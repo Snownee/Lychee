@@ -1,0 +1,26 @@
+{
+  "required": true,
+  "package": "snownee.lychee.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "refmap": "lychee.refmap.json",
+  "mixins": [
+    "BlockPredicateAccess",
+    "ItemEntityAccess",
+    "LocationCheckAccess",
+    "LocationPredicateAccess",
+    "LootContextParamSetsAccess",
+    "NbtPredicateAccess",
+    "RecipeManagerAccess",
+    "StatePropertiesPredicateAccess",
+    "EntityMixin",
+    "ItemEntityMixin",
+    "RecipeManagerMixin"
+  ],
+  "client": [
+    "GameRendererAccess"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

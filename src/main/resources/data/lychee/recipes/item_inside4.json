@@ -1,0 +1,24 @@
+{
+  "type": "lychee:item_inside",
+  "item_in": {
+    "item": "bucket"
+  },
+  "block_in": {
+    "blocks": [ "wheat" ],
+    "state": {
+      "age": {
+        "min": "5"
+      }
+    }
+  },
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "water_bucket"
+    },
+    {
+      "type": "place",
+      "block": "cauldron"
+    }
+  ]
+}

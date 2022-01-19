@@ -1,0 +1,25 @@
+{
+  "type": "lychee:item_burning",
+  "contextual": {
+    "hide": true,
+    "type": "not",
+    "contextual": {
+      "type": "weather",
+      "weather": "rain"
+    }
+  },
+  "item_in": {
+    "item": "dirt"
+  },
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "diamond",
+      "count": 5
+    },
+    {
+      "type": "drop_item",
+      "item": "gold_ingot"
+    }
+  ]
+}
