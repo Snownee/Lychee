@@ -19,9 +19,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
 import snownee.lychee.core.contextual.ContextualCondition;
 import snownee.lychee.core.contextual.ContextualHolder;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public abstract class PostAction extends ContextualHolder {

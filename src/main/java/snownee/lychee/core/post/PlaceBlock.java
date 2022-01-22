@@ -28,8 +28,8 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
 import snownee.lychee.core.def.BlockPredicateHelper;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.NbtPredicateAccess;
 import snownee.lychee.mixin.StatePropertiesPredicateAccess;
@@ -55,7 +55,7 @@ public class PlaceBlock extends PostAction {
 		if (pos == null) {
 			pos = new BlockPos(ctx.getParam(LootContextParams.ORIGIN));
 		}
-		ServerLevel level = ctx.getLevel();
+		ServerLevel level = ctx.getServerLevel();
 		BlockState oldState = level.getBlockState(pos);
 		BlockPredicateAccess access = (BlockPredicateAccess) block;
 		Set<String> properties = ((StatePropertiesPredicateAccess) access.getProperties()).getProperties().stream().map($ -> $.getName()).collect(Collectors.toSet());

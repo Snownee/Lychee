@@ -1,6 +1,8 @@
 {
 "recipeType.lychee.item_burning": "Item Burning",
 "recipeType.lychee.item_inside": "Item Inside",
+"recipeType.lychee.block_interacting": "Block Interaction",
+"recipeType.lychee.block_clicking": "Block Interaction",
 "postAction.lychee.place": "Place %s",
 "postAction.lychee.place.consume": "Consume Block",
 "postAction.lychee.drop_xp": "{0} Xp",
@@ -36,5 +38,8 @@
 "result.lychee.success": "§a✔ ",
 "result.lychee.fail": "§4✕ ",
 "result.lychee.pass": "§7- ",
-"tip.lychee.nbtPredicate": "Has NBT predicate"
+"tip.lychee.anyBlock": "Any Block",
+"tip.lychee.nbtPredicate": "Has NBT predicate",
+"tip.lychee.block_interacting": "Use on block",
+"tip.lychee.block_clicking": "Click on block"
 }

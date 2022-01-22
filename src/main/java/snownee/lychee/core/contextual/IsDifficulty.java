@@ -20,7 +20,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public record IsDifficulty(IntImmutableList difficulties) implements ContextualCondition {

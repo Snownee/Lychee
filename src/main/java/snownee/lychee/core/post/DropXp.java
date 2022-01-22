@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public class DropXp extends PostAction {
@@ -41,7 +41,7 @@ public class DropXp extends PostAction {
 	@Override
 	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
-		ExperienceOrb.award(ctx.getLevel(), pos, xp * times);
+		ExperienceOrb.award(ctx.getServerLevel(), pos, xp * times);
 	}
 
 	@Override

@@ -204,6 +204,9 @@ public class BlockPredicateHelper {
 
 	@SuppressWarnings("rawtypes")
 	public static List<Component> getTooltips(BlockState state, BlockPredicate predicate) {
+		if (predicate == BlockPredicate.ANY) {
+			return List.of(new TranslatableComponent("tip.lychee.anyBlock"));
+		}
 		List<Component> list = Lists.newArrayList(state.getBlock().getName());
 		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
 		List<PropertyMatcher> matchers = ((StatePropertiesPredicateAccess) access.getProperties()).getProperties();

@@ -1,17 +1,26 @@
 package snownee.lychee;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import snownee.lychee.core.contextual.ContextualConditionType;
 import snownee.lychee.core.post.PostActionType;
-import snownee.lychee.item_inside.ItemInsideRecipe;
+import snownee.lychee.interaction.BlockClickingRecipe;
+import snownee.lychee.interaction.BlockInteractingRecipe;
 
 @Mod(Lychee.ID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
@@ -21,9 +30,11 @@ public final class Lychee {
 	public static final Logger LOGGER = LogManager.getLogger(Lychee.ID);
 
 	public Lychee() {
-		RecipeTypes.init();
 		LycheeLootContextParamSets.init();
+		RecipeTypes.init();
 		LycheeTags.init();
+		MinecraftForge.EVENT_BUS.addListener(Lychee::useItemOn);
+		MinecraftForge.EVENT_BUS.addListener(Lychee::clickItemOn);
 	}
 
 	@SubscribeEvent
@@ -46,9 +57,32 @@ public final class Lychee {
 		RecipeSerializers.init();
 	}
 
+	public static void useItemOn(PlayerInteractEvent.RightClickBlock event) {
+		ItemStack stack = event.getItemStack();
+		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(event.getPlayer(), stack, event.getPos(), event.getHitVec().getLocation(), builder -> {
+			builder.withParameter(LootContextParams.TOOL, stack);
+		});
+		if (result.isPresent()) {
+			event.setCanceled(true);
+			event.setCancellationResult(InteractionResult.SUCCESS);
+		}
+	}
+
+	public static void clickItemOn(PlayerInteractEvent.LeftClickBlock event) {
+		ItemStack stack = event.getItemStack();
+		Vec3 vec = Vec3.atCenterOf(event.getPos());
+		Optional<BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(event.getPlayer(), stack, event.getPos(), vec, builder -> {
+			builder.withParameter(LootContextParams.TOOL, stack);
+		});
+		if (result.isPresent()) {
+			event.setCanceled(true);
+			event.setCancellationResult(InteractionResult.SUCCESS);
+		}
+	}
+
 	public static void onRecipesLoaded(RecipeManager recipeManager) {
 		RecipeTypes.ALL.forEach($ -> $.updateEmptyState(recipeManager));
-		ItemInsideRecipe.buildCache(RecipeTypes.ITEM_INSIDE.recipes(recipeManager));
+		RecipeTypes.ALL.forEach($ -> $.buildCache(recipeManager));
 	}
 
 }

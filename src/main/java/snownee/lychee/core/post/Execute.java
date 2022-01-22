@@ -20,7 +20,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
+import snownee.lychee.core.recipe.LycheeRecipe;
 
 public class Execute extends PostAction {
 
@@ -60,7 +60,7 @@ public class Execute extends PostAction {
 			displayName = entity.getDisplayName();
 			name = entity.getName().getString();
 		}
-		CommandSourceStack sourceStack = new CommandSourceStack(CommandSource.NULL, pos, rotation, ctx.getLevel(), 2, name, displayName, ctx.getLevel().getServer(), entity);
+		CommandSourceStack sourceStack = new CommandSourceStack(CommandSource.NULL, pos, rotation, ctx.getServerLevel(), 2, name, displayName, ctx.getLevel().getServer(), entity);
 		for (int i = 0; i < times; i++) {
 			ctx.getLevel().getServer().getCommands().performCommand(sourceStack, command);
 		}

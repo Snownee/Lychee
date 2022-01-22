@@ -9,14 +9,15 @@ import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipeType;
+import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.item_burning.ItemBurningRecipe;
 
-public class ItemBurningRecipeCategory extends ThrowItemRecipeCategory<LycheeContext, ItemBurningRecipe> {
+public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<LycheeContext, ItemBurningRecipe> {
 
 	public ItemBurningRecipeCategory(LycheeRecipeType<LycheeContext, ItemBurningRecipe> recipeType, IGuiHelper guiHelper) {
-		super(recipeType, guiHelper);
+		super(List.of(recipeType), guiHelper, AllGuiTextures.JEI_DOWN_ARROW);
 	}
 
 	@Override

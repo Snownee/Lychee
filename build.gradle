@@ -234,6 +234,7 @@ processResources {
 }
 
 jar {
+    exclude '/data/lychee/recipes'
     manifest {
         attributes([
                 "Specification-Title": mod_id,

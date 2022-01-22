@@ -23,13 +23,13 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.GsonContextImpl;
 import snownee.lychee.util.LUtil;
 
 public interface ContextualCondition {
-	static final Gson predicateGson = Deserializers.createConditionSerializer().create();
-	static final GsonContextImpl gsonContext = new GsonContextImpl(predicateGson);
+	Gson predicateGson = Deserializers.createConditionSerializer().create();
+	GsonContextImpl gsonContext = new GsonContextImpl(predicateGson);
 
 	ContextualConditionType<? extends ContextualCondition> getType();
 

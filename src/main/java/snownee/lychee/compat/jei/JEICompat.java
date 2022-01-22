@@ -23,6 +23,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.jei.category.BlockInteractionRecipeCategory;
 import snownee.lychee.compat.jei.category.ItemBurningRecipeCategory;
 import snownee.lychee.compat.jei.category.ItemInsideRecipeCategory;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientHelper;
@@ -41,11 +42,14 @@ public class JEICompat implements IModPlugin {
 		return UID;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registration) {
 		IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
 		registration.addRecipeCategories(new ItemBurningRecipeCategory(RecipeTypes.ITEM_BURNING, guiHelper));
-		registration.addRecipeCategories(new ItemInsideRecipeCategory(RecipeTypes.ITEM_INSIDE, guiHelper));
+		registration.addRecipeCategories(new ItemInsideRecipeCategory<>(RecipeTypes.ITEM_INSIDE, guiHelper, AllGuiTextures.JEI_DOWN_ARROW));
+		ScreenElement mainIcon = RecipeTypes.BLOCK_INTERACTING.isEmpty() ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
+		registration.addRecipeCategories(new BlockInteractionRecipeCategory((List) List.of(RecipeTypes.BLOCK_INTERACTING, RecipeTypes.BLOCK_CLICKING), guiHelper, mainIcon));
 	}
 
 	@Override
@@ -53,6 +57,8 @@ public class JEICompat implements IModPlugin {
 		RecipeManager recipeManager = Minecraft.getInstance().getConnection().getRecipeManager();
 		registration.addRecipes(RecipeTypes.ITEM_BURNING.recipes(recipeManager), RecipeTypes.ITEM_BURNING.id);
 		registration.addRecipes(RecipeTypes.ITEM_INSIDE.recipes(recipeManager), RecipeTypes.ITEM_INSIDE.id);
+		registration.addRecipes(RecipeTypes.BLOCK_INTERACTING.recipes(recipeManager), RecipeTypes.BLOCK_INTERACTING.id);
+		registration.addRecipes(RecipeTypes.BLOCK_CLICKING.recipes(recipeManager), RecipeTypes.BLOCK_INTERACTING.id);
 	}
 
 	@Override

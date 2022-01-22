@@ -19,21 +19,25 @@ import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.compat.jei.JEICompat;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
-import snownee.lychee.core.LycheeRecipeType;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.PostAction;
+import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
 
 public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeRecipe<C>> implements IRecipeCategory<T> {
 
-	protected final LycheeRecipeType<C, T> recipeType;
+	protected final List<LycheeRecipeType<C, T>> recipeTypes;
 	protected final IGuiHelper guiHelper;
 	protected IDrawable bg;
 	protected IDrawable icon;
 
 	public BaseJEICategory(LycheeRecipeType<C, T> recipeType, IGuiHelper guiHelper) {
-		this.recipeType = recipeType;
+		this(List.of(recipeType), guiHelper);
+	}
+
+	public BaseJEICategory(List<LycheeRecipeType<C, T>> recipeTypes, IGuiHelper guiHelper) {
+		this.recipeTypes = recipeTypes;
 		this.guiHelper = guiHelper;
 	}
 
@@ -49,7 +53,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	@Override
 	public Class<? extends T> getRecipeClass() {
-		return recipeType.clazz;
+		return recipeTypes.get(0).clazz;
 	}
 
 	@Override
@@ -59,7 +63,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	@Override
 	public ResourceLocation getUid() {
-		return recipeType.id;
+		return recipeTypes.get(0).id;
 	}
 
 	@Override

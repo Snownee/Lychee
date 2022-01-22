@@ -5,15 +5,17 @@ import java.util.function.Supplier;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.client.gui.ScreenElement;
 
-public class ThrowItemIcon extends RenderElement {
+public class SideBlockIcon extends RenderElement {
 
+	private final ScreenElement mainIcon;
 	private final Supplier<BlockState> blockProvider;
 
-	public ThrowItemIcon(Supplier<BlockState> blockProvider) {
+	public SideBlockIcon(ScreenElement mainIcon, Supplier<BlockState> blockProvider) {
+		this.mainIcon = mainIcon;
 		this.blockProvider = blockProvider;
 	}
 
@@ -21,8 +23,9 @@ public class ThrowItemIcon extends RenderElement {
 	public void render(PoseStack ms) {
 		ms.pushPose();
 		ms.translate(x, y, z);
-		ms.scale(.6F, .6F, .6F);
-		AllGuiTextures.JEI_DOWN_ARROW.render(ms, 0, 0);
+		//		ms.scale(.75F, .75F, .75F);
+		ms.scale(.625F, .625F, .625F);
+		mainIcon.render(ms, 0, 0);
 		ms.popPose();
 		GuiGameElement.of(blockProvider.get()).scale(7).rotateBlock(12.5f, 22.5f, 0).at(x + 6, y + 16).render(ms);
 	}

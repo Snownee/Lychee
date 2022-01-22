@@ -7,7 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public record Chance(float chance) implements ContextualCondition {

@@ -21,7 +21,9 @@ public enum AllGuiTextures implements ScreenElement {
 	JEI_QUESTION_MARK("jei/widgets", 0, 178, 12, 16),
 	JEI_SHADOW("jei/widgets", 0, 56, 52, 11),
 	BLOCKZAPPER_UPGRADE_RECIPE("jei/widgets", 0, 75, 144, 66),
-	JEI_INFO("jei/widgets", 240, 0, 16, 16);
+	INFO("jei/widgets", 240, 0, 16, 16),
+	LEFT_CLICK("jei/widgets", 192, 0, 16, 16),
+	RIGHT_CLICK("jei/widgets", 224, 0, 16, 16);
 
 	public final ResourceLocation location;
 	public int width, height;

@@ -16,7 +16,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.mixin.ItemEntityAccess;
 import snownee.lychee.util.LUtil;
 

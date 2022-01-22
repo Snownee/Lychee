@@ -1,4 +1,4 @@
-package snownee.lychee.core;
+package snownee.lychee.core.recipe;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,6 +15,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import snownee.lychee.LycheeRegistries;
+import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualCondition;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.post.PostAction;
@@ -69,7 +70,13 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	}
 
 	public void applyPostActions(LycheeContext ctx, int times) {
-		actions.forEach($ -> $.doApply(this, ctx, times));
+		if (!ctx.getLevel().isClientSide) {
+			actions.forEach($ -> $.doApply(this, ctx, times));
+		}
+	}
+
+	public boolean willBatchRun() {
+		return willBatchRun;
 	}
 
 	public static abstract class Serializer<R extends LycheeRecipe<?>> extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<R> {

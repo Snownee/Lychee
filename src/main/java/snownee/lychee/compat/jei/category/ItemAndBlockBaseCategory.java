@@ -24,30 +24,31 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.compat.jei.JEICompat;
 import snownee.lychee.compat.jei.JEICompat.ScreenElementWrapper;
-import snownee.lychee.compat.jei.ThrowItemIcon;
+import snownee.lychee.compat.jei.SideBlockIcon;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
-import snownee.lychee.core.LycheeRecipeType;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.post.PostAction;
+import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
 
-public abstract class ThrowItemRecipeCategory<C extends LycheeContext, T extends LycheeRecipe<C>> extends BaseJEICategory<C, T> {
+public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extends LycheeRecipe<C>> extends BaseJEICategory<C, T> {
 
 	public static final int width = 116;
 	public static final int height = 54;
 	public static final Rect2i infoRect = new Rect2i(8, 32, 8, 8);
 	public static final Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
+	public static final Rect2i methodRect = new Rect2i(30, 12, 20, 20);
 
-	public ThrowItemRecipeCategory(LycheeRecipeType<C, T> recipeType, IGuiHelper guiHelper) {
-		super(recipeType, guiHelper);
+	public ItemAndBlockBaseCategory(List<LycheeRecipeType<C, T>> recipeTypes, IGuiHelper guiHelper, ScreenElement mainIcon) {
+		super(recipeTypes, guiHelper);
 		bg = guiHelper.createBlankDrawable(width, height);
-		icon = new ScreenElementWrapper(new ThrowItemIcon(this::getIconBlock));
+		icon = new ScreenElementWrapper(new SideBlockIcon(mainIcon, this::getIconBlock));
 	}
 
 	public abstract BlockState getIconBlock();
@@ -89,17 +90,21 @@ public abstract class ThrowItemRecipeCategory<C extends LycheeContext, T extends
 		}
 	}
 
+	public void drawExtra(T recipe, PoseStack matrixStack, double mouseX, double mouseY) {
+		AllGuiTextures.JEI_DOWN_ARROW.render(matrixStack, 26, 18);
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	public void draw(T recipe, PoseStack matrixStack, double mouseX, double mouseY) {
 		super.draw(recipe, matrixStack, mouseX, mouseY);
-		AllGuiTextures.JEI_DOWN_ARROW.render(matrixStack, 26, 18);
+		drawExtra(recipe, matrixStack, mouseX, mouseY);
 
 		if (!recipe.getConditions().isEmpty()) {
 			matrixStack.pushPose();
 			matrixStack.translate(infoRect.getX(), infoRect.getY(), 0);
 			matrixStack.scale(.5F, .5F, .5F);
-			AllGuiTextures.JEI_INFO.render(matrixStack, 0, 0);
+			AllGuiTextures.INFO.render(matrixStack, 0, 0);
 			matrixStack.popPose();
 		}
 
@@ -140,15 +145,26 @@ public abstract class ThrowItemRecipeCategory<C extends LycheeContext, T extends
 			recipe.getConditonTooltips(list, 0);
 			return list;
 		}
-		if (recipeType != RecipeTypes.ITEM_BURNING && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
+		if (getClass() != ItemBurningRecipeCategory.class && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
 			return BlockPredicateHelper.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe));
+		}
+		if (methodRect.contains((int) mouseX, (int) mouseY)) {
+			Component description = getMethodDescription(recipe);
+			if (description != null) {
+				return List.of(description);
+			}
 		}
 		return super.getTooltipStrings(recipe, mouseX, mouseY);
 	}
 
+	@Nullable
+	public Component getMethodDescription(T recipe) {
+		return null;
+	}
+
 	@Override
 	public boolean handleInput(T recipe, double mouseX, double mouseY, Key input) {
-		if (input.getType() == InputConstants.Type.MOUSE && recipeType != RecipeTypes.ITEM_BURNING && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
+		if (input.getType() == InputConstants.Type.MOUSE && getClass() != ItemBurningRecipeCategory.class && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
 			BlockState state = getRenderingBlock(recipe);
 			ItemStack stack = new ItemStack(state.getBlock());
 			if (!stack.isEmpty()) {

@@ -9,7 +9,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.item_inside.ItemInsideRecipe;
 
 @Mixin(Entity.class)
 public class EntityMixin {
@@ -21,7 +20,7 @@ public class EntityMixin {
 		}
 		Entity entity = (Entity) (Object) this;
 		if (entity.isAlive() && entity.getType() == EntityType.ITEM && !entity.level.isClientSide && entity.tickCount % 20 == 10) {
-			ItemInsideRecipe.on((ItemEntity) entity);
+			RecipeTypes.ITEM_INSIDE.process(entity, ((ItemEntity) entity).getItem(), entity.blockPosition(), entity.position(), null);
 		}
 	}
 

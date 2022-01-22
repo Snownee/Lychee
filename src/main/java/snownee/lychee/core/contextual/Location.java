@@ -32,10 +32,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.LocationPredicateHelper;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.LocationCheckAccess;
 import snownee.lychee.mixin.LocationPredicateAccess;
@@ -65,7 +65,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 
 		@OnlyIn(Dist.CLIENT)
-		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result);
+		void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result);
 	}
 
 	private static record PosRule(String name, Function<LocationPredicateAccess, Doubles> boundsGetter, Function<Vec3, Double> valueGetter) implements Rule {
@@ -239,10 +239,9 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 	@Override
 	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		return check.test(ctx.context) ? times : 0;
+		return check.test(ctx.toLootContext()) ? times : 0;
 	}
 
-	//TODO
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public InteractionResult testInTooltips() {

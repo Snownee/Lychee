@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.LycheeRecipe;
+import snownee.lychee.core.recipe.LycheeRecipe;
 
 public record Not(ContextualCondition condition) implements ContextualCondition {
 
