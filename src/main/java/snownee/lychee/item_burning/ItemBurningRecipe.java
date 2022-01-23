@@ -76,8 +76,9 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		LycheeContext ctx = builder.create(LycheeLootContextParamSets.ITEM_BURNING);
 		entity.level.getRecipeManager().getRecipeFor(RecipeTypes.ITEM_BURNING, ctx, entity.level).ifPresent($ -> {
 			int times = $.willBatchRun() ? entity.getItem().getCount() : 1;
-			entity.getItem().shrink(times);
-			$.applyPostActions(ctx, times);
+			if ($.applyPostActions(ctx, times)) {
+				entity.getItem().shrink(times);
+			}
 		});
 	}
 

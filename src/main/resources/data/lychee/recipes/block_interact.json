@@ -1,17 +1,20 @@
 {
   "type": "lychee:block_interacting",
   "item_in": {
-    "tag": "sand"
+    "item": "iron_axe"
   },
-  "block_in": "water_cauldron",
+  "block_in": "oak_log",
   "post": [
     {
       "type": "drop_item",
-      "item": "water_bucket"
+      "item": "diamond"
     },
     {
       "type": "place",
-      "block": "cauldron"
+      "block": "stripped_oak_log"
+    },
+    {
+      "type": "damage_item"
     }
   ]
 }

@@ -61,7 +61,7 @@ public class And extends ContextualHolder implements ContextualCondition {
 		@Override
 		public And fromJson(JsonObject o) {
 			And and = new And();
-			ContextualCondition.parseConditions(o.get("contextual"), and::addCondition);
+			ContextualCondition.parseConditions(o.get("contextual"), and::withCondition);
 			return and;
 		}
 

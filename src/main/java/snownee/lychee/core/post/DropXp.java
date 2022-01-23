@@ -31,11 +31,12 @@ public class DropXp extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		times = checkConditions(recipe, ctx, times);
 		if (times > 0) {
 			apply(recipe, ctx, times);
 		}
+		return true;
 	}
 
 	@Override
@@ -69,8 +70,8 @@ public class DropXp extends PostAction {
 		}
 
 		@Override
-		public void toNetwork(DropXp condition, FriendlyByteBuf buf) {
-			buf.writeVarInt(condition.xp);
+		public void toNetwork(DropXp action, FriendlyByteBuf buf) {
+			buf.writeVarInt(action.xp);
 		}
 
 	}

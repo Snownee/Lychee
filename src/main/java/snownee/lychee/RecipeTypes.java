@@ -1,10 +1,10 @@
 package snownee.lychee;
 
-import java.util.List;
+import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
@@ -23,7 +23,7 @@ public final class RecipeTypes {
 	public static void init() {
 	}
 
-	public static final List<LycheeRecipeType<?, ?>> ALL = Lists.newLinkedList();
+	public static final Set<LycheeRecipeType<?, ?>> ALL = Sets.newLinkedHashSet();
 	public static final LycheeRecipeType<LycheeContext, ItemBurningRecipe> ITEM_BURNING = type("item_burning", ItemBurningRecipe.class);
 	public static final BlockKeyRecipeType<LycheeContext, ItemInsideRecipe> ITEM_INSIDE = blockKey("item_inside", ItemInsideRecipe.class, null);
 	public static final BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe> BLOCK_INTERACTING = blockKey("block_interacting", BlockInteractingRecipe.class, LycheeLootContextParamSets.BLOCK_INTERACTION);

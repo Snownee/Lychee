@@ -1,0 +1,17 @@
+{
+  "type": "lychee:block_clicking",
+  "item_in": {
+    "tag": "sand"
+  },
+  "block_in": "water_cauldron",
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "water_bucket"
+    },
+    {
+      "type": "place",
+      "block": "cauldron"
+    }
+  ]
+}

@@ -11,7 +11,7 @@ public abstract class PostActionType<T extends PostAction> extends ForgeRegistry
 
 	public abstract T fromNetwork(FriendlyByteBuf buf);
 
-	public abstract void toNetwork(T condition, FriendlyByteBuf buf);
+	public abstract void toNetwork(T action, FriendlyByteBuf buf);
 
 	public boolean canBatchRun() {
 		return true;

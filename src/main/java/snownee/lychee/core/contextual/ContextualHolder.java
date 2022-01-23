@@ -28,7 +28,7 @@ public abstract class ContextualHolder {
 		return conditions;
 	}
 
-	public void addCondition(ContextualCondition condition, boolean hide) {
+	public void withCondition(ContextualCondition condition, boolean hide) {
 		if (conditions == Collections.EMPTY_LIST) {
 			conditions = Lists.newArrayList();
 		}
@@ -45,7 +45,7 @@ public abstract class ContextualHolder {
 		int size = pBuffer.readVarInt();
 		for (int i = 0; i < size; i++) {
 			ContextualConditionType<?> type = pBuffer.readRegistryIdUnsafe(LycheeRegistries.CONTEXTUAL);
-			addCondition(type.fromNetwork(pBuffer), false);
+			withCondition(type.fromNetwork(pBuffer), false);
 		}
 		if (pBuffer.readBoolean()) {
 			secretFlags = pBuffer.readBitSet();
@@ -63,7 +63,7 @@ public abstract class ContextualHolder {
 		pBuffer.writeBoolean(secretFlags != null);
 		if (secretFlags != null) {
 			pBuffer.writeBitSet(secretFlags);
-			//we should sync condition even though it is hidden because
+			//we should sync condition even though it is secret because
 			//the client-side need to know the result in tooltips for UX
 		}
 	}

@@ -20,7 +20,7 @@ public class DoubleBoundsHelper {
 			min = Double.NaN;
 		}
 		pBuffer.writeDouble(min);
-		Double max = doubles.getMin();
+		Double max = doubles.getMax();
 		if (max == null) {
 			max = Double.NaN;
 		}

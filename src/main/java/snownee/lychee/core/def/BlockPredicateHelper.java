@@ -123,7 +123,7 @@ public class BlockPredicateHelper {
 		}
 		StatePropertiesPredicate propertiesPredicate = PropertiesPredicateHelper.fromNetwork(pBuffer);
 		NbtPredicate nbtPredicate = pBuffer.readBoolean() ? NBT_PREDICATE_DUMMY : NbtPredicate.ANY;
-		return new BlockPredicate(tag, Set.copyOf(blocks), propertiesPredicate, nbtPredicate);
+		return new BlockPredicate(tag, blocks, propertiesPredicate, nbtPredicate);
 	}
 
 	public static void toNetwork(BlockPredicate predicate, FriendlyByteBuf pBuffer) {

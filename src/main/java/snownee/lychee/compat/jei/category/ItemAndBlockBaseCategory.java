@@ -85,6 +85,9 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		for (int i = 0; i < gridY; i++) {
 			for (int j = 0; j < gridX; j++) {
 				int index = i * 3 + j;
+				if (index >= size) {
+					break;
+				}
 				actionSlot(layout, recipe.getPostActions().get(index), index + 10, x + j * 19, y + i * 19);
 			}
 		}
@@ -110,6 +113,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 		BlockState state = getRenderingBlock(recipe);
 		if (state.isAir()) {
+			AllGuiTextures.JEI_QUESTION_MARK.render(matrixStack, 23, 48);
 			return;
 		}
 		if (state.getLightEmission() < 5) {

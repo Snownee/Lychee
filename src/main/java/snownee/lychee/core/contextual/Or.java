@@ -67,7 +67,7 @@ public class Or extends ContextualHolder implements ContextualCondition {
 		@Override
 		public Or fromJson(JsonObject o) {
 			Or or = new Or();
-			ContextualCondition.parseConditions(o.get("contextual"), or::addCondition);
+			ContextualCondition.parseConditions(o.get("contextual"), or::withCondition);
 			return or;
 		}
 

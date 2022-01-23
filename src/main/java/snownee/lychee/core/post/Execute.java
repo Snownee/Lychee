@@ -41,11 +41,12 @@ public class Execute extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		times = checkConditions(recipe, ctx, times);
 		if (times > 0) {
 			apply(recipe, ctx, times);
 		}
+		return true;
 	}
 
 	@Override
@@ -86,11 +87,12 @@ public class Execute extends PostAction {
 
 		@Override
 		public Execute fromNetwork(FriendlyByteBuf buf) {
-			return CLIENT_DUMMY;
+			return buf.readBoolean() ? CLIENT_DUMMY : new Execute("", false);
 		}
 
 		@Override
-		public void toNetwork(Execute condition, FriendlyByteBuf buf) {
+		public void toNetwork(Execute action, FriendlyByteBuf buf) {
+			buf.writeBoolean(action.getConditions().isEmpty());
 		}
 
 	}

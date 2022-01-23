@@ -90,8 +90,9 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 		for (T recipe : Iterables.concat(recipes, anyBlockRecipes)) {
 			if (recipe.matches(ctx, level)) {
 				int times = recipe.willBatchRun() ? stack.getCount() : 1;
-				stack.shrink(times);
-				recipe.applyPostActions(ctx, times);
+				if (recipe.applyPostActions(ctx, times)) {
+					stack.shrink(times);
+				}
 				return Optional.of(recipe);
 			}
 		}

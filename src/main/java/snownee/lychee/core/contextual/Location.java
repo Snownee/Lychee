@@ -319,7 +319,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public Location fromNetwork(FriendlyByteBuf buf) {
-			LocationPredicate.Builder builder = LocationPredicate.Builder.location();
+			LocationPredicate.Builder builder = LocationPredicateHelper.fromNetwork(buf);
 			LocationCheck check = (LocationCheck) LocationCheck.checkLocation(builder, buf.readBlockPos()).build();
 			return new Location(check);
 		}

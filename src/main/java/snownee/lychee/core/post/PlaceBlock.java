@@ -132,8 +132,8 @@ public class PlaceBlock extends PostAction {
 		}
 
 		@Override
-		public void toNetwork(PlaceBlock condition, FriendlyByteBuf buf) {
-			BlockPredicateHelper.toNetwork(condition.block, buf);
+		public void toNetwork(PlaceBlock action, FriendlyByteBuf buf) {
+			BlockPredicateHelper.toNetwork(action.block, buf);
 		}
 
 		@Override

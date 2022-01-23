@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.registries.ForgeRegistryEntry;
+import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualCondition;
@@ -69,10 +70,14 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		return getPostActions().stream().filter($ -> !$.isHidden()).toList();
 	}
 
-	public void applyPostActions(LycheeContext ctx, int times) {
+	/**
+	 * @return false if prevent default behavior
+	 */
+	public boolean applyPostActions(LycheeContext ctx, int times) {
 		if (!ctx.getLevel().isClientSide) {
-			actions.forEach($ -> $.doApply(this, ctx, times));
+			return actions.stream().allMatch($ -> $.doApply(this, ctx, times));
 		}
+		return true;
 	}
 
 	public boolean willBatchRun() {
@@ -90,7 +95,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		@Override
 		public final R fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
 			R recipe = factory.apply(pRecipeId);
-			ContextualCondition.parseConditions(pSerializedRecipe.get("contextual"), recipe::addCondition);
+			ContextualCondition.parseConditions(pSerializedRecipe.get("contextual"), recipe::withCondition);
 			PostAction.parseActions(pSerializedRecipe.get("post"), recipe::addPostAction);
 			fromJson(recipe, pSerializedRecipe);
 			return recipe;
@@ -100,17 +105,25 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 		@Override
 		public final R fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-			R recipe = factory.apply(pRecipeId);
-			recipe.conditionsFromNetwork(pBuffer);
+			try {
+				R recipe = factory.apply(pRecipeId);
+				recipe.conditionsFromNetwork(pBuffer);
 
-			int size = pBuffer.readVarInt();
-			for (int i = 0; i < size; i++) {
-				PostActionType<?> type = pBuffer.readRegistryIdUnsafe(LycheeRegistries.POST_ACTION);
-				recipe.addPostAction(type.fromNetwork(pBuffer));
+				int size = pBuffer.readVarInt();
+				for (int i = 0; i < size; i++) {
+					PostActionType<?> type = pBuffer.readRegistryIdUnsafe(LycheeRegistries.POST_ACTION);
+					PostAction action = type.fromNetwork(pBuffer);
+					action.conditionsFromNetwork(pBuffer);
+					recipe.addPostAction(action);
+				}
+
+				fromNetwork(recipe, pBuffer);
+				return recipe;
+			} catch (Exception e) {
+				Lychee.LOGGER.error("Exception while reading Lychee recipe: {}", pRecipeId);
+				Lychee.LOGGER.catching(e);
+				return null;
 			}
-
-			fromNetwork(recipe, pBuffer);
-			return recipe;
 		}
 
 		public abstract void fromNetwork(R pRecipe, FriendlyByteBuf pBuffer);
@@ -123,12 +136,14 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 			pBuffer.writeVarInt(pRecipe.getPostActions().size());
 			for (PostAction action : pRecipe.getPostActions()) {
-				if (action.isHidden()) {
-					continue;
-				}
+				//FIXME
+				//				if (action.isHidden()) {
+				//					continue;
+				//				}
 				PostActionType type = action.getType();
 				pBuffer.writeRegistryIdUnsafe(LycheeRegistries.POST_ACTION, type);
 				type.toNetwork(action, pBuffer);
+				action.conditionsToNetwork(pBuffer);
 			}
 		}
 

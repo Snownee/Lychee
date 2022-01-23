@@ -28,15 +28,22 @@ public abstract class PostAction extends ContextualHolder {
 
 	public abstract PostActionType<?> getType();
 
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	/**
+	 * @return false if prevent default behavior
+	 */
+	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		times = checkConditions(recipe, ctx, times);
 		if (times > 0) {
 			for (int i = 0; i < times; i++) {
 				apply(recipe, ctx, times);
 			}
 		}
+		return true;
 	}
 
+	/**
+	 * @return true if prevent default behavior
+	 */
 	protected abstract void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times);
 
 	public List<ItemStack> getOutputItems() {
@@ -59,7 +66,7 @@ public abstract class PostAction extends ContextualHolder {
 		ResourceLocation key = new ResourceLocation(o.get("type").getAsString());
 		PostActionType<?> type = LycheeRegistries.POST_ACTION.getValue(key);
 		PostAction action = type.fromJson(o);
-		ContextualCondition.parseConditions(o.get("contextual"), action::addCondition);
+		ContextualCondition.parseConditions(o.get("contextual"), action::withCondition);
 		return action;
 	}
 

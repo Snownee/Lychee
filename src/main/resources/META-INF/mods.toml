@@ -18,4 +18,4 @@ description="In-World Crafting"
     side="BOTH"
 
 [modproperties.lychee]
-    catalogueItemIcon="minecraft:snow_block" #Support for Catalogue mod
+    catalogueItemIcon="minecraft:crafting_table" #Support for Catalogue mod

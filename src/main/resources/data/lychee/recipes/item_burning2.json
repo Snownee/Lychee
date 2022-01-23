@@ -51,6 +51,13 @@
             "chance": 0.5
           },
           {
+            "type": "not",
+            "contextual": {
+              "type": "difficulty",
+              "difficulty": [1, 2, 3]
+            }
+          },
+          {
             "type": "location",
             "predicate": {
               "dimension": "the_end",
@@ -62,13 +69,6 @@
                   "max": 1000
                 }
               }
-            }
-          },
-          {
-            "type": "not",
-            "contextual": {
-              "type": "difficulty",
-              "difficulty": [1, 2, 3]
             }
           }
         ]

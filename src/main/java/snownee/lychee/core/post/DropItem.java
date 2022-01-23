@@ -34,11 +34,12 @@ public class DropItem extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		times = checkConditions(recipe, ctx, times);
 		if (times > 0) {
 			apply(recipe, ctx, times);
 		}
+		return true;
 	}
 
 	@Override
@@ -70,8 +71,8 @@ public class DropItem extends PostAction {
 		}
 
 		@Override
-		public void toNetwork(DropItem condition, FriendlyByteBuf buf) {
-			buf.writeItem(condition.stack);
+		public void toNetwork(DropItem action, FriendlyByteBuf buf) {
+			buf.writeItem(action.stack);
 		}
 
 	}
