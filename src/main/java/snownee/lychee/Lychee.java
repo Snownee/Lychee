@@ -70,7 +70,7 @@ public final class Lychee {
 		});
 		if (result.isPresent()) {
 			event.setCanceled(true);
-			event.setCancellationResult(InteractionResult.SUCCESS);
+			event.setCancellationResult(InteractionResult.sidedSuccess(event.getWorld().isClientSide));
 		}
 	}
 
@@ -82,7 +82,7 @@ public final class Lychee {
 		});
 		if (result.isPresent()) {
 			event.setCanceled(true);
-			event.setCancellationResult(InteractionResult.SUCCESS);
+			event.setCancellationResult(InteractionResult.sidedSuccess(event.getWorld().isClientSide));
 		}
 	}
 
