@@ -25,7 +25,7 @@ Spawns an item entity on the ground.
 	```json
 	{
 		"type": "drop_item",
-		"item": {{item name: string}},
+		"item": {{item resource id: string}},
 		"count": {{optional item amount: int}},
 		"nbt": {{(Forge only) optional item nbt: object or string}}
 	}
@@ -47,7 +47,9 @@ Spawns an item entity on the ground.
 
 ### Place block (`place`)
 
-Place a block in world.
+Places a block in world.
+
+This action is not repeatable.
 
 ??? note "Format"
 
@@ -60,7 +62,7 @@ Place a block in world.
 
 ??? example
 
-	Place a cauldron:
+	Places a cauldron:
 
 	```json
 	{
@@ -69,7 +71,7 @@ Place a block in world.
 	}
 	```
 
-	Place a waterlogged oak stairs:
+	Places a waterlogged oak stairs:
 
 	```json
 	{
@@ -83,7 +85,7 @@ Place a block in world.
 	}
 	```
 
-	Destroy current block (place air):
+	Destroys current block (place air):
 
 	```json
 	{
@@ -92,10 +94,60 @@ Place a block in world.
 	}
 	```
 
-TODO
+### Execute command (`execute`)
+
+Executes a command.
+
+??? note "Format"
+
+	```json
+	{
+		"type": "place",
+		"command": {{command to run: string}},
+		"hide": {{optional hide in JEI/REI: boolean}}
+	}
+	```
+
+### Drop experience (`drop_xp`)
+
+Spawns experience orbs.
+
+??? note "Format"
+
+	```json
+	{
+		"type": "drop_xp",
+		"xp": {{amount: int}}
+	}
+	```
 
 ## Special built-in actions
 
 These following actions will prevent the default behavior of the recipe (such as consuming input item). The default behavior is explained in the recipes page.
 
-TODO
+### Prevent default behavior (`prevent_default`)
+
+Prevents default behavior and do nothing.
+
+??? note "Format"
+
+	```json
+	{
+		"type": "prevent_default"
+	}
+	```
+
+### Damage input item (`damage_item`)
+
+Damages input item.
+
+This action is not repeatable.
+
+??? note "Format"
+
+	```json
+	{
+		"type": "damage_item",
+		"damage": {{optional damage: int}}
+	}
+	```

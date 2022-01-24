@@ -4,27 +4,23 @@
 
 === "Forge"
 
-	```json
-	{
-		"type": {{type: string}},
-		"conditions": {{optional conditions: ForgeCondition[]}},
-		"contextual": {{optional contextual conditions: ContextualCondition | ContextualCondition[]}},
-		"post": {{optional action: PostAction | PostAction[]}},
-		{{additional properties}}
-	}
-	```
+    | Name       | Description                      | Type / Literal                                                                                     |
+    | ---------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
+    | type       | type                             | string                                                                                             |
+    | conditions | (optional) conditions            | ForgeCondition[]                                                                                   |
+    | contextual | (optional) contextual conditions | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+    | post       | (optional) post actions          | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
+    |            | additional properties...         |                                                                                                    |
 
 === "Fabric"
 
-	```json
-	{
-		"type": {{type: string}},
-		"fabric:conditions": {{optional conditions: FabricCondition[]}},
-		"contextual": {{optional contextual conditions: ContextualCondition | ContextualCondition[]}},
-		"post": {{optional action: PostAction | PostAction[]}},
-		{{additional properties}}
-	}
-	```
+    | Name              | Description                      | Type / Literal                                                                                     |
+    | ----------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
+    | type              | type                             | string                                                                                             |
+    | fabric:conditions | (optional) conditions            | FabricCondition[][]                                                                                |
+    | contextual        | (optional) contextual conditions | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+    | post              | (optional) post actions          | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
+    |                   | additional properties...         |                                                                                                    |
 
 ## Recipe types
 
@@ -34,15 +30,15 @@ Event when a player uses item on a block.
 
 Default behavior: item is consumed.
 
+This recipe type is not [repeatable](concepts.md#repeatability).
+
 ??? note "Format"
 
-	```json
-	{
-		"type": "lychee:block_interacting",
-		"item_in": {{item in player's hand: Ingredient}},
-		"block_in" {{block being used: BlockPredicate}}
-	}
-	```
+    | Name     | Description               | Type / Literal                                    |
+    | -------- | ------------------------- | ------------------------------------------------- |
+    | type     | type                      | "lychee:block_interacting"                        |
+    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient)         |
+    | block_in | the block being used      | [BlockPredicate](general-types.md#blockpredicate) |
 
 ### Click on a block with item (`lychee:block_clicking`)
 
@@ -50,15 +46,15 @@ Event when a player click on a block with item.
 
 Default behavior: item is consumed.
 
+This recipe type is not [repeatable](concepts.md#repeatability).
+
 ??? note "Format"
 
-	```json
-	{
-		"type": "lychee:block_clicking",
-		"item_in": {{item in player's hand: Ingredient}},
-		"block_in" {{block being clicked: BlockPredicate}}
-	}
-	```
+    | Name     | Description               | Type / Literal                                    |
+    | -------- | ------------------------- | ------------------------------------------------- |
+    | type     | type                      | "lychee:block_clicking"                           |
+    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient)         |
+    | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate) |
 
 ### Item entity burning (`lychee:item_burning`)
 
@@ -68,12 +64,10 @@ Default behavior: item is consumed.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "lychee:item_burning",
-		"item_in": {{burnt item: Ingredient}}
-	}
-	```
+    | Name    | Description    | Type / Literal                            |
+    | ------- | -------------- | ----------------------------------------- |
+    | type    | type           | "lychee:item_burning"                     |
+    | item_in | the burnt item | [Ingredient](general-types.md#ingredient) |
 
 !!! note
 
@@ -89,9 +83,7 @@ Default behavior: item is consumed.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "lychee:item_inside",
-		"item_in": {{burnt item: Ingredient}}
-	}
-	```
+    | Name    | Description      | Type / Literal                            |
+    | ------- | ---------------- | ----------------------------------------- |
+    | type    | type             | "lychee:item_inside"                      |
+    | item_in | the ticking item | [Ingredient](general-types.md#ingredient) |

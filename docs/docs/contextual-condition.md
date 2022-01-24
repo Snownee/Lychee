@@ -9,7 +9,7 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 ```json
 {
 	"type": {{type: string}},
-	"secret": {{display as ??? in player's tooltip (optional): boolean}}
+	"secret": {{optional display as ??? in player's tooltip: boolean}}
 	{{additional properties}}
 }
 ```
