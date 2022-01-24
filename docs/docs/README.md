@@ -4,7 +4,8 @@ Lychee is a mod allows you to define custom interactions using JSON recipes and 
 
 You can download Lychee on CurseForge:
 
-//TODO project not being approved yet
+- [Lychee (Forge)](https://www.curseforge.com/minecraft/mc-mods/lychee)
+- ~~Lychee (Fabric)~~ (not ready yet)
 
 Currently Lychee has support for following recipe type (with full JEI/REI support!):
 
