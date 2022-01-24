@@ -106,6 +106,8 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 Event when an item entity is burnt.
 
+This recipe type is [repeatable](concepts.md#repeatability).
+
 Default behavior: item is consumed.
 
 ??? note "Format"
@@ -141,6 +143,8 @@ Default behavior: item is consumed.
 ### Item entity inside a block (`lychee:item_inside`)
 
 Event when an item entity is inside a block. This will be tested every second.
+
+This recipe type is [repeatable](concepts.md#repeatability).
 
 Default behavior: item is consumed.
 

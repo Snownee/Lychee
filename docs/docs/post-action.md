@@ -136,4 +136,4 @@ This action is not [repeatable](concepts.md#repeatability).
     | Name   | Description | Type / Literal |
     | ------ | ----------- | -------------- |
     | type   | type        | "damage_item"  |
-    | damage | damage      | int            |
+    | damage | (optional) damage      | int            |

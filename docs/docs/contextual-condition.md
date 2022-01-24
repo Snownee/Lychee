@@ -40,7 +40,7 @@ Checks if any of the wrapped conditions is passed.
     | type       | type        | "or"                                           |
     | contextual | conditions  | [ContextualCondition](#contextual-condition)[] |
 
-### True for all (`or`)
+### True for all (`and`)
 
 Checks if all the wrapped conditions are passed.
 

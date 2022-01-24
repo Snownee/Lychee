@@ -35,7 +35,7 @@ An Ingredient is a predicate of ItemStack.
         | item | item resource id | string           |
         | nbt  | the item nbt     | object \| string |
 
-        You can combine several ingredient to one compound ingredient:
+        You can combine several ingredients to one compound ingredient:
 
         ```
         [
@@ -47,7 +47,7 @@ An Ingredient is a predicate of ItemStack.
 
 ## BlockPredicate
 
-An BlockPredicate is a predicate of an in-world block. It can also be used to represent the first possible block that matches this predicate.
+A BlockPredicate is a predicate of an in-world block. It can also be used to represent the first possible block that matches this predicate.
 
 ??? note "Format"
 
@@ -66,7 +66,7 @@ You can use `"*"` to represent a BlockPredicate to match all blocks.
 
 ## StatePropertiesPredicate
 
-An BlockPredicate is a predicate of StateDefinition.
+A BlockPredicate is a predicate of StateDefinition.
 
 ??? note "Format"
 
