@@ -1,0 +1,10 @@
+{
+  "type": "lychee:item_burning",
+  "item_in": {
+    "tag": "logs_that_burn"
+  },
+  "post": {
+    "type": "drop_item",
+    "item": "charcoal"
+  }
+}

@@ -89,9 +89,11 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 		LycheeContext ctx = builder.create(contextParamSet);
 		for (T recipe : Iterables.concat(recipes, anyBlockRecipes)) {
 			if (recipe.matches(ctx, level)) {
-				int times = recipe.willBatchRun() ? stack.getCount() : 1;
-				if (recipe.applyPostActions(ctx, times)) {
-					stack.shrink(times);
+				if (!level.isClientSide) {
+					int times = recipe.willBatchRun() ? stack.getCount() : 1;
+					if (recipe.applyPostActions(ctx, times)) {
+						stack.shrink(times);
+					}
 				}
 				return Optional.of(recipe);
 			}

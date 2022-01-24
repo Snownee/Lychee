@@ -1,0 +1,10 @@
+{
+  "type": "lychee:block_interacting",
+  "item_in": {
+    "item": "shears"
+  },
+  "block_in": "pumpkin",
+  "post": {
+    "type": "prevent_default"
+  }
+}

@@ -3,7 +3,12 @@
   "item_in": {
     "item": "bucket"
   },
-  "block_in": "water_cauldron",
+  "block_in": {
+    "blocks": ["water_cauldron"],
+    "state": {
+      "level": 3
+    }
+  },
   "post": [
     {
       "type": "drop_item",

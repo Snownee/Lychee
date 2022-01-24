@@ -1,7 +1,7 @@
 {
   "type": "lychee:item_burning",
   "contextual": {
-    "hide": true,
+    "secret": true,
     "type": "not",
     "contextual": {
       "type": "weather",

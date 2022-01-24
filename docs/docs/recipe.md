@@ -40,6 +40,52 @@ This recipe type is not [repeatable](concepts.md#repeatability).
     | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient)         |
     | block_in | the block being used      | [BlockPredicate](general-types.md#blockpredicate) |
 
+??? example
+
+	Prevent player from carving pumpkins:
+
+	```json
+	{
+		"type": "lychee:block_interacting",
+		"item_in": {
+			"item": "shears"
+		},
+		"block_in": "pumpkin",
+		"post": {
+			"type": "prevent_default"
+		}
+	}
+	```
+
+	Stripping an oak log with iron axe, you will have 50% chance to obtain a diamond:
+
+	```json
+	{
+		"type": "lychee:block_interacting",
+		"item_in": {
+			"item": "iron_axe"
+		},
+		"block_in": "oak_log",
+		"post": [
+			{
+				"type": "drop_item",
+				"item": "diamond",
+				"contextual": {
+					"type": "chance",
+					"chance": 0.5
+				}
+			},
+			{
+				"type": "place",
+				"block": "stripped_oak_log"
+			},
+			{
+				"type": "damage_item"
+			}
+		]
+	}
+	```
+
 ### Click on a block with item (`lychee:block_clicking`)
 
 Event when a player click on a block with item.
@@ -75,6 +121,23 @@ Default behavior: item is consumed.
 
 	If you want to make an item fire-immune as well, you can tag it with `lychee:fire_immune`
 
+??? example
+
+	Burning logs produces charcoal:
+
+	```json
+	{
+		"type": "lychee:item_burning",
+		"item_in": {
+			"tag": "logs_that_burn"
+		},
+		"post": {
+			"type": "drop_item",
+			"item": "charcoal"
+		}
+	}
+	```
+
 ### Item entity inside a block (`lychee:item_inside`)
 
 Event when an item entity is inside a block. This will be tested every second.
@@ -87,3 +150,32 @@ Default behavior: item is consumed.
     | ------- | ---------------- | ----------------------------------------- |
     | type    | type             | "lychee:item_inside"                      |
     | item_in | the ticking item | [Ingredient](general-types.md#ingredient) |
+
+??? example
+
+	Drop a buck into a full water cauldron, it returns a water bucket and empty the cauldron:
+
+	```json
+	{
+		"type": "lychee:item_inside",
+		"item_in": {
+			"item": "bucket"
+		},
+		"block_in": {
+			"blocks": ["water_cauldron"],
+			"state": {
+				"level": 3
+			}
+		},
+		"post": [
+			{
+				"type": "drop_item",
+				"item": "water_bucket"
+			},
+			{
+				"type": "place",
+				"block": "cauldron"
+			}
+		]
+	}
+	```
