@@ -6,11 +6,11 @@ Usually you can add post actions to a Lychee's recipe, and  they will be execute
 
 ## Basic format
 
-    | Name       | Description                      | Type / Literal                                                                                     |
-    | ---------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
-    | type       | type                             | string                                                                                             |
-    | contextual | (optional) contextual conditions | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
-    |            | additional properties...         |                                                                                                    |
+| Name       | Description                      | Type / Literal                                                                                     |
+| ---------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
+| type       | type                             | string                                                                                             |
+| contextual | (optional) contextual conditions | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+|            | additional properties...         |                                                                                                    |
 
 ## Built-in actions
 
