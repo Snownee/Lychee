@@ -20,4 +20,4 @@ Or you can add recipes using [CraftTweaker](https://www.curseforge.com/minecraft
 
 ## Contact
 
-Having trouble create recipe, or got an idea for Lychee? You can [join our Discord](http://discord.snownee.com/), or [create a new issue in Lychee's GitHub repository](https://github.com/Snownee/Lychee/issues).
+Having trouble creating recipe, or got an idea for Lychee? You can [join our Discord](http://discord.snownee.com/), or [create a new issue in Lychee's GitHub repository](https://github.com/Snownee/Lychee/issues).
