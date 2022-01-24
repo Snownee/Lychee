@@ -6,11 +6,11 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 
 ## Basic format
 
-    | Name   | Description                                      | Type / Literal |
-    | ------ | ------------------------------------------------ | -------------- |
-    | type   | type                                             | string         |
-    | secret | (optional) displays as `???` in player's tooltip | boolean        |
-    |        | additional properties...                         |                |
+| Name   | Description                                      | Type / Literal |
+| ------ | ------------------------------------------------ | -------------- |
+| type   | type                                             | string         |
+| secret | (optional) displays as "???" in player's tooltip | boolean        |
+|        | additional properties...                         |                |
 
 !!! note
 
