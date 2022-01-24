@@ -24,6 +24,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.ScreenElement;
@@ -75,9 +76,18 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		IGuiItemStackGroup itemStackGroup = layout.getItemStacks();
 		itemStackGroup.init(0, true, 3, 12);
 		itemStackGroup.set(0, ingredients.getInputs(VanillaTypes.ITEM).get(0));
-		itemStackGroup.setBackground(0, JEICompat.slot(false));
+		boolean preventDefault = recipe.getPostActions().stream().anyMatch($ -> $.getType() == PostActionTypes.PREVENT_DEFAULT);
+		if (preventDefault) {
+			itemStackGroup.setBackground(0, JEICompat.el(AllGuiTextures.JEI_CATALYST_SLOT));
+			itemStackGroup.addTooltipCallback((i, input, stack, tooltip) -> {
+				tooltip.add(recipe.getType().getPreventDefaultDescription(recipe));
+			});
+		} else {
+			itemStackGroup.setBackground(0, JEICompat.slot(false));
+		}
 
-		int size = Math.min(recipe.getPostActions().size(), 9);
+		List<PostAction> actions = recipe.getShowingPostActions();
+		int size = Math.min(actions.size(), 9);
 		int gridX = (int) Math.ceil(Math.sqrt(size));
 		int gridY = (int) Math.ceil((float) size / gridX);
 
@@ -88,7 +98,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 				if (index >= size) {
 					break;
 				}
-				actionSlot(layout, recipe.getPostActions().get(index), index + 10, x + j * 19, y + i * 19);
+				actionSlot(layout, actions.get(index), index + 10, x + j * 19, y + i * 19);
 			}
 		}
 	}
@@ -113,7 +123,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 		BlockState state = getRenderingBlock(recipe);
 		if (state.isAir()) {
-			AllGuiTextures.JEI_QUESTION_MARK.render(matrixStack, 23, 48);
+			AllGuiTextures.JEI_QUESTION_MARK.render(matrixStack, 34, 37);
 			return;
 		}
 		if (state.getLightEmission() < 5) {

@@ -3,15 +3,11 @@
   "item_in": {
     "item": "sponge"
   },
-  "block_in": "grass_block",
+  "block_in": "*",
   "post": [
     {
       "type": "drop_item",
       "item": "wet_sponge"
-    },
-    {
-      "type": "place",
-      "block": "*"
     }
   ]
 }

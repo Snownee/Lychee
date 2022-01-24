@@ -5,6 +5,9 @@ import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -20,6 +23,8 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 	public final Class<? extends T> clazz;
 	public final LootContextParamSet contextParamSet;
 	private boolean empty;
+
+	public static final Component DEFAULT_PREVENT_TIP = new TranslatableComponent("tip.lychee.prevent_default.default").withStyle(ChatFormatting.YELLOW);
 
 	public LycheeRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet contextParamSet) {
 		id = new ResourceLocation(Lychee.ID, name);
@@ -48,5 +53,9 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 
 	public void buildCache(RecipeManager recipeManager) {
 
+	}
+
+	public Component getPreventDefaultDescription(LycheeRecipe<?> recipe) {
+		return DEFAULT_PREVENT_TIP;
 	}
 }

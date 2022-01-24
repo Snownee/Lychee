@@ -8,7 +8,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParamSets;
@@ -16,6 +15,7 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
 public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 
@@ -37,7 +37,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public RecipeType<?> getType() {
+	public LycheeRecipeType<?, ?> getType() {
 		return RecipeTypes.ITEM_BURNING;
 	}
 

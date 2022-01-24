@@ -16,6 +16,8 @@ nav:
 theme:
     name: material
     language: en
+    logo: images/site_icon.png
+    favicon: images/site_icon.png
     features:
         - content.code.annotate
         - content.tabs.link

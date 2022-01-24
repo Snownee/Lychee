@@ -21,6 +21,7 @@ import snownee.lychee.core.contextual.ContextualCondition;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
+import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
 public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHolder implements Recipe<C> {
 
@@ -83,6 +84,9 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	public boolean willBatchRun() {
 		return willBatchRun;
 	}
+
+	@Override
+	public abstract LycheeRecipeType<?, ?> getType();
 
 	public static abstract class Serializer<R extends LycheeRecipe<?>> extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<R> {
 
