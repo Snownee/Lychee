@@ -2,6 +2,7 @@ site_name: Lychee
 repo_name: Lychee
 repo_url: https://github.com/Snownee/Lychee
 site_author: Snownee
+edit_uri: ""
 
 nav:
     - Preface: README.md
