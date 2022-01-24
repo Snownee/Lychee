@@ -6,13 +6,11 @@ Usually you can add post actions to a Lychee's recipe, and  they will be execute
 
 ## Basic format
 
-```json
-{
-	"type": {{type: string}},
-	"contextual": {{optional contextual conditions: ContextualCondition | ContextualCondition[]}}
-	{{additional properties}}
-}
-```
+    | Name       | Description                      | Type / Literal                                                                                     |
+    | ---------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
+    | type       | type                             | string                                                                                             |
+    | contextual | (optional) contextual conditions | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+    |            | additional properties...         |                                                                                                    |
 
 ## Built-in actions
 
@@ -22,14 +20,12 @@ Spawns an item entity on the ground.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "drop_item",
-		"item": {{item resource id: string}},
-		"count": {{optional item amount: int}},
-		"nbt": {{(Forge only) optional item nbt: object or string}}
-	}
-	```
+    | Name  | Description                      | Type / Literal   |
+    | ----- | -------------------------------- | ---------------- |
+    | type  | type                             | "drop_item"      |
+    | item  | the item resource id             | string           |
+    | count | (optional) item amount           | int              |
+    | nbt   | (Forge only) (optional) item nbt | object \| string |
 
 ??? example
 
@@ -49,16 +45,14 @@ Spawns an item entity on the ground.
 
 Places a block in world.
 
-This action is not repeatable.
+This action is not [repeatable](concepts.md#repeatability).
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "place",
-		"block": {{block: BlockPredicate}}
-	}
-	```
+    | Name  | Description            | Type / Literal                                    |
+    | ----- | ---------------------- | ------------------------------------------------- |
+    | type  | type                   | "place"                                           |
+    | block | the block being placed | [BlockPredicate](general-types.md#blockpredicate) |
 
 ??? example
 
@@ -100,13 +94,11 @@ Executes a command.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "place",
-		"command": {{command to run: string}},
-		"hide": {{optional hide in JEI/REI: boolean}}
-	}
-	```
+    | Name    | Description                            | Type / Literal |
+    | ------- | -------------------------------------- | -------------- |
+    | type    | type                                   | "execute"      |
+    | command | the command to run                     | string         |
+    | hide    | (optional) hide this action in JEI/REI | boolean        |
 
 ### Drop experience (`drop_xp`)
 
@@ -114,12 +106,10 @@ Spawns experience orbs.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "drop_xp",
-		"xp": {{amount: int}}
-	}
-	```
+    | Name | Description | Type / Literal |
+    | ---- | ----------- | -------------- |
+    | type | type        | "drop_xp"      |
+    | xp   | amount      | int            |
 
 ## Special built-in actions
 
@@ -131,23 +121,19 @@ Prevents default behavior and do nothing.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "prevent_default"
-	}
-	```
+    | Name | Description | Type / Literal    |
+    | ---- | ----------- | ----------------- |
+    | type | type        | "prevent_default" |
 
 ### Damage input item (`damage_item`)
 
 Damages input item.
 
-This action is not repeatable.
+This action is not [repeatable](concepts.md#repeatability).
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "damage_item",
-		"damage": {{optional damage: int}}
-	}
-	```
+    | Name   | Description | Type / Literal |
+    | ------ | ----------- | -------------- |
+    | type   | type        | "damage_item"  |
+    | damage | damage      | int            |

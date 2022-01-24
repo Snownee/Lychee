@@ -6,13 +6,11 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 
 ## Basic format
 
-```json
-{
-	"type": {{type: string}},
-	"secret": {{optional display as ??? in player's tooltip: boolean}}
-	{{additional properties}}
-}
-```
+    | Name   | Description                                      | Type / Literal |
+    | ------ | ------------------------------------------------ | -------------- |
+    | type   | type                                             | string         |
+    | secret | (optional) displays as `???` in player's tooltip | boolean        |
+    |        | additional properties...                         |                |
 
 !!! note
 
@@ -26,12 +24,10 @@ Inverts another condition.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "not",
-		"contextual": {{contextual condition: ContextualCondition}}
-	}
-	```
+    | Name       | Description | Type / Literal                               |
+    | ---------- | ----------- | -------------------------------------------- |
+    | type       | type        | "not"                                        |
+    | contextual | condition   | [ContextualCondition](#contextual-condition) |
 
 ### True for any (`or`)
 
@@ -39,16 +35,10 @@ Checks if any of the wrapped conditions is passed.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "or",
-		"contextual": [
-			{{contextual condition: ContextualCondition}},
-			{{contextual condition: ContextualCondition}},
-			...
-		]
-	}
-	```
+    | Name       | Description | Type / Literal                                 |
+    | ---------- | ----------- | ---------------------------------------------- |
+    | type       | type        | "or"                                           |
+    | contextual | conditions  | [ContextualCondition](#contextual-condition)[] |
 
 ### True for all (`or`)
 
@@ -56,16 +46,10 @@ Checks if all the wrapped conditions are passed.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "and",
-		"contextual": [
-			{{contextual condition: ContextualCondition}},
-			{{contextual condition: ContextualCondition}},
-			...
-		]
-	}
-	```
+    | Name       | Description | Type / Literal                                 |
+    | ---------- | ----------- | ---------------------------------------------- |
+    | type       | type        | "and"                                          |
+    | contextual | conditions  | [ContextualCondition](#contextual-condition)[] |
 
 ### Random chance (`chance`)
 
@@ -73,12 +57,10 @@ Generates a random number between 0.0 and 1.0, and checks if it is less than a s
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "chance",
-		"chance": {{Success rate as a number 0.0–1.0: number}}
-	}
-	```
+    | Name   | Description                      | Type / Literal |
+    | ------ | -------------------------------- | -------------- |
+    | type   | type                             | "chance"       |
+    | chance | success rate as a number 0.0–1.0 | number         |
 
 ??? example
 
@@ -95,17 +77,13 @@ Checks if a `location_check` predicate is passed.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "location",
-		"offsetX": {{optional offsets to location: int}},
-		"offsetY": {{optional offsets to location: int}},
-		"offsetZ": {{optional offsets to location: int}},
-		"predicate": {{location predicate: object}}
-	}
-	```
-
-For more details please see [Minecraft Wiki](https://minecraft.fandom.com/wiki/Predicate).
+    | Name      | Description                    | Type / Literal                                          |
+    | --------- | ------------------------------ | ------------------------------------------------------- |
+    | type      | type                           | "location"                                              |
+    | offsetX   | (optional) offsets to location | int                                                     |
+    | offsetY   | (optional) offsets to location | int                                                     |
+    | offsetZ   | (optional) offsets to location | int                                                     |
+    | predicate | location predicate             | [LocationPredicate](general-types.md#locationpredicate) |
 
 ??? example
 
@@ -136,12 +114,10 @@ Checks weather.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "weather",
-		"weather": {{weather: "clear", "rain" or "thunder"}}
-	}
-	```
+    | Name    | Description | Type / Literal                 |
+    | ------- | ----------- | ------------------------------ |
+    | type    | type        | "weather"                      |
+    | weather | weather     | "clear" \| "rain" \| "thunder" |
 
 ### Difficulty check (`difficulty`)
 
@@ -149,22 +125,10 @@ Checks if world is in any of the listed difficulties.
 
 ??? note "Format"
 
-	```json
-	{
-		"type": "difficulty",
-		"difficulty": {{difficulty: string or int}}
-	}
-	```
-	
-	```json
-	{
-		"type": "difficulty",
-		"difficulty": [
-			{{difficulty: string or int}},
-			{{difficulty: string or int}}
-		]
-	}
-	```
+    | Name       | Description | Type / Literal                     |
+    | ---------- | ----------- | ---------------------------------- |
+    | type       | type        | "difficulty"                       |
+    | difficulty | difficulty  | string \| int \| string[] \| int[] |
 
 ??? example
 
