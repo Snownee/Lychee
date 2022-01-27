@@ -6,11 +6,12 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 
 ## Basic format
 
-| Name   | Description                                      | Type / Literal |
-| ------ | ------------------------------------------------ | -------------- |
-| type   | type                                             | string         |
-| secret | (optional) displays as "???" in player's tooltip | boolean        |
-|        | additional properties...                         |                |
+| Name        | Description                                                          | Type / Literal |
+| ----------- | -------------------------------------------------------------------- | -------------- |
+| type        | type                                                                 | string         |
+| secret      | (optional) displays as "???" in player's tooltip                     | boolean        |
+| description | (optional) overrides the default  description with a translation key | string         |
+|             | additional properties...                                             |                |
 
 !!! note
 
@@ -106,7 +107,7 @@ Checks if a `location_check` predicate is passed.
 
 !!! note
 
-	Some features of location predicate are not supported yet. (because I am lazy)
+	Fluid state predicate is not supported yet. (because I am lazy)
 
 ### Weather check (`weather`)
 
@@ -138,5 +139,28 @@ Checks if world is in any of the listed difficulties.
 	{
 		"type": "difficulty",
 		"difficulty": ["peaceful", 1]
+	}
+	```
+
+### Time check (`time`)
+
+Compares the current game time (the age of the world in game ticks) against given values.
+
+??? note "Format"
+
+    See [Minecraft Wiki](https://minecraft.fandom.com/wiki/Predicate). Only supports constant value.
+
+??? example
+
+	Recipe works every other second:
+
+	```json
+	{
+        "type": "time",
+        "value": {
+            "min": 0,
+            "max": 20
+        },
+        "period": 40
 	}
 	```

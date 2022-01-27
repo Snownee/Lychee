@@ -17,7 +17,6 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.contextual.ContextualCondition;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
@@ -99,7 +98,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		@Override
 		public final R fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
 			R recipe = factory.apply(pRecipeId);
-			ContextualCondition.parseConditions(pSerializedRecipe.get("contextual"), recipe::withCondition);
+			recipe.parseConditions(pSerializedRecipe.get("contextual"));
 			PostAction.parseActions(pSerializedRecipe.get("post"), recipe::addPostAction);
 			fromJson(recipe, pSerializedRecipe);
 			return recipe;
@@ -137,13 +136,9 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		@OverridingMethodsMustInvokeSuper
 		public void toNetwork(FriendlyByteBuf pBuffer, R pRecipe) {
 			pRecipe.conditionsToNetwork(pBuffer);
-
-			pBuffer.writeVarInt(pRecipe.getPostActions().size());
-			for (PostAction action : pRecipe.getPostActions()) {
-				//FIXME
-				//				if (action.isHidden()) {
-				//					continue;
-				//				}
+			List<PostAction> actions = pRecipe.getShowingPostActions();
+			pBuffer.writeVarInt(actions.size());
+			for (PostAction action : actions) {
 				PostActionType type = action.getType();
 				pBuffer.writeRegistryIdUnsafe(LycheeRegistries.POST_ACTION, type);
 				type.toNetwork(action, pBuffer);

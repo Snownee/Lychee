@@ -10,6 +10,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.FluidPredicate;
+import net.minecraft.advancements.critereon.LightPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds.Doubles;
 import net.minecraft.advancements.critereon.NbtPredicate;
@@ -37,6 +38,7 @@ import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.LocationPredicateHelper;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.mixin.BlockPredicateAccess;
+import snownee.lychee.mixin.LightPredicateAccess;
 import snownee.lychee.mixin.LocationCheckAccess;
 import snownee.lychee.mixin.LocationPredicateAccess;
 import snownee.lychee.util.LUtil;
@@ -51,8 +53,9 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	private static final Rule BIOME = new BiomeRule();
 	private static final Rule BLOCK = new BlockRule();
 	private static final Rule FLUID = new FluidRule();
+	private static final Rule LIGHT = new LightRule();
 	private static final Rule SMOKEY = new SmokeyRule();
-	private static final Rule[] RULES = new Rule[] { X, Y, Z, DIMENSION, FEATURE, BIOME, BLOCK, FLUID, SMOKEY };
+	private static final Rule[] RULES = new Rule[] { X, Y, Z, DIMENSION, FEATURE, BIOME, BLOCK, FLUID, LIGHT, SMOKEY };
 
 	private interface Rule {
 		String getName();
@@ -138,6 +141,32 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			//				name.append("*");
 			//			}
 			//			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
+		}
+	}
+
+	private static class LightRule implements Rule {
+		@Override
+		public String getName() {
+			return "light";
+		}
+
+		@Override
+		public boolean isAny(LocationPredicateAccess access) {
+			return access.getLight() == LightPredicate.ANY;
+		}
+
+		@Override
+		@OnlyIn(Dist.CLIENT)
+		public InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
+			int light = level.getMaxLocalRawBrightness(pos);
+			return LUtil.interactionResult(((LightPredicateAccess) access.getLight()).getComposite().matches(light));
+		}
+
+		@Override
+		@OnlyIn(Dist.CLIENT)
+		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
+			MutableComponent bounds = BoundsHelper.getDescription(((LightPredicateAccess) access.getLight()).getComposite()).withStyle(ChatFormatting.WHITE);
+			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), bounds));
 		}
 	}
 

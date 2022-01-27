@@ -1,5 +1,14 @@
 {
   "type": "lychee:block_clicking",
+  "contextual": {
+    "type": "time",
+    "value": {
+      "min": 0,
+      "max": 20
+    },
+    "period": 40,
+    "description": "Test"
+  },
   "item_in": {
     "tag": "sand"
   },

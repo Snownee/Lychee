@@ -33,7 +33,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.fluids.FluidStack;
 import snownee.lychee.util.Color;
 import snownee.lychee.util.VecHelper;
 
@@ -203,7 +202,7 @@ public class GuiGameElement {
 
 			float min = 0.001F, max = 0.999F;
 			// LiquidBlockRenderer.MAX_FLUID_HEIGHT
-			FluidRenderer.renderFluidBox(new FluidStack(blockState.getFluidState().getType(), 1000), min, min, min, max, max * 0.8888889F, max, buffer, ms, LightTexture.FULL_BRIGHT, false);
+			FluidRenderer.renderFluidBox(blockState.getFluidState(), min, min, min, max, max * 0.8888889F, max, buffer, ms, LightTexture.FULL_BRIGHT, false);
 			buffer.endBatch();
 		}
 	}

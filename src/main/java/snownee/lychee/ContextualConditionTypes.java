@@ -10,6 +10,7 @@ import snownee.lychee.core.contextual.IsWeather;
 import snownee.lychee.core.contextual.Location;
 import snownee.lychee.core.contextual.Not;
 import snownee.lychee.core.contextual.Or;
+import snownee.lychee.core.contextual.Time;
 
 public final class ContextualConditionTypes {
 
@@ -23,6 +24,7 @@ public final class ContextualConditionTypes {
 	public static final ContextualConditionType<Not> NOT = register("not", new Not.Type());
 	public static final ContextualConditionType<Or> OR = register("or", new Or.Type());
 	public static final ContextualConditionType<And> AND = register("and", new And.Type());
+	public static final ContextualConditionType<Time> TIME = register("time", new Time.Type());
 
 	public static <T extends ContextualConditionType<?>> T register(String name, T t) {
 		ModLoadingContext.get().setActiveContainer(null); // bypass Forge warning

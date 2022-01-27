@@ -2,6 +2,7 @@ package snownee.lychee.core.def;
 
 import net.minecraft.advancements.critereon.MinMaxBounds.Doubles;
 import net.minecraft.network.FriendlyByteBuf;
+import snownee.lychee.mixin.DoublesAccess;
 
 public class DoubleBoundsHelper {
 
@@ -11,7 +12,7 @@ public class DoubleBoundsHelper {
 		if (Double.isNaN(min) && Double.isNaN(max)) {
 			return Doubles.ANY;
 		}
-		return Doubles.between(Double.isNaN(min) ? null : min, Double.isNaN(max) ? null : max);
+		return DoublesAccess.create(Double.isNaN(min) ? null : min, Double.isNaN(max) ? null : max);
 	}
 
 	public static void toNetwork(Doubles doubles, FriendlyByteBuf pBuffer) {

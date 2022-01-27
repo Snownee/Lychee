@@ -2,12 +2,15 @@ package snownee.lychee.core.def;
 
 import java.util.Optional;
 
+import net.minecraft.advancements.critereon.LightPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import snownee.lychee.mixin.LightPredicateAccess;
 import snownee.lychee.mixin.LocationPredicateAccess;
 import snownee.lychee.util.LUtil;
 
@@ -20,8 +23,11 @@ public class LocationPredicateHelper {
 		builder.setY(DoubleBoundsHelper.fromNetwork(pBuffer));
 		builder.setZ(DoubleBoundsHelper.fromNetwork(pBuffer));
 		builder.setBlock(BlockPredicateHelper.fromNetwork(pBuffer));
-		//TODO
-		//
+		//TODO fluid
+		Ints ints = IntBoundsHelper.fromNetwork(pBuffer);
+		if (ints != Ints.ANY) {
+			builder.setLight(LightPredicate.Builder.light().setComposite(ints).build());
+		}
 		ResourceLocation dim = LUtil.readNullableRL(pBuffer);
 		if (dim != null) {
 			builder.setDimension(ResourceKey.create(Registry.DIMENSION_REGISTRY, dim));
@@ -48,7 +54,8 @@ public class LocationPredicateHelper {
 		DoubleBoundsHelper.toNetwork(access.getZ(), pBuffer);
 		BlockPredicateHelper.toNetwork(access.getBlock(), pBuffer);
 		//		access.getFluid();
-		//		access.getLight();
+		Ints ints = ((LightPredicateAccess) access.getLight()).getComposite();
+		IntBoundsHelper.toNetwork(ints, pBuffer);
 		ResourceLocation dim = Optional.ofNullable(access.getDimension()).map(ResourceKey::location).orElse(null);
 		LUtil.writeNullableRL(dim, pBuffer);
 		ResourceLocation biome = Optional.ofNullable(access.getBiome()).map(ResourceKey::location).orElse(null);

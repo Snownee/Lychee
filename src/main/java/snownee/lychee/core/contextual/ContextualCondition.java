@@ -2,11 +2,8 @@ package snownee.lychee.core.contextual;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.function.BiConsumer;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.ChatFormatting;
@@ -16,7 +13,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.storage.loot.Deserializers;
 import net.minecraftforge.api.distmarker.Dist;
@@ -67,22 +63,10 @@ public interface ContextualCondition {
 		return InteractionResult.PASS;
 	}
 
-	static void parseConditions(JsonElement element, BiConsumer<ContextualCondition, Boolean> consumer) {
-		if (element == null) {
-		} else if (element.isJsonObject()) {
-			parse(element.getAsJsonObject(), consumer);
-		} else {
-			JsonArray array = element.getAsJsonArray();
-			for (int x = 0; x < array.size(); x++) {
-				parse(array.get(x).getAsJsonObject(), consumer);
-			}
-		}
-	}
-
-	static void parse(JsonObject o, BiConsumer<ContextualCondition, Boolean> consumer) {
+	static ContextualCondition parse(JsonObject o) {
 		ResourceLocation key = new ResourceLocation(o.get("type").getAsString());
 		ContextualConditionType<?> type = LycheeRegistries.CONTEXTUAL.getValue(key);
-		consumer.accept(type.fromJson(o), GsonHelper.getAsBoolean(o, "secret", false));
+		return type.fromJson(o);
 	}
 
 }

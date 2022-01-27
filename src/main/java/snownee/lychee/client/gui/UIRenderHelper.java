@@ -1,7 +1,5 @@
 package snownee.lychee.client.gui;
 
-import javax.annotation.Nonnull;
-
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
@@ -16,11 +14,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraftforge.client.gui.GuiUtils;
 import snownee.lychee.util.Color;
 import snownee.lychee.util.Couple;
 
@@ -57,101 +53,6 @@ public class UIRenderHelper {
 		GlStateManager._glBlitFrameBuffer(0, 0, src.viewWidth, src.viewHeight, 0, 0, dst.viewWidth, dst.viewHeight, GL30.GL_COLOR_BUFFER_BIT, GL20.GL_LINEAR);
 
 		GlStateManager._glBindFramebuffer(GlConst.GL_FRAMEBUFFER, dst.frameBufferId);
-	}
-
-	//	public static void streak(PoseStack ms, float angle, int x, int y, int breadth, int length) {
-	//		streak(ms, angle, x, y, breadth, length, Theme.i(Theme.Key.STREAK));
-	//	}
-
-	// angle in degrees; 0° -> fading to the right
-	// x and y specify the middle point of the starting edge
-	// breadth is the total width of the streak
-
-	public static void streak(PoseStack ms, float angle, int x, int y, int breadth, int length, int color) {
-		int a1 = 0xa0 << 24;
-		int a2 = 0x80 << 24;
-		int a3 = 0x10 << 24;
-		int a4 = 0x00 << 24;
-
-		color &= 0x00FFFFFF;
-		int c1 = a1 | color;
-		int c2 = a2 | color;
-		int c3 = a3 | color;
-		int c4 = a4 | color;
-
-		ms.pushPose();
-		ms.translate(x, y, 0);
-		ms.mulPose(Vector3f.ZP.rotationDegrees(angle - 90));
-
-		streak(ms, breadth / 2, length, c1, c2, c3, c4);
-
-		ms.popPose();
-	}
-
-	public static void streak(PoseStack ms, float angle, int x, int y, int breadth, int length, Color c) {
-		Color color = c.copy().setImmutable();
-		int c1 = color.scaleAlpha(0.625f).getRGB();
-		int c2 = color.scaleAlpha(0.5f).getRGB();
-		int c3 = color.scaleAlpha(0.0625f).getRGB();
-		int c4 = color.scaleAlpha(0f).getRGB();
-
-		ms.pushPose();
-		ms.translate(x, y, 0);
-		ms.mulPose(Vector3f.ZP.rotationDegrees(angle - 90));
-
-		streak(ms, breadth / 2, length, c1, c2, c3, c4);
-
-		ms.popPose();
-	}
-
-	private static void streak(PoseStack ms, int width, int height, int c1, int c2, int c3, int c4) {
-		double split1 = .5;
-		double split2 = .75;
-		Matrix4f model = ms.last().pose();
-		GuiUtils.drawGradientRect(model, 0, -width, 0, width, (int) (split1 * height), c1, c2);
-		GuiUtils.drawGradientRect(model, 0, -width, (int) (split1 * height), width, (int) (split2 * height), c2, c3);
-		GuiUtils.drawGradientRect(model, 0, -width, (int) (split2 * height), width, height, c3, c4);
-	}
-
-	/**
-	 * @see #angledGradient(MatrixStack, float, int, int, int, int, int, Color, Color)
-	 */
-	public static void angledGradient(@Nonnull PoseStack ms, float angle, int x, int y, int breadth, int length, Couple<Color> c) {
-		angledGradient(ms, angle, x, y, 0, breadth, length, c);
-	}
-
-	/**
-	 * @see #angledGradient(MatrixStack, float, int, int, int, int, int, Color, Color)
-	 */
-	public static void angledGradient(@Nonnull PoseStack ms, float angle, int x, int y, int z, int breadth, int length, Couple<Color> c) {
-		angledGradient(ms, angle, x, y, z, breadth, length, c.getFirst(), c.getSecond());
-	}
-
-	/**
-	 * @see #angledGradient(MatrixStack, float, int, int, int, int, int, Color, Color)
-	 */
-	public static void angledGradient(@Nonnull PoseStack ms, float angle, int x, int y, int breadth, int length, Color color1, Color color2) {
-		angledGradient(ms, angle, x, y, 0, breadth, length, color1, color2);
-	}
-
-	/**
-	 * x and y specify the middle point of the starting edge
-	 *
-	 * @param angle   the angle of the gradient in degrees; 0° means from left to right
-	 * @param color1  the color at the starting edge
-	 * @param color2  the color at the ending edge
-	 * @param breadth the total width of the gradient
-	 */
-	public static void angledGradient(@Nonnull PoseStack ms, float angle, int x, int y, int z, int breadth, int length, Color color1, Color color2) {
-		ms.pushPose();
-		ms.translate(x, y, z);
-		ms.mulPose(Vector3f.ZP.rotationDegrees(angle - 90));
-
-		Matrix4f model = ms.last().pose();
-		int w = breadth / 2;
-		GuiUtils.drawGradientRect(model, 0, -w, 0, w, length, color1.getRGB(), color2.getRGB());
-
-		ms.popPose();
 	}
 
 	public static void breadcrumbArrow(PoseStack matrixStack, int x, int y, int z, int width, int height, int indent, Couple<Color> colors) {

@@ -5,13 +5,18 @@
   "refmap": "lychee.refmap.json",
   "mixins": [
     "BlockPredicateAccess",
+    "DoublesAccess",
+    "IntRangeAccess",
+    "IntsAccess",
     "ItemEntityAccess",
+    "LightPredicateAccess",
     "LocationCheckAccess",
     "LocationPredicateAccess",
     "LootContextParamSetsAccess",
     "NbtPredicateAccess",
     "RecipeManagerAccess",
     "StatePropertiesPredicateAccess",
+    "TimeCheckAccess",
     "EntityMixin",
     "ItemEntityMixin",
     "RecipeManagerMixin"

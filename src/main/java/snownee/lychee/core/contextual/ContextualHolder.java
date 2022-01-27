@@ -4,13 +4,19 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.InteractionResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -21,23 +27,51 @@ import snownee.lychee.core.recipe.LycheeRecipe;
 public abstract class ContextualHolder {
 
 	private List<ContextualCondition> conditions = Collections.EMPTY_LIST;
+	@Nullable
 	private BitSet secretFlags;
-	private static final Component HIDDEN_TITLE = new TranslatableComponent("contextual.lychee.hidden").withStyle(ChatFormatting.GRAY);
+	@Nullable
+	private List<TranslatableComponent> overrideDesc;
+	private static final Component SECRET_TITLE = new TranslatableComponent("contextual.lychee.secret").withStyle(ChatFormatting.GRAY);
 
 	public List<ContextualCondition> getConditions() {
 		return conditions;
 	}
 
-	public void withCondition(ContextualCondition condition, boolean hide) {
+	public void withCondition(ContextualCondition condition) {
 		if (conditions == Collections.EMPTY_LIST) {
 			conditions = Lists.newArrayList();
 		}
 		conditions.add(condition);
-		if (hide) {
+	}
+
+	public void parseConditions(JsonElement element) {
+		if (element == null) {
+		} else if (element.isJsonObject()) {
+			parse(element.getAsJsonObject());
+		} else {
+			JsonArray array = element.getAsJsonArray();
+			for (int x = 0; x < array.size(); x++) {
+				parse(array.get(x).getAsJsonObject());
+			}
+		}
+	}
+
+	private void parse(JsonObject o) {
+		withCondition(ContextualCondition.parse(o));
+		if (GsonHelper.getAsBoolean(o, "secret", false)) {
 			if (secretFlags == null) {
 				secretFlags = new BitSet(conditions.size());
 			}
 			secretFlags.set(conditions.size() - 1);
+		}
+		if (o.has("description")) {
+			if (overrideDesc == null) {
+				overrideDesc = Lists.newArrayList();
+			}
+			while (overrideDesc.size() + 1 < conditions.size()) {
+				overrideDesc.add(null);
+			}
+			overrideDesc.add(new TranslatableComponent(GsonHelper.getAsString(o, "description")));
 		}
 	}
 
@@ -45,10 +79,21 @@ public abstract class ContextualHolder {
 		int size = pBuffer.readVarInt();
 		for (int i = 0; i < size; i++) {
 			ContextualConditionType<?> type = pBuffer.readRegistryIdUnsafe(LycheeRegistries.CONTEXTUAL);
-			withCondition(type.fromNetwork(pBuffer), false);
+			withCondition(type.fromNetwork(pBuffer));
 		}
 		if (pBuffer.readBoolean()) {
 			secretFlags = pBuffer.readBitSet();
+		}
+		if (pBuffer.readBoolean()) {
+			overrideDesc = Lists.newArrayListWithCapacity(size);
+			for (int i = 0; i < size; i++) {
+				String key = pBuffer.readUtf();
+				if (key.isEmpty()) {
+					overrideDesc.add(null);
+				} else {
+					overrideDesc.add(new TranslatableComponent(key));
+				}
+			}
 		}
 	}
 
@@ -65,6 +110,16 @@ public abstract class ContextualHolder {
 			pBuffer.writeBitSet(secretFlags);
 			//we should sync condition even though it is secret because
 			//the client-side need to know the result in tooltips for UX
+		}
+		pBuffer.writeBoolean(overrideDesc != null);
+		if (overrideDesc != null) {
+			for (TranslatableComponent component : overrideDesc) {
+				if (component == null) {
+					pBuffer.writeUtf("");
+				} else {
+					pBuffer.writeUtf(component.getKey());
+				}
+			}
 		}
 	}
 
@@ -90,18 +145,30 @@ public abstract class ContextualHolder {
 	public void getConditonTooltips(List<Component> list, int indent) {
 		int i = 0;
 		for (ContextualCondition condition : getConditions()) {
-			boolean hide = isSecretCondition(i);
-			if (hide) {
+			if (isSecretCondition(i)) {
 				InteractionResult result = InteractionResult.PASS;
 				if (Minecraft.getInstance().level != null) {
 					result = condition.testInTooltips();
 				}
-				ContextualCondition.desc(list, result, indent, HIDDEN_TITLE.copy());
+				ContextualCondition.desc(list, result, indent, SECRET_TITLE.copy());
+			} else if (isOverridenDesc(i)) {
+				InteractionResult result = InteractionResult.PASS;
+				if (Minecraft.getInstance().level != null) {
+					result = condition.testInTooltips();
+				}
+				ContextualCondition.desc(list, result, indent, overrideDesc.get(i).copy());
 			} else {
 				condition.appendTooltips(list, indent, false);
 			}
 			++i;
 		}
+	}
+
+	private boolean isOverridenDesc(int i) {
+		if (overrideDesc != null && overrideDesc.size() > i) {
+			return overrideDesc.get(i) != null;
+		}
+		return false;
 	}
 
 }

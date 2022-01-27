@@ -19,7 +19,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.contextual.ContextualCondition;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
@@ -66,7 +65,7 @@ public abstract class PostAction extends ContextualHolder {
 		ResourceLocation key = new ResourceLocation(o.get("type").getAsString());
 		PostActionType<?> type = LycheeRegistries.POST_ACTION.getValue(key);
 		PostAction action = type.fromJson(o);
-		ContextualCondition.parseConditions(o.get("contextual"), action::withCondition);
+		action.parseConditions(o.get("contextual"));
 		return action;
 	}
 
