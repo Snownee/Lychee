@@ -10,7 +10,6 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
@@ -28,7 +27,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	@Override
 	public boolean matches(LycheeContext ctx, Level pLevel) {
 		ItemStack stack = ((ItemEntity) ctx.getParam(LootContextParams.THIS_ENTITY)).getItem();
-		return checkConditions(this, ctx, 1) > 0 && input.test(stack);
+		return input.test(stack);
 	}
 
 	@Override
@@ -73,9 +72,9 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		LycheeContext.Builder builder = new LycheeContext.Builder(entity.level);
 		builder.withParameter(LootContextParams.ORIGIN, entity.position());
 		builder.withParameter(LootContextParams.THIS_ENTITY, entity);
-		LycheeContext ctx = builder.create(LycheeLootContextParamSets.ITEM_BURNING);
+		LycheeContext ctx = builder.create(RecipeTypes.ITEM_BURNING.contextParamSet);
 		entity.level.getRecipeManager().getRecipeFor(RecipeTypes.ITEM_BURNING, ctx, entity.level).ifPresent($ -> {
-			int times = $.willBatchRun() ? entity.getItem().getCount() : 1;
+			int times = $.isRepeatable() ? entity.getItem().getCount() : 1;
 			if ($.applyPostActions(ctx, times)) {
 				entity.getItem().shrink(times);
 			}

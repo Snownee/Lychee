@@ -1,0 +1,27 @@
+{
+  "type": "lychee:anvil_crafting",
+  "item_in": [
+    {
+      "item": "dirt"
+    },
+    {
+      "item": "dirt"
+    }
+  ],
+  "item_out": {
+    "item": "diamond"
+  },
+  "level_cost": 10,
+  "material_cost": 2,
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "diamond",
+      "count": 5
+    },
+    {
+      "type": "drop_item",
+      "item": "gold_ingot"
+    }
+  ]
+}

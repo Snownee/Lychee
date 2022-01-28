@@ -2,6 +2,7 @@ package snownee.lychee.core.recipe.type;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -9,8 +10,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import snownee.lychee.Lychee;
@@ -36,6 +40,12 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 	@Override
 	public String toString() {
 		return id.toString();
+	}
+
+	@Override
+	public <D extends Container> Optional<T> tryMatch(Recipe<D> pRecipe, Level pLevel, D pContainer) {
+		T lycheeRecipe = (T) pRecipe;
+		return pRecipe.matches(pContainer, pLevel) && lycheeRecipe.checkConditions(lycheeRecipe, (C) pContainer, 1) > 0 ? Optional.of(lycheeRecipe) : Optional.empty();
 	}
 
 	@SuppressWarnings("rawtypes")

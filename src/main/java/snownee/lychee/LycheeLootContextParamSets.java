@@ -21,4 +21,8 @@ public final class LycheeLootContextParamSets {
 		$.required(LootContextParams.ORIGIN).required(LootContextParams.THIS_ENTITY).required(LootContextParams.BLOCK_STATE).required(LycheeLootContextParams.BLOCK_POS).optional(LootContextParams.BLOCK_ENTITY).required(LootContextParams.TOOL);
 	});
 
+	public static final LootContextParamSet ANVIL_CRAFTING = LootContextParamSetsAccess.callRegister("lychee:anvil_crafting", $ -> {
+		$.required(LootContextParams.ORIGIN).required(LootContextParams.THIS_ENTITY).optional(LootContextParams.BLOCK_STATE).optional(LycheeLootContextParams.BLOCK_POS).optional(LootContextParams.BLOCK_ENTITY);
+	});
+
 }

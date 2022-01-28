@@ -42,7 +42,7 @@ public abstract class ItemAndBlockRecipe<C extends LycheeContext> extends Lychee
 		} else {
 			stack = ctx.getParam(LootContextParams.TOOL);
 		}
-		return checkConditions(this, ctx, 1) > 0 && input.test(stack) && BlockPredicateHelper.fastMatch(block, ctx);
+		return input.test(stack) && BlockPredicateHelper.fastMatch(block, ctx);
 	}
 
 	public static class Serializer<T extends ItemAndBlockRecipe<?>> extends LycheeRecipe.Serializer<T> {

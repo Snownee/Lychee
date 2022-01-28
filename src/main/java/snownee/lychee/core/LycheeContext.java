@@ -24,7 +24,7 @@ public class LycheeContext extends EmptyContainer {
 	private final Level level;
 	private LootContext cachedLootContext;
 
-	LycheeContext(Random pRandom, Level level, Map<LootContextParam<?>, Object> pParams) {
+	protected LycheeContext(Random pRandom, Level level, Map<LootContextParam<?>, Object> pParams) {
 		this.random = pRandom;
 		this.level = level;
 		this.params = ImmutableMap.copyOf(pParams);
@@ -83,9 +83,9 @@ public class LycheeContext extends EmptyContainer {
 	}
 
 	public static class Builder {
-		private final Map<LootContextParam<?>, Object> params = Maps.newIdentityHashMap();
-		private Level level;
-		private Random random;
+		protected final Map<LootContextParam<?>, Object> params = Maps.newIdentityHashMap();
+		protected Level level;
+		protected Random random;
 
 		public Builder(Level level) {
 			this.level = level;

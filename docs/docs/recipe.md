@@ -183,3 +183,27 @@ Default behavior: item is consumed.
 		]
 	}
 	```
+
+### Anvil crafting (`lychee:anvil_crafting`)
+
+It is not recommended to add contextual conditions or actions to the recipe, because JEI does not support drawing extra things on an anvil recipe.
+
+This recipe type is not [repeatable](concepts.md#repeatability).
+
+Default behavior: anvil is damaged.
+
+??? note "Format"
+
+    | Name          | Description                                             | Type / Literal                               |
+    | ------------- | ------------------------------------------------------- | -------------------------------------------- |
+    | type          | type                                                    | "lychee:anvil_crafting"                      |
+    | item_in       | the input items                                         | [Ingredient](general-types.md#ingredient)[2] |
+    | item_out      | the result item                                         | ItemStack                                    |
+    | level_cost    | player's xp level                                       | int                                          |
+    | material_cost | amount of items that will be cost from right input slot | int                                          |
+
+??? example
+
+	```json
+	TODO
+	```

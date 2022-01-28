@@ -17,6 +17,7 @@
     "RecipeManagerAccess",
     "StatePropertiesPredicateAccess",
     "TimeCheckAccess",
+    "AnvilMenuMixin",
     "EntityMixin",
     "ItemEntityMixin",
     "RecipeManagerMixin"

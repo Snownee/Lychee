@@ -26,7 +26,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 	private final ResourceLocation id;
 	private List<PostAction> actions = Collections.EMPTY_LIST;
-	protected boolean willBatchRun = true;
+	protected boolean repeatable = true;
 
 	public LycheeRecipe(ResourceLocation id) {
 		this.id = id;
@@ -57,7 +57,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			actions = Lists.newArrayList();
 		}
 		if (!action.getType().canBatchRun()) {
-			willBatchRun = false;
+			repeatable = false;
 		}
 		actions.add(action);
 	}
@@ -80,8 +80,8 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		return true;
 	}
 
-	public boolean willBatchRun() {
-		return willBatchRun;
+	public boolean isRepeatable() {
+		return repeatable;
 	}
 
 	@Override

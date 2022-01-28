@@ -69,7 +69,11 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 		return Pair.of(state, most.getValue().size());
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Optional<T> process(Entity entity, ItemStack stack, BlockPos pos, Vec3 origin, Consumer<LycheeContext.Builder> builderConsumer) {
+		if (isEmpty()) {
+			return Optional.empty();
+		}
 		Level level = entity.level;
 		BlockState blockstate = level.getBlockState(pos);
 		Collection<T> recipes = multimap.get(blockstate.getBlock());
@@ -88,9 +92,9 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 			builderConsumer.accept(builder);
 		LycheeContext ctx = builder.create(contextParamSet);
 		for (T recipe : Iterables.concat(recipes, anyBlockRecipes)) {
-			if (recipe.matches(ctx, level)) {
+			if (tryMatch((ItemAndBlockRecipe) recipe, level, ctx).isPresent()) {
 				if (!level.isClientSide) {
-					int times = recipe.willBatchRun() ? stack.getCount() : 1;
+					int times = recipe.isRepeatable() ? stack.getCount() : 1;
 					if (recipe.applyPostActions(ctx, times)) {
 						stack.shrink(times);
 					}

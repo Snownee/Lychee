@@ -12,7 +12,7 @@ public class BlockInteractingRecipe extends ItemAndBlockRecipe<LycheeContext> {
 
 	public BlockInteractingRecipe(ResourceLocation id) {
 		super(id);
-		willBatchRun = false;
+		repeatable = false;
 	}
 
 	@Override

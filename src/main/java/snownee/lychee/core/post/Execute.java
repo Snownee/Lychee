@@ -51,6 +51,9 @@ public class Execute extends PostAction {
 
 	@Override
 	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+		if (command.isEmpty()) {
+			return;
+		}
 		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
 		Entity entity = ctx.getParamOrNull(LootContextParams.THIS_ENTITY);
 		Vec2 rotation = Vec2.ZERO;

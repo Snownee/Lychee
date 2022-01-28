@@ -12,6 +12,7 @@ Currently Lychee has support for following recipe type (with full JEI/REI suppor
 - Use or click on a block with item
 - Item entity burning
 - Item entity inside a specific block (for instance water)
+- Anvil crafting
 
 ## Adding recipes
 

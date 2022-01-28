@@ -133,7 +133,7 @@ This action is not [repeatable](concepts.md#repeatability).
 
 ??? note "Format"
 
-    | Name   | Description | Type / Literal |
-    | ------ | ----------- | -------------- |
-    | type   | type        | "damage_item"  |
-    | damage | (optional) damage      | int            |
+    | Name   | Description       | Type / Literal |
+    | ------ | ----------------- | -------------- |
+    | type   | type              | "damage_item"  |
+    | damage | (optional) damage | int            |
