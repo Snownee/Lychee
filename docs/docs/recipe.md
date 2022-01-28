@@ -194,13 +194,13 @@ Default behavior: anvil is damaged.
 
 ??? note "Format"
 
-    | Name          | Description                                             | Type / Literal                               |
-    | ------------- | ------------------------------------------------------- | -------------------------------------------- |
-    | type          | type                                                    | "lychee:anvil_crafting"                      |
-    | item_in       | the input items                                         | [Ingredient](general-types.md#ingredient)[2] |
-    | item_out      | the result item                                         | ItemStack                                    |
-    | level_cost    | player's xp level                                       | int                                          |
-    | material_cost | amount of items that will be cost from right input slot | int                                          |
+    | Name          | Description                                             | Type / Literal                                                                           |
+    | ------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+    | type          | type                                                    | "lychee:anvil_crafting"                                                                  |
+    | item_in       | the input items (can only has left)                     | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | item_out      | the result item                                         | ItemStack                                                                                |
+    | level_cost    | player's xp level                                       | int                                                                                      |
+    | material_cost | amount of items that will be cost from right input slot | int                                                                                      |
 
 ??? example
 
