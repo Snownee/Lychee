@@ -92,4 +92,9 @@ public abstract class PostAction extends ContextualHolder {
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		return "";
+	}
+
 }

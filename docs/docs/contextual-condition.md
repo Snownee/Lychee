@@ -146,7 +146,7 @@ Checks if world is in any of the listed difficulties.
 
 Compares the current game time (the age of the world in game ticks) against given values.
 
-??? note "Format"
+!!! note "Format"
 
     See [Minecraft Wiki](https://minecraft.fandom.com/wiki/Predicate). Only supports constant value.
 

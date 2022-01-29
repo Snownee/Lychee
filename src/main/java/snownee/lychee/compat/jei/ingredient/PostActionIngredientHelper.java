@@ -49,7 +49,7 @@ public class PostActionIngredientHelper implements IIngredientHelper<PostAction>
 
 	@Override
 	public String getUniqueId(PostAction postAction, UidContext arg1) {
-		return postAction.getType().getRegistryName().toString();
+		return postAction.getType().getRegistryName().toString() + postAction.toString();
 	}
 
 }
