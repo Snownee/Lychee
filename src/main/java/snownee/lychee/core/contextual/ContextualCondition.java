@@ -6,6 +6,8 @@ import java.util.Locale;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -15,8 +17,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.storage.loot.Deserializers;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
@@ -41,7 +41,7 @@ public interface ContextualCondition {
 		return key;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	default void appendTooltips(List<Component> tooltips, int indent, boolean inverted) {
 		InteractionResult result = InteractionResult.PASS;
 		if (Minecraft.getInstance().level != null) {
@@ -50,7 +50,7 @@ public interface ContextualCondition {
 		desc(tooltips, result, indent, getDescription(inverted));
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	static void desc(List<Component> tooltips, InteractionResult result, int indent, MutableComponent content) {
 		TextComponent indentComponent = new TextComponent("  ".repeat(indent));
 		indentComponent.append(I18n.get("result.lychee." + result.toString().toLowerCase(Locale.ENGLISH)));
@@ -58,14 +58,14 @@ public interface ContextualCondition {
 		tooltips.add(indentComponent);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	default InteractionResult testInTooltips() {
 		return InteractionResult.PASS;
 	}
 
 	static ContextualCondition parse(JsonObject o) {
 		ResourceLocation key = new ResourceLocation(o.get("type").getAsString());
-		ContextualConditionType<?> type = LycheeRegistries.CONTEXTUAL.getValue(key);
+		ContextualConditionType<?> type = LycheeRegistries.CONTEXTUAL.get(key);
 		return type.fromJson(o);
 	}
 

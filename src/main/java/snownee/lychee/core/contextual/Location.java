@@ -6,6 +6,8 @@ import java.util.function.Function;
 
 import com.google.gson.JsonObject;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -18,6 +20,7 @@ import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -29,8 +32,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
@@ -62,12 +63,12 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		boolean isAny(LocationPredicateAccess access);
 
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		default InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
 			return InteractionResult.PASS;
 		}
 
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result);
 	}
 
@@ -83,13 +84,13 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
 			return LUtil.interactionResult(boundsGetter.apply(access).matches(valueGetter.apply(vec)));
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
 			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), BoundsHelper.getDescription(boundsGetter.apply(access)).withStyle(ChatFormatting.WHITE)));
 		}
@@ -107,7 +108,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
 			Block block = LUtil.getCycledItem(List.copyOf(BlockPredicateHelper.getMatchedBlocks(access.getBlock())), Blocks.AIR);
 			MutableComponent name = block.getName().withStyle(ChatFormatting.WHITE);
@@ -131,7 +132,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
 			//TODO
 			//			Block block = LUtil.getCycledItem(List.copyOf(BlockPredicateHelper.getMatchedBlocks(access.getBlock())), Blocks.AIR);
@@ -156,14 +157,14 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
 			int light = level.getMaxLocalRawBrightness(pos);
 			return LUtil.interactionResult(((LightPredicateAccess) access.getLight()).getComposite().matches(light));
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
 			MutableComponent bounds = BoundsHelper.getDescription(((LightPredicateAccess) access.getLight()).getComposite()).withStyle(ChatFormatting.WHITE);
 			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), bounds));
@@ -182,13 +183,13 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
 			return LUtil.interactionResult(level.dimension() == access.getDimension());
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
 			MutableComponent name = LUtil.getDimensionDisplayName(access.getDimension()).withStyle(ChatFormatting.WHITE);
 			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
@@ -207,13 +208,13 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
-			return LUtil.interactionResult(Objects.equals(level.getBiome(pos).getRegistryName(), access.getBiome().location()));
+			return LUtil.interactionResult(Objects.equals(level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(level.getBiome(pos)), access.getBiome().location()));
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
 			MutableComponent name = new TranslatableComponent(Util.makeDescriptionId("biome", access.getBiome().location())).withStyle(ChatFormatting.WHITE);
 			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
@@ -232,7 +233,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
 			key = key + "." + getName();
 			if (access.getSmokey() == Boolean.FALSE) {
@@ -254,7 +255,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
+		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
 			MutableComponent name = new TextComponent(LUtil.capitaliseAllWords(access.getFeature().getFeatureName())).withStyle(ChatFormatting.WHITE);
 			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
@@ -272,7 +273,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public InteractionResult testInTooltips() {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.getCameraEntity() == null) {
@@ -301,7 +302,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void appendTooltips(List<Component> tooltips, int indent, boolean inverted) {
 		Minecraft mc = Minecraft.getInstance();
 		LocationCheckAccess checkAccess = (LocationCheckAccess) check;

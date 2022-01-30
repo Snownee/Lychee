@@ -1,35 +1,34 @@
-package snownee.lychee.compat.jei.category;
+package snownee.lychee.compat.rei.category;
 
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.rei.REICompat;
+import snownee.lychee.compat.rei.display.ItemInsideDisplay;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.util.Pair;
 
-public class ItemInsideRecipeCategory<T extends ItemAndBlockRecipe<LycheeContext>> extends ItemAndBlockBaseCategory<LycheeContext, T> {
+public class ItemInsideRecipeCategory<T extends ItemAndBlockRecipe<LycheeContext>> extends ItemAndBlockBaseCategory<LycheeContext, T, ItemInsideDisplay<T>> {
 
 	private BlockState iconBlock;
 
-	public ItemInsideRecipeCategory(BlockKeyRecipeType<LycheeContext, T> recipeType, IGuiHelper guiHelper, ScreenElement mainIcon) {
-		this(List.of(recipeType), guiHelper, mainIcon);
+	public ItemInsideRecipeCategory(BlockKeyRecipeType<LycheeContext, T> recipeType, ScreenElement mainIcon) {
+		this(List.of(recipeType), mainIcon);
 	}
 
 	@SuppressWarnings("rawtypes")
-	public ItemInsideRecipeCategory(List<BlockKeyRecipeType<LycheeContext, T>> recipeTypes, IGuiHelper guiHelper, ScreenElement mainIcon) {
-		super((List) recipeTypes, guiHelper, mainIcon);
+	public ItemInsideRecipeCategory(List<BlockKeyRecipeType<LycheeContext, T>> recipeTypes, ScreenElement mainIcon) {
+		super((List) recipeTypes, mainIcon);
 	}
 
 	@Override
@@ -51,14 +50,15 @@ public class ItemInsideRecipeCategory<T extends ItemAndBlockRecipe<LycheeContext
 	}
 
 	@Override
-	public void setInputs(T recipe, IIngredients ingredients) {
-		ingredients.setInputLists(VanillaTypes.ITEM, List.of(List.of(recipe.getInput().getItems()), BlockPredicateHelper.getMatchedItemStacks(recipe.getBlock())));
-	}
-
-	@Override
 	@Nullable
 	public BlockPredicate getInputBlock(T recipe) {
 		return recipe.getBlock();
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public CategoryIdentifier<? extends ItemInsideDisplay<T>> getCategoryIdentifier() {
+		return (CategoryIdentifier) REICompat.ITEM_INSIDE;
 	}
 
 }

@@ -2,7 +2,7 @@ package snownee.lychee.util;
 
 import java.util.Random;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
@@ -225,7 +225,7 @@ public class VecHelper {
 				result3f.transform(q1);
 
 				Vector3f bob_translation = new Vector3f((Mth.sin(f1 * (float) Math.PI) * f2 * 0.5F), (-Math.abs(Mth.cos(f1 * (float) Math.PI) * f2)), 0.0f);
-				bob_translation.setY(-bob_translation.y()); // this is weird but hey, if it works
+				bob_translation.set(bob_translation.x(), -bob_translation.y(), bob_translation.z()); // this is weird but hey, if it works
 				result3f.add(bob_translation);
 			}
 		}

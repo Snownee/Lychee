@@ -9,13 +9,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.core.LycheeContext;
@@ -63,7 +63,7 @@ public abstract class PostAction extends ContextualHolder {
 
 	public static PostAction parse(JsonObject o) {
 		ResourceLocation key = new ResourceLocation(o.get("type").getAsString());
-		PostActionType<?> type = LycheeRegistries.POST_ACTION.getValue(key);
+		PostActionType<?> type = LycheeRegistries.POST_ACTION.get(key);
 		PostAction action = type.fromJson(o);
 		action.parseConditions(o.get("contextual"));
 		return action;
@@ -73,12 +73,12 @@ public abstract class PostAction extends ContextualHolder {
 		return new TranslatableComponent(LUtil.makeDescriptionId("postAction", getType().getRegistryName()));
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void render(PoseStack poseStack, int x, int y) {
 		AllGuiTextures.JEI_QUESTION_MARK.render(poseStack, x + 2, y + 1);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public List<Component> getTooltips() {
 		List<Component> list = Lists.newArrayList(getDisplayName());
 		if (!getConditions().isEmpty()) {

@@ -3,6 +3,8 @@ package snownee.lychee.core.post;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,8 +16,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.Lychee;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
@@ -71,7 +71,7 @@ public class Execute extends PostAction {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void render(PoseStack poseStack, int x, int y) {
 		GuiGameElement.of(Items.COMMAND_BLOCK).render(poseStack, x, y);
 	}

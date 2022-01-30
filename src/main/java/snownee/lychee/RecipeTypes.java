@@ -23,6 +23,10 @@ import snownee.lychee.item_inside.ItemInsideRecipe;
 
 public final class RecipeTypes {
 
+	static {
+		LycheeLootContextParamSets.init();
+	}
+
 	public static void init() {
 	}
 

@@ -3,14 +3,14 @@ package snownee.lychee.core.post;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
@@ -51,7 +51,7 @@ public class DropXp extends PostAction {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void render(PoseStack poseStack, int x, int y) {
 		//TODO this is not ideal. render xp orb in the future
 		GuiGameElement.of(Items.EXPERIENCE_BOTTLE).render(poseStack, x, y);

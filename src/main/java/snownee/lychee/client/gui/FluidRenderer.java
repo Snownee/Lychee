@@ -4,7 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import net.minecraft.client.Minecraft;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -12,17 +15,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.core.Vec3i;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidAttributes;
-import net.minecraftforge.fluids.FluidStack;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class FluidRenderer {
 
 	public static VertexConsumer getFluidBuilder(MultiBufferSource buffer) {
@@ -86,16 +82,13 @@ public class FluidRenderer {
 	}
 
 	public static void renderFluidBox(FluidState fluidState, float xMin, float yMin, float zMin, float xMax, float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom) {
-		Fluid fluid = fluidState.getType();
-		FluidAttributes fluidAttributes = fluid.getAttributes();
-		FluidStack fluidStack = new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME);
-		ResourceLocation stillTex = fluidAttributes.getStillTexture(fluidStack);
-		TextureAtlasSprite fluidTexture = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTex);
+		FluidRenderHandler renderHandler = FluidRenderHandlerRegistry.INSTANCE.get(fluidState.getType());
+		TextureAtlasSprite fluidTexture = renderHandler.getFluidSprites(null, null, fluidState)[0];
 
-		int color = fluidAttributes.getColor(fluidStack);
-		int blockLightIn = (light >> 4) & 0xF;
-		int luminosity = Math.max(blockLightIn, fluidAttributes.getLuminosity(fluidStack));
-		light = (light & 0xF00000) | luminosity << 4;
+		int color = renderHandler.getFluidColor(null, null, fluidState) | 0xFF000000;
+		//		int blockLightIn = (light >> 4) & 0xF;
+		//		int luminosity = Math.max(blockLightIn, fluidAttributes.getLuminosity(fluidStack));
+		//		light = (light & 0xF00000) | luminosity << 4;
 
 		//		Vec3 center = new Vec3(xMin + (xMax - xMin) / 2, yMin + (yMax - yMin) / 2, zMin + (zMax - zMin) / 2);
 		ms.pushPose();
@@ -103,6 +96,9 @@ public class FluidRenderer {
 		//		if (fluidStack.getFluid().getAttributes().isLighterThanAir())
 		//			TransformStack.cast(ms).translate(center).rotateX(180).translateBack(center);
 
+		//		RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
+		//		RenderSystem.setShaderColor(1, 1, 1, 1);
+		//		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		for (Direction side : Direction.values()) {
 			if (side == Direction.DOWN && !renderBottom)
 				continue;

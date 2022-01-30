@@ -43,7 +43,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraftforge.registries.ForgeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.StatePropertiesPredicateAccess;
@@ -92,7 +91,6 @@ public class BlockPredicateHelper {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static BlockPredicate fromJson(JsonElement jsonElement) {
 		if (jsonElement != null && jsonElement.isJsonPrimitive()) {
 			String id = jsonElement.getAsString();
@@ -113,7 +111,7 @@ public class BlockPredicateHelper {
 		if (blockCount > 0) {
 			blocks = Sets.newHashSet();
 			for (int i = 0; i < blockCount; i++) {
-				blocks.add(pBuffer.readRegistryIdUnsafe(ForgeRegistries.BLOCKS));
+				blocks.add(LUtil.readRegistryId(Registry.BLOCK, pBuffer));
 			}
 		}
 		Tag<Block> tag = null;
@@ -134,7 +132,7 @@ public class BlockPredicateHelper {
 		} else {
 			pBuffer.writeVarInt(blocks.size());
 			for (Block block : blocks) {
-				pBuffer.writeRegistryIdUnsafe(ForgeRegistries.BLOCKS, block);
+				LUtil.writeRegistryId(Registry.BLOCK, block, pBuffer);
 			}
 		}
 		ResourceLocation tagId = null;

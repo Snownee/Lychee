@@ -3,10 +3,10 @@ package snownee.lychee.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.Lychee;
 
 public enum AllGuiTextures implements ScreenElement {
@@ -49,19 +49,19 @@ public enum AllGuiTextures implements ScreenElement {
 		this.startY = startY;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void bind() {
 		RenderSystem.setShaderTexture(0, location);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	@Override
 	public void render(PoseStack ms, int x, int y) {
 		bind();
 		GuiComponent.blit(ms, x, y, 0, startX, startY, width, height, 256, 256);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void render(PoseStack ms, int x, int y, GuiComponent component) {
 		bind();
 		component.blit(ms, x, y, startX, startY, width, height);

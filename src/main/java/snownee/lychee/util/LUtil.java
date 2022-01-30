@@ -7,9 +7,12 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
@@ -20,8 +23,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.Lychee;
 
 public class LUtil {
@@ -46,7 +47,7 @@ public class LUtil {
 		return "minecraft".equals(modid) ? Lychee.ID : modid;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public static MutableComponent getDimensionDisplayName(ResourceKey<Level> dimension) {
 		String key = Util.makeDescriptionId("dimension", dimension.location());
 		if (I18n.exists(key)) {
@@ -56,7 +57,7 @@ public class LUtil {
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public static MutableComponent format(String s, Object... objects) {
 		return new TextComponent(MessageFormat.format(I18n.get(s), objects));
 	}
@@ -114,6 +115,14 @@ public class LUtil {
 			return InteractionResult.PASS;
 		}
 		return bool ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+	}
+
+	public static <T> T readRegistryId(Registry<T> registry, FriendlyByteBuf buf) {
+		return registry.byId(buf.readVarInt());
+	}
+
+	public static <T> void writeRegistryId(Registry<T> registry, T entry, FriendlyByteBuf buf) {
+		buf.writeVarInt(registry.getId(entry));
 	}
 
 }

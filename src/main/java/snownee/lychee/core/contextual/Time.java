@@ -1,9 +1,11 @@
 package snownee.lychee.core.contextual;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonObject;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -12,8 +14,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.IntBoundsHelper;
@@ -36,7 +36,7 @@ public record Time(Ints value, @Nullable Long period) implements ContextualCondi
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public InteractionResult testInTooltips() {
 		ClientLevel level = Minecraft.getInstance().level;
 		if (level == null) {

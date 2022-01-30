@@ -1,6 +1,6 @@
 package snownee.lychee.client.gui;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
@@ -32,7 +32,6 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.model.data.EmptyModelData;
 import snownee.lychee.util.Color;
 import snownee.lychee.util.VecHelper;
 
@@ -173,7 +172,7 @@ public class GuiGameElement {
 			Minecraft mc = Minecraft.getInstance();
 			int color = mc.getBlockColors().getColor(blockState, mc.level, mc.cameraEntity != null ? mc.cameraEntity.blockPosition() : null, 0);
 			Color rgb = new Color(color == -1 ? this.color : color);
-			blockRenderer.getModelRenderer().renderModel(ms.last(), vb, blockState, blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(), rgb.getBlueAsFloat(), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+			blockRenderer.getModelRenderer().renderModel(ms.last(), vb, blockState, blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(), rgb.getBlueAsFloat(), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 			buffer.endBatch();
 		}
 
@@ -189,7 +188,7 @@ public class GuiGameElement {
 		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, RenderType renderType, VertexConsumer vb, PoseStack ms) {
 			if (blockState.getBlock() instanceof FireBlock) {
 				Lighting.setupForFlatItems();
-				blockRenderer.renderSingleBlock(blockState, ms, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+				blockRenderer.renderSingleBlock(blockState, ms, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
 				buffer.endBatch();
 				Lighting.setupFor3DItems();
 				return;

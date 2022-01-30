@@ -1,9 +1,9 @@
 package snownee.lychee.interaction;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
 public class BlockClickingRecipe extends BlockInteractingRecipe {
@@ -13,7 +13,7 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 	}
 
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public LycheeRecipe.Serializer<?> getSerializer() {
 		return RecipeSerializers.BLOCK_CLICKING;
 	}
 

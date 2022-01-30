@@ -3,9 +3,10 @@ package snownee.lychee.core.post;
 import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraft.resources.ResourceLocation;
+import snownee.lychee.LycheeRegistries;
 
-public abstract class PostActionType<T extends PostAction> extends ForgeRegistryEntry<PostActionType<?>> {
+public abstract class PostActionType<T extends PostAction> {
 
 	public abstract T fromJson(JsonObject o);
 
@@ -15,6 +16,10 @@ public abstract class PostActionType<T extends PostAction> extends ForgeRegistry
 
 	public boolean canBatchRun() {
 		return true;
+	}
+
+	public ResourceLocation getRegistryName() {
+		return LycheeRegistries.POST_ACTION.getKey(this);
 	}
 
 }

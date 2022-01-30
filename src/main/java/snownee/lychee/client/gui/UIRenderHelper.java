@@ -182,7 +182,7 @@ public class UIRenderHelper {
 			CustomRenderTarget framebuffer = new CustomRenderTarget(true);
 			framebuffer.resize(mainWindow.getWidth(), mainWindow.getHeight(), Minecraft.ON_OSX);
 			framebuffer.setClearColor(0, 0, 0, 0);
-			framebuffer.enableStencil();
+			// framebuffer.enableStencil(); // necessary?
 			return framebuffer;
 		}
 

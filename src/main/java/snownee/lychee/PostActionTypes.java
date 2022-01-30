@@ -1,7 +1,6 @@
 package snownee.lychee;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraft.core.Registry;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.DropXp;
 import snownee.lychee.core.post.Execute;
@@ -23,8 +22,7 @@ public class PostActionTypes {
 	public static final PostActionType<PreventDefault> PREVENT_DEFAULT = register("prevent_default", new PreventDefault.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
-		ModLoadingContext.get().setActiveContainer(null); // bypass Forge warning
-		LycheeRegistries.POST_ACTION.register(t.setRegistryName(new ResourceLocation(name)));
+		Registry.register(LycheeRegistries.POST_ACTION, name, t);
 		return t;
 	}
 

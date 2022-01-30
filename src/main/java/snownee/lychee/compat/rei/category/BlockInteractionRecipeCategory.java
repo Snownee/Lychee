@@ -1,4 +1,4 @@
-package snownee.lychee.compat.jei.category;
+package snownee.lychee.compat.rei.category;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import mezz.jei.api.helpers.IGuiHelper;
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -15,14 +15,16 @@ import net.minecraft.network.chat.TranslatableComponent;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.rei.REICompat;
+import snownee.lychee.compat.rei.display.ItemInsideDisplay;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.interaction.BlockInteractingRecipe;
 
 public class BlockInteractionRecipeCategory extends ItemInsideRecipeCategory<BlockInteractingRecipe> {
 
-	public BlockInteractionRecipeCategory(List<BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe>> recipeTypes, IGuiHelper guiHelper, ScreenElement mainIcon) {
-		super(recipeTypes, guiHelper, mainIcon);
+	public BlockInteractionRecipeCategory(List<BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe>> recipeTypes, ScreenElement mainIcon) {
+		super(recipeTypes, mainIcon);
 	}
 
 	@Override
@@ -38,10 +40,9 @@ public class BlockInteractionRecipeCategory extends ItemInsideRecipeCategory<Blo
 		//		}
 		//		Minecraft.getInstance().font.draw(matrixStack, keyMapping.getTranslatedKeyMessage(), 0, 0, 0);
 		AllGuiTextures icon;
-		int value = keyMapping.getKey().getValue();
-		if (value == 0) {
+		if (keyMapping.matchesMouse(0)) {
 			icon = AllGuiTextures.LEFT_CLICK;
-		} else if (value == 1) {
+		} else if (keyMapping.matchesMouse(1)) {
 			icon = AllGuiTextures.RIGHT_CLICK;
 		} else {
 			icon = recipe.getType() == RecipeTypes.BLOCK_CLICKING ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
@@ -52,6 +53,11 @@ public class BlockInteractionRecipeCategory extends ItemInsideRecipeCategory<Blo
 	private KeyMapping getKeyMapping(BlockInteractingRecipe recipe) {
 		boolean click = recipe.getType() == RecipeTypes.BLOCK_CLICKING;
 		return click ? Minecraft.getInstance().options.keyAttack : Minecraft.getInstance().options.keyUse;
+	}
+
+	@Override
+	public CategoryIdentifier<? extends ItemInsideDisplay<BlockInteractingRecipe>> getCategoryIdentifier() {
+		return REICompat.BLOCK_INTERACTION;
 	}
 
 }

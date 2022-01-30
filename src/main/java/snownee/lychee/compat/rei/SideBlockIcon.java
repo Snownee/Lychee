@@ -1,4 +1,4 @@
-package snownee.lychee.compat.jei;
+package snownee.lychee.compat.rei;
 
 import java.util.function.Supplier;
 

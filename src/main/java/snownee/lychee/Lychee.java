@@ -8,82 +8,70 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Sets;
 
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import snownee.lychee.core.contextual.ContextualConditionType;
-import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.interaction.BlockClickingRecipe;
 import snownee.lychee.interaction.BlockInteractingRecipe;
 
-@Mod(Lychee.ID)
-@Mod.EventBusSubscriber(bus = Bus.MOD)
-public final class Lychee {
+public final class Lychee implements ModInitializer {
 	public static final String ID = "lychee";
 
 	public static final Logger LOGGER = LogManager.getLogger(Lychee.ID);
 
-	public Lychee() {
-		LycheeLootContextParamSets.init();
+	@Override
+	public void onInitialize() {
 		RecipeTypes.init();
 		LycheeTags.init();
-		MinecraftForge.EVENT_BUS.addListener(Lychee::useItemOn);
-		MinecraftForge.EVENT_BUS.addListener(Lychee::clickItemOn);
-	}
-
-	@SubscribeEvent
-	public static void newRegistries(RegistryEvent.NewRegistry event) {
+		UseBlockCallback.EVENT.register(Lychee::useItemOn);
+		AttackBlockCallback.EVENT.register(Lychee::clickItemOn);
 		LycheeRegistries.init();
-	}
-
-	@SubscribeEvent
-	public static void registerContextual(RegistryEvent.Register<ContextualConditionType<?>> event) {
 		ContextualConditionTypes.init();
-	}
-
-	@SubscribeEvent
-	public static void registerPostAction(RegistryEvent.Register<PostActionType<?>> event) {
 		PostActionTypes.init();
-	}
-
-	@SubscribeEvent
-	public static void registerRegisterSerializer(RegistryEvent.Register<RecipeSerializer<?>> event) {
 		RecipeSerializers.init();
 	}
 
-	public static void useItemOn(PlayerInteractEvent.RightClickBlock event) {
-		ItemStack stack = event.getItemStack();
-		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(event.getPlayer(), stack, event.getPos(), event.getHitVec().getLocation(), builder -> {
+	public static InteractionResult useItemOn(Player player, Level world, InteractionHand hand, BlockHitResult hitResult) {
+		if (player.isSpectator()) {
+			return InteractionResult.PASS;
+		}
+		ItemStack stack = player.getItemInHand(hand);
+		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(player, stack, hitResult.getBlockPos(), hitResult.getLocation(), builder -> {
 			builder.withParameter(LootContextParams.TOOL, stack);
 		});
 		if (result.isPresent()) {
-			event.setCanceled(true);
-			event.setCancellationResult(InteractionResult.sidedSuccess(event.getWorld().isClientSide));
+			return InteractionResult.SUCCESS;
 		}
+		return InteractionResult.PASS;
 	}
 
-	public static void clickItemOn(PlayerInteractEvent.LeftClickBlock event) {
-		ItemStack stack = event.getItemStack();
-		Vec3 vec = Vec3.atCenterOf(event.getPos());
-		Optional<BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(event.getPlayer(), stack, event.getPos(), vec, builder -> {
+	public static InteractionResult clickItemOn(Player player, Level world, InteractionHand hand, BlockPos pos, Direction direction) {
+		if (player.isSpectator()) {
+			return InteractionResult.PASS;
+		}
+		ItemStack stack = player.getItemInHand(hand);
+		Vec3 vec = Vec3.atCenterOf(pos);
+		Optional<BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(player, stack, pos, vec, builder -> {
 			builder.withParameter(LootContextParams.TOOL, stack);
 		});
 		if (result.isPresent()) {
-			event.setCanceled(true);
-			event.setCancellationResult(InteractionResult.sidedSuccess(event.getWorld().isClientSide));
+			return InteractionResult.SUCCESS;
 		}
+		return InteractionResult.PASS;
 	}
 
 	public static void onRecipesLoaded(RecipeManager recipeManager) {

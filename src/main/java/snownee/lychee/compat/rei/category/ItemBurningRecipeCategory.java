@@ -1,33 +1,29 @@
-package snownee.lychee.compat.jei.category;
+package snownee.lychee.compat.rei.category;
 
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
+import snownee.lychee.compat.rei.REICompat;
+import snownee.lychee.compat.rei.display.ItemBurningDisplay;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.item_burning.ItemBurningRecipe;
 
-public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<LycheeContext, ItemBurningRecipe> {
+public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<LycheeContext, ItemBurningRecipe, ItemBurningDisplay> {
 
-	public ItemBurningRecipeCategory(LycheeRecipeType<LycheeContext, ItemBurningRecipe> recipeType, IGuiHelper guiHelper) {
-		super(List.of(recipeType), guiHelper, AllGuiTextures.JEI_DOWN_ARROW);
+	public ItemBurningRecipeCategory(LycheeRecipeType<LycheeContext, ItemBurningRecipe> recipeType) {
+		super(List.of(recipeType), AllGuiTextures.JEI_DOWN_ARROW);
 	}
 
 	@Override
 	public BlockState getIconBlock() {
 		return Blocks.FIRE.defaultBlockState();
-	}
-
-	@Override
-	public void setInputs(ItemBurningRecipe recipe, IIngredients ingredients) {
-		ingredients.setInputIngredients(List.of(recipe.getInput()));
 	}
 
 	@Nullable
@@ -39,6 +35,11 @@ public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<LycheeCo
 	@Override
 	public BlockState getRenderingBlock(ItemBurningRecipe recipe) {
 		return getIconBlock();
+	}
+
+	@Override
+	public CategoryIdentifier<? extends ItemBurningDisplay> getCategoryIdentifier() {
+		return REICompat.ITEM_BURNING;
 	}
 
 }

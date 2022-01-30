@@ -1,7 +1,6 @@
 package snownee.lychee;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraft.core.Registry;
 import snownee.lychee.core.contextual.And;
 import snownee.lychee.core.contextual.Chance;
 import snownee.lychee.core.contextual.ContextualConditionType;
@@ -27,8 +26,7 @@ public final class ContextualConditionTypes {
 	public static final ContextualConditionType<Time> TIME = register("time", new Time.Type());
 
 	public static <T extends ContextualConditionType<?>> T register(String name, T t) {
-		ModLoadingContext.get().setActiveContainer(null); // bypass Forge warning
-		LycheeRegistries.CONTEXTUAL.register(t.setRegistryName(new ResourceLocation(name)));
+		Registry.register(LycheeRegistries.CONTEXTUAL, name, t);
 		return t;
 	}
 

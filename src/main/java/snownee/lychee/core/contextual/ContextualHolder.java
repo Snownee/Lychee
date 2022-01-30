@@ -11,6 +11,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,11 +20,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.InteractionResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.util.LUtil;
 
 public abstract class ContextualHolder {
 
@@ -78,7 +79,7 @@ public abstract class ContextualHolder {
 	public void conditionsFromNetwork(FriendlyByteBuf pBuffer) {
 		int size = pBuffer.readVarInt();
 		for (int i = 0; i < size; i++) {
-			ContextualConditionType<?> type = pBuffer.readRegistryIdUnsafe(LycheeRegistries.CONTEXTUAL);
+			ContextualConditionType<?> type = LUtil.readRegistryId(LycheeRegistries.CONTEXTUAL, pBuffer);
 			withCondition(type.fromNetwork(pBuffer));
 		}
 		if (pBuffer.readBoolean()) {
@@ -102,7 +103,7 @@ public abstract class ContextualHolder {
 		pBuffer.writeVarInt(conditions.size());
 		for (ContextualCondition condition : conditions) {
 			ContextualConditionType type = condition.getType();
-			pBuffer.writeRegistryIdUnsafe(LycheeRegistries.CONTEXTUAL, type);
+			LUtil.writeRegistryId(LycheeRegistries.CONTEXTUAL, type, pBuffer);
 			type.toNetwork(condition, pBuffer);
 		}
 		pBuffer.writeBoolean(secretFlags != null);
@@ -141,7 +142,7 @@ public abstract class ContextualHolder {
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	@Environment(EnvType.CLIENT)
 	public void getConditonTooltips(List<Component> list, int indent) {
 		int i = 0;
 		for (ContextualCondition condition : getConditions()) {

@@ -78,9 +78,10 @@ public class DamageItem extends PostAction {
 			InteractionHand hand2 = hand;
 			onBroken = $ -> $.broadcastBreakEvent(hand2);
 		}
-		if (thisEntity instanceof LivingEntity) {
-			damage = stack.getItem().damageItem(stack, damage, (LivingEntity) thisEntity, onBroken);
-		}
+		// Forge hook
+		//		if (thisEntity instanceof LivingEntity) {
+		//			damage = stack.getItem().damageItem(stack, damage, (LivingEntity) thisEntity, onBroken);
+		//		}
 		if (stack.hurt(damage, ctx.getRandom(), thisEntity instanceof ServerPlayer ? (ServerPlayer) thisEntity : null)) {
 			if (thisEntity instanceof LivingEntity) {
 				onBroken.accept((LivingEntity) thisEntity);
@@ -97,6 +98,11 @@ public class DamageItem extends PostAction {
 	@Override
 	public Component getDisplayName() {
 		return LUtil.format(LUtil.makeDescriptionId("postAction", getType().getRegistryName()), damage);
+	}
+
+	@Override
+	public boolean isHidden() {
+		return true;
 	}
 
 	public static class Type extends PostActionType<DamageItem> {
