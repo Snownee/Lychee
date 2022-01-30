@@ -5,7 +5,7 @@ Lychee is a mod allows you to define custom interactions using JSON recipes and 
 You can download Lychee on CurseForge:
 
 - [Lychee (Forge)](https://www.curseforge.com/minecraft/mc-mods/lychee)
-- ~~Lychee (Fabric)~~ (not ready yet)
+- [Lychee (Fabric)](https://www.curseforge.com/minecraft/mc-mods/lychee-fabric)
 
 Currently Lychee has support for following recipe type (with full JEI/REI support!):
 
@@ -18,7 +18,7 @@ Currently Lychee has support for following recipe type (with full JEI/REI suppor
 
 To create a new recipe that works in every world you create, you will need a datapack loader mod, such as [OpenLoader](https://www.curseforge.com/minecraft/mc-mods/open-loader).
 
-Or you can add recipes using [CraftTweaker](https://www.curseforge.com/minecraft/mc-mods/crafttweaker) or [KubeJS](https://www.curseforge.com/minecraft/mc-mods/kubejs-forge).
+Or you can add recipes using [CraftTweaker](https://www.curseforge.com/minecraft/mc-mods/crafttweaker) or KubeJS ([Forge](https://www.curseforge.com/minecraft/mc-mods/kubejs-forge) / [Fabric](https://www.curseforge.com/minecraft/mc-mods/kubejs-fabric)).
 
 ## Contact
 

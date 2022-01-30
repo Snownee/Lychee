@@ -186,7 +186,7 @@ Default behavior: item is consumed.
 
 ### Anvil crafting (`lychee:anvil_crafting`)
 
-It is not recommended to add contextual conditions or actions to the recipe, because JEI does not support drawing extra things on an anvil recipe.
+It is not recommended to add contextual conditions or actions to the recipe, because JEI/REI does not support drawing extra things on an anvil recipe.
 
 This recipe type is not [repeatable](concepts.md#repeatability).
 
