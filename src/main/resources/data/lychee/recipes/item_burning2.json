@@ -35,10 +35,16 @@
     {
       "type": "drop_item",
       "item": "cod",
-      "contextual": {
-        "type": "chance",
-        "chance": 0.5
-      }
+      "contextual": [
+        {
+          "type": "chance",
+          "chance": 0.5
+        },
+        {
+          "type": "chance",
+          "chance": 0.5
+        }
+      ]
     },
     {
       "type": "drop_item",

@@ -63,7 +63,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 			if (!action.getConditions().isEmpty()) {
 				slot.addTooltipCallback(tooltip -> {
 					List<Component> list = Lists.newArrayList();
-					list.add(LUtil.format("contextual.lychee", action.getConditions().size()).withStyle(ChatFormatting.GRAY));
+					list.add(LUtil.format("contextual.lychee", action.showingConditionsCount()).withStyle(ChatFormatting.GRAY));
 					action.getConditonTooltips(list, 0);
 					int line = Minecraft.getInstance().options.advancedItemTooltips ? 2 : 1;
 					line = Math.min(tooltip.entries().size(), line);

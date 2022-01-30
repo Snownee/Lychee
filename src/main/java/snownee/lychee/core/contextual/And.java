@@ -56,6 +56,11 @@ public class And extends ContextualHolder implements ContextualCondition {
 		}
 	}
 
+	@Override
+	public int showingCount() {
+		return showingConditionsCount();
+	}
+
 	public static class Type extends ContextualConditionType<And> {
 
 		@Override
