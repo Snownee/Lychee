@@ -17,7 +17,7 @@
     | Name              | Description                      | Type / Literal                                                                                     |
     | ----------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
     | type              | type                             | string                                                                                             |
-    | fabric:conditions | (optional) conditions            | FabricCondition[][]                                                                                |
+    | fabric:conditions | (optional) conditions            | FabricCondition[]                                                                                  |
     | contextual        | (optional) contextual conditions | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
     | post              | (optional) post actions          | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
     |                   | additional properties...         |                                                                                                    |

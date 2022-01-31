@@ -2,7 +2,7 @@ package snownee.lychee.util;
 
 import java.util.Random;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;

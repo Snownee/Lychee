@@ -3,8 +3,6 @@ package snownee.lychee.anvil_crafting;
 import java.util.Map;
 import java.util.Random;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
@@ -12,9 +10,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.core.LycheeContext;
 
 public class AnvilContext extends LycheeContext {
-	@Nonnull
 	public final ItemStack left; // The left side of the input
-	@Nonnull
 	public final ItemStack right; // The right side of the input
 	public final String name; // The name to set the item, if the user specified one.
 	public int levelCost; // The base cost, set this to change it if output != null

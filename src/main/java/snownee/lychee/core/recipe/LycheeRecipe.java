@@ -4,8 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.MustBeInvokedByOverriders;
+
 import com.google.common.collect.Lists;
-import com.google.errorprone.annotations.OverridingMethodsMustInvokeSuper;
 import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -133,7 +134,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 		@SuppressWarnings("rawtypes")
 		@Override
-		@OverridingMethodsMustInvokeSuper
+		@MustBeInvokedByOverriders
 		public void toNetwork(FriendlyByteBuf pBuffer, R pRecipe) {
 			pRecipe.conditionsToNetwork(pBuffer);
 			List<PostAction> actions = pRecipe.getShowingPostActions();
