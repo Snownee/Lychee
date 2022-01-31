@@ -82,7 +82,7 @@ public abstract class PostAction extends ContextualHolder {
 	public List<Component> getTooltips() {
 		List<Component> list = Lists.newArrayList(getDisplayName());
 		if (!getConditions().isEmpty()) {
-			list.add(LUtil.format("contextual.lychee", getConditions().size()).withStyle(ChatFormatting.GRAY));
+			list.add(LUtil.format("contextual.lychee", showingConditionsCount()).withStyle(ChatFormatting.GRAY));
 		}
 		getConditonTooltips(list, 0);
 		return list;

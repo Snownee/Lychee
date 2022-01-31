@@ -37,6 +37,10 @@ public abstract class ContextualHolder {
 		return conditions;
 	}
 
+	public int showingConditionsCount() {
+		return conditions.stream().mapToInt(ContextualCondition::showingCount).sum();
+	}
+
 	public void withCondition(ContextualCondition condition) {
 		if (conditions == Collections.EMPTY_LIST) {
 			conditions = Lists.newArrayList();

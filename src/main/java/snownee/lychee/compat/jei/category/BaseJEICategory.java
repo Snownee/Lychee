@@ -82,7 +82,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 				group.addTooltipCallback((i, input, stack, tooltip) -> {
 					if (i == index) {
 						List<Component> list = Lists.newArrayList();
-						list.add(LUtil.format("contextual.lychee", action.getConditions().size()).withStyle(ChatFormatting.GRAY));
+						list.add(LUtil.format("contextual.lychee", action.showingConditionsCount()).withStyle(ChatFormatting.GRAY));
 						action.getConditonTooltips(list, 0);
 						int line = Minecraft.getInstance().options.advancedItemTooltips ? 2 : 1;
 						line = Math.min(tooltip.size(), line);

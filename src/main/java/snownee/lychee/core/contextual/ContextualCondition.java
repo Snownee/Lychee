@@ -69,4 +69,8 @@ public interface ContextualCondition {
 		return type.fromJson(o);
 	}
 
+	default int showingCount() {
+		return 1;
+	}
+
 }

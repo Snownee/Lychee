@@ -338,6 +338,19 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		return new TranslatableComponent(makeDescriptionId(inverted));
 	}
 
+	@Override
+	public int showingCount() {
+		int c = 0;
+		LocationCheckAccess checkAccess = (LocationCheckAccess) check;
+		LocationPredicateAccess access = (LocationPredicateAccess) checkAccess.getPredicate();
+		for (Rule rule : RULES) {
+			if (!rule.isAny(access)) {
+				++c;
+			}
+		}
+		return c;
+	}
+
 	public static class Type extends ContextualConditionType<Location> {
 
 		@Override
