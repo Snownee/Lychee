@@ -22,6 +22,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import snownee.lychee.Lychee;
 
 public class LUtil {
@@ -114,6 +116,14 @@ public class LUtil {
 			return InteractionResult.PASS;
 		}
 		return bool ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+	}
+
+	public static <T extends IForgeRegistryEntry<T>> T readRegistryId(IForgeRegistry<T> registry, FriendlyByteBuf buf) {
+		return LUtil.readRegistryId(registry, buf);
+	}
+
+	public static <T extends IForgeRegistryEntry<T>> void writeRegistryId(IForgeRegistry<T> registry, T entry, FriendlyByteBuf buf) {
+		LUtil.writeRegistryId(registry, entry, buf);
 	}
 
 }

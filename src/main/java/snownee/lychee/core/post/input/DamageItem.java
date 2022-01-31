@@ -99,6 +99,11 @@ public class DamageItem extends PostAction {
 		return LUtil.format(LUtil.makeDescriptionId("postAction", getType().getRegistryName()), damage);
 	}
 
+	@Override
+	public boolean isHidden() {
+		return true;
+	}
+
 	public static class Type extends PostActionType<DamageItem> {
 
 		@Override

@@ -66,9 +66,10 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	@Override
 	public void setIngredients(T recipe, IIngredients ingredients) {
 		setInputs(recipe, ingredients);
-		List<List<ItemStack>> outputs = recipe.getPostActions().stream().map(PostAction::getOutputItems).toList();
+		List<PostAction> actions = recipe.getShowingPostActions();
+		List<List<ItemStack>> outputs = actions.stream().map(PostAction::getOutputItems).toList();
 		ingredients.setOutputLists(VanillaTypes.ITEM, outputs);
-		ingredients.setOutputs(JEICompat.POST_ACTION, recipe.getPostActions());
+		ingredients.setOutputs(JEICompat.POST_ACTION, actions);
 	}
 
 	@Override

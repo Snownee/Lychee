@@ -113,7 +113,7 @@ public class BlockPredicateHelper {
 		if (blockCount > 0) {
 			blocks = Sets.newHashSet();
 			for (int i = 0; i < blockCount; i++) {
-				blocks.add(pBuffer.readRegistryIdUnsafe(ForgeRegistries.BLOCKS));
+				blocks.add(LUtil.readRegistryId(ForgeRegistries.BLOCKS, pBuffer));
 			}
 		}
 		Tag<Block> tag = null;
@@ -134,7 +134,7 @@ public class BlockPredicateHelper {
 		} else {
 			pBuffer.writeVarInt(blocks.size());
 			for (Block block : blocks) {
-				pBuffer.writeRegistryIdUnsafe(ForgeRegistries.BLOCKS, block);
+				LUtil.writeRegistryId(ForgeRegistries.BLOCKS, block, pBuffer);
 			}
 		}
 		ResourceLocation tagId = null;

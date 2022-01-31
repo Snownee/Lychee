@@ -38,10 +38,9 @@ public class BlockInteractionRecipeCategory extends ItemInsideRecipeCategory<Blo
 		//		}
 		//		Minecraft.getInstance().font.draw(matrixStack, keyMapping.getTranslatedKeyMessage(), 0, 0, 0);
 		AllGuiTextures icon;
-		int value = keyMapping.getKey().getValue();
-		if (value == 0) {
+		if (keyMapping.matchesMouse(0)) {
 			icon = AllGuiTextures.LEFT_CLICK;
-		} else if (value == 1) {
+		} else if (keyMapping.matchesMouse(1)) {
 			icon = AllGuiTextures.RIGHT_CLICK;
 		} else {
 			icon = recipe.getType() == RecipeTypes.BLOCK_CLICKING ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;

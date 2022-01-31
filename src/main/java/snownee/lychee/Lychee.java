@@ -36,7 +36,6 @@ public final class Lychee {
 	public static final Logger LOGGER = LogManager.getLogger(Lychee.ID);
 
 	public Lychee() {
-		LycheeLootContextParamSets.init();
 		RecipeTypes.init();
 		LycheeTags.init();
 		MinecraftForge.EVENT_BUS.addListener(Lychee::useItemOn);

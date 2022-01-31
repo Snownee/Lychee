@@ -25,25 +25,25 @@ public class LycheeContext extends EmptyContainer {
 	private LootContext cachedLootContext;
 
 	protected LycheeContext(Random pRandom, Level level, Map<LootContextParam<?>, Object> pParams) {
-		this.random = pRandom;
+		random = pRandom;
 		this.level = level;
-		this.params = ImmutableMap.copyOf(pParams);
+		params = ImmutableMap.copyOf(pParams);
 	}
 
 	/**
 	    * Check whether the given parameter is present in this context.
 	    */
 	public boolean hasParam(LootContextParam<?> pParameter) {
-		return this.params.containsKey(pParameter);
+		return params.containsKey(pParameter);
 	}
 
 	/**
 	    * Get the value of the given parameter.
-	    * 
+	    *
 	    * @throws NoSuchElementException if the parameter is not present in this context
 	    */
 	public <T> T getParam(LootContextParam<T> pParam) {
-		T t = (T) this.params.get(pParam);
+		T t = (T) params.get(pParam);
 		if (t == null) {
 			throw new NoSuchElementException(pParam.getName().toString());
 		} else {
@@ -56,11 +56,11 @@ public class LycheeContext extends EmptyContainer {
 	    */
 	@Nullable
 	public <T> T getParamOrNull(LootContextParam<T> pParameter) {
-		return (T) this.params.get(pParameter);
+		return (T) params.get(pParameter);
 	}
 
 	public Random getRandom() {
-		return this.random;
+		return random;
 	}
 
 	public Level getLevel() {
@@ -92,13 +92,13 @@ public class LycheeContext extends EmptyContainer {
 		}
 
 		public Builder withRandom(Random pRandom) {
-			this.random = pRandom;
+			random = pRandom;
 			return this;
 		}
 
 		public Builder withOptionalRandomSeed(long pSeed) {
 			if (pSeed != 0L) {
-				this.random = new Random(pSeed);
+				random = new Random(pSeed);
 			}
 
 			return this;
@@ -106,31 +106,31 @@ public class LycheeContext extends EmptyContainer {
 
 		public Builder withOptionalRandomSeed(long pSeed, Random pRandom) {
 			if (pSeed == 0L) {
-				this.random = pRandom;
+				random = pRandom;
 			} else {
-				this.random = new Random(pSeed);
+				random = new Random(pSeed);
 			}
 
 			return this;
 		}
 
 		public <T> Builder withParameter(LootContextParam<T> pParameter, T pValue) {
-			this.params.put(pParameter, pValue);
+			params.put(pParameter, pValue);
 			return this;
 		}
 
 		public <T> Builder withOptionalParameter(LootContextParam<T> pParameter, @Nullable T pValue) {
 			if (pValue == null) {
-				this.params.remove(pParameter);
+				params.remove(pParameter);
 			} else {
-				this.params.put(pParameter, pValue);
+				params.put(pParameter, pValue);
 			}
 
 			return this;
 		}
 
 		public <T> T getParameter(LootContextParam<T> pParameter) {
-			T t = (T) this.params.get(pParameter);
+			T t = (T) params.get(pParameter);
 			if (t == null) {
 				throw new IllegalArgumentException("No parameter " + pParameter);
 			} else {
@@ -140,7 +140,7 @@ public class LycheeContext extends EmptyContainer {
 
 		@Nullable
 		public <T> T getOptionalParameter(LootContextParam<T> pParameter) {
-			return (T) this.params.get(pParameter);
+			return (T) params.get(pParameter);
 		}
 
 		public LycheeContext create(LootContextParamSet pParameterSet) {
@@ -148,7 +148,7 @@ public class LycheeContext extends EmptyContainer {
 			//			if (false && !set.isEmpty()) { // Forge: Allow mods to pass custom loot parameters (not part of the vanilla loot table) to the loot context.
 			//				throw new IllegalArgumentException("Parameters not allowed in this parameter set: " + set);
 			//			} else {
-			Set<LootContextParam<?>> set1 = Sets.difference(pParameterSet.getRequired(), this.params.keySet());
+			Set<LootContextParam<?>> set1 = Sets.difference(pParameterSet.getRequired(), params.keySet());
 			if (!set1.isEmpty()) {
 				throw new IllegalArgumentException("Missing required parameters: " + set1);
 			} else {
@@ -157,7 +157,7 @@ public class LycheeContext extends EmptyContainer {
 					random = new Random();
 				}
 
-				return new LycheeContext(random, level, this.params);
+				return new LycheeContext(random, level, params);
 			}
 			//			}
 		}

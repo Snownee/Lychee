@@ -22,6 +22,7 @@ import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.LUtil;
 
 public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHolder implements Recipe<C> {
 
@@ -115,7 +116,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 				int size = pBuffer.readVarInt();
 				for (int i = 0; i < size; i++) {
-					PostActionType<?> type = pBuffer.readRegistryIdUnsafe(LycheeRegistries.POST_ACTION);
+					PostActionType<?> type = LUtil.readRegistryId(LycheeRegistries.POST_ACTION, pBuffer);
 					PostAction action = type.fromNetwork(pBuffer);
 					action.conditionsFromNetwork(pBuffer);
 					recipe.addPostAction(action);
@@ -141,7 +142,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			pBuffer.writeVarInt(actions.size());
 			for (PostAction action : actions) {
 				PostActionType type = action.getType();
-				pBuffer.writeRegistryIdUnsafe(LycheeRegistries.POST_ACTION, type);
+				LUtil.writeRegistryId(LycheeRegistries.POST_ACTION, type, pBuffer);
 				type.toNetwork(action, pBuffer);
 				action.conditionsToNetwork(pBuffer);
 			}

@@ -15,6 +15,7 @@ import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.util.LUtil;
 
 public record Not(ContextualCondition condition) implements ContextualCondition {
 
@@ -64,7 +65,7 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 
 		@Override
 		public Not fromNetwork(FriendlyByteBuf buf) {
-			ContextualConditionType<?> type = buf.readRegistryIdUnsafe(LycheeRegistries.CONTEXTUAL);
+			ContextualConditionType<?> type = LUtil.readRegistryId(LycheeRegistries.CONTEXTUAL, buf);
 			return new Not(type.fromNetwork(buf));
 		}
 
@@ -72,7 +73,7 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 		@Override
 		public void toNetwork(Not condition, FriendlyByteBuf buf) {
 			ContextualConditionType type = condition.condition.getType();
-			buf.writeRegistryIdUnsafe(LycheeRegistries.CONTEXTUAL, type);
+			LUtil.writeRegistryId(LycheeRegistries.CONTEXTUAL, type, buf);
 			type.toNetwork(condition.condition, buf);
 		}
 
