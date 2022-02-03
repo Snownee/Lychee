@@ -24,7 +24,7 @@
 
 ## Recipe types
 
-### Use item on a block (`lychee:block_interacting`)
+### Use item on a block
 
 Event when a player uses item on a block.
 
@@ -86,7 +86,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 	}
 	```
 
-### Click on a block with item (`lychee:block_clicking`)
+### Click on a block with item
 
 Event when a player click on a block with item.
 
@@ -102,7 +102,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
     | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient)         |
     | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate) |
 
-### Item entity burning (`lychee:item_burning`)
+### Item entity burning
 
 Event when an item entity is burnt.
 
@@ -140,7 +140,7 @@ Default behavior: item is consumed.
 	}
 	```
 
-### Item entity inside a block (`lychee:item_inside`)
+### Item entity inside a block
 
 Event when an item entity is inside a block. This will be tested every second.
 
@@ -150,10 +150,11 @@ Default behavior: item is consumed.
 
 ??? note "Format"
 
-    | Name    | Description      | Type / Literal                            |
-    | ------- | ---------------- | ----------------------------------------- |
-    | type    | type             | "lychee:item_inside"                      |
-    | item_in | the ticking item | [Ingredient](general-types.md#ingredient) |
+    | Name    | Description                        | Type / Literal                            |
+    | ------- | ---------------------------------- | ----------------------------------------- |
+    | type    | type                               | "lychee:item_inside"                      |
+    | item_in | the ticking item                   | [Ingredient](general-types.md#ingredient) |
+    | time    | (optional) waiting time in seconds | int                                       |
 
 ??? example
 
@@ -184,7 +185,7 @@ Default behavior: item is consumed.
 	}
 	```
 
-### Anvil crafting (`lychee:anvil_crafting`)
+### Anvil crafting
 
 It is not recommended to add contextual conditions or actions to the recipe, because JEI/REI does not support drawing extra things on an anvil recipe.
 

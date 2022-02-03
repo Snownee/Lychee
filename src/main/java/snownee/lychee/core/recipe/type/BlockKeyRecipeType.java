@@ -99,6 +99,9 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 					prevRecipe = (T) recipe;
 					if (tryMatchAndApply(prevRecipe, level, ctx, stack)) {
 						return Optional.of(prevRecipe);
+					} else {
+						((LycheeCounter) entity).lychee$setRecipeId(null);
+						((LycheeCounter) entity).lychee$setCount(0);
 					}
 				}
 			}
