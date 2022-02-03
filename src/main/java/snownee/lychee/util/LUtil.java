@@ -63,7 +63,11 @@ public class LUtil {
 
 	@OnlyIn(Dist.CLIENT)
 	public static MutableComponent format(String s, Object... objects) {
-		return new TextComponent(MessageFormat.format(I18n.get(s), objects));
+		try {
+			return new TextComponent(MessageFormat.format(I18n.get(s), objects));
+		} catch (Exception e) {
+			return new TranslatableComponent(s, objects);
+		}
 	}
 
 	public static MutableComponent white(CharSequence s) {
