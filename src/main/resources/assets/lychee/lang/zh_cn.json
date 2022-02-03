@@ -45,5 +45,13 @@
 "tip.lychee.block_interacting": "在方块上使用",
 "tip.lychee.block_clicking": "点击方块",
 "tip.lychee.prevent_default.default": "不会被消耗",
-"tip.lychee.sec": "{0}秒"
+"tip.lychee.sec": "{0}秒",
+"structure.igloo": "雪屋",
+"structure.village": "村庄",
+"structure.mansion": "林地府邸",
+"structure.stronghold": "要塞",
+"structure.endcity": "末地城",
+"structure.swamp_hut": "女巫小屋",
+"structure.mineshaft": "废弃矿井",
+"structure.fortress": "下界要塞"
 }

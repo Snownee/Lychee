@@ -62,6 +62,16 @@ public class LUtil {
 	}
 
 	@OnlyIn(Dist.CLIENT)
+	public static MutableComponent getStructureDisplayName(String rawName) {
+		String key = "structure." + rawName;
+		if (I18n.exists(key)) {
+			return new TranslatableComponent(key);
+		} else {
+			return new TextComponent(capitaliseAllWords(rawName));
+		}
+	}
+
+	@OnlyIn(Dist.CLIENT)
 	public static MutableComponent format(String s, Object... objects) {
 		try {
 			return new TextComponent(MessageFormat.format(I18n.get(s), objects));
