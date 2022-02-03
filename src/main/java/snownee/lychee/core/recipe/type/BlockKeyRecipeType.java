@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -15,8 +14,10 @@ import com.google.common.collect.Multimap;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -29,6 +30,8 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
+import snownee.lychee.core.recipe.LycheeCounter;
+import snownee.lychee.util.LUtil;
 import snownee.lychee.util.Pair;
 
 public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockRecipe<C>> extends LycheeRecipeType<C, T> {
@@ -69,8 +72,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 		return Pair.of(state, most.getValue().size());
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Optional<T> process(Entity entity, ItemStack stack, BlockPos pos, Vec3 origin, Consumer<LycheeContext.Builder> builderConsumer) {
+	public Optional<T> process(Entity entity, ItemStack stack, BlockPos pos, Vec3 origin, LycheeContext.Builder<C> ctxBuilder) {
 		if (isEmpty()) {
 			return Optional.empty();
 		}
@@ -80,29 +82,49 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
 			return Optional.empty();
 		}
-		LycheeContext.Builder builder = new LycheeContext.Builder(level);
-		builder.withParameter(LootContextParams.ORIGIN, origin);
-		builder.withParameter(LootContextParams.THIS_ENTITY, entity);
-		builder.withParameter(LootContextParams.BLOCK_STATE, blockstate);
-		builder.withParameter(LycheeLootContextParams.BLOCK_POS, pos);
+		ctxBuilder.withParameter(LootContextParams.ORIGIN, origin);
+		ctxBuilder.withParameter(LootContextParams.THIS_ENTITY, entity);
+		ctxBuilder.withParameter(LootContextParams.BLOCK_STATE, blockstate);
+		ctxBuilder.withParameter(LycheeLootContextParams.BLOCK_POS, pos);
 		if (blockstate.hasBlockEntity()) {
-			builder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
+			ctxBuilder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
 		}
-		if (builderConsumer != null)
-			builderConsumer.accept(builder);
-		LycheeContext ctx = builder.create(contextParamSet);
-		for (T recipe : Iterables.concat(recipes, anyBlockRecipes)) {
-			if (tryMatch((ItemAndBlockRecipe) recipe, level, ctx).isPresent()) {
-				if (!level.isClientSide) {
-					int times = recipe.isRepeatable() ? stack.getCount() : 1;
-					if (recipe.applyPostActions(ctx, times)) {
-						stack.shrink(times);
+		C ctx = ctxBuilder.create(contextParamSet);
+		T prevRecipe = null;
+		{
+			ResourceLocation prevRecipeId = ((LycheeCounter) entity).lychee$getRecipeId();
+			if (prevRecipeId != null) {
+				Recipe<?> recipe = LUtil.recipe(prevRecipeId);
+				if (recipe != null && recipe.getType() == this) {
+					prevRecipe = (T) recipe;
+					if (tryMatchAndApply(prevRecipe, level, ctx, stack)) {
+						return Optional.of(prevRecipe);
 					}
 				}
+			}
+		}
+		for (T recipe : Iterables.concat(recipes, anyBlockRecipes)) {
+			if (recipe == prevRecipe) {
+				continue;
+			}
+			if (tryMatchAndApply(recipe, level, ctx, stack)) {
 				return Optional.of(recipe);
 			}
 		}
 		return Optional.empty();
+	}
+
+	private boolean tryMatchAndApply(T recipe, Level level, C ctx, ItemStack stack) {
+		if (tryMatch(recipe, level, ctx).isPresent()) {
+			if (!level.isClientSide && recipe.tickOrApply(ctx)) {
+				int times = recipe.isRepeatable() ? stack.getCount() : 1;
+				if (recipe.applyPostActions(ctx, times)) {
+					stack.shrink(times);
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 
 }

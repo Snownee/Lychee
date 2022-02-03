@@ -82,7 +82,7 @@ public class LycheeContext extends EmptyContainer {
 		return cachedLootContext;
 	}
 
-	public static class Builder {
+	public static class Builder<C extends LycheeContext> {
 		protected final Map<LootContextParam<?>, Object> params = Maps.newIdentityHashMap();
 		protected Level level;
 		protected Random random;
@@ -91,12 +91,12 @@ public class LycheeContext extends EmptyContainer {
 			this.level = level;
 		}
 
-		public Builder withRandom(Random pRandom) {
+		public Builder<C> withRandom(Random pRandom) {
 			random = pRandom;
 			return this;
 		}
 
-		public Builder withOptionalRandomSeed(long pSeed) {
+		public Builder<C> withOptionalRandomSeed(long pSeed) {
 			if (pSeed != 0L) {
 				random = new Random(pSeed);
 			}
@@ -104,7 +104,7 @@ public class LycheeContext extends EmptyContainer {
 			return this;
 		}
 
-		public Builder withOptionalRandomSeed(long pSeed, Random pRandom) {
+		public Builder<C> withOptionalRandomSeed(long pSeed, Random pRandom) {
 			if (pSeed == 0L) {
 				random = pRandom;
 			} else {
@@ -114,12 +114,12 @@ public class LycheeContext extends EmptyContainer {
 			return this;
 		}
 
-		public <T> Builder withParameter(LootContextParam<T> pParameter, T pValue) {
+		public <T> Builder<C> withParameter(LootContextParam<T> pParameter, T pValue) {
 			params.put(pParameter, pValue);
 			return this;
 		}
 
-		public <T> Builder withOptionalParameter(LootContextParam<T> pParameter, @Nullable T pValue) {
+		public <T> Builder<C> withOptionalParameter(LootContextParam<T> pParameter, @Nullable T pValue) {
 			if (pValue == null) {
 				params.remove(pParameter);
 			} else {
@@ -143,7 +143,7 @@ public class LycheeContext extends EmptyContainer {
 			return (T) params.get(pParameter);
 		}
 
-		public LycheeContext create(LootContextParamSet pParameterSet) {
+		public C create(LootContextParamSet pParameterSet) {
 			//			Set<LootContextParam<?>> set = Sets.difference(this.params.keySet(), pParameterSet.getAllowed());
 			//			if (false && !set.isEmpty()) { // Forge: Allow mods to pass custom loot parameters (not part of the vanilla loot table) to the loot context.
 			//				throw new IllegalArgumentException("Parameters not allowed in this parameter set: " + set);
@@ -157,7 +157,7 @@ public class LycheeContext extends EmptyContainer {
 					random = new Random();
 				}
 
-				return new LycheeContext(random, level, params);
+				return (C) new LycheeContext(random, level, params);
 			}
 			//			}
 		}

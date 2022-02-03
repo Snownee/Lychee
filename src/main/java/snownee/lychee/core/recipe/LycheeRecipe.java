@@ -86,6 +86,11 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		return repeatable;
 	}
 
+	// true to apply
+	public boolean tickOrApply(C ctx) {
+		return true;
+	}
+
 	@Override
 	public abstract LycheeRecipeType<?, ?> getType();
 

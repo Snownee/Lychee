@@ -23,7 +23,7 @@ public class AnvilContext extends LycheeContext {
 		this.name = name;
 	}
 
-	public static class Builder extends LycheeContext.Builder {
+	public static class Builder extends LycheeContext.Builder<AnvilContext> {
 
 		private final ItemStack left;
 		private final ItemStack right;

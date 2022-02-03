@@ -19,11 +19,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import snownee.lychee.Lychee;
 
 public class LUtil {
@@ -124,6 +127,14 @@ public class LUtil {
 
 	public static <T extends IForgeRegistryEntry<T>> void writeRegistryId(IForgeRegistry<T> registry, T entry, FriendlyByteBuf buf) {
 		LUtil.writeRegistryId(registry, entry, buf);
+	}
+
+	public static RecipeManager recipeManager() {
+		return ServerLifecycleHooks.getCurrentServer().getRecipeManager();
+	}
+
+	public static Recipe<?> recipe(ResourceLocation id) {
+		return recipeManager().byKey(id).orElse(null);
 	}
 
 }

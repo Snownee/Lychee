@@ -69,7 +69,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	public static void on(ItemEntity entity) {
-		LycheeContext.Builder builder = new LycheeContext.Builder(entity.level);
+		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(entity.level);
 		builder.withParameter(LootContextParams.ORIGIN, entity.position());
 		builder.withParameter(LootContextParams.THIS_ENTITY, entity);
 		LycheeContext ctx = builder.create(RecipeTypes.ITEM_BURNING.contextParamSet);

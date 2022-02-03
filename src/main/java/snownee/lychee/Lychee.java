@@ -22,6 +22,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualConditionType;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
@@ -64,9 +65,9 @@ public final class Lychee {
 
 	public static void useItemOn(PlayerInteractEvent.RightClickBlock event) {
 		ItemStack stack = event.getItemStack();
-		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(event.getPlayer(), stack, event.getPos(), event.getHitVec().getLocation(), builder -> {
-			builder.withParameter(LootContextParams.TOOL, stack);
-		});
+		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(event.getWorld());
+		builder.withParameter(LootContextParams.TOOL, stack);
+		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(event.getPlayer(), stack, event.getPos(), event.getHitVec().getLocation(), builder);
 		if (result.isPresent()) {
 			event.setCanceled(true);
 			event.setCancellationResult(InteractionResult.sidedSuccess(event.getWorld().isClientSide));
@@ -75,10 +76,10 @@ public final class Lychee {
 
 	public static void clickItemOn(PlayerInteractEvent.LeftClickBlock event) {
 		ItemStack stack = event.getItemStack();
+		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(event.getWorld());
+		builder.withParameter(LootContextParams.TOOL, stack);
 		Vec3 vec = Vec3.atCenterOf(event.getPos());
-		Optional<BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(event.getPlayer(), stack, event.getPos(), vec, builder -> {
-			builder.withParameter(LootContextParams.TOOL, stack);
-		});
+		Optional<BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(event.getPlayer(), stack, event.getPos(), vec, builder);
 		if (result.isPresent()) {
 			event.setCanceled(true);
 			event.setCancellationResult(InteractionResult.sidedSuccess(event.getWorld().isClientSide));

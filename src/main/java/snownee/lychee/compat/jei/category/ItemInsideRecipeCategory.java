@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
@@ -17,6 +19,8 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
+import snownee.lychee.item_inside.ItemInsideRecipe;
+import snownee.lychee.util.LUtil;
 import snownee.lychee.util.Pair;
 
 public class ItemInsideRecipeCategory<T extends ItemAndBlockRecipe<LycheeContext>> extends ItemAndBlockBaseCategory<LycheeContext, T> {
@@ -59,6 +63,15 @@ public class ItemInsideRecipeCategory<T extends ItemAndBlockRecipe<LycheeContext
 	@Nullable
 	public BlockPredicate getInputBlock(T recipe) {
 		return recipe.getBlock();
+	}
+
+	@Override
+	public void drawExtra(T recipe, PoseStack matrixStack, double mouseX, double mouseY) {
+		super.drawExtra(recipe, matrixStack, mouseX, mouseY);
+		ItemInsideRecipe insideRecipe = (ItemInsideRecipe) recipe;
+		if (insideRecipe.getTime() > 0) {
+			Minecraft.getInstance().font.draw(matrixStack, LUtil.format("tip.lychee.sec", insideRecipe.getTime()), 0, 0, 0);
+		}
 	}
 
 }

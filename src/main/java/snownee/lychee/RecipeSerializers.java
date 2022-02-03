@@ -16,7 +16,7 @@ public final class RecipeSerializers {
 	}
 
 	public static final RecipeSerializer<ItemBurningRecipe> ITEM_BURNING = register("item_burning", new ItemBurningRecipe.Serializer());
-	public static final RecipeSerializer<ItemInsideRecipe> ITEM_INSIDE = register("item_inside", new ItemAndBlockRecipe.Serializer<>(ItemInsideRecipe::new));
+	public static final RecipeSerializer<ItemInsideRecipe> ITEM_INSIDE = register("item_inside", new ItemInsideRecipe.Serializer());
 	public static final RecipeSerializer<BlockInteractingRecipe> BLOCK_INTERACTING = register("block_interacting", new ItemAndBlockRecipe.Serializer<>(BlockInteractingRecipe::new));
 	public static final RecipeSerializer<BlockInteractingRecipe> BLOCK_CLICKING = register("block_clicking", new ItemAndBlockRecipe.Serializer<>(BlockClickingRecipe::new));
 	public static final RecipeSerializer<AnvilCraftingRecipe> ANVIL_CRAFTING = register("anvil_crafting", new AnvilCraftingRecipe.Serializer());

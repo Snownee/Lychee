@@ -44,5 +44,6 @@
 "tip.lychee.nbtPredicate": "Has NBT predicate",
 "tip.lychee.block_interacting": "Use on block",
 "tip.lychee.block_clicking": "Click on block",
-"tip.lychee.prevent_default.default": "Will not be consumed"
+"tip.lychee.prevent_default.default": "Will not be consumed",
+"tip.lychee.sec": "{0}s"
 }
