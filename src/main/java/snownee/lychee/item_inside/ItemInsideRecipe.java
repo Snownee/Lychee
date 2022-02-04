@@ -5,13 +5,13 @@ import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
 import snownee.lychee.core.recipe.LycheeCounter;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
 public class ItemInsideRecipe extends ItemAndBlockRecipe<LycheeContext> {
@@ -23,7 +23,7 @@ public class ItemInsideRecipe extends ItemAndBlockRecipe<LycheeContext> {
 	}
 
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public LycheeRecipe.Serializer<?> getSerializer() {
 		return RecipeSerializers.ITEM_INSIDE;
 	}
 

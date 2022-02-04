@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
@@ -31,7 +30,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public LycheeRecipe.Serializer<?> getSerializer() {
 		return RecipeSerializers.ITEM_BURNING;
 	}
 

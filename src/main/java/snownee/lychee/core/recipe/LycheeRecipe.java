@@ -94,6 +94,9 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	@Override
 	public abstract LycheeRecipeType<?, ?> getType();
 
+	@Override
+	public abstract Serializer<?> getSerializer();
+
 	public static abstract class Serializer<R extends LycheeRecipe<?>> extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<R> {
 
 		protected final Function<ResourceLocation, R> factory;
