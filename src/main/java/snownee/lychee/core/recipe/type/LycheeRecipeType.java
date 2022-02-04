@@ -1,18 +1,20 @@
 package snownee.lychee.core.recipe.type;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
@@ -20,13 +22,14 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
-import snownee.lychee.mixin.RecipeManagerAccess;
+import snownee.lychee.util.LUtil;
 
 public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>> implements RecipeType<T> {
 	public final ResourceLocation id;
 	public final Class<? extends T> clazz;
 	public final LootContextParamSet contextParamSet;
 	private boolean empty;
+	protected List<T> recipes;
 
 	public static final Component DEFAULT_PREVENT_TIP = new TranslatableComponent("tip.lychee.prevent_default.default").withStyle(ChatFormatting.YELLOW);
 
@@ -48,21 +51,29 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 		return pRecipe.matches(pContainer, pLevel) && lycheeRecipe.checkConditions(lycheeRecipe, (C) pContainer, 1) > 0 ? Optional.of(lycheeRecipe) : Optional.empty();
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Collection<T> recipes(RecipeManager recipeManager) {
-		return (Collection) ((RecipeManagerAccess) recipeManager).callByType(this).values();
+	public List<T> recipes() {
+		return recipes;
 	}
 
-	public void updateEmptyState(RecipeManager recipeManager) {
-		empty = recipes(recipeManager).isEmpty();
+	public void updateEmptyState() {
+		empty = recipes.isEmpty();
 	}
 
 	public boolean isEmpty() {
 		return empty;
 	}
 
-	public void buildCache(RecipeManager recipeManager) {
+	public void buildCache() {
+		recipes = Lists.newLinkedList(LUtil.recipes(this));
+		if (clazz.isAssignableFrom(Comparable.class)) {
+			recipes.sort(null);
+		}
+	}
 
+	public Optional<T> findFirst(C ctx, Level level) {
+		return recipes.stream().flatMap($ -> {
+			return Util.toStream(tryMatch($, level, ctx));
+		}).findFirst();
 	}
 
 	public Component getPreventDefaultDescription(LycheeRecipe<?> recipe) {

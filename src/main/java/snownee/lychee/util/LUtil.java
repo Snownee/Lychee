@@ -1,6 +1,7 @@
 package snownee.lychee.util;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -21,16 +22,18 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import snownee.lychee.Lychee;
+import snownee.lychee.mixin.RecipeManagerAccess;
 
 public class LUtil {
 	private static final Random RANDOM = new Random();
+	private static RecipeManager recipeManager;
 
 	public static void dropItemStack(Level pLevel, double pX, double pY, double pZ, ItemStack pStack, @Nullable Consumer<ItemEntity> extraStep) {
 		while (!pStack.isEmpty()) {
@@ -144,11 +147,20 @@ public class LUtil {
 	}
 
 	public static RecipeManager recipeManager() {
-		return ServerLifecycleHooks.getCurrentServer().getRecipeManager();
+		return recipeManager;
+	}
+
+	public static void setRecipeManager(RecipeManager recipeManager) {
+		LUtil.recipeManager = recipeManager;
 	}
 
 	public static Recipe<?> recipe(ResourceLocation id) {
 		return recipeManager().byKey(id).orElse(null);
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static <T extends Recipe<?>> Collection<T> recipes(RecipeType<T> type) {
+		return ((RecipeManagerAccess) recipeManager()).callByType((RecipeType) type).values();
 	}
 
 }

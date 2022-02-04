@@ -28,6 +28,7 @@ import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.interaction.BlockClickingRecipe;
 import snownee.lychee.interaction.BlockInteractingRecipe;
+import snownee.lychee.util.LUtil;
 
 @Mod(Lychee.ID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
@@ -87,19 +88,21 @@ public final class Lychee {
 	}
 
 	public static void onRecipesLoaded(RecipeManager recipeManager) {
-		RecipeTypes.ALL.forEach($ -> $.updateEmptyState(recipeManager));
-		RecipeTypes.ALL.forEach($ -> $.buildCache(recipeManager));
+		LUtil.setRecipeManager(recipeManager);
+		RecipeTypes.ALL.forEach(LycheeRecipeType::buildCache);
+		RecipeTypes.ALL.forEach(LycheeRecipeType::updateEmptyState);
 	}
 
 	public static void onRecipesReplaced(RecipeManager recipeManager, Iterable<Recipe<?>> pRecipes) {
+		LUtil.setRecipeManager(recipeManager);
 		Set<RecipeType<?>> types = Sets.newHashSet();
 		for (Recipe<?> recipe : pRecipes) {
 			types.add(recipe.getType());
 		}
 		for (RecipeType<?> type : types) {
 			if (RecipeTypes.ALL.contains(type)) {
-				((LycheeRecipeType<?, ?>) type).updateEmptyState(recipeManager);
-				((LycheeRecipeType<?, ?>) type).buildCache(recipeManager);
+				((LycheeRecipeType<?, ?>) type).updateEmptyState();
+				((LycheeRecipeType<?, ?>) type).buildCache();
 			}
 		}
 	}

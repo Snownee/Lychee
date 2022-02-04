@@ -1,7 +1,9 @@
 package snownee.lychee.core.recipe.type;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
@@ -10,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -18,7 +21,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -36,7 +38,7 @@ import snownee.lychee.util.Pair;
 
 public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockRecipe<C>> extends LycheeRecipeType<C, T> {
 
-	protected final Multimap<Block, T> multimap = HashMultimap.create();
+	protected final Map<Block, List<T>> recipesByBlock = Maps.newHashMap();
 	protected final List<T> anyBlockRecipes = Lists.newLinkedList();
 
 	public BlockKeyRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet paramSet) {
@@ -44,10 +46,12 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 	}
 
 	@Override
-	public void buildCache(RecipeManager recipeManager) {
-		multimap.clear();
+	public void buildCache() {
+		recipesByBlock.clear();
 		anyBlockRecipes.clear();
-		for (T recipe : recipes(recipeManager)) {
+		super.buildCache();
+		Multimap<Block, T> multimap = HashMultimap.create();
+		for (T recipe : recipes) {
 			if (recipe.getBlock() == BlockPredicate.ANY) {
 				anyBlockRecipes.add(recipe);
 				continue;
@@ -56,11 +60,16 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 				multimap.put(block, recipe);
 			}
 		}
+		for (Entry<Block, Collection<T>> e : multimap.asMap().entrySet()) {
+			List<T> list = Lists.newArrayList(e.getValue());
+			list.sort(null);
+			recipesByBlock.put(e.getKey(), list);
+		}
 	}
 
 	public Pair<BlockState, Integer> getMostUsedBlock() {
-		Entry<Block, Collection<T>> most = null;
-		for (Entry<Block, Collection<T>> entry : multimap.asMap().entrySet()) {
+		Entry<Block, List<T>> most = null;
+		for (Entry<Block, List<T>> entry : recipesByBlock.entrySet()) {
 			if (most == null || most.getValue().size() < entry.getValue().size()) {
 				most = entry;
 			}
@@ -78,7 +87,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 		}
 		Level level = entity.level;
 		BlockState blockstate = level.getBlockState(pos);
-		Collection<T> recipes = multimap.get(blockstate.getBlock());
+		Collection<T> recipes = recipesByBlock.getOrDefault(blockstate.getBlock(), Collections.EMPTY_LIST);
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
 			return Optional.empty();
 		}

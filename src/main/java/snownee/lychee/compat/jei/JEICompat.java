@@ -17,10 +17,8 @@ import mezz.jei.api.registration.IModIngredientRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeManager;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
@@ -57,13 +55,12 @@ public class JEICompat implements IModPlugin {
 
 	@Override
 	public void registerRecipes(IRecipeRegistration registration) {
-		RecipeManager recipeManager = Minecraft.getInstance().getConnection().getRecipeManager();
-		registration.addRecipes(RecipeTypes.ITEM_BURNING.recipes(recipeManager), RecipeTypes.ITEM_BURNING.id);
-		registration.addRecipes(RecipeTypes.ITEM_INSIDE.recipes(recipeManager), RecipeTypes.ITEM_INSIDE.id);
-		registration.addRecipes(RecipeTypes.BLOCK_INTERACTING.recipes(recipeManager), RecipeTypes.BLOCK_INTERACTING.id);
-		registration.addRecipes(RecipeTypes.BLOCK_CLICKING.recipes(recipeManager), RecipeTypes.BLOCK_INTERACTING.id);
+		registration.addRecipes(RecipeTypes.ITEM_BURNING.recipes(), RecipeTypes.ITEM_BURNING.id);
+		registration.addRecipes(RecipeTypes.ITEM_INSIDE.recipes(), RecipeTypes.ITEM_INSIDE.id);
+		registration.addRecipes(RecipeTypes.BLOCK_INTERACTING.recipes(), RecipeTypes.BLOCK_INTERACTING.id);
+		registration.addRecipes(RecipeTypes.BLOCK_CLICKING.recipes(), RecipeTypes.BLOCK_INTERACTING.id);
 
-		List<IJeiAnvilRecipe> recipes = RecipeTypes.ANVIL_CRAFTING.recipes(recipeManager).stream().filter($ -> {
+		List<IJeiAnvilRecipe> recipes = RecipeTypes.ANVIL_CRAFTING.recipes().stream().filter($ -> {
 			return !$.getResultItem().isEmpty() && !$.isSpecial();
 		}).map($ -> {
 			List<ItemStack> right = List.of($.getRight().getItems()).stream().map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
