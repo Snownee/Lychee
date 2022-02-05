@@ -20,7 +20,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -31,12 +30,13 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.recipe.ItemAndBlockRecipe;
+import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.LycheeCounter;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.Pair;
 
-public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockRecipe<C>> extends LycheeRecipeType<C, T> {
+public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<C> & BlockKeyRecipe> extends LycheeRecipeType<C, T> {
 
 	protected final Map<Block, List<T>> recipesByBlock = Maps.newHashMap();
 	protected final List<T> anyBlockRecipes = Lists.newLinkedList();
@@ -85,6 +85,11 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 		if (isEmpty()) {
 			return Optional.empty();
 		}
+		ResourceLocation prevRecipeId = null;
+		if (entity instanceof LycheeCounter) {
+			prevRecipeId = ((LycheeCounter) entity).lychee$getRecipeId();
+			((LycheeCounter) entity).lychee$setRecipeId(null);
+		}
 		Level level = entity.level;
 		BlockState blockstate = level.getBlockState(pos);
 		Collection<T> recipes = recipesByBlock.getOrDefault(blockstate.getBlock(), Collections.EMPTY_LIST);
@@ -99,44 +104,26 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends ItemAndBlockR
 			ctxBuilder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
 		}
 		C ctx = ctxBuilder.create(contextParamSet);
-		T prevRecipe = null;
-		{
-			ResourceLocation prevRecipeId = ((LycheeCounter) entity).lychee$getRecipeId();
-			if (prevRecipeId != null) {
-				Recipe<?> recipe = LUtil.recipe(prevRecipeId);
-				if (recipe != null && recipe.getType() == this) {
-					prevRecipe = (T) recipe;
-					if (tryMatchAndApply(prevRecipe, level, ctx, stack)) {
-						return Optional.of(prevRecipe);
-					} else {
-						((LycheeCounter) entity).lychee$setRecipeId(null);
-						((LycheeCounter) entity).lychee$setCount(0);
+		T prevRecipe = (T) Optional.ofNullable(prevRecipeId).map(LUtil::recipe).filter($ -> $.getType() == this).orElse(null);
+		Iterable<T> iterable = Iterables.concat(recipes, anyBlockRecipes);
+		if (prevRecipe != null) {
+			iterable = Iterables.concat(List.of(prevRecipe), Iterables.filter(iterable, $ -> $ != prevRecipe));
+		}
+		for (T recipe : iterable) {
+			if (tryMatch(recipe, level, ctx).isPresent()) {
+				if (entity instanceof LycheeCounter) {
+					((LycheeCounter) entity).lychee$update(prevRecipeId, recipe);
+				}
+				if (!level.isClientSide && recipe.tickOrApply(ctx)) {
+					int times = recipe.isRepeatable() ? stack.getCount() : 1;
+					if (recipe.applyPostActions(ctx, times)) {
+						stack.shrink(times);
 					}
 				}
-			}
-		}
-		for (T recipe : Iterables.concat(recipes, anyBlockRecipes)) {
-			if (recipe == prevRecipe) {
-				continue;
-			}
-			if (tryMatchAndApply(recipe, level, ctx, stack)) {
 				return Optional.of(recipe);
 			}
 		}
 		return Optional.empty();
-	}
-
-	private boolean tryMatchAndApply(T recipe, Level level, C ctx, ItemStack stack) {
-		if (tryMatch(recipe, level, ctx).isPresent()) {
-			if (!level.isClientSide && recipe.tickOrApply(ctx)) {
-				int times = recipe.isRepeatable() ? stack.getCount() : 1;
-				if (recipe.applyPostActions(ctx, times)) {
-					stack.shrink(times);
-				}
-			}
-			return true;
-		}
-		return false;
 	}
 
 }

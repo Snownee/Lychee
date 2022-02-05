@@ -9,12 +9,13 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
 import snownee.lychee.core.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
-public class ItemInsideRecipe extends ItemAndBlockRecipe<LycheeContext> {
+public class ItemInsideRecipe extends ItemAndBlockRecipe<LycheeContext> implements BlockKeyRecipe {
 
 	private int time;
 
@@ -38,21 +39,10 @@ public class ItemInsideRecipe extends ItemAndBlockRecipe<LycheeContext> {
 
 	@Override
 	public boolean tickOrApply(LycheeContext ctx) {
-		if (time == 0) {
-			return true;
-		}
 		LycheeCounter entity = (LycheeCounter) ctx.getParam(LootContextParams.THIS_ENTITY);
-		ResourceLocation recipeId = entity.lychee$getRecipeId();
-		if (getId().equals(recipeId)) {
-			int ticks = entity.lychee$getCount();
-			if (ticks >= time) {
-				entity.lychee$setRecipeId(null);
-				entity.lychee$setCount(0);
-				return true;
-			}
-			entity.lychee$setCount(ticks + 1);
-		} else {
-			entity.lychee$setRecipeId(getId());
+		if (entity.lychee$getCount() >= time) {
+			entity.lychee$setRecipeId(null);
+			return true;
 		}
 		return false;
 	}

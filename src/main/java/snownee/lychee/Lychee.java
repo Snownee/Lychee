@@ -1,19 +1,15 @@
 package snownee.lychee;
 
 import java.util.Optional;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.google.common.collect.Sets;
 
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
@@ -25,7 +21,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualConditionType;
 import snownee.lychee.core.post.PostActionType;
-import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.interaction.BlockClickingRecipe;
 import snownee.lychee.interaction.BlockInteractingRecipe;
 import snownee.lychee.util.LUtil;
@@ -89,22 +84,10 @@ public final class Lychee {
 
 	public static void onRecipesLoaded(RecipeManager recipeManager) {
 		LUtil.setRecipeManager(recipeManager);
-		RecipeTypes.ALL.forEach(LycheeRecipeType::buildCache);
-		RecipeTypes.ALL.forEach(LycheeRecipeType::updateEmptyState);
 	}
 
 	public static void onRecipesReplaced(RecipeManager recipeManager, Iterable<Recipe<?>> pRecipes) {
 		LUtil.setRecipeManager(recipeManager);
-		Set<RecipeType<?>> types = Sets.newHashSet();
-		for (Recipe<?> recipe : pRecipes) {
-			types.add(recipe.getType());
-		}
-		for (RecipeType<?> type : types) {
-			if (RecipeTypes.ALL.contains(type)) {
-				((LycheeRecipeType<?, ?>) type).updateEmptyState();
-				((LycheeRecipeType<?, ?>) type).buildCache();
-			}
-		}
 	}
 
 }

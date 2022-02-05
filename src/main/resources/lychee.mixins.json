@@ -19,8 +19,10 @@
     "TimeCheckAccess",
     "AnvilMenuMixin",
     "EntityMixin",
+    "FallingBlockEntityMixin",
     "ItemEntityMixin",
-    "RecipeManagerMixin"
+    "RecipeManagerMixin",
+    "TagContainerMixin"
   ],
   "client": [
     "GameRendererAccess"

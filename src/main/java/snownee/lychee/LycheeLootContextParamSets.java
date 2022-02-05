@@ -25,4 +25,8 @@ public final class LycheeLootContextParamSets {
 		$.required(LootContextParams.ORIGIN).required(LootContextParams.THIS_ENTITY).optional(LootContextParams.BLOCK_STATE).optional(LycheeLootContextParams.BLOCK_POS).optional(LootContextParams.BLOCK_ENTITY);
 	});
 
+	public static final LootContextParamSet BLOCK_CRUSHING = LootContextParamSetsAccess.callRegister("lychee:block_crushing", $ -> {
+		$.required(LootContextParams.ORIGIN).required(LootContextParams.THIS_ENTITY).required(LootContextParams.BLOCK_STATE).required(LycheeLootContextParams.BLOCK_POS).optional(LootContextParams.BLOCK_ENTITY);
+	});
+
 }
