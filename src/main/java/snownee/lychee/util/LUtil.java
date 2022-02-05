@@ -1,6 +1,7 @@
 package snownee.lychee.util;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -22,11 +23,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
+import snownee.lychee.mixin.RecipeManagerAccess;
 
 public class LUtil {
 	private static final Random RANDOM = new Random();
+	private static RecipeManager recipeManager;
 
 	public static void dropItemStack(Level pLevel, double pX, double pY, double pZ, ItemStack pStack, @Nullable Consumer<ItemEntity> extraStep) {
 		while (!pStack.isEmpty()) {
@@ -58,8 +64,22 @@ public class LUtil {
 	}
 
 	@Environment(EnvType.CLIENT)
+	public static MutableComponent getStructureDisplayName(String rawName) {
+		String key = "structure." + rawName;
+		if (I18n.exists(key)) {
+			return new TranslatableComponent(key);
+		} else {
+			return new TextComponent(capitaliseAllWords(rawName));
+		}
+	}
+
+	@Environment(EnvType.CLIENT)
 	public static MutableComponent format(String s, Object... objects) {
-		return new TextComponent(MessageFormat.format(I18n.get(s), objects));
+		try {
+			return new TextComponent(MessageFormat.format(I18n.get(s), objects));
+		} catch (Exception e) {
+			return new TranslatableComponent(s, objects);
+		}
 	}
 
 	public static MutableComponent white(CharSequence s) {
@@ -123,6 +143,23 @@ public class LUtil {
 
 	public static <T> void writeRegistryId(Registry<T> registry, T entry, FriendlyByteBuf buf) {
 		buf.writeVarInt(registry.getId(entry));
+	}
+
+	public static RecipeManager recipeManager() {
+		return recipeManager;
+	}
+
+	public static void setRecipeManager(RecipeManager recipeManager) {
+		LUtil.recipeManager = recipeManager;
+	}
+
+	public static Recipe<?> recipe(ResourceLocation id) {
+		return recipeManager().byKey(id).orElse(null);
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static <T extends Recipe<?>> Collection<T> recipes(RecipeType<T> type) {
+		return ((RecipeManagerAccess) recipeManager()).callByType((RecipeType) type).values();
 	}
 
 }

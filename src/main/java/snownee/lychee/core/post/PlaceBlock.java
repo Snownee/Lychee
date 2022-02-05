@@ -18,6 +18,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -38,9 +39,11 @@ import snownee.lychee.util.LUtil;
 public class PlaceBlock extends PostAction {
 
 	public final BlockPredicate block;
+	public final BlockPos offset;
 
-	public PlaceBlock(BlockPredicate block) {
+	public PlaceBlock(BlockPredicate block, BlockPos offset) {
 		this.block = block;
+		this.offset = offset;
 	}
 
 	@Override
@@ -55,6 +58,7 @@ public class PlaceBlock extends PostAction {
 		if (pos == null) {
 			pos = new BlockPos(ctx.getParam(LootContextParams.ORIGIN));
 		}
+		pos = pos.offset(offset);
 		ServerLevel level = ctx.getServerLevel();
 		BlockState oldState = level.getBlockState(pos);
 		BlockPredicateAccess access = (BlockPredicateAccess) block;
@@ -123,17 +127,25 @@ public class PlaceBlock extends PostAction {
 
 		@Override
 		public PlaceBlock fromJson(JsonObject o) {
-			return new PlaceBlock(BlockPredicateHelper.fromJson(o.get("block")));
+			int x = GsonHelper.getAsInt(o, "offsetX", 0);
+			int y = GsonHelper.getAsInt(o, "offsetY", 0);
+			int z = GsonHelper.getAsInt(o, "offsetZ", 0);
+			BlockPos offset = BlockPos.ZERO;
+			if (x != 0 || y != 0 || z != 0) {
+				offset = new BlockPos(x, y, z);
+			}
+			return new PlaceBlock(BlockPredicateHelper.fromJson(o.get("block")), offset);
 		}
 
 		@Override
 		public PlaceBlock fromNetwork(FriendlyByteBuf buf) {
-			return new PlaceBlock(BlockPredicateHelper.fromNetwork(buf));
+			return new PlaceBlock(BlockPredicateHelper.fromNetwork(buf), buf.readBlockPos());
 		}
 
 		@Override
 		public void toNetwork(PlaceBlock action, FriendlyByteBuf buf) {
 			BlockPredicateHelper.toNetwork(action.block, buf);
+			buf.writeBlockPos(action.offset);
 		}
 
 		@Override

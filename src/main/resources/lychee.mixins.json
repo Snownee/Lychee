@@ -20,7 +20,8 @@
     "AnvilMenuMixin",
     "EntityMixin",
     "ItemEntityMixin",
-    "RecipeManagerMixin"
+    "RecipeManagerMixin",
+    "TagContainerMixin"
   ],
   "client": [
     "GameRendererAccess"

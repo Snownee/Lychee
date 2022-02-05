@@ -107,6 +107,9 @@ public class BlockPredicateHelper {
 
 	public static BlockPredicate fromNetwork(FriendlyByteBuf pBuffer) {
 		int blockCount = pBuffer.readVarInt();
+		if (blockCount == -1) {
+			return BlockPredicate.ANY;
+		}
 		Set<Block> blocks = null;
 		if (blockCount > 0) {
 			blocks = Sets.newHashSet();
@@ -125,6 +128,10 @@ public class BlockPredicateHelper {
 	}
 
 	public static void toNetwork(BlockPredicate predicate, FriendlyByteBuf pBuffer) {
+		if (predicate == BlockPredicate.ANY) {
+			pBuffer.writeVarInt(-1);
+			return;
+		}
 		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
 		Set<Block> blocks = access.getBlocks();
 		if (blocks == null) {

@@ -18,12 +18,10 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry;
 import me.shedaniel.rei.plugin.common.displays.anvil.AnvilRecipe;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeManager;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.RecipeTypes;
@@ -64,13 +62,12 @@ public class REICompat implements REIClientPlugin {
 
 	@Override
 	public void registerDisplays(DisplayRegistry registration) {
-		RecipeManager recipeManager = Minecraft.getInstance().getConnection().getRecipeManager();
 		registration.registerRecipeFiller(RecipeTypes.ITEM_BURNING.clazz, RecipeTypes.ITEM_BURNING, ItemBurningDisplay::new);
 		registration.registerRecipeFiller(RecipeTypes.ITEM_INSIDE.clazz, RecipeTypes.ITEM_INSIDE, ItemInsideDisplay::new);
 		registration.registerRecipeFiller(RecipeTypes.BLOCK_INTERACTING.clazz, RecipeTypes.BLOCK_INTERACTING, BlockInteractionDisplay::new);
 		registration.registerRecipeFiller(RecipeTypes.BLOCK_CLICKING.clazz, RecipeTypes.BLOCK_CLICKING, BlockInteractionDisplay::new);
 
-		RecipeTypes.ANVIL_CRAFTING.recipes(recipeManager).stream().filter($ -> {
+		RecipeTypes.ANVIL_CRAFTING.recipes().stream().filter($ -> {
 			return !$.getResultItem().isEmpty() && !$.isSpecial();
 		}).map($ -> {
 			List<ItemStack> right = List.of($.getRight().getItems()).stream().map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();

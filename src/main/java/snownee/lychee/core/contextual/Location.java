@@ -24,7 +24,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Block;
@@ -257,7 +256,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		@Override
 		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
-			MutableComponent name = new TextComponent(LUtil.capitaliseAllWords(access.getFeature().getFeatureName())).withStyle(ChatFormatting.WHITE);
+			MutableComponent name = LUtil.getStructureDisplayName(access.getFeature().getFeatureName()).withStyle(ChatFormatting.WHITE);
 			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
 		}
 	}
