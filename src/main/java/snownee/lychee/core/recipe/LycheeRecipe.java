@@ -141,7 +141,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		@MustBeInvokedByOverriders
 		public void toNetwork(FriendlyByteBuf pBuffer, R pRecipe) {
 			pRecipe.conditionsToNetwork(pBuffer);
-			List<PostAction> actions = pRecipe.getShowingPostActions();
+			List<PostAction> actions = pRecipe.getPostActions();
 			pBuffer.writeVarInt(actions.size());
 			for (PostAction action : actions) {
 				PostActionType type = action.getType();
