@@ -24,7 +24,8 @@ import snownee.lychee.core.recipe.LycheeRecipe;
 
 public class Execute extends PostAction {
 
-	public static final Execute CLIENT_DUMMY = new Execute("", false);
+	public static final Execute DUMMY_SHOW = new Execute("", false);
+	public static final Execute DUMMY_HIDE = new Execute("", true);
 	public static final Component DEFAULT_NAME = new TextComponent(Lychee.ID);
 
 	private final String command;
@@ -90,12 +91,16 @@ public class Execute extends PostAction {
 
 		@Override
 		public Execute fromNetwork(FriendlyByteBuf buf) {
-			return buf.readBoolean() ? CLIENT_DUMMY : new Execute("", false);
+			if (buf.readBoolean()) {
+				return new Execute("", buf.readBoolean());
+			}
+			return buf.readBoolean() ? DUMMY_HIDE : DUMMY_SHOW;
 		}
 
 		@Override
 		public void toNetwork(Execute action, FriendlyByteBuf buf) {
 			buf.writeBoolean(action.getConditions().isEmpty());
+			buf.writeBoolean(action.hide);
 		}
 
 	}
