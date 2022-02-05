@@ -49,10 +49,13 @@ This action is not [repeatable](concepts.md#repeatability).
 
 ??? note "Format"
 
-    | Name  | Description            | Type / Literal                                    |
-    | ----- | ---------------------- | ------------------------------------------------- |
-    | type  | type                   | "place"                                           |
-    | block | the block being placed | [BlockPredicate](general-types.md#blockpredicate) |
+    | Name    | Description                    | Type / Literal                                    |
+    | ------- | ------------------------------ | ------------------------------------------------- |
+    | type    | type                           | "place"                                           |
+    | block   | the block being placed         | [BlockPredicate](general-types.md#blockpredicate) |
+    | offsetX | (optional) offsets to location | int                                               |
+    | offsetY | (optional) offsets to location | int                                               |
+    | offsetZ | (optional) offsets to location | int                                               |
 
 ??? example
 

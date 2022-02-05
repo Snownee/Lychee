@@ -14,19 +14,19 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import snownee.lychee.Lychee;
+import snownee.lychee.util.LUtil;
 
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
 
-	@Inject(at = @At("TAIL"), method = "apply")
+	@Inject(at = @At("HEAD"), method = "apply")
 	private void lychee_apply(Map<ResourceLocation, JsonElement> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler, CallbackInfo ci) {
-		Lychee.onRecipesLoaded((RecipeManager) (Object) this);
+		LUtil.setRecipeManager((RecipeManager) (Object) this);
 	}
 
-	@Inject(at = @At("TAIL"), method = "replaceRecipes")
+	@Inject(at = @At("HEAD"), method = "replaceRecipes")
 	private void lychee_replaceRecipes(Iterable<Recipe<?>> pRecipes, CallbackInfo ci) {
-		Lychee.onRecipesReplaced((RecipeManager) (Object) this, pRecipes);
+		LUtil.setRecipeManager((RecipeManager) (Object) this);
 	}
 
 }

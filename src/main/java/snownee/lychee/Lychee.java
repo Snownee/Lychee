@@ -7,8 +7,6 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -23,7 +21,6 @@ import snownee.lychee.core.contextual.ContextualConditionType;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.interaction.BlockClickingRecipe;
 import snownee.lychee.interaction.BlockInteractingRecipe;
-import snownee.lychee.util.LUtil;
 
 @Mod(Lychee.ID)
 @Mod.EventBusSubscriber(bus = Bus.MOD)
@@ -80,14 +77,6 @@ public final class Lychee {
 			event.setCanceled(true);
 			event.setCancellationResult(InteractionResult.sidedSuccess(event.getWorld().isClientSide));
 		}
-	}
-
-	public static void onRecipesLoaded(RecipeManager recipeManager) {
-		LUtil.setRecipeManager(recipeManager);
-	}
-
-	public static void onRecipesReplaced(RecipeManager recipeManager, Iterable<Recipe<?>> pRecipes) {
-		LUtil.setRecipeManager(recipeManager);
 	}
 
 }
