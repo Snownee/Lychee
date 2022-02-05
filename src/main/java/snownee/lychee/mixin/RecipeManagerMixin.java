@@ -19,12 +19,12 @@ import snownee.lychee.util.LUtil;
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
 
-	@Inject(at = @At("TAIL"), method = "apply")
+	@Inject(at = @At("HEAD"), method = "apply")
 	private void lychee_apply(Map<ResourceLocation, JsonElement> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler, CallbackInfo ci) {
 		LUtil.setRecipeManager((RecipeManager) (Object) this);
 	}
 
-	@Inject(at = @At("TAIL"), method = "replaceRecipes")
+	@Inject(at = @At("HEAD"), method = "replaceRecipes")
 	private void lychee_replaceRecipes(Iterable<Recipe<?>> pRecipes, CallbackInfo ci) {
 		LUtil.setRecipeManager((RecipeManager) (Object) this);
 	}
