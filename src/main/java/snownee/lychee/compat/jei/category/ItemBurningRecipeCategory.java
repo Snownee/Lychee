@@ -5,7 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,11 +22,6 @@ public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<LycheeCo
 	@Override
 	public BlockState getIconBlock() {
 		return Blocks.FIRE.defaultBlockState();
-	}
-
-	@Override
-	public void setInputs(ItemBurningRecipe recipe, IIngredients ingredients) {
-		ingredients.setInputIngredients(List.of(recipe.getInput()));
 	}
 
 	@Nullable

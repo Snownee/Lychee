@@ -19,14 +19,18 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.PostActionTypes;
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
@@ -68,12 +72,19 @@ public class PlaceBlock extends PostAction {
 			level.destroyBlock(pos, false);
 			return;
 		}
+		if (recipe.getType() == RecipeTypes.BLOCK_CRUSHING && !oldState.isAir()) {
+			level.levelEvent(2001, pos, Block.getId(oldState));
+		}
 		for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
 			Property property = entry.getKey();
 			if (properties.contains(property.getName()) || !state.hasProperty(property))
 				continue;
 			state = state.setValue(property, (Comparable) entry.getValue());
 		}
+		if (state.hasProperty(BlockStateProperties.WATERLOGGED) && oldState.getFluidState().isSourceOfType(Fluids.WATER)) {
+			state = state.setValue(BlockStateProperties.WATERLOGGED, true);
+		}
+
 		if (!level.setBlockAndUpdate(pos, state)) {
 			return;
 		}

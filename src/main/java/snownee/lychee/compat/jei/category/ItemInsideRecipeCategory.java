@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import mezz.jei.api.constants.VanillaTypes;
@@ -12,6 +13,7 @@ import mezz.jei.api.ingredients.IIngredients;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.ScreenElement;
@@ -57,7 +59,13 @@ public class ItemInsideRecipeCategory<T extends ItemAndBlockRecipe<LycheeContext
 
 	@Override
 	public void setInputs(T recipe, IIngredients ingredients) {
-		ingredients.setInputLists(VanillaTypes.ITEM, List.of(List.of(recipe.getInput().getItems()), BlockPredicateHelper.getMatchedItemStacks(recipe.getBlock())));
+		List<List<ItemStack>> items = Lists.newArrayList();
+		items.add(List.of(recipe.getInput().getItems()));
+		List<ItemStack> items1 = BlockPredicateHelper.getMatchedItemStacks(recipe.getBlock());
+		if (!items1.isEmpty()) {
+			items.add(items1);
+		}
+		ingredients.setInputLists(VanillaTypes.ITEM, items);
 	}
 
 	@Override

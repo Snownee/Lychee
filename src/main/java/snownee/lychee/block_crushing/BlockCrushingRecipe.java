@@ -41,7 +41,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<ItemShapelessContext> impl
 
 	@Override
 	public boolean matches(ItemShapelessContext ctx, Level pLevel) {
-		if (ctx.itemEntities.size() < ingredients.size()) {
+		if (ctx.totalItems < ingredients.size()) {
 			return false;
 		}
 		if (!BlockPredicateHelper.fastMatch(landingBlock, ctx)) {
@@ -57,16 +57,13 @@ public class BlockCrushingRecipe extends LycheeRecipe<ItemShapelessContext> impl
 			// ingredient.test is not thread safe
 			return ingredients.stream().anyMatch(ingredient -> ingredient.test($.getItem()));
 		}).limit(MAX_INGREDIENTS).toList();
-		if (itemEntities.size() < ingredients.size()) {
-			return false;
-		}
 		List<ItemStack> items = itemEntities.stream().map(ItemEntity::getItem).toList();
-		int[] match = RecipeMatcher.findMatches(items, ingredients);
+		int[] amount = items.stream().mapToInt(ItemStack::getCount).toArray();
+		int[] match = RecipeMatcher.findMatches(items, ingredients, amount);
 		if (match == null) {
 			return false;
 		}
 		ctx.match = match;
-		//TODO
 		return true;
 	}
 
@@ -106,6 +103,10 @@ public class BlockCrushingRecipe extends LycheeRecipe<ItemShapelessContext> impl
 		return fallingBlock;
 	}
 
+	public BlockPredicate getLandingBlock() {
+		return landingBlock;
+	}
+
 	@Override
 	public NonNullList<Ingredient> getIngredients() {
 		return ingredients;
@@ -114,13 +115,19 @@ public class BlockCrushingRecipe extends LycheeRecipe<ItemShapelessContext> impl
 	@Override
 	public int compareTo(BlockCrushingRecipe that) {
 		int i;
+		i = Integer.compare(isRepeatable() ? 0 : 1, that.isRepeatable() ? 0 : 1);
+		if (i != 0)
+			return i;
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
 		if (i != 0)
 			return i;
 		i = Integer.compare(landingBlock == BlockPredicate.ANY ? 1 : 0, that.landingBlock == BlockPredicate.ANY ? 1 : 0);
 		if (i != 0)
 			return i;
-		return -Integer.compare(ingredients.size(), that.ingredients.size());
+		i = -Integer.compare(ingredients.size(), that.ingredients.size());
+		if (i != 0)
+			return i;
+		return getId().compareTo(that.getId());
 	}
 
 	public static class Serializer extends LycheeRecipe.Serializer<BlockCrushingRecipe> {
@@ -132,11 +139,11 @@ public class BlockCrushingRecipe extends LycheeRecipe<ItemShapelessContext> impl
 		@Override
 		public void fromJson(BlockCrushingRecipe pRecipe, JsonObject pSerializedRecipe) {
 			if (pSerializedRecipe.has("falling_block"))
-				pRecipe.fallingBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.getAsJsonObject("falling_block"));
+				pRecipe.fallingBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.get("falling_block"));
 			if (pSerializedRecipe.has("landing_block"))
-				pRecipe.landingBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.getAsJsonObject("landing_block"));
+				pRecipe.landingBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.get("landing_block"));
 			if (pSerializedRecipe.has("item_in")) {
-				JsonElement itemIn = pSerializedRecipe.getAsJsonObject("item_in");
+				JsonElement itemIn = pSerializedRecipe.get("item_in");
 				if (itemIn.isJsonArray()) {
 					itemIn.getAsJsonArray().forEach($ -> {
 						pRecipe.ingredients.add(Ingredient.fromJson($));
@@ -150,11 +157,17 @@ public class BlockCrushingRecipe extends LycheeRecipe<ItemShapelessContext> impl
 
 		@Override
 		public void fromNetwork(BlockCrushingRecipe pRecipe, FriendlyByteBuf pBuffer) {
+			pRecipe.fallingBlock = BlockPredicateHelper.fromNetwork(pBuffer);
+			pRecipe.landingBlock = BlockPredicateHelper.fromNetwork(pBuffer);
+			pBuffer.readCollection(i -> pRecipe.ingredients, Ingredient::fromNetwork);
 		}
 
 		@Override
 		public void toNetwork(FriendlyByteBuf pBuffer, BlockCrushingRecipe pRecipe) {
 			super.toNetwork(pBuffer, pRecipe);
+			BlockPredicateHelper.toNetwork(pRecipe.fallingBlock, pBuffer);
+			BlockPredicateHelper.toNetwork(pRecipe.landingBlock, pBuffer);
+			pBuffer.writeCollection(pRecipe.ingredients, (b, i) -> i.toNetwork(b));
 		}
 
 	}

@@ -9,11 +9,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
 import mezz.jei.api.registration.IModIngredientRegistration;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
@@ -24,6 +26,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.jei.category.BlockCrushingRecipeCategory;
 import snownee.lychee.compat.jei.category.BlockInteractionRecipeCategory;
 import snownee.lychee.compat.jei.category.ItemBurningRecipeCategory;
 import snownee.lychee.compat.jei.category.ItemInsideRecipeCategory;
@@ -51,6 +54,7 @@ public class JEICompat implements IModPlugin {
 		registration.addRecipeCategories(new ItemInsideRecipeCategory<>(RecipeTypes.ITEM_INSIDE, guiHelper, AllGuiTextures.JEI_DOWN_ARROW));
 		ScreenElement mainIcon = RecipeTypes.BLOCK_INTERACTING.isEmpty() ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
 		registration.addRecipeCategories(new BlockInteractionRecipeCategory((List) List.of(RecipeTypes.BLOCK_INTERACTING, RecipeTypes.BLOCK_CLICKING), guiHelper, mainIcon));
+		registration.addRecipeCategories(new BlockCrushingRecipeCategory(RecipeTypes.BLOCK_CRUSHING, guiHelper));
 	}
 
 	@Override
@@ -59,6 +63,7 @@ public class JEICompat implements IModPlugin {
 		registration.addRecipes(RecipeTypes.ITEM_INSIDE.recipes(), RecipeTypes.ITEM_INSIDE.id);
 		registration.addRecipes(RecipeTypes.BLOCK_INTERACTING.recipes(), RecipeTypes.BLOCK_INTERACTING.id);
 		registration.addRecipes(RecipeTypes.BLOCK_CLICKING.recipes(), RecipeTypes.BLOCK_INTERACTING.id);
+		registration.addRecipes(RecipeTypes.BLOCK_CRUSHING.recipes(), RecipeTypes.BLOCK_CRUSHING.id);
 
 		List<IJeiAnvilRecipe> recipes = RecipeTypes.ANVIL_CRAFTING.recipes().stream().filter($ -> {
 			return !$.getResultItem().isEmpty() && !$.isSpecial();
@@ -72,6 +77,13 @@ public class JEICompat implements IModPlugin {
 	@Override
 	public void registerIngredients(IModIngredientRegistration registration) {
 		registration.register(POST_ACTION, List.of(), new PostActionIngredientHelper(), PostActionIngredientRenderer.INSTANCE);
+	}
+
+	@Override
+	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+		for (ItemStack stack : RecipeTypes.BLOCK_CRUSHING.blockKeysToItems()) {
+			registration.addRecipeCatalyst(VanillaTypes.ITEM, stack, RecipeTypes.BLOCK_CRUSHING.id);
+		}
 	}
 
 	@SuppressWarnings("static-access")

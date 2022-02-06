@@ -19,7 +19,9 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -79,6 +81,14 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		}
 		BlockState state = BlockPredicateHelper.anyBlockState(most.getValue().stream().findAny().get().getBlock());
 		return Pair.of(state, most.getValue().size());
+	}
+
+	public List<ItemStack> blockKeysToItems() {
+		return recipesByBlock.keySet().stream().map(Block::asItem).filter($ -> {
+			return $ != Items.AIR;
+		}).sorted((a, b) -> {
+			return Integer.compare(Item.getId(a), Item.getId(b));
+		}).map(ItemStack::new).toList();
 	}
 
 	public Optional<T> process(Entity entity, ItemStack stack, BlockPos pos, Vec3 origin, LycheeContext.Builder<C> ctxBuilder) {

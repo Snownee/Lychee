@@ -1,0 +1,24 @@
+{
+  "type": "lychee:block_crushing",
+  "landing_block": "moss_carpet",
+  "contextual": {
+    "type": "location",
+    "offsetY": -1,
+    "predicate": {
+      "block": {
+        "blocks": [ "stone_bricks" ]
+      }
+    }
+  },
+  "post": [
+    {
+      "type": "place",
+      "block": "*"
+    },
+    {
+      "type": "place",
+      "offsetY": -1,
+      "block": "mossy_stone_bricks"
+    }
+  ]
+}

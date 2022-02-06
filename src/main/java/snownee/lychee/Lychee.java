@@ -14,6 +14,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import snownee.lychee.core.LycheeContext;
@@ -28,6 +29,8 @@ public final class Lychee {
 	public static final String ID = "lychee";
 
 	public static final Logger LOGGER = LogManager.getLogger(Lychee.ID);
+
+	public static boolean hasKiwi = ModList.get().isLoaded("kiwi");
 
 	public Lychee() {
 		RecipeTypes.init();

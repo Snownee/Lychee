@@ -1,0 +1,8 @@
+{
+  "type": "lychee:block_crushing",
+  "landing_block": "glass",
+  "post": {
+    "type": "place",
+    "block": "*"
+  }
+}

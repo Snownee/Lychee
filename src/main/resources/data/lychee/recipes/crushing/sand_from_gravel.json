@@ -1,0 +1,18 @@
+{
+  "type": "lychee:block_crushing",
+  "landing_block": "gravel",
+  "post": [
+    {
+      "type": "place",
+      "block": "sand"
+    },
+    {
+      "type": "drop_item",
+      "item": "flint",
+      "contextual": {
+        "type": "chance",
+        "chance": 0.25
+      }
+    }
+  ]
+}

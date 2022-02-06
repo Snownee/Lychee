@@ -18,6 +18,7 @@
     "StatePropertiesPredicateAccess",
     "TimeCheckAccess",
     "AnvilMenuMixin",
+    "DefaultDispenseItemBehaviorMixin",
     "EntityMixin",
     "FallingBlockEntityMixin",
     "ItemEntityMixin",

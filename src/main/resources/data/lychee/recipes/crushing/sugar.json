@@ -1,0 +1,12 @@
+{
+  "type": "lychee:block_crushing",
+  "item_in": {
+    "item": "sugar_cane"
+  },
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "sugar"
+    }
+  ]
+}
