@@ -229,7 +229,9 @@ Default behavior: Anvil is damaged.
 	}
 	```
 
-### Block crushing (Forge only)
+### Block crushing
+
+Forge only.
 
 Event when a falling block entity lands on a block.
 
