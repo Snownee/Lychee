@@ -18,7 +18,7 @@ Usually you can add post actions to a Lychee's recipe, and  they will be execute
 
 Spawns an item entity on the ground.
 
-??? note "Format"
+!!! note "Format"
 
     | Name  | Description                      | Type / Literal   |
     | ----- | -------------------------------- | ---------------- |
@@ -47,7 +47,7 @@ Places a block in world.
 
 This action is not [repeatable](concepts.md#repeatability).
 
-??? note "Format"
+!!! note "Format"
 
     | Name    | Description                    | Type / Literal                                    |
     | ------- | ------------------------------ | ------------------------------------------------- |
@@ -95,7 +95,7 @@ This action is not [repeatable](concepts.md#repeatability).
 
 Executes a command.
 
-??? note "Format"
+!!! note "Format"
 
     | Name    | Description                            | Type / Literal |
     | ------- | -------------------------------------- | -------------- |
@@ -107,7 +107,7 @@ Executes a command.
 
 Spawns experience orbs.
 
-??? note "Format"
+!!! note "Format"
 
     | Name | Description | Type / Literal |
     | ---- | ----------- | -------------- |
@@ -122,7 +122,7 @@ These following actions will prevent the default behavior of the recipe (such as
 
 Prevents default behavior and do nothing.
 
-??? note "Format"
+!!! note "Format"
 
     | Name | Description | Type / Literal    |
     | ---- | ----------- | ----------------- |
@@ -134,7 +134,7 @@ Damages input item.
 
 This action is not [repeatable](concepts.md#repeatability).
 
-??? note "Format"
+!!! note "Format"
 
     | Name   | Description       | Type / Literal |
     | ------ | ----------------- | -------------- |

@@ -4,7 +4,7 @@
 
 An Ingredient is a predicate of ItemStack.
 
-??? note "Format"
+!!! note "Format"
 
     Checks if item id matches:
 
@@ -49,7 +49,7 @@ An Ingredient is a predicate of ItemStack.
 
 A BlockPredicate is a predicate of an in-world block. It can also be used to represent the first possible block that matches this predicate.
 
-??? note "Format"
+!!! note "Format"
 
     | Name   | Description                                        | Type / Literal                                        |
     | ------ | -------------------------------------------------- | ----------------------------------------------------- |
@@ -68,7 +68,7 @@ You can use `"*"` to represent a BlockPredicate to match all blocks.
 
 A BlockPredicate is a predicate of StateDefinition.
 
-??? note "Format"
+!!! note "Format"
 
     | Name  | Description                           | Type / Literal           |
     | ----- | ------------------------------------- | ------------------------ |

@@ -28,11 +28,11 @@
 
 Event when a player uses item on a block.
 
-Default behavior: item is consumed.
+Default behavior: Item is consumed.
 
 This recipe type is not [repeatable](concepts.md#repeatability).
 
-??? note "Format"
+!!! note "Format"
 
     | Name     | Description               | Type / Literal                                    |
     | -------- | ------------------------- | ------------------------------------------------- |
@@ -90,11 +90,11 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 Event when a player click on a block with item.
 
-Default behavior: item is consumed.
+Default behavior: Item is consumed.
 
 This recipe type is not [repeatable](concepts.md#repeatability).
 
-??? note "Format"
+!!! note "Format"
 
     | Name     | Description               | Type / Literal                                    |
     | -------- | ------------------------- | ------------------------------------------------- |
@@ -110,7 +110,7 @@ This recipe type is [repeatable](concepts.md#repeatability).
 
 Default behavior: item is consumed.
 
-??? note "Format"
+!!! note "Format"
 
     | Name    | Description    | Type / Literal                            |
     | ------- | -------------- | ----------------------------------------- |
@@ -146,15 +146,15 @@ Event when an item entity is inside a block. This will be tested every second.
 
 This recipe type is [repeatable](concepts.md#repeatability).
 
-Default behavior: item is consumed.
+Default behavior: Item is consumed.
 
-??? note "Format"
+!!! note "Format"
 
-    | Name    | Description                        | Type / Literal                            |
-    | ------- | ---------------------------------- | ----------------------------------------- |
-    | type    | type                               | "lychee:item_inside"                      |
-    | item_in | the ticking item                   | [Ingredient](general-types.md#ingredient) |
-    | time    | (optional) waiting time in seconds | int                                       |
+    | Name    | Description                                     | Type / Literal                            |
+    | ------- | ----------------------------------------------- | ----------------------------------------- |
+    | type    | type                                            | "lychee:item_inside"                      |
+    | item_in | the ticking item                                | [Ingredient](general-types.md#ingredient) |
+    | time    | (optional) (Forge only) waiting time in seconds | int                                       |
 
 ??? example
 
@@ -191,20 +191,122 @@ It is not recommended to add contextual conditions or actions to the recipe, bec
 
 This recipe type is not [repeatable](concepts.md#repeatability).
 
-Default behavior: anvil is damaged.
+Default behavior: Anvil is damaged.
 
-??? note "Format"
+!!! note "Format"
 
     | Name          | Description                                             | Type / Literal                                                                           |
     | ------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
     | type          | type                                                    | "lychee:anvil_crafting"                                                                  |
-    | item_in       | the input items (can only has left)                     | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | item_in       | the input items (the second one is optional)            | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
     | item_out      | the result item                                         | ItemStack                                                                                |
     | level_cost    | player's xp level                                       | int                                                                                      |
     | material_cost | amount of items that will be cost from right input slot | int                                                                                      |
 
 ??? example
 
+	It costs 1 apple, 8 gold ingots and 1 level to make a golden_apple. Does not damage the anvil:
+
 	```json
-	TODO
+	{
+		"type": "lychee:anvil_crafting",
+		"item_in": [
+			{
+				"item": "apple"
+			},
+			{
+				"item": "gold_ingot"
+			}
+		],
+		"item_out": {
+			"item": "golden_apple"
+		},
+		"level_cost": 1,
+		"material_cost": 8,
+		"post": {
+			"type": "prevent_default"
+		}
+	}
 	```
+
+### Block crushing (Forge only)
+
+Event when a falling block entity lands on a block.
+
+This recipe type is [repeatable](concepts.md#repeatability).
+
+Default behavior: Falling block becomes block or drops item. Canceling this will make falling block disappear.
+
+!!! note "Format"
+
+    | Name          | Description                                              | Type / Literal                                                                           |
+    | ------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+    | type          | type                                                     | "lychee:block_crushing"                                                                  |
+    | item_in       | (optional) the input items (can only has left)           | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | falling_block | (optional) the falling block. default are all the anvils | [BlockPredicate](general-types.md#blockpredicate)                                        |
+    | landing_block | (optional) the landing block. default is any block       | [BlockPredicate](general-types.md#blockpredicate)                                        |
+
+??? example
+
+	Papers from sugar canes:
+
+	```json
+	{
+		"type": "lychee:block_crushing",
+		"item_in": [
+			{
+				"item": "sugar_cane"
+			},
+			{
+				"item": "sugar_cane"
+			},
+			{
+				"item": "sugar_cane"
+			}
+		],
+		"post": [
+			{
+				"type": "drop_item",
+				"item": "paper",
+				"count": 3
+			}
+		]
+	}
+	```
+
+	Making a mossy stone bricks block. It uses a location check to check the block below the current position:
+
+	```json
+	{
+		"type": "lychee:block_crushing",
+		"landing_block": "moss_carpet",
+		"contextual": {
+			"type": "location",
+			"offsetY": -1,
+			"predicate": {
+				"block": {
+					"blocks": [ "stone_bricks" ]
+				}
+			}
+		},
+		"post": [
+			{
+				"type": "place",
+				"block": "*"
+			},
+			{
+				"type": "place",
+				"offsetY": -1,
+				"block": "mossy_stone_bricks"
+			}
+		]
+	}
+	```
+
+!!! note
+
+	Dispenser can now place fallable blocks and items that tagged with `lychee:dispenser_placement` in front of it. Note the item should not have a special dispense behavior.
+
+!!! note
+
+	Normally it will process all the items that touches the falling block, but if the landing block is tagged with `lychee:extend_box` (cauldrons by default), it will collect items inside the landing block as well.

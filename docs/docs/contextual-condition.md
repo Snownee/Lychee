@@ -23,7 +23,7 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 
 Inverts another condition.
 
-??? note "Format"
+!!! note "Format"
 
     | Name       | Description | Type / Literal                               |
     | ---------- | ----------- | -------------------------------------------- |
@@ -34,7 +34,7 @@ Inverts another condition.
 
 Checks if any of the wrapped conditions is passed.
 
-??? note "Format"
+!!! note "Format"
 
     | Name       | Description | Type / Literal                                 |
     | ---------- | ----------- | ---------------------------------------------- |
@@ -45,7 +45,7 @@ Checks if any of the wrapped conditions is passed.
 
 Checks if all the wrapped conditions are passed.
 
-??? note "Format"
+!!! note "Format"
 
     | Name       | Description | Type / Literal                                 |
     | ---------- | ----------- | ---------------------------------------------- |
@@ -56,7 +56,7 @@ Checks if all the wrapped conditions are passed.
 
 Generates a random number between 0.0 and 1.0, and checks if it is less than a specified value.
 
-??? note "Format"
+!!! note "Format"
 
     | Name   | Description                      | Type / Literal |
     | ------ | -------------------------------- | -------------- |
@@ -76,7 +76,7 @@ Generates a random number between 0.0 and 1.0, and checks if it is less than a s
 
 Checks if a `location_check` predicate is passed.
 
-??? note "Format"
+!!! note "Format"
 
     | Name      | Description                    | Type / Literal                                          |
     | --------- | ------------------------------ | ------------------------------------------------------- |
@@ -113,7 +113,7 @@ Checks if a `location_check` predicate is passed.
 
 Checks weather.
 
-??? note "Format"
+!!! note "Format"
 
     | Name    | Description | Type / Literal                 |
     | ------- | ----------- | ------------------------------ |
@@ -124,7 +124,7 @@ Checks weather.
 
 Checks if world is in any of the listed difficulties.
 
-??? note "Format"
+!!! note "Format"
 
     | Name       | Description | Type / Literal                     |
     | ---------- | ----------- | ---------------------------------- |

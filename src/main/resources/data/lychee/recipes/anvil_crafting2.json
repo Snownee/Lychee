@@ -1,0 +1,19 @@
+{
+  "type": "lychee:anvil_crafting",
+  "item_in": [
+    {
+      "item": "apple"
+    },
+    {
+      "item": "gold_ingot"
+    }
+  ],
+  "item_out": {
+    "item": "golden_apple"
+  },
+  "level_cost": 1,
+  "material_cost": 8,
+  "post": {
+    "type": "prevent_default"
+  }
+}
