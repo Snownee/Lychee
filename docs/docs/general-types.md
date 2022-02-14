@@ -18,6 +18,8 @@ An Ingredient is a predicate of ItemStack.
     | ---- | ------------ | -------------- |
     | tag  | the item tag | string         |
 
+    If you want to specify a modded item or tag, you need to write down the namespace at start, for example "namespace:name"
+
     ??? note "Forge-only area"
 
         Custom ingredient created by modders:

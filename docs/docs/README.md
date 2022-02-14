@@ -7,7 +7,7 @@ You can download Lychee on CurseForge:
 - [Lychee (Forge)](https://www.curseforge.com/minecraft/mc-mods/lychee)
 - [Lychee (Fabric)](https://www.curseforge.com/minecraft/mc-mods/lychee-fabric)
 
-Currently Lychee has support for following recipe type (with full JEI/REI support!):
+Currently Lychee has support for the following recipe type (with full JEI/REI support!):
 
 - Use or click on a block with item
 - Item entity burning
@@ -17,6 +17,10 @@ Currently Lychee has support for following recipe type (with full JEI/REI suppor
 - Lightning channeling
 - Item exploding
 - Block exploding
+
+## Dependency
+
+Kiwi is an optional dependency to have some additional particles.
 
 ## Adding recipes
 

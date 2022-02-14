@@ -150,11 +150,11 @@ Default behavior: Item is consumed.
 
 !!! note "Format"
 
-    | Name    | Description                                     | Type / Literal                            |
-    | ------- | ----------------------------------------------- | ----------------------------------------- |
-    | type    | type                                            | "lychee:item_inside"                      |
-    | item_in | the ticking item                                | [Ingredient](general-types.md#ingredient) |
-    | time    | (optional) (Forge only) waiting time in seconds | int                                       |
+    | Name    | Description                        | Type / Literal                            |
+    | ------- | ---------------------------------- | ----------------------------------------- |
+    | type    | type                               | "lychee:item_inside"                      |
+    | item_in | the ticking item                   | [Ingredient](general-types.md#ingredient) |
+    | time    | (optional) waiting time in seconds | int                                       |
 
 ??? example
 
@@ -230,8 +230,6 @@ Default behavior: Anvil is damaged.
 	```
 
 ### Block crushing
-
-Forge only.
 
 Event when a falling block entity lands on a block.
 
@@ -315,8 +313,6 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
 
 ### Lightning channeling
 
-Forge only.
-
 This recipe type is [repeatable](concepts.md#repeatability).
 
 Default behavior: Items are consumed. Canceling this will **not** prevent item from being damaged.
@@ -329,8 +325,6 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
     | item_in | (optional) items nearby the lightning | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
 
 ### Item exploding
-
-Forge only.
 
 This recipe type is [repeatable](concepts.md#repeatability).
 
@@ -348,8 +342,6 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 	You can tag items with `lychee:explosives` to let them be shown in JEI / REI.
 
 ### Block exploding
-
-Forge only.
 
 This recipe type is not [repeatable](concepts.md#repeatability).
 
