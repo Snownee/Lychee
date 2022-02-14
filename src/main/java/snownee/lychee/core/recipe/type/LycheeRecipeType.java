@@ -8,12 +8,17 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Lists;
 
+import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.ints.IntSets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.StackedContents;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -78,5 +83,21 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 
 	public Component getPreventDefaultDescription(LycheeRecipe<?> recipe) {
 		return DEFAULT_PREVENT_TIP;
+	}
+
+	public static class ValidItemCache {
+		private IntSet validItems = IntSets.emptySet();
+
+		public void buildCache(List<? extends Recipe<?>> recipes) {
+			validItems = new IntAVLTreeSet(recipes.stream().flatMap($ -> {
+				return $.getIngredients().stream();
+			}).flatMapToInt($ -> {
+				return $.getStackingIds().intStream();
+			}).toArray());
+		}
+
+		public boolean contains(ItemStack stack) {
+			return validItems.contains(StackedContents.getStackingIndex(stack));
+		}
 	}
 }

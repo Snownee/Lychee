@@ -3,6 +3,10 @@
 "recipeType.lychee.item_inside": "Item Inside",
 "recipeType.lychee.block_interacting": "Block Interaction",
 "recipeType.lychee.block_clicking": "Block Interaction",
+"recipeType.lychee.block_crushing": "Block Crushing",
+"recipeType.lychee.lightning_channeling": "Lightning Channeling",
+"recipeType.lychee.item_exploding": "Item Exploding",
+"recipeType.lychee.block_exploding": "Block Exploding",
 "postAction.lychee.place": "Place %s",
 "postAction.lychee.place.consume": "Consume Block",
 "postAction.lychee.drop_xp": "{0} Xp",
@@ -44,5 +48,6 @@
 "tip.lychee.nbtPredicate": "Has NBT predicate",
 "tip.lychee.block_interacting": "Use on block",
 "tip.lychee.block_clicking": "Click on block",
-"tip.lychee.prevent_default.default": "Will not be consumed"
+"tip.lychee.prevent_default.default": "Will not be consumed",
+"tip.lychee.sec": "{0}s"
 }

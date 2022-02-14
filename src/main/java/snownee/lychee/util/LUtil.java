@@ -13,6 +13,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
@@ -20,13 +21,18 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.Lychee;
 import snownee.lychee.mixin.RecipeManagerAccess;
 
@@ -105,11 +111,14 @@ public class LUtil {
 		return buffer.toString();
 	}
 
-	public static <T> T getCycledItem(List<T> list, T fallback) {
+	public static <T> T getCycledItem(List<T> list, T fallback, int interval) {
 		if (list.isEmpty()) {
 			return fallback;
 		}
-		long index = (System.currentTimeMillis() / 1000) % list.size();
+		if (list.size() == 1) {
+			return list.get(0);
+		}
+		long index = (System.currentTimeMillis() / interval) % list.size();
 		return list.get(Math.toIntExact(index));
 	}
 
@@ -160,6 +169,26 @@ public class LUtil {
 	@SuppressWarnings("rawtypes")
 	public static <T extends Recipe<?>> Collection<T> recipes(RecipeType<T> type) {
 		return ((RecipeManagerAccess) recipeManager()).callByType((RecipeType) type).values();
+	}
+
+	// see Entity.getOnPos
+	public static BlockPos getOnPos(Entity entity) {
+		int i = Mth.floor(entity.getX());
+		int j = Mth.floor(entity.getY() - 0.05); // vanilla is 0.2. carpet's height is 0.13
+		int k = Mth.floor(entity.getZ());
+		BlockPos blockpos = new BlockPos(i, j, k);
+		if (entity.level.isEmptyBlock(blockpos)) {
+			BlockPos blockpos1 = blockpos.below();
+			BlockState blockstate = entity.level.getBlockState(blockpos1);
+			if (collisionExtendsVertically(blockstate, entity.level, blockpos1, entity)) {
+				return blockpos1;
+			}
+		}
+		return blockpos;
+	}
+
+	public static boolean collisionExtendsVertically(BlockState state, Level level, BlockPos pos, Entity entity) {
+		return state.is(BlockTags.FENCES) || state.is(BlockTags.WALLS) || state.getBlock() instanceof FenceGateBlock;
 	}
 
 }

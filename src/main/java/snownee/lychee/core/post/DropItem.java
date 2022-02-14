@@ -11,9 +11,14 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeTags;
 import snownee.lychee.PostActionTypes;
+import snownee.lychee.RecipeTypes;
+import snownee.lychee.block_exploding.BlockExplodingContext;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
@@ -45,11 +50,21 @@ public class DropItem extends PostAction {
 	@Override
 	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
+		if (recipe.getType() == RecipeTypes.BLOCK_CRUSHING) {
+			BlockState landingBlock = ctx.getParam(LootContextParams.BLOCK_STATE);
+			if (landingBlock.is(LycheeTags.EXTEND_BOX)) {
+				pos = Vec3.atCenterOf(ctx.getParam(LycheeLootContextParams.BLOCK_POS));
+			}
+		}
 		ItemStack stack = this.stack.copy();
 		stack.setCount(stack.getCount() * times);
-		LUtil.dropItemStack(ctx.getLevel(), pos.x, pos.y, pos.z, stack, $ -> {
-			((ItemEntityAccess) $).setHealth(20);
-		});
+		if (ctx.getClass() == BlockExplodingContext.class) {
+			((BlockExplodingContext) ctx).items.add(stack);
+		} else {
+			LUtil.dropItemStack(ctx.getLevel(), pos.x, pos.y, pos.z, stack, $ -> {
+				((ItemEntityAccess) $).setHealth(20);
+			});
+		}
 	}
 
 	@Override

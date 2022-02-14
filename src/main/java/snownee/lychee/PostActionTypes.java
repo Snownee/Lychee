@@ -1,6 +1,7 @@
 package snownee.lychee;
 
 import net.minecraft.core.Registry;
+import snownee.lychee.core.post.AnvilDamageChance;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.DropXp;
 import snownee.lychee.core.post.Execute;
@@ -20,6 +21,7 @@ public class PostActionTypes {
 	public static final PostActionType<PlaceBlock> PLACE = register("place", new PlaceBlock.Type());
 	public static final PostActionType<DamageItem> DAMAGE_ITEM = register("damage_item", new DamageItem.Type());
 	public static final PostActionType<PreventDefault> PREVENT_DEFAULT = register("prevent_default", new PreventDefault.Type());
+	public static final PostActionType<AnvilDamageChance> ANVIL_DAMAGE_CHANCE = register("anvil_damage_chance", new AnvilDamageChance.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		Registry.register(LycheeRegistries.POST_ACTION, name, t);

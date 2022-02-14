@@ -1,0 +1,42 @@
+{
+  "type": "lychee:block_exploding",
+  "block_in": "coal_block",
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    }
+  ]
+}

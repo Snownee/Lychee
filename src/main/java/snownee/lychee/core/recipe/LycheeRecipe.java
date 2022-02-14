@@ -86,11 +86,16 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		return repeatable;
 	}
 
+	// true to apply
+	public boolean tickOrApply(C ctx) {
+		return true;
+	}
+
 	@Override
 	public abstract LycheeRecipeType<?, ?> getType();
 
 	@Override
-	public abstract LycheeRecipe.Serializer<?> getSerializer();
+	public abstract Serializer<?> getSerializer();
 
 	public static abstract class Serializer<R extends LycheeRecipe<?>> implements RecipeSerializer<R> {
 

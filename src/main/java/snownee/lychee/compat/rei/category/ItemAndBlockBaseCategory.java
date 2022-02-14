@@ -62,7 +62,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	public abstract BlockPredicate getInputBlock(T recipe);
 
 	public BlockState getRenderingBlock(T recipe) {
-		return LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(getInputBlock(recipe)), Blocks.AIR.defaultBlockState());
+		return LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(getInputBlock(recipe)), Blocks.AIR.defaultBlockState(), 1000);
 	}
 
 	public void drawExtra(T recipe, PoseStack matrixStack, double mouseX, double mouseY) {

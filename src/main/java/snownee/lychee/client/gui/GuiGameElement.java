@@ -215,7 +215,7 @@ public class GuiGameElement {
 		}
 
 		public GuiItemRenderBuilder(ItemLike provider) {
-			this(new ItemStack(provider));
+			this(provider.asItem().getDefaultInstance());
 		}
 
 		@Override

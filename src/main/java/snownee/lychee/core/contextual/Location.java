@@ -109,7 +109,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		@Override
 		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
-			Block block = LUtil.getCycledItem(List.copyOf(BlockPredicateHelper.getMatchedBlocks(access.getBlock())), Blocks.AIR);
+			Block block = LUtil.getCycledItem(List.copyOf(BlockPredicateHelper.getMatchedBlocks(access.getBlock())), Blocks.AIR, 1000);
 			MutableComponent name = block.getName().withStyle(ChatFormatting.WHITE);
 			BlockPredicateAccess blockAccess = (BlockPredicateAccess) access.getBlock();
 			if (blockAccess.getProperties() != StatePropertiesPredicate.ANY || blockAccess.getNbt() != NbtPredicate.ANY) {

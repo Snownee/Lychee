@@ -2,6 +2,7 @@ package snownee.lychee.item_burning;
 
 import com.google.gson.JsonObject;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -43,6 +44,11 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		return input;
 	}
 
+	@Override
+	public NonNullList<Ingredient> getIngredients() {
+		return NonNullList.of(Ingredient.EMPTY, input);
+	}
+
 	public static class Serializer extends LycheeRecipe.Serializer<ItemBurningRecipe> {
 
 		public Serializer() {
@@ -68,7 +74,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	public static void on(ItemEntity entity) {
-		LycheeContext.Builder builder = new LycheeContext.Builder(entity.level);
+		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(entity.level);
 		builder.withParameter(LootContextParams.ORIGIN, entity.position());
 		builder.withParameter(LootContextParams.THIS_ENTITY, entity);
 		LycheeContext ctx = builder.create(RecipeTypes.ITEM_BURNING.contextParamSet);

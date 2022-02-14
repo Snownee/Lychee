@@ -1,0 +1,75 @@
+{
+  "type": "lychee:block_crushing",
+  "contextual": {
+    "type": "weather",
+    "weather": "rain"
+  },
+  "falling_block": "dragon_egg",
+  "item_in": [
+    {
+      "tag": "coals"
+    },
+    {
+      "item": "coal"
+    },
+    {
+      "tag": "coals"
+    },
+    {
+      "item": "coal"
+    },
+    {
+      "tag": "coals"
+    },
+    {
+      "item": "coal"
+    },
+    {
+      "tag": "coals"
+    },
+    {
+      "item": "coal"
+    },
+    {
+      "tag": "coals"
+    }
+  ],
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "paper"
+    },
+    {
+      "type": "drop_item",
+      "item": "paper"
+    },
+    {
+      "type": "drop_item",
+      "item": "paper"
+    },
+    {
+      "type": "drop_item",
+      "item": "paper"
+    },
+    {
+      "type": "drop_item",
+      "item": "paper"
+    },
+    {
+      "type": "drop_item",
+      "item": "paper"
+    },
+    {
+      "type": "drop_item",
+      "item": "paper"
+    },
+    {
+      "type": "drop_item",
+      "item": "paper"
+    },
+    {
+      "type": "drop_item",
+      "item": "paper"
+    }
+  ]
+}

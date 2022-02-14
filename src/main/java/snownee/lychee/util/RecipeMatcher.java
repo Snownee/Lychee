@@ -1,0 +1,75 @@
+package snownee.lychee.util;
+
+import java.util.BitSet;
+import java.util.List;
+import java.util.function.Predicate;
+
+public class RecipeMatcher<T> {
+
+	private List<T> inputs;
+	private int[] inputCapability;
+	private int[] inputUsed;
+	private int[][] use; // input to test
+	private BitSet data;
+	private BitSet mask;
+
+	public RecipeMatcher(List<T> inputs, List<? extends Predicate<T>> tests, int[] inputCapability) {
+		this.inputs = inputs;
+		this.inputCapability = inputCapability;
+		inputUsed = new int[inputs.size()];
+		use = new int[tests.size()][tests.size()];
+		data = new BitSet(inputs.size() * tests.size());
+		mask = new BitSet(inputs.size());
+		for (int i = 0; i < tests.size(); i++) {
+			Predicate<T> test = tests.get(i);
+			int offset = i * inputs.size();
+			for (int j = 0; j < inputs.size(); j++) {
+				if (test.test(inputs.get(j))) {
+					data.set(offset + j);
+				}
+			}
+		}
+		for (int i = 0; i < tests.size(); i++) {
+			mask.clear();
+			if (!match(i)) {
+				inputUsed = null; // failed
+				return;
+			}
+		}
+	}
+
+	private boolean match(int test) {
+		int offset = test * inputs.size();
+		for (int i = 0; i < inputs.size(); i++) {
+			if (data.get(offset + i) && !mask.get(i)) {
+				mask.set(i);
+				if (inputUsed[i] < inputCapability[i]) {
+					use[i][inputUsed[i]] = test;
+					++inputUsed[i];
+					return true;
+				}
+				for (int j = 0; j < inputUsed[i]; j++) {
+					if (match(use[i][j])) {
+						use[i][j] = test;
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public static <T> int[] findMatches(List<T> inputs, List<? extends Predicate<T>> tests, int[] amount) {
+		int sum = 0;
+		for (int i = 0; i < amount.length; i++) {
+			sum += amount[i];
+		}
+		int testSize = tests.size();
+		if (sum < testSize)
+			return null;
+
+		RecipeMatcher<T> matcher = new RecipeMatcher<>(inputs, tests, amount);
+		return matcher.inputUsed;
+	}
+
+}
