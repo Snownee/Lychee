@@ -16,25 +16,26 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.block_crushing.BlockCrushingContext;
 import snownee.lychee.block_crushing.BlockCrushingRecipe;
-import snownee.lychee.block_crushing.ItemShapelessContext;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
 
-public class BlockCrushingRecipeCategory extends BaseJEICategory<ItemShapelessContext, BlockCrushingRecipe> {
+public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingContext, BlockCrushingRecipe> {
 
 	public static final Rect2i fallingBlockRect = new Rect2i(5, -35, 20, 35);
 	public static final Rect2i landingBlockRect = new Rect2i(5, 0, 20, 20);
 
-	public BlockCrushingRecipeCategory(LycheeRecipeType<ItemShapelessContext, BlockCrushingRecipe> recipeType, IGuiHelper guiHelper) {
+	public BlockCrushingRecipeCategory(LycheeRecipeType<BlockCrushingContext, BlockCrushingRecipe> recipeType, IGuiHelper guiHelper) {
 		super(recipeType, guiHelper);
-		icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, new ItemStack(Blocks.ANVIL));
+		icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, Items.ANVIL.getDefaultInstance());
 		infoRect = new Rect2i(0, 25, 8, 8);
 	}
 

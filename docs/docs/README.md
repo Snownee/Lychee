@@ -13,6 +13,10 @@ Currently Lychee has support for following recipe type (with full JEI/REI suppor
 - Item entity burning
 - Item entity inside a specific block (for instance water)
 - Anvil crafting
+- Falling block crushing items or block
+- Lightning channeling
+- Item exploding
+- Block exploding
 
 ## Adding recipes
 

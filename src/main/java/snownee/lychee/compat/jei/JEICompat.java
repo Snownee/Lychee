@@ -20,16 +20,22 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import snownee.lychee.Lychee;
+import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
+import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.compat.jei.category.BlockCrushingRecipeCategory;
+import snownee.lychee.compat.jei.category.BlockExplodingRecipeCategory;
 import snownee.lychee.compat.jei.category.BlockInteractionRecipeCategory;
 import snownee.lychee.compat.jei.category.ItemBurningRecipeCategory;
 import snownee.lychee.compat.jei.category.ItemInsideRecipeCategory;
+import snownee.lychee.compat.jei.category.ItemShapelessRecipeCategory;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.core.post.PostAction;
@@ -55,6 +61,9 @@ public class JEICompat implements IModPlugin {
 		ScreenElement mainIcon = RecipeTypes.BLOCK_INTERACTING.isEmpty() ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
 		registration.addRecipeCategories(new BlockInteractionRecipeCategory((List) List.of(RecipeTypes.BLOCK_INTERACTING, RecipeTypes.BLOCK_CLICKING), guiHelper, mainIcon));
 		registration.addRecipeCategories(new BlockCrushingRecipeCategory(RecipeTypes.BLOCK_CRUSHING, guiHelper));
+		registration.addRecipeCategories(new ItemShapelessRecipeCategory<>(RecipeTypes.LIGHTNING_CHANNELING, guiHelper, guiHelper.createDrawableIngredient(VanillaTypes.ITEM, Items.LIGHTNING_ROD.getDefaultInstance())));
+		registration.addRecipeCategories(new ItemShapelessRecipeCategory<>(RecipeTypes.ITEM_EXPLODING, guiHelper, guiHelper.createDrawableIngredient(VanillaTypes.ITEM, Items.TNT.getDefaultInstance())));
+		registration.addRecipeCategories(new BlockExplodingRecipeCategory(guiHelper, GuiGameElement.of(Items.TNT)));
 	}
 
 	@Override
@@ -64,6 +73,9 @@ public class JEICompat implements IModPlugin {
 		registration.addRecipes(RecipeTypes.BLOCK_INTERACTING.recipes(), RecipeTypes.BLOCK_INTERACTING.id);
 		registration.addRecipes(RecipeTypes.BLOCK_CLICKING.recipes(), RecipeTypes.BLOCK_INTERACTING.id);
 		registration.addRecipes(RecipeTypes.BLOCK_CRUSHING.recipes(), RecipeTypes.BLOCK_CRUSHING.id);
+		registration.addRecipes(RecipeTypes.LIGHTNING_CHANNELING.recipes(), RecipeTypes.LIGHTNING_CHANNELING.id);
+		registration.addRecipes(RecipeTypes.ITEM_EXPLODING.recipes(), RecipeTypes.ITEM_EXPLODING.id);
+		registration.addRecipes(RecipeTypes.BLOCK_EXPLODING.recipes(), RecipeTypes.BLOCK_EXPLODING.id);
 
 		List<IJeiAnvilRecipe> recipes = RecipeTypes.ANVIL_CRAFTING.recipes().stream().filter($ -> {
 			return !$.getResultItem().isEmpty() && !$.isSpecial();
@@ -83,6 +95,12 @@ public class JEICompat implements IModPlugin {
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
 		for (ItemStack stack : RecipeTypes.BLOCK_CRUSHING.blockKeysToItems()) {
 			registration.addRecipeCatalyst(VanillaTypes.ITEM, stack, RecipeTypes.BLOCK_CRUSHING.id);
+		}
+		registration.addRecipeCatalyst(VanillaTypes.ITEM, Items.LIGHTNING_ROD.getDefaultInstance(), RecipeTypes.LIGHTNING_CHANNELING.id);
+		for (Item item : LycheeTags.EXPLOSIVES.getValues()) {
+			ItemStack stack = item.getDefaultInstance();
+			registration.addRecipeCatalyst(VanillaTypes.ITEM, stack, RecipeTypes.ITEM_EXPLODING.id);
+			registration.addRecipeCatalyst(VanillaTypes.ITEM, stack, RecipeTypes.BLOCK_EXPLODING.id);
 		}
 	}
 

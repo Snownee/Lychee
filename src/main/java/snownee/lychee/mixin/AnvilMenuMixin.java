@@ -58,7 +58,6 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		if (access != ContainerLevelAccess.NULL) {
 			builder.withOptionalParameter(LycheeLootContextParams.BLOCK_POS, pos);
 			builder.withOptionalParameter(LootContextParams.BLOCK_STATE, player.level.getBlockState(pos));
-			builder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, player.level.getBlockEntity(pos));
 		}
 		builder.withParameter(LootContextParams.THIS_ENTITY, player);
 		AnvilContext ctx = builder.create(RecipeTypes.ANVIL_CRAFTING.contextParamSet);

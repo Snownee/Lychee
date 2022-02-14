@@ -4,12 +4,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import snownee.lychee.anvil_crafting.AnvilCraftingRecipe;
 import snownee.lychee.block_crushing.BlockCrushingRecipe;
+import snownee.lychee.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
+import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.interaction.BlockClickingRecipe;
 import snownee.lychee.interaction.BlockInteractingRecipe;
 import snownee.lychee.item_burning.ItemBurningRecipe;
+import snownee.lychee.item_exploding.ItemExplodingRecipe;
 import snownee.lychee.item_inside.ItemInsideRecipe;
+import snownee.lychee.lightning_channeling.LightningChannelingRecipe;
 
 public final class RecipeSerializers {
 
@@ -22,6 +26,9 @@ public final class RecipeSerializers {
 	public static final LycheeRecipe.Serializer<BlockInteractingRecipe> BLOCK_CLICKING = register("block_clicking", new ItemAndBlockRecipe.Serializer<>(BlockClickingRecipe::new));
 	public static final LycheeRecipe.Serializer<AnvilCraftingRecipe> ANVIL_CRAFTING = register("anvil_crafting", new AnvilCraftingRecipe.Serializer());
 	public static final LycheeRecipe.Serializer<BlockCrushingRecipe> BLOCK_CRUSHING = register("block_crushing", new BlockCrushingRecipe.Serializer());
+	public static final LycheeRecipe.Serializer<LightningChannelingRecipe> LIGHTNING_CHANNELING = register("lightning_channeling", new ItemShapelessRecipe.Serializer<>(LightningChannelingRecipe::new));
+	public static final LycheeRecipe.Serializer<ItemExplodingRecipe> ITEM_EXPLODING = register("item_exploding", new ItemShapelessRecipe.Serializer<>(ItemExplodingRecipe::new));
+	public static final LycheeRecipe.Serializer<BlockExplodingRecipe> BLOCK_EXPLODING = register("block_exploding", new BlockExplodingRecipe.Serializer());
 
 	public static <T extends LycheeRecipe.Serializer<?>> T register(String name, T t) {
 		ForgeRegistries.RECIPE_SERIALIZERS.register(t.setRegistryName(new ResourceLocation(Lychee.ID, name)));

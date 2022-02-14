@@ -7,12 +7,13 @@ import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
@@ -30,13 +31,15 @@ public class LycheeContext extends EmptyContainer {
 	protected LycheeContext(Random pRandom, Level level, Map<LootContextParam<?>, Object> pParams) {
 		random = pRandom;
 		this.level = level;
-		params = ImmutableMap.copyOf(pParams);
+		params = pParams;
 	}
 
 	/**
 	    * Check whether the given parameter is present in this context.
 	    */
 	public boolean hasParam(LootContextParam<?> pParameter) {
+		if (pParameter == LootContextParams.BLOCK_ENTITY)
+			lazyGetBlockEntity();
 		return params.containsKey(pParameter);
 	}
 
@@ -46,6 +49,8 @@ public class LycheeContext extends EmptyContainer {
 	    * @throws NoSuchElementException if the parameter is not present in this context
 	    */
 	public <T> T getParam(LootContextParam<T> pParam) {
+		if (pParam == LootContextParams.BLOCK_ENTITY)
+			lazyGetBlockEntity();
 		T t = (T) params.get(pParam);
 		if (t == null) {
 			throw new NoSuchElementException(pParam.getName().toString());
@@ -59,6 +64,8 @@ public class LycheeContext extends EmptyContainer {
 	    */
 	@Nullable
 	public <T> T getParamOrNull(LootContextParam<T> pParameter) {
+		if (pParameter == LootContextParams.BLOCK_ENTITY)
+			lazyGetBlockEntity();
 		return (T) params.get(pParameter);
 	}
 
@@ -77,6 +84,7 @@ public class LycheeContext extends EmptyContainer {
 	@SuppressWarnings("rawtypes")
 	public LootContext toLootContext() {
 		if (cachedLootContext == null) {
+			lazyGetBlockEntity();
 			LootContext.Builder builder = new LootContext.Builder((ServerLevel) level);
 			builder.withRandom(random);
 			params.forEach((p, o) -> builder.withParameter((LootContextParam) p, o));
@@ -88,8 +96,24 @@ public class LycheeContext extends EmptyContainer {
 		return cachedLootContext;
 	}
 
+	public void lazyGetBlockEntity() {
+		if (params.containsKey(LootContextParams.BLOCK_ENTITY)) {
+			return;
+		}
+		BlockPos pos = getParamOrNull(LycheeLootContextParams.BLOCK_POS);
+		if (pos == null) {
+			Vec3 vec = getParamOrNull(LootContextParams.ORIGIN);
+			if (vec == null) {
+				return;
+			}
+			pos = new BlockPos(vec);
+		}
+		BlockEntity blockEntity = level.getBlockEntity(pos);
+		params.put(LootContextParams.BLOCK_ENTITY, blockEntity);
+	}
+
 	public static class Builder<C extends LycheeContext> {
-		protected final Map<LootContextParam<?>, Object> params = Maps.newIdentityHashMap();
+		protected Map<LootContextParam<?>, Object> params = Maps.newIdentityHashMap();
 		protected Level level;
 		protected Random random;
 
@@ -166,6 +190,10 @@ public class LycheeContext extends EmptyContainer {
 				return (C) new LycheeContext(random, level, params);
 			}
 			//			}
+		}
+
+		public void setParams(Map<LootContextParam<?>, Object> params) {
+			this.params = params;
 		}
 	}
 

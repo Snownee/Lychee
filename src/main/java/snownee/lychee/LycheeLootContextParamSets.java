@@ -29,4 +29,16 @@ public final class LycheeLootContextParamSets {
 		$.required(LootContextParams.ORIGIN).required(LootContextParams.THIS_ENTITY).required(LootContextParams.BLOCK_STATE).required(LycheeLootContextParams.BLOCK_POS).optional(LootContextParams.BLOCK_ENTITY);
 	});
 
+	public static final LootContextParamSet LIGHTNING_CHANNELING = LootContextParamSetsAccess.callRegister("lychee:lightning_channeling", $ -> {
+		$.required(LootContextParams.ORIGIN).required(LootContextParams.THIS_ENTITY);
+	});
+
+	public static final LootContextParamSet ITEM_EXPLODING = LootContextParamSetsAccess.callRegister("lychee:item_exploding", $ -> {
+		$.required(LootContextParams.ORIGIN);
+	});
+
+	public static final LootContextParamSet BLOCK_EXPLODING = LootContextParamSetsAccess.callRegister("lychee:block_exploding", $ -> {
+		$.required(LootContextParams.ORIGIN).required(LootContextParams.BLOCK_STATE).optional(LycheeLootContextParams.BLOCK_POS).optional(LootContextParams.BLOCK_ENTITY);
+	});
+
 }

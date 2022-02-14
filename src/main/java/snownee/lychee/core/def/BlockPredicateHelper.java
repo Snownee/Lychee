@@ -33,6 +33,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.SerializationTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -65,7 +66,7 @@ public class BlockPredicateHelper {
 	}
 
 	public static List<ItemStack> getMatchedItemStacks(BlockPredicate predicate) {
-		return getMatchedBlocks(predicate).stream().filter(s -> s.asItem() != Items.AIR).map(ItemStack::new).toList();
+		return getMatchedBlocks(predicate).stream().map(Block::asItem).filter(s -> s != Items.AIR).map(Item::getDefaultInstance).toList();
 	}
 
 	public static boolean fastMatch(BlockPredicate predicate, LycheeContext context) {

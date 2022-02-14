@@ -244,7 +244,7 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
     | Name          | Description                                              | Type / Literal                                                                           |
     | ------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
     | type          | type                                                     | "lychee:block_crushing"                                                                  |
-    | item_in       | (optional) the input items (can only has left)           | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | item_in       | (optional) the crushed items                             | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
     | falling_block | (optional) the falling block. default are all the anvils | [BlockPredicate](general-types.md#blockpredicate)                                        |
     | landing_block | (optional) the landing block. default is any block       | [BlockPredicate](general-types.md#blockpredicate)                                        |
 
@@ -312,3 +312,56 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
 !!! note
 
 	Normally it will process all the items that touches the falling block, but if the landing block is tagged with `lychee:extend_box` (cauldrons by default), it will collect items inside the landing block as well.
+
+### Lightning channeling
+
+Forge only.
+
+This recipe type is [repeatable](concepts.md#repeatability).
+
+Default behavior: Items are consumed. Canceling this will **not** prevent item from being damaged.
+
+!!! note "Format"
+
+    | Name    | Description                           | Type / Literal                                                                           |
+    | ------- | ------------------------------------- | ---------------------------------------------------------------------------------------- |
+    | type    | type                                  | "lychee:lightning_channeling"                                                            |
+    | item_in | (optional) items nearby the lightning | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+
+### Item exploding
+
+Forge only.
+
+This recipe type is [repeatable](concepts.md#repeatability).
+
+Default behavior: Items are consumed. Canceling this will **not** prevent item from being damaged.
+
+!!! note "Format"
+
+    | Name    | Description                                | Type / Literal                                                                           |
+    | ------- | ------------------------------------------ | ---------------------------------------------------------------------------------------- |
+    | type    | type                                       | "lychee:item_exploding"                                                                  |
+    | item_in | (optional) items affected by the explosion | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+
+!!! note
+
+	You can tag items with `lychee:explosives` to let them be shown in JEI / REI.
+
+### Block exploding
+
+Forge only.
+
+This recipe type is not [repeatable](concepts.md#repeatability).
+
+Default behavior: Block drops items from loot table.
+
+!!! note "Format"
+
+    | Name     | Description                                 | Type / Literal                                    |
+    | -------- | ------------------------------------------- | ------------------------------------------------- |
+    | type     | type                                        | "lychee:block_exploding"                          |
+    | block_in | (optional) block destroyed by the explosion | [BlockPredicate](general-types.md#blockpredicate) |
+
+!!! note
+
+	You can tag items with `lychee:explosives` to let them be shown as catalysts in JEI / REI.

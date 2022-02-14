@@ -25,8 +25,9 @@ import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.mixin.BlockPredicateAccess;
+import snownee.lychee.util.RecipeMatcher;
 
-public class BlockCrushingRecipe extends LycheeRecipe<ItemShapelessContext> implements Comparable<BlockCrushingRecipe>, BlockKeyRecipe {
+public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingContext> implements Comparable<BlockCrushingRecipe>, BlockKeyRecipe {
 
 	private static final int MAX_INGREDIENTS = 27;
 	public static final BlockPredicate ANVIL = BlockPredicate.Builder.block().of(BlockTags.ANVIL).build();
@@ -40,7 +41,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<ItemShapelessContext> impl
 	}
 
 	@Override
-	public boolean matches(ItemShapelessContext ctx, Level pLevel) {
+	public boolean matches(BlockCrushingContext ctx, Level pLevel) {
 		if (ctx.totalItems < ingredients.size()) {
 			return false;
 		}

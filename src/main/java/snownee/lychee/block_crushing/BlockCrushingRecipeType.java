@@ -7,12 +7,9 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
-import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
@@ -27,9 +24,9 @@ import snownee.lychee.core.network.SCustomLevelEventPacket;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.util.LUtil;
 
-public class BlockCrushingRecipeType extends BlockKeyRecipeType<ItemShapelessContext, BlockCrushingRecipe> {
+public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingContext, BlockCrushingRecipe> {
 
-	private IntSet validItems;
+	private ValidItemCache validItems = new ValidItemCache();
 
 	public BlockCrushingRecipeType(String name, Class<BlockCrushingRecipe> clazz, @Nullable LootContextParamSet paramSet) {
 		super(name, clazz, paramSet);
@@ -52,17 +49,14 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<ItemShapelessCon
 			box = box.minmax(new AABB(pos));
 		}
 		List<ItemEntity> itemEntities = entity.level.getEntitiesOfClass(ItemEntity.class, box, $ -> {
-			return $.isAlive() && validItems.contains(StackedContents.getStackingIndex(((ItemEntity) $).getItem()));
+			return $.isAlive() && validItems.contains(((ItemEntity) $).getItem());
 		});
-		ItemShapelessContext.Builder ctxBuilder = new ItemShapelessContext.Builder(entity.level, itemEntities, entity);
+		BlockCrushingContext.Builder ctxBuilder = new BlockCrushingContext.Builder(entity.level, itemEntities, entity);
 		ctxBuilder.withParameter(LootContextParams.ORIGIN, entity.position());
 		ctxBuilder.withParameter(LootContextParams.THIS_ENTITY, entity);
 		ctxBuilder.withParameter(LootContextParams.BLOCK_STATE, landingBlock);
 		ctxBuilder.withParameter(LycheeLootContextParams.BLOCK_POS, pos);
-		if (landingBlock.hasBlockEntity()) {
-			ctxBuilder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
-		}
-		ItemShapelessContext ctx = ctxBuilder.create(contextParamSet);
+		BlockCrushingContext ctx = ctxBuilder.create(contextParamSet);
 		boolean matchedAny = false;
 		major:
 		while (true) {
@@ -127,11 +121,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<ItemShapelessCon
 	@Override
 	public void buildCache() {
 		super.buildCache();
-		validItems = new IntAVLTreeSet(recipes.stream().flatMap($ -> {
-			return $.getIngredients().stream();
-		}).flatMapToInt($ -> {
-			return $.getStackingIds().intStream();
-		}).toArray());
+		validItems.buildCache(recipes);
 	}
 
 }

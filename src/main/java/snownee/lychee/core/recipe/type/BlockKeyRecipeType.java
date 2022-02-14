@@ -88,7 +88,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 			return $ != Items.AIR;
 		}).sorted((a, b) -> {
 			return Integer.compare(Item.getId(a), Item.getId(b));
-		}).map(ItemStack::new).toList();
+		}).map(Item::getDefaultInstance).toList();
 	}
 
 	public Optional<T> process(Entity entity, ItemStack stack, BlockPos pos, Vec3 origin, LycheeContext.Builder<C> ctxBuilder) {
@@ -110,9 +110,6 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		ctxBuilder.withParameter(LootContextParams.THIS_ENTITY, entity);
 		ctxBuilder.withParameter(LootContextParams.BLOCK_STATE, blockstate);
 		ctxBuilder.withParameter(LycheeLootContextParams.BLOCK_POS, pos);
-		if (blockstate.hasBlockEntity()) {
-			ctxBuilder.withOptionalParameter(LootContextParams.BLOCK_ENTITY, level.getBlockEntity(pos));
-		}
 		C ctx = ctxBuilder.create(contextParamSet);
 		T prevRecipe = (T) Optional.ofNullable(prevRecipeId).map(LUtil::recipe).filter($ -> $.getType() == this).orElse(null);
 		Iterable<T> iterable = Iterables.concat(recipes, anyBlockRecipes);
@@ -134,6 +131,25 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 			}
 		}
 		return Optional.empty();
+	}
+
+	public boolean has(BlockState state) {
+		return !anyBlockRecipes.isEmpty() || recipesByBlock.containsKey(state.getBlock());
+	}
+
+	public boolean process(BlockState state, C ctx) {
+		Level level = ctx.getLevel();
+		Collection<T> recipes = recipesByBlock.getOrDefault(state.getBlock(), Collections.EMPTY_LIST);
+		Iterable<T> iterable = Iterables.concat(recipes, anyBlockRecipes);
+		for (T recipe : iterable) {
+			if (tryMatch(recipe, level, ctx).isPresent()) {
+				if (!level.isClientSide && recipe.applyPostActions(ctx, 1)) {
+					return true;
+				}
+				break;
+			}
+		}
+		return false;
 	}
 
 }

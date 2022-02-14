@@ -16,6 +16,8 @@ public final class LycheeTags {
 
 	public static final Named<Item> DISPENSER_PLACEMENT = ItemTags.createOptional(new ResourceLocation(Lychee.ID, "dispenser_placement"));
 
+	public static final Named<Item> EXPLOSIVES = ItemTags.createOptional(new ResourceLocation(Lychee.ID, "explosives"));
+
 	public static final Named<Block> EXTEND_BOX = BlockTags.createOptional(new ResourceLocation(Lychee.ID, "extend_box"));
 
 }

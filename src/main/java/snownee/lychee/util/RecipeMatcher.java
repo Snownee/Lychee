@@ -1,4 +1,4 @@
-package snownee.lychee.block_crushing;
+package snownee.lychee.util;
 
 import java.util.BitSet;
 import java.util.List;

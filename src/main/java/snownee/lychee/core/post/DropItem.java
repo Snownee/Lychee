@@ -18,6 +18,7 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.block_exploding.BlockExplodingContext;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
@@ -57,9 +58,13 @@ public class DropItem extends PostAction {
 		}
 		ItemStack stack = this.stack.copy();
 		stack.setCount(stack.getCount() * times);
-		LUtil.dropItemStack(ctx.getLevel(), pos.x, pos.y, pos.z, stack, $ -> {
-			((ItemEntityAccess) $).setHealth(20);
-		});
+		if (ctx.getClass() == BlockExplodingContext.class) {
+			((BlockExplodingContext) ctx).items.add(stack);
+		} else {
+			LUtil.dropItemStack(ctx.getLevel(), pos.x, pos.y, pos.z, stack, $ -> {
+				((ItemEntityAccess) $).setHealth(20);
+			});
+		}
 	}
 
 	@Override

@@ -199,7 +199,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 			if (state.is(Blocks.CHIPPED_ANVIL) || state.is(Blocks.DAMAGED_ANVIL)) {
 				state = Blocks.ANVIL.defaultBlockState();
 			}
-			ItemStack stack = new ItemStack(state.getBlock());
+			ItemStack stack = state.getBlock().asItem().getDefaultInstance();
 			if (!stack.isEmpty()) {
 				IFocus<ItemStack> focus = JEICompat.RUNTIME.getRecipeManager().createFocus(input.getValue() == 1 ? IFocus.Mode.INPUT : IFocus.Mode.OUTPUT, stack);
 				JEICompat.RUNTIME.getRecipesGui().show(focus);

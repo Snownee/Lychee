@@ -1,0 +1,70 @@
+{
+  "type": "lychee:item_exploding",
+  "item_in": [
+    {
+      "tag": "coals"
+    },
+    {
+      "tag": "coals"
+    },
+    {
+      "tag": "coals"
+    },
+    {
+      "tag": "coals"
+    },
+    {
+      "tag": "coals"
+    },
+    {
+      "tag": "coals"
+    },
+    {
+      "tag": "coals"
+    },
+    {
+      "tag": "coals"
+    },
+    {
+      "tag": "coals"
+    }
+  ],
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    }
+  ]
+}

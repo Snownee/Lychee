@@ -141,11 +141,11 @@ This action is not [repeatable](concepts.md#repeatability).
     | type   | type              | "damage_item"  |
     | damage | (optional) damage | int            |
 
-### Set falling anvil damage chance (`damage_anvil_chance`)
+### Set falling anvil damage chance (`anvil_damage_chance`)
 
 This action can only be used in the [Block Crushing](recipe.md#block-crushing) recipe. The default damage chance depends on the falling height.
 
-    | Name   | Description | Type / Literal        |
-    | ------ | ----------- | --------------------- |
-    | type   | type        | "damage_anvil_chance" |
-    | chance | chance      | number [0,1]          |
+    | Name   | Description            | Type / Literal        |
+    | ------ | ---------------------- | --------------------- |
+    | type   | type                   | "anvil_damage_chance" |
+    | chance | chance between 0 and 1 | number                |
