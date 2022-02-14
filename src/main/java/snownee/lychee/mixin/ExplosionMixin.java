@@ -19,7 +19,6 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.phys.Vec3;
 import snownee.lychee.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.item_exploding.ItemExplodingRecipe;
 
@@ -28,12 +27,17 @@ public class ExplosionMixin {
 
 	@Shadow
 	private Level level;
+	// the field "position" is added by forge
 	@Shadow
-	private Vec3 position;
+	private double x;
+	@Shadow
+	private double y;
+	@Shadow
+	private double z;
 
 	@Inject(at = @At("TAIL"), method = "explode", locals = LocalCapture.CAPTURE_FAILHARD)
 	private void lychee_explode(CallbackInfo ci, Set<BlockPos> set, int i, float f2, int k1, int l1, int i2, int i1, int j2, int j1, List<Entity> list) {
-		ItemExplodingRecipe.on(level, position, list);
+		ItemExplodingRecipe.on(level, x, y, z, list);
 	}
 
 	@SuppressWarnings("deprecation")
