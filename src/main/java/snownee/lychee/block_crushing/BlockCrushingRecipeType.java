@@ -58,6 +58,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 		ctxBuilder.withParameter(LycheeLootContextParams.BLOCK_POS, pos);
 		BlockCrushingContext ctx = ctxBuilder.create(contextParamSet);
 		boolean matchedAny = false;
+		int loop = 0;
 		major:
 		while (true) {
 			boolean matched = false;
@@ -73,14 +74,14 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 								times = Integer.MAX_VALUE;
 								for (int i = 0; i < ctx.match.length; i++) {
 									if (ctx.match[i] > 0) {
-										ItemStack stack = ctx.itemEntities.get(i).getItem();
+										ItemStack stack = ctx.filteredItems.get(i).getItem();
 										times = Math.min(times, stack.getCount() / ctx.match[i]);
 									}
 								}
 							}
 							for (int i = 0; i < ctx.match.length; i++) {
 								if (ctx.match[i] > 0) {
-									ItemEntity itemEntity = ctx.itemEntities.get(i);
+									ItemEntity itemEntity = ctx.filteredItems.get(i);
 									if (Lychee.hasKiwi) {
 										SCustomLevelEventPacket.sendItemParticles(itemEntity.getItem(), level, itemEntity.position());
 									}
@@ -96,6 +97,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 						if (!recipe.isRepeatable()) {
 							break major;
 						}
+						ctx.filteredItems = null;
 						ctx.match = null;
 						ctx.itemEntities.removeIf($ -> $.getItem().isEmpty());
 					}
@@ -104,7 +106,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 					break major;
 				}
 			}
-			if (!matched) {
+			if (++loop >= 100 || !matched) {
 				break major;
 			}
 		}
@@ -114,7 +116,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 				entity.setPosRaw(entity.getX(), pos.getY() + 1, entity.getZ());
 			}
 			((LycheeFallingBlockEntity) entity).lychee$matched();
-			ctx.itemEntities.forEach($ -> $.setItem($.getItem())); //sync item amount
+			ctx.itemEntities.forEach($ -> $.setItem($.getItem().copy())); //sync item amount
 		}
 	}
 

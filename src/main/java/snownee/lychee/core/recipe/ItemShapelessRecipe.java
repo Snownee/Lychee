@@ -44,6 +44,7 @@ public abstract class ItemShapelessRecipe extends LycheeRecipe<ItemShapelessCont
 		if (match == null) {
 			return false;
 		}
+		ctx.filteredItems = itemEntities;
 		ctx.match = match;
 		return true;
 	}

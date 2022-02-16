@@ -57,7 +57,7 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 								times = Integer.MAX_VALUE;
 								for (int i = 0; i < ctx.match.length; i++) {
 									if (ctx.match[i] > 0) {
-										ItemStack stack = ctx.itemEntities.get(i).getItem();
+										ItemStack stack = ctx.filteredItems.get(i).getItem();
 										times = Math.min(times, stack.getCount() / ctx.match[i]);
 									}
 								}
@@ -66,7 +66,7 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 						if (match.get().applyPostActions(ctx, times) && ctx.match != null) {
 							for (int i = 0; i < ctx.match.length; i++) {
 								if (ctx.match[i] > 0) {
-									ItemEntity itemEntity = ctx.itemEntities.get(i);
+									ItemEntity itemEntity = ctx.filteredItems.get(i);
 									int count = ctx.match[i] * times;
 									itemEntity.getItem().shrink(count);
 									ctx.totalItems -= count;
@@ -76,6 +76,7 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 						if (!recipe.isRepeatable()) {
 							break major;
 						}
+						ctx.filteredItems = null;
 						ctx.match = null;
 						ctx.itemEntities.removeIf($ -> $.getItem().isEmpty());
 					}
