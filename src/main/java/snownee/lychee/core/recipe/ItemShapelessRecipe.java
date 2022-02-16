@@ -44,6 +44,7 @@ public abstract class ItemShapelessRecipe<C extends ItemShapelessContext> extend
 		if (match == null) {
 			return false;
 		}
+		ctx.filteredItems = itemEntities;
 		ctx.match = match;
 		return true;
 	}

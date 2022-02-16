@@ -12,6 +12,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 
 public class ItemShapelessContext extends LycheeContext {
 	public final List<ItemEntity> itemEntities;
+	public List<ItemEntity> filteredItems;
 	public int[] match;
 	public int totalItems;
 
