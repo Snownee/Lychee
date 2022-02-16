@@ -10,11 +10,12 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
-public class LightningChannelingRecipe extends ItemShapelessRecipe {
+public class LightningChannelingRecipe extends ItemShapelessRecipe<ItemShapelessContext> {
 
 	public LightningChannelingRecipe(ResourceLocation id) {
 		super(id);

@@ -11,11 +11,12 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
-public class ItemExplodingRecipe extends ItemShapelessRecipe {
+public class ItemExplodingRecipe extends ItemShapelessRecipe<ItemShapelessContext> {
 
 	public ItemExplodingRecipe(ResourceLocation id) {
 		super(id);

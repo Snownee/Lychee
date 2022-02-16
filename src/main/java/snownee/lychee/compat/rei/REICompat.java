@@ -15,25 +15,37 @@ import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
+import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry;
+import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.plugin.common.displays.anvil.AnvilRecipe;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
+import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
+import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.rei.category.BlockCrushingRecipeCategory;
+import snownee.lychee.compat.rei.category.BlockExplodingRecipeCategory;
 import snownee.lychee.compat.rei.category.BlockInteractionRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemBurningRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemInsideRecipeCategory;
+import snownee.lychee.compat.rei.category.ItemShapelessRecipeCategory;
+import snownee.lychee.compat.rei.display.BlockCrushingDisplay;
+import snownee.lychee.compat.rei.display.BlockExplodingDisplay;
 import snownee.lychee.compat.rei.display.BlockInteractionDisplay;
 import snownee.lychee.compat.rei.display.ItemBurningDisplay;
 import snownee.lychee.compat.rei.display.ItemInsideDisplay;
+import snownee.lychee.compat.rei.display.ItemShapelessDisplay;
 import snownee.lychee.compat.rei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.core.post.PostAction;
 
@@ -46,6 +58,12 @@ public class REICompat implements REIClientPlugin {
 	@SuppressWarnings("rawtypes")
 	public static final CategoryIdentifier<ItemInsideDisplay> ITEM_INSIDE = CategoryIdentifier.of(RecipeTypes.ITEM_INSIDE.id);
 	public static final CategoryIdentifier<BlockInteractionDisplay> BLOCK_INTERACTION = CategoryIdentifier.of(RecipeTypes.BLOCK_INTERACTING.id);
+	public static final CategoryIdentifier<BlockCrushingDisplay> BLOCK_CRUSHING = CategoryIdentifier.of(RecipeTypes.BLOCK_CRUSHING.id);
+	@SuppressWarnings("rawtypes")
+	public static final CategoryIdentifier<ItemShapelessDisplay> LIGHTNING_CHANNELING = CategoryIdentifier.of(RecipeTypes.LIGHTNING_CHANNELING.id);
+	@SuppressWarnings("rawtypes")
+	public static final CategoryIdentifier<ItemShapelessDisplay> ITEM_EXPLODING = CategoryIdentifier.of(RecipeTypes.ITEM_EXPLODING.id);
+	public static final CategoryIdentifier<BlockExplodingDisplay> BLOCK_EXPLODING = CategoryIdentifier.of(RecipeTypes.BLOCK_EXPLODING.id);
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -54,10 +72,28 @@ public class REICompat implements REIClientPlugin {
 		registration.add(new ItemInsideRecipeCategory<>(RecipeTypes.ITEM_INSIDE, AllGuiTextures.JEI_DOWN_ARROW));
 		ScreenElement mainIcon = RecipeTypes.BLOCK_INTERACTING.isEmpty() ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
 		registration.add(new BlockInteractionRecipeCategory((List) List.of(RecipeTypes.BLOCK_INTERACTING, RecipeTypes.BLOCK_CLICKING), mainIcon));
+		registration.add(new BlockCrushingRecipeCategory(RecipeTypes.BLOCK_CRUSHING));
+		registration.add(new ItemShapelessRecipeCategory<>(RecipeTypes.LIGHTNING_CHANNELING, EntryStacks.of(Items.LIGHTNING_ROD)));
+		registration.add(new ItemShapelessRecipeCategory<>(RecipeTypes.ITEM_EXPLODING, EntryStacks.of(Items.TNT)));
+		registration.add(new BlockExplodingRecipeCategory(RecipeTypes.BLOCK_EXPLODING, GuiGameElement.of(Items.TNT)));
 
 		registration.removePlusButton(ITEM_BURNING);
 		registration.removePlusButton(ITEM_INSIDE);
 		registration.removePlusButton(BLOCK_INTERACTION);
+		registration.removePlusButton(BLOCK_CRUSHING);
+		registration.removePlusButton(LIGHTNING_CHANNELING);
+		registration.removePlusButton(ITEM_EXPLODING);
+		registration.removePlusButton(BLOCK_EXPLODING);
+
+		for (ItemStack stack : RecipeTypes.BLOCK_CRUSHING.blockKeysToItems()) {
+			registration.addWorkstations(BLOCK_CRUSHING, EntryStacks.of(stack));
+		}
+		registration.addWorkstations(LIGHTNING_CHANNELING, EntryStacks.of(Items.LIGHTNING_ROD));
+		for (Item item : LycheeTags.EXPLOSIVES.getValues()) {
+			EntryStack<ItemStack> stack = EntryStacks.of(item);
+			registration.addWorkstations(ITEM_EXPLODING, stack);
+			registration.addWorkstations(BLOCK_EXPLODING, stack);
+		}
 	}
 
 	@Override
@@ -66,6 +102,10 @@ public class REICompat implements REIClientPlugin {
 		registration.registerRecipeFiller(RecipeTypes.ITEM_INSIDE.clazz, RecipeTypes.ITEM_INSIDE, ItemInsideDisplay::new);
 		registration.registerRecipeFiller(RecipeTypes.BLOCK_INTERACTING.clazz, RecipeTypes.BLOCK_INTERACTING, BlockInteractionDisplay::new);
 		registration.registerRecipeFiller(RecipeTypes.BLOCK_CLICKING.clazz, RecipeTypes.BLOCK_CLICKING, BlockInteractionDisplay::new);
+		registration.registerRecipeFiller(RecipeTypes.BLOCK_CRUSHING.clazz, RecipeTypes.BLOCK_CRUSHING, BlockCrushingDisplay::new);
+		registration.registerRecipeFiller(RecipeTypes.LIGHTNING_CHANNELING.clazz, RecipeTypes.LIGHTNING_CHANNELING, ItemShapelessDisplay::new);
+		registration.registerRecipeFiller(RecipeTypes.ITEM_EXPLODING.clazz, RecipeTypes.ITEM_EXPLODING, ItemShapelessDisplay::new);
+		registration.registerRecipeFiller(RecipeTypes.BLOCK_EXPLODING.clazz, RecipeTypes.BLOCK_EXPLODING, BlockExplodingDisplay::new);
 
 		RecipeTypes.ANVIL_CRAFTING.recipes().stream().filter($ -> {
 			return !$.getResultItem().isEmpty() && !$.isSpecial();

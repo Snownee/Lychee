@@ -28,10 +28,11 @@ public final class Lychee implements ModInitializer {
 
 	public static final Logger LOGGER = LogManager.getLogger(Lychee.ID);
 
-	public static boolean hasKiwi = FabricLoader.getInstance().isModLoaded("kiwi");
+	public static boolean hasKiwi;
 
 	@Override
 	public void onInitialize() {
+		hasKiwi = FabricLoader.getInstance().isModLoaded("kiwi");
 		RecipeTypes.init();
 		LycheeTags.init();
 		UseBlockCallback.EVENT.register(Lychee::useItemOn);

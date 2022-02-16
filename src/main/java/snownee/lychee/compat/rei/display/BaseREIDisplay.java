@@ -32,6 +32,11 @@ public abstract class BaseREIDisplay<C extends LycheeContext, T extends LycheeRe
 	}
 
 	@Override
+	public List<EntryIngredient> getInputEntries() {
+		return EntryIngredients.ofIngredients(recipe.getIngredients());
+	}
+
+	@Override
 	public List<EntryIngredient> getOutputEntries() {
 		return recipe.getShowingPostActions().stream().map(BaseREIDisplay::postAction).toList();
 	}
