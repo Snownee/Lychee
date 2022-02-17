@@ -146,11 +146,11 @@ public class LUtil {
 	}
 
 	public static <T extends IForgeRegistryEntry<T>> T readRegistryId(IForgeRegistry<T> registry, FriendlyByteBuf buf) {
-		return LUtil.readRegistryId(registry, buf);
+		return buf.readRegistryIdUnsafe(registry);
 	}
 
 	public static <T extends IForgeRegistryEntry<T>> void writeRegistryId(IForgeRegistry<T> registry, T entry, FriendlyByteBuf buf) {
-		LUtil.writeRegistryId(registry, entry, buf);
+		buf.writeRegistryIdUnsafe(registry, entry);
 	}
 
 	public static RecipeManager recipeManager() {
