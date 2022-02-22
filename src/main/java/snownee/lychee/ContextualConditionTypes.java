@@ -5,6 +5,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import snownee.lychee.core.contextual.And;
 import snownee.lychee.core.contextual.Chance;
 import snownee.lychee.core.contextual.ContextualConditionType;
+import snownee.lychee.core.contextual.Execute;
 import snownee.lychee.core.contextual.IsDifficulty;
 import snownee.lychee.core.contextual.IsWeather;
 import snownee.lychee.core.contextual.Location;
@@ -25,6 +26,7 @@ public final class ContextualConditionTypes {
 	public static final ContextualConditionType<Or> OR = register("or", new Or.Type());
 	public static final ContextualConditionType<And> AND = register("and", new And.Type());
 	public static final ContextualConditionType<Time> TIME = register("time", new Time.Type());
+	public static final ContextualConditionType<Execute> EXECUTE = register("execute", new Execute.Type());
 
 	public static <T extends ContextualConditionType<?>> T register(String name, T t) {
 		ModLoadingContext.get().setActiveContainer(null); // bypass Forge warning
