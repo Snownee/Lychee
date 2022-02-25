@@ -128,7 +128,38 @@ Randomly selects entries from an actions list to apply. Similar to loot table.
     | rolls   | (optional) specifies the number of rolls on the pool | [IntBounds](general-types.md#intbounds) |
     | entries | a list of actions that can be applied                | WeightedPostAction[]                    |
 
-		The format of WeightedPostAction is just like a normal PostAction, but you can add a `weight` entry to it to decide how often this action is chosen out of all the actions.
+    The format of WeightedPostAction is just like a normal PostAction, but you can add a `weight` entry to it to decide how often this action is chosen out of all the actions.
+
+??? example
+
+	```json
+	{
+		"type": "random",
+		"rolls": {
+			"min": 3,
+			"max": 5
+		},
+		"entries": [
+			{
+				"type": "drop_item",
+				"item": "gold_ingot",
+				"contextual": {
+					"type": "weather",
+					"weather": "rain"
+				}
+			},
+			{
+				"type": "drop_item",
+				"item": "ender_pearl"
+			},
+			{
+				"weight": 2,
+				"type": "drop_item",
+				"item": "dirt"
+			}
+		]
+	}
+	```
 
 ## Special Built-in Actions
 
@@ -160,6 +191,8 @@ This action is not [repeatable](concepts.md#repeatability).
 ### Set Falling Anvil Damage Chance (`anvil_damage_chance`)
 
 This action can only be used in the [Block Crushing](recipe.md#block-crushing) recipe. The default damage chance depends on the falling height.
+
+!!! note "Format"
 
     | Name   | Description            | Type / Literal        |
     | ------ | ---------------------- | --------------------- |
