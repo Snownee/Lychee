@@ -8,6 +8,7 @@ import snownee.lychee.core.post.DropXp;
 import snownee.lychee.core.post.Execute;
 import snownee.lychee.core.post.PlaceBlock;
 import snownee.lychee.core.post.PostActionType;
+import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.post.input.DamageItem;
 import snownee.lychee.core.post.input.PreventDefault;
 
@@ -23,6 +24,7 @@ public class PostActionTypes {
 	public static final PostActionType<DamageItem> DAMAGE_ITEM = register("damage_item", new DamageItem.Type());
 	public static final PostActionType<PreventDefault> PREVENT_DEFAULT = register("prevent_default", new PreventDefault.Type());
 	public static final PostActionType<AnvilDamageChance> ANVIL_DAMAGE_CHANCE = register("anvil_damage_chance", new AnvilDamageChance.Type());
+	public static final PostActionType<RandomSelect> RANDOM = register("random", new RandomSelect.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		ModLoadingContext.get().setActiveContainer(null); // bypass Forge warning

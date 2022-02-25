@@ -4,7 +4,7 @@ Post action is an action to be executed.
 
 Usually you can add post actions to a Lychee's recipe, and  they will be executed after the recipe is successfully matched.
 
-## Basic format
+## Basic Format
 
 | Name       | Description                      | Type / Literal                                                                                     |
 | ---------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -12,9 +12,9 @@ Usually you can add post actions to a Lychee's recipe, and  they will be execute
 | contextual | (optional) contextual conditions | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
 |            | additional properties...         |                                                                                                    |
 
-## Built-in actions
+## Built-in Actions
 
-### Drop item (`drop_item`)
+### Drop Item (`drop_item`)
 
 Spawns an item entity on the ground.
 
@@ -41,7 +41,7 @@ Spawns an item entity on the ground.
 	}
 	```
 
-### Place block (`place`)
+### Place Block (`place`)
 
 Places a block in world.
 
@@ -91,7 +91,7 @@ This action is not [repeatable](concepts.md#repeatability).
 	}
 	```
 
-### Execute command (`execute`)
+### Execute Command (`execute`)
 
 Executes a command.
 
@@ -103,7 +103,7 @@ Executes a command.
     | command | the command to run                     | string         |
     | hide    | (optional) hide this action in JEI/REI | boolean        |
 
-### Drop experience (`drop_xp`)
+### Drop Experience (`drop_xp`)
 
 Spawns experience orbs.
 
@@ -114,11 +114,27 @@ Spawns experience orbs.
     | type | type        | "drop_xp"      |
     | xp   | amount      | int            |
 
-## Special built-in actions
+### Random (`random`)
+
+*Since 1.6.0*
+
+Randomly selects entries from an actions list to apply. Similar to loot table.
+
+!!! note "Format"
+
+    | Name    | Description                                          | Type / Literal                          |
+    | ------- | ---------------------------------------------------- | --------------------------------------- |
+    | type    | type                                                 | "random"                                |
+    | rolls   | (optional) specifies the number of rolls on the pool | [IntBounds](general-types.md#intbounds) |
+    | entries | a list of actions that can be applied                | WeightedPostAction[]                    |
+
+		The format of WeightedPostAction is just like a normal PostAction, but you can add a `weight` entry to it to decide how often this action is chosen out of all the actions.
+
+## Special Built-in Actions
 
 These following actions will prevent the default behavior of the recipe (such as consuming input item). The default behavior is explained in the recipes page.
 
-### Prevent default behavior (`prevent_default`)
+### Prevent Default Behavior (`prevent_default`)
 
 Prevents default behavior and do nothing.
 
@@ -128,7 +144,7 @@ Prevents default behavior and do nothing.
     | ---- | ----------- | ----------------- |
     | type | type        | "prevent_default" |
 
-### Damage input item (`damage_item`)
+### Damage Input Item (`damage_item`)
 
 Damages input item.
 
@@ -141,7 +157,7 @@ This action is not [repeatable](concepts.md#repeatability).
     | type   | type              | "damage_item"  |
     | damage | (optional) damage | int            |
 
-### Set falling anvil damage chance (`anvil_damage_chance`)
+### Set Falling Anvil Damage Chance (`anvil_damage_chance`)
 
 This action can only be used in the [Block Crushing](recipe.md#block-crushing) recipe. The default damage chance depends on the falling height.
 

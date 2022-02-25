@@ -1,6 +1,6 @@
 # Recipes
 
-## Basic format
+## Basic Format
 
 === "Forge"
 
@@ -22,9 +22,9 @@
     | post              | (optional) post actions          | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
     |                   | additional properties...         |                                                                                                    |
 
-## Recipe types
+## Recipe Types
 
-### Use item on a block
+### Use Item on a Block
 
 Event when a player uses item on a block.
 
@@ -86,7 +86,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 	}
 	```
 
-### Click on a block with item
+### Click on a Block with Item
 
 Event when a player click on a block with item.
 
@@ -102,7 +102,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
     | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient)         |
     | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate) |
 
-### Item entity burning
+### Item Entity Burning
 
 Event when an item entity is burnt.
 
@@ -140,7 +140,7 @@ Default behavior: item is consumed.
 	}
 	```
 
-### Item entity inside a block
+### Item Entity inside a Block
 
 Event when an item entity is inside a block. This will be tested every second.
 
@@ -185,7 +185,7 @@ Default behavior: Item is consumed.
 	}
 	```
 
-### Anvil crafting
+### Anvil Crafting
 
 It is not recommended to add contextual conditions or actions to the recipe, because JEI/REI does not support drawing extra things on an anvil recipe.
 
@@ -229,7 +229,7 @@ Default behavior: Anvil is damaged.
 	}
 	```
 
-### Block crushing
+### Block Crushing
 
 Event when a falling block entity lands on a block.
 
@@ -311,7 +311,7 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
 
 	Normally it will process all the items that touches the falling block, but if the landing block is tagged with `lychee:extend_box` (cauldrons by default), it will collect items inside the landing block as well.
 
-### Lightning channeling
+### Lightning Channeling
 
 This recipe type is [repeatable](concepts.md#repeatability).
 
@@ -324,7 +324,7 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
     | type    | type                                  | "lychee:lightning_channeling"                                                            |
     | item_in | (optional) items nearby the lightning | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
 
-### Item exploding
+### Item Exploding
 
 This recipe type is [repeatable](concepts.md#repeatability).
 
@@ -341,7 +341,7 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 
 	You can tag items with `lychee:explosives` to let them be shown in JEI / REI.
 
-### Block exploding
+### Block Exploding
 
 This recipe type is not [repeatable](concepts.md#repeatability).
 

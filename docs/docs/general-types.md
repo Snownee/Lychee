@@ -82,3 +82,16 @@ A BlockPredicate is a predicate of StateDefinition.
 ## LocationPredicate
 
 Predicate applied to location. Please refer to the [Minecraft Wiki](https://minecraft.fandom.com/wiki/Predicate).
+
+## IntBounds
+
+Describes a inclusive range for integers.
+
+!!! note "Format"
+
+    | Name | Description                                    | Type / Literal |
+    | ---- | ---------------------------------------------- | -------------- |
+    | min  | (optional) minimum value. -infinity by default | int            |
+    | max  | (optional) maximum value. +infinity by default | int            |
+
+    IntBounds can also be a simple `int` to represent [n, n].

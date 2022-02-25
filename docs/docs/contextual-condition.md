@@ -4,7 +4,7 @@ Unlike Forge's recipe condition (sadly no docs), or Fabric's resource condition 
 
 Contextual condition can be applied to a recipe, or a single result (aka Post Action) in a recipe.
 
-## Basic format
+## Basic Format
 
 | Name        | Description                                                          | Type / Literal |
 | ----------- | -------------------------------------------------------------------- | -------------- |
@@ -17,7 +17,7 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 
 	If a condition is a secret, it is still visible to players by using some technical approach.
 
-## Built-in conditions
+## Built-in Conditions
 
 ### Inverted (`not`)
 
@@ -30,7 +30,7 @@ Inverts another condition.
     | type       | type        | "not"                                        |
     | contextual | condition   | [ContextualCondition](#contextual-condition) |
 
-### True for any (`or`)
+### True for Any (`or`)
 
 Checks if any of the wrapped conditions is passed.
 
@@ -41,7 +41,7 @@ Checks if any of the wrapped conditions is passed.
     | type       | type        | "or"                                           |
     | contextual | conditions  | [ContextualCondition](#contextual-condition)[] |
 
-### True for all (`and`)
+### True for All (`and`)
 
 Checks if all the wrapped conditions are passed.
 
@@ -52,7 +52,7 @@ Checks if all the wrapped conditions are passed.
     | type       | type        | "and"                                          |
     | contextual | conditions  | [ContextualCondition](#contextual-condition)[] |
 
-### Random chance (`chance`)
+### Random Chance (`chance`)
 
 Generates a random number between 0.0 and 1.0, and checks if it is less than a specified value.
 
@@ -72,7 +72,7 @@ Generates a random number between 0.0 and 1.0, and checks if it is less than a s
 	}
 	```
 
-### Location check (`location`)
+### Location Check (`location`)
 
 Checks if a `location_check` predicate is passed.
 
@@ -109,7 +109,7 @@ Checks if a `location_check` predicate is passed.
 
 	Fluid state predicate is not supported yet. (because I am lazy)
 
-### Weather check (`weather`)
+### Weather Check (`weather`)
 
 Checks weather.
 
@@ -120,7 +120,7 @@ Checks weather.
     | type    | type        | "weather"                      |
     | weather | weather     | "clear" \| "rain" \| "thunder" |
 
-### Difficulty check (`difficulty`)
+### Difficulty Check (`difficulty`)
 
 Checks if world is in any of the listed difficulties.
 
@@ -142,11 +142,17 @@ Checks if world is in any of the listed difficulties.
 	}
 	```
 
-### Time check (`time`)
+### Time Check (`time`)
 
 Compares the current game time (the age of the world in game ticks) against given values.
 
 !!! note "Format"
+
+    | Name   | Description         | Type / Literal                          |
+    | ------ | ------------------- | --------------------------------------- |
+    | type   | type                | "time"                                  |
+    | value  | the time            | [IntBounds](general-types.md#intbounds) |
+    | period | (optional) see wiki | int                                     |
 
     See [Minecraft Wiki](https://minecraft.fandom.com/wiki/Predicate). Only supports constant value.
 
@@ -164,3 +170,17 @@ Compares the current game time (the age of the world in game ticks) against give
         "period": 40
 	}
 	```
+
+### Command Check (`execute`)
+
+*Since 1.6.0*
+
+Executes a command and see if the range matches the return value.
+
+!!! note "Format"
+
+    | Name    | Description                             | Type / Literal                          |
+    | ------- | --------------------------------------- | --------------------------------------- |
+    | type    | type                                    | "execute"                               |
+    | command | the command to run                      | string                                  |
+    | value   | (optional) the range. [1,+∞) by default | [IntBounds](general-types.md#intbounds) |

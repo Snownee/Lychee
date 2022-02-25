@@ -22,7 +22,7 @@ Currently Lychee has support for the following recipe type (with full JEI/REI su
 
 Kiwi is an optional dependency to have some additional particles.
 
-## Adding recipes
+## Adding Recipes
 
 To create a new recipe that works in every world you create, you will need a datapack loader mod, such as [OpenLoader](https://www.curseforge.com/minecraft/mc-mods/open-loader).
 

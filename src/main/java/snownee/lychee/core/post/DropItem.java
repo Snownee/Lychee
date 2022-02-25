@@ -40,10 +40,7 @@ public class DropItem extends PostAction {
 
 	@Override
 	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		times = checkConditions(recipe, ctx, times);
-		if (times > 0) {
-			apply(recipe, ctx, times);
-		}
+		apply(recipe, ctx, times);
 		return true;
 	}
 

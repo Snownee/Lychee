@@ -19,6 +19,36 @@
     },
     {
       "type": "damage_item"
+    },
+    {
+      "type": "random",
+      "contextual": {
+        "type": "chance",
+        "chance": 0.9
+      },
+      "rolls": {
+        "min": 3,
+        "max": 5
+      },
+      "entries": [
+        {
+          "type": "drop_item",
+          "item": "gold_ingot",
+          "contextual": {
+            "type": "weather",
+            "weather": "rain"
+          }
+        },
+        {
+          "type": "drop_item",
+          "item": "ender_pearl"
+        },
+        {
+          "weight": 2,
+          "type": "drop_item",
+          "item": "dirt"
+        }
+      ]
     }
   ]
 }

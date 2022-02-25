@@ -31,8 +31,7 @@ public record Chance(float chance) implements ContextualCondition {
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
 		String key = makeDescriptionId(inverted);
-		String chance = this.chance < 0.01 ? "<1" : String.valueOf((int) (this.chance * 100));
-		return new TranslatableComponent(key, LUtil.white(chance + "%"));
+		return new TranslatableComponent(key, LUtil.white(LUtil.chance(chance)));
 	}
 
 	public static class Type extends ContextualConditionType<Chance> {

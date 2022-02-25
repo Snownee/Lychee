@@ -134,6 +134,11 @@ public class PlaceBlock extends PostAction {
 		GuiGameElement.of(state).rotateBlock(22.5f, 45f, 0).scale(10).atLocal(0.3, 1.3, 2).render(poseStack, x, y);
 	}
 
+	@Override
+	public boolean canRepeat() {
+		return false;
+	}
+
 	public static class Type extends PostActionType<PlaceBlock> {
 
 		@Override
@@ -157,11 +162,6 @@ public class PlaceBlock extends PostAction {
 		public void toNetwork(PlaceBlock action, FriendlyByteBuf buf) {
 			BlockPredicateHelper.toNetwork(action.block, buf);
 			buf.writeBlockPos(action.offset);
-		}
-
-		@Override
-		public boolean canBatchRun() {
-			return false;
 		}
 
 	}
