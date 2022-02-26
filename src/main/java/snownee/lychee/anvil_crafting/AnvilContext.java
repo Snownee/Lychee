@@ -38,6 +38,7 @@ public class AnvilContext extends LycheeContext {
 
 		@Override
 		public AnvilContext create(LootContextParamSet pParameterSet) {
+			beforeCreate(pParameterSet);
 			return new AnvilContext(random, level, params, left, right, name);
 		}
 

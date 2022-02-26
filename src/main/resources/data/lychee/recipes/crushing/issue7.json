@@ -1,0 +1,23 @@
+{
+  "type": "lychee:block_crushing",
+  "item_in": [
+    {
+      "item": "minecraft:oak_planks"
+    }
+  ],
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "minecraft:spruce_planks",
+      "count": 1
+    },
+    {
+      "type": "drop_item",
+      "item": "minecraft:spruce_planks",
+      "contextual": {
+        "type": "chance",
+        "chance": 0.99
+      }
+    }
+  ]
+}
