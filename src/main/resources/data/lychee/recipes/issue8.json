@@ -1,0 +1,20 @@
+{
+  "type": "lychee:block_interacting",
+  "item_in": {
+    "item": "minecraft:iron_axe"
+  },
+  "block_in": "minecraft:stripped_oak_log",
+  "post": [
+    {
+      "type": "prevent_default"
+    },
+    {
+      "type": "execute",
+      "command": "playsound minecraft:entity.experience_orb.pickup block @a",
+      "contextual": {
+        "type": "execute",
+        "command": "execute unless block ~ ~-1 ~ minecraft:oak_log"
+      }
+    }
+  ]
+}

@@ -28,6 +28,7 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -188,6 +189,26 @@ public class LUtil {
 			}
 		}
 		return blockpos;
+	}
+
+	public static Vec3 clampPos(Vec3 origin, BlockPos pos) {
+		double x = clamp(origin.x, pos.getX());
+		double y = clamp(origin.y, pos.getY());
+		double z = clamp(origin.z, pos.getZ());
+		if (x == origin.x && y == origin.y && z == origin.z) {
+			return origin;
+		}
+		return new Vec3(x, y, z);
+	}
+
+	private static double clamp(double v, int target) {
+		if (v < target) {
+			return target;
+		}
+		if (v >= target + 1) {
+			return target + 0.999999;
+		}
+		return v;
 	}
 
 }

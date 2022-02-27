@@ -106,7 +106,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
 			return Optional.empty();
 		}
-		ctxBuilder.withParameter(LootContextParams.ORIGIN, origin);
+		ctxBuilder.withParameter(LootContextParams.ORIGIN, LUtil.clampPos(origin, pos));
 		ctxBuilder.withParameter(LootContextParams.THIS_ENTITY, entity);
 		ctxBuilder.withParameter(LootContextParams.BLOCK_STATE, blockstate);
 		ctxBuilder.withParameter(LycheeLootContextParams.BLOCK_POS, pos);
