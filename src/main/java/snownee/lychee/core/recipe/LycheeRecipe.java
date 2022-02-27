@@ -2,6 +2,7 @@ package snownee.lychee.core.recipe;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -55,6 +56,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	}
 
 	public void addPostAction(PostAction action) {
+		Objects.requireNonNull(action);
 		if (actions == Collections.EMPTY_LIST) {
 			actions = Lists.newArrayList();
 		}

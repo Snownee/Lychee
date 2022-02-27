@@ -22,7 +22,8 @@ public enum PostActionIngredientRenderer implements IIngredientRenderer<PostActi
 
 	@Override
 	public void render(PoseStack poseStack, int mx, int my, @Nullable PostAction action) {
-		action.render(poseStack, mx, my);
+		if (action != null)
+			action.render(poseStack, mx, my);
 	}
 
 }

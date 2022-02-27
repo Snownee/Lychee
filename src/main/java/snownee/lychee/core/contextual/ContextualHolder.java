@@ -3,6 +3,7 @@ package snownee.lychee.core.contextual;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -43,6 +44,7 @@ public abstract class ContextualHolder {
 	}
 
 	public void withCondition(ContextualCondition condition) {
+		Objects.requireNonNull(condition);
 		if (conditions == Collections.EMPTY_LIST) {
 			conditions = Lists.newArrayList();
 		}
