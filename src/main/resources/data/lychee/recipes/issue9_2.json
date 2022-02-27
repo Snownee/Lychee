@@ -1,0 +1,16 @@
+{
+  "type": "lychee:block_interacting",
+  "item_in": { "item": "wheat_seeds" },
+  "block_in": {
+    "blocks": [ "dirt" ]
+  },
+  "post": [
+    {
+      "type": "place",
+      "block": "green_wool"
+    },
+    {
+      "type": "prevent_default"
+    }
+  ]
+}

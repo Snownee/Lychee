@@ -9,13 +9,12 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
 import snownee.lychee.core.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
-public class ItemInsideRecipe extends ItemAndBlockRecipe<LycheeContext> implements BlockKeyRecipe {
+public class ItemInsideRecipe extends ItemAndBlockRecipe<LycheeContext> {
 
 	private int time;
 

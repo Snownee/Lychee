@@ -21,7 +21,7 @@ import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.mixin.LootContextBuilderAccess;
 
-public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> implements BlockKeyRecipe {
+public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> implements BlockKeyRecipe<BlockExplodingRecipe> {
 
 	private BlockPredicate block;
 
@@ -62,6 +62,21 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> im
 			ctx.items.addAll(defaultDrops.get());
 		}
 		return ctx.items;
+	}
+
+	@Override
+	public int compareTo(BlockExplodingRecipe that) {
+		int i;
+		i = Integer.compare(isRepeatable() ? 0 : 1, that.isRepeatable() ? 0 : 1);
+		if (i != 0)
+			return i;
+		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
+		if (i != 0)
+			return i;
+		i = Integer.compare(block == BlockPredicate.ANY ? 1 : 0, that.block == BlockPredicate.ANY ? 1 : 0);
+		if (i != 0)
+			return i;
+		return getId().compareTo(that.getId());
 	}
 
 	public static class Serializer extends LycheeRecipe.Serializer<BlockExplodingRecipe> {

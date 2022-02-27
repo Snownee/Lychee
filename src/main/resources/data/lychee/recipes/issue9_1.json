@@ -1,0 +1,16 @@
+{
+  "type": "lychee:block_interacting",
+  "item_in": { "item": "stick" },
+  "block_in": {
+    "blocks": [ "dirt" ]
+  },
+  "post": [
+    {
+      "type": "place",
+      "block": "oak_planks"
+    },
+    {
+      "type": "prevent_default"
+    }
+  ]
+}

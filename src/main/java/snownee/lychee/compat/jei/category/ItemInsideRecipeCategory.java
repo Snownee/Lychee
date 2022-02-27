@@ -13,13 +13,12 @@ import net.minecraft.world.item.ItemStack;
 import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.item_inside.ItemInsideRecipe;
 import snownee.lychee.util.LUtil;
 
-public class ItemInsideRecipeCategory<T extends ItemAndBlockRecipe<LycheeContext> & BlockKeyRecipe> extends ItemAndBlockBaseCategory<LycheeContext, T> {
+public class ItemInsideRecipeCategory<T extends ItemAndBlockRecipe<LycheeContext>> extends ItemAndBlockBaseCategory<LycheeContext, T> {
 
 	public ItemInsideRecipeCategory(BlockKeyRecipeType<LycheeContext, T> recipeType, IGuiHelper guiHelper, ScreenElement mainIcon) {
 		this(List.of(recipeType), guiHelper, mainIcon);
