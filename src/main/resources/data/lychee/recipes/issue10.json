@@ -1,0 +1,24 @@
+{
+  "type": "lychee:block_crushing",
+  "landing_block": "minecraft:raw_copper_block",
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "minecraft:copper_ingot",
+      "count": 39
+    },
+    {
+      "type": "drop_item",
+      "item": "minecraft:copper_ingot",
+      "contextual": {
+        "type": "chance",
+        "chance": 0.25
+      }
+    },
+    {
+      "type": "place",
+      "block": "*"
+    }
+    
+  ]
+}
