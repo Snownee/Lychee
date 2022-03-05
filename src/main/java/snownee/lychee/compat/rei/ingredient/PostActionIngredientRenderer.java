@@ -17,7 +17,8 @@ public enum PostActionIngredientRenderer implements EntryRenderer<PostAction> {
 
 	@Override
 	public void render(EntryStack<PostAction> entry, PoseStack poseStack, Rectangle bounds, int mx, int my, float delta) {
-		entry.getValue().render(poseStack, bounds.x, bounds.y);
+		if (!entry.isEmpty())
+			entry.getValue().render(poseStack, bounds.x, bounds.y);
 	}
 
 	@Override
