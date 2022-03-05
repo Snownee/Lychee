@@ -31,11 +31,8 @@ public abstract class PostAction extends ContextualHolder {
 	 * @return false if prevent default behavior
 	 */
 	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		times = checkConditions(recipe, ctx, times);
-		if (times > 0) {
-			for (int i = 0; i < times; i++) {
-				apply(recipe, ctx, times);
-			}
+		for (int i = 0; i < times; i++) {
+			apply(recipe, ctx, times);
 		}
 		return true;
 	}
@@ -81,8 +78,9 @@ public abstract class PostAction extends ContextualHolder {
 	@Environment(EnvType.CLIENT)
 	public List<Component> getTooltips() {
 		List<Component> list = Lists.newArrayList(getDisplayName());
-		if (!getConditions().isEmpty()) {
-			list.add(LUtil.format("contextual.lychee", showingConditionsCount()).withStyle(ChatFormatting.GRAY));
+		int c = showingConditionsCount();
+		if (c > 0) {
+			list.add(LUtil.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
 		}
 		getConditonTooltips(list, 0);
 		return list;
@@ -95,6 +93,10 @@ public abstract class PostAction extends ContextualHolder {
 	@Override
 	public String toString() {
 		return "";
+	}
+
+	public boolean canRepeat() {
+		return true;
 	}
 
 }

@@ -92,6 +92,10 @@ public class LUtil {
 		return new TextComponent(s.toString()).withStyle(ChatFormatting.WHITE);
 	}
 
+	public static String chance(float chance) {
+		return (chance < 0.01 ? "<1" : String.valueOf((int) (chance * 100))) + "%";
+	}
+
 	public static String capitaliseAllWords(String str) {
 		int sz = str.length();
 		StringBuilder buffer = new StringBuilder(sz);

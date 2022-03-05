@@ -18,10 +18,6 @@
       "type": "drop_item",
       "item": "diamond",
       "count": 5
-    },
-    {
-      "type": "drop_item",
-      "item": "gold_ingot"
     }
   ]
 }

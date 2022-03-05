@@ -58,7 +58,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		if (actions == Collections.EMPTY_LIST) {
 			actions = Lists.newArrayList();
 		}
-		if (!action.getType().canBatchRun()) {
+		if (!action.canRepeat()) {
 			repeatable = false;
 		}
 		actions.add(action);
@@ -76,10 +76,16 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	 * @return false if prevent default behavior
 	 */
 	public boolean applyPostActions(LycheeContext ctx, int times) {
+		boolean doDefault = true;
 		if (!ctx.getLevel().isClientSide) {
-			return actions.stream().allMatch($ -> $.doApply(this, ctx, times));
+			for (PostAction action : actions) {
+				int t = action.checkConditions(this, ctx, times);
+				if (t > 0) {
+					doDefault &= action.doApply(this, ctx, t);
+				}
+			}
 		}
-		return true;
+		return doDefault;
 	}
 
 	public boolean isRepeatable() {

@@ -39,12 +39,8 @@ public class DamageItem extends PostAction {
 
 	@Override
 	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		times = checkConditions(recipe, ctx, times);
-		if (times > 0) {
-			apply(recipe, ctx, times);
-			return false;
-		}
-		return true;
+		apply(recipe, ctx, times);
+		return false;
 	}
 
 	@Override
@@ -105,6 +101,11 @@ public class DamageItem extends PostAction {
 		return true;
 	}
 
+	@Override
+	public boolean canRepeat() {
+		return false;
+	}
+
 	public static class Type extends PostActionType<DamageItem> {
 
 		@Override
@@ -120,11 +121,6 @@ public class DamageItem extends PostAction {
 		@Override
 		public void toNetwork(DamageItem action, FriendlyByteBuf buf) {
 			buf.writeVarInt(action.damage);
-		}
-
-		@Override
-		public boolean canBatchRun() {
-			return false;
 		}
 
 	}
