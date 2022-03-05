@@ -32,6 +32,7 @@ public class ItemShapelessContext extends LycheeContext {
 
 		@Override
 		public C create(LootContextParamSet pParameterSet) {
+			beforeCreate(pParameterSet);
 			return (C) new ItemShapelessContext(random, level, params, itemEntities);
 		}
 

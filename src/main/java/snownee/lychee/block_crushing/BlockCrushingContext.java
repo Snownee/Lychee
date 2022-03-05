@@ -33,6 +33,7 @@ public class BlockCrushingContext extends ItemShapelessContext {
 
 		@Override
 		public BlockCrushingContext create(LootContextParamSet pParameterSet) {
+			beforeCreate(pParameterSet);
 			return new BlockCrushingContext(random, level, params, itemEntities, fallingBlock);
 		}
 	}

@@ -27,6 +27,7 @@ public class BlockExplodingContext extends LycheeContext {
 
 		@Override
 		public BlockExplodingContext create(LootContextParamSet pParameterSet) {
+			beforeCreate(pParameterSet);
 			return new BlockExplodingContext(random, level, params);
 		}
 	}

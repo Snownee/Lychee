@@ -169,7 +169,7 @@ public class LycheeContext extends EmptyContainer {
 			return (T) params.get(pParameter);
 		}
 
-		public C create(LootContextParamSet pParameterSet) {
+		protected void beforeCreate(LootContextParamSet pParameterSet) {
 			//			Set<LootContextParam<?>> set = Sets.difference(this.params.keySet(), pParameterSet.getAllowed());
 			//			if (false && !set.isEmpty()) { // Forge: Allow mods to pass custom loot parameters (not part of the vanilla loot table) to the loot context.
 			//				throw new IllegalArgumentException("Parameters not allowed in this parameter set: " + set);
@@ -177,15 +177,15 @@ public class LycheeContext extends EmptyContainer {
 			Set<LootContextParam<?>> set1 = Sets.difference(pParameterSet.getRequired(), params.keySet());
 			if (!set1.isEmpty()) {
 				throw new IllegalArgumentException("Missing required parameters: " + set1);
-			} else {
-				Random random = this.random;
-				if (random == null) {
-					random = new Random();
-				}
-
-				return (C) new LycheeContext(random, level, params);
+			} else if (this.random == null) {
+				this.random = new Random();
 			}
 			//			}
+		}
+
+		public C create(LootContextParamSet pParameterSet) {
+			beforeCreate(pParameterSet);
+			return (C) new LycheeContext(random, level, params);
 		}
 
 		public void setParams(Map<LootContextParam<?>, Object> params) {
