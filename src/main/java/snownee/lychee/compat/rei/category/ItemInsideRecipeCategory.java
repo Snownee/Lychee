@@ -12,13 +12,12 @@ import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.compat.rei.REICompat;
 import snownee.lychee.compat.rei.display.ItemInsideDisplay;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.item_inside.ItemInsideRecipe;
 import snownee.lychee.util.LUtil;
 
-public class ItemInsideRecipeCategory<T extends ItemAndBlockRecipe<LycheeContext> & BlockKeyRecipe> extends ItemAndBlockBaseCategory<LycheeContext, T, ItemInsideDisplay<T>> {
+public class ItemInsideRecipeCategory<T extends ItemAndBlockRecipe<LycheeContext>> extends ItemAndBlockBaseCategory<LycheeContext, T, ItemInsideDisplay<T>> {
 
 	public ItemInsideRecipeCategory(BlockKeyRecipeType<LycheeContext, T> recipeType, ScreenElement mainIcon) {
 		this(List.of(recipeType), mainIcon);

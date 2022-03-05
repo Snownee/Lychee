@@ -38,7 +38,7 @@ import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.Pair;
 
-public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<C> & BlockKeyRecipe> extends LycheeRecipeType<C, T> {
+public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<C> & BlockKeyRecipe<?>> extends LycheeRecipeType<C, T> {
 
 	protected final Map<Block, List<T>> recipesByBlock = Maps.newHashMap();
 	protected final List<T> anyBlockRecipes = Lists.newLinkedList();

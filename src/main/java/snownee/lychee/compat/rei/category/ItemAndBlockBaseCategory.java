@@ -66,7 +66,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 	@Nullable
 	public BlockPredicate getInputBlock(T recipe) {
-		return ((BlockKeyRecipe) recipe).getBlock();
+		return ((BlockKeyRecipe<?>) recipe).getBlock();
 	}
 
 	public BlockState getRenderingBlock(T recipe) {
