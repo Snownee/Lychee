@@ -86,7 +86,7 @@ public class Execute extends PostAction {
 
 		@Override
 		public Execute fromJson(JsonObject o) {
-			return new Execute(o.get("command").getAsString(), GsonHelper.getAsBoolean(o, "hide", false));
+			return new Execute(GsonHelper.getAsString(o, "command"), GsonHelper.getAsBoolean(o, "hide", false));
 		}
 
 		@Override
