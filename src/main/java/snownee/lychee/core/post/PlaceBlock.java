@@ -19,11 +19,16 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.api.distmarker.Dist;
@@ -69,7 +74,7 @@ public class PlaceBlock extends PostAction {
 		Set<String> properties = ((StatePropertiesPredicateAccess) access.getProperties()).getProperties().stream().map($ -> $.getName()).collect(Collectors.toSet());
 		BlockState state = BlockPredicateHelper.anyBlockState(block);
 		if (state.isAir()) {
-			level.destroyBlock(pos, false);
+			destroyBlock(level, pos, false);
 			return;
 		}
 		if (recipe.getType() == RecipeTypes.BLOCK_CRUSHING && !oldState.isAir()) {
@@ -105,6 +110,34 @@ public class PlaceBlock extends PostAction {
 					blockentity.setChanged();
 				}
 			}
+		}
+	}
+
+	private static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {
+		BlockState blockstate = level.getBlockState(pos);
+		if (blockstate.isAir()) {
+			return false;
+		} else {
+			FluidState fluidstate = level.getFluidState(pos);
+			if (!(blockstate.getBlock() instanceof BaseFireBlock)) {
+				level.levelEvent(2001, pos, Block.getId(blockstate));
+			}
+
+			if (drop) {
+				BlockEntity blockentity = blockstate.hasBlockEntity() ? level.getBlockEntity(pos) : null;
+				Block.dropResources(blockstate, level, pos, blockentity, null, ItemStack.EMPTY);
+			}
+
+			BlockState legacy = fluidstate.createLegacyBlock();
+			if (legacy == blockstate) {
+				legacy = Blocks.AIR.defaultBlockState();
+			}
+			boolean flag = level.setBlock(pos, legacy, 3, 512);
+			if (flag) {
+				level.gameEvent(null, GameEvent.BLOCK_DESTROY, pos);
+			}
+
+			return flag;
 		}
 	}
 
