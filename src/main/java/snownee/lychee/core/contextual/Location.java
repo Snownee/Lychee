@@ -1,7 +1,6 @@
 package snownee.lychee.core.contextual;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 
 import com.google.gson.JsonObject;
@@ -20,7 +19,6 @@ import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -209,7 +207,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		@Override
 		@Environment(EnvType.CLIENT)
 		public InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
-			return LUtil.interactionResult(Objects.equals(level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(level.getBiome(pos)), access.getBiome().location()));
+			return LUtil.interactionResult(level.getBiome(pos).is(access.getBiome().location()));
 		}
 
 		@Override
@@ -256,7 +254,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		@Override
 		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
-			MutableComponent name = LUtil.getStructureDisplayName(access.getFeature().getFeatureName()).withStyle(ChatFormatting.WHITE);
+			MutableComponent name = LUtil.getStructureDisplayName(access.getFeature().location()).withStyle(ChatFormatting.WHITE);
 			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
 		}
 	}

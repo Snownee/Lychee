@@ -12,7 +12,6 @@ import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.ints.IntSets;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -77,7 +76,7 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 
 	public Optional<T> findFirst(C ctx, Level level) {
 		return recipes.stream().flatMap($ -> {
-			return Util.toStream(tryMatch($, level, ctx));
+			return tryMatch($, level, ctx).stream();
 		}).findFirst();
 	}
 

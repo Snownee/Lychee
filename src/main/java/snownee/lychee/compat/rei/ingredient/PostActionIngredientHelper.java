@@ -1,8 +1,7 @@
 package snownee.lychee.compat.rei.ingredient;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -14,7 +13,7 @@ import me.shedaniel.rei.api.common.entry.type.EntryDefinition;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagContainer;
+import net.minecraft.tags.TagKey;
 import snownee.lychee.compat.rei.REICompat;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.util.LUtil;
@@ -88,8 +87,8 @@ public class PostActionIngredientHelper implements EntryDefinition<PostAction> {
 	}
 
 	@Override
-	public Collection<ResourceLocation> getTagsFor(TagContainer tagContainer, EntryStack<PostAction> entry, PostAction value) {
-		return List.of();
+	public Stream<? extends TagKey<?>> getTagsFor(EntryStack<PostAction> entry, PostAction value) {
+		return Stream.of();
 	}
 
 }

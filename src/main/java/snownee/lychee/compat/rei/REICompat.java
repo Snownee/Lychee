@@ -22,6 +22,7 @@ import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.plugin.common.displays.anvil.AnvilRecipe;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -48,6 +49,7 @@ import snownee.lychee.compat.rei.display.ItemInsideDisplay;
 import snownee.lychee.compat.rei.display.ItemShapelessDisplay;
 import snownee.lychee.compat.rei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.core.post.PostAction;
+import snownee.lychee.util.LUtil;
 
 public class REICompat implements REIClientPlugin {
 
@@ -89,7 +91,7 @@ public class REICompat implements REIClientPlugin {
 			registration.addWorkstations(BLOCK_CRUSHING, EntryStacks.of(stack));
 		}
 		registration.addWorkstations(LIGHTNING_CHANNELING, EntryStacks.of(Items.LIGHTNING_ROD));
-		for (Item item : LycheeTags.EXPLOSIVES.getValues()) {
+		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.EXPLOSIVES)) {
 			EntryStack<ItemStack> stack = EntryStacks.of(item);
 			registration.addWorkstations(ITEM_EXPLODING, stack);
 			registration.addWorkstations(BLOCK_EXPLODING, stack);
