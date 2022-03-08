@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
 @Mixin(BlockPredicate.class)
@@ -17,7 +17,7 @@ public interface BlockPredicateAccess {
 
 	@Accessor
 	@Nullable
-	Tag<Block> getTag();
+	TagKey<Block> getTag();
 
 	@Accessor
 	@Nullable

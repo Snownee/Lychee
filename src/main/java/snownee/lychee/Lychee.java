@@ -33,7 +33,6 @@ public final class Lychee {
 	public static boolean hasKiwi = ModList.get().isLoaded("kiwi");
 
 	public Lychee() {
-		RecipeTypes.init();
 		LycheeTags.init();
 		MinecraftForge.EVENT_BUS.addListener(Lychee::useItemOn);
 		MinecraftForge.EVENT_BUS.addListener(Lychee::clickItemOn);
@@ -57,6 +56,7 @@ public final class Lychee {
 	@SubscribeEvent
 	public static void registerRegisterSerializer(RegistryEvent.Register<RecipeSerializer<?>> event) {
 		RecipeSerializers.init();
+		RecipeTypes.init();
 	}
 
 	public static void useItemOn(PlayerInteractEvent.RightClickBlock event) {

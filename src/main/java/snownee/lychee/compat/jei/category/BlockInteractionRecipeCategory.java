@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import mezz.jei.api.helpers.IGuiHelper;
 import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -21,8 +20,8 @@ import snownee.lychee.interaction.BlockInteractingRecipe;
 
 public class BlockInteractionRecipeCategory extends ItemInsideRecipeCategory<BlockInteractingRecipe> {
 
-	public BlockInteractionRecipeCategory(List<BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe>> recipeTypes, IGuiHelper guiHelper, ScreenElement mainIcon) {
-		super(recipeTypes, guiHelper, mainIcon);
+	public BlockInteractionRecipeCategory(List<BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe>> recipeTypes, ScreenElement mainIcon) {
+		super(recipeTypes, mainIcon);
 	}
 
 	@Override

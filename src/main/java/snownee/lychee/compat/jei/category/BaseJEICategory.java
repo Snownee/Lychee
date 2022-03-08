@@ -8,15 +8,21 @@ import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.builder.IIngredientAcceptor;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IGuiIngredientGroup;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.IFocus;
+import mezz.jei.api.recipe.IFocusFactory;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import mezz.jei.api.runtime.IRecipesGui;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -27,8 +33,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.jei.JEICompat;
-import snownee.lychee.compat.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.LycheeRecipe;
@@ -39,47 +45,62 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	public static final int width = 119;
 	public static final int height = 59;
-	protected final List<LycheeRecipeType<C, T>> recipeTypes;
-	protected final IGuiHelper guiHelper;
+	public final List<LycheeRecipeType<C, T>> recipeTypes;
 	protected IDrawable bg;
 	protected IDrawable icon;
 	protected Rect2i infoRect;
+	protected RecipeType<T> recipeType;
 
-	public BaseJEICategory(LycheeRecipeType<C, T> recipeType, IGuiHelper guiHelper) {
-		this(List.of(recipeType), guiHelper);
+	public BaseJEICategory(LycheeRecipeType<C, T> recipeType) {
+		this(List.of(recipeType));
 	}
 
-	public BaseJEICategory(List<LycheeRecipeType<C, T>> recipeTypes, IGuiHelper guiHelper) {
+	public BaseJEICategory(List<LycheeRecipeType<C, T>> recipeTypes) {
 		this.recipeTypes = recipeTypes;
-		this.guiHelper = guiHelper;
+		recipeType = new RecipeType<>(recipeTypes.get(0).id, recipeTypes.get(0).clazz);
+	}
+
+	@Override
+	public Class<? extends T> getRecipeClass() {
+		return recipeType.getRecipeClass();
+	}
+
+	@Override
+	public ResourceLocation getUid() {
+		return recipeType.getUid();
+	}
+
+	@Override
+	public RecipeType<T> getRecipeType() {
+		return recipeType;
+	}
+
+	@Override
+	public ResourceLocation getRegistryName(T recipe) {
+		return recipe.getId();
 	}
 
 	@Override
 	public IDrawable getBackground() {
 		if (bg == null) {
-			bg = guiHelper.createBlankDrawable(getWidth(), getHeight());
+			bg = JEICompat.GUI.createBlankDrawable(getWidth(), getHeight());
 		}
 		return bg;
 	}
 
 	@Override
 	public IDrawable getIcon() {
+		if (icon == null) {
+			icon = createIcon(JEICompat.GUI);
+		}
 		return icon;
 	}
 
-	@Override
-	public Class<? extends T> getRecipeClass() {
-		return recipeTypes.get(0).clazz;
-	}
+	public abstract IDrawable createIcon(IGuiHelper guiHelper);
 
 	@Override
 	public Component getTitle() {
 		return new TranslatableComponent(Util.makeDescriptionId("recipeType", getUid()));
-	}
-
-	@Override
-	public ResourceLocation getUid() {
-		return recipeTypes.get(0).id;
 	}
 
 	public int getWidth() {
@@ -90,39 +111,32 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		return height;
 	}
 
-	@Override
-	public void setIngredients(T recipe, IIngredients ingredients) {
-		setInputs(recipe, ingredients);
-		setOutputs(recipe, ingredients);
-	}
-
-	public void setInputs(T recipe, IIngredients ingredients) {
-		ingredients.setInputIngredients(recipe.getIngredients());
-	}
-
-	public void setOutputs(T recipe, IIngredients ingredients) {
-		List<PostAction> actions = recipe.getShowingPostActions();
-		List<List<ItemStack>> outputs = actions.stream().map(PostAction::getOutputItems).toList();
-		ingredients.setOutputLists(VanillaTypes.ITEM, outputs);
-		ingredients.setOutputs(JEICompat.POST_ACTION, actions);
+	public static void addBlockInputs(IRecipeLayoutBuilder builder, BlockPredicate block) {
+		if (block == null)
+			return;
+		List<ItemStack> items = BlockPredicateHelper.getMatchedItemStacks(block);
+		if (!items.isEmpty()) {
+			IIngredientAcceptor<?> acceptor = builder.addInvisibleIngredients(RecipeIngredientRole.INPUT);
+			acceptor.addItemStacks(items);
+		}
 	}
 
 	@Override
-	public abstract void setRecipe(IRecipeLayout layout, T recipe, IIngredients ingredients);
+	public abstract void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses);
 
-	public void actionGroup(IRecipeLayout layout, T recipe, int x, int y) {
-		slotGroup(layout, x, y, 10000, recipe.getShowingPostActions(), BaseJEICategory::actionSlot);
+	public void actionGroup(IRecipeLayoutBuilder builder, T recipe, int x, int y) {
+		slotGroup(builder, x, y, 10000, recipe.getShowingPostActions(), BaseJEICategory::actionSlot);
 	}
 
-	public void ingredientGroup(IRecipeLayout layout, T recipe, int x, int y) {
-		slotGroup(layout, x, y, 0, recipe.getIngredients(), (layout0, ingredient, i, x0, y0) -> {
-			layout.getItemStacks().init(i, true, x0, y0);
-			layout.getItemStacks().set(i, List.of(ingredient.getItems()));
-			layout.getItemStacks().setBackground(i, JEICompat.slot(false));
+	public void ingredientGroup(IRecipeLayoutBuilder builder, T recipe, int x, int y) {
+		slotGroup(builder, x + 1, y + 1, 0, recipe.getIngredients(), (layout0, ingredient, i, x0, y0) -> {
+			IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, x0, y0);
+			slot.addIngredients(ingredient);
+			slot.setBackground(JEICompat.slot(false), -1, -1);
 		});
 	}
 
-	public static <T> void slotGroup(IRecipeLayout layout, int x, int y, int startIndex, List<T> items, SlotLayoutFunction<T> layoutFunction) {
+	public static <T> void slotGroup(IRecipeLayoutBuilder builder, int x, int y, int startIndex, List<T> items, SlotLayoutFunction<T> layoutFunction) {
 		int size = Math.min(items.size(), 9);
 		int gridX = (int) Math.ceil(Math.sqrt(size));
 		int gridY = (int) Math.ceil((float) size / gridX);
@@ -136,7 +150,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 				if (index >= size) {
 					break;
 				}
-				layoutFunction.apply(layout, items.get(index), startIndex + index, x + j * 19, y + i * 19);
+				layoutFunction.apply(builder, items.get(index), startIndex + index, x + j * 19, y + i * 19);
 				++index;
 			}
 		}
@@ -144,37 +158,31 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	@FunctionalInterface
 	public interface SlotLayoutFunction<T> {
-		void apply(IRecipeLayout layout, T item, int index, int x, int y);
+		void apply(IRecipeLayoutBuilder builder, T item, int index, int x, int y);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public static void actionSlot(IRecipeLayout layout, PostAction action, int index, int x, int y) {
-		IGuiIngredientGroup group;
+	public static void actionSlot(IRecipeLayoutBuilder builder, PostAction action, int index, int x, int y) {
+		IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, x + 1, y + 1);
 		if (action instanceof DropItem) {
-			group = layout.getItemStacks();
-			group.init(index, false, x, y);
+			slot.addItemStack(((DropItem) action).stack);
 			if (!action.getConditions().isEmpty()) {
-				group.addTooltipCallback((i, input, stack, tooltip) -> {
-					if (i == index) {
-						List<Component> list = Lists.newArrayList();
-						list.add(LUtil.format("contextual.lychee", action.showingConditionsCount()).withStyle(ChatFormatting.GRAY));
-						action.getConditonTooltips(list, 0);
-						int line = Minecraft.getInstance().options.advancedItemTooltips ? 2 : 1;
-						line = Math.min(tooltip.size(), line);
-						tooltip.addAll(line, list);
-					}
+				slot.addTooltipCallback((stack, tooltip) -> {
+					List<Component> list = Lists.newArrayList();
+					list.add(LUtil.format("contextual.lychee", action.showingConditionsCount()).withStyle(ChatFormatting.GRAY));
+					action.getConditonTooltips(list, 0);
+					int line = Minecraft.getInstance().options.advancedItemTooltips ? 2 : 1;
+					line = Math.min(tooltip.size(), line);
+					tooltip.addAll(line, list);
 				});
 			}
 		} else {
-			group = layout.getIngredientsGroup(JEICompat.POST_ACTION);
-			group.init(index, false, PostActionIngredientRenderer.INSTANCE, x, y, 18, 18, 1, 1);
+			slot.addIngredient(JEICompat.POST_ACTION, action);
 		}
-		group.set(index, action instanceof DropItem ? ((DropItem) action).stack : action);
-		group.setBackground(index, JEICompat.slot(!action.getConditions().isEmpty()));
+		slot.setBackground(JEICompat.slot(!action.getConditions().isEmpty()), -1, -1);
 	}
 
 	@Override
-	public void draw(T recipe, PoseStack matrixStack, double mouseX, double mouseY) {
+	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
 		if (!recipe.getConditions().isEmpty()) {
 			matrixStack.pushPose();
 			matrixStack.translate(infoRect.getX(), infoRect.getY(), 0);
@@ -185,13 +193,13 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	}
 
 	@Override
-	public List<Component> getTooltipStrings(T recipe, double mouseX, double mouseY) {
+	public List<Component> getTooltipStrings(T recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
 		if (infoRect.contains((int) mouseX, (int) mouseY)) {
 			List<Component> list = Lists.newArrayList();
 			recipe.getConditonTooltips(list, 0);
 			return list;
 		}
-		return IRecipeCategory.super.getTooltipStrings(recipe, mouseX, mouseY);
+		return IRecipeCategory.super.getTooltipStrings(recipe, recipeSlotsView, mouseX, mouseY);
 	}
 
 	public boolean clickBlock(BlockState state, Key input) {
@@ -201,8 +209,9 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 			}
 			ItemStack stack = state.getBlock().asItem().getDefaultInstance();
 			if (!stack.isEmpty()) {
-				IFocus<ItemStack> focus = JEICompat.RUNTIME.getRecipeManager().createFocus(input.getValue() == 1 ? IFocus.Mode.INPUT : IFocus.Mode.OUTPUT, stack);
-				JEICompat.RUNTIME.getRecipesGui().show(focus);
+				IRecipesGui gui = JEICompat.RUNTIME.getRecipesGui();
+				IFocusFactory factory = JEICompat.HELPERS.getFocusFactory();
+				gui.show(factory.createFocus(input.getValue() == 1 ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM, stack));
 				return true;
 			}
 		}

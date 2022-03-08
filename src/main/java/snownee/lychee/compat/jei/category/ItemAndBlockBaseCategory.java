@@ -8,19 +8,19 @@ import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.gui.ingredient.IGuiIngredientGroup;
-import mezz.jei.api.gui.ingredient.IGuiItemStackGroup;
-import mezz.jei.api.gui.ingredient.ITooltipCallback;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
+import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.PostActionTypes;
@@ -44,10 +44,17 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	public static final Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public static final Rect2i methodRect = new Rect2i(30, 12, 20, 20);
 
-	public ItemAndBlockBaseCategory(List<LycheeRecipeType<C, T>> recipeTypes, IGuiHelper guiHelper, ScreenElement mainIcon) {
-		super(recipeTypes, guiHelper);
-		icon = new ScreenElementWrapper(new SideBlockIcon(mainIcon, this::getIconBlock));
+	private final ScreenElement mainIcon;
+
+	public ItemAndBlockBaseCategory(List<LycheeRecipeType<C, T>> recipeTypes, ScreenElement mainIcon) {
+		super(recipeTypes);
+		this.mainIcon = mainIcon;
 		infoRect = new Rect2i(8, 32, 8, 8);
+	}
+
+	@Override
+	public IDrawable createIcon(IGuiHelper guiHelper) {
+		return new ScreenElementWrapper(new SideBlockIcon(mainIcon, this::getIconBlock));
 	}
 
 	public BlockState getIconBlock() {
@@ -74,24 +81,24 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout layout, T recipe, IIngredients ingredients) {
-		IGuiItemStackGroup itemStackGroup = layout.getItemStacks();
-		List<List<ItemStack>> items = ingredients.getInputs(VanillaTypes.ITEM);
+	public void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses) {
+		List<Ingredient> items = recipe.getIngredients();
 		if (!items.isEmpty()) {
-			itemStackGroup.init(0, true, 3, 12);
-			itemStackGroup.set(0, ingredients.getInputs(VanillaTypes.ITEM).get(0));
+			IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, 4, 13);
+			slot.addIngredients(items.get(0));
 			boolean preventDefault = recipe.getPostActions().stream().anyMatch($ -> $.getType() == PostActionTypes.PREVENT_DEFAULT);
 			if (preventDefault) {
-				itemStackGroup.setBackground(0, JEICompat.el(AllGuiTextures.JEI_CATALYST_SLOT));
-				itemStackGroup.addTooltipCallback((i, input, stack, tooltip) -> {
+				slot.setBackground(JEICompat.el(AllGuiTextures.JEI_CATALYST_SLOT), -1, -1);
+				slot.addTooltipCallback((stack, tooltip) -> {
 					tooltip.add(recipe.getType().getPreventDefaultDescription(recipe));
 				});
 			} else {
-				itemStackGroup.setBackground(0, JEICompat.slot(false));
+				slot.setBackground(JEICompat.slot(false), -1, -1);
 			}
 		}
 
-		actionGroup(layout, recipe, 88, recipe.getShowingPostActions().size() > 9 ? 26 : 28);
+		actionGroup(builder, recipe, 88, recipe.getShowingPostActions().size() > 9 ? 26 : 28);
+		addBlockInputs(builder, getInputBlock(recipe));
 	}
 
 	public void drawExtra(T recipe, PoseStack matrixStack, double mouseX, double mouseY) {
@@ -100,8 +107,8 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void draw(T recipe, PoseStack matrixStack, double mouseX, double mouseY) {
-		super.draw(recipe, matrixStack, mouseX, mouseY);
+	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
+		super.draw(recipe, recipeSlotsView, matrixStack, mouseX, mouseY);
 		drawExtra(recipe, matrixStack, mouseX, mouseY);
 
 		BlockState state = getRenderingBlock(recipe);
@@ -133,18 +140,8 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		return 35;
 	}
 
-	/**
-	 * Get the tooltip for whatever's under the mouse.
-	 * Ingredient tooltips are already handled by JEI, this is for anything else.
-	 *
-	 * To add to ingredient tooltips, see {@link IGuiIngredientGroup#addTooltipCallback(ITooltipCallback)}
-	 *
-	 * @param mouseX the X position of the mouse, relative to the recipe.
-	 * @param mouseY the Y position of the mouse, relative to the recipe.
-	 * @return tooltip strings. If there is no tooltip at this position, return an empty list.
-	 */
 	@Override
-	public List<Component> getTooltipStrings(T recipe, double mouseX, double mouseY) {
+	public List<Component> getTooltipStrings(T recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
 		inputBlockRect.setPosition(getBlockRenderPosX(), getBlockRenderPosY());
 		if (getClass() != ItemBurningRecipeCategory.class && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
 			return BlockPredicateHelper.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe));
@@ -155,7 +152,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 				return List.of(description);
 			}
 		}
-		return super.getTooltipStrings(recipe, mouseX, mouseY);
+		return super.getTooltipStrings(recipe, recipeSlotsView, mouseX, mouseY);
 	}
 
 	@Nullable

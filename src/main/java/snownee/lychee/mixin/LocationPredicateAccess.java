@@ -12,7 +12,7 @@ import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 
 @Mixin(LocationPredicate.class)
 public interface LocationPredicateAccess {
@@ -32,7 +32,7 @@ public interface LocationPredicateAccess {
 
 	@Accessor
 	@Nullable
-	StructureFeature<?> getFeature();
+	ResourceKey<ConfiguredStructureFeature<?, ?>> getFeature();
 
 	@Accessor
 	@Nullable

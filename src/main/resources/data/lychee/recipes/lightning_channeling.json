@@ -3,9 +3,65 @@
   "item_in": [
     {
       "item": "oxidized_copper"
+    },
+    {
+      "item": "oxidized_copper"
+    },
+    {
+      "item": "oxidized_copper"
+    },
+    {
+      "item": "oxidized_copper"
+    },
+    {
+      "item": "oxidized_copper"
+    },
+    {
+      "item": "oxidized_copper"
+    },
+    {
+      "item": "oxidized_copper"
+    },
+    {
+      "item": "oxidized_copper"
+    },
+    {
+      "item": "oxidized_copper"
     }
   ],
   "post": [
+    {
+      "type": "drop_item",
+      "item": "copper_block"
+    },
+    {
+      "type": "drop_item",
+      "item": "copper_block"
+    },
+    {
+      "type": "drop_item",
+      "item": "copper_block"
+    },
+    {
+      "type": "drop_item",
+      "item": "copper_block"
+    },
+    {
+      "type": "drop_item",
+      "item": "copper_block"
+    },
+    {
+      "type": "drop_item",
+      "item": "copper_block"
+    },
+    {
+      "type": "drop_item",
+      "item": "copper_block"
+    },
+    {
+      "type": "drop_item",
+      "item": "copper_block"
+    },
     {
       "type": "drop_item",
       "item": "copper_block"

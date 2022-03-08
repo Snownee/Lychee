@@ -31,8 +31,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.SerializationTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -53,6 +52,7 @@ import snownee.lychee.util.LUtil;
 public class BlockPredicateHelper {
 
 	// handle BlockPredicate.ANY by yourself!
+	@SuppressWarnings("deprecation")
 	public static Set<Block> getMatchedBlocks(BlockPredicate predicate) {
 		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
 		Set<Block> blocks = Sets.newLinkedHashSet();
@@ -60,7 +60,7 @@ public class BlockPredicateHelper {
 			blocks.addAll(access.getBlocks());
 		}
 		if (access.getTag() != null) {
-			blocks.addAll(access.getTag().getValues());
+			blocks.addAll(LUtil.tagElements(Registry.BLOCK, access.getTag()));
 		}
 		return blocks;
 	}
@@ -120,10 +120,10 @@ public class BlockPredicateHelper {
 				blocks.add(LUtil.readRegistryId(ForgeRegistries.BLOCKS, pBuffer));
 			}
 		}
-		Tag<Block> tag = null;
+		TagKey<Block> tag = null;
 		ResourceLocation tagId = LUtil.readNullableRL(pBuffer);
 		if (tagId != null) {
-			tag = SerializationTags.getInstance().getOrEmpty(Registry.BLOCK_REGISTRY).getTag(tagId);
+			tag = TagKey.create(Registry.BLOCK_REGISTRY, tagId);
 		}
 		StatePropertiesPredicate propertiesPredicate = PropertiesPredicateHelper.fromNetwork(pBuffer);
 		NbtPredicate nbtPredicate = pBuffer.readBoolean() ? NBT_PREDICATE_DUMMY : NbtPredicate.ANY;
@@ -146,9 +146,9 @@ public class BlockPredicateHelper {
 			}
 		}
 		ResourceLocation tagId = null;
-		Tag<Block> tag = access.getTag();
+		TagKey<Block> tag = access.getTag();
 		if (tag != null)
-			tagId = SerializationTags.getInstance().getOrEmpty(Registry.BLOCK_REGISTRY).getId(tag);
+			tagId = tag.location();
 		LUtil.writeNullableRL(tagId, pBuffer);
 		PropertiesPredicateHelper.toNetwork(access.getProperties(), pBuffer);
 		NbtPredicate nbtPredicate = access.getNbt();

@@ -2,22 +2,21 @@ package snownee.lychee.compat.jei.category;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
+import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
+import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.block_crushing.BlockCrushingContext;
@@ -33,9 +32,8 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 	public static final Rect2i fallingBlockRect = new Rect2i(5, -35, 20, 35);
 	public static final Rect2i landingBlockRect = new Rect2i(5, 0, 20, 20);
 
-	public BlockCrushingRecipeCategory(LycheeRecipeType<BlockCrushingContext, BlockCrushingRecipe> recipeType, IGuiHelper guiHelper) {
-		super(recipeType, guiHelper);
-		icon = guiHelper.createDrawableIngredient(VanillaTypes.ITEM, Items.ANVIL.getDefaultInstance());
+	public BlockCrushingRecipeCategory(LycheeRecipeType<BlockCrushingContext, BlockCrushingRecipe> recipeType) {
+		super(recipeType);
 		infoRect = new Rect2i(0, 25, 8, 8);
 	}
 
@@ -45,17 +43,23 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayout layout, BlockCrushingRecipe recipe, IIngredients ingredients) {
+	public IDrawable createIcon(IGuiHelper guiHelper) {
+		return guiHelper.createDrawableIngredient(VanillaTypes.ITEM, Items.ANVIL.getDefaultInstance());
+	}
+
+	@Override
+	public void setRecipe(IRecipeLayoutBuilder builder, BlockCrushingRecipe recipe, IFocusGroup focuses) {
 		int xCenter = getWidth() / 2;
 		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
-		ingredientGroup(layout, recipe, xCenter - 45, y);
-		actionGroup(layout, recipe, xCenter + 50, y);
+		ingredientGroup(builder, recipe, xCenter - 45, y);
+		actionGroup(builder, recipe, xCenter + 50, y);
+		addBlockInputs(builder, recipe.getBlock());
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void draw(BlockCrushingRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY) {
-		super.draw(recipe, matrixStack, mouseX, mouseY);
+	public void draw(BlockCrushingRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
+		super.draw(recipe, recipeSlotsView, matrixStack, mouseX, mouseY);
 		BlockState fallingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
 		BlockState landingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
 		int x = recipe.getIngredients().isEmpty() ? 36 : 72;
@@ -93,7 +97,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 	}
 
 	@Override
-	public List<Component> getTooltipStrings(BlockCrushingRecipe recipe, double mouseX, double mouseY) {
+	public List<Component> getTooltipStrings(BlockCrushingRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
 		int x = recipe.getIngredients().isEmpty() ? 36 : 72;
 		int y = recipe.getLandingBlock() == BlockPredicate.ANY ? 45 : 33;
 		x = (int) mouseX - x;
@@ -106,7 +110,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 			BlockState landingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
 			return BlockPredicateHelper.getTooltips(landingBlock, recipe.getLandingBlock());
 		}
-		return super.getTooltipStrings(recipe, mouseX, mouseY);
+		return super.getTooltipStrings(recipe, recipeSlotsView, mouseX, mouseY);
 	}
 
 	@Override
@@ -126,17 +130,6 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public void setInputs(BlockCrushingRecipe recipe, IIngredients ingredients) {
-		List<List<ItemStack>> items = Lists.newArrayList();
-		items.addAll(recipe.getIngredients().stream().map(Ingredient::getItems).map(List::of).toList());
-		List<ItemStack> items1 = BlockPredicateHelper.getMatchedItemStacks(recipe.getLandingBlock());
-		if (!items1.isEmpty()) {
-			items.add(items1);
-		}
-		ingredients.setInputLists(VanillaTypes.ITEM, items);
 	}
 
 }

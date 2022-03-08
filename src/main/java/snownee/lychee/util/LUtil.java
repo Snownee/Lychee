@@ -8,16 +8,21 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.collect.Streams;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -70,12 +75,12 @@ public class LUtil {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static MutableComponent getStructureDisplayName(String rawName) {
-		String key = "structure." + rawName;
+	public static MutableComponent getStructureDisplayName(ResourceLocation rawName) {
+		String key = "structure." + rawName.getNamespace() + "." + rawName.getPath();
 		if (I18n.exists(key)) {
 			return new TranslatableComponent(key);
 		} else {
-			return new TextComponent(capitaliseAllWords(rawName));
+			return new TextComponent(capitaliseAllWords(rawName.getPath()));
 		}
 	}
 
@@ -209,6 +214,10 @@ public class LUtil {
 			return target + 0.999999;
 		}
 		return v;
+	}
+
+	public static <T> List<T> tagElements(Registry<T> registry, TagKey<T> tag) {
+		return Streams.stream(registry.getTagOrEmpty(tag)).map(Holder::value).toList();
 	}
 
 }

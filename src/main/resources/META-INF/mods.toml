@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[38,)"
+loaderVersion="[40,)"
 license="ARR"
 
 [[mods]]
@@ -13,7 +13,7 @@ description="In-World Crafting"
 [[dependencies.lychee]]
     modId="forge"
     mandatory=true
-    versionRange="[38,)"
+    versionRange="[40,)"
     ordering="NONE"
     side="BOTH"
 

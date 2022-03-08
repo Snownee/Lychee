@@ -9,14 +9,12 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import snownee.lychee.mixin.LightPredicateAccess;
 import snownee.lychee.mixin.LocationPredicateAccess;
 import snownee.lychee.util.LUtil;
 
 public class LocationPredicateHelper {
 
-	@SuppressWarnings("deprecation")
 	public static LocationPredicate.Builder fromNetwork(FriendlyByteBuf pBuffer) {
 		LocationPredicate.Builder builder = LocationPredicate.Builder.location();
 		builder.setX(DoubleBoundsHelper.fromNetwork(pBuffer));
@@ -38,7 +36,7 @@ public class LocationPredicateHelper {
 		}
 		ResourceLocation feature = LUtil.readNullableRL(pBuffer);
 		if (feature != null) {
-			builder.setFeature(Registry.STRUCTURE_FEATURE.get(feature));
+			builder.setFeature(ResourceKey.create(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY, feature));
 		}
 		byte smokey = pBuffer.readByte();
 		if (smokey < 2) {
@@ -60,7 +58,7 @@ public class LocationPredicateHelper {
 		LUtil.writeNullableRL(dim, pBuffer);
 		ResourceLocation biome = Optional.ofNullable(access.getBiome()).map(ResourceKey::location).orElse(null);
 		LUtil.writeNullableRL(biome, pBuffer);
-		ResourceLocation feature = Optional.ofNullable(access.getFeature()).map(StructureFeature::getRegistryName).orElse(null);
+		ResourceLocation feature = Optional.ofNullable(access.getFeature()).map(ResourceKey::location).orElse(null);
 		LUtil.writeNullableRL(feature, pBuffer);
 		Boolean smokey = access.getSmokey();
 		if (smokey == null) {
