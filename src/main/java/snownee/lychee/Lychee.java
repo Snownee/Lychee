@@ -17,6 +17,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.registries.NewRegistryEvent;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualConditionType;
 import snownee.lychee.core.post.PostActionType;
@@ -39,8 +40,8 @@ public final class Lychee {
 	}
 
 	@SubscribeEvent
-	public static void newRegistries(RegistryEvent.NewRegistry event) {
-		LycheeRegistries.init();
+	public static void newRegistries(NewRegistryEvent event) {
+		LycheeRegistries.init(event);
 	}
 
 	@SubscribeEvent
