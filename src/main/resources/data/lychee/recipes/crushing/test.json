@@ -1,16 +1,11 @@
 {
-  "type": "lychee:block_crushing",
-  "item_in": {
-    "tag": "sand"
-  },
-  "post": [
-    {
-      "type": "drop_item",
-      "item": "water_bucket"
-    },
-    {
-      "type": "place",
-      "block": "cauldron"
-    }
-  ]
+    "type": "lychee:block_crushing",
+    "landing_block": "minecraft:basalt",
+    "post": [
+        {
+            "type": "drop_item",
+            "item": "sugar",
+            "count": 3
+        }
+    ]
 }

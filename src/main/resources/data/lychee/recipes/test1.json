@@ -1,0 +1,5 @@
+{
+  "type": "lychee:block_crushing",
+  "item_in": [{"item": "gold_nugget"}, {"item": "iron_ingot"}],
+  "post": [{"type": "drop_item", "item": "nether_star", "count": 1}]
+}

@@ -1,0 +1,5 @@
+{
+  "type": "lychee:block_crushing",
+  "item_in": [{"item": "minecraft:nether_star"}, {"item": "diamond"}, {"item": "iron_ingot"}, {"item": "gold_ingot"}],
+  "post": [{"type": "drop_item", "item": "gunpowder", "count": 1}]
+}
