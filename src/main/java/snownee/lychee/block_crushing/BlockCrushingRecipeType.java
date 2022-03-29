@@ -63,6 +63,10 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 		while (true) {
 			boolean matched = false;
 			for (BlockCrushingRecipe recipe : recipes) {
+				// recipe without ingredients will only run once to prevent dead loop
+				if (recipe.ingredients.isEmpty() && loop > 0) {
+					continue;
+				}
 				try {
 					Optional<BlockCrushingRecipe> match = tryMatch(recipe, level, ctx);
 					if (match.isPresent()) {

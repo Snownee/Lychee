@@ -1,0 +1,11 @@
+{
+    "type": "lychee:block_crushing",
+    "landing_block": "minecraft:basalt",
+    "post": [
+        {
+            "type": "drop_item",
+            "item": "sugar",
+            "count": 3
+        }
+    ]
+}
