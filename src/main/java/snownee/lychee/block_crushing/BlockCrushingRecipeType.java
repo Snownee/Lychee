@@ -74,13 +74,11 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 						int times = 1;
 						if (ctx.match != null && ctx.match.length > 0) {
 							//System.out.println(Arrays.toString(ctx.match));
-							if (recipe.isRepeatable()) {
-								times = Integer.MAX_VALUE;
-								for (int i = 0; i < ctx.match.length; i++) {
-									if (ctx.match[i] > 0) {
-										ItemStack stack = ctx.filteredItems.get(i).getItem();
-										times = Math.min(times, stack.getCount() / ctx.match[i]);
-									}
+							times = recipe.getRandomRepeats(Integer.MAX_VALUE, ctx);
+							for (int i = 0; i < ctx.match.length; i++) {
+								if (ctx.match[i] > 0) {
+									ItemStack stack = ctx.filteredItems.get(i).getItem();
+									times = Math.min(times, stack.getCount() / ctx.match[i]);
 								}
 							}
 							for (int i = 0; i < ctx.match.length; i++) {
@@ -98,7 +96,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 						if (!match.get().applyPostActions(ctx, times)) {
 							((LycheeFallingBlockEntity) entity).lychee$cancelDrop();
 						}
-						if (!recipe.isRepeatable()) {
+						if (!recipe.getMaxRepeats().isAny()) {
 							break major;
 						}
 						ctx.filteredItems = null;

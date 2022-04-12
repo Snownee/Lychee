@@ -122,7 +122,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 					((LycheeCounter) entity).lychee$update(prevRecipeId, recipe);
 				}
 				if (!level.isClientSide && recipe.tickOrApply(ctx)) {
-					int times = recipe.isRepeatable() ? stack.getCount() : 1;
+					int times = recipe.getRandomRepeats(stack.getCount(), ctx);
 					if (recipe.applyPostActions(ctx, times)) {
 						stack.shrink(times);
 					}

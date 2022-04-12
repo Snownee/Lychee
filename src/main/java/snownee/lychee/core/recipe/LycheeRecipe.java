@@ -6,13 +6,18 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
+import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 
+import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -20,6 +25,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
+import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
@@ -29,7 +35,11 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 	private final ResourceLocation id;
 	private List<PostAction> actions = Collections.EMPTY_LIST;
-	protected boolean repeatable = true;
+	protected Ints maxRepeats = Ints.ANY;
+	public boolean ghost;
+	public boolean hideInRecipeViewer;
+	@Nullable
+	public String comment;
 
 	public LycheeRecipe(ResourceLocation id) {
 		this.id = id;
@@ -61,7 +71,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			actions = Lists.newArrayList();
 		}
 		if (!action.canRepeat()) {
-			repeatable = false;
+			maxRepeats = IntBoundsHelper.ONE;
 		}
 		actions.add(action);
 	}
@@ -90,8 +100,20 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		return doDefault;
 	}
 
-	public boolean isRepeatable() {
-		return repeatable;
+	public Ints getMaxRepeats() {
+		return maxRepeats;
+	}
+
+	public int getRandomRepeats(int max, C ctx) {
+		int times = Integer.MAX_VALUE;
+		if (!maxRepeats.isAny()) {
+			times = IntBoundsHelper.random(maxRepeats, ctx.getRandom());
+		}
+		return Math.min(max, times);
+	}
+
+	public boolean showInRecipeViewer() {
+		return !hideInRecipeViewer;
 	}
 
 	// true to apply
@@ -116,9 +138,17 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		@Override
 		public final R fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
 			R recipe = factory.apply(pRecipeId);
+			recipe.hideInRecipeViewer = GsonHelper.getAsBoolean(pSerializedRecipe, "hide_in_viewer", false);
+			recipe.ghost = GsonHelper.getAsBoolean(pSerializedRecipe, "ghost", false);
+			recipe.comment = GsonHelper.getAsString(pSerializedRecipe, "comment", null);
 			recipe.parseConditions(pSerializedRecipe.get("contextual"));
 			PostAction.parseActions(pSerializedRecipe.get("post"), recipe::addPostAction);
 			fromJson(recipe, pSerializedRecipe);
+			if (pSerializedRecipe.has("max_repeats")) {
+				recipe.maxRepeats = Ints.fromJson(pSerializedRecipe.get("max_repeats"));
+				Integer min = recipe.maxRepeats.getMin();
+				Preconditions.checkArgument(min != null && min > 0, "Min value of max_repeats should be greater than 0");
+			}
 			return recipe;
 		}
 
@@ -128,6 +158,10 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		public final R fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
 			try {
 				R recipe = factory.apply(pRecipeId);
+				recipe.hideInRecipeViewer = pBuffer.readBoolean();
+				if (recipe.hideInRecipeViewer && !recipe.getType().requiresClient()) {
+					return recipe;
+				}
 				recipe.conditionsFromNetwork(pBuffer);
 
 				int size = pBuffer.readVarInt();
@@ -138,6 +172,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 					recipe.addPostAction(action);
 				}
 
+				recipe.comment = pBuffer.readUtf();
 				fromNetwork(recipe, pBuffer);
 				return recipe;
 			} catch (Exception e) {
@@ -153,6 +188,10 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		@Override
 		@MustBeInvokedByOverriders
 		public void toNetwork(FriendlyByteBuf pBuffer, R pRecipe) {
+			pBuffer.writeBoolean(pRecipe.hideInRecipeViewer);
+			if (pRecipe.hideInRecipeViewer && !pRecipe.getType().requiresClient()) {
+				return;
+			}
 			pRecipe.conditionsToNetwork(pBuffer);
 			List<PostAction> actions = pRecipe.getPostActions();
 			pBuffer.writeVarInt(actions.size());
@@ -162,6 +201,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 				type.toNetwork(action, pBuffer);
 				action.conditionsToNetwork(pBuffer);
 			}
+			pBuffer.writeUtf(Strings.nullToEmpty(pRecipe.comment));
 		}
 
 		public ResourceLocation getRegistryName() {

@@ -13,6 +13,7 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
@@ -26,7 +27,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 
 	public AnvilCraftingRecipe(ResourceLocation id) {
 		super(id);
-		repeatable = false;
+		maxRepeats = IntBoundsHelper.ONE;
 	}
 
 	@Override

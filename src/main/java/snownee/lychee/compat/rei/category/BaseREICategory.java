@@ -2,6 +2,8 @@ package snownee.lychee.compat.rei.category;
 
 import java.util.List;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -21,7 +23,9 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
@@ -144,7 +148,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 		Point startPoint = new Point(bounds.getCenterX() - getDisplayWidth(display) / 2, bounds.getY() + 4);
 		T recipe = display.recipe;
 		List<Widget> widgets = Lists.newArrayList(DisplayCategory.super.setupDisplay(display, bounds));
-		if (!recipe.getConditions().isEmpty()) {
+		if (!recipe.getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.comment)) {
 			widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
 				matrixStack.pushPose();
 				matrixStack.translate(startPoint.x + infoRect.getX(), startPoint.y + infoRect.getY(), 0);
@@ -155,6 +159,13 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 			ReactiveWidget reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, infoRect));
 			reactive.setTooltipFunction($ -> {
 				List<Component> list = Lists.newArrayList();
+				if (!Strings.isNullOrEmpty(recipe.comment)) {
+					String comment = recipe.comment;
+					if (I18n.exists(comment)) {
+						comment = I18n.get(comment);
+					}
+					Splitter.on('\n').splitToStream(comment).map(TextComponent::new).forEach(list::add);
+				}
 				recipe.getConditonTooltips(list, 0);
 				return list.toArray(new Component[0]);
 			});

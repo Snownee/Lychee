@@ -78,8 +78,8 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		builder.withParameter(LootContextParams.ORIGIN, entity.position());
 		builder.withParameter(LootContextParams.THIS_ENTITY, entity);
 		LycheeContext ctx = builder.create(RecipeTypes.ITEM_BURNING.contextParamSet);
-		entity.level.getRecipeManager().getRecipeFor(RecipeTypes.ITEM_BURNING, ctx, entity.level).ifPresent($ -> {
-			int times = $.isRepeatable() ? entity.getItem().getCount() : 1;
+		RecipeTypes.ITEM_BURNING.findFirst(ctx, entity.level).ifPresent($ -> {
+			int times = $.getRandomRepeats(entity.getItem().getCount(), ctx);
 			if ($.applyPostActions(ctx, times)) {
 				entity.getItem().shrink(times);
 			}

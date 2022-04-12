@@ -30,6 +30,8 @@ public final class RecipeTypes {
 	}
 
 	public static void init() {
+		BLOCK_INTERACTING.setRequiresClient();
+		BLOCK_CLICKING.setRequiresClient();
 	}
 
 	public static final Set<LycheeRecipeType<?, ?>> ALL = Sets.newLinkedHashSet();

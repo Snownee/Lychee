@@ -1,0 +1,12 @@
+{
+  "type": "lychee:item_burning",
+  "ghost": true,
+  "comment": "Ghost recipe test",
+  "item_in": {
+    "item": "diamond"
+  },
+  "post": {
+    "type": "drop_item",
+    "item": "charcoal"
+  }
+}

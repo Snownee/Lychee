@@ -41,8 +41,8 @@ import snownee.lychee.util.Pair;
 
 public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<C, T>> extends BaseREICategory<C, T, D> {
 
-	public static final Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
-	public static final Rect2i methodRect = new Rect2i(30, 12, 20, 20);
+	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
+	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
 
 	public ItemAndBlockBaseCategory(List<LycheeRecipeType<C, T>> recipeTypes, ScreenElement mainIcon) {
 		super(recipeTypes);
@@ -89,7 +89,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		List<Widget> widgets = super.setupDisplay(display, bounds);
 		widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
 			matrixStack.pushPose();
-			matrixStack.translate(startPoint.x + getBlockRenderPosX() - 30, startPoint.y + getBlockRenderPosY() - 35, 0);
+			matrixStack.translate(startPoint.x + inputBlockRect.getX() - 30, startPoint.y + inputBlockRect.getY() - 35, 0);
 			drawExtra(recipe, matrixStack, mouseX, mouseY);
 
 			BlockState state = getRenderingBlock(recipe);
@@ -116,7 +116,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		}));
 
 		List<EntryIngredient> items = display.getInputEntries();
-		if (!items.isEmpty()) {
+		if (getClass() != BlockExplodingRecipeCategory.class && !items.isEmpty()) {
 			boolean preventDefault = recipe.getPostActions().stream().anyMatch($ -> $.getType() == PostActionTypes.PREVENT_DEFAULT);
 			LEntryWidget slot = REICompat.slot(startPoint, 3, 12, false, preventDefault);
 			slot.entries(items.get(0));
@@ -154,14 +154,6 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		}
 
 		return widgets;
-	}
-
-	protected int getBlockRenderPosX() {
-		return 30;
-	}
-
-	protected int getBlockRenderPosY() {
-		return 35;
 	}
 
 }

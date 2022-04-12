@@ -3,6 +3,8 @@ package snownee.lychee.compat.rei;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,6 +17,7 @@ import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
+import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry;
@@ -49,6 +52,8 @@ import snownee.lychee.compat.rei.display.ItemInsideDisplay;
 import snownee.lychee.compat.rei.display.ItemShapelessDisplay;
 import snownee.lychee.compat.rei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.core.post.PostAction;
+import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
 
 public class REICompat implements REIClientPlugin {
@@ -91,23 +96,26 @@ public class REICompat implements REIClientPlugin {
 			registration.addWorkstations(BLOCK_CRUSHING, EntryStacks.of(stack));
 		}
 		registration.addWorkstations(LIGHTNING_CHANNELING, EntryStacks.of(Items.LIGHTNING_ROD));
-		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.EXPLOSIVES)) {
+		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
 			EntryStack<ItemStack> stack = EntryStacks.of(item);
 			registration.addWorkstations(ITEM_EXPLODING, stack);
+		}
+		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
+			EntryStack<ItemStack> stack = EntryStacks.of(item);
 			registration.addWorkstations(BLOCK_EXPLODING, stack);
 		}
 	}
 
 	@Override
 	public void registerDisplays(DisplayRegistry registration) {
-		registration.registerRecipeFiller(RecipeTypes.ITEM_BURNING.clazz, RecipeTypes.ITEM_BURNING, ItemBurningDisplay::new);
-		registration.registerRecipeFiller(RecipeTypes.ITEM_INSIDE.clazz, RecipeTypes.ITEM_INSIDE, ItemInsideDisplay::new);
-		registration.registerRecipeFiller(RecipeTypes.BLOCK_INTERACTING.clazz, RecipeTypes.BLOCK_INTERACTING, BlockInteractionDisplay::new);
-		registration.registerRecipeFiller(RecipeTypes.BLOCK_CLICKING.clazz, RecipeTypes.BLOCK_CLICKING, BlockInteractionDisplay::new);
-		registration.registerRecipeFiller(RecipeTypes.BLOCK_CRUSHING.clazz, RecipeTypes.BLOCK_CRUSHING, BlockCrushingDisplay::new);
-		registration.registerRecipeFiller(RecipeTypes.LIGHTNING_CHANNELING.clazz, RecipeTypes.LIGHTNING_CHANNELING, ItemShapelessDisplay::new);
-		registration.registerRecipeFiller(RecipeTypes.ITEM_EXPLODING.clazz, RecipeTypes.ITEM_EXPLODING, ItemShapelessDisplay::new);
-		registration.registerRecipeFiller(RecipeTypes.BLOCK_EXPLODING.clazz, RecipeTypes.BLOCK_EXPLODING, BlockExplodingDisplay::new);
+		registerFiller(registration, RecipeTypes.ITEM_BURNING, ItemBurningDisplay::new);
+		registerFiller(registration, RecipeTypes.ITEM_INSIDE, ItemInsideDisplay::new);
+		registerFiller(registration, RecipeTypes.BLOCK_INTERACTING, BlockInteractionDisplay::new);
+		registerFiller(registration, RecipeTypes.BLOCK_CLICKING, BlockInteractionDisplay::new);
+		registerFiller(registration, RecipeTypes.BLOCK_CRUSHING, BlockCrushingDisplay::new);
+		registerFiller(registration, RecipeTypes.LIGHTNING_CHANNELING, ItemShapelessDisplay::new);
+		registerFiller(registration, RecipeTypes.ITEM_EXPLODING, ItemShapelessDisplay::new);
+		registerFiller(registration, RecipeTypes.BLOCK_EXPLODING, BlockExplodingDisplay::new);
 
 		RecipeTypes.ANVIL_CRAFTING.recipes().stream().filter($ -> {
 			return !$.getResultItem().isEmpty() && !$.isSpecial();
@@ -115,6 +123,10 @@ public class REICompat implements REIClientPlugin {
 			List<ItemStack> right = List.of($.getRight().getItems()).stream().map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
 			return new AnvilRecipe($.getId(), List.of($.getLeft().getItems()), right, List.of($.getResultItem()));
 		}).forEach(registration::add);
+	}
+
+	private static <T extends LycheeRecipe<?>, D extends Display> void registerFiller(DisplayRegistry registration, LycheeRecipeType<?, ? extends T> recipeType, Function<? extends T, D> filler) {
+		registration.registerRecipeFiller((Class<T>) recipeType.clazz, type -> Objects.equals(recipeType, type), LycheeRecipe::showInRecipeViewer, filler);
 	}
 
 	@Override

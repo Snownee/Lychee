@@ -1,0 +1,13 @@
+{
+  "type": "lychee:item_burning",
+  "hide_in_viewer": true,
+  "max_repeats": 4,
+  "comment": "Hide recipe test",
+  "item_in": {
+    "item": "tnt"
+  },
+  "post": {
+    "type": "drop_item",
+    "item": "charcoal"
+  }
+}
