@@ -14,13 +14,17 @@
 
 === "Fabric"
 
-    | Name              | Description                      | Type / Literal                                                                                     |
-    | ----------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
-    | type              | type                             | string                                                                                             |
-    | fabric:conditions | (optional) conditions            | FabricCondition[]                                                                                  |
-    | contextual        | (optional) contextual conditions | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
-    | post              | (optional) post actions          | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
-    |                   | additional properties...         |                                                                                                    |
+    | Name              | Description                                                                 | Type / Literal                                                                                     |
+    | ----------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+    | type              | type                                                                        | string                                                                                             |
+    | fabric:conditions | (optional) conditions                                                       | FabricCondition[]                                                                                  |
+    | contextual        | (optional) contextual conditions                                            | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+    | post              | (optional) post actions                                                     | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
+    | comment           | (optional) language key to show in JEI/REI                                  | string                                                                                             |
+    | ghost             | (optional) only show in JEI/REI but does not take effect                    | true \| false                                                                                      |
+    | hide_in_viewer    | (optional) hide in JEI/REI                                                  | true \| false                                                                                      |
+    | max_repeats       | (optional) max repeats for a processing. not work for a unrepeatable recipe | int                                                                                                |
+    |                   | additional properties...                                                    |                                                                                                    |
 
 ## Recipe Types
 
