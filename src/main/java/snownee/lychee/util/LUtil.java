@@ -12,8 +12,10 @@ import com.google.common.collect.Streams;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -164,6 +166,9 @@ public class LUtil {
 	}
 
 	public static RecipeManager recipeManager() {
+		if (recipeManager == null && FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			recipeManager = Minecraft.getInstance().getConnection().getRecipeManager();
+		}
 		return recipeManager;
 	}
 

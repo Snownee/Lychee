@@ -31,6 +31,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	private String itemName;
 	@Shadow
 	private DataSlot cost;
+	@Shadow
+	private ContainerLevelAccess access;
 
 	private AnvilCraftingRecipe lycheeRecipe;
 	private AnvilContext lycheeCtx;
@@ -78,6 +80,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 				}
 				repairItemCountCost = ctx.materialCost;
 			}
+			broadcastChanges();
 			ci.cancel();
 		});
 	}
@@ -99,6 +102,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	private void lychee_preventDefault(Player player, ItemStack stack, CallbackInfo ci) {
 		if (lycheePreventDefault) {
 			lycheePreventDefault = false;
+			access.execute((level, pos) -> level.levelEvent(1030, pos, 0));
 			ci.cancel();
 		}
 	}

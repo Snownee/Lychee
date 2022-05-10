@@ -16,7 +16,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import snownee.lychee.util.LUtil;
 
-@Mixin(RecipeManager.class)
+@Mixin(value = RecipeManager.class, priority = 9)
 public class RecipeManagerMixin {
 
 	@Inject(at = @At("HEAD"), method = "apply")
