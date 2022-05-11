@@ -1,5 +1,23 @@
 {
-  "type": "lychee:block_crushing",
-  "item_in": [{"item": "minecraft:nether_star"}, {"item": "diamond"}, {"item": "iron_ingot"}, {"item": "gold_ingot"}],
-  "post": [{"type": "drop_item", "item": "gunpowder", "count": 1}]
+  "type": "lychee:block_interacting",
+    "item_in": {
+    "item": "minecraft:stick"
+  },
+    "block_in": "bedrock",
+  "contextual": {
+        "type": "location",
+        "offsetY": 1,
+        "predicate": {
+            "block": {
+                "blocks": [ "air" ]
+            }
+        }
+    },
+    "post": [
+        {
+            "type": "place",
+            "offsetY": 1,
+            "block": "ice"
+        }
+    ]
 }
