@@ -12,6 +12,7 @@ import com.google.common.collect.Streams;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -36,6 +37,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import snownee.lychee.Lychee;
@@ -164,6 +166,9 @@ public class LUtil {
 	}
 
 	public static RecipeManager recipeManager() {
+		if (recipeManager == null && FMLEnvironment.dist.isClient()) {
+			recipeManager = Minecraft.getInstance().getConnection().getRecipeManager();
+		}
 		return recipeManager;
 	}
 

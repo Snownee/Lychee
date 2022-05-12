@@ -41,8 +41,8 @@ import snownee.lychee.util.Pair;
 
 public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extends LycheeRecipe<C>> extends BaseJEICategory<C, T> {
 
-	public static final Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
-	public static final Rect2i methodRect = new Rect2i(30, 12, 20, 20);
+	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
+	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
 
 	private final ScreenElement mainIcon;
 
@@ -83,7 +83,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses) {
 		List<Ingredient> items = recipe.getIngredients();
-		if (!items.isEmpty()) {
+		if (getClass() != BlockExplodingRecipeCategory.class && !items.isEmpty()) {
 			IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, 4, 13);
 			slot.addIngredients(items.get(0));
 			boolean preventDefault = recipe.getPostActions().stream().anyMatch($ -> $.getType() == PostActionTypes.PREVENT_DEFAULT);
@@ -113,12 +113,12 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 		BlockState state = getRenderingBlock(recipe);
 		if (state.isAir()) {
-			AllGuiTextures.JEI_QUESTION_MARK.render(matrixStack, getBlockRenderPosX() + 4, getBlockRenderPosY() + 2);
+			AllGuiTextures.JEI_QUESTION_MARK.render(matrixStack, inputBlockRect.getX() + 4, inputBlockRect.getY() + 2);
 			return;
 		}
 		if (state.getLightEmission() < 5) {
 			matrixStack.pushPose();
-			matrixStack.translate(getBlockRenderPosX() + 11, getBlockRenderPosY() + 18, 0);
+			matrixStack.translate(inputBlockRect.getX() + 11, inputBlockRect.getY() + 18, 0);
 			matrixStack.scale(.7F, .7F, .7F);
 			AllGuiTextures.JEI_SHADOW.render(matrixStack, -26, -5);
 			matrixStack.popPose();
@@ -127,22 +127,14 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		matrixStack.pushPose();
 		matrixStack.mulPose(Vector3f.XP.rotationDegrees(-12.5f));
 		matrixStack.mulPose(Vector3f.YP.rotationDegrees(22.5f));
-		matrixStack.translate(getBlockRenderPosX() - 9, getBlockRenderPosY() + 13, 0);
+		matrixStack.translate(inputBlockRect.getX() - 9, inputBlockRect.getY() + 13, 0);
 		GuiGameElement.of(state).scale(15).atLocal(0, 0, 2).render(matrixStack);
 		matrixStack.popPose();
 	}
 
-	protected int getBlockRenderPosX() {
-		return 30;
-	}
-
-	protected int getBlockRenderPosY() {
-		return 35;
-	}
-
 	@Override
 	public List<Component> getTooltipStrings(T recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
-		inputBlockRect.setPosition(getBlockRenderPosX(), getBlockRenderPosY());
+		inputBlockRect.setPosition(inputBlockRect.getX(), inputBlockRect.getY());
 		if (getClass() != ItemBurningRecipeCategory.class && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
 			return BlockPredicateHelper.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe));
 		}
@@ -162,7 +154,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 	@Override
 	public boolean handleInput(T recipe, double mouseX, double mouseY, Key input) {
-		inputBlockRect.setPosition(getBlockRenderPosX(), getBlockRenderPosY());
+		inputBlockRect.setPosition(inputBlockRect.getX(), inputBlockRect.getY());
 		if (getClass() != ItemBurningRecipeCategory.class && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
 			return clickBlock(getRenderingBlock(recipe), input);
 		}

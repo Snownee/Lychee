@@ -93,7 +93,7 @@ public class JEICompat implements IModPlugin {
 	public void registerRecipes(IRecipeRegistration registration) {
 		getCategories().forEach($ -> {
 			$.recipeTypes.forEach($$ -> {
-				registration.addRecipes($.getRecipeType(), $$.recipes());
+				registration.addRecipes($.getRecipeType(), LUtil.recipes($$).stream().filter(LycheeRecipe::showInRecipeViewer).toList());
 			});
 		});
 
@@ -118,10 +118,11 @@ public class JEICompat implements IModPlugin {
 			registration.addRecipeCatalyst(VanillaTypes.ITEM, stack, BLOCK_CRUSHING.getRecipeType());
 		}
 		registration.addRecipeCatalyst(VanillaTypes.ITEM, Items.LIGHTNING_ROD.getDefaultInstance(), LIGHTNING_CHANNELING.getRecipeType());
-		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.EXPLOSIVES)) {
-			ItemStack stack = item.getDefaultInstance();
-			registration.addRecipeCatalyst(VanillaTypes.ITEM, stack, ITEM_EXPLODING.getRecipeType());
-			registration.addRecipeCatalyst(VanillaTypes.ITEM, stack, BLOCK_EXPLODING.getRecipeType());
+		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
+			registration.addRecipeCatalyst(VanillaTypes.ITEM, item.getDefaultInstance(), ITEM_EXPLODING.getRecipeType());
+		}
+		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
+			registration.addRecipeCatalyst(VanillaTypes.ITEM, item.getDefaultInstance(), BLOCK_EXPLODING.getRecipeType());
 		}
 	}
 

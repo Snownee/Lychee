@@ -49,7 +49,12 @@ public class IntBoundsHelper {
 	}
 
 	public static int random(Ints ints, Random random) {
-		return Mth.randomBetweenInclusive(random, ints.getMin(), ints.getMax());
+		int min = ints.getMin() == null ? Integer.MIN_VALUE : ints.getMin();
+		int max = ints.getMax() == null ? Integer.MAX_VALUE : ints.getMax();
+		if (min == max) {
+			return min;
+		}
+		return Mth.randomBetweenInclusive(random, min, max);
 	}
 
 	public static String toString(Ints ints) {

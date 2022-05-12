@@ -53,13 +53,11 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 						matchedAny = matched = true;
 						int times = 1;
 						if (ctx.match != null && ctx.match.length > 0) {
-							if (recipe.isRepeatable()) {
-								times = Integer.MAX_VALUE;
-								for (int i = 0; i < ctx.match.length; i++) {
-									if (ctx.match[i] > 0) {
-										ItemStack stack = ctx.filteredItems.get(i).getItem();
-										times = Math.min(times, stack.getCount() / ctx.match[i]);
-									}
+							times = recipe.getRandomRepeats(Integer.MAX_VALUE, ctx);
+							for (int i = 0; i < ctx.match.length; i++) {
+								if (ctx.match[i] > 0) {
+									ItemStack stack = ctx.filteredItems.get(i).getItem();
+									times = Math.min(times, stack.getCount() / ctx.match[i]);
 								}
 							}
 						}
@@ -73,7 +71,7 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 								}
 							}
 						}
-						if (!recipe.isRepeatable()) {
+						if (!recipe.getMaxRepeats().isAny()) {
 							break major;
 						}
 						ctx.filteredItems = null;

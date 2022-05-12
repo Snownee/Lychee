@@ -2,6 +2,8 @@ package snownee.lychee.compat.jei.category;
 
 import java.util.List;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
@@ -25,7 +27,9 @@ import net.minecraft.Util;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -183,7 +187,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	@Override
 	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
-		if (!recipe.getConditions().isEmpty()) {
+		if (!recipe.getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.comment)) {
 			matrixStack.pushPose();
 			matrixStack.translate(infoRect.getX(), infoRect.getY(), 0);
 			matrixStack.scale(.5F, .5F, .5F);
@@ -196,6 +200,13 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	public List<Component> getTooltipStrings(T recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
 		if (infoRect.contains((int) mouseX, (int) mouseY)) {
 			List<Component> list = Lists.newArrayList();
+			if (!Strings.isNullOrEmpty(recipe.comment)) {
+				String comment = recipe.comment;
+				if (I18n.exists(comment)) {
+					comment = I18n.get(comment);
+				}
+				Splitter.on('\n').splitToStream(comment).map(TextComponent::new).forEach(list::add);
+			}
 			recipe.getConditonTooltips(list, 0);
 			return list;
 		}

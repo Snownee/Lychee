@@ -67,7 +67,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> im
 	@Override
 	public int compareTo(BlockExplodingRecipe that) {
 		int i;
-		i = Integer.compare(isRepeatable() ? 0 : 1, that.isRepeatable() ? 0 : 1);
+		i = Integer.compare(getMaxRepeats().isAny() ? 1 : 0, that.getMaxRepeats().isAny() ? 1 : 0);
 		if (i != 0)
 			return i;
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);

@@ -3,10 +3,9 @@ package snownee.lychee.core.recipe.type;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
-
-import com.google.common.collect.Lists;
 
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -33,6 +32,7 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 	public final Class<? extends T> clazz;
 	public final LootContextParamSet contextParamSet;
 	private boolean empty;
+	private boolean requiresClient;
 	protected List<T> recipes;
 
 	public static final Component DEFAULT_PREVENT_TIP = new TranslatableComponent("tip.lychee.prevent_default.default").withStyle(ChatFormatting.YELLOW);
@@ -68,10 +68,11 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 	}
 
 	public void buildCache() {
-		recipes = Lists.newLinkedList(LUtil.recipes(this));
+		Stream<T> stream = LUtil.recipes(this).stream().filter($ -> !$.ghost);
 		if (clazz.isAssignableFrom(Comparable.class)) {
-			recipes.sort(null);
+			stream = stream.sorted();
 		}
+		recipes = stream.toList();
 	}
 
 	public Optional<T> findFirst(C ctx, Level level) {
@@ -82,6 +83,14 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 
 	public Component getPreventDefaultDescription(LycheeRecipe<?> recipe) {
 		return DEFAULT_PREVENT_TIP;
+	}
+
+	public void setRequiresClient() {
+		requiresClient = true;
+	}
+
+	public boolean requiresClient() {
+		return requiresClient;
 	}
 
 	public static class ValidItemCache {

@@ -49,7 +49,7 @@
 "tip.lychee.nbtPredicate": "Has NBT predicate",
 "tip.lychee.block_interacting": "Use on block",
 "tip.lychee.block_clicking": "Click on block",
-"tip.lychee.prevent_default.default": "Will not be consumed",
+"tip.lychee.prevent_default.default": "No consumption",
 "tip.lychee.sec": "{0}s",
 "tip.lychee.randomChance.one": "Chance: %s",
 "tip.lychee.randomChance": "Chance: %s × %s"
