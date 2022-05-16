@@ -1,10 +1,12 @@
 package snownee.lychee.compat.jei.category;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,10 +24,8 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.runtime.IRecipesGui;
-import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -41,9 +41,9 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.PostAction;
+import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.util.LUtil;
 
 public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeRecipe<C>> implements IRecipeCategory<T> {
 
@@ -167,22 +167,45 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	public static void actionSlot(IRecipeLayoutBuilder builder, PostAction action, int index, int x, int y) {
 		IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, x + 1, y + 1);
-		if (action instanceof DropItem) {
-			slot.addItemStack(((DropItem) action).stack);
-			if (!action.getConditions().isEmpty()) {
-				slot.addTooltipCallback((stack, tooltip) -> {
-					List<Component> list = Lists.newArrayList();
-					list.add(LUtil.format("contextual.lychee", action.showingConditionsCount()).withStyle(ChatFormatting.GRAY));
-					action.getConditonTooltips(list, 0);
-					int line = Minecraft.getInstance().options.advancedItemTooltips ? 2 : 1;
-					line = Math.min(tooltip.size(), line);
-					tooltip.addAll(line, list);
-				});
+		Map<ItemStack, PostAction> itemMap = Maps.newIdentityHashMap();
+		buildActionSlot(slot, action, itemMap);
+		slot.addTooltipCallback((view, tooltip) -> {
+			var optional = view.getDisplayedIngredient();
+			if (optional.isEmpty()) {
+				return;
+			}
+			var ingr = optional.get();
+			var raw = ingr.getIngredient();
+			if (!itemMap.containsKey(raw)) {
+				return;
+			}
+			tooltip.clear();
+			if (raw instanceof ItemStack) {
+
+			}
+			raw = itemMap.get(raw);
+			List<Component> list;
+			if (action instanceof RandomSelect) {
+				list = ((RandomSelect) action).getTooltips((PostAction) raw);
+			} else {
+				list = action.getTooltips();
+			}
+			tooltip.addAll(list);
+		});
+		slot.setBackground(JEICompat.slot(!action.getConditions().isEmpty()), -1, -1);
+	}
+
+	private static void buildActionSlot(IRecipeSlotBuilder slot, PostAction action, Map<ItemStack, PostAction> itemMap) {
+		if (action instanceof DropItem dropitem) {
+			slot.addItemStack(dropitem.stack);
+			itemMap.put(dropitem.stack, dropitem);
+		} else if (action instanceof RandomSelect random) {
+			for (PostAction entry : random.entries) {
+				buildActionSlot(slot, entry, itemMap);
 			}
 		} else {
 			slot.addIngredient(JEICompat.POST_ACTION, action);
 		}
-		slot.setBackground(JEICompat.slot(!action.getConditions().isEmpty()), -1, -1);
 	}
 
 	@Override
@@ -222,7 +245,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 			if (!stack.isEmpty()) {
 				IRecipesGui gui = JEICompat.RUNTIME.getRecipesGui();
 				IFocusFactory factory = JEICompat.HELPERS.getFocusFactory();
-				gui.show(factory.createFocus(input.getValue() == 1 ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM, stack));
+				gui.show(factory.createFocus(input.getValue() == 1 ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT, VanillaTypes.ITEM_STACK, stack));
 				return true;
 			}
 		}

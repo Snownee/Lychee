@@ -16,7 +16,7 @@ public class LightningChannelingRecipeCategory extends ItemShapelessRecipeCatego
 
 	@Override
 	public IDrawable createIcon(IGuiHelper guiHelper) {
-		return guiHelper.createDrawableIngredient(VanillaTypes.ITEM, Items.LIGHTNING_ROD.getDefaultInstance());
+		return guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, Items.LIGHTNING_ROD.getDefaultInstance());
 	}
 
 }

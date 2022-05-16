@@ -115,14 +115,14 @@ public class JEICompat implements IModPlugin {
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
 		for (ItemStack stack : RecipeTypes.BLOCK_CRUSHING.blockKeysToItems()) {
-			registration.addRecipeCatalyst(VanillaTypes.ITEM, stack, BLOCK_CRUSHING.getRecipeType());
+			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, stack, BLOCK_CRUSHING.getRecipeType());
 		}
-		registration.addRecipeCatalyst(VanillaTypes.ITEM, Items.LIGHTNING_ROD.getDefaultInstance(), LIGHTNING_CHANNELING.getRecipeType());
+		registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, Items.LIGHTNING_ROD.getDefaultInstance(), LIGHTNING_CHANNELING.getRecipeType());
 		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
-			registration.addRecipeCatalyst(VanillaTypes.ITEM, item.getDefaultInstance(), ITEM_EXPLODING.getRecipeType());
+			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), ITEM_EXPLODING.getRecipeType());
 		}
 		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
-			registration.addRecipeCatalyst(VanillaTypes.ITEM, item.getDefaultInstance(), BLOCK_EXPLODING.getRecipeType());
+			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), BLOCK_EXPLODING.getRecipeType());
 		}
 	}
 

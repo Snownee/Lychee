@@ -5,9 +5,11 @@ import java.util.List;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -62,6 +64,12 @@ public class DropItem extends PostAction {
 				((ItemEntityAccess) $).setHealth(20);
 			});
 		}
+	}
+
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public List<Component> getBaseTooltips() {
+		return stack.getTooltipLines(null, Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
 	}
 
 	@Override

@@ -16,7 +16,7 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 
 	@Override
 	public IDrawable createIcon(IGuiHelper guiHelper) {
-		return guiHelper.createDrawableIngredient(VanillaTypes.ITEM, Items.TNT.getDefaultInstance());
+		return guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, Items.TNT.getDefaultInstance());
 	}
 
 }
