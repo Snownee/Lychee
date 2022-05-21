@@ -192,6 +192,7 @@ public class RandomSelect extends PostAction {
 		@Override
 		public void toNetwork(RandomSelect action, FriendlyByteBuf buf) {
 			int size = action.entries.length;
+			buf.writeVarInt(size);
 			for (int i = 0; i < size; i++) {
 				buf.writeVarInt(action.weights[i]);
 				PostActionType type = action.entries[i].getType();
