@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
@@ -54,7 +55,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 	@Override
 	public IDrawable createIcon(IGuiHelper guiHelper) {
-		return new ScreenElementWrapper(new SideBlockIcon(mainIcon, this::getIconBlock));
+		return new ScreenElementWrapper(new SideBlockIcon(mainIcon, Suppliers.memoize(this::getIconBlock)));
 	}
 
 	public BlockState getIconBlock() {

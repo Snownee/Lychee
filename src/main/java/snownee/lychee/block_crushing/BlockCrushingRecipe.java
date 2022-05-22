@@ -165,8 +165,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingContext> impl
 		}
 
 		@Override
-		public void toNetwork(FriendlyByteBuf pBuffer, BlockCrushingRecipe pRecipe) {
-			super.toNetwork(pBuffer, pRecipe);
+		public void toNetwork0(FriendlyByteBuf pBuffer, BlockCrushingRecipe pRecipe) {
 			BlockPredicateHelper.toNetwork(pRecipe.fallingBlock, pBuffer);
 			BlockPredicateHelper.toNetwork(pRecipe.landingBlock, pBuffer);
 			pBuffer.writeCollection(pRecipe.ingredients, (b, i) -> i.toNetwork(b));

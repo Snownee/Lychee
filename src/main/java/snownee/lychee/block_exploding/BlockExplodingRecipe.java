@@ -96,8 +96,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> im
 		}
 
 		@Override
-		public void toNetwork(FriendlyByteBuf pBuffer, BlockExplodingRecipe pRecipe) {
-			super.toNetwork(pBuffer, pRecipe);
+		public void toNetwork0(FriendlyByteBuf pBuffer, BlockExplodingRecipe pRecipe) {
 			BlockPredicateHelper.toNetwork(pRecipe.block, pBuffer);
 		}
 

@@ -96,8 +96,7 @@ public abstract class ItemShapelessRecipe extends LycheeRecipe<ItemShapelessCont
 		}
 
 		@Override
-		public void toNetwork(FriendlyByteBuf pBuffer, T pRecipe) {
-			super.toNetwork(pBuffer, pRecipe);
+		public void toNetwork0(FriendlyByteBuf pBuffer, T pRecipe) {
 			pBuffer.writeCollection(pRecipe.ingredients, (b, i) -> i.toNetwork(b));
 		}
 

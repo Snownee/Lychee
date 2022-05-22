@@ -89,8 +89,7 @@ public abstract class ItemAndBlockRecipe<C extends LycheeContext> extends Lychee
 		}
 
 		@Override
-		public void toNetwork(FriendlyByteBuf pBuffer, T pRecipe) {
-			super.toNetwork(pBuffer, pRecipe);
+		public void toNetwork0(FriendlyByteBuf pBuffer, T pRecipe) {
 			pRecipe.input.toNetwork(pBuffer);
 			BlockPredicateHelper.toNetwork(pRecipe.block, pBuffer);
 		}

@@ -29,7 +29,8 @@
     "ReloadableServerResourcesMixin"
   ],
   "client": [
-    "GameRendererAccess"
+    "GameRendererAccess",
+    "ClientPacketListenerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

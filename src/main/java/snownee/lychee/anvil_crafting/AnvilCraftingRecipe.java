@@ -110,8 +110,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 		}
 
 		@Override
-		public void toNetwork(FriendlyByteBuf pBuffer, AnvilCraftingRecipe pRecipe) {
-			super.toNetwork(pBuffer, pRecipe);
+		public void toNetwork0(FriendlyByteBuf pBuffer, AnvilCraftingRecipe pRecipe) {
 			pRecipe.left.toNetwork(pBuffer);
 			pRecipe.right.toNetwork(pBuffer);
 			pBuffer.writeItem(pRecipe.output);

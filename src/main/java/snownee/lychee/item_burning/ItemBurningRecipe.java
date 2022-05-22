@@ -66,8 +66,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		}
 
 		@Override
-		public void toNetwork(FriendlyByteBuf pBuffer, ItemBurningRecipe pRecipe) {
-			super.toNetwork(pBuffer, pRecipe);
+		public void toNetwork0(FriendlyByteBuf pBuffer, ItemBurningRecipe pRecipe) {
 			pRecipe.input.toNetwork(pBuffer);
 		}
 

@@ -65,8 +65,8 @@ public class ItemInsideRecipe extends ItemAndBlockRecipe<LycheeContext> {
 		}
 
 		@Override
-		public void toNetwork(FriendlyByteBuf pBuffer, ItemInsideRecipe pRecipe) {
-			super.toNetwork(pBuffer, pRecipe);
+		public void toNetwork0(FriendlyByteBuf pBuffer, ItemInsideRecipe pRecipe) {
+			super.toNetwork0(pBuffer, pRecipe);
 			pBuffer.writeVarInt(pRecipe.time);
 		}
 
