@@ -117,7 +117,7 @@ public class REICompat implements REIClientPlugin {
 		registerFiller(registration, RecipeTypes.ITEM_EXPLODING, ItemShapelessDisplay::new);
 		registerFiller(registration, RecipeTypes.BLOCK_EXPLODING, BlockExplodingDisplay::new);
 
-		RecipeTypes.ANVIL_CRAFTING.recipes().stream().filter($ -> {
+		LUtil.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
 			return !$.getResultItem().isEmpty() && !$.isSpecial();
 		}).map($ -> {
 			List<ItemStack> right = List.of($.getRight().getItems()).stream().map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();

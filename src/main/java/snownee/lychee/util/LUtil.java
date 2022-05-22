@@ -41,6 +41,7 @@ import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.Lychee;
+import snownee.lychee.LycheeConfig;
 import snownee.lychee.mixin.RecipeManagerAccess;
 
 public class LUtil {
@@ -167,6 +168,9 @@ public class LUtil {
 
 	public static RecipeManager recipeManager() {
 		if (recipeManager == null && FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+			if (LycheeConfig.debug) {
+				Lychee.LOGGER.trace("Early loading recipes..");
+			}
 			recipeManager = Minecraft.getInstance().getConnection().getRecipeManager();
 		}
 		return recipeManager;
@@ -174,6 +178,9 @@ public class LUtil {
 
 	public static void setRecipeManager(RecipeManager recipeManager) {
 		LUtil.recipeManager = recipeManager;
+		if (LycheeConfig.debug) {
+			Lychee.LOGGER.trace("Setting recipe manager..");
+		}
 	}
 
 	public static Recipe<?> recipe(ResourceLocation id) {

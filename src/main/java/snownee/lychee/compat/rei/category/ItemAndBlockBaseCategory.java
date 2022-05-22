@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 
@@ -46,7 +47,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 	public ItemAndBlockBaseCategory(List<LycheeRecipeType<C, T>> recipeTypes, ScreenElement mainIcon) {
 		super(recipeTypes);
-		icon = new ScreenElementWrapper(new SideBlockIcon(mainIcon, this::getIconBlock));
+		icon = new ScreenElementWrapper(new SideBlockIcon(mainIcon, Suppliers.memoize(this::getIconBlock)));
 		infoRect = new Rect2i(23, 32, 8, 8);
 	}
 

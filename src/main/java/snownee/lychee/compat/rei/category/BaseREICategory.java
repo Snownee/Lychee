@@ -1,10 +1,12 @@
 package snownee.lychee.compat.rei.category;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import me.shedaniel.math.Point;
@@ -18,9 +20,7 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.impl.client.gui.widget.QueuedTooltip.TooltipEntryImpl;
-import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
@@ -38,9 +38,9 @@ import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.PostAction;
+import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.util.LUtil;
 
 public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<C, T>> implements DisplayCategory<D> {
 
@@ -125,22 +125,41 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 	public static void actionSlot(List<Widget> widgets, Point startPoint, PostAction action, int x, int y) {
 		LEntryWidget slot = REICompat.slot(startPoint, x, y, !action.getConditions().isEmpty(), false);
 		slot.markOutput();
-		if (action instanceof DropItem) {
-			slot.entry(EntryStacks.of(((DropItem) action).stack));
-			if (!action.getConditions().isEmpty()) {
-				slot.addTooltipCallback(tooltip -> {
-					List<Component> list = Lists.newArrayList();
-					list.add(LUtil.format("contextual.lychee", action.showingConditionsCount()).withStyle(ChatFormatting.GRAY));
-					action.getConditonTooltips(list, 0);
-					int line = Minecraft.getInstance().options.advancedItemTooltips ? 2 : 1;
-					line = Math.min(tooltip.entries().size(), line);
-					tooltip.entries().addAll(line, list.stream().map(TooltipEntryImpl::new).toList());
-				});
+		List<EntryStack<?>> entries = Lists.newArrayList();
+		Map<EntryStack<ItemStack>, PostAction> itemMap = Maps.newHashMap();
+		buildActionSlot(entries, action, itemMap);
+		slot.entries(entries);
+		widgets.add(slot);
+		slot.addTooltipCallback(tooltip -> {
+			Object raw = tooltip.getContextStack();
+			if (!itemMap.containsKey(raw)) {
+				System.out.println(itemMap);
+				return;
+			}
+			tooltip.entries().clear();
+			raw = itemMap.get(raw);
+			List<Component> list;
+			if (action instanceof RandomSelect) {
+				list = ((RandomSelect) action).getTooltips((PostAction) raw);
+			} else {
+				list = action.getTooltips();
+			}
+			tooltip.entries().addAll(list.stream().map(TooltipEntryImpl::new).toList());
+		});
+	}
+
+	private static void buildActionSlot(List<EntryStack<?>> entries, PostAction action, Map<EntryStack<ItemStack>, PostAction> itemMap) {
+		if (action instanceof DropItem dropitem) {
+			EntryStack<ItemStack> entry = EntryStacks.of(dropitem.stack);
+			entries.add(entry);
+			itemMap.put(entry, dropitem);
+		} else if (action instanceof RandomSelect random) {
+			for (PostAction entry : random.entries) {
+				buildActionSlot(entries, entry, itemMap);
 			}
 		} else {
-			slot.entry(EntryStack.of(REICompat.POST_ACTION, action));
+			entries.add(EntryStack.of(REICompat.POST_ACTION, action));
 		}
-		widgets.add(slot);
 	}
 
 	@Override

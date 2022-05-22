@@ -76,8 +76,13 @@ public abstract class PostAction extends ContextualHolder {
 	}
 
 	@Environment(EnvType.CLIENT)
+	public List<Component> getBaseTooltips() {
+		return Lists.newArrayList(getDisplayName());
+	}
+
+	@Environment(EnvType.CLIENT)
 	public List<Component> getTooltips() {
-		List<Component> list = Lists.newArrayList(getDisplayName());
+		List<Component> list = getBaseTooltips();
 		int c = showingConditionsCount();
 		if (c > 0) {
 			list.add(LUtil.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
@@ -92,7 +97,7 @@ public abstract class PostAction extends ContextualHolder {
 
 	@Override
 	public String toString() {
-		return "";
+		return "PostAction";
 	}
 
 	public boolean canRepeat() {

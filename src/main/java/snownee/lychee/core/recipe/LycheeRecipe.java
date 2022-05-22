@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
@@ -22,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import snownee.lychee.Lychee;
+import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
@@ -43,6 +43,8 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 	public LycheeRecipe(ResourceLocation id) {
 		this.id = id;
+		if (LycheeConfig.debug)
+			Lychee.LOGGER.debug("Construct recipe: {}", id);
 	}
 
 	@Override
@@ -158,6 +160,8 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		public final R fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
 			try {
 				R recipe = factory.apply(pRecipeId);
+				if (LycheeConfig.debug)
+					Lychee.LOGGER.debug("Read recipe: {}", pRecipeId);
 				recipe.hideInRecipeViewer = pBuffer.readBoolean();
 				if (recipe.hideInRecipeViewer && !recipe.getType().requiresClient()) {
 					return recipe;
@@ -186,8 +190,9 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 		@SuppressWarnings("rawtypes")
 		@Override
-		@MustBeInvokedByOverriders
-		public void toNetwork(FriendlyByteBuf pBuffer, R pRecipe) {
+		public final void toNetwork(FriendlyByteBuf pBuffer, R pRecipe) {
+			if (LycheeConfig.debug)
+				Lychee.LOGGER.debug("Write recipe: {}", pRecipe.getId());
 			pBuffer.writeBoolean(pRecipe.hideInRecipeViewer);
 			if (pRecipe.hideInRecipeViewer && !pRecipe.getType().requiresClient()) {
 				return;
@@ -202,7 +207,10 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 				action.conditionsToNetwork(pBuffer);
 			}
 			pBuffer.writeUtf(Strings.nullToEmpty(pRecipe.comment));
+			toNetwork0(pBuffer, pRecipe);
 		}
+
+		public abstract void toNetwork0(FriendlyByteBuf pBuffer, R pRecipe);
 
 		public ResourceLocation getRegistryName() {
 			return Registry.RECIPE_SERIALIZER.getKey(this);

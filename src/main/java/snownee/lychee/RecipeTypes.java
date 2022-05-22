@@ -50,4 +50,9 @@ public final class RecipeTypes {
 		return Registry.register(Registry.RECIPE_TYPE, recipeType.id, recipeType);
 	}
 
+	public static void buildCache() {
+		ALL.forEach(LycheeRecipeType::buildCache);
+		ALL.forEach(LycheeRecipeType::updateEmptyState);
+	}
+
 }

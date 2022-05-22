@@ -31,8 +31,6 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	private String itemName;
 	@Shadow
 	private DataSlot cost;
-	@Shadow
-	private ContainerLevelAccess access;
 
 	private AnvilCraftingRecipe lycheeRecipe;
 	private AnvilContext lycheeCtx;

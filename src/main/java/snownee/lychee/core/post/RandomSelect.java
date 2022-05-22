@@ -1,5 +1,6 @@
 package snownee.lychee.core.post;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -113,12 +114,13 @@ public class RandomSelect extends PostAction {
 		return LUtil.getCycledItem(List.of(entries), entries[0], 1000).getDisplayName();
 	}
 
-	@Override
 	@Environment(EnvType.CLIENT)
-	public List<Component> getTooltips() {
-		int index = Math.toIntExact((System.currentTimeMillis() / 1000) % entries.length);
-		PostAction child = entries[index];
-		List<Component> list = Lists.newArrayList(child.getDisplayName());
+	public List<Component> getTooltips(PostAction child) {
+		int index = Arrays.asList(entries).indexOf(child);
+		List<Component> list = child.getBaseTooltips();
+		if (index == -1) {
+			return list; //TODO nested actions?
+		}
 		String chance = LUtil.chance(weights[index] / (float) totalWeight);
 		if (rolls == IntBoundsHelper.ONE) {
 			list.add(new TranslatableComponent("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
@@ -137,7 +139,7 @@ public class RandomSelect extends PostAction {
 	@Override
 	@Environment(EnvType.CLIENT)
 	public void render(PoseStack poseStack, int x, int y) {
-		LUtil.getCycledItem(List.of(entries), entries[0], 1000).render(poseStack, x, y);
+		// should not be run, except from old versions
 	}
 
 	@Override
@@ -190,6 +192,7 @@ public class RandomSelect extends PostAction {
 		@Override
 		public void toNetwork(RandomSelect action, FriendlyByteBuf buf) {
 			int size = action.entries.length;
+			buf.writeVarInt(size);
 			for (int i = 0; i < size; i++) {
 				buf.writeVarInt(action.weights[i]);
 				PostActionType type = action.entries[i].getType();
