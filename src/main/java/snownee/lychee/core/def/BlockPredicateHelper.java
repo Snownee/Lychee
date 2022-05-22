@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.google.common.cache.Cache;
@@ -68,10 +69,13 @@ public class BlockPredicateHelper {
 	}
 
 	public static boolean fastMatch(BlockPredicate predicate, LycheeContext context) {
+		return fastMatch(predicate, context.getParam(LootContextParams.BLOCK_STATE), () -> context.getParamOrNull(LootContextParams.BLOCK_ENTITY));
+	}
+
+	public static boolean fastMatch(BlockPredicate predicate, BlockState blockstate, Supplier<BlockEntity> beGetter) {
 		if (predicate == BlockPredicate.ANY) {
 			return true;
 		}
-		BlockState blockstate = context.getParam(LootContextParams.BLOCK_STATE);
 		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
 		if (access.getTag() != null && !blockstate.is(access.getTag())) {
 			return false;
@@ -81,7 +85,7 @@ public class BlockPredicateHelper {
 			return false;
 		} else {
 			if (access.getNbt() != NbtPredicate.ANY) {
-				BlockEntity blockentity = context.getParamOrNull(LootContextParams.BLOCK_ENTITY);
+				BlockEntity blockentity = beGetter.get();
 				if (blockentity == null || !access.getNbt().matches(blockentity.saveWithFullMetadata())) {
 					return false;
 				}

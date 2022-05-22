@@ -26,10 +26,12 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.ContextualConditionTypes;
+import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.def.BoundsHelper;
@@ -61,7 +63,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		boolean isAny(LocationPredicateAccess access);
 
 		@Environment(EnvType.CLIENT)
-		default InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
+		default InteractionResult testClient(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
 			return InteractionResult.PASS;
 		}
 
@@ -82,7 +84,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		@Environment(EnvType.CLIENT)
-		public InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
+		public InteractionResult testClient(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
 			return LUtil.interactionResult(boundsGetter.apply(access).matches(valueGetter.apply(vec)));
 		}
 
@@ -114,6 +116,12 @@ public record Location(LocationCheck check) implements ContextualCondition {
 				name.append("*");
 			}
 			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
+		}
+
+		@Override
+		@Environment(EnvType.CLIENT)
+		public InteractionResult testClient(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
+			return BlockPredicateHelper.fastMatch(access.getBlock(), level.getBlockState(pos), () -> level.getBlockEntity(pos)) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
 		}
 	}
 
@@ -155,7 +163,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		@Environment(EnvType.CLIENT)
-		public InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
+		public InteractionResult testClient(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
 			int light = level.getMaxLocalRawBrightness(pos);
 			return LUtil.interactionResult(((LightPredicateAccess) access.getLight()).getComposite().matches(light));
 		}
@@ -181,7 +189,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		@Environment(EnvType.CLIENT)
-		public InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
+		public InteractionResult testClient(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
 			return LUtil.interactionResult(level.dimension() == access.getDimension());
 		}
 
@@ -206,7 +214,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		@Environment(EnvType.CLIENT)
-		public InteractionResult testInTooltips(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
+		public InteractionResult testClient(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
 			return LUtil.interactionResult(level.getBiome(pos).is(access.getBiome().location()));
 		}
 
@@ -266,7 +274,11 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 	@Override
 	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		return check.test(ctx.toLootContext()) ? times : 0;
+		if (ctx.getLevel().isClientSide) {
+			return testClient((ClientLevel) ctx.getLevel(), ctx.getParamOrNull(LycheeLootContextParams.BLOCK_POS), ctx.getParamOrNull(LootContextParams.ORIGIN)) == InteractionResult.SUCCESS ? times : 0;
+		} else {
+			return check.test(ctx.toLootContext()) ? times : 0;
+		}
 	}
 
 	@Override
@@ -282,12 +294,22 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 		Vec3 vec = mc.getCameraEntity().position();
 		BlockPos pos = mc.getCameraEntity().blockPosition();
+		return testClient(mc.level, pos, vec);
+	}
+
+	@Environment(EnvType.CLIENT)
+	public InteractionResult testClient(ClientLevel level, BlockPos pos, Vec3 vec) {
+		LocationCheckAccess checkAccess = (LocationCheckAccess) check;
+		BlockPos offset = checkAccess.getOffset();
+		if (!BlockPos.ZERO.equals(offset)) {
+			pos = pos.offset(offset.getX(), offset.getY(), offset.getZ());
+		}
 		LocationPredicateAccess access = (LocationPredicateAccess) checkAccess.getPredicate();
 		boolean hasPass = false;
 		for (Rule rule : RULES) {
 			if (rule.isAny(access))
 				continue;
-			InteractionResult result = rule.testInTooltips(access, mc.level, pos, vec);
+			InteractionResult result = rule.testClient(access, level, pos, vec);
 			if (result == InteractionResult.FAIL) {
 				return result;
 			}
@@ -325,7 +347,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 				continue;
 			InteractionResult result = InteractionResult.PASS;
 			if (test) {
-				result = rule.testInTooltips(access, mc.level, pos, vec);
+				result = rule.testClient(access, mc.level, pos, vec);
 			}
 			rule.appendTooltips(tooltips, indent, key, access, result);
 		}

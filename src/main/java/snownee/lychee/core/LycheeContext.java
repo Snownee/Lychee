@@ -105,7 +105,8 @@ public class LycheeContext extends EmptyContainer {
 			pos = new BlockPos(vec);
 		}
 		BlockEntity blockEntity = level.getBlockEntity(pos);
-		params.put(LootContextParams.BLOCK_ENTITY, blockEntity);
+		if (blockEntity != null)
+			params.put(LootContextParams.BLOCK_ENTITY, blockEntity);
 	}
 
 	public static class Builder<C extends LycheeContext> {
