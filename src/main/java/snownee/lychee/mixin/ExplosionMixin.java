@@ -22,7 +22,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import snownee.lychee.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.item_exploding.ItemExplodingRecipe;
 
-@Mixin(Explosion.class)
+@Mixin(value = Explosion.class, priority = 700)
 public class ExplosionMixin {
 
 	@Shadow
@@ -35,7 +35,11 @@ public class ExplosionMixin {
 	@Shadow
 	private double z;
 
-	@Inject(at = @At("TAIL"), method = "explode", locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(
+			at = @At(
+				"TAIL"
+			), method = "Lnet/minecraft/world/level/Explosion;explode()V", locals = LocalCapture.CAPTURE_FAILHARD
+	)
 	private void lychee_explode(CallbackInfo ci, Set<BlockPos> set, int i, float f2, int k1, int l1, int i2, int i1, int j2, int j1, List<Entity> list) {
 		ItemExplodingRecipe.on(level, x, y, z, list);
 	}
@@ -44,7 +48,7 @@ public class ExplosionMixin {
 	@Redirect(
 			at = @At(
 					value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getDrops(Lnet/minecraft/world/level/storage/loot/LootContext$Builder;)Ljava/util/List;"
-			), method = "finalizeExplosion"
+			), method = "Lnet/minecraft/world/level/Explosion;finalizeExplosion(Z)V"
 	)
 	public List<ItemStack> lychee_getDrops(BlockState state, LootContext.Builder pBuilder) {
 		Supplier<List<ItemStack>> drops = () -> state.getBlock().getDrops(state, pBuilder);
