@@ -86,8 +86,9 @@ public abstract class ItemShapelessRecipe extends LycheeRecipe<ItemShapelessCont
 				} else {
 					pRecipe.ingredients.add(Ingredient.fromJson(itemIn));
 				}
-				Preconditions.checkArgument(pRecipe.ingredients.size() <= MAX_INGREDIENTS, "Ingredients cannot be more than %s", MAX_INGREDIENTS);
 			}
+			Preconditions.checkArgument(!pRecipe.ingredients.isEmpty(), "Ingredients cannot be empty");
+			Preconditions.checkArgument(pRecipe.ingredients.size() <= MAX_INGREDIENTS, "Ingredients cannot be more than %s", MAX_INGREDIENTS);
 		}
 
 		@Override
