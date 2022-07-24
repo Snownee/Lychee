@@ -17,6 +17,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
@@ -57,6 +58,9 @@ public class RandomSelect extends PostAction {
 		times *= IntBoundsHelper.random(rolls, ctx.getRandom());
 		if (times == 0) {
 			return true;
+		}
+		if (entries.length == 1) {
+			return entries[0].doApply(recipe, ctx, entries[0].checkConditions(recipe, ctx, times));
 		}
 		List<PostAction> validActions = Lists.newArrayList();
 		int[] validWeights = new int[entries.length];
@@ -111,21 +115,26 @@ public class RandomSelect extends PostAction {
 
 	@Override
 	public Component getDisplayName() {
+		if (entries.length == 1) {
+			return new TextComponent("%s × %s".formatted(entries[0].getDisplayName().getString(), IntBoundsHelper.toString(rolls)));
+		}
 		return LUtil.getCycledItem(List.of(entries), entries[0], 1000).getDisplayName();
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	public List<Component> getTooltips(PostAction child) {
 		int index = Arrays.asList(entries).indexOf(child);
-		List<Component> list = child.getBaseTooltips();
+		List<Component> list = entries.length == 1 ? Lists.newArrayList(getDisplayName()) : child.getBaseTooltips();
 		if (index == -1) {
 			return list; //TODO nested actions?
 		}
-		String chance = LUtil.chance(weights[index] / (float) totalWeight);
-		if (rolls == IntBoundsHelper.ONE) {
-			list.add(new TranslatableComponent("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
-		} else {
-			list.add(new TranslatableComponent("tip.lychee.randomChance", chance, IntBoundsHelper.toString(rolls)).withStyle(ChatFormatting.YELLOW));
+		if (entries.length > 1) {
+			String chance = LUtil.chance(weights[index] / (float) totalWeight);
+			if (rolls == IntBoundsHelper.ONE) {
+				list.add(new TranslatableComponent("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
+			} else {
+				list.add(new TranslatableComponent("tip.lychee.randomChance", chance, IntBoundsHelper.toString(rolls)).withStyle(ChatFormatting.YELLOW));
+			}
 		}
 		int c = showingConditionsCount() + child.showingConditionsCount();
 		if (c > 0) {
@@ -153,7 +162,7 @@ public class RandomSelect extends PostAction {
 		public RandomSelect fromJson(JsonObject o) {
 			JsonArray array = o.getAsJsonArray("entries");
 			int size = array.size();
-			Preconditions.checkArgument(size > 1, "entries should be more than 1");
+			Preconditions.checkArgument(size > 0, "entries can not be empty");
 			PostAction[] entries = new PostAction[size];
 			int[] weights = new int[size];
 			for (int i = 0; i < size; i++) {
