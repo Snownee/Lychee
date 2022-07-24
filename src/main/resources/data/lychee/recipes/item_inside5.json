@@ -1,0 +1,18 @@
+{
+  "type": "lychee:item_inside",
+  "item_in": {
+    "item": "diamond"
+  },
+  "block_in": "water",
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "raw_iron"
+    },
+    {
+      "type": "place",
+      "block": "cauldron"
+    }
+  ],
+  "max_repeats": 64
+}

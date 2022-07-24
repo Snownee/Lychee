@@ -1,0 +1,22 @@
+{
+  "type": "lychee:item_exploding",
+  "item_in": {
+    "item": "coal_block"
+  },
+  "post": [
+    {
+      "type": "random",
+      "rolls": 64,
+      "entries": [
+        {
+          "type": "drop_item",
+          "item": "diamond",
+          "contextual": {
+            "type": "chance",
+            "chance": 0.5
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -133,7 +133,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 		slot.addTooltipCallback(tooltip -> {
 			Object raw = tooltip.getContextStack();
 			if (!itemMap.containsKey(raw)) {
-				System.out.println(itemMap);
+				//System.out.println(itemMap);
 				return;
 			}
 			tooltip.entries().clear();

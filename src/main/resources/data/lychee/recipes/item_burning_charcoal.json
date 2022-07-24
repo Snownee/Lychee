@@ -5,6 +5,11 @@
   },
   "post": {
     "type": "drop_item",
-    "item": "charcoal"
+    "item": "charcoal",
+    "count": 64,
+    "contextual": {
+      "type": "chance",
+      "chance": 0.5
+    }
   }
 }
