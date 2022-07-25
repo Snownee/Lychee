@@ -22,6 +22,7 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.BlockKeyRecipe;
+import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.mixin.BlockPredicateAccess;
@@ -29,7 +30,6 @@ import snownee.lychee.util.RecipeMatcher;
 
 public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingContext> implements BlockKeyRecipe<BlockCrushingRecipe> {
 
-	private static final int MAX_INGREDIENTS = 27;
 	public static final BlockPredicate ANVIL = BlockPredicate.Builder.block().of(BlockTags.ANVIL).build();
 
 	protected BlockPredicate fallingBlock = ANVIL;
@@ -57,7 +57,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingContext> impl
 		List<ItemEntity> itemEntities = ctx.itemEntities.stream().filter($ -> {
 			// ingredient.test is not thread safe
 			return ingredients.stream().anyMatch(ingredient -> ingredient.test($.getItem()));
-		}).limit(MAX_INGREDIENTS).toList();
+		}).limit(ItemShapelessRecipe.MAX_INGREDIENTS).toList();
 		List<ItemStack> items = itemEntities.stream().map(ItemEntity::getItem).toList();
 		int[] amount = items.stream().mapToInt(ItemStack::getCount).toArray();
 		int[] match = RecipeMatcher.findMatches(items, ingredients, amount);
@@ -153,7 +153,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingContext> impl
 				} else {
 					pRecipe.ingredients.add(Ingredient.fromJson(itemIn));
 				}
-				Preconditions.checkArgument(pRecipe.ingredients.size() <= MAX_INGREDIENTS, "Ingredients cannot be more than %s", MAX_INGREDIENTS);
+				Preconditions.checkArgument(pRecipe.ingredients.size() <= ItemShapelessRecipe.MAX_INGREDIENTS, "Ingredients cannot be more than %s", ItemShapelessRecipe.MAX_INGREDIENTS);
 			}
 		}
 
