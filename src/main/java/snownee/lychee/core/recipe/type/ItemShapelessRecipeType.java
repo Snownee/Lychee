@@ -43,10 +43,15 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 		ctxBuilderConsumer.accept(ctxBuilder);
 		C ctx = ctxBuilder.create(contextParamSet);
 		boolean matchedAny = false;
+		int loop = 0;
 		major:
 		while (true) {
 			boolean matched = false;
 			for (T recipe : recipes) {
+				// recipe without ingredients will only run once to prevent dead loop
+				if (recipe.getIngredients().isEmpty() && loop > 0) {
+					continue;
+				}
 				try {
 					Optional<T> match = tryMatch(recipe, level, ctx);
 					if (match.isPresent()) {
@@ -87,7 +92,7 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 				break major;
 			}
 		}
-		if (matchedAny) {
+		if (++loop >= 100 || matchedAny) {
 			ctx.itemEntities.forEach($ -> $.setItem($.getItem())); //sync item amount
 		}
 	}

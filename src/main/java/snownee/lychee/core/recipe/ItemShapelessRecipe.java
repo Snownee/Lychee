@@ -19,7 +19,7 @@ import snownee.lychee.util.RecipeMatcher;
 
 public abstract class ItemShapelessRecipe<C extends ItemShapelessContext> extends LycheeRecipe<C> implements Comparable<ItemShapelessRecipe<C>> {
 
-	private static final int MAX_INGREDIENTS = 27;
+	public static final int MAX_INGREDIENTS = 27;
 	protected NonNullList<Ingredient> ingredients = NonNullList.create();
 
 	public ItemShapelessRecipe(ResourceLocation id) {
@@ -87,7 +87,6 @@ public abstract class ItemShapelessRecipe<C extends ItemShapelessContext> extend
 					pRecipe.ingredients.add(Ingredient.fromJson(itemIn));
 				}
 			}
-			Preconditions.checkArgument(!pRecipe.ingredients.isEmpty(), "Ingredients cannot be empty");
 			Preconditions.checkArgument(pRecipe.ingredients.size() <= MAX_INGREDIENTS, "Ingredients cannot be more than %s", MAX_INGREDIENTS);
 		}
 
