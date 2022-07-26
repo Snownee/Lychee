@@ -45,7 +45,6 @@ import snownee.lychee.compat.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.LycheeRecipe;
-import snownee.lychee.item_inside.ItemInsideRecipe;
 import snownee.lychee.util.LUtil;
 
 @JeiPlugin
@@ -56,13 +55,13 @@ public class JEICompat implements IModPlugin {
 	public static IJeiRuntime RUNTIME;
 	public static IJeiHelpers HELPERS;
 	public static IGuiHelper GUI;
-	private ItemBurningRecipeCategory ITEM_BURNING;
-	private ItemInsideRecipeCategory<ItemInsideRecipe> ITEM_INSIDE;
-	private BlockInteractionRecipeCategory BLOCK_INTERACTING;
-	private BlockCrushingRecipeCategory BLOCK_CRUSHING;
-	private LightningChannelingRecipeCategory LIGHTNING_CHANNELING;
-	private ItemExplodingRecipeCategory ITEM_EXPLODING;
-	private BlockExplodingRecipeCategory BLOCK_EXPLODING;
+	public static ItemBurningRecipeCategory ITEM_BURNING;
+	public static ItemInsideRecipeCategory ITEM_INSIDE;
+	public static BlockInteractionRecipeCategory BLOCK_INTERACTING;
+	public static BlockCrushingRecipeCategory BLOCK_CRUSHING;
+	public static LightningChannelingRecipeCategory LIGHTNING_CHANNELING;
+	public static ItemExplodingRecipeCategory ITEM_EXPLODING;
+	public static BlockExplodingRecipeCategory BLOCK_EXPLODING;
 
 	@Override
 	public ResourceLocation getPluginUid() {
@@ -79,7 +78,7 @@ public class JEICompat implements IModPlugin {
 		HELPERS = registration.getJeiHelpers();
 		GUI = HELPERS.getGuiHelper();
 		ITEM_BURNING = new ItemBurningRecipeCategory(RecipeTypes.ITEM_BURNING);
-		ITEM_INSIDE = new ItemInsideRecipeCategory<>(RecipeTypes.ITEM_INSIDE, AllGuiTextures.JEI_DOWN_ARROW);
+		ITEM_INSIDE = new ItemInsideRecipeCategory(RecipeTypes.ITEM_INSIDE, AllGuiTextures.JEI_DOWN_ARROW);
 		ScreenElement mainIcon = RecipeTypes.BLOCK_INTERACTING.isEmpty() ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
 		BLOCK_INTERACTING = new BlockInteractionRecipeCategory((List) List.of(RecipeTypes.BLOCK_INTERACTING, RecipeTypes.BLOCK_CLICKING), mainIcon);
 		BLOCK_CRUSHING = new BlockCrushingRecipeCategory(RecipeTypes.BLOCK_CRUSHING);
@@ -134,8 +133,20 @@ public class JEICompat implements IModPlugin {
 
 	private static final Map<AllGuiTextures, IDrawable> elMap = Maps.newIdentityHashMap();
 
-	public static IDrawable slot(boolean chance) {
-		return chance ? el(AllGuiTextures.JEI_CHANCE_SLOT) : el(AllGuiTextures.JEI_SLOT);
+	public enum SlotType {
+		NORMAL(AllGuiTextures.JEI_SLOT),
+		CHANCE(AllGuiTextures.JEI_CHANCE_SLOT),
+		CATALYST(AllGuiTextures.JEI_CATALYST_SLOT);
+
+		final IDrawable element;
+
+		private SlotType(AllGuiTextures element) {
+			this.element = el(element);
+		}
+	}
+
+	public static IDrawable slot(SlotType slotType) {
+		return slotType.element;
 	}
 
 	public static IDrawable el(AllGuiTextures element) {

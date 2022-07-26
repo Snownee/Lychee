@@ -18,10 +18,10 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.interaction.BlockInteractingRecipe;
 
-public class BlockInteractionRecipeCategory extends ItemInsideRecipeCategory<BlockInteractingRecipe> {
+public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<LycheeContext, BlockInteractingRecipe> {
 
 	public BlockInteractionRecipeCategory(List<BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe>> recipeTypes, ScreenElement mainIcon) {
-		super(recipeTypes, mainIcon);
+		super(List.copyOf(recipeTypes), mainIcon);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class BlockInteractionRecipeCategory extends ItemInsideRecipeCategory<Blo
 	}
 
 	@Override
-	public void drawExtra(BlockInteractingRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY) {
+	public void drawExtra(BlockInteractingRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY, int centerX) {
 		KeyMapping keyMapping = getKeyMapping(recipe);
 		//		if (keyMapping.getKey().getValue() == -1) { // key is unset or unknown
 		//

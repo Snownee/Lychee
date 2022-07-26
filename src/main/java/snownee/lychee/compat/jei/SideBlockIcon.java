@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
 
@@ -27,7 +28,14 @@ public class SideBlockIcon extends RenderElement {
 		ms.scale(.625F, .625F, .625F);
 		mainIcon.render(ms, 0, 0);
 		ms.popPose();
-		GuiGameElement.of(blockProvider.get()).scale(7).rotateBlock(12.5f, 22.5f, 0).at(x + 6, y + 16).render(ms);
+		/* off */
+		GuiGameElement.of(blockProvider.get())
+				.lighting(ILightingSettings.DEFAULT_JEI)
+				.scale(7)
+				.rotateBlock(12.5f, 22.5f, 0)
+				.at(x + 6, y + 16)
+				.render(ms);
+		/* on */
 	}
 
 }

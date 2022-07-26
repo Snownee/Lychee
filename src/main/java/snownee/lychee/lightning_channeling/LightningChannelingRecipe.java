@@ -14,7 +14,7 @@ import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
-public class LightningChannelingRecipe extends ItemShapelessRecipe {
+public class LightningChannelingRecipe extends ItemShapelessRecipe<LightningChannelingRecipe> {
 
 	public LightningChannelingRecipe(ResourceLocation id) {
 		super(id);

@@ -15,7 +15,7 @@ import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
-public class ItemExplodingRecipe extends ItemShapelessRecipe {
+public class ItemExplodingRecipe extends ItemShapelessRecipe<ItemExplodingRecipe> {
 
 	public ItemExplodingRecipe(ResourceLocation id) {
 		super(id);

@@ -1,10 +1,62 @@
 {
   "type": "lychee:item_inside",
-  "item_in": {
-    "item": "sponge"
-  },
+  "comment": "Test",
+  "item_in": [
+    {
+      "item": "sponge"
+    },
+    {
+      "item": "sponge"
+    },
+    {
+      "item": "sponge"
+    },
+    {
+      "item": "sponge"
+    },
+    {
+      "item": "sponge"
+    },
+    {
+      "item": "sponge"
+    },
+    {
+      "item": "sponge"
+    },
+    {
+      "item": "sponge"
+    }
+  ],
   "block_in": "*",
   "post": [
+    {
+      "type": "drop_item",
+      "item": "wet_sponge"
+    },
+    {
+      "type": "drop_item",
+      "item": "wet_sponge"
+    },
+    {
+      "type": "drop_item",
+      "item": "wet_sponge"
+    },
+    {
+      "type": "drop_item",
+      "item": "wet_sponge"
+    },
+    {
+      "type": "drop_item",
+      "item": "wet_sponge"
+    },
+    {
+      "type": "drop_item",
+      "item": "wet_sponge"
+    },
+    {
+      "type": "drop_item",
+      "item": "wet_sponge"
+    },
     {
       "type": "drop_item",
       "item": "wet_sponge"

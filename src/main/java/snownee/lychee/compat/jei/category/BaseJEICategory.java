@@ -37,6 +37,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.jei.JEICompat;
+import snownee.lychee.compat.jei.JEICompat.SlotType;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.post.DropItem;
@@ -62,6 +63,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	public BaseJEICategory(List<LycheeRecipeType<C, T>> recipeTypes) {
 		this.recipeTypes = recipeTypes;
 		recipeType = new RecipeType<>(recipeTypes.get(0).id, recipeTypes.get(0).clazz);
+		infoRect = new Rect2i(0, 25, 8, 8);
 	}
 
 	@Override
@@ -132,11 +134,16 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		slotGroup(builder, x, y, 10000, recipe.getShowingPostActions(), BaseJEICategory::actionSlot);
 	}
 
-	public void ingredientGroup(IRecipeLayoutBuilder builder, T recipe, int x, int y) {
+	public void ingredientGroup(IRecipeLayoutBuilder builder, T recipe, int x, int y, boolean catalyst) {
 		slotGroup(builder, x + 1, y + 1, 0, recipe.getIngredients(), (layout0, ingredient, i, x0, y0) -> {
 			IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, x0, y0);
 			slot.addIngredients(ingredient);
-			slot.setBackground(JEICompat.slot(false), -1, -1);
+			slot.setBackground(JEICompat.slot(catalyst ? SlotType.CATALYST : SlotType.NORMAL), -1, -1);
+			if (catalyst) {
+				slot.addTooltipCallback((stack, tooltip) -> {
+					tooltip.add(recipe.getType().getPreventDefaultDescription(recipe));
+				});
+			}
 		});
 	}
 
@@ -192,7 +199,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 			}
 			tooltip.addAll(list);
 		});
-		slot.setBackground(JEICompat.slot(!action.getConditions().isEmpty()), -1, -1);
+		slot.setBackground(JEICompat.slot(action.getConditions().isEmpty() ? SlotType.NORMAL : SlotType.CHANCE), -1, -1);
 	}
 
 	private static void buildActionSlot(IRecipeSlotBuilder slot, PostAction action, Map<ItemStack, PostAction> itemMap) {

@@ -3,11 +3,15 @@ package snownee.lychee.core.recipe.type;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
+
+import com.google.common.collect.Sets;
 
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -41,9 +45,13 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 		}
 		ItemShapelessContext.Builder<C> ctxBuilder = new ItemShapelessContext.Builder<>(level, list);
 		ctxBuilderConsumer.accept(ctxBuilder);
-		C ctx = ctxBuilder.create(contextParamSet);
+		process(this, recipes, ctxBuilder.create(contextParamSet), null);
+	}
+
+	public static <C extends ItemShapelessContext, T extends LycheeRecipe<C>> void process(LycheeRecipeType<C, T> recipeType, Iterable<T> recipes, C ctx, Predicate<T> test) {
 		boolean matchedAny = false;
 		int loop = 0;
+		Set<T> excluded = Sets.newHashSet();
 		major:
 		while (true) {
 			boolean matched = false;
@@ -52,9 +60,16 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 				if (recipe.getIngredients().isEmpty() && loop > 0) {
 					continue;
 				}
+				if (excluded.contains(recipe)) {
+					continue;
+				}
 				try {
-					Optional<T> match = tryMatch(recipe, level, ctx);
+					Optional<T> match = recipeType.tryMatch(recipe, ctx.getLevel(), ctx);
 					if (match.isPresent()) {
+						if (test != null && !test.test(recipe)) {
+							excluded.add(recipe);
+							continue;
+						}
 						matchedAny = matched = true;
 						int times = 1;
 						if (ctx.match != null && ctx.match.length > 0) {

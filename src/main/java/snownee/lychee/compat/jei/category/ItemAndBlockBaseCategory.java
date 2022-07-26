@@ -7,26 +7,23 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.compat.jei.JEICompat;
 import snownee.lychee.compat.jei.JEICompat.ScreenElementWrapper;
@@ -34,9 +31,10 @@ import snownee.lychee.compat.jei.SideBlockIcon;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.BlockKeyRecipe;
+import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
-import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.core.recipe.type.MostUsedBlockProvider;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.Pair;
 
@@ -50,7 +48,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	public ItemAndBlockBaseCategory(List<LycheeRecipeType<C, T>> recipeTypes, ScreenElement mainIcon) {
 		super(recipeTypes);
 		this.mainIcon = mainIcon;
-		infoRect = new Rect2i(8, 32, 8, 8);
+		infoRect.setPosition(8, 32);
 	}
 
 	@Override
@@ -65,7 +63,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		}
 		/* off */
 		return recipeTypes.stream()
-				.map($ -> ((BlockKeyRecipeType<?, ?>) $).getMostUsedBlock())
+				.map($ -> ((MostUsedBlockProvider) $).getMostUsedBlock())
 				.max((a, b) -> a.getSecond() - b.getSecond())
 				.map(Pair::getFirst)
 				.orElse(Blocks.AIR.defaultBlockState());
@@ -83,34 +81,27 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses) {
-		List<Ingredient> items = recipe.getIngredients();
-		if (getClass() != BlockExplodingRecipeCategory.class && !items.isEmpty()) {
-			IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, 4, 13);
-			slot.addIngredients(items.get(0));
-			boolean preventDefault = recipe.getPostActions().stream().anyMatch($ -> $.getType() == PostActionTypes.PREVENT_DEFAULT);
-			if (preventDefault) {
-				slot.setBackground(JEICompat.el(AllGuiTextures.JEI_CATALYST_SLOT), -1, -1);
-				slot.addTooltipCallback((stack, tooltip) -> {
-					tooltip.add(recipe.getType().getPreventDefaultDescription(recipe));
-				});
-			} else {
-				slot.setBackground(JEICompat.slot(false), -1, -1);
-			}
+		boolean preventDefault = this != JEICompat.BLOCK_EXPLODING && recipe.getPostActions().stream().anyMatch($ -> $.getType() == PostActionTypes.PREVENT_DEFAULT);
+		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
+		if (recipe instanceof ItemShapelessRecipe) {
+			ingredientGroup(builder, recipe, 38, y, preventDefault);
+		} else {
+			ingredientGroup(builder, recipe, 12, 21, preventDefault);
 		}
-
-		actionGroup(builder, recipe, 88, recipe.getShowingPostActions().size() > 9 ? 26 : 28);
+		actionGroup(builder, recipe, getWidth() - 29, y);
 		addBlockInputs(builder, getInputBlock(recipe));
 	}
 
-	public void drawExtra(T recipe, PoseStack matrixStack, double mouseX, double mouseY) {
-		AllGuiTextures.JEI_DOWN_ARROW.render(matrixStack, 26, 18);
+	public void drawExtra(T recipe, PoseStack matrixStack, double mouseX, double mouseY, int centerX) {
+		AllGuiTextures.JEI_DOWN_ARROW.render(matrixStack, methodRect.getX(), methodRect.getY());
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
 		super.draw(recipe, recipeSlotsView, matrixStack, mouseX, mouseY);
-		drawExtra(recipe, matrixStack, mouseX, mouseY);
+		int centerX = getWidth() / 2;
+		drawExtra(recipe, matrixStack, mouseX, mouseY, centerX);
 
 		BlockState state = getRenderingBlock(recipe);
 		if (state.isAir()) {
@@ -125,12 +116,15 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 			matrixStack.popPose();
 		}
 
-		matrixStack.pushPose();
-		matrixStack.mulPose(Vector3f.XP.rotationDegrees(-12.5f));
-		matrixStack.mulPose(Vector3f.YP.rotationDegrees(22.5f));
-		matrixStack.translate(inputBlockRect.getX() - 9, inputBlockRect.getY() + 13, 0);
-		GuiGameElement.of(state).scale(15).atLocal(0, 0, 2).render(matrixStack);
-		matrixStack.popPose();
+		/* off */
+		GuiGameElement.of(state)
+				.rotateBlock(12.5, -22.5, 0)
+				.scale(15)
+				.lighting(ILightingSettings.DEFAULT_JEI)
+				.atLocal(0, 0, 2)
+				.at(inputBlockRect.getX() + 4, inputBlockRect.getY() + 16)
+				.render(matrixStack);
+		/* on */
 	}
 
 	@Override

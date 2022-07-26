@@ -34,7 +34,6 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 
 	public BlockCrushingRecipeCategory(LycheeRecipeType<BlockCrushingContext, BlockCrushingRecipe> recipeType) {
 		super(recipeType);
-		infoRect = new Rect2i(0, 25, 8, 8);
 	}
 
 	@Override
@@ -51,7 +50,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 	public void setRecipe(IRecipeLayoutBuilder builder, BlockCrushingRecipe recipe, IFocusGroup focuses) {
 		int xCenter = getWidth() / 2;
 		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
-		ingredientGroup(builder, recipe, xCenter - 45, y);
+		ingredientGroup(builder, recipe, xCenter - 45, y, false);
 		actionGroup(builder, recipe, xCenter + 50, y);
 		addBlockInputs(builder, recipe.getBlock());
 	}
@@ -91,7 +90,6 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 		GuiGameElement.of(fallingBlock).scale(15).atLocal(0, ticks * 1.3 - 1.3, 2).rotateBlock(0, 45, 0).render(matrixStack);
 		if (!landingBlock.isAir()) {
 			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 2).rotateBlock(0, 45, 0).render(matrixStack);
-			//			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 2, 2).rotateBlock(0, 45, 0).render(matrixStack);
 		}
 		matrixStack.popPose();
 	}
