@@ -129,7 +129,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 			if ($.isRemoved()) {
 				return false;
 			}
-			if (!pos.equals($.blockPosition()) && !level.getBlockState(pos).is(block)) {
+			if (!pos.equals($.blockPosition()) && !level.getBlockState($.blockPosition()).is(block)) {
 				return false;
 			}
 			return true;
