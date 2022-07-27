@@ -99,7 +99,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	@SuppressWarnings("deprecation")
 	@Override
 	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
-		super.draw(recipe, recipeSlotsView, matrixStack, mouseX, mouseY);
+		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
 		int centerX = getWidth() / 2;
 		drawExtra(recipe, matrixStack, mouseX, mouseY, centerX);
 

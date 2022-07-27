@@ -217,6 +217,10 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	@Override
 	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
+		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
+	}
+
+	public void drawInfoBadge(T recipe, PoseStack matrixStack, double mouseX, double mouseY) {
 		if (!recipe.getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.comment)) {
 			matrixStack.pushPose();
 			matrixStack.translate(infoRect.getX(), infoRect.getY(), 0);

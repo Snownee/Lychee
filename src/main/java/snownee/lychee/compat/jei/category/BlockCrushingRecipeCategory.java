@@ -58,7 +58,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 	@SuppressWarnings("deprecation")
 	@Override
 	public void draw(BlockCrushingRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
-		super.draw(recipe, recipeSlotsView, matrixStack, mouseX, mouseY);
+		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
 		BlockState fallingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
 		BlockState landingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
 		int x = recipe.getIngredients().isEmpty() ? 36 : 72;

@@ -30,7 +30,7 @@ public abstract class ItemShapelessRecipeCategory<T extends ItemShapelessRecipe<
 
 	@Override
 	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
-		super.draw(recipe, recipeSlotsView, matrixStack, mouseX, mouseY);
+		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
 		matrixStack.pushPose();
 		matrixStack.translate(76, 16, 0);
 		matrixStack.scale(1.5F, 1.5F, 0);
