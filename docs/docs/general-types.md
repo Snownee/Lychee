@@ -79,6 +79,19 @@ A BlockPredicate is a predicate of StateDefinition.
     | - min | minimum value                         | int                      |
     | - max | maximum value                         | int                      |
 
+??? example
+
+	Matches water source block:
+    
+	```json
+	{
+		"blocks": ["water"],
+		"state": {
+			"level": 0
+		}
+	}
+	```
+
 ## LocationPredicate
 
 Predicate applied to location. Please refer to the [Minecraft Wiki](https://minecraft.fandom.com/wiki/Predicate).
