@@ -1,10 +1,9 @@
 package snownee.lychee.compat.rei.display;
 
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
-import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.recipe.ItemShapelessRecipe;
 
-public class ItemShapelessDisplay<C extends ItemShapelessContext, T extends ItemShapelessRecipe<C>> extends BaseREIDisplay<C, T> {
+public class ItemShapelessDisplay<T extends ItemShapelessRecipe<T>> extends BaseREIDisplay<T> {
 
 	public ItemShapelessDisplay(T recipe) {
 		super(recipe);

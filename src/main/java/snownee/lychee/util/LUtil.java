@@ -33,6 +33,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -234,6 +235,10 @@ public class LUtil {
 
 	public static <T> List<T> tagElements(Registry<T> registry, TagKey<T> tag) {
 		return Streams.stream(registry.getTagOrEmpty(tag)).map(Holder::value).toList();
+	}
+
+	public static boolean isSimpleIngredient(Ingredient ingredient) {
+		return true;
 	}
 
 }

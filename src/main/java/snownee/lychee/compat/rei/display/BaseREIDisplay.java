@@ -10,11 +10,10 @@ import me.shedaniel.rei.api.common.util.EntryIngredients;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.compat.rei.REICompat;
-import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.LycheeRecipe;
 
-public abstract class BaseREIDisplay<C extends LycheeContext, T extends LycheeRecipe<C>> implements Display {
+public abstract class BaseREIDisplay<T extends LycheeRecipe<?>> implements Display {
 
 	public final T recipe;
 

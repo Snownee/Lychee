@@ -16,15 +16,15 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.compat.rei.REICompat;
-import snownee.lychee.compat.rei.display.ItemInsideDisplay;
+import snownee.lychee.compat.rei.display.BlockInteractionDisplay;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.interaction.BlockInteractingRecipe;
 
-public class BlockInteractionRecipeCategory extends ItemInsideRecipeCategory<BlockInteractingRecipe> {
+public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<LycheeContext, BlockInteractingRecipe, BlockInteractionDisplay> {
 
 	public BlockInteractionRecipeCategory(List<BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe>> recipeTypes, ScreenElement mainIcon) {
-		super(recipeTypes, mainIcon);
+		super(List.copyOf(recipeTypes), mainIcon);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class BlockInteractionRecipeCategory extends ItemInsideRecipeCategory<Blo
 	}
 
 	@Override
-	public void drawExtra(BlockInteractingRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY) {
+	public void drawExtra(BlockInteractingRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY, int centerX) {
 		KeyMapping keyMapping = getKeyMapping(recipe);
 		//		if (keyMapping.getKey().getValue() == -1) { // key is unset or unknown
 		//
@@ -56,7 +56,7 @@ public class BlockInteractionRecipeCategory extends ItemInsideRecipeCategory<Blo
 	}
 
 	@Override
-	public CategoryIdentifier<? extends ItemInsideDisplay<BlockInteractingRecipe>> getCategoryIdentifier() {
+	public CategoryIdentifier<? extends BlockInteractionDisplay> getCategoryIdentifier() {
 		return REICompat.BLOCK_INTERACTION;
 	}
 

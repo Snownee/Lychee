@@ -17,7 +17,7 @@ import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
-public class ItemShapelessRecipeCategory<C extends ItemShapelessContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<C, T>> extends BaseREICategory<C, T, D> {
+public class ItemShapelessRecipeCategory<C extends ItemShapelessContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> extends BaseREICategory<C, T, D> {
 
 	public ItemShapelessRecipeCategory(LycheeRecipeType<C, T> recipeType, Renderer icon) {
 		super(recipeType);
@@ -32,6 +32,11 @@ public class ItemShapelessRecipeCategory<C extends ItemShapelessContext, T exten
 
 	@Override
 	public int getDisplayWidth(D display) {
+		return getRealWidth();
+	}
+
+	@Override
+	public int getRealWidth() {
 		return width + 20;
 	}
 
@@ -43,7 +48,7 @@ public class ItemShapelessRecipeCategory<C extends ItemShapelessContext, T exten
 
 		int xCenter = bounds.getCenterX();
 		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
-		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y);
+		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y, false);
 		actionGroup(widgets, startPoint, recipe, xCenter + 50 - startPoint.x, y);
 
 		Rectangle iconBounds = new Rectangle(xCenter - 8, bounds.y + y - 8, 24, 24);

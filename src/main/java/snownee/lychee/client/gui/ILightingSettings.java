@@ -8,5 +8,11 @@ public interface ILightingSettings {
 
 	ILightingSettings DEFAULT_3D = () -> Lighting.setupFor3DItems();
 	ILightingSettings DEFAULT_FLAT = () -> Lighting.setupForFlatItems();
+	/* off */
+	ILightingSettings DEFAULT_JEI = CustomLightingSettings.builder()
+			.firstLightRotation(12.5f, 45.0f)
+			.secondLightRotation(-20.0f, 50.0f)
+			.build();
+	/* on */
 
 }

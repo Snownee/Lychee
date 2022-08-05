@@ -5,6 +5,7 @@ import java.util.function.Function;
 import com.google.gson.JsonObject;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -32,6 +33,11 @@ public abstract class ItemAndBlockRecipe<C extends LycheeContext> extends Lychee
 	@Override
 	public BlockPredicate getBlock() {
 		return block;
+	}
+
+	@Override
+	public NonNullList<Ingredient> getIngredients() {
+		return NonNullList.of(Ingredient.EMPTY, input);
 	}
 
 	@Override

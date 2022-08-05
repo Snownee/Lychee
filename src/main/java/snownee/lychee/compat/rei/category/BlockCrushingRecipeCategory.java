@@ -37,7 +37,6 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 	public BlockCrushingRecipeCategory(LycheeRecipeType<BlockCrushingContext, BlockCrushingRecipe> recipeType) {
 		super(recipeType);
 		icon = EntryStacks.of(Items.ANVIL);
-		infoRect = new Rect2i(3, 25, 8, 8);
 	}
 
 	@Override
@@ -47,12 +46,17 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 
 	@Override
 	public int getDisplayWidth(BlockCrushingDisplay display) {
+		return getRealWidth();
+	}
+
+	@Override
+	public int getRealWidth() {
 		return width + 20;
 	}
 
 	@Override
 	public List<Widget> setupDisplay(BlockCrushingDisplay display, Rectangle bounds) {
-		Point startPoint = new Point(bounds.getCenterX() - getDisplayWidth(display) / 2, bounds.getY() + 4);
+		Point startPoint = new Point(bounds.getCenterX() - getRealWidth() / 2, bounds.getY() + 4);
 		BlockCrushingRecipe recipe = display.recipe;
 		List<Widget> widgets = super.setupDisplay(display, bounds);
 		widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
@@ -89,7 +93,6 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 			GuiGameElement.of(getFallingBlock(recipe)).scale(15).atLocal(0, ticks * 1.3 - 1.3, 2).rotateBlock(0, 45, 0).render(matrixStack);
 			if (!landingBlock.isAir()) {
 				GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 2).rotateBlock(0, 45, 0).render(matrixStack);
-				//			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 2, 2).rotateBlock(0, 45, 0).render(matrixStack);
 			}
 			matrixStack.popPose();
 			matrixStack.popPose();
@@ -97,7 +100,7 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 
 		int xCenter = bounds.getCenterX();
 		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
-		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y);
+		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y, false);
 		actionGroup(widgets, startPoint, recipe, xCenter + 50 - startPoint.x, y);
 
 		int x = recipe.getIngredients().isEmpty() ? 36 : 72;

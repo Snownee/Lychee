@@ -21,6 +21,7 @@ import snownee.lychee.interaction.BlockInteractingRecipe;
 import snownee.lychee.item_burning.ItemBurningRecipe;
 import snownee.lychee.item_exploding.ItemExplodingRecipe;
 import snownee.lychee.item_inside.ItemInsideRecipe;
+import snownee.lychee.item_inside.ItemInsideRecipeType;
 import snownee.lychee.lightning_channeling.LightningChannelingRecipe;
 
 public final class RecipeTypes {
@@ -36,7 +37,7 @@ public final class RecipeTypes {
 
 	public static final Set<LycheeRecipeType<?, ?>> ALL = Sets.newLinkedHashSet();
 	public static final LycheeRecipeType<LycheeContext, ItemBurningRecipe> ITEM_BURNING = register(new LycheeRecipeType<>("item_burning", ItemBurningRecipe.class, null));
-	public static final BlockKeyRecipeType<LycheeContext, ItemInsideRecipe> ITEM_INSIDE = register(new BlockKeyRecipeType<>("item_inside", ItemInsideRecipe.class, null));
+	public static final ItemInsideRecipeType ITEM_INSIDE = register(new ItemInsideRecipeType("item_inside", ItemInsideRecipe.class, null));
 	public static final BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe> BLOCK_INTERACTING = register(new BlockKeyRecipeType<>("block_interacting", BlockInteractingRecipe.class, LycheeLootContextParamSets.BLOCK_INTERACTION));
 	public static final BlockKeyRecipeType<LycheeContext, BlockClickingRecipe> BLOCK_CLICKING = register(new BlockKeyRecipeType<>("block_clicking", BlockClickingRecipe.class, LycheeLootContextParamSets.BLOCK_INTERACTION));
 	public static final LycheeRecipeType<AnvilContext, AnvilCraftingRecipe> ANVIL_CRAFTING = register(new LycheeRecipeType<>("anvil_crafting", AnvilCraftingRecipe.class, null));

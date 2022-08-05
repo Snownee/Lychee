@@ -11,7 +11,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
-import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.WidgetWithBounds;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
@@ -62,7 +61,6 @@ public class REICompat implements REIClientPlugin {
 	public static final EntryType<PostAction> POST_ACTION = EntryType.deferred(LycheeRegistries.POST_ACTION.key().location());
 
 	public static final CategoryIdentifier<ItemBurningDisplay> ITEM_BURNING = CategoryIdentifier.of(RecipeTypes.ITEM_BURNING.id);
-	@SuppressWarnings("rawtypes")
 	public static final CategoryIdentifier<ItemInsideDisplay> ITEM_INSIDE = CategoryIdentifier.of(RecipeTypes.ITEM_INSIDE.id);
 	public static final CategoryIdentifier<BlockInteractionDisplay> BLOCK_INTERACTION = CategoryIdentifier.of(RecipeTypes.BLOCK_INTERACTING.id);
 	public static final CategoryIdentifier<BlockCrushingDisplay> BLOCK_CRUSHING = CategoryIdentifier.of(RecipeTypes.BLOCK_CRUSHING.id);
@@ -76,7 +74,7 @@ public class REICompat implements REIClientPlugin {
 	@Override
 	public void registerCategories(CategoryRegistry registration) {
 		registration.add(new ItemBurningRecipeCategory(RecipeTypes.ITEM_BURNING));
-		registration.add(new ItemInsideRecipeCategory<>(RecipeTypes.ITEM_INSIDE, AllGuiTextures.JEI_DOWN_ARROW));
+		registration.add(new ItemInsideRecipeCategory(RecipeTypes.ITEM_INSIDE, AllGuiTextures.JEI_DOWN_ARROW));
 		ScreenElement mainIcon = RecipeTypes.BLOCK_INTERACTING.isEmpty() ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
 		registration.add(new BlockInteractionRecipeCategory((List) List.of(RecipeTypes.BLOCK_INTERACTING, RecipeTypes.BLOCK_CLICKING), mainIcon));
 		registration.add(new BlockCrushingRecipeCategory(RecipeTypes.BLOCK_CRUSHING));
@@ -134,23 +132,27 @@ public class REICompat implements REIClientPlugin {
 		registration.register(POST_ACTION, new PostActionIngredientHelper());
 	}
 
-	private static final Map<AllGuiTextures, Renderer> elMap = Maps.newIdentityHashMap();
+	private static final Map<AllGuiTextures, ScreenElementWrapper> elMap = Maps.newIdentityHashMap();
 
-	public static Renderer el(AllGuiTextures element) {
+	public static ScreenElementWrapper el(AllGuiTextures element) {
 		return elMap.computeIfAbsent(element, ScreenElementWrapper::new);
 	}
 
-	public static LEntryWidget slot(Point startPoint, int x, int y, boolean conditonal, boolean catalyst) {
-		LEntryWidget widget = new LEntryWidget(new Point(startPoint.x + x + 1, startPoint.y + y + 1));
-		ScreenElement bg;
-		if (catalyst) {
-			bg = AllGuiTextures.JEI_CATALYST_SLOT;
-		} else if (conditonal) {
-			bg = AllGuiTextures.JEI_CHANCE_SLOT;
-		} else {
-			bg = AllGuiTextures.JEI_SLOT;
+	public enum SlotType {
+		NORMAL(AllGuiTextures.JEI_SLOT),
+		CHANCE(AllGuiTextures.JEI_CHANCE_SLOT),
+		CATALYST(AllGuiTextures.JEI_CATALYST_SLOT);
+
+		final ScreenElement element;
+
+		private SlotType(AllGuiTextures element) {
+			this.element = el(element).element;
 		}
-		widget.background(bg);
+	}
+
+	public static LEntryWidget slot(Point startPoint, int x, int y, SlotType slotType) {
+		LEntryWidget widget = new LEntryWidget(new Point(startPoint.x + x + 1, startPoint.y + y + 1));
+		widget.background(slotType.element);
 		return widget;
 	}
 

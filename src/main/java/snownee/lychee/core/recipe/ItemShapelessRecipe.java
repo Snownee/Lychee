@@ -17,7 +17,7 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.util.RecipeMatcher;
 
-public abstract class ItemShapelessRecipe<C extends ItemShapelessContext> extends LycheeRecipe<C> implements Comparable<ItemShapelessRecipe<C>> {
+public abstract class ItemShapelessRecipe<T extends ItemShapelessRecipe<T>> extends LycheeRecipe<ItemShapelessContext> implements Comparable<T> {
 
 	public static final int MAX_INGREDIENTS = 27;
 	protected NonNullList<Ingredient> ingredients = NonNullList.create();
@@ -55,7 +55,7 @@ public abstract class ItemShapelessRecipe<C extends ItemShapelessContext> extend
 	}
 
 	@Override
-	public int compareTo(ItemShapelessRecipe<C> that) {
+	public int compareTo(T that) {
 		int i;
 		i = Integer.compare(getMaxRepeats().isAny() ? 1 : 0, that.getMaxRepeats().isAny() ? 1 : 0);
 		if (i != 0)
@@ -69,7 +69,7 @@ public abstract class ItemShapelessRecipe<C extends ItemShapelessContext> extend
 		return getId().compareTo(that.getId());
 	}
 
-	public static class Serializer<T extends ItemShapelessRecipe<?>> extends LycheeRecipe.Serializer<T> {
+	public static class Serializer<T extends ItemShapelessRecipe<T>> extends LycheeRecipe.Serializer<T> {
 
 		public Serializer(Function<ResourceLocation, T> factory) {
 			super(factory);

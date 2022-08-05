@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.rei.LEntryWidget;
 import snownee.lychee.compat.rei.REICompat;
+import snownee.lychee.compat.rei.REICompat.SlotType;
 import snownee.lychee.compat.rei.ReactiveWidget;
 import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.core.LycheeContext;
@@ -42,13 +43,13 @@ import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
-public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<C, T>> implements DisplayCategory<D> {
+public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> implements DisplayCategory<D> {
 
 	public static final int width = 150;
 	public static final int height = 59;
 	protected final List<LycheeRecipeType<C, T>> recipeTypes;
 	protected Renderer icon;
-	protected Rect2i infoRect = new Rect2i(8, 32, 8, 8);
+	protected Rect2i infoRect;
 
 	public BaseREICategory(LycheeRecipeType<C, T> recipeType) {
 		this(List.of(recipeType));
@@ -56,6 +57,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 
 	public BaseREICategory(List<LycheeRecipeType<C, T>> recipeTypes) {
 		this.recipeTypes = recipeTypes;
+		infoRect = new Rect2i(4, 25, 8, 8);
 	}
 
 	@Override
@@ -78,6 +80,10 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 		return 150;
 	}
 
+	public int getRealWidth() {
+		return 120;
+	}
+
 	//	@Override
 	//	public abstract void setIngredients(T recipe, IIngredients ingredients);
 	//
@@ -88,11 +94,16 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 		slotGroup(widgets, startPoint, x, y, recipe.getShowingPostActions(), BaseREICategory::actionSlot);
 	}
 
-	public void ingredientGroup(List<Widget> widgets, Point startPoint, T recipe, int x, int y) {
+	public void ingredientGroup(List<Widget> widgets, Point startPoint, T recipe, int x, int y, boolean catalyst) {
 		slotGroup(widgets, startPoint, x, y, recipe.getIngredients(), (widgets0, startPoint0, ingredient, x0, y0) -> {
-			LEntryWidget slot = REICompat.slot(startPoint, x0, y0, false, false);
+			LEntryWidget slot = REICompat.slot(startPoint, x0, y0, catalyst ? SlotType.CATALYST : SlotType.NORMAL);
 			slot.entries(EntryIngredients.ofIngredient(ingredient));
 			slot.markInput();
+			if (catalyst) {
+				slot.addTooltipCallback(tooltip -> {
+					tooltip.add(recipe.getType().getPreventDefaultDescription(recipe));
+				});
+			}
 			widgets.add(slot);
 		});
 	}
@@ -123,7 +134,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 	}
 
 	public static void actionSlot(List<Widget> widgets, Point startPoint, PostAction action, int x, int y) {
-		LEntryWidget slot = REICompat.slot(startPoint, x, y, !action.getConditions().isEmpty(), false);
+		LEntryWidget slot = REICompat.slot(startPoint, x, y, action.getConditions().isEmpty() ? SlotType.NORMAL : SlotType.CHANCE);
 		slot.markOutput();
 		List<EntryStack<?>> entries = Lists.newArrayList();
 		Map<EntryStack<ItemStack>, PostAction> itemMap = Maps.newHashMap();
@@ -164,7 +175,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 
 	@Override
 	public List<Widget> setupDisplay(D display, Rectangle bounds) {
-		Point startPoint = new Point(bounds.getCenterX() - getDisplayWidth(display) / 2, bounds.getY() + 4);
+		Point startPoint = new Point(bounds.getCenterX() - getRealWidth() / 2, bounds.getY() + 4);
 		T recipe = display.recipe;
 		List<Widget> widgets = Lists.newArrayList(DisplayCategory.super.setupDisplay(display, bounds));
 		if (!recipe.getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.comment)) {
