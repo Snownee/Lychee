@@ -42,21 +42,23 @@ public class ItemShapelessRecipeCategory<C extends ItemShapelessContext, T exten
 
 	@Override
 	public List<Widget> setupDisplay(D display, Rectangle bounds) {
-		Point startPoint = new Point(bounds.getCenterX() - getDisplayWidth(display) / 2, bounds.getY() + 4);
+		Point startPoint = new Point(bounds.getCenterX() - getRealWidth() / 2, bounds.getY() + 4);
 		T recipe = display.recipe;
 		List<Widget> widgets = super.setupDisplay(display, bounds);
-
+		drawInfoBadge(widgets, display, startPoint);
 		int xCenter = bounds.getCenterX();
 		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
 		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y, false);
 		actionGroup(widgets, startPoint, recipe, xCenter + 50 - startPoint.x, y);
+		drawExtra(widgets, display, bounds);
+		return widgets;
+	}
 
-		Rectangle iconBounds = new Rectangle(xCenter - 8, bounds.y + y - 8, 24, 24);
+	public void drawExtra(List<Widget> widgets, D display, Rectangle bounds) {
+		Rectangle iconBounds = new Rectangle(bounds.getCenterX() - 8, bounds.y + 19, 24, 24);
 		widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
 			icon.render(matrixStack, iconBounds, mouseX, mouseY, delta);
 		}));
-
-		return widgets;
 	}
 
 }

@@ -41,6 +41,7 @@ import snownee.lychee.compat.rei.category.BlockCrushingRecipeCategory;
 import snownee.lychee.compat.rei.category.BlockExplodingRecipeCategory;
 import snownee.lychee.compat.rei.category.BlockInteractionRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemBurningRecipeCategory;
+import snownee.lychee.compat.rei.category.ItemExplodingRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemInsideRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemShapelessRecipeCategory;
 import snownee.lychee.compat.rei.display.BlockCrushingDisplay;
@@ -79,7 +80,7 @@ public class REICompat implements REIClientPlugin {
 		registration.add(new BlockInteractionRecipeCategory((List) List.of(RecipeTypes.BLOCK_INTERACTING, RecipeTypes.BLOCK_CLICKING), mainIcon));
 		registration.add(new BlockCrushingRecipeCategory(RecipeTypes.BLOCK_CRUSHING));
 		registration.add(new ItemShapelessRecipeCategory<>(RecipeTypes.LIGHTNING_CHANNELING, EntryStacks.of(Items.LIGHTNING_ROD)));
-		registration.add(new ItemShapelessRecipeCategory<>(RecipeTypes.ITEM_EXPLODING, EntryStacks.of(Items.TNT)));
+		registration.add(new ItemExplodingRecipeCategory(RecipeTypes.ITEM_EXPLODING, EntryStacks.of(Items.TNT)));
 		registration.add(new BlockExplodingRecipeCategory(RecipeTypes.BLOCK_EXPLODING, GuiGameElement.of(Items.TNT)));
 
 		registration.removePlusButton(ITEM_BURNING);

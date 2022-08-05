@@ -59,6 +59,7 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 		Point startPoint = new Point(bounds.getCenterX() - getRealWidth() / 2, bounds.getY() + 4);
 		BlockCrushingRecipe recipe = display.recipe;
 		List<Widget> widgets = super.setupDisplay(display, bounds);
+		drawInfoBadge(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
 			int x = recipe.getIngredients().isEmpty() ? 36 : 72;
 			boolean anyLandingBlock = recipe.getLandingBlock() == BlockPredicate.ANY;

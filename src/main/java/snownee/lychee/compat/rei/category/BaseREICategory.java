@@ -175,9 +175,11 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 
 	@Override
 	public List<Widget> setupDisplay(D display, Rectangle bounds) {
-		Point startPoint = new Point(bounds.getCenterX() - getRealWidth() / 2, bounds.getY() + 4);
+		return Lists.newArrayList(DisplayCategory.super.setupDisplay(display, bounds));
+	}
+
+	public void drawInfoBadge(List<Widget> widgets, D display, Point startPoint) {
 		T recipe = display.recipe;
-		List<Widget> widgets = Lists.newArrayList(DisplayCategory.super.setupDisplay(display, bounds));
 		if (!recipe.getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.comment)) {
 			widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
 				matrixStack.pushPose();
@@ -201,7 +203,6 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 			});
 			widgets.add(reactive);
 		}
-		return widgets;
 	}
 
 	public boolean clickBlock(BlockState state, int button) {

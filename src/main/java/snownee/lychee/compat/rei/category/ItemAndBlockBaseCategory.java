@@ -87,6 +87,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		Point startPoint = new Point(bounds.getCenterX() - getRealWidth() / 2, bounds.getY() + 4);
 		T recipe = display.recipe;
 		List<Widget> widgets = super.setupDisplay(display, bounds);
+		drawInfoBadge(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
 			matrixStack.pushPose();
 			matrixStack.translate(startPoint.x, startPoint.y, 0);
