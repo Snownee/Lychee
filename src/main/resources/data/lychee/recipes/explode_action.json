@@ -1,0 +1,18 @@
+{
+  "type": "lychee:item_inside",
+  "item_in": [
+    {
+      "item": "gunpowder"
+    },
+    {
+      "item": "gunpowder"
+    }
+  ],
+  "block_in": "water",
+  "post": [
+    {
+      "type": "explode",
+      "fire": true
+    }
+  ]
+}

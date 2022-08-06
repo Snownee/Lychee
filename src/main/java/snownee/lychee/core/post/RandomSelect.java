@@ -27,6 +27,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
@@ -116,7 +117,7 @@ public class RandomSelect extends PostAction {
 	@Override
 	public Component getDisplayName() {
 		if (entries.length == 1) {
-			return new TextComponent("%s × %s".formatted(entries[0].getDisplayName().getString(), IntBoundsHelper.toString(rolls)));
+			return new TextComponent("%s × %s".formatted(entries[0].getDisplayName().getString(), BoundsHelper.getDescription(rolls).getString()));
 		}
 		return LUtil.getCycledItem(List.of(entries), entries[0], 1000).getDisplayName();
 	}
@@ -133,7 +134,7 @@ public class RandomSelect extends PostAction {
 			if (rolls == IntBoundsHelper.ONE) {
 				list.add(new TranslatableComponent("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
 			} else {
-				list.add(new TranslatableComponent("tip.lychee.randomChance", chance, IntBoundsHelper.toString(rolls)).withStyle(ChatFormatting.YELLOW));
+				list.add(new TranslatableComponent("tip.lychee.randomChance", chance, BoundsHelper.getDescription(rolls)).withStyle(ChatFormatting.YELLOW));
 			}
 		}
 		int c = showingConditionsCount() + child.showingConditionsCount();

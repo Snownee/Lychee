@@ -1,6 +1,5 @@
 package snownee.lychee.core.def;
 
-import java.util.Objects;
 import java.util.Random;
 
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -55,22 +54,6 @@ public class IntBoundsHelper {
 			return min;
 		}
 		return Mth.randomBetweenInclusive(random, min, max);
-	}
-
-	public static String toString(Ints ints) {
-		if (ints.isAny()) {
-			return "*";
-		}
-		if (ints.getMin() == null) {
-			return "<" + ints.getMax();
-		}
-		if (ints.getMax() == null) {
-			return ">" + ints.getMax();
-		}
-		if (Objects.equals(ints.getMin(), ints.getMax())) {
-			return ints.getMin().toString();
-		}
-		return ints.getMin() + "~" + ints.getMax();
 	}
 
 }
