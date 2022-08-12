@@ -4,10 +4,10 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
+import me.shedaniel.rei.api.client.gui.widgets.TooltipContext;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import snownee.lychee.core.post.PostAction;
 
@@ -22,7 +22,7 @@ public enum PostActionIngredientRenderer implements EntryRenderer<PostAction> {
 	}
 
 	@Override
-	public @Nullable Tooltip getTooltip(EntryStack<PostAction> entry, Point mouse) {
+	public @Nullable Tooltip getTooltip(EntryStack<PostAction> entry, TooltipContext context) {
 		return Tooltip.create(entry.getValue().getTooltips());
 	}
 

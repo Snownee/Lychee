@@ -83,14 +83,6 @@ public class REICompat implements REIClientPlugin {
 		registration.add(new ItemExplodingRecipeCategory(RecipeTypes.ITEM_EXPLODING, EntryStacks.of(Items.TNT)));
 		registration.add(new BlockExplodingRecipeCategory(RecipeTypes.BLOCK_EXPLODING, GuiGameElement.of(Items.TNT)));
 
-		registration.removePlusButton(ITEM_BURNING);
-		registration.removePlusButton(ITEM_INSIDE);
-		registration.removePlusButton(BLOCK_INTERACTION);
-		registration.removePlusButton(BLOCK_CRUSHING);
-		registration.removePlusButton(LIGHTNING_CHANNELING);
-		registration.removePlusButton(ITEM_EXPLODING);
-		registration.removePlusButton(BLOCK_EXPLODING);
-
 		for (ItemStack stack : RecipeTypes.BLOCK_CRUSHING.blockKeysToItems()) {
 			registration.addWorkstations(BLOCK_CRUSHING, EntryStacks.of(stack));
 		}
