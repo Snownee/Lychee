@@ -18,7 +18,7 @@
     "main": [
       "snownee.lychee.Lychee"
     ],
-    "rei": [
+    "rei_client": [
       "snownee.lychee.compat.rei.REICompat"
     ]
   },
