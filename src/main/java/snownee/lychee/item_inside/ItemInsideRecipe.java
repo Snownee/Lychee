@@ -25,6 +25,7 @@ import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.LUtil;
 import snownee.lychee.util.RecipeMatcher;
 
 public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe> implements BlockKeyRecipe<ItemInsideRecipe> {
@@ -92,12 +93,12 @@ public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe> impl
 
 	public void buildCache() {
 		cachedItemList = null;
-		special = !getIngredients().stream().anyMatch(Ingredient::isSimple);
+		special = !getIngredients().stream().anyMatch(LUtil::isSimpleIngredient);
 		if (special)
 			return;
 		/* off */
 		cachedItemList = getIngredients().stream()
-				.filter(Ingredient::isSimple)
+				.filter(LUtil::isSimpleIngredient)
 				.map(Ingredient::getItems)
 				.flatMap(Stream::of)
 				.map(ItemStack::getItem)

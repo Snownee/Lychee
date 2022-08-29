@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import net.minecraft.world.item.crafting.Ingredient;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Streams;
@@ -232,4 +234,7 @@ public class LUtil {
 		return Streams.stream(registry.getTagOrEmpty(tag)).map(Holder::value).toList();
 	}
 
+	public static boolean isSimpleIngredient(Ingredient ingredient) {
+		return ingredient.isSimple();
+	}
 }
