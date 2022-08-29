@@ -55,7 +55,7 @@ public record Time(Ints value, @Nullable Long period) implements ContextualCondi
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
-		return new TranslatableComponent(makeDescriptionId(false));
+		return new TranslatableComponent(makeDescriptionId(inverted));
 	}
 
 	public static class Type extends ContextualConditionType<Time> {
