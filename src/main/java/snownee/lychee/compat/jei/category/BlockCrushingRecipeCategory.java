@@ -53,6 +53,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 		ingredientGroup(builder, recipe, xCenter - 45, y, false);
 		actionGroup(builder, recipe, xCenter + 50, y);
 		addBlockInputs(builder, recipe.getBlock());
+		addBlockInputs(builder, recipe.getLandingBlock());
 	}
 
 	@SuppressWarnings("deprecation")

@@ -110,7 +110,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		}
 		if (state.getLightEmission() < 5) {
 			matrixStack.pushPose();
-			matrixStack.translate(inputBlockRect.getX() + 11, inputBlockRect.getY() + 18, 0);
+			matrixStack.translate(inputBlockRect.getX() + 11, inputBlockRect.getY() + 16, 0);
 			matrixStack.scale(.7F, .7F, .7F);
 			AllGuiTextures.JEI_SHADOW.render(matrixStack, -26, -5);
 			matrixStack.popPose();
