@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import com.google.gson.JsonObject;
+
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.crafting.Ingredient;
 
 import org.jetbrains.annotations.Nullable;
@@ -236,5 +239,16 @@ public class LUtil {
 
 	public static boolean isSimpleIngredient(Ingredient ingredient) {
 		return ingredient.isSimple();
+	}
+
+	public static BlockPos parseOffset(JsonObject o) {
+		int x = GsonHelper.getAsInt(o, "offsetX", 0);
+		int y = GsonHelper.getAsInt(o, "offsetY", 0);
+		int z = GsonHelper.getAsInt(o, "offsetZ", 0);
+		BlockPos offset = BlockPos.ZERO;
+		if (x != 0 || y != 0 || z != 0) {
+			offset = new BlockPos(x, y, z);
+		}
+		return offset;
 	}
 }

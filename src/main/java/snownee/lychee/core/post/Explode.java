@@ -69,10 +69,10 @@ public class Explode extends PostAction {
 	@Override
 	public Component getDisplayName() {
 		String s = switch (blockInteraction) {
-		case NONE -> "none";
-		case BREAK -> "break";
-		case DESTROY -> "destroy";
-		default -> throw new IllegalArgumentException("Unexpected value: " + blockInteraction);
+			case NONE -> "none";
+			case BREAK -> "break";
+			case DESTROY -> "destroy";
+			default -> throw new IllegalArgumentException("Unexpected value: " + blockInteraction);
 		};
 		return new TranslatableComponent(LUtil.makeDescriptionId("postAction", getType().getRegistryName()) + "." + s);
 	}
@@ -81,20 +81,15 @@ public class Explode extends PostAction {
 
 		@Override
 		public Explode fromJson(JsonObject o) {
-			int x = GsonHelper.getAsInt(o, "offsetX", 0);
-			int y = GsonHelper.getAsInt(o, "offsetY", 0);
-			int z = GsonHelper.getAsInt(o, "offsetZ", 0);
-			BlockPos offset = BlockPos.ZERO;
-			if (x != 0 || y != 0 || z != 0) {
-				offset = new BlockPos(x, y, z);
-			}
+
+			BlockPos offset = LUtil.parseOffset(o);
 			boolean fire = GsonHelper.getAsBoolean(o, "fire", false);
 			String s = GsonHelper.getAsString(o, "block_interaction", "break");
 			BlockInteraction blockInteraction = switch (s) {
-			case "none" -> BlockInteraction.NONE;
-			case "break" -> BlockInteraction.BREAK;
-			case "destroy" -> BlockInteraction.DESTROY;
-			default -> throw new IllegalArgumentException("Unexpected value: " + s);
+				case "none" -> BlockInteraction.NONE;
+				case "break" -> BlockInteraction.BREAK;
+				case "destroy" -> BlockInteraction.DESTROY;
+				default -> throw new IllegalArgumentException("Unexpected value: " + s);
 			};
 			float radius = GsonHelper.getAsFloat(o, "radius", 4);
 			float radiusStep = GsonHelper.getAsFloat(o, "radius_step", 0.5F);

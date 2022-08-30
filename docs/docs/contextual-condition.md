@@ -173,8 +173,6 @@ Compares the current game time (the age of the world in game ticks) against give
 
 ### Command Check (`execute`)
 
-*Since 1.6.0*
-
 Executes a command and see if the range matches the return value.
 
 !!! note "Format"
@@ -184,3 +182,14 @@ Executes a command and see if the range matches the return value.
     | type    | type                                    | "execute"                               |
     | command | the command to run                      | string                                  |
     | value   | (optional) the range. [1,+∞) by default | [IntBounds](general-types.md#intbounds) |
+
+### Fall Distance Check (`fall_distance`)
+
+Checks entity fall distance. Mainly for block crushing recipes.
+
+!!! note "Format"
+
+    | Name  | Description | Type / Literal                                |
+    | ----- | ----------- | --------------------------------------------- |
+    | type  | type        | "fall_distance"                               |
+    | range | the range   | [DoubleBounds](general-types.md#doublebounds) |

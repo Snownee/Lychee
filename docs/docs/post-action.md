@@ -116,8 +116,6 @@ Spawns experience orbs.
 
 ### Random (`random`)
 
-*Since 1.6.0*
-
 Randomly selects entries from an actions list to apply. Similar to loot table.
 
 !!! note "Format"
@@ -198,3 +196,20 @@ This action can only be used in the [Block Crushing](recipe.md#block-crushing) r
     | ------ | ---------------------- | --------------------- |
     | type   | type                   | "anvil_damage_chance" |
     | chance | chance between 0 and 1 | number                |
+
+### Create Explosion (`explode`)
+
+Creates explosion at where the interaction occurs.
+
+!!! note "Format"
+
+    | Name              | Description                                                                                   | Type / Literal                 |
+    | ----------------- | --------------------------------------------------------------------------------------------- | ------------------------------ |
+    | type              | type                                                                                          | "explode"                      |
+    | offsetX           | (optional) offsets to location                                                                | int                            |
+    | offsetY           | (optional) offsets to location                                                                | int                            |
+    | offsetZ           | (optional) offsets to location                                                                | int                            |
+    | fire              | (optional) set fire. false by default                                                         | boolean                        |
+    | block_interaction | (optional) whether break blocks or not. "break" by default                                    | "none" \| "break" \| "destroy" |
+    | radius            | (optional) the base radius of the explosion. 4 by default                                     | number                         |
+    | radius_step       | (optional) the radius step according to how many times the recipe can be done. 0.5 by default | number                         |

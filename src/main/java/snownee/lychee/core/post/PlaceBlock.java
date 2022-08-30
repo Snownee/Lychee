@@ -16,7 +16,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -176,14 +175,7 @@ public class PlaceBlock extends PostAction {
 
 		@Override
 		public PlaceBlock fromJson(JsonObject o) {
-			int x = GsonHelper.getAsInt(o, "offsetX", 0);
-			int y = GsonHelper.getAsInt(o, "offsetY", 0);
-			int z = GsonHelper.getAsInt(o, "offsetZ", 0);
-			BlockPos offset = BlockPos.ZERO;
-			if (x != 0 || y != 0 || z != 0) {
-				offset = new BlockPos(x, y, z);
-			}
-			return new PlaceBlock(BlockPredicateHelper.fromJson(o.get("block")), offset);
+            return new PlaceBlock(BlockPredicateHelper.fromJson(o.get("block")), LUtil.parseOffset(o));
 		}
 
 		@Override

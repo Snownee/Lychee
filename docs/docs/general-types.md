@@ -37,6 +37,16 @@ An Ingredient is a predicate of ItemStack.
         | item | item resource id | string           |
         | nbt  | the item nbt     | object \| string |
 
+        ```
+        {
+            "type": "forge:nbt",
+            "item": "ceramicbucket:ceramic_bucket",
+            "nbt": {
+                "BucketContent": "minecraft:milk"
+            }
+        }
+        ```
+
         You can combine several ingredients to one compound ingredient:
 
         ```
@@ -81,16 +91,16 @@ A BlockPredicate is a predicate of StateDefinition.
 
 ??? example
 
-	Matches water source block:
-    
-	```json
-	{
-		"blocks": ["water"],
-		"state": {
-			"level": 0
-		}
-	}
-	```
+    Matches water source block:
+
+    ```json
+    {
+    	"blocks": ["water"],
+    	"state": {
+    		"level": 0
+    	}
+    }
+    ```
 
 ## LocationPredicate
 
@@ -108,3 +118,16 @@ Describes a inclusive range for integers.
     | max  | (optional) maximum value. +infinity by default | int            |
 
     IntBounds can also be a simple `int` to represent [n, n].
+
+## DoubleBounds
+
+Describes a inclusive range for doubles.
+
+!!! note "Format"
+
+    | Name | Description                                    | Type / Literal |
+    | ---- | ---------------------------------------------- | -------------- |
+    | min  | (optional) minimum value. -infinity by default | number         |
+    | max  | (optional) maximum value. +infinity by default | number         |
+
+    DoubleBounds can also be a simple `number` to represent [n, n].
