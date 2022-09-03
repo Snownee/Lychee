@@ -7,9 +7,11 @@ import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.compat.rei.REICompat;
+import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.LycheeRecipe;
 
@@ -27,6 +29,15 @@ public abstract class BaseREIDisplay<T extends LycheeRecipe<?>> implements Displ
 			return EntryIngredient.of(EntryStack.of(REICompat.POST_ACTION, action));
 		} else {
 			return EntryIngredients.ofItemStacks(items);
+		}
+	}
+
+	public static void addBlockInputs(List<EntryIngredient> items, BlockPredicate block) {
+		if (block == null)
+			return;
+		List<ItemStack> items1 = BlockPredicateHelper.getMatchedItemStacks(block);
+		if (!items1.isEmpty()) {
+			items.add(EntryIngredients.ofItemStacks(items1));
 		}
 	}
 

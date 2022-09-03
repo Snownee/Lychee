@@ -26,10 +26,8 @@ public class BlockCrushingDisplay extends BaseREIDisplay<BlockCrushingRecipe> {
 	@Override
 	public List<EntryIngredient> getInputEntries() {
 		List<EntryIngredient> items = Lists.newArrayList(super.getInputEntries());
-		List<ItemStack> items1 = BlockPredicateHelper.getMatchedItemStacks(recipe.getLandingBlock());
-		if (!items1.isEmpty()) {
-			items.add(EntryIngredients.ofItemStacks(items1));
-		}
+		addBlockInputs(items, recipe.getBlock());
+		addBlockInputs(items, recipe.getLandingBlock());
 		return items;
 	}
 
