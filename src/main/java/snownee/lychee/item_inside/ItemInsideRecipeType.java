@@ -50,6 +50,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 
 	public ItemInsideRecipeType(String name, Class<ItemInsideRecipe> clazz, @Nullable LootContextParamSet paramSet) {
 		super(name, clazz, paramSet);
+		compactInputs = true;
 	}
 
 	@Override

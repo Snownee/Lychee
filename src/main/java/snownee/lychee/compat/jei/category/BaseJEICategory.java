@@ -59,7 +59,6 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	protected IDrawable icon;
 	protected Rect2i infoRect;
 	protected RecipeType<T> recipeType;
-	protected boolean compactInputs;
 
 	public BaseJEICategory(LycheeRecipeType<C, T> recipeType) {
 		this(List.of(recipeType));
@@ -141,13 +140,13 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	public void ingredientGroup(IRecipeLayoutBuilder builder, T recipe, int x, int y, boolean catalyst) {
 		List<Pair<Ingredient, Integer>> ingredients;
-		if (compactInputs) {
+		if (recipe.getType().compactInputs) {
 			ingredients = Lists.newArrayList();
 			for (Ingredient ingredient : recipe.getIngredients()) {
 				Pair<Ingredient, Integer> match = null;
-				if (ingredient.isSimple()) {
+				if (LUtil.isSimpleIngredient(ingredient)) {
 					for (Pair<Ingredient, Integer> toCompare : ingredients) {
-						if (toCompare.getFirst().isSimple() && toCompare.getFirst().getStackingIds().equals(ingredient.getStackingIds())) {
+						if (LUtil.isSimpleIngredient(toCompare.getFirst()) && toCompare.getFirst().getStackingIds().equals(ingredient.getStackingIds())) {
 							match = toCompare;
 							break;
 						}
@@ -164,7 +163,11 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		}
 		slotGroup(builder, x + 1, y + 1, 0, ingredients, (layout0, ingredient, i, x0, y0) -> {
 			IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, x0, y0);
-			slot.addItemStacks(Stream.of(ingredient.getFirst().getItems()).peek($ -> $.setCount(ingredient.getSecond())).toList());
+			slot.addItemStacks(Stream.of(ingredient.getFirst().getItems())
+					.map($ -> $.getCount() == 1 ? $ : $.copy())
+					.peek($ -> $.setCount(ingredient.getSecond()))
+					.toList()
+			);
 			slot.setBackground(JEICompat.slot(catalyst ? SlotType.CATALYST : SlotType.NORMAL), -1, -1);
 			if (catalyst) {
 				slot.addTooltipCallback((stack, tooltip) -> {

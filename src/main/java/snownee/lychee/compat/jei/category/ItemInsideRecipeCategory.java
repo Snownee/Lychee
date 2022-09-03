@@ -20,7 +20,6 @@ public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemShape
 		infoRect.setPosition(0, 25);
 		inputBlockRect.setX(80);
 		methodRect.setX(77);
-		compactInputs = true;
 	}
 
 	@Override

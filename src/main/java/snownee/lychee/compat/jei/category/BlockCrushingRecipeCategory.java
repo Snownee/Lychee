@@ -34,7 +34,6 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 
 	public BlockCrushingRecipeCategory(LycheeRecipeType<BlockCrushingContext, BlockCrushingRecipe> recipeType) {
 		super(recipeType);
-		compactInputs = true;
 	}
 
 	@Override

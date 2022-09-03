@@ -13,7 +13,6 @@ public abstract class ItemShapelessRecipeCategory<T extends ItemShapelessRecipe<
 
 	public ItemShapelessRecipeCategory(LycheeRecipeType<ItemShapelessContext, T> recipeType) {
 		super(recipeType);
-		compactInputs = true;
 	}
 
 	@Override

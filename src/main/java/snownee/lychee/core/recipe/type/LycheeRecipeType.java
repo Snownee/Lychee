@@ -34,6 +34,7 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 	private boolean empty;
 	private boolean requiresClient;
 	protected List<T> recipes;
+	public boolean compactInputs;
 
 	public static final Component DEFAULT_PREVENT_TIP = new TranslatableComponent("tip.lychee.prevent_default.default").withStyle(ChatFormatting.YELLOW);
 
