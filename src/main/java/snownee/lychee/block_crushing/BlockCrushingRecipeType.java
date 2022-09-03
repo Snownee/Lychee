@@ -30,6 +30,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 
 	public BlockCrushingRecipeType(String name, Class<BlockCrushingRecipe> clazz, @Nullable LootContextParamSet paramSet) {
 		super(name, clazz, paramSet);
+		compactInputs = true;
 	}
 
 	public void process(FallingBlockEntity entity) {

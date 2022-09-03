@@ -27,6 +27,7 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 
 	public ItemShapelessRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet contextParamSet) {
 		super(name, clazz, contextParamSet);
+		compactInputs = true;
 	}
 
 	@Override

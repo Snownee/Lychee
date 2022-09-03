@@ -2,6 +2,7 @@ package snownee.lychee.compat.rei.category;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -28,6 +29,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
@@ -42,6 +44,8 @@ import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.LUtil;
+import snownee.lychee.util.Pair;
 
 public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> implements DisplayCategory<D> {
 
@@ -95,9 +99,35 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 	}
 
 	public void ingredientGroup(List<Widget> widgets, Point startPoint, T recipe, int x, int y, boolean catalyst) {
-		slotGroup(widgets, startPoint, x, y, recipe.getIngredients(), (widgets0, startPoint0, ingredient, x0, y0) -> {
+		List<Pair<Ingredient, Integer>> ingredients;
+		if (recipe.getType().compactInputs) {
+			ingredients = Lists.newArrayList();
+			for (Ingredient ingredient : recipe.getIngredients()) {
+				Pair<Ingredient, Integer> match = null;
+				if (LUtil.isSimpleIngredient(ingredient)) {
+					for (Pair<Ingredient, Integer> toCompare : ingredients) {
+						if (LUtil.isSimpleIngredient(toCompare.getFirst()) && toCompare.getFirst().getStackingIds().equals(ingredient.getStackingIds())) {
+							match = toCompare;
+							break;
+						}
+					}
+				}
+				if (match == null) {
+					ingredients.add(Pair.of(ingredient, 1));
+				} else {
+					match.setSecond(match.getSecond() + 1);
+				}
+			}
+		} else {
+			ingredients = recipe.getIngredients().stream().map($ -> Pair.of($, 1)).toList();
+		}
+		slotGroup(widgets, startPoint, x, y, ingredients, (widgets0, startPoint0, ingredient, x0, y0) -> {
 			LEntryWidget slot = REICompat.slot(startPoint, x0, y0, catalyst ? SlotType.CATALYST : SlotType.NORMAL);
-			slot.entries(EntryIngredients.ofIngredient(ingredient));
+			slot.entries(EntryIngredients.ofItemStacks(Stream.of(ingredient.getFirst().getItems())
+					.map($ -> ingredient.getSecond() == 1 ? $ : $.copy())
+					.peek($ -> $.setCount(ingredient.getSecond()))
+					.toList()
+			));
 			slot.markInput();
 			if (catalyst) {
 				slot.addTooltipCallback(tooltip -> {
