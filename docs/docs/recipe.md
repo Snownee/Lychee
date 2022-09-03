@@ -7,7 +7,7 @@
     | Name           | Description                                                                 | Type / Literal                                                                                     |
     | -------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
     | type           | type                                                                        | string                                                                                             |
-    | conditions     | (optional) conditions                                                       | ForgeCondition[]                                                                                   |
+    | conditions     | (optional) conditions                                                       | [ForgeCondition](https://docs.minecraftforge.net/en/1.19.x/resources/server/conditional/)[]        |
     | contextual     | (optional) contextual conditions                                            | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
     | post           | (optional) post actions                                                     | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
     | comment        | (optional) language key to show in JEI/REI                                  | string                                                                                             |
@@ -21,7 +21,7 @@
     | Name              | Description                                                                 | Type / Literal                                                                                     |
     | ----------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
     | type              | type                                                                        | string                                                                                             |
-    | fabric:conditions | (optional) conditions                                                       | FabricCondition[]                                                                                  |
+    | fabric:conditions | (optional) conditions                                                       | [FabricCondition](https://github.com/FabricMC/fabric/pull/1656)[]                                  |
     | contextual        | (optional) contextual conditions                                            | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
     | post              | (optional) post actions                                                     | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
     | comment           | (optional) language key to show in JEI/REI                                  | string                                                                                             |

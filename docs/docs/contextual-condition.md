@@ -1,6 +1,6 @@
 # Contextual Condition
 
-Unlike Forge's recipe condition (sadly no docs), or Fabric's resource condition (sadly no docs x2), contextual condition will be tested during the crafting (or "interaction" you name it). Thus you can achieve more complex goals. For example, limit the crafting only happening in the specific biome or structure.
+Unlike Forge's recipe condition, or Fabric's resource condition, contextual condition will be tested during the crafting (or "interaction" you name it). Thus you can achieve more complex goals. For example, limit the crafting only happening in the specific biome or structure.
 
 Contextual condition can be applied to a recipe, or a single result (aka Post Action) in a recipe.
 
