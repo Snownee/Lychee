@@ -70,11 +70,13 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		infoRect = new Rect2i(0, 25, 8, 8);
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public Class<? extends T> getRecipeClass() {
 		return recipeType.getRecipeClass();
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public ResourceLocation getUid() {
 		return recipeType.getUid();

@@ -1,8 +1,12 @@
 package snownee.lychee.core.def;
 
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.MinMaxBounds.Doubles;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.Mth;
 import snownee.lychee.mixin.DoublesAccess;
+
+import java.util.Random;
 
 public class DoubleBoundsHelper {
 
@@ -26,6 +30,15 @@ public class DoubleBoundsHelper {
 			max = Double.NaN;
 		}
 		pBuffer.writeDouble(max);
+	}
+
+	public static float random(MinMaxBounds.Doubles doubles, Random random) {
+		float min = doubles.getMin() == null ? Float.MIN_VALUE : doubles.getMin().floatValue();
+		float max = doubles.getMax() == null ? Float.MAX_VALUE : doubles.getMax().floatValue();
+		if (min == max) {
+			return min;
+		}
+		return Mth.randomBetween(random, min, max);
 	}
 
 }

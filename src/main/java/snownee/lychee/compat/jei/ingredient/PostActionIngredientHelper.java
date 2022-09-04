@@ -31,17 +31,20 @@ public class PostActionIngredientHelper implements IIngredientHelper<PostAction>
 		return JEICompat.POST_ACTION;
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public PostAction getMatch(Iterable<PostAction> arg0, PostAction arg1, UidContext arg2) {
 		return null;
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public String getModId(PostAction postAction) {
 		String modid = postAction.getType().getRegistryName().getNamespace();
 		return LUtil.wrapNamespace(modid);
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public String getResourceId(PostAction postAction) {
 		return postAction.getType().getRegistryName().getPath();

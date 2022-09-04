@@ -15,10 +15,10 @@ public class BoundsHelper {
 			return new TextComponent("*");
 		}
 		if (bounds.getMin() == null) {
-			return new TextComponent("<" + dfCommas.format(bounds.getMax()));
+			return new TextComponent("<=" + dfCommas.format(bounds.getMax()));
 		}
-		if (bounds.getMin() == null) {
-			return new TextComponent(">" + dfCommas.format(bounds.getMin()));
+		if (bounds.getMax() == null) {
+			return new TextComponent(">=" + dfCommas.format(bounds.getMin()));
 		}
 		if (Objects.equals(bounds.getMin(), bounds.getMax())) {
 			return new TextComponent(dfCommas.format(bounds.getMin()));

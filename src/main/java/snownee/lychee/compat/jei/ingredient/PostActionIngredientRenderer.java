@@ -20,6 +20,7 @@ public enum PostActionIngredientRenderer implements IIngredientRenderer<PostActi
 		return action.getTooltips();
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public void render(PoseStack poseStack, int mx, int my, @Nullable PostAction action) {
 		if (action != null)
