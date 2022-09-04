@@ -24,19 +24,19 @@ import snownee.lychee.util.LUtil;
 
 import java.util.Locale;
 
-public class DamageEntity extends PostAction {
+public class Hurt extends PostAction {
 
 	public final MinMaxBounds.Doubles damage;
 	public final SourceType source;
 
-	public DamageEntity(MinMaxBounds.Doubles damage, SourceType source) {
+	public Hurt(MinMaxBounds.Doubles damage, SourceType source) {
 		this.damage = damage;
 		this.source = source;
 	}
 
 	@Override
 	public PostActionType<?> getType() {
-		return PostActionTypes.DAMAGE_ENTITY;
+		return PostActionTypes.HURT;
 	}
 
 	@Override
@@ -65,23 +65,23 @@ public class DamageEntity extends PostAction {
 		GuiGameElement.of(Items.IRON_SWORD).render(poseStack, x, y);
 	}
 
-	public static class Type extends PostActionType<DamageEntity> {
+	public static class Type extends PostActionType<Hurt> {
 
 		@Override
-		public DamageEntity fromJson(JsonObject o) {
-			return new DamageEntity(
+		public Hurt fromJson(JsonObject o) {
+			return new Hurt(
 					MinMaxBounds.Doubles.fromJson(o.get("damage")),
 					SourceType.valueOf(GsonHelper.getAsString(o, "source", SourceType.GENERIC.name()).toUpperCase(Locale.ENGLISH))
 			);
 		}
 
 		@Override
-		public DamageEntity fromNetwork(FriendlyByteBuf buf) {
-			return new DamageEntity(DoubleBoundsHelper.fromNetwork(buf), buf.readEnum(SourceType.class));
+		public Hurt fromNetwork(FriendlyByteBuf buf) {
+			return new Hurt(DoubleBoundsHelper.fromNetwork(buf), buf.readEnum(SourceType.class));
 		}
 
 		@Override
-		public void toNetwork(DamageEntity action, FriendlyByteBuf buf) {
+		public void toNetwork(Hurt action, FriendlyByteBuf buf) {
 			DoubleBoundsHelper.toNetwork(action.damage, buf);
 			buf.writeEnum(action.source);
 		}
