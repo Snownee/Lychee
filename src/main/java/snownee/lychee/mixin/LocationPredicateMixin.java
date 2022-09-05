@@ -1,29 +1,17 @@
 package snownee.lychee.mixin;
 
-import com.google.gson.JsonElement;
-
-import net.minecraft.advancements.critereon.LocationPredicate;
-
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.TagKey;
-
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.level.biome.Biome;
-
 import org.spongepowered.asm.mixin.Mixin;
-
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import net.minecraft.advancements.critereon.LocationPredicate;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
 import snownee.lychee.core.def.LocationPredicateHelper;
-
-import javax.annotation.Nullable;
 
 @Mixin(LocationPredicate.class)
 public class LocationPredicateMixin implements LocationPredicateHelper {

@@ -9,7 +9,7 @@
       "type": "prevent_default"
     },
     {
-      "type": "damage_entity",
+      "type": "hurt",
       "damage": 2,
       "contextual": [
         {
