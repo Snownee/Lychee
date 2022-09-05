@@ -105,6 +105,19 @@ Checks if a `location_check` predicate is passed.
 	}
 	```
 
+Special usage: you can use `lychee:biome_tag` option to specify biome tag.
+
+??? example
+
+	```json
+	{
+		"type": "location",
+		"predicate": {
+			"lychee:biome_tag": "is_ocean"
+		}
+	}
+	```
+
 !!! note
 
 	Fluid state predicate is not supported yet. (because I am lazy)
@@ -193,3 +206,42 @@ Checks entity fall distance. Mainly for block crushing recipes.
     | ----- | ----------- | --------------------------------------------- |
     | type  | type        | "fall_distance"                               |
     | range | the range   | [DoubleBounds](general-types.md#doublebounds) |
+
+### Entity Health Check (`entity_health`)
+
+Checks if entity's is in a range.
+
+!!! note "Format"
+
+    | Name  | Description | Type / Literal                                |
+    | ----- | ----------- | --------------------------------------------- |
+    | type  | type        | "entity_health"                               |
+    | range | the range   | [DoubleBounds](general-types.md#doublebounds) |
+
+??? example
+
+	```json
+	{
+		"type": "lychee:block_interacting",
+		"item_in": {
+			"item": "shears"
+		},
+		"block_in": "pumpkin",
+		"contextual": {
+			"type": "entity_health",
+			"range": {
+				"min": 2.1
+			}
+		},
+		"post": [
+			{
+				"type": "prevent_default"
+			},
+			{
+				"type": "hurt",
+				"source": "generic",
+				"damage": 2
+			}
+		]
+	}
+	```

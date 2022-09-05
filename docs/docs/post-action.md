@@ -159,6 +159,65 @@ Randomly selects entries from an actions list to apply. Similar to loot table.
 	}
 	```
 
+### Create Explosion (`explode`)
+
+Creates explosion at where the interaction occurs.
+
+!!! note "Format"
+
+    | Name              | Description                                                                                   | Type / Literal                 |
+    | ----------------- | --------------------------------------------------------------------------------------------- | ------------------------------ |
+    | type              | type                                                                                          | "explode"                      |
+    | offsetX           | (optional) offsets to location                                                                | int                            |
+    | offsetY           | (optional) offsets to location                                                                | int                            |
+    | offsetZ           | (optional) offsets to location                                                                | int                            |
+    | fire              | (optional) set fire. false by default                                                         | boolean                        |
+    | block_interaction | (optional) whether break blocks or not. "break" by default                                    | "none" \| "break" \| "destroy" |
+    | radius            | (optional) the base radius of the explosion. 4 by default                                     | number                         |
+    | radius_step       | (optional) the radius step according to how many times the recipe can be done. 0.5 by default | number                         |
+
+### Hurt Entity (`hurt`)
+
+Causes damage to the entity
+
+!!! note "Format"
+
+    | Name   | Description                                         | Type / Literal |
+    | ------ | --------------------------------------------------- | -------------- |
+    | type   | type                                                | "hurt"         |
+    | damage | range of damage                                     | DoubleBounds   |
+    | source | (optional) damage source type. "generic" by default | string         |
+    
+    Source allowed values: generic, magic, out_of_world, anvil, wither, freeze, drown, fall, in_fire, on_fire, lava
+
+??? example
+
+	```json
+	{
+		"type": "lychee:block_interacting",
+		"item_in": {
+			"item": "shears"
+		},
+		"block_in": "pumpkin",
+		"contextual": {
+			"type": "entity_health",
+			"range": {
+				"min": 2.1
+			}
+		},
+		"post": [
+			{
+				"type": "prevent_default"
+			},
+			{
+				"type": "hurt",
+				"source": "generic",
+				"damage": 2
+			}
+		]
+	}
+	```
+
 ## Special Built-in Actions
 
 These following actions will prevent the default behavior of the recipe (such as consuming input item). The default behavior is explained in the recipes page.
@@ -196,20 +255,3 @@ This action can only be used in the [Block Crushing](recipe.md#block-crushing) r
     | ------ | ---------------------- | --------------------- |
     | type   | type                   | "anvil_damage_chance" |
     | chance | chance between 0 and 1 | number                |
-
-### Create Explosion (`explode`)
-
-Creates explosion at where the interaction occurs.
-
-!!! note "Format"
-
-    | Name              | Description                                                                                   | Type / Literal                 |
-    | ----------------- | --------------------------------------------------------------------------------------------- | ------------------------------ |
-    | type              | type                                                                                          | "explode"                      |
-    | offsetX           | (optional) offsets to location                                                                | int                            |
-    | offsetY           | (optional) offsets to location                                                                | int                            |
-    | offsetZ           | (optional) offsets to location                                                                | int                            |
-    | fire              | (optional) set fire. false by default                                                         | boolean                        |
-    | block_interaction | (optional) whether break blocks or not. "break" by default                                    | "none" \| "break" \| "destroy" |
-    | radius            | (optional) the base radius of the explosion. 4 by default                                     | number                         |
-    | radius_step       | (optional) the radius step according to how many times the recipe can be done. 0.5 by default | number                         |
