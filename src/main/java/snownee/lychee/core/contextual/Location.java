@@ -1,6 +1,7 @@
 package snownee.lychee.core.contextual;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import com.google.gson.JsonObject;
@@ -19,11 +20,16 @@ import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -55,7 +61,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	private static final Rule FLUID = new FluidRule();
 	private static final Rule LIGHT = new LightRule();
 	private static final Rule SMOKEY = new SmokeyRule();
-	private static final Rule[] RULES = new Rule[] { X, Y, Z, DIMENSION, FEATURE, BIOME, BLOCK, FLUID, LIGHT, SMOKEY };
+	private static final Rule[] RULES = new Rule[]{X, Y, Z, DIMENSION, FEATURE, BIOME, BLOCK, FLUID, LIGHT, SMOKEY};
 
 	private interface Rule {
 		String getName();
@@ -71,7 +77,8 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result);
 	}
 
-	private static record PosRule(String name, Function<LocationPredicateAccess, Doubles> boundsGetter, Function<Vec3, Double> valueGetter) implements Rule {
+	private static record PosRule(String name, Function<LocationPredicateAccess, Doubles> boundsGetter,
+								  Function<Vec3, Double> valueGetter) implements Rule {
 		@Override
 		public String getName() {
 			return name;
@@ -209,19 +216,33 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public boolean isAny(LocationPredicateAccess access) {
-			return access.getBiome() == null;
+			return access.getBiome() == null && ((LocationPredicateHelper) access).getBiomeTag() == null;
 		}
 
 		@Override
 		@Environment(EnvType.CLIENT)
 		public InteractionResult testClient(LocationPredicateAccess access, ClientLevel level, BlockPos pos, Vec3 vec) {
-			return LUtil.interactionResult(level.getBiome(pos).is(access.getBiome().location()));
+			Holder<Biome> biome = level.getBiome(pos);
+			if (access.getBiome() != null && biome.is(access.getBiome().location())) {
+				return InteractionResult.SUCCESS;
+			}
+			TagKey<Biome> tag = ((LocationPredicateHelper) access).getBiomeTag();
+			if (tag != null && biome.is(tag)) {
+				return InteractionResult.SUCCESS;
+			}
+			return InteractionResult.FAIL;
 		}
 
 		@Override
 		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
-			MutableComponent name = new TranslatableComponent(Util.makeDescriptionId("biome", access.getBiome().location())).withStyle(ChatFormatting.WHITE);
+			String valueKey;
+			if (access.getBiome() != null) {
+				valueKey = Util.makeDescriptionId("biome", access.getBiome().location());
+			} else {
+				valueKey = Util.makeDescriptionId("biomeTag", ((LocationPredicateHelper) access).getBiomeTag().location());
+			}
+			MutableComponent name = new TranslatableComponent(valueKey).withStyle(ChatFormatting.WHITE);
 			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
 		}
 	}
@@ -383,6 +404,11 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		public Location fromNetwork(FriendlyByteBuf buf) {
 			LocationPredicate.Builder builder = LocationPredicateHelper.fromNetwork(buf);
 			LocationCheck check = (LocationCheck) LocationCheck.checkLocation(builder, buf.readBlockPos()).build();
+			ResourceLocation biomeTag = LUtil.readNullableRL(buf);
+			if (biomeTag != null) {
+				LocationPredicateHelper access = (LocationPredicateHelper) ((LocationCheckAccess) check).getPredicate();
+				access.setBiomeTag(TagKey.create(Registry.BIOME_REGISTRY, biomeTag));
+			}
 			return new Location(check);
 		}
 
@@ -391,6 +417,8 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			LocationCheckAccess access = (LocationCheckAccess) condition.check;
 			LocationPredicateHelper.toNetwork(access.getPredicate(), buf);
 			buf.writeBlockPos(access.getOffset());
+			ResourceLocation biomeTag = Optional.ofNullable(((LocationPredicateHelper) access.getPredicate()).getBiomeTag()).map(TagKey::location).orElse(null);
+			LUtil.writeNullableRL(biomeTag, buf);
 		}
 
 	}

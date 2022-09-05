@@ -1,0 +1,22 @@
+{
+  "type": "lychee:item_burning",
+  "item_in": {
+    "item": "nether_star"
+  },
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "drop_item",
+      "item": "cod",
+      "contextual": {
+        "type": "location",
+        "predicate": {
+          "lychee:biome_tag": "is_ocean"
+        }
+      }
+    }
+  ]
+}

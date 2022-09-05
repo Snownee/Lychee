@@ -9,11 +9,13 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
 import snownee.lychee.mixin.LightPredicateAccess;
 import snownee.lychee.mixin.LocationPredicateAccess;
 import snownee.lychee.util.LUtil;
 
-public class LocationPredicateHelper {
+public interface LocationPredicateHelper {
 
 	public static LocationPredicate.Builder fromNetwork(FriendlyByteBuf pBuffer) {
 		LocationPredicate.Builder builder = LocationPredicate.Builder.location();
@@ -68,4 +70,7 @@ public class LocationPredicateHelper {
 		}
 	}
 
+	void setBiomeTag(TagKey<Biome> biomeTag);
+
+	TagKey<Biome> getBiomeTag();
 }
