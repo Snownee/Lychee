@@ -4,7 +4,25 @@
     "item": "shears"
   },
   "block_in": "pumpkin",
-  "post": {
-    "type": "prevent_default"
-  }
+  "post": [
+    {
+      "type": "prevent_default"
+    },
+    {
+      "type": "damage_entity",
+      "damage": 2,
+      "contextual": [
+        {
+          "type": "entity_health",
+          "range": {
+            "min": 2.1
+          }
+        }
+      ]
+    },
+    {
+      "type": "drop_item",
+      "item": "dirt"
+    }
+  ]
 }

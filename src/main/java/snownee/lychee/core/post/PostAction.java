@@ -37,9 +37,6 @@ public abstract class PostAction extends ContextualHolder {
 		return true;
 	}
 
-	/**
-	 * @return true if prevent default behavior
-	 */
 	protected abstract void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times);
 
 	public List<ItemStack> getOutputItems() {

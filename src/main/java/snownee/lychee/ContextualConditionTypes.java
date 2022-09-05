@@ -4,6 +4,7 @@ import net.minecraft.core.Registry;
 import snownee.lychee.core.contextual.And;
 import snownee.lychee.core.contextual.Chance;
 import snownee.lychee.core.contextual.ContextualConditionType;
+import snownee.lychee.core.contextual.EntityHealth;
 import snownee.lychee.core.contextual.Execute;
 import snownee.lychee.core.contextual.FallDistance;
 import snownee.lychee.core.contextual.IsDifficulty;
@@ -28,6 +29,7 @@ public final class ContextualConditionTypes {
 	public static final ContextualConditionType<Time> TIME = register("time", new Time.Type());
 	public static final ContextualConditionType<Execute> EXECUTE = register("execute", new Execute.Type());
 	public static final ContextualConditionType<FallDistance> FALL_DISTANCE = register("fall_distance", new FallDistance.Type());
+	public static final ContextualConditionType<EntityHealth> ENTITY_HEALTH = register("entity_health", new EntityHealth.Type());
 
 	public static <T extends ContextualConditionType<?>> T register(String name, T t) {
 		Registry.register(LycheeRegistries.CONTEXTUAL, name, t);

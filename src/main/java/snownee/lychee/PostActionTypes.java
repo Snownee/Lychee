@@ -2,6 +2,7 @@ package snownee.lychee;
 
 import net.minecraft.core.Registry;
 import snownee.lychee.core.post.AnvilDamageChance;
+import snownee.lychee.core.post.DamageEntity;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.DropXp;
 import snownee.lychee.core.post.Execute;
@@ -26,6 +27,7 @@ public class PostActionTypes {
 	public static final PostActionType<AnvilDamageChance> ANVIL_DAMAGE_CHANCE = register("anvil_damage_chance", new AnvilDamageChance.Type());
 	public static final PostActionType<RandomSelect> RANDOM = register("random", new RandomSelect.Type());
 	public static final PostActionType<Explode> EXPLODE = register("explode", new Explode.Type());
+	public static final PostActionType<DamageEntity> DAMAGE_ENTITY = register("damage_entity", new DamageEntity.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		Registry.register(LycheeRegistries.POST_ACTION, name, t);
