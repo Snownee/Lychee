@@ -20,6 +20,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
 
 public class LycheeContext extends EmptyContainer {
@@ -87,7 +88,7 @@ public class LycheeContext extends EmptyContainer {
 			LootContext.Builder builder = new LootContext.Builder((ServerLevel) level);
 			builder.withRandom(random);
 			params.forEach((p, o) -> builder.withParameter((LootContextParam) p, o));
-			cachedLootContext = builder.create(LootContextParamSets.EMPTY);
+			cachedLootContext = builder.create(LycheeLootContextParamSets.ALL);
 		}
 		return cachedLootContext;
 	}
