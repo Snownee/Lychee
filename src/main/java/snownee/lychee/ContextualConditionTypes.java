@@ -9,6 +9,7 @@ import snownee.lychee.core.contextual.EntityHealth;
 import snownee.lychee.core.contextual.Execute;
 import snownee.lychee.core.contextual.FallDistance;
 import snownee.lychee.core.contextual.IsDifficulty;
+import snownee.lychee.core.contextual.IsSneaking;
 import snownee.lychee.core.contextual.IsWeather;
 import snownee.lychee.core.contextual.Location;
 import snownee.lychee.core.contextual.Not;
@@ -31,6 +32,7 @@ public final class ContextualConditionTypes {
 	public static final ContextualConditionType<Execute> EXECUTE = register("execute", new Execute.Type());
 	public static final ContextualConditionType<FallDistance> FALL_DISTANCE = register("fall_distance", new FallDistance.Type());
 	public static final ContextualConditionType<EntityHealth> ENTITY_HEALTH = register("entity_health", new EntityHealth.Type());
+	public static final ContextualConditionType<IsSneaking> IS_SNEAKING = register("is_sneaking", new IsSneaking.Type());
 
 	public static <T extends ContextualConditionType<?>> T register(String name, T t) {
 		ModLoadingContext.get().setActiveContainer(null); // bypass Forge warning

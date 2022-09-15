@@ -44,6 +44,8 @@
 "contextual.lychee.fall_distance.not": "Fall distance is not: %s",
 "contextual.lychee.entity_health": "Entity health is: %s",
 "contextual.lychee.entity_health.not": "Entity health is not: %s",
+"contextual.lychee.is_sneaking": "Requires crouching",
+"contextual.lychee.is_sneaking.not": "Requires not crouching",
 "weather.lychee.clear": "Clear",
 "weather.lychee.rain": "Rain",
 "weather.lychee.thunder": "Thunder",
