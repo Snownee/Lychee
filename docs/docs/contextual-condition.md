@@ -245,3 +245,13 @@ Checks if entity's is in a range.
 		]
 	}
 	```
+
+### Requires Entity Crouching (`is_sneaking`)
+
+Checks if entity is crouching/sneaking.
+
+!!! note "Format"
+
+    | Name | Description | Type / Literal |
+    | ---- | ----------- | -------------- |
+    | type | type        | "is_sneaking"  |
