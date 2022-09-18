@@ -8,7 +8,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
