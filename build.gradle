@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'fabric-loom' version '0.12.54'
     id 'maven-publish'
 }
 
@@ -44,27 +44,27 @@ dependencies {
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
-    
+
     modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
         exclude(group: "net.fabricmc.fabric-api")
     }
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-    
+
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-    
+
     //modImplementation "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
     //annotationProcessor "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
-    
-    modImplementation "curse.maven:kiwi-549404:3714092"
-    annotationProcessor "curse.maven:kiwi-549404:3714092"
+
+    modImplementation "curse.maven:kiwi-549404:3909202"
+    annotationProcessor "curse.maven:kiwi-549404:3909202"
 }
 
 loom {
     mixin {
         defaultRefmapName = "${project.mod_id}.refmap.json"
     }
-    
+
     accessWidenerPath = file("src/main/resources/${project.mod_id}.accesswidener")
 }
 

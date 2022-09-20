@@ -2,8 +2,8 @@ package snownee.lychee.core;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -16,7 +16,7 @@ public class ItemShapelessContext extends LycheeContext {
 	public int[] match;
 	public int totalItems;
 
-	protected ItemShapelessContext(Random pRandom, Level level, Map<LootContextParam<?>, Object> pParams, List<ItemEntity> itemEntities) {
+	protected ItemShapelessContext(RandomSource pRandom, Level level, Map<LootContextParam<?>, Object> pParams, List<ItemEntity> itemEntities) {
 		super(pRandom, level, pParams);
 		this.itemEntities = itemEntities;
 		totalItems = itemEntities.stream().map(ItemEntity::getItem).mapToInt(ItemStack::getCount).sum();

@@ -38,7 +38,7 @@ public interface LocationPredicateHelper {
 		}
 		ResourceLocation feature = LUtil.readNullableRL(pBuffer);
 		if (feature != null) {
-			builder.setFeature(ResourceKey.create(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY, feature));
+			builder.setStructure(ResourceKey.create(Registry.STRUCTURE_REGISTRY, feature));
 		}
 		byte smokey = pBuffer.readByte();
 		if (smokey < 2) {
@@ -60,7 +60,7 @@ public interface LocationPredicateHelper {
 		LUtil.writeNullableRL(dim, pBuffer);
 		ResourceLocation biome = Optional.ofNullable(access.getBiome()).map(ResourceKey::location).orElse(null);
 		LUtil.writeNullableRL(biome, pBuffer);
-		ResourceLocation feature = Optional.ofNullable(access.getFeature()).map(ResourceKey::location).orElse(null);
+		ResourceLocation feature = Optional.ofNullable(access.getStructure()).map(ResourceKey::location).orElse(null);
 		LUtil.writeNullableRL(feature, pBuffer);
 		Boolean smokey = access.getSmokey();
 		if (smokey == null) {

@@ -27,7 +27,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	@Override
 	public boolean matches(LycheeContext ctx, Level pLevel) {
 		ItemStack stack = ((ItemEntity) ctx.getParam(LootContextParams.THIS_ENTITY)).getItem();
-		return input.test(stack);
+		return input.test(stack) && super.matches(ctx, pLevel);
 	}
 
 	@Override

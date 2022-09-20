@@ -10,8 +10,8 @@ import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.Level;
 import snownee.lychee.ContextualConditionTypes;
@@ -55,7 +55,7 @@ public record Time(Ints value, @Nullable Long period) implements ContextualCondi
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
-		return new TranslatableComponent(makeDescriptionId(inverted));
+		return Component.translatable(makeDescriptionId(inverted));
 	}
 
 	public static class Type extends ContextualConditionType<Time> {

@@ -1,8 +1,8 @@
 package snownee.lychee.anvil_crafting;
 
 import java.util.Map;
-import java.util.Random;
 
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
@@ -16,7 +16,7 @@ public class AnvilContext extends LycheeContext {
 	public int levelCost; // The base cost, set this to change it if output != null
 	public int materialCost = 1; // The number of items from the right slot to be consumed during the repair. Leave as 0 to consume the entire stack.
 
-	protected AnvilContext(Random pRandom, Level level, Map<LootContextParam<?>, Object> pParams, ItemStack left, ItemStack right, String name) {
+	protected AnvilContext(RandomSource pRandom, Level level, Map<LootContextParam<?>, Object> pParams, ItemStack left, ItemStack right, String name) {
 		super(pRandom, level, pParams);
 		this.left = left;
 		this.right = right;

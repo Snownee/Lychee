@@ -26,8 +26,6 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
@@ -71,7 +69,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 
 	@Override
 	public Component getTitle() {
-		return new TranslatableComponent(Util.makeDescriptionId("recipeType", getIdentifier()));
+		return Component.translatable(Util.makeDescriptionId("recipeType", getIdentifier()));
 	}
 
 	@Override
@@ -226,7 +224,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 					if (I18n.exists(comment)) {
 						comment = I18n.get(comment);
 					}
-					Splitter.on('\n').splitToStream(comment).map(TextComponent::new).forEach(list::add);
+					Splitter.on('\n').splitToStream(comment).map(Component::literal).forEach(list::add);
 				}
 				recipe.getConditonTooltips(list, 0);
 				return list.toArray(new Component[0]);

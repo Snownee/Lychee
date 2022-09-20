@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
+import me.shedaniel.rei.api.client.gui.widgets.TooltipContext;
 import me.shedaniel.rei.impl.client.gui.widget.EntryWidget;
 import snownee.lychee.client.gui.ScreenElement;
 
@@ -42,8 +43,8 @@ public class LEntryWidget extends EntryWidget {
 	}
 
 	@Override
-	public @Nullable Tooltip getCurrentTooltip(Point point) {
-		Tooltip tooltip = super.getCurrentTooltip(point);
+	public @Nullable Tooltip getCurrentTooltip(TooltipContext ctx) {
+		Tooltip tooltip = super.getCurrentTooltip(ctx);
 		if (tooltipCallback != null) {
 			tooltipCallback.accept(tooltip);
 		}

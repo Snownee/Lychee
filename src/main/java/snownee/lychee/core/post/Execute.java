@@ -2,14 +2,16 @@ package snownee.lychee.core.post;
 
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.ParseResults;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Items;
@@ -26,7 +28,7 @@ public class Execute extends PostAction {
 
 	public static final Execute DUMMY_SHOW = new Execute("", false);
 	public static final Execute DUMMY_HIDE = new Execute("", true);
-	public static final Component DEFAULT_NAME = new TextComponent(Lychee.ID);
+	public static final Component DEFAULT_NAME = Component.literal(Lychee.ID);
 
 	private final String command;
 	private final boolean hide;
@@ -58,7 +60,11 @@ public class Execute extends PostAction {
 		}
 		CommandSourceStack sourceStack = new CommandSourceStack(CommandSource.NULL, pos, rotation, ctx.getServerLevel(), 2, name, displayName, ctx.getLevel().getServer(), entity);
 		for (int i = 0; i < times; i++) {
-			ctx.getLevel().getServer().getCommands().performCommand(sourceStack, command);
+			Commands cmds = ctx.getLevel().getServer().getCommands();
+			CommandDispatcher<CommandSourceStack> dispatcher = cmds.getDispatcher();
+			//todo: check if it's available
+			ParseResults<CommandSourceStack> results = dispatcher.parse(command, sourceStack);
+			cmds.performCommand(results, command);
 		}
 	}
 

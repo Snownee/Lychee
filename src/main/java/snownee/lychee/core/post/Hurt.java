@@ -1,5 +1,7 @@
 package snownee.lychee.core.post;
 
+import java.util.Locale;
+
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -8,7 +10,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -21,8 +22,6 @@ import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.DoubleBoundsHelper;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
-
-import java.util.Locale;
 
 public class Hurt extends PostAction {
 
@@ -55,7 +54,7 @@ public class Hurt extends PostAction {
 
 	@Override
 	public Component getDisplayName() {
-		return new TranslatableComponent(LUtil.makeDescriptionId("postAction", getType().getRegistryName()), BoundsHelper.getDescription(damage));
+		return Component.translatable(LUtil.makeDescriptionId("postAction", getType().getRegistryName()), BoundsHelper.getDescription(damage));
 	}
 
 	@Override

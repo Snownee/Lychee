@@ -13,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.storage.loot.Deserializers;
@@ -52,7 +51,7 @@ public interface ContextualCondition {
 
 	@Environment(EnvType.CLIENT)
 	static void desc(List<Component> tooltips, InteractionResult result, int indent, MutableComponent content) {
-		TextComponent indentComponent = new TextComponent("  ".repeat(indent));
+		MutableComponent indentComponent = Component.literal("  ".repeat(indent));
 		indentComponent.append(I18n.get("result.lychee." + result.toString().toLowerCase(Locale.ENGLISH)));
 		indentComponent.append(content.withStyle(ChatFormatting.GRAY));
 		tooltips.add(indentComponent);

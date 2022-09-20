@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.advancements.critereon.MinMaxBounds.Doubles;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -34,7 +34,7 @@ public record EntityHealth(Doubles range) implements ContextualCondition {
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
-		return new TranslatableComponent(makeDescriptionId(inverted), BoundsHelper.getDescription(range));
+		return Component.translatable(makeDescriptionId(inverted), BoundsHelper.getDescription(range));
 	}
 
 	public static class Type extends ContextualConditionType<EntityHealth> {

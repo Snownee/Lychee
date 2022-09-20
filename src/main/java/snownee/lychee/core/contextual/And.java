@@ -9,7 +9,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
@@ -45,7 +44,7 @@ public class And extends ContextualHolder implements ContextualCondition {
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
-		return new TranslatableComponent(makeDescriptionId(inverted));
+		return Component.translatable(makeDescriptionId(inverted));
 	}
 
 	@Override

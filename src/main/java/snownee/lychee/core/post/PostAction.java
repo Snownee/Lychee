@@ -13,7 +13,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.LycheeRegistries;
@@ -64,7 +63,7 @@ public abstract class PostAction extends ContextualHolder {
 	}
 
 	public Component getDisplayName() {
-		return new TranslatableComponent(LUtil.makeDescriptionId("postAction", getType().getRegistryName()));
+		return Component.translatable(LUtil.makeDescriptionId("postAction", getType().getRegistryName()));
 	}
 
 	@Environment(EnvType.CLIENT)

@@ -21,9 +21,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -72,9 +71,9 @@ public class LUtil {
 	public static MutableComponent getDimensionDisplayName(ResourceKey<Level> dimension) {
 		String key = Util.makeDescriptionId("dimension", dimension.location());
 		if (I18n.exists(key)) {
-			return new TranslatableComponent(key);
+			return Component.translatable(key);
 		} else {
-			return new TextComponent(capitaliseAllWords(dimension.location().getPath()));
+			return Component.literal(capitaliseAllWords(dimension.location().getPath()));
 		}
 	}
 
@@ -82,23 +81,23 @@ public class LUtil {
 	public static MutableComponent getStructureDisplayName(ResourceLocation rawName) {
 		String key = "structure." + rawName.getNamespace() + "." + rawName.getPath();
 		if (I18n.exists(key)) {
-			return new TranslatableComponent(key);
+			return Component.translatable(key);
 		} else {
-			return new TextComponent(capitaliseAllWords(rawName.getPath()));
+			return Component.literal(capitaliseAllWords(rawName.getPath()));
 		}
 	}
 
 	@Environment(EnvType.CLIENT)
 	public static MutableComponent format(String s, Object... objects) {
 		try {
-			return new TextComponent(MessageFormat.format(I18n.get(s), objects));
+			return Component.literal(MessageFormat.format(I18n.get(s), objects));
 		} catch (Exception e) {
-			return new TranslatableComponent(s, objects);
+			return Component.translatable(s, objects);
 		}
 	}
 
 	public static MutableComponent white(CharSequence s) {
-		return new TextComponent(s.toString()).withStyle(ChatFormatting.WHITE);
+		return Component.literal(s.toString()).withStyle(ChatFormatting.WHITE);
 	}
 
 	public static String chance(float chance) {

@@ -25,7 +25,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
@@ -98,7 +97,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		@Override
 		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
-			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), BoundsHelper.getDescription(boundsGetter.apply(access)).withStyle(ChatFormatting.WHITE)));
+			ContextualCondition.desc(tooltips, result, indent, Component.translatable(key + "." + getName(), BoundsHelper.getDescription(boundsGetter.apply(access)).withStyle(ChatFormatting.WHITE)));
 		}
 	}
 
@@ -122,7 +121,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			if (blockAccess.getProperties() != StatePropertiesPredicate.ANY || blockAccess.getNbt() != NbtPredicate.ANY) {
 				name.append("*");
 			}
-			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
+			ContextualCondition.desc(tooltips, result, indent, Component.translatable(key + "." + getName(), name));
 		}
 
 		@Override
@@ -153,7 +152,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			//			if (blockAccess.getProperties() != StatePropertiesPredicate.ANY || blockAccess.getNbt() != NbtPredicate.ANY) {
 			//				name.append("*");
 			//			}
-			//			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
+			//			ContextualCondition.desc(tooltips, result, indent, Component.translatable(key + "." + getName(), name));
 		}
 	}
 
@@ -179,7 +178,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
 			MutableComponent bounds = BoundsHelper.getDescription(((LightPredicateAccess) access.getLight()).getComposite()).withStyle(ChatFormatting.WHITE);
-			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), bounds));
+			ContextualCondition.desc(tooltips, result, indent, Component.translatable(key + "." + getName(), bounds));
 		}
 	}
 
@@ -204,7 +203,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
 			MutableComponent name = LUtil.getDimensionDisplayName(access.getDimension()).withStyle(ChatFormatting.WHITE);
-			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
+			ContextualCondition.desc(tooltips, result, indent, Component.translatable(key + "." + getName(), name));
 		}
 	}
 
@@ -242,8 +241,8 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			} else {
 				valueKey = Util.makeDescriptionId("biomeTag", ((LocationPredicateHelper) access).getBiomeTag().location());
 			}
-			MutableComponent name = new TranslatableComponent(valueKey).withStyle(ChatFormatting.WHITE);
-			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
+			MutableComponent name = Component.translatable(valueKey).withStyle(ChatFormatting.WHITE);
+			ContextualCondition.desc(tooltips, result, indent, Component.translatable(key + "." + getName(), name));
 		}
 	}
 
@@ -265,7 +264,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			if (access.getSmokey() == Boolean.FALSE) {
 				key += ".not";
 			}
-			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key));
+			ContextualCondition.desc(tooltips, result, indent, Component.translatable(key));
 		}
 	}
 
@@ -277,14 +276,14 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public boolean isAny(LocationPredicateAccess access) {
-			return access.getFeature() == null;
+			return access.getStructure() == null;
 		}
 
 		@Override
 		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
-			MutableComponent name = LUtil.getStructureDisplayName(access.getFeature().location()).withStyle(ChatFormatting.WHITE);
-			ContextualCondition.desc(tooltips, result, indent, new TranslatableComponent(key + "." + getName(), name));
+			MutableComponent name = LUtil.getStructureDisplayName(access.getStructure().location()).withStyle(ChatFormatting.WHITE);
+			ContextualCondition.desc(tooltips, result, indent, Component.translatable(key + "." + getName(), name));
 		}
 	}
 
@@ -354,7 +353,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		boolean noOffset = BlockPos.ZERO.equals(checkAccess.getOffset());
 		if (!noOffset) {
 			BlockPos offset = checkAccess.getOffset();
-			MutableComponent content = new TranslatableComponent(key, offset.getX(), offset.getY(), offset.getZ()).withStyle(ChatFormatting.GRAY);
+			MutableComponent content = Component.translatable(key, offset.getX(), offset.getY(), offset.getZ()).withStyle(ChatFormatting.GRAY);
 			ContextualCondition.desc(tooltips, testInTooltips(), indent, content);
 			++indent;
 		}
@@ -376,7 +375,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
-		return new TranslatableComponent(makeDescriptionId(inverted));
+		return Component.translatable(makeDescriptionId(inverted));
 	}
 
 	@Override

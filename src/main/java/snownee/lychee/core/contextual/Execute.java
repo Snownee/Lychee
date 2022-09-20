@@ -1,14 +1,15 @@
 package snownee.lychee.core.contextual;
 
 import com.google.gson.JsonObject;
+import com.mojang.brigadier.ParseResults;
 
 import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -45,13 +46,15 @@ public record Execute(String command, Ints bounds) implements ContextualConditio
 			name = entity.getName().getString();
 		}
 		CommandSourceStack sourceStack = new CommandSourceStack(CommandSource.NULL, pos, rotation, ctx.getServerLevel(), 2, name, displayName, ctx.getLevel().getServer(), entity);
-		int i = ctx.getLevel().getServer().getCommands().performCommand(sourceStack, command);
+		Commands cmds = ctx.getLevel().getServer().getCommands();
+		ParseResults<CommandSourceStack> results = cmds.getDispatcher().parse(command, sourceStack);
+		int i = cmds.performCommand(results, command);
 		return bounds.matches(i) ? times : 0;
 	}
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
-		return new TranslatableComponent(makeDescriptionId(false));
+		return Component.translatable(makeDescriptionId(false));
 	}
 
 	public static class Type extends ContextualConditionType<Execute> {
