@@ -68,7 +68,10 @@ public abstract class PostAction extends ContextualHolder {
 
 	@Environment(EnvType.CLIENT)
 	public void render(PoseStack poseStack, int x, int y) {
+		poseStack.pushPose();
+		poseStack.translate(2, 1, 0);
 		AllGuiTextures.JEI_QUESTION_MARK.render(poseStack, x + 2, y + 1);
+		poseStack.popPose();
 	}
 
 	@Environment(EnvType.CLIENT)

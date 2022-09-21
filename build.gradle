@@ -11,6 +11,16 @@ version = project.minecraft_version + "-fabric-" + project.mod_version
 group = project.maven_group
 
 repositories {
+    maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "ModMaven"
+        url = "https://modmaven.dev"
+    }
     maven { url = "https://maven.parchmentmc.org" }
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases/" }
@@ -53,6 +63,9 @@ dependencies {
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
+    modCompileOnlyApi("mezz.jei:jei-${project.minecraft_version}-common-api:${project.jei_version}")
+    modCompileOnlyApi("mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}")
+    modImplementation("mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}")
     //modImplementation "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
     //annotationProcessor "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
 
