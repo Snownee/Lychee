@@ -20,7 +20,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeRegistries;
@@ -48,10 +47,12 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			Lychee.LOGGER.debug("Construct recipe: {}", id);
 	}
 
-	@Override
-	public boolean matches(C container, Level level) {
-		return checkConditions(this, container, 1) > 0;
-	}
+	//todo: In 1.19.2, RecipeManager#getRecipeFor no longer calls RecipeType#tryMatch. Then shall we move that call of checkConditions function here?
+
+	//@Override
+	//public boolean matches(C container, Level level) {
+	//	return checkConditions(this, container, 1) > 0;
+	//}
 
 	@Override
 	public ResourceLocation getId() {

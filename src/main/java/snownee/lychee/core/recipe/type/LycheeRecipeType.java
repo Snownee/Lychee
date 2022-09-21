@@ -75,9 +75,7 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 	}
 
 	public Optional<T> findFirst(C ctx, Level level) {
-		return recipes.stream().flatMap($ -> {
-			return tryMatch($, level, ctx).stream();
-		}).findFirst();
+		return recipes.stream().flatMap($ -> tryMatch($, level, ctx).stream()).findFirst();
 	}
 
 	public Component getPreventDefaultDescription(LycheeRecipe<?> recipe) {
