@@ -20,6 +20,9 @@
     ],
     "rei_client": [
       "snownee.lychee.compat.rei.REICompat"
+    ],
+    "jei_mod_plugin": [
+      "snownee.lychee.compat.jei.JEICompat"
     ]
   },
   "mixins": [ "lychee.mixins.json" ],
