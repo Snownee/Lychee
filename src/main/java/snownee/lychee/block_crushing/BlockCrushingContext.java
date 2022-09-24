@@ -2,8 +2,8 @@ package snownee.lychee.block_crushing;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
@@ -16,7 +16,7 @@ public class BlockCrushingContext extends ItemShapelessContext {
 
 	public final FallingBlockEntity fallingBlock;
 
-	protected BlockCrushingContext(Random pRandom, Level level, Map<LootContextParam<?>, Object> pParams, List<ItemEntity> itemEntities, FallingBlockEntity fallingBlock) {
+	protected BlockCrushingContext(RandomSource pRandom, Level level, Map<LootContextParam<?>, Object> pParams, List<ItemEntity> itemEntities, FallingBlockEntity fallingBlock) {
 		super(pRandom, level, pParams, itemEntities);
 		this.fallingBlock = fallingBlock;
 	}

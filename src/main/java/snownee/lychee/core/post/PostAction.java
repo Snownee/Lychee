@@ -63,7 +63,7 @@ public abstract class PostAction extends ContextualHolder {
 	}
 
 	public Component getDisplayName() {
-		return Component.translatable(LUtil.makeDescriptionId("postAction", getType().getRegistryName()));
+		return Component.translatable(LUtil.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(getType())));
 	}
 
 	@OnlyIn(Dist.CLIENT)

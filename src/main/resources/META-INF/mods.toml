@@ -1,6 +1,6 @@
-modLoader="javafml"
-loaderVersion="[40,)"
-license="ARR"
+modLoader = "javafml"
+loaderVersion = "[42,)"
+license = "ARR"
 
 [[mods]]
 modId="lychee"

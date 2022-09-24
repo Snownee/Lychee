@@ -31,7 +31,7 @@ public final class RecipeSerializers {
 	public static final LycheeRecipe.Serializer<BlockExplodingRecipe> BLOCK_EXPLODING = register("block_exploding", new BlockExplodingRecipe.Serializer());
 
 	public static <T extends LycheeRecipe.Serializer<?>> T register(String name, T t) {
-		ForgeRegistries.RECIPE_SERIALIZERS.register(t.setRegistryName(new ResourceLocation(Lychee.ID, name)));
+		ForgeRegistries.RECIPE_SERIALIZERS.register(new ResourceLocation(Lychee.ID, name), t);
 		return t;
 	}
 

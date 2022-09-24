@@ -3,6 +3,7 @@ package snownee.lychee.core.contextual;
 import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.ContextualConditionTypes;

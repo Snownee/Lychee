@@ -41,7 +41,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.mixin.RecipeManagerAccess;
@@ -160,11 +159,11 @@ public class LUtil {
 		return bool ? InteractionResult.SUCCESS : InteractionResult.FAIL;
 	}
 
-	public static <T extends IForgeRegistryEntry<T>> T readRegistryId(IForgeRegistry<T> registry, FriendlyByteBuf buf) {
+	public static <T> T readRegistryId(IForgeRegistry<T> registry, FriendlyByteBuf buf) {
 		return buf.readRegistryIdUnsafe(registry);
 	}
 
-	public static <T extends IForgeRegistryEntry<T>> void writeRegistryId(IForgeRegistry<T> registry, T entry, FriendlyByteBuf buf) {
+	public static <T> void writeRegistryId(IForgeRegistry<T> registry, T entry, FriendlyByteBuf buf) {
 		buf.writeRegistryIdUnsafe(registry, entry);
 	}
 

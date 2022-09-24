@@ -36,7 +36,7 @@ public final class ContextualConditionTypes {
 
 	public static <T extends ContextualConditionType<?>> T register(String name, T t) {
 		ModLoadingContext.get().setActiveContainer(null); // bypass Forge warning
-		LycheeRegistries.CONTEXTUAL.register(t.setRegistryName(new ResourceLocation(name)));
+		LycheeRegistries.CONTEXTUAL.register(new ResourceLocation(name), t);
 		return t;
 	}
 

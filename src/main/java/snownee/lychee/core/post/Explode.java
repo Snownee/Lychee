@@ -15,6 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
@@ -71,9 +72,8 @@ public class Explode extends PostAction {
 			case NONE -> "none";
 			case BREAK -> "break";
 			case DESTROY -> "destroy";
-			default -> throw new IllegalArgumentException("Unexpected value: " + blockInteraction);
 		};
-		return Component.translatable(LUtil.makeDescriptionId("postAction", getType().getRegistryName()) + "." + s);
+		return Component.translatable(LUtil.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(getType())) + "." + s);
 	}
 
 	public static class Type extends PostActionType<Explode> {

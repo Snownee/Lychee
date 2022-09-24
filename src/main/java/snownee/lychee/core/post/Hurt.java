@@ -15,6 +15,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
@@ -54,7 +55,7 @@ public class Hurt extends PostAction {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.translatable(LUtil.makeDescriptionId("postAction", getType().getRegistryName()), BoundsHelper.getDescription(damage));
+		return Component.translatable(LUtil.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(getType())), BoundsHelper.getDescription(damage));
 	}
 
 	@Override

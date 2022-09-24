@@ -19,7 +19,6 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeRegistries;
@@ -129,7 +128,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	@Override
 	public abstract Serializer<?> getSerializer();
 
-	public static abstract class Serializer<R extends LycheeRecipe<?>> extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<R> {
+	public static abstract class Serializer<R extends LycheeRecipe<?>> implements RecipeSerializer<R> {
 
 		protected final Function<ResourceLocation, R> factory;
 

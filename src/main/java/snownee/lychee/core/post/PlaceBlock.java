@@ -32,6 +32,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.GuiGameElement;
@@ -142,7 +143,7 @@ public class PlaceBlock extends PostAction {
 	@Override
 	public Component getDisplayName() {
 		BlockState state = BlockPredicateHelper.anyBlockState(block);
-		String key = LUtil.makeDescriptionId("postAction", getType().getRegistryName());
+		String key = LUtil.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(getType()));
 		if (state.isAir()) {
 			return Component.translatable(key + ".consume");
 		}

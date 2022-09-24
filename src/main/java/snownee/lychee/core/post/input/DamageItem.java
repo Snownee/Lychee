@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.PostAction;
@@ -92,7 +93,7 @@ public class DamageItem extends PostAction {
 
 	@Override
 	public Component getDisplayName() {
-		return LUtil.format(LUtil.makeDescriptionId("postAction", getType().getRegistryName()), damage);
+		return LUtil.format(LUtil.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(getType())), damage);
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package snownee.lychee.item_inside;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -71,7 +72,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 				itemCount.mergeInt(item, 1, Integer::sum);
 			}
 		}
-		List<Item> sorted = itemCount.object2IntEntrySet().stream().sorted((a, b) -> Integer.compare(a.getIntValue(), b.getIntValue())).map(Object2IntMap.Entry::getKey).toList();
+		List<Item> sorted = itemCount.object2IntEntrySet().stream().sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue)).map(Object2IntMap.Entry::getKey).toList();
 		for (Item selectedItem : sorted) {
 			if (itemCount.getInt(selectedItem) <= 0) {
 				continue;
@@ -104,7 +105,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 		}
 		/* off */
 		return blockStateCount.object2IntEntrySet().stream()
-				.max((a, b) -> Integer.compare(a.getIntValue(), b.getIntValue()))
+				.max(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
 				.map($ -> Pair.of(BlockPredicateHelper.anyBlockState(blockPredicateMap.get($.getKey())), $.getIntValue()))
 				.orElseGet(() -> Pair.of(Blocks.AIR.defaultBlockState(), 0));
 		/* on */

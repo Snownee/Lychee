@@ -3,9 +3,8 @@ package snownee.lychee.core.post;
 import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
-public abstract class PostActionType<T extends PostAction> extends ForgeRegistryEntry<PostActionType<?>> {
+public abstract class PostActionType<T extends PostAction> {
 
 	public abstract T fromJson(JsonObject o);
 

@@ -1,5 +1,6 @@
 package snownee.lychee.compat.jei.category;
 
+import java.util.Comparator;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
@@ -64,7 +65,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		/* off */
 		return recipeTypes.stream()
 				.map($ -> ((MostUsedBlockProvider) $).getMostUsedBlock())
-				.max((a, b) -> a.getSecond() - b.getSecond())
+				.max(Comparator.comparingInt(Pair::getSecond))
 				.map(Pair::getFirst)
 				.orElse(Blocks.AIR.defaultBlockState());
 		/* on */

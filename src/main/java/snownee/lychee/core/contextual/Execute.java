@@ -47,7 +47,7 @@ public record Execute(String command, Ints bounds) implements ContextualConditio
 		}
 		CommandSourceStack sourceStack = new CommandSourceStack(CommandSource.NULL, pos, rotation, ctx.getServerLevel(), 2, name, displayName, ctx.getLevel().getServer(), entity);
 		Commands cmds = ctx.getLevel().getServer().getCommands();
-		ParseResults<CommandSourceStack> results = cmds.getDispatcher().parse(command, sourceStack)
+		ParseResults<CommandSourceStack> results = cmds.getDispatcher().parse(command, sourceStack);
 		int i = cmds.performCommand(results, command);
 		return bounds.matches(i) ? times : 0;
 	}

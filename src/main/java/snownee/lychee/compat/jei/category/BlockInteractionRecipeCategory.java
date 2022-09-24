@@ -10,6 +10,7 @@ import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.registries.ForgeRegistries;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.ScreenElement;
@@ -25,7 +26,7 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Lyc
 
 	@Override
 	public @Nullable Component getMethodDescription(BlockInteractingRecipe recipe) {
-		return Component.translatable(Util.makeDescriptionId("tip", recipe.getSerializer().getRegistryName()));
+		return Component.translatable(Util.makeDescriptionId("tip", ForgeRegistries.RECIPE_SERIALIZERS.getKey(recipe.getSerializer())));
 	}
 
 	@Override

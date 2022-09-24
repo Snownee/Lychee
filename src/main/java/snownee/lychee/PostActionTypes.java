@@ -3,11 +3,11 @@ package snownee.lychee;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModLoadingContext;
 import snownee.lychee.core.post.AnvilDamageChance;
-import snownee.lychee.core.post.Hurt;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.DropXp;
 import snownee.lychee.core.post.Execute;
 import snownee.lychee.core.post.Explode;
+import snownee.lychee.core.post.Hurt;
 import snownee.lychee.core.post.PlaceBlock;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.post.RandomSelect;
@@ -32,7 +32,7 @@ public class PostActionTypes {
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		ModLoadingContext.get().setActiveContainer(null); // bypass Forge warning
-		LycheeRegistries.POST_ACTION.register(t.setRegistryName(new ResourceLocation(name)));
+		LycheeRegistries.POST_ACTION.register(new ResourceLocation(name), t);
 		return t;
 	}
 

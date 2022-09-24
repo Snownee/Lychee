@@ -33,7 +33,7 @@ public interface ContextualCondition {
 	MutableComponent getDescription(boolean inverted);
 
 	default String makeDescriptionId(boolean inverted) {
-		String key = LUtil.makeDescriptionId("contextual", getType().getRegistryName());
+		String key = LUtil.makeDescriptionId("contextual", LycheeRegistries.CONTEXTUAL.getKey(getType()));
 		if (inverted) {
 			key += ".not";
 		}

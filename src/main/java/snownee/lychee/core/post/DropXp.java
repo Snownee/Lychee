@@ -11,6 +11,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
@@ -44,7 +45,7 @@ public class DropXp extends PostAction {
 
 	@Override
 	public Component getDisplayName() {
-		return LUtil.format(LUtil.makeDescriptionId("postAction", getType().getRegistryName()), xp);
+		return LUtil.format(LUtil.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(getType())), xp);
 	}
 
 	@Override
