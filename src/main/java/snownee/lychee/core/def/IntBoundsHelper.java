@@ -1,11 +1,10 @@
 package snownee.lychee.core.def;
 
-import java.util.Random;
-
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.storage.loot.IntRange;
 import snownee.lychee.mixin.IntRangeAccess;
 import snownee.lychee.mixin.IntsAccess;
@@ -47,7 +46,7 @@ public class IntBoundsHelper {
 		return IntRangeAccess.create(NumberProviderHelper.fromConstant(ints.getMin()), NumberProviderHelper.fromConstant(ints.getMax()));
 	}
 
-	public static int random(Ints ints, Random random) {
+	public static int random(Ints ints, RandomSource random) {
 		int min = ints.getMin() == null ? Integer.MIN_VALUE : ints.getMin();
 		int max = ints.getMax() == null ? Integer.MAX_VALUE : ints.getMax();
 		if (min == max) {

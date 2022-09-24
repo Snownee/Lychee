@@ -9,8 +9,8 @@ import com.google.gson.JsonObject;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
@@ -52,8 +52,8 @@ public record IsWeather(String id, Predicate<Level> predicate) implements Contex
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
 		String key = makeDescriptionId(inverted);
-		TranslatableComponent weather = new TranslatableComponent("weather.lychee." + id);
-		return new TranslatableComponent(key, weather.withStyle(ChatFormatting.WHITE));
+		MutableComponent weather = Component.translatable("weather.lychee." + id);
+		return Component.translatable(key, weather.withStyle(ChatFormatting.WHITE));
 	}
 
 	public static class Type extends ContextualConditionType<IsWeather> {

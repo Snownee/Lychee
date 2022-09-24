@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
@@ -25,7 +24,7 @@ public enum IsSneaking implements ContextualCondition {
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
-		return new TranslatableComponent(makeDescriptionId(inverted));
+		return Component.translatable(makeDescriptionId(inverted));
 	}
 
 	public static class Type extends ContextualConditionType<IsSneaking> {

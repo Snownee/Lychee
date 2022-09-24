@@ -11,7 +11,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -64,7 +63,7 @@ public abstract class PostAction extends ContextualHolder {
 	}
 
 	public Component getDisplayName() {
-		return new TranslatableComponent(LUtil.makeDescriptionId("postAction", getType().getRegistryName()));
+		return Component.translatable(LUtil.makeDescriptionId("postAction", getType().getRegistryName()));
 	}
 
 	@OnlyIn(Dist.CLIENT)

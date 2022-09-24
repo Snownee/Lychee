@@ -16,7 +16,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.InteractionResult;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,8 +32,8 @@ public abstract class ContextualHolder {
 	@Nullable
 	private BitSet secretFlags;
 	@Nullable
-	private List<TranslatableComponent> overrideDesc;
-	private static final Component SECRET_TITLE = new TranslatableComponent("contextual.lychee.secret").withStyle(ChatFormatting.GRAY);
+	private List<Component> overrideDesc;
+	private static final Component SECRET_TITLE = Component.translatable("contextual.lychee.secret").withStyle(ChatFormatting.GRAY);
 
 	public List<ContextualCondition> getConditions() {
 		return conditions;
@@ -78,7 +78,7 @@ public abstract class ContextualHolder {
 			while (overrideDesc.size() + 1 < conditions.size()) {
 				overrideDesc.add(null);
 			}
-			overrideDesc.add(new TranslatableComponent(GsonHelper.getAsString(o, "description")));
+			overrideDesc.add(Component.translatable(GsonHelper.getAsString(o, "description")));
 		}
 	}
 
@@ -98,7 +98,7 @@ public abstract class ContextualHolder {
 				if (key.isEmpty()) {
 					overrideDesc.add(null);
 				} else {
-					overrideDesc.add(new TranslatableComponent(key));
+					overrideDesc.add(Component.translatable(key));
 				}
 			}
 		}
@@ -120,11 +120,11 @@ public abstract class ContextualHolder {
 		}
 		pBuffer.writeBoolean(overrideDesc != null);
 		if (overrideDesc != null) {
-			for (TranslatableComponent component : overrideDesc) {
-				if (component == null) {
+			for (Component component : overrideDesc) {
+				if (component == null || !(component.getContents() instanceof TranslatableContents translatable)) {
 					pBuffer.writeUtf("");
 				} else {
-					pBuffer.writeUtf(component.getKey());
+					pBuffer.writeUtf(translatable.getKey());
 				}
 			}
 		}

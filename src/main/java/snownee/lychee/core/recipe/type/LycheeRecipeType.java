@@ -12,7 +12,6 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.ints.IntSets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.StackedContents;
@@ -36,7 +35,7 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 	protected List<T> recipes;
 	public boolean compactInputs;
 
-	public static final Component DEFAULT_PREVENT_TIP = new TranslatableComponent("tip.lychee.prevent_default.default").withStyle(ChatFormatting.YELLOW);
+	public static final Component DEFAULT_PREVENT_TIP = Component.translatable("tip.lychee.prevent_default.default").withStyle(ChatFormatting.YELLOW);
 
 	public LycheeRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet contextParamSet) {
 		id = new ResourceLocation(Lychee.ID, name);

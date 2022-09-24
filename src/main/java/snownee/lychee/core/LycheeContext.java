@@ -2,7 +2,6 @@ package snownee.lychee.core;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Random;
 import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
@@ -12,6 +11,7 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -23,12 +23,12 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 
 public class LycheeContext extends EmptyContainer {
-	private final Random random;
+	private final RandomSource random;
 	private final Map<LootContextParam<?>, Object> params;
 	private final Level level;
 	private LootContext cachedLootContext;
 
-	protected LycheeContext(Random pRandom, Level level, Map<LootContextParam<?>, Object> pParams) {
+	protected LycheeContext(RandomSource pRandom, Level level, Map<LootContextParam<?>, Object> pParams) {
 		random = pRandom;
 		this.level = level;
 		params = pParams;
@@ -69,7 +69,7 @@ public class LycheeContext extends EmptyContainer {
 		return (T) params.get(pParameter);
 	}
 
-	public Random getRandom() {
+	public RandomSource getRandom() {
 		return random;
 	}
 
@@ -116,30 +116,30 @@ public class LycheeContext extends EmptyContainer {
 	public static class Builder<C extends LycheeContext> {
 		protected Map<LootContextParam<?>, Object> params = Maps.newIdentityHashMap();
 		protected Level level;
-		protected Random random;
+		protected RandomSource random;
 
 		public Builder(Level level) {
 			this.level = level;
 		}
 
-		public Builder<C> withRandom(Random pRandom) {
+		public Builder<C> withRandom(RandomSource pRandom) {
 			random = pRandom;
 			return this;
 		}
 
 		public Builder<C> withOptionalRandomSeed(long pSeed) {
 			if (pSeed != 0L) {
-				random = new Random(pSeed);
+				random = RandomSource.create(pSeed);
 			}
 
 			return this;
 		}
 
-		public Builder<C> withOptionalRandomSeed(long pSeed, Random pRandom) {
+		public Builder<C> withOptionalRandomSeed(long pSeed, RandomSource pRandom) {
 			if (pSeed == 0L) {
 				random = pRandom;
 			} else {
-				random = new Random(pSeed);
+				random = RandomSource.create(pSeed);
 			}
 
 			return this;
@@ -183,7 +183,7 @@ public class LycheeContext extends EmptyContainer {
 			if (!set1.isEmpty()) {
 				throw new IllegalArgumentException("Missing required parameters: " + set1);
 			} else if (this.random == null) {
-				this.random = new Random();
+				this.random = RandomSource.create();
 			}
 			//			}
 		}

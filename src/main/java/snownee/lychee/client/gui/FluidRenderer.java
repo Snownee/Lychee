@@ -19,7 +19,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 
 @OnlyIn(Dist.CLIENT)
@@ -87,14 +87,14 @@ public class FluidRenderer {
 
 	public static void renderFluidBox(FluidState fluidState, float xMin, float yMin, float zMin, float xMax, float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom) {
 		Fluid fluid = fluidState.getType();
-		FluidAttributes fluidAttributes = fluid.getAttributes();
-		FluidStack fluidStack = new FluidStack(fluid, FluidAttributes.BUCKET_VOLUME);
+		IClientFluidTypeExtensions fluidAttributes = IClientFluidTypeExtensions.of(fluid);
+		FluidStack fluidStack = new FluidStack(fluid, 1000);
 		ResourceLocation stillTex = fluidAttributes.getStillTexture(fluidStack);
 		TextureAtlasSprite fluidTexture = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(stillTex);
 
-		int color = fluidAttributes.getColor(fluidStack);
+		int color = fluidAttributes.getTintColor(fluidStack);
 		int blockLightIn = (light >> 4) & 0xF;
-		int luminosity = Math.max(blockLightIn, fluidAttributes.getLuminosity(fluidStack));
+		int luminosity = Math.max(blockLightIn, fluid.getFluidType().getLightLevel(fluidStack));
 		light = (light & 0xF00000) | luminosity << 4;
 
 		//		Vec3 center = new Vec3(xMin + (xMax - xMin) / 2, yMin + (yMax - yMin) / 2, zMin + (zMax - zMin) / 2);

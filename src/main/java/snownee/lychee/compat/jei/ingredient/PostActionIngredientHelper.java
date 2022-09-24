@@ -5,6 +5,7 @@ import java.util.Objects;
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.subtypes.UidContext;
+import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.compat.jei.JEICompat;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.util.LUtil;
@@ -31,28 +32,20 @@ public class PostActionIngredientHelper implements IIngredientHelper<PostAction>
 		return JEICompat.POST_ACTION;
 	}
 
-	@SuppressWarnings("removal")
-	@Override
-	public PostAction getMatch(Iterable<PostAction> arg0, PostAction arg1, UidContext arg2) {
-		return null;
-	}
-
-	@SuppressWarnings("removal")
-	@Override
-	public String getModId(PostAction postAction) {
-		String modid = postAction.getType().getRegistryName().getNamespace();
-		return LUtil.wrapNamespace(modid);
-	}
-
-	@SuppressWarnings("removal")
-	@Override
-	public String getResourceId(PostAction postAction) {
-		return postAction.getType().getRegistryName().getPath();
-	}
-
 	@Override
 	public String getUniqueId(PostAction postAction, UidContext arg1) {
 		return postAction.getType().getRegistryName().toString() + postAction.toString();
+	}
+
+	@Override
+	public String getDisplayModId(PostAction ingredient) {
+		String modid = ingredient.getType().getRegistryName().getNamespace();
+		return LUtil.wrapNamespace(modid);
+	}
+
+	@Override
+	public ResourceLocation getResourceLocation(PostAction ingredient) {
+		return ingredient.getType().getRegistryName();
 	}
 
 }

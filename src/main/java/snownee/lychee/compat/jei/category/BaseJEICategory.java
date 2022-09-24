@@ -30,8 +30,6 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -70,18 +68,6 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		infoRect = new Rect2i(0, 25, 8, 8);
 	}
 
-	@SuppressWarnings("removal")
-	@Override
-	public Class<? extends T> getRecipeClass() {
-		return recipeType.getRecipeClass();
-	}
-
-	@SuppressWarnings("removal")
-	@Override
-	public ResourceLocation getUid() {
-		return recipeType.getUid();
-	}
-
 	@Override
 	public RecipeType<T> getRecipeType() {
 		return recipeType;
@@ -112,7 +98,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	@Override
 	public Component getTitle() {
-		return new TranslatableComponent(Util.makeDescriptionId("recipeType", getUid()));
+		return Component.translatable(Util.makeDescriptionId("recipeType", recipeType.getUid()));
 	}
 
 	public int getWidth() {
@@ -271,7 +257,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 				if (I18n.exists(comment)) {
 					comment = I18n.get(comment);
 				}
-				Splitter.on('\n').splitToStream(comment).map(TextComponent::new).forEach(list::add);
+				Splitter.on('\n').splitToStream(comment).map(Component::literal).forEach(list::add);
 			}
 			recipe.getConditonTooltips(list, 0);
 			return list;

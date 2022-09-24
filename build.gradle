@@ -163,13 +163,23 @@ repositories {
     //    url = "https://dvs1.progwml6.com/files/maven"
     //}
     maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        // location of a maven mirror for JEI files, as a fallback
+        name = "ModMaven"
+        url = "https://modmaven.dev"
+    }
+    maven {
         url = "https://www.cursemaven.com"
-		content {
+        content {
             includeGroup "curse.maven"
         }
     }
-	maven { url 'https://maven.blamejared.com' }
-	flatDir {
+    maven { url 'https://maven.blamejared.com' }
+    flatDir {
         dir 'libs'
     }
 }
@@ -189,15 +199,20 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
-    
-    implementation fg.deobf("curse.maven:jei-238222:3788739")
-    implementation fg.deobf("curse.maven:jade-324717:3671210")
-    implementation fg.deobf("curse.maven:kiwi-303657:3680819")
-    annotationProcessor fg.deobf("curse.maven:kiwi-303657:3680819")
+
+    // compile against the JEI API but do not include it at runtime
+    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"))
+    compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
+    //// at runtime, use the full JEI jar for Forge
+    implementation(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
+    implementation(fg.deobf("curse.maven:jade-324717:3987060"))
+//
+    implementation(fg.deobf("curse.maven:kiwi-303657:3974084"))
+    annotationProcessor(fg.deobf("curse.maven:kiwi-303657:3974084"))
 
     // Examples using mod jars from ./libs
     //implementation fg.deobf("libs:Jade-1.17.1:3.1.6")
-	//runtimeOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.1:9.0.0+24")
+    // runtimeOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.1:9.0.0+24")
 }
 
 // This block of code expands all the gradle properties in the specified resource targets.

@@ -22,9 +22,9 @@ public enum PostActionIngredientRenderer implements IIngredientRenderer<PostActi
 
 	@SuppressWarnings("removal")
 	@Override
-	public void render(PoseStack poseStack, int mx, int my, @Nullable PostAction action) {
+	public void render(PoseStack poseStack, @Nullable PostAction action) {
 		if (action != null)
-			action.render(poseStack, mx, my);
+			action.render(poseStack, 0, 0);
 	}
 
 }

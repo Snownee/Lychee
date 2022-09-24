@@ -29,8 +29,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -217,16 +215,16 @@ public class BlockPredicateHelper {
 	@SuppressWarnings("rawtypes")
 	public static List<Component> getTooltips(BlockState state, BlockPredicate predicate) {
 		if (predicate == BlockPredicate.ANY) {
-			return List.of(new TranslatableComponent("tip.lychee.anyBlock"));
+			return List.of(Component.translatable("tip.lychee.anyBlock"));
 		}
 		List<Component> list = Lists.newArrayList(state.getBlock().getName());
 		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
 		List<PropertyMatcher> matchers = ((StatePropertiesPredicateAccess) access.getProperties()).getProperties();
 		for (PropertyMatcher matcher : matchers) {
-			MutableComponent name = new TextComponent(matcher.getName() + "=").withStyle(ChatFormatting.GRAY);
+			MutableComponent name = Component.literal(matcher.getName() + "=").withStyle(ChatFormatting.GRAY);
 			JsonElement json = matcher.toJson();
 			if (json.isJsonPrimitive()) {
-				name.append(new TextComponent(json.getAsString()).withStyle(ChatFormatting.WHITE));
+				name.append(Component.literal(json.getAsString()).withStyle(ChatFormatting.WHITE));
 			} else {
 				JsonObject object = json.getAsJsonObject();
 				StateDefinition<Block, BlockState> definition = state.getBlock().getStateDefinition();
@@ -246,14 +244,14 @@ public class BlockPredicateHelper {
 				} else {
 					max = property.getName(sorted.get(sorted.size() - 1));
 				}
-				name.append(new TextComponent(min).withStyle(ChatFormatting.WHITE));
-				name.append(new TextComponent("~").withStyle(ChatFormatting.GRAY));
-				name.append(new TextComponent(max).withStyle(ChatFormatting.WHITE));
+				name.append(Component.literal(min).withStyle(ChatFormatting.WHITE));
+				name.append(Component.literal("~").withStyle(ChatFormatting.GRAY));
+				name.append(Component.literal(max).withStyle(ChatFormatting.WHITE));
 			}
 			list.add(name);
 		}
 		if (access.getNbt() != NbtPredicate.ANY) {
-			list.add(new TranslatableComponent("tip.lychee.nbtPredicate").withStyle(ChatFormatting.GRAY));
+			list.add(Component.translatable("tip.lychee.nbtPredicate").withStyle(ChatFormatting.GRAY));
 		}
 		return list;
 	}

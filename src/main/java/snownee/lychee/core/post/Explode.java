@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.Items;
@@ -74,7 +73,7 @@ public class Explode extends PostAction {
 			case DESTROY -> "destroy";
 			default -> throw new IllegalArgumentException("Unexpected value: " + blockInteraction);
 		};
-		return new TranslatableComponent(LUtil.makeDescriptionId("postAction", getType().getRegistryName()) + "." + s);
+		return Component.translatable(LUtil.makeDescriptionId("postAction", getType().getRegistryName()) + "." + s);
 	}
 
 	public static class Type extends PostActionType<Explode> {

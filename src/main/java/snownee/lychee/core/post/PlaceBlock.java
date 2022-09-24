@@ -14,7 +14,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -145,9 +144,9 @@ public class PlaceBlock extends PostAction {
 		BlockState state = BlockPredicateHelper.anyBlockState(block);
 		String key = LUtil.makeDescriptionId("postAction", getType().getRegistryName());
 		if (state.isAir()) {
-			return new TranslatableComponent(key + ".consume");
+			return Component.translatable(key + ".consume");
 		}
-		return new TranslatableComponent(key, state.getBlock().getName());
+		return Component.translatable(key, state.getBlock().getName());
 	}
 
 	@Override

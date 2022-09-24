@@ -3,7 +3,6 @@ package snownee.lychee.core.post;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -17,9 +16,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -90,7 +88,7 @@ public class RandomSelect extends PostAction {
 		return doDefault;
 	}
 
-	private int getRandomEntry(Random random, int[] weights, int totalWeights) {
+	private int getRandomEntry(RandomSource random, int[] weights, int totalWeights) {
 		if (weights.length == 1) {
 			return 0;
 		}
@@ -117,7 +115,7 @@ public class RandomSelect extends PostAction {
 	@Override
 	public Component getDisplayName() {
 		if (entries.length == 1) {
-			return new TextComponent("%s × %s".formatted(entries[0].getDisplayName().getString(), BoundsHelper.getDescription(rolls).getString()));
+			return Component.literal("%s × %s".formatted(entries[0].getDisplayName().getString(), BoundsHelper.getDescription(rolls).getString()));
 		}
 		return LUtil.getCycledItem(List.of(entries), entries[0], 1000).getDisplayName();
 	}
@@ -132,9 +130,9 @@ public class RandomSelect extends PostAction {
 		if (entries.length > 1) {
 			String chance = LUtil.chance(weights[index] / (float) totalWeight);
 			if (rolls == IntBoundsHelper.ONE) {
-				list.add(new TranslatableComponent("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
+				list.add(Component.translatable("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
 			} else {
-				list.add(new TranslatableComponent("tip.lychee.randomChance", chance, BoundsHelper.getDescription(rolls)).withStyle(ChatFormatting.YELLOW));
+				list.add(Component.translatable("tip.lychee.randomChance", chance, BoundsHelper.getDescription(rolls)).withStyle(ChatFormatting.YELLOW));
 			}
 		}
 		int c = showingConditionsCount() + child.showingConditionsCount();

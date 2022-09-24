@@ -13,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionResult;
 import net.minecraftforge.api.distmarker.Dist;
@@ -47,7 +46,7 @@ public record IsDifficulty(IntImmutableList difficulties) implements ContextualC
 		List<String> names = difficulties.intParallelStream().mapToObj(Difficulty::byId).map(Difficulty::getDisplayName).map(Component::getString).toList();
 		int size = names.size();
 		if (size == 1) {
-			return new TranslatableComponent(key, LUtil.white(names.get(0)));
+			return Component.translatable(key, LUtil.white(names.get(0)));
 		} else {
 			StringBuilder sb = new StringBuilder();
 			key += ".more";
@@ -57,7 +56,7 @@ public record IsDifficulty(IntImmutableList difficulties) implements ContextualC
 				}
 				sb.append(names.get(i));
 			}
-			return new TranslatableComponent(key, LUtil.white(sb), LUtil.white(names.get(size - 1)));
+			return Component.translatable(key, LUtil.white(sb), LUtil.white(names.get(size - 1)));
 		}
 	}
 

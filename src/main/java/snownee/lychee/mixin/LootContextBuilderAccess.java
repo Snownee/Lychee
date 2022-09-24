@@ -1,11 +1,11 @@
 package snownee.lychee.mixin;
 
 import java.util.Map;
-import java.util.Random;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 
@@ -16,6 +16,6 @@ public interface LootContextBuilderAccess {
 	Map<LootContextParam<?>, Object> getParams();
 
 	@Accessor
-	Random getRandom();
+	RandomSource getRandom();
 
 }

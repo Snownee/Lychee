@@ -207,7 +207,7 @@ public class VecHelper {
 		// ----- compensate for view bobbing (if active) -----
 		// the following code adapted from GameRenderer::applyBobbing (to invert it)
 		Minecraft mc = Minecraft.getInstance();
-		if (mc.options.bobView) {
+		if (mc.options.bobView().get()) {
 			Entity renderViewEntity = mc.getCameraEntity();
 			if (renderViewEntity instanceof Player) {
 				Player playerentity = (Player) renderViewEntity;
