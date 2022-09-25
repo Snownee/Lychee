@@ -110,7 +110,6 @@ public class JEICompat implements IModPlugin {
 		registration.register(POST_ACTION, List.of(), new PostActionIngredientHelper(), PostActionIngredientRenderer.INSTANCE);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
 		for (ItemStack stack : RecipeTypes.BLOCK_CRUSHING.blockKeysToItems()) {

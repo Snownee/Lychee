@@ -47,5 +47,4 @@ public class PostActionIngredientHelper implements IIngredientHelper<PostAction>
 	public String getUniqueId(PostAction postAction, UidContext arg1) {
 		return postAction.getType().getRegistryName().toString() + postAction.toString();
 	}
-
 }
