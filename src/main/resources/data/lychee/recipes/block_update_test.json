@@ -1,0 +1,13 @@
+{
+  "type": "lychee:item_inside",
+  "item_in": {
+    "item": "diamond"
+  },
+  "block_in": "grass",
+  "post": [
+    {
+      "type": "place",
+      "block": "redstone_block"
+    }
+  ]
+}

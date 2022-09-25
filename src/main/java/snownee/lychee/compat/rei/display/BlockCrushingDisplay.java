@@ -6,11 +6,8 @@ import com.google.common.collect.Lists;
 
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
-import me.shedaniel.rei.api.common.util.EntryIngredients;
-import net.minecraft.world.item.ItemStack;
 import snownee.lychee.block_crushing.BlockCrushingRecipe;
 import snownee.lychee.compat.rei.REICompat;
-import snownee.lychee.core.def.BlockPredicateHelper;
 
 public class BlockCrushingDisplay extends BaseREIDisplay<BlockCrushingRecipe> {
 

@@ -6,6 +6,7 @@
   "name": "Lychee Tweaker",
   "description": "Data-driven in-world crafting.",
   "authors": ["Snownee"],
+  "contributors": ["MikhailTapio"],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/lychee-fabric",
     "sources": "https://github.com/Snownee/Lychee",
