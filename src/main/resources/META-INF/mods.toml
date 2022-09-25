@@ -6,7 +6,7 @@ license = "ARR"
 modId="lychee"
 version="${file.jarVersion}"
 displayName="Lychee Tweaker"
-authors="Snownee"
+authors="Snownee, MikhailTapio"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/lychee"
 description="In-World Crafting"
 
