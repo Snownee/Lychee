@@ -240,4 +240,8 @@ public class LUtil {
 		return true;
 	}
 
+	public static boolean isPhysicalClient() {
+		return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
+	}
+
 }

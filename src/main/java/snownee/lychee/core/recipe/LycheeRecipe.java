@@ -94,7 +94,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	}
 
 	/**
-	 * @return false if prevent default behavior
+	 * @return true if do default behavior
 	 */
 	public boolean applyPostActions(LycheeContext ctx, int times) {
 		boolean doDefault = true;

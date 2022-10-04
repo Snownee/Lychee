@@ -23,6 +23,8 @@ import snownee.lychee.item_exploding.ItemExplodingRecipe;
 import snownee.lychee.item_inside.ItemInsideRecipe;
 import snownee.lychee.item_inside.ItemInsideRecipeType;
 import snownee.lychee.lightning_channeling.LightningChannelingRecipe;
+import snownee.lychee.random_block_ticking.RandomBlockTickingRecipe;
+import snownee.lychee.random_block_ticking.RandomBlockTickingRecipeType;
 
 public final class RecipeTypes {
 
@@ -44,7 +46,8 @@ public final class RecipeTypes {
 	public static final BlockCrushingRecipeType BLOCK_CRUSHING = register(new BlockCrushingRecipeType("block_crushing", BlockCrushingRecipe.class, null));
 	public static final ItemShapelessRecipeType<ItemShapelessContext, LightningChannelingRecipe> LIGHTNING_CHANNELING = register(new ItemShapelessRecipeType<>("lightning_channeling", LightningChannelingRecipe.class, null));
 	public static final ItemShapelessRecipeType<ItemShapelessContext, ItemExplodingRecipe> ITEM_EXPLODING = register(new ItemShapelessRecipeType<>("item_exploding", ItemExplodingRecipe.class, null));
-	public static final BlockKeyRecipeType<BlockExplodingContext, BlockExplodingRecipe> BLOCK_EXPLODING = register(new BlockKeyRecipeType<>("block_exploding", BlockExplodingRecipe.class, null));
+	public static final BlockKeyRecipeType<BlockExplodingContext, BlockExplodingRecipe> BLOCK_EXPLODING = register(new BlockKeyRecipeType<>("block_exploding", BlockExplodingRecipe.class, LycheeLootContextParamSets.BLOCK_ONLY));
+	public static final RandomBlockTickingRecipeType RANDOM_BLOCK_TICKING = register(new RandomBlockTickingRecipeType("random_block_ticking", RandomBlockTickingRecipe.class, LycheeLootContextParamSets.BLOCK_ONLY));
 
 	public static <T extends LycheeRecipeType<?, ?>> T register(T recipeType) {
 		ALL.add(recipeType);

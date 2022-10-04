@@ -31,7 +31,7 @@ public class ItemExplodingRecipe extends ItemShapelessRecipe<ItemExplodingRecipe
 		return RecipeTypes.ITEM_EXPLODING;
 	}
 
-	public static void on(Level level, double x, double y, double z, List<Entity> list1) {
+	public static void on(Level level, double x, double y, double z, List<Entity> list1, float radius) {
 		if (level.isClientSide) {
 			return;
 		}
@@ -40,6 +40,7 @@ public class ItemExplodingRecipe extends ItemShapelessRecipe<ItemExplodingRecipe
 		}).map(ItemEntity.class::cast);
 		RecipeTypes.ITEM_EXPLODING.process(level, itemEntities, $ -> {
 			$.withParameter(LootContextParams.ORIGIN, new Vec3(x, y, z));
+			$.withParameter(LootContextParams.EXPLOSION_RADIUS, radius);
 		});
 	}
 

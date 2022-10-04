@@ -5,6 +5,7 @@
   "refmap": "lychee.refmap.json",
   "mixins": [
     "BlockPredicateAccess",
+    "ChunkMapAccess",
     "DoublesAccess",
     "IntRangeAccess",
     "IntsAccess",
@@ -19,6 +20,8 @@
     "StatePropertiesPredicateAccess",
     "TimeCheckAccess",
     "AnvilMenuMixin",
+    "BlockMixin",
+    "BlockStateMixin",
     "DefaultDispenseItemBehaviorMixin",
     "EntityMixin",
     "ExplosionMixin",

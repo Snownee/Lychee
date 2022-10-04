@@ -34,6 +34,8 @@ public class ExplosionMixin {
 	private double y;
 	@Shadow
 	private double z;
+	@Shadow
+	private float radius;
 
 	@Inject(
 			at = @At(
@@ -41,7 +43,7 @@ public class ExplosionMixin {
 			), method = "Lnet/minecraft/world/level/Explosion;explode()V", locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void lychee_explode(CallbackInfo ci, Set<BlockPos> set, int i, float f2, int k1, int l1, int i2, int i1, int j2, int j1, List<Entity> list) {
-		ItemExplodingRecipe.on(level, x, y, z, list);
+		ItemExplodingRecipe.on(level, x, y, z, list, radius);
 	}
 
 	@SuppressWarnings("deprecation")
