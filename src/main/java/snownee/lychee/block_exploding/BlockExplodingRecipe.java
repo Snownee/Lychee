@@ -3,6 +3,7 @@ package snownee.lychee.block_exploding;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.google.common.base.Predicates;
 import com.google.gson.JsonObject;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -30,8 +31,8 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> im
 	}
 
 	@Override
-	public boolean matches(BlockExplodingContext pContainer, Level pLevel) {
-		return BlockPredicateHelper.fastMatch(block, pContainer);
+	public boolean matches(BlockExplodingContext ctx, Level pLevel) {
+		return BlockPredicateHelper.fastMatch(block, ctx);
 	}
 
 	@Override
@@ -58,7 +59,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> im
 		builder.withParameter(LootContextParams.BLOCK_STATE, state);
 		builder.withRandom(((LootContextBuilderAccess) lootBuilder).getRandom());
 		BlockExplodingContext ctx = builder.create(RecipeTypes.BLOCK_EXPLODING.contextParamSet);
-		if (!RecipeTypes.BLOCK_EXPLODING.process(state, ctx)) {
+		if (RecipeTypes.BLOCK_EXPLODING.process(level, state, () -> ctx, Predicates.alwaysTrue())) {
 			ctx.items.addAll(defaultDrops.get());
 		}
 		return ctx.items;
@@ -67,9 +68,6 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> im
 	@Override
 	public int compareTo(BlockExplodingRecipe that) {
 		int i;
-		i = Integer.compare(getMaxRepeats().isAny() ? 1 : 0, that.getMaxRepeats().isAny() ? 1 : 0);
-		if (i != 0)
-			return i;
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
 		if (i != 0)
 			return i;
