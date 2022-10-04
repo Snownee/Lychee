@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -134,23 +136,31 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		return Optional.empty();
 	}
 
-	public boolean has(BlockState state) {
-		return !anyBlockRecipes.isEmpty() || recipesByBlock.containsKey(state.getBlock());
+	public boolean has(Block block) {
+		return !anyBlockRecipes.isEmpty() || recipesByBlock.containsKey(block);
 	}
 
-	public boolean process(BlockState state, C ctx) {
-		Level level = ctx.getLevel();
+	public boolean has(BlockState state) {
+		return has(state.getBlock());
+	}
+
+	public boolean process(Level level, BlockState state, Supplier<C> ctxSupplier, Predicate<T> filter) {
 		Collection<T> recipes = recipesByBlock.getOrDefault(state.getBlock(), Collections.EMPTY_LIST);
 		Iterable<T> iterable = Iterables.concat(recipes, anyBlockRecipes);
+		iterable = Iterables.filter(iterable, filter);
+		C ctx = null;
 		for (T recipe : iterable) {
+			if (ctx == null) {
+				ctx = ctxSupplier.get();
+			}
 			if (tryMatch(recipe, level, ctx).isPresent()) {
-				if (!level.isClientSide && recipe.applyPostActions(ctx, 1)) {
-					return true;
+				if (!level.isClientSide) {
+					return recipe.applyPostActions(ctx, 1);
 				}
 				break;
 			}
 		}
-		return false;
+		return true;
 	}
 
 }
