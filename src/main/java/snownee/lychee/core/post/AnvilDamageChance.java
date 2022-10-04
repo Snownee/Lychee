@@ -24,12 +24,11 @@ public class AnvilDamageChance extends PostAction {
 	}
 
 	@Override
-	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Entity entity = ctx.getParam(LootContextParams.THIS_ENTITY);
 		if (entity instanceof LycheeFallingBlockEntity) {
 			((LycheeFallingBlockEntity) entity).lychee$anvilDamageChance(chance);
 		}
-		return true;
 	}
 
 	@Override

@@ -11,15 +11,16 @@ import snownee.lychee.core.recipe.LycheeRecipe;
 
 public class PreventDefault extends PostAction {
 
+	public static final PreventDefault INSTANCE = new PreventDefault();
+
 	@Override
 	public PostActionType<?> getType() {
 		return PostActionTypes.PREVENT_DEFAULT;
 	}
 
 	@Override
-	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		apply(recipe, ctx, times);
-		return false;
+	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+		ctx.status.doDefault = false;
 	}
 
 	@Override
@@ -35,12 +36,12 @@ public class PreventDefault extends PostAction {
 
 		@Override
 		public PreventDefault fromJson(JsonObject o) {
-			return new PreventDefault();
+			return INSTANCE;
 		}
 
 		@Override
 		public PreventDefault fromNetwork(FriendlyByteBuf buf) {
-			return new PreventDefault();
+			return INSTANCE;
 		}
 
 		@Override

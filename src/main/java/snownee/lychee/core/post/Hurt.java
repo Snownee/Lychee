@@ -39,10 +39,9 @@ public class Hurt extends PostAction {
 	}
 
 	@Override
-	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		if (times > 0)
 			apply(recipe, ctx, times);
-		return true;
 	}
 
 	@Override
@@ -68,10 +67,7 @@ public class Hurt extends PostAction {
 
 		@Override
 		public Hurt fromJson(JsonObject o) {
-			return new Hurt(
-					MinMaxBounds.Doubles.fromJson(o.get("damage")),
-					SourceType.valueOf(GsonHelper.getAsString(o, "source", SourceType.GENERIC.name()).toUpperCase(Locale.ENGLISH))
-			);
+			return new Hurt(MinMaxBounds.Doubles.fromJson(o.get("damage")), SourceType.valueOf(GsonHelper.getAsString(o, "source", SourceType.GENERIC.name()).toUpperCase(Locale.ENGLISH)));
 		}
 
 		@Override

@@ -96,17 +96,11 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	/**
 	 * @return true if do default behavior
 	 */
-	public boolean applyPostActions(LycheeContext ctx, int times) {
-		boolean doDefault = true;
+	public void applyPostActions(LycheeContext ctx, int times) {
 		if (!ctx.getLevel().isClientSide) {
-			for (PostAction action : actions) {
-				int t = action.checkConditions(this, ctx, times);
-				if (t > 0) {
-					doDefault &= action.doApply(this, ctx, t);
-				}
-			}
+			ctx.status.reset();
+			PostAction.applySequence(actions, this, ctx, times);
 		}
-		return doDefault;
 	}
 
 	public Ints getMaxRepeats() {
