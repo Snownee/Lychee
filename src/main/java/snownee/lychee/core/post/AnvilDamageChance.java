@@ -48,6 +48,11 @@ public class AnvilDamageChance extends PostAction {
 		}
 
 		@Override
+		public void toJson(AnvilDamageChance action, JsonObject o) {
+			o.addProperty("chance", action.chance);
+		}
+
+		@Override
 		public AnvilDamageChance fromNetwork(FriendlyByteBuf buf) {
 			return new AnvilDamageChance(buf.readFloat());
 		}

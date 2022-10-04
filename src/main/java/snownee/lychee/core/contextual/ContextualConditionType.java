@@ -10,6 +10,8 @@ public abstract class ContextualConditionType<T extends ContextualCondition> {
 
 	public abstract T fromJson(JsonObject o);
 
+	public abstract void toJson(T condition, JsonObject o);
+
 	public abstract T fromNetwork(FriendlyByteBuf buf);
 
 	public abstract void toNetwork(T condition, FriendlyByteBuf buf);

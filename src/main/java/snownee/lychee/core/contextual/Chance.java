@@ -42,6 +42,11 @@ public record Chance(float chance) implements ContextualCondition {
 		}
 
 		@Override
+		public void toJson(Chance condition, JsonObject o) {
+			o.addProperty("chance", condition.chance());
+		}
+
+		@Override
 		public Chance fromNetwork(FriendlyByteBuf buf) {
 			return new Chance(buf.readFloat());
 		}

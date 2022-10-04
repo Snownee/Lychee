@@ -24,7 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
-import snownee.lychee.core.ActionStatus.State;
+import snownee.lychee.core.Job;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
@@ -60,8 +60,7 @@ public class RandomSelect extends PostAction {
 			return;
 		}
 		if (entries.length == 1) {
-			int t = entries[0].checkConditions(recipe, ctx, times);
-			entries[0].doApply(recipe, ctx, t);
+			ctx.runtime.jobs.push(new Job(entries[0], times));
 			return;
 		}
 		List<PostAction> validActions = Lists.newArrayList();
@@ -84,10 +83,7 @@ public class RandomSelect extends PostAction {
 		}
 		for (int i = 0; i < validActions.size(); i++) {
 			if (childTimes[i] > 0) {
-				validActions.get(i).doApply(recipe, ctx, childTimes[i]);
-				if (ctx.status.state != State.RUNNING) {
-					return;
-				}
+				ctx.runtime.jobs.push(new Job(validActions.get(i), childTimes[i]));
 			}
 		}
 	}
@@ -183,6 +179,24 @@ public class RandomSelect extends PostAction {
 				rolls = IntBoundsHelper.ONE;
 			}
 			return new RandomSelect(entries, weights, rolls);
+		}
+
+		@Override
+		public void toJson(RandomSelect action, JsonObject o) {
+			JsonArray entries = new JsonArray(action.entries.length);
+			int i = 0;
+			for (var entry : action.entries) {
+				JsonObject entryJson = entry.toJson();
+				if (action.weights[i] != 1) {
+					entryJson.addProperty("weight", action.weights[i]);
+				}
+				entries.add(entryJson);
+				++i;
+			}
+			o.add("entries", entries);
+			if (action.rolls != IntBoundsHelper.ONE) {
+				o.add("rolls", action.rolls.serializeToJson());
+			}
 		}
 
 		@Override

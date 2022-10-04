@@ -45,6 +45,11 @@ public record EntityHealth(Doubles range) implements ContextualCondition {
 		}
 
 		@Override
+		public void toJson(EntityHealth condition, JsonObject o) {
+			o.add("range", condition.range().serializeToJson());
+		}
+
+		@Override
 		public EntityHealth fromNetwork(FriendlyByteBuf buf) {
 			return new EntityHealth(DoubleBoundsHelper.fromNetwork(buf));
 		}

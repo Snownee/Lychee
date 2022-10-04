@@ -18,6 +18,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -103,6 +104,13 @@ public class BlockPredicateHelper {
 			return new BlockPredicate(null, Set.of(block), StatePropertiesPredicate.ANY, NbtPredicate.ANY);
 		}
 		return BlockPredicate.fromJson(jsonElement);
+	}
+
+	public static JsonElement toJson(BlockPredicate predicate) {
+		if (predicate == BlockPredicate.ANY) {
+			return new JsonPrimitive("*");
+		}
+		return predicate.serializeToJson();
 	}
 
 	public static final NbtPredicate NBT_PREDICATE_DUMMY = new NbtPredicate(new CompoundTag());

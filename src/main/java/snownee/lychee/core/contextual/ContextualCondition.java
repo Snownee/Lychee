@@ -68,6 +68,13 @@ public interface ContextualCondition {
 		return type.fromJson(o);
 	}
 
+	default JsonObject toJson() {
+		JsonObject o = new JsonObject();
+		o.addProperty("type", getType().getRegistryName().toString());
+		((ContextualConditionType<ContextualCondition>) getType()).toJson(this, o);
+		return o;
+	}
+
 	default int showingCount() {
 		return 1;
 	}

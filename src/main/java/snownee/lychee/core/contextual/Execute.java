@@ -69,6 +69,14 @@ public record Execute(String command, Ints bounds) implements ContextualConditio
 		}
 
 		@Override
+		public void toJson(Execute condition, JsonObject o) {
+			o.addProperty("command", condition.command());
+			if (condition.bounds() != DEFAULT_RANGE) {
+				o.add("value", condition.bounds().serializeToJson());
+			}
+		}
+
+		@Override
 		public Execute fromNetwork(FriendlyByteBuf buf) {
 			return DUMMY;
 		}

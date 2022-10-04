@@ -70,6 +70,11 @@ public class And extends ContextualHolder implements ContextualCondition {
 		}
 
 		@Override
+		public void toJson(And condition, JsonObject o) {
+			o.add("contextual", condition.rawConditionsToJson());
+		}
+
+		@Override
 		public And fromNetwork(FriendlyByteBuf buf) {
 			And and = new And();
 			and.conditionsFromNetwork(buf);

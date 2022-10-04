@@ -60,7 +60,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	private static final Rule FLUID = new FluidRule();
 	private static final Rule LIGHT = new LightRule();
 	private static final Rule SMOKEY = new SmokeyRule();
-	private static final Rule[] RULES = new Rule[]{X, Y, Z, DIMENSION, FEATURE, BIOME, BLOCK, FLUID, LIGHT, SMOKEY};
+	private static final Rule[] RULES = new Rule[] { X, Y, Z, DIMENSION, FEATURE, BIOME, BLOCK, FLUID, LIGHT, SMOKEY };
 
 	private interface Rule {
 		String getName();
@@ -76,8 +76,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result);
 	}
 
-	private static record PosRule(String name, Function<LocationPredicateAccess, Doubles> boundsGetter,
-								  Function<Vec3, Double> valueGetter) implements Rule {
+	private static record PosRule(String name, Function<LocationPredicateAccess, Doubles> boundsGetter, Function<Vec3, Double> valueGetter) implements Rule {
 		@Override
 		public String getName() {
 			return name;
@@ -397,6 +396,11 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		public Location fromJson(JsonObject o) {
 			LocationCheck check = (LocationCheck) LootItemConditions.LOCATION_CHECK.getSerializer().deserialize(o, gsonContext);
 			return new Location(check);
+		}
+
+		@Override
+		public void toJson(Location condition, JsonObject o) {
+			new LocationCheck.Serializer().serialize(o, condition.check(), gsonContext);
 		}
 
 		@Override

@@ -64,6 +64,11 @@ public record IsWeather(String id, Predicate<Level> predicate) implements Contex
 		}
 
 		@Override
+		public void toJson(IsWeather condition, JsonObject o) {
+			o.addProperty("weather", condition.id());
+		}
+
+		@Override
 		public IsWeather fromNetwork(FriendlyByteBuf buf) {
 			return REGISTRY.get(buf.readUtf());
 		}

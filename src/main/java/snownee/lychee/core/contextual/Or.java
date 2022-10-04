@@ -71,6 +71,11 @@ public class Or extends ContextualHolder implements ContextualCondition {
 		}
 
 		@Override
+		public void toJson(Or condition, JsonObject o) {
+			o.add("contextual", condition.rawConditionsToJson());
+		}
+
+		@Override
 		public Or fromNetwork(FriendlyByteBuf buf) {
 			Or or = new Or();
 			or.conditionsFromNetwork(buf);

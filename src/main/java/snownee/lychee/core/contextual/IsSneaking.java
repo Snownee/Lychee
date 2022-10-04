@@ -36,6 +36,10 @@ public enum IsSneaking implements ContextualCondition {
 		}
 
 		@Override
+		public void toJson(IsSneaking condition, JsonObject o) {
+		}
+
+		@Override
 		public IsSneaking fromNetwork(FriendlyByteBuf buf) {
 			return IsSneaking.INSTANCE;
 		}

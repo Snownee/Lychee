@@ -67,7 +67,15 @@ public class Hurt extends PostAction {
 
 		@Override
 		public Hurt fromJson(JsonObject o) {
-			return new Hurt(MinMaxBounds.Doubles.fromJson(o.get("damage")), SourceType.valueOf(GsonHelper.getAsString(o, "source", SourceType.GENERIC.name()).toUpperCase(Locale.ENGLISH)));
+			return new Hurt(MinMaxBounds.Doubles.fromJson(o.get("damage")), SourceType.parse(GsonHelper.getAsString(o, "source", SourceType.GENERIC.name())));
+		}
+
+		@Override
+		public void toJson(Hurt action, JsonObject o) {
+			o.add("damage", action.damage.serializeToJson());
+			if (action.source != SourceType.GENERIC) {
+				o.addProperty("source", action.source.name().toLowerCase(Locale.ENGLISH));
+			}
 		}
 
 		@Override
@@ -100,6 +108,14 @@ public class Hurt extends PostAction {
 
 		SourceType(DamageSource value) {
 			this.value = value;
+		}
+
+		public static SourceType parse(String s) {
+			try {
+				return valueOf(s.toUpperCase(Locale.ENGLISH));
+			} catch (Throwable e) {
+				throw new IllegalArgumentException(e);
+			}
 		}
 	}
 

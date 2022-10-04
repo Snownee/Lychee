@@ -1,5 +1,7 @@
 package snownee.lychee.core.post;
 
+import java.util.Locale;
+
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -97,6 +99,25 @@ public class Explode extends PostAction {
 			float radius = GsonHelper.getAsFloat(o, "radius", 4);
 			float radiusStep = GsonHelper.getAsFloat(o, "radius_step", 0.5F);
 			return new Explode(blockInteraction, offset, fire, radius, radiusStep);
+		}
+
+		@Override
+		public void toJson(Explode action, JsonObject o) {
+			BlockPos offset = action.offset;
+			if (offset.getX() != 0)
+				o.addProperty("offsetX", offset.getX());
+			if (offset.getY() != 0)
+				o.addProperty("offsetY", offset.getY());
+			if (offset.getZ() != 0)
+				o.addProperty("offsetZ", offset.getX());
+			if (action.fire)
+				o.addProperty("fire", action.fire);
+			if (action.blockInteraction != BlockInteraction.BREAK)
+				o.addProperty("block_interaction", action.blockInteraction.name().toLowerCase(Locale.ENGLISH));
+			if (action.radius != 4)
+				o.addProperty("radius", action.radius);
+			if (action.step != 0.5F)
+				o.addProperty("radius_step", action.step);
 		}
 
 		@Override

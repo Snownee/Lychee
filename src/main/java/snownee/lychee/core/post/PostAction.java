@@ -1,6 +1,5 @@
 package snownee.lychee.core.post;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -18,7 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.client.gui.AllGuiTextures;
-import snownee.lychee.core.ActionStatus.State;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.recipe.LycheeRecipe;
@@ -101,14 +99,12 @@ public abstract class PostAction extends ContextualHolder {
 		return true;
 	}
 
-	public static void applySequence(List<PostAction> actions, LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		LinkedList<Job> jobs = Lists.newLinkedList(actions.stream().map($ -> new Job($, times)).toList());
-		while (!jobs.isEmpty()) {
-			jobs.getFirst().apply(recipe, ctx);
-			if (ctx.status.state != State.RUNNING) {
-				break;
-			}
-		}
+	public final JsonObject toJson() {
+		JsonObject o = new JsonObject();
+		o.add("contextual", rawConditionsToJson());
+		o.addProperty("type", getType().getRegistryName().toString());
+		((PostActionType<PostAction>) getType()).toJson(this, o);
+		return o;
 	}
 
 }

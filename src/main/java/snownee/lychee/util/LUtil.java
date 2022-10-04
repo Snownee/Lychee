@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Streams;
+import com.google.gson.JsonObject;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -242,6 +243,16 @@ public class LUtil {
 
 	public static boolean isPhysicalClient() {
 		return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
+	}
+
+	public static void itemstackToJson(ItemStack stack, JsonObject jsonObject) {
+		jsonObject.addProperty("item", Registry.ITEM.getKey(stack.getItem()).toString());
+		if (stack.hasTag()) {
+			jsonObject.addProperty("nbt", stack.getTag().toString());
+		}
+		if (stack.getCount() > 1) {
+			jsonObject.addProperty("count", stack.getCount());
+		}
 	}
 
 }

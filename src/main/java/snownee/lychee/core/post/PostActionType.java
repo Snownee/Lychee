@@ -10,6 +10,8 @@ public abstract class PostActionType<T extends PostAction> {
 
 	public abstract T fromJson(JsonObject o);
 
+	public abstract void toJson(T action, JsonObject o);
+
 	public abstract T fromNetwork(FriendlyByteBuf buf);
 
 	public abstract void toNetwork(T action, FriendlyByteBuf buf);
