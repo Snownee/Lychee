@@ -15,6 +15,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
@@ -137,7 +138,7 @@ public class DripstoneRecipe extends LycheeRecipe<DripstoneContext> implements B
 		}
 		DripstoneContext ctx = result.getFirst();
 		DripstoneRecipe recipe = result.getSecond();
-		level.levelEvent(1504, tipPos, 0);
+		level.levelEvent(LevelEvent.DRIPSTONE_DRIP, tipPos, 0);
 		int i = tipPos.getY() - targetPos.getY();
 		int j = 50 + i;
 		Break breakAction = new Break();
