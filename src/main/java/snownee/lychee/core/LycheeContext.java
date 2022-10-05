@@ -1,13 +1,17 @@
 package snownee.lychee.core;
 
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -18,9 +22,10 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.core.post.Delay.LycheeMarker;
+import snownee.lychee.core.post.PostAction;
 
 public class LycheeContext extends EmptyContainer {
 	private final RandomSource random;
@@ -99,15 +104,42 @@ public class LycheeContext extends EmptyContainer {
 		}
 		BlockPos pos = getParamOrNull(LycheeLootContextParams.BLOCK_POS);
 		if (pos == null) {
-			Vec3 vec = getParamOrNull(LootContextParams.ORIGIN);
-			if (vec == null) {
-				return;
-			}
-			pos = new BlockPos(vec);
+			pos = new BlockPos(getParam(LootContextParams.ORIGIN));
 		}
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if (blockEntity != null)
 			params.put(LootContextParams.BLOCK_ENTITY, blockEntity);
+	}
+
+	public JsonObject save() {
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.addProperty("doDefault", runtime.doDefault);
+		JsonArray jobs = new JsonArray(runtime.jobs.size());
+		JsonArray jobRepeats = new JsonArray(runtime.jobs.size());
+		for (var job : runtime.jobs) {
+			jobs.add(job.action.toJson());
+			jobRepeats.add(job.times);
+		}
+		jsonObject.add("jobs", jobs);
+		jsonObject.add("jobRepeats", jobRepeats);
+		return jsonObject;
+	}
+
+	public static LycheeContext load(JsonObject jsonObject, LycheeMarker marker) {
+		var builder = new LycheeContext.Builder<>(marker.getEntity().level);
+		builder.withParameter(LootContextParams.ORIGIN, marker.getEntity().position());
+		LycheeContext ctx = builder.create(LycheeLootContextParamSets.ALL);
+		ctx.runtime.doDefault = jsonObject.get("doDefault").getAsBoolean();
+		JsonArray jobs = jsonObject.getAsJsonArray("jobs");
+		JsonArray jobRepeats = jsonObject.getAsJsonArray("jobRepeats");
+		List<Job> jobList = Lists.newArrayList();
+		for (int i = 0; i < jobs.size(); i++) {
+			var job = new Job(PostAction.parse(jobs.get(i).getAsJsonObject()), jobRepeats.get(i).getAsInt());
+			jobList.add(job);
+		}
+		ctx.runtime.jobs.addAll(0, jobList);
+		ctx.runtime.marker = marker;
+		return ctx;
 	}
 
 	public static class Builder<C extends LycheeContext> {

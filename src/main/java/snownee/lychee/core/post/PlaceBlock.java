@@ -34,7 +34,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.PostActionTypes;
-import snownee.lychee.RecipeTypes;
+import snownee.lychee.block_crushing.BlockCrushingRecipe;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
@@ -76,7 +76,7 @@ public class PlaceBlock extends PostAction {
 			destroyBlock(level, pos, false);
 			return;
 		}
-		if (recipe.getType() == RecipeTypes.BLOCK_CRUSHING && !oldState.isAir()) {
+		if (recipe instanceof BlockCrushingRecipe && !oldState.isAir()) {
 			level.levelEvent(2001, pos, Block.getId(oldState));
 		}
 		for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {

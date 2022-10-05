@@ -16,7 +16,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
@@ -52,9 +51,6 @@ public class Explode extends PostAction {
 	@Override
 	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
-		if (pos == null) {
-			pos = Vec3.atCenterOf(ctx.getParam(LycheeLootContextParams.BLOCK_POS));
-		}
 		pos = pos.add(offset.getX(), offset.getY(), offset.getZ());
 		float r = Math.min(radius + step * (Mth.sqrt(times) - 1), radius * 4);
 		ctx.getLevel().explode(ctx.getParamOrNull(LootContextParams.THIS_ENTITY), null, null, pos.x, pos.y, pos.z, r, fire, blockInteraction);

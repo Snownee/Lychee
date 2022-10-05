@@ -43,7 +43,7 @@ public class Delay extends PostAction {
 	public static void makeMarker(LycheeRecipe<?> recipe, LycheeContext ctx) {
 		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
 		Marker marker = EntityType.MARKER.create(ctx.getLevel());
-		marker.setPos(pos);
+		marker.moveTo(pos);
 		ctx.getLevel().addFreshEntity(marker);
 		LycheeMarker lycheeMarker = (LycheeMarker) marker;
 		lycheeMarker.lychee$setContext(recipe, ctx);

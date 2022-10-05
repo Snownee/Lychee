@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Lists;
 
+import snownee.lychee.Lychee;
 import snownee.lychee.core.post.Delay.LycheeMarker;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.LycheeRecipe;
@@ -37,13 +38,19 @@ public class ActionRuntime {
 	}
 
 	public void run(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx) {
-		while (!jobs.isEmpty()) {
-			jobs.pop().apply(recipe, ctx);
-			if (ctx.runtime.state != State.RUNNING) {
-				break;
+		try {
+			while (!jobs.isEmpty()) {
+				jobs.pop().apply(recipe, ctx);
+				if (ctx.runtime.state != State.RUNNING) {
+					break;
+				}
 			}
-		}
-		if (ctx.runtime.state == State.RUNNING && jobs.isEmpty()) {
+			if (ctx.runtime.state == State.RUNNING && jobs.isEmpty()) {
+				ctx.runtime.state = State.STOPPED;
+			}
+		} catch (Throwable e) {
+			Lychee.LOGGER.error("Error running actions");
+			Lychee.LOGGER.catching(e);
 			ctx.runtime.state = State.STOPPED;
 		}
 	}
