@@ -30,6 +30,7 @@
     "LocationCheckMixin",
     "LocationPredicateMixin",
     "LightningBoltMixin",
+    "MarkerMixin",
     "RecipeManagerMixin",
     "ReloadableServerResourcesMixin"
   ],
