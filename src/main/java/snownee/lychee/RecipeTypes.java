@@ -16,6 +16,8 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.core.recipe.type.ItemShapelessRecipeType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.dripstone_dripping.DripstoneContext;
+import snownee.lychee.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.interaction.BlockClickingRecipe;
 import snownee.lychee.interaction.BlockInteractingRecipe;
 import snownee.lychee.item_burning.ItemBurningRecipe;
@@ -35,6 +37,10 @@ public final class RecipeTypes {
 	public static void init() {
 		BLOCK_INTERACTING.setRequiresClient();
 		BLOCK_CLICKING.setRequiresClient();
+		DRIPSTONE_DRIPPING.setRequiresClient(); // we need the particle
+
+		RANDOM_BLOCK_TICKING.extractChance = true;
+		DRIPSTONE_DRIPPING.extractChance = true;
 	}
 
 	public static final Set<LycheeRecipeType<?, ?>> ALL = Sets.newLinkedHashSet();
@@ -48,6 +54,7 @@ public final class RecipeTypes {
 	public static final ItemShapelessRecipeType<ItemShapelessContext, ItemExplodingRecipe> ITEM_EXPLODING = register(new ItemShapelessRecipeType<>("item_exploding", ItemExplodingRecipe.class, null));
 	public static final BlockKeyRecipeType<BlockExplodingContext, BlockExplodingRecipe> BLOCK_EXPLODING = register(new BlockKeyRecipeType<>("block_exploding", BlockExplodingRecipe.class, LycheeLootContextParamSets.BLOCK_ONLY));
 	public static final RandomBlockTickingRecipeType RANDOM_BLOCK_TICKING = register(new RandomBlockTickingRecipeType("random_block_ticking", RandomBlockTickingRecipe.class, LycheeLootContextParamSets.BLOCK_ONLY));
+	public static final BlockKeyRecipeType<DripstoneContext, DripstoneRecipe> DRIPSTONE_DRIPPING = register(new BlockKeyRecipeType<>("dripstone_dripping", DripstoneRecipe.class, LycheeLootContextParamSets.BLOCK_ONLY));
 
 	public static <T extends LycheeRecipeType<?, ?>> T register(T recipeType) {
 		ALL.add(recipeType);

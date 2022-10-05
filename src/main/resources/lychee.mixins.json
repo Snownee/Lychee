@@ -16,6 +16,7 @@
     "LootContextBuilderAccess",
     "LootContextParamSetsAccess",
     "NbtPredicateAccess",
+    "PointedDripstoneBlockAccess",
     "RecipeManagerAccess",
     "StatePropertiesPredicateAccess",
     "TimeCheckAccess",
@@ -31,6 +32,7 @@
     "LocationPredicateMixin",
     "LightningBoltMixin",
     "MarkerMixin",
+    "PointedDripstoneBlockMixin",
     "RecipeManagerMixin",
     "ReloadableServerResourcesMixin"
   ],

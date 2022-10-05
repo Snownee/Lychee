@@ -3,7 +3,6 @@ package snownee.lychee.block_exploding;
 import java.util.List;
 import java.util.function.Supplier;
 
-import com.google.common.base.Predicates;
 import com.google.gson.JsonObject;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -59,7 +58,8 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> im
 		builder.withParameter(LootContextParams.BLOCK_STATE, state);
 		builder.withRandom(((LootContextBuilderAccess) lootBuilder).getRandom());
 		BlockExplodingContext ctx = builder.create(RecipeTypes.BLOCK_EXPLODING.contextParamSet);
-		if (RecipeTypes.BLOCK_EXPLODING.process(level, state, () -> ctx, Predicates.alwaysTrue())) {
+		RecipeTypes.BLOCK_EXPLODING.process(level, state, () -> ctx);
+		if (ctx.runtime.doDefault) {
 			ctx.items.addAll(defaultDrops.get());
 		}
 		return ctx.items;

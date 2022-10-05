@@ -35,9 +35,8 @@ public class BlockStateMixin {
 				builder.withParameter(LycheeLootContextParams.BLOCK_POS, blockPos);
 				return builder.create(RecipeTypes.RANDOM_BLOCK_TICKING.contextParamSet);
 			};
-			if (!RecipeTypes.RANDOM_BLOCK_TICKING.process(serverLevel, state, ctxSupplier, $ -> {
-				return $.chance == 1 || $.chance > randomSource.nextFloat();
-			})) {
+			var result = RecipeTypes.RANDOM_BLOCK_TICKING.process(serverLevel, state, ctxSupplier);
+			if (result != null && result.getFirst().runtime.doDefault) {
 				ci.cancel();
 			}
 		}

@@ -52,11 +52,11 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 	private boolean lychee_overrideDamageAnvil(boolean original) {
 		if (original && lychee$anvilDamageChance >= 0) {
 			if (random.nextFloat() < lychee$anvilDamageChance) {
-				BlockState blockstate = AnvilBlock.damage(this.blockState);
+				BlockState blockstate = AnvilBlock.damage(blockState);
 				if (blockstate == null) {
-					this.cancelDrop = true;
+					cancelDrop = true;
 				} else {
-					this.blockState = blockstate;
+					blockState = blockstate;
 				}
 			}
 			return false;

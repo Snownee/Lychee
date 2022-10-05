@@ -138,7 +138,7 @@ public class REICompat implements REIClientPlugin {
 
 		final ScreenElement element;
 
-		private SlotType(AllGuiTextures element) {
+		SlotType(AllGuiTextures element) {
 			this.element = el(element).element;
 		}
 	}

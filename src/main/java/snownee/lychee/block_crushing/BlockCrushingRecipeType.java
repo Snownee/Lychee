@@ -50,7 +50,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 			box = box.minmax(new AABB(pos));
 		}
 		List<ItemEntity> itemEntities = entity.level.getEntitiesOfClass(ItemEntity.class, box, $ -> {
-			return $.isAlive() && validItems.contains(((ItemEntity) $).getItem());
+			return $.isAlive() && validItems.contains($.getItem());
 		});
 		BlockCrushingContext.Builder ctxBuilder = new BlockCrushingContext.Builder(entity.level, itemEntities, entity);
 		ctxBuilder.withParameter(LootContextParams.ORIGIN, entity.position());

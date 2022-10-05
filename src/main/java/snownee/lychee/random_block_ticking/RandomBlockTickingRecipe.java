@@ -12,12 +12,13 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.BlockKeyRecipe;
+import snownee.lychee.core.recipe.ChanceRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
-public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyRecipe<RandomBlockTickingRecipe> {
+public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyRecipe<RandomBlockTickingRecipe>, ChanceRecipe {
 
-	public float chance = 1;
+	protected float chance = 1;
 	protected BlockPredicate block;
 
 	public RandomBlockTickingRecipe(ResourceLocation id) {
@@ -41,6 +42,16 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 	@Override
 	public BlockPredicate getBlock() {
 		return block;
+	}
+
+	@Override
+	public float getChance() {
+		return chance;
+	}
+
+	@Override
+	public void setChance(float chance) {
+		this.chance = chance;
 	}
 
 	@Override

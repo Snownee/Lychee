@@ -17,7 +17,7 @@ import snownee.lychee.util.LUtil;
 
 public interface LocationPredicateHelper {
 
-	public static LocationPredicate.Builder fromNetwork(FriendlyByteBuf pBuffer) {
+	static LocationPredicate.Builder fromNetwork(FriendlyByteBuf pBuffer) {
 		LocationPredicate.Builder builder = LocationPredicate.Builder.location();
 		builder.setX(DoubleBoundsHelper.fromNetwork(pBuffer));
 		builder.setY(DoubleBoundsHelper.fromNetwork(pBuffer));
@@ -47,7 +47,7 @@ public interface LocationPredicateHelper {
 		return builder;
 	}
 
-	public static void toNetwork(LocationPredicate predicate, FriendlyByteBuf pBuffer) {
+	static void toNetwork(LocationPredicate predicate, FriendlyByteBuf pBuffer) {
 		LocationPredicateAccess access = (LocationPredicateAccess) predicate;
 		DoubleBoundsHelper.toNetwork(access.getX(), pBuffer);
 		DoubleBoundsHelper.toNetwork(access.getY(), pBuffer);

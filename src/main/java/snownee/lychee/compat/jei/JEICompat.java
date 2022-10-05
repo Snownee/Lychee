@@ -139,7 +139,7 @@ public class JEICompat implements IModPlugin {
 
 		final IDrawable element;
 
-		private SlotType(AllGuiTextures element) {
+		SlotType(AllGuiTextures element) {
 			this.element = el(element);
 		}
 	}

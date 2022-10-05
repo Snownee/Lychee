@@ -109,6 +109,7 @@ public class PlaceBlock extends PostAction {
 				}
 			}
 		}
+		level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
 	}
 
 	private static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {

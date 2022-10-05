@@ -12,8 +12,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.kiwi.loader.Platform;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.contextual.Chance;
-import snownee.lychee.core.contextual.ContextualCondition;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.mixin.ChunkMapAccess;
 import snownee.lychee.util.LUtil;
@@ -33,14 +31,6 @@ public class RandomBlockTickingRecipeType extends BlockKeyRecipeType<LycheeConte
 		}
 		for (Block block : Registry.BLOCK) {
 			((RandomlyTickable) block).lychee$setTickable(has(block));
-		}
-		for (var recipe : recipes) {
-			if (!recipe.getConditions().isEmpty()) {
-				ContextualCondition condition = recipe.getConditions().get(0);
-				if (condition instanceof Chance chance) {
-					recipe.chance = chance.chance();
-				}
-			}
 		}
 		if (Lychee.hasKiwi) {
 			MinecraftServer server = Platform.getServer();

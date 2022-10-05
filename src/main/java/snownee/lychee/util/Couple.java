@@ -86,6 +86,7 @@ public class Couple<T> extends Pair<T, T> implements Iterable<T> {
 		function.accept(getSecond(), values.getSecond());
 	}
 
+	@Override
 	public Couple<T> swap() {
 		return Couple.create(second, first);
 	}

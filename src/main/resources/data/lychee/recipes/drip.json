@@ -1,0 +1,11 @@
+{
+  "type": "lychee:dripstone_dripping",
+  "source_block": "water",
+  "target_block": "sponge",
+  "post": [
+    {
+      "type": "place",
+      "block": "wet_sponge"
+    }
+  ]
+}
