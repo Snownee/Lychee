@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.dripstone_dripping.DripstoneRecipe;
 
-@Mixin(PointedDripstoneBlock.class)
+@Mixin(value = PointedDripstoneBlock.class, priority = 2000)
 public class PointedDripstoneBlockMixin {
 
 	@Inject(

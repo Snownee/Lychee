@@ -65,7 +65,7 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 
 		@Override
 		public void toJson(Not condition, JsonObject o) {
-			o.add("contextual", condition.condition.toJson());
+			o.add("contextual", condition.condition().toJson());
 		}
 
 		@Override

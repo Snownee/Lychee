@@ -30,6 +30,10 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven {
+        url = "https://mvn.devos.one/snapshots/"
+    }
+    maven { url = "https://api.modrinth.com/maven" }
     flatDir { dir 'libs' }
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
@@ -71,6 +75,8 @@ dependencies {
 
     modImplementation "curse.maven:kiwi-549404:3909202"
     annotationProcessor "curse.maven:kiwi-549404:3909202"
+    
+    modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
 }
 
 loom {
