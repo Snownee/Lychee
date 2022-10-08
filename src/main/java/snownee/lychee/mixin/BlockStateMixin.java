@@ -17,7 +17,9 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
+import snownee.lychee.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.random_block_ticking.RandomlyTickable;
+import snownee.lychee.util.LUtil;
 
 @Mixin(BlockStateBase.class)
 public class BlockStateMixin {
@@ -25,6 +27,7 @@ public class BlockStateMixin {
 	@Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
 	private void randomTick(ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource, CallbackInfo ci) {
 		BlockState state = (BlockState) (Object) this;
+
 		RandomlyTickable block = (RandomlyTickable) state.getBlock();
 		if (block.lychee$isTickable()) {
 			Supplier<LycheeContext> ctxSupplier = () -> {
@@ -36,9 +39,13 @@ public class BlockStateMixin {
 				return builder.create(RecipeTypes.RANDOM_BLOCK_TICKING.contextParamSet);
 			};
 			var result = RecipeTypes.RANDOM_BLOCK_TICKING.process(serverLevel, state, ctxSupplier);
-			if (result != null && result.getFirst().runtime.doDefault) {
+			if (result != null && !result.getFirst().runtime.doDefault) {
 				ci.cancel();
 			}
+		}
+
+		if (LUtil.useSafeDripstoneTicking() && DripstoneRecipe.safeTick(state, serverLevel, blockPos, randomSource)) {
+			ci.cancel();
 		}
 	}
 

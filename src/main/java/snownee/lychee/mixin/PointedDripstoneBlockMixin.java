@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.dripstone_dripping.DripstoneRecipe;
 
-@Mixin(value = PointedDripstoneBlock.class, priority = 2000)
+@Mixin(value = PointedDripstoneBlock.class, priority = 1100)
 public class PointedDripstoneBlockMixin {
 
 	@Inject(
@@ -20,7 +20,7 @@ public class PointedDripstoneBlockMixin {
 			), method = "maybeTransferFluid", cancellable = true
 	)
 	private static void lychee_maybeTransferFluid(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, float f, CallbackInfo ci) {
-		if (DripstoneRecipe.on(blockState, serverLevel, blockPos, f))
+		if (DripstoneRecipe.on(blockState, serverLevel, blockPos))
 			ci.cancel();
 	}
 

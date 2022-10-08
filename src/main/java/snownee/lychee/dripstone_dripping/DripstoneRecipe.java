@@ -14,6 +14,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
@@ -108,7 +109,18 @@ public class DripstoneRecipe extends LycheeRecipe<DripstoneContext> implements B
 		}
 	}
 
-	public static boolean on(BlockState blockState, ServerLevel level, BlockPos blockPos, float f) {
+	public static boolean safeTick(BlockState state, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {
+		if (!PointedDripstoneBlockAccess.callIsStalactiteStartPos(state, serverLevel, blockPos)) {
+			return false;
+		}
+		float f = randomSource.nextFloat();
+		if (f > 0.17578125f && f > 0.05859375f) {
+			return false;
+		}
+		return on(state, serverLevel, blockPos);
+	}
+
+	public static boolean on(BlockState blockState, ServerLevel level, BlockPos blockPos) {
 		if (RecipeTypes.DRIPSTONE_DRIPPING.isEmpty()) {
 			return false;
 		}
