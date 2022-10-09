@@ -3,6 +3,7 @@ package snownee.lychee.mixin;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -21,7 +22,7 @@ public class ItemEntityMixin implements LycheeCounter {
 
 	@Inject(
 			at = @At(
-					value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;discard()V"
+					value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;discard()V", shift = Shift.AFTER
 			), method = "hurt"
 	)
 	private void lychee_hurt(DamageSource pSource, float pAmount, CallbackInfoReturnable<Boolean> ci) {
@@ -29,7 +30,7 @@ public class ItemEntityMixin implements LycheeCounter {
 			return;
 		}
 		Entity entity = (Entity) (Object) this;
-		if (entity.isAlive() && entity.getType() == EntityType.ITEM && !entity.level.isClientSide && entity.isOnFire()) {
+		if (!entity.isAlive() && entity.getType() == EntityType.ITEM && entity.isOnFire()) {
 			ItemBurningRecipe.on((ItemEntity) entity);
 		}
 	}
