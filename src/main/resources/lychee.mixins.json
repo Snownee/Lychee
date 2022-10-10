@@ -28,7 +28,8 @@
     "LocationCheckMixin",
     "LocationPredicateMixin",
     "RecipeManagerMixin",
-    "ReloadableServerResourcesMixin"
+    "ReloadableServerResourcesMixin",
+    "arsnouveau.LightningEntityMixin"
   ],
   "client": [
     "GameRendererAccess",
