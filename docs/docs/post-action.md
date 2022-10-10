@@ -137,3 +137,16 @@ This action is not [repeatable](concepts.md#repeatability).
     | ------ | ----------------- | -------------- |
     | type   | type              | "damage_item"  |
     | damage | (optional) damage | int            |
+
+### Add item cooldown (`add_item_cooldown`)
+
+Add item cooldown to the item in player's hand, just like when you use ender pearl.
+
+This action only works for interaction recipes.
+
+??? note "Format"
+
+    | Name | Description | Type / Literal      |
+    | ---- | ----------- | ------------------- |
+    | type | type        | "add_item_cooldown" |
+    | s    | seconds     | number              |
