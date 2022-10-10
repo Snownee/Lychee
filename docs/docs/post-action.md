@@ -255,3 +255,16 @@ This action can only be used in the [Block Crushing](recipe.md#block-crushing) r
     | ------ | ---------------------- | --------------------- |
     | type   | type                   | "anvil_damage_chance" |
     | chance | chance between 0 and 1 | number                |
+
+### Add item cooldown (`add_item_cooldown`)
+
+Add item cooldown to the item in player's hand, just like when you use ender pearl.
+
+This action only works for interaction recipes.
+
+??? note "Format"
+
+    | Name | Description | Type / Literal      |
+    | ---- | ----------- | ------------------- |
+    | type | type        | "add_item_cooldown" |
+    | s    | seconds     | number              |
