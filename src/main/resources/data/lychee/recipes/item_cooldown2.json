@@ -1,5 +1,5 @@
 {
-  "type": "lychee:block_interacting",
+  "type": "lychee:block_clicking",
   "item_in": {
     "item": "air"
   },
