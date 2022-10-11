@@ -1,0 +1,17 @@
+{
+  "type": "lychee:block_clicking",
+  "item_in": {
+    "item": "air"
+  },
+  "block_in": "stone",
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "add_item_cooldown",
+      "s": "0.5"
+    }
+  ]
+}

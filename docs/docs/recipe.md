@@ -116,7 +116,7 @@ Event when an item entity is burnt.
 
 This recipe type is [repeatable](concepts.md#repeatability).
 
-Default behavior: item is consumed.
+Default behavior: none.
 
 !!! note "Format"
 

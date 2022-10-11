@@ -97,7 +97,7 @@ public class JEICompat implements IModPlugin {
 		});
 
 		List<IJeiAnvilRecipe> recipes = LUtil.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
-			return !$.getResultItem().isEmpty() && !$.isSpecial();
+			return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
 		}).map($ -> {
 			List<ItemStack> right = List.of($.getRight().getItems()).stream().map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
 			return registration.getVanillaRecipeFactory().createAnvilRecipe(List.of($.getLeft().getItems()), right, List.of($.getResultItem()));

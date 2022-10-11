@@ -21,7 +21,7 @@ public class ItemEntityMixin implements LycheeCounter {
 
 	@Inject(
 			at = @At(
-					value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;discard()V"
+					value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;discard()V", shift = At.Shift.AFTER
 			), method = "hurt"
 	)
 	private void lychee_hurt(DamageSource pSource, float pAmount, CallbackInfoReturnable<Boolean> ci) {
@@ -29,7 +29,7 @@ public class ItemEntityMixin implements LycheeCounter {
 			return;
 		}
 		Entity entity = (Entity) (Object) this;
-		if (entity.isAlive() && entity.getType() == EntityType.ITEM && !entity.level.isClientSide && entity.isOnFire()) {
+		if (!entity.isAlive() && entity.getType() == EntityType.ITEM && entity.isOnFire()) {
 			ItemBurningRecipe.on((ItemEntity) entity);
 		}
 	}

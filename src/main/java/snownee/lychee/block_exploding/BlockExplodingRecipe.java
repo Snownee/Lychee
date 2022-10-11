@@ -30,8 +30,8 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> im
 	}
 
 	@Override
-	public boolean matches(BlockExplodingContext pContainer, Level pLevel) {
-		return BlockPredicateHelper.fastMatch(block, pContainer);
+	public boolean matches(BlockExplodingContext ctx, Level pLevel) {
+		return BlockPredicateHelper.fastMatch(block, ctx);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> im
 		builder.withParameter(LootContextParams.BLOCK_STATE, state);
 		builder.withRandom(((LootContextBuilderAccess) lootBuilder).getRandom());
 		BlockExplodingContext ctx = builder.create(RecipeTypes.BLOCK_EXPLODING.contextParamSet);
-		if (!RecipeTypes.BLOCK_EXPLODING.process(state, ctx)) {
+		if (!RecipeTypes.BLOCK_EXPLODING.process(level, state, () -> ctx, recipe -> true)) {
 			ctx.items.addAll(defaultDrops.get());
 		}
 		return ctx.items;

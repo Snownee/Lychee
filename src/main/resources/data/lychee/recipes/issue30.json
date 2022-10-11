@@ -1,0 +1,18 @@
+{
+  "type": "lychee:lightning_channeling",
+  "item_in": [
+    {
+      "item": "red_dye"
+    },
+    {
+      "item": "yellow_dye"
+    }
+  ],
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "orange_dye",
+      "count": 2
+    }
+  ]
+}
