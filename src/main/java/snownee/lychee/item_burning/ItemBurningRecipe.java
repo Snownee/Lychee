@@ -79,9 +79,9 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		LycheeContext ctx = builder.create(RecipeTypes.ITEM_BURNING.contextParamSet);
 		RecipeTypes.ITEM_BURNING.findFirst(ctx, entity.level).ifPresent($ -> {
 			int times = $.getRandomRepeats(entity.getItem().getCount(), ctx);
-			if ($.applyPostActions(ctx, times)) {
-				entity.getItem().shrink(times);
-			}
+			$.applyPostActions(ctx, times);
+			entity.getItem().shrink(times);
+
 		});
 	}
 
