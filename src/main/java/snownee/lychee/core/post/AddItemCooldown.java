@@ -24,10 +24,9 @@ public class AddItemCooldown extends PostAction {
 	}
 
 	@Override
-	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		if (times > 0)
 			apply(recipe, ctx, times);
-		return true;
 	}
 
 	@Override
@@ -47,6 +46,11 @@ public class AddItemCooldown extends PostAction {
 		@Override
 		public AddItemCooldown fromJson(JsonObject o) {
 			return new AddItemCooldown(o.get("s").getAsFloat());
+		}
+
+		@Override
+		public void toJson(AddItemCooldown action, JsonObject o) {
+			o.addProperty("s", action.seconds);
 		}
 
 		@Override
