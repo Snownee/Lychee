@@ -60,7 +60,7 @@ public class DropItem extends PostAction {
 			((BlockExplodingContext) ctx).items.add(stack);
 		} else {
 			LUtil.dropItemStack(ctx.getLevel(), pos.x, pos.y, pos.z, stack, $ -> {
-				((ItemEntityAccess) $).setHealth(20);
+				((ItemEntityAccess) $).setHealth(80);
 			});
 		}
 	}
