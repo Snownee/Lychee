@@ -1,0 +1,11 @@
+{
+  "type": "lychee:dripstone_dripping",
+  "source_block": "redstone_block",
+  "target_block": "sponge",
+  "post": [
+    {
+      "type": "place",
+      "block": "calcite"
+    }
+  ]
+}
