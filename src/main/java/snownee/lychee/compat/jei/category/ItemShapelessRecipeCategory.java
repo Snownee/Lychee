@@ -34,7 +34,7 @@ public abstract class ItemShapelessRecipeCategory<T extends ItemShapelessRecipe<
 		matrixStack.pushPose();
 		matrixStack.translate(76, 16, 0);
 		matrixStack.scale(1.5F, 1.5F, 0);
-		icon.draw(matrixStack);
+		getIcon().draw(matrixStack);
 		matrixStack.popPose();
 	}
 
