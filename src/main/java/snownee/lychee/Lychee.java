@@ -48,6 +48,8 @@ public final class Lychee implements ModInitializer {
 			return InteractionResult.PASS;
 		}
 		ItemStack stack = player.getItemInHand(hand);
+		if (player.getCooldowns().isOnCooldown(stack.getItem()))
+			return InteractionResult.PASS;
 		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(world);
 		builder.withParameter(LootContextParams.TOOL, stack);
 		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(player, stack, hitResult.getBlockPos(), hitResult.getLocation(), builder);
@@ -62,6 +64,8 @@ public final class Lychee implements ModInitializer {
 			return InteractionResult.PASS;
 		}
 		ItemStack stack = player.getItemInHand(hand);
+		if (player.getCooldowns().isOnCooldown(stack.getItem()))
+			return InteractionResult.PASS;
 		Vec3 vec = Vec3.atCenterOf(pos);
 		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(world);
 		builder.withParameter(LootContextParams.TOOL, stack);
