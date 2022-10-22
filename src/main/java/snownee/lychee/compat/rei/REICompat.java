@@ -109,7 +109,7 @@ public class REICompat implements REIClientPlugin {
 		registerFiller(registration, RecipeTypes.BLOCK_EXPLODING, BlockExplodingDisplay::new);
 
 		LUtil.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
-			return !$.getResultItem().isEmpty() && !$.isSpecial();
+			return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
 		}).map($ -> {
 			List<ItemStack> right = List.of($.getRight().getItems()).stream().map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
 			return new AnvilRecipe($.getId(), List.of($.getLeft().getItems()), right, List.of($.getResultItem()));
