@@ -323,6 +323,8 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
 
 ### Lightning Channeling
 
+Event when a lightning is channeling.
+
 This recipe type is [repeatable](concepts.md#repeatability).
 
 Default behavior: Items are consumed. Canceling this will **not** prevent item from being damaged.
@@ -335,6 +337,8 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
     | item_in | (optional) items nearby the lightning | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
 
 ### Item Exploding
+
+Event when an item entity is exploded.
 
 This recipe type is [repeatable](concepts.md#repeatability).
 
@@ -352,6 +356,8 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 	You can tag items with `lychee:explosives` to let them be shown in JEI / REI.
 
 ### Block Exploding
+
+Event when a block is exploded.
 
 This recipe type is not [repeatable](concepts.md#repeatability).
 
