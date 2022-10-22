@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import io.github.tropheusj.dripstone_fluid_lib.DripstoneInteractingFluid;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.client.Minecraft;
@@ -31,8 +32,11 @@ public class DripstoneRecipeMod implements ModInitializer {
 	public static final ParticleType<BlockParticleOption> DRIPSTONE_FALLING = FabricParticleTypes.complex(BlockParticleOption.DESERIALIZER);
 	public static final ParticleType<BlockParticleOption> DRIPSTONE_SPLASH = FabricParticleTypes.complex(BlockParticleOption.DESERIALIZER);
 
+	public static boolean hasDFLib;
+
 	@Override
 	public void onInitialize() {
+		hasDFLib = LUtil.isModLoaded("dripstone_fluid_lib");
 		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_dripping"), DRIPSTONE_DRIPPING);
 		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_falling"), DRIPSTONE_FALLING);
 		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_splash"), DRIPSTONE_SPLASH);
@@ -45,6 +49,9 @@ public class DripstoneRecipeMod implements ModInitializer {
 		}
 		FluidState sourceFluid = sourceBlock.getFluidState();
 		if (sourceFluid.is(FluidTags.LAVA) || sourceFluid.is(FluidTags.WATER)) {
+			return false;
+		}
+		if (DripstoneRecipeMod.hasDFLib && sourceFluid.getType() instanceof DripstoneInteractingFluid) {
 			return false;
 		}
 		DripParticleHandler handler = getParticleHandler(sourceBlock);
@@ -61,7 +68,6 @@ public class DripstoneRecipeMod implements ModInitializer {
 
 	public static DripParticleHandler getParticleHandler(BlockState sourceBlock) {
 		Block block = sourceBlock.getBlock();
-		particleHandlers.invalidateAll();
 		try {
 			return particleHandlers.get(block, () -> {
 				if (!LUtil.isPhysicalClient()) {

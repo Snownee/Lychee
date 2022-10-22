@@ -48,7 +48,6 @@ import snownee.lychee.mixin.RecipeManagerAccess;
 public class LUtil {
 	private static final Random RANDOM = new Random();
 	private static RecipeManager recipeManager;
-	private static boolean hasDripstoneLib = FabricLoader.getInstance().isModLoaded("dripstone_fluid_lib");
 
 	public static void dropItemStack(Level pLevel, double pX, double pY, double pZ, ItemStack pStack, @Nullable Consumer<ItemEntity> extraStep) {
 		while (!pStack.isEmpty()) {
@@ -256,8 +255,8 @@ public class LUtil {
 		}
 	}
 
-	public static boolean useSafeDripstoneTicking() {
-		return hasDripstoneLib;
+	public static boolean isModLoaded(String modid) {
+		return FabricLoader.getInstance().isModLoaded(modid);
 	}
 
 }

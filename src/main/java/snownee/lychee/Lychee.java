@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
+import snownee.lychee.util.LUtil;
 
 public final class Lychee implements ModInitializer {
 	public static final String ID = "lychee";
@@ -15,7 +15,7 @@ public final class Lychee implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		hasKiwi = FabricLoader.getInstance().isModLoaded("kiwi");
+		hasKiwi = LUtil.isModLoaded("kiwi");
 		RecipeTypes.init();
 		LycheeTags.init();
 		LycheeRegistries.init();
