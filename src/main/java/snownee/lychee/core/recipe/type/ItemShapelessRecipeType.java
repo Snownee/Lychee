@@ -41,9 +41,6 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 			return;
 		}
 		List<ItemEntity> list = itemEntities.filter($ -> validItems.contains($.getItem())).collect(Collectors.toCollection(LinkedList::new));
-		if (list.isEmpty()) {
-			return;
-		}
 		ItemShapelessContext.Builder<C> ctxBuilder = new ItemShapelessContext.Builder<>(level, list);
 		ctxBuilderConsumer.accept(ctxBuilder);
 		process(this, recipes, ctxBuilder.create(contextParamSet), null);
@@ -105,11 +102,11 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 					break major;
 				}
 			}
-			if (!matched) {
+			if (++loop >= 100 || !matched) {
 				break major;
 			}
 		}
-		if (++loop >= 100 || matchedAny) {
+		if (matchedAny) {
 			ctx.itemEntities.forEach($ -> $.setItem($.getItem())); //sync item amount
 		}
 	}
