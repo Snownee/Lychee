@@ -1,0 +1,13 @@
+{
+  "type": "lychee:lightning_channeling",
+  "post": [
+    {
+      "type": "execute",
+      "command": "fill ~-3 ~-3 ~-3 ~3 ~3 ~3 calcite replace redstone_block"
+    },
+    {
+      "type": "drop_item",
+      "item": "copper_block"
+    }
+  ]
+}
