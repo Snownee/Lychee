@@ -336,6 +336,22 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
     | type    | type                                  | "lychee:lightning_channeling"                                                            |
     | item_in | (optional) items nearby the lightning | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
 
+??? example
+
+	Make nearby stone become calcite:
+
+	```json
+	{
+		"type": "lychee:lightning_channeling",
+		"post": [
+			{
+				"type": "execute",
+				"command": "fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite"
+			}
+		]
+	}
+	```
+
 ### Item Exploding
 
 Event when an item entity is exploded.
