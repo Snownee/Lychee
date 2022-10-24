@@ -5,6 +5,7 @@ import net.minecraftforge.fml.ModLoadingContext;
 import snownee.lychee.core.post.AddItemCooldown;
 import snownee.lychee.core.post.AnvilDamageChance;
 import snownee.lychee.core.post.Break;
+import snownee.lychee.core.post.CycleStateProperty;
 import snownee.lychee.core.post.Delay;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.DropXp;
@@ -35,6 +36,7 @@ public class PostActionTypes {
 	public static final PostActionType<Delay> DELAY = register("delay", new Delay.Type());
 	public static final PostActionType<Break> BREAK = register("break", new Break.Type());
 	public static final PostActionType<AddItemCooldown> ADD_ITEM_COOLDOWN = register("add_item_cooldown", new AddItemCooldown.Type());
+	public static final PostActionType<CycleStateProperty> CYCLE_STATE_PROPERTY = register("cycle_state_property", new CycleStateProperty.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		ModLoadingContext.get().setActiveContainer(null); // bypass Forge warning
