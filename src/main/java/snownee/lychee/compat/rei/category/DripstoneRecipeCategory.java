@@ -108,7 +108,7 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 	}
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {
-		return LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.WATER.defaultBlockState(), 2000);
+		return LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
 	}
 
 	private BlockState getTargetBlock(DripstoneRecipe recipe) {
