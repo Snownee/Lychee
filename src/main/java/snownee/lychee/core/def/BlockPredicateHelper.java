@@ -173,48 +173,50 @@ public class BlockPredicateHelper {
 		ITERABLE_PROPERTIES.addAll(List.of(BlockStateProperties.AGE_1, BlockStateProperties.AGE_2, BlockStateProperties.AGE_3, BlockStateProperties.AGE_5, BlockStateProperties.AGE_7, BlockStateProperties.CANDLES, BlockStateProperties.BITES, BlockStateProperties.POWER, BlockStateProperties.POWERED, BlockStateProperties.LIT, BlockStateProperties.BERRIES, BlockStateProperties.OPEN, BlockStateProperties.DELAY, BlockStateProperties.DISTANCE, BlockStateProperties.LAYERS, BlockStateProperties.PICKLES, BlockStateProperties.LEVEL, BlockStateProperties.LEVEL_HONEY, BlockStateProperties.LEVEL_CAULDRON, BlockStateProperties.DRIPSTONE_THICKNESS));
 	}
 
-	@SuppressWarnings("rawtypes")
 	public static List<BlockState> getShowcaseBlockStates(BlockPredicate predicate) {
 		try {
-			return CACHE.get(predicate, () -> {
-				Set<Block> blocks = getMatchedBlocks(predicate);
-				if (blocks.isEmpty()) {
-					return Collections.EMPTY_LIST;
-				}
-				List<BlockState> states = Lists.newArrayList();
-				BlockPredicateAccess access = (BlockPredicateAccess) predicate;
-				StatePropertiesPredicate propertiesPredicate = access.getProperties();
-
-				for (Block block : blocks) {
-					BlockState state = block.defaultBlockState();
-					Multimap<Property<?>, Comparable> propertyMap = ArrayListMultimap.create();
-					for (Property<? extends Comparable> property : block.getStateDefinition().getProperties()) {
-						String name = property.getName();
-						PropertyMatcher matcher = PropertiesPredicateHelper.findMatcher(propertiesPredicate, name);
-						if (matcher != null) {
-							for (Comparable object : property.getPossibleValues()) {
-								if (matcher.match(block.getStateDefinition(), state.setValue((Property) property, object))) {
-									propertyMap.put(property, object);
-								}
-							}
-						} else if (ITERABLE_PROPERTIES.contains(property)) {
-							propertyMap.putAll(property, property.getPossibleValues());
-						}
-					}
-					Stream<BlockState> stream = Stream.of(state);
-					for (Entry<Property<?>, Collection<Comparable>> e : propertyMap.asMap().entrySet()) {
-						stream = stream.flatMap($ -> {
-							return e.getValue().stream().map(v -> $.setValue((Property) e.getKey(), v));
-						});
-					}
-
-					states.addAll(stream.toList());
-				}
-				return states;
-			});
+			return CACHE.get(predicate, () -> getShowcaseBlockStates(predicate, ITERABLE_PROPERTIES));
 		} catch (ExecutionException e) {
 			return Collections.EMPTY_LIST;
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static List<BlockState> getShowcaseBlockStates(BlockPredicate predicate, Collection<Property<?>> iterableProperties) {
+		Set<Block> blocks = getMatchedBlocks(predicate);
+		if (blocks.isEmpty()) {
+			return Collections.EMPTY_LIST;
+		}
+		List<BlockState> states = Lists.newArrayList();
+		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
+		StatePropertiesPredicate propertiesPredicate = access.getProperties();
+
+		for (Block block : blocks) {
+			BlockState state = block.defaultBlockState();
+			Multimap<Property<?>, Comparable> propertyMap = ArrayListMultimap.create();
+			for (Property<? extends Comparable> property : block.getStateDefinition().getProperties()) {
+				String name = property.getName();
+				PropertyMatcher matcher = PropertiesPredicateHelper.findMatcher(propertiesPredicate, name);
+				if (matcher != null) {
+					for (Comparable object : property.getPossibleValues()) {
+						if (matcher.match(block.getStateDefinition(), state.setValue((Property) property, object))) {
+							propertyMap.put(property, object);
+						}
+					}
+				} else if (iterableProperties.contains(property)) {
+					propertyMap.putAll(property, property.getPossibleValues());
+				}
+			}
+			Stream<BlockState> stream = Stream.of(state);
+			for (Entry<Property<?>, Collection<Comparable>> e : propertyMap.asMap().entrySet()) {
+				stream = stream.flatMap($ -> {
+					return e.getValue().stream().map(v -> $.setValue((Property) e.getKey(), v));
+				});
+			}
+
+			states.addAll(stream.toList());
+		}
+		return states;
 	}
 
 	@SuppressWarnings("rawtypes")

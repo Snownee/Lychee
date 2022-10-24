@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -70,9 +72,10 @@ public class PlaceBlock extends PostAction {
 		pos = pos.offset(offset);
 		ServerLevel level = ctx.getServerLevel();
 		BlockState oldState = level.getBlockState(pos);
-		BlockPredicateAccess access = (BlockPredicateAccess) block;
-		Set<String> properties = ((StatePropertiesPredicateAccess) access.getProperties()).getProperties().stream().map($ -> $.getName()).collect(Collectors.toSet());
-		BlockState state = BlockPredicateHelper.anyBlockState(block);
+		BlockState state = getNewState(oldState);
+		if (state == null) {
+			return;
+		}
 		if (state.isAir()) {
 			destroyBlock(level, pos, false);
 			return;
@@ -80,21 +83,25 @@ public class PlaceBlock extends PostAction {
 		if (recipe instanceof BlockCrushingRecipe && !oldState.isAir()) {
 			level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(oldState));
 		}
-		for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
-			Property property = entry.getKey();
-			if (properties.contains(property.getName()) || !state.hasProperty(property))
-				continue;
-			state = state.setValue(property, (Comparable) entry.getValue());
-		}
-		if (state.hasProperty(BlockStateProperties.WATERLOGGED) && oldState.getFluidState().isSourceOfType(Fluids.WATER)) {
-			state = state.setValue(BlockStateProperties.WATERLOGGED, true);
+		BlockPredicateAccess access = (BlockPredicateAccess) block;
+		if (getType() == PostActionTypes.PLACE) {
+			Set<String> properties = ((StatePropertiesPredicateAccess) access.getProperties()).getProperties().stream().map($ -> $.getName()).collect(Collectors.toSet());
+			for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
+				Property property = entry.getKey();
+				if (properties.contains(property.getName()) || !state.hasProperty(property))
+					continue;
+				state = state.setValue(property, (Comparable) entry.getValue());
+			}
+			if (state.hasProperty(BlockStateProperties.WATERLOGGED) && oldState.getFluidState().isSourceOfType(Fluids.WATER)) {
+				state = state.setValue(BlockStateProperties.WATERLOGGED, true);
+			}
 		}
 		if (!level.setBlockAndUpdate(pos, state)) {
 			return;
 		}
 
 		NbtPredicate nbtPredicate = access.getNbt();
-		if (nbtPredicate != NbtPredicate.ANY) {
+		if (getType() == PostActionTypes.PLACE && nbtPredicate != NbtPredicate.ANY) {
 			BlockEntity blockentity = level.getBlockEntity(pos);
 			if (blockentity != null) {
 				if (blockentity.onlyOpCanSetNbt()) {
@@ -111,6 +118,11 @@ public class PlaceBlock extends PostAction {
 			}
 		}
 		level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
+	}
+
+	@Nullable
+	protected BlockState getNewState(BlockState oldState) {
+		return BlockPredicateHelper.anyBlockState(block);
 	}
 
 	private static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {
@@ -144,7 +156,7 @@ public class PlaceBlock extends PostAction {
 	@Override
 	public Component getDisplayName() {
 		BlockState state = BlockPredicateHelper.anyBlockState(block);
-		String key = LUtil.makeDescriptionId("postAction", getType().getRegistryName());
+		String key = LUtil.makeDescriptionId("postAction", PostActionTypes.PLACE.getRegistryName());
 		if (state.isAir()) {
 			return Component.translatable(key + ".consume");
 		}
