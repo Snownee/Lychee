@@ -29,6 +29,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
@@ -46,6 +47,9 @@ public class GuiGameElement {
 	}
 
 	public static GuiRenderBuilder of(BlockState state) {
+		if (state.getRenderShape() != RenderShape.MODEL && state.getFluidState().isEmpty()) {
+			return GuiGameElement.of(state.getBlock());
+		}
 		return new GuiBlockStateRenderBuilder(state);
 	}
 
@@ -253,6 +257,26 @@ public class GuiGameElement {
 			}
 
 			matrixStack.popPose();
+		}
+
+		@Override
+		public GuiRenderBuilder atLocal(double x, double y, double z) {
+			return this;
+		}
+
+		@Override
+		public GuiRenderBuilder rotate(double xRot, double yRot, double zRot) {
+			return this;
+		}
+
+		@Override
+		public GuiRenderBuilder rotateBlock(double xRot, double yRot, double zRot) {
+			return this;
+		}
+
+		@Override
+		public GuiRenderBuilder scale(double scale) {
+			return this;
 		}
 
 	}
