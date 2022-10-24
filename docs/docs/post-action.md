@@ -1,8 +1,8 @@
 # Post Action
 
-Post action is an action to be executed.
+Post-action is an action to be executed.
 
-Usually you can add post actions to a Lychee's recipe, and  they will be executed after the recipe is successfully matched.
+Usually, you can add post actions to a Lychee's recipe, and they will be executed after the recipe is successfully matched.
 
 ## Basic Format
 
@@ -116,7 +116,7 @@ Spawns experience orbs.
 
 ### Random (`random`)
 
-Randomly selects entries from an actions list to apply. Similar to loot table.
+Randomly selects entries from an action list to apply. Similar to loot table.
 
 !!! note "Format"
 
@@ -161,7 +161,7 @@ Randomly selects entries from an actions list to apply. Similar to loot table.
 
 ### Create Explosion (`explode`)
 
-Creates explosion at where the interaction occurs.
+Creates an explosion at where the interaction occurs.
 
 !!! note "Format"
 
@@ -178,7 +178,7 @@ Creates explosion at where the interaction occurs.
 
 ### Hurt Entity (`hurt`)
 
-Causes damage to the entity
+Causes damage to the entity.
 
 !!! note "Format"
 
@@ -218,33 +218,6 @@ Causes damage to the entity
 	}
 	```
 
-## Special Built-in Actions
-
-These following actions will prevent the default behavior of the recipe (such as consuming input item). The default behavior is explained in the recipes page.
-
-### Prevent Default Behavior (`prevent_default`)
-
-Prevents default behavior and do nothing.
-
-!!! note "Format"
-
-    | Name | Description | Type / Literal    |
-    | ---- | ----------- | ----------------- |
-    | type | type        | "prevent_default" |
-
-### Damage Input Item (`damage_item`)
-
-Damages input item.
-
-This action is not [repeatable](concepts.md#repeatability).
-
-!!! note "Format"
-
-    | Name   | Description       | Type / Literal |
-    | ------ | ----------------- | -------------- |
-    | type   | type              | "damage_item"  |
-    | damage | (optional) damage | int            |
-
 ### Set Falling Anvil Damage Chance (`anvil_damage_chance`)
 
 This action can only be used in the [Block Crushing](recipe.md#block-crushing) recipe. The default damage chance depends on the falling height.
@@ -268,3 +241,76 @@ This action only works for interaction recipes.
     | ---- | ----------- | ------------------- |
     | type | type        | "add_item_cooldown" |
     | s    | seconds     | number              |
+
+### Delay (`delay`)
+
+*Since 3.2*
+
+Wait for several seconds, then execute the following actions.
+
+??? note "Format"
+
+    | Name | Description | Type / Literal |
+    | ---- | ----------- | -------------- |
+    | type | type        | "delay"        |
+    | s    | seconds     | number         |
+
+!!! note
+
+	After the delay, some context will lose. For example, if the player leaves the game while delaying, you can't hurt the player after this delay.
+
+### Break (`break`)
+
+*Since 3.2*
+
+Stop executing the following actions.
+
+??? note "Format"
+
+    | Name | Description | Type / Literal |
+    | ---- | ----------- | -------------- |
+    | type | type        | "break"        |
+
+### Cycle State Property (`cycle_state_property`)
+
+*Since 3.2*
+
+Cycles a property's value in a block-state.
+
+??? note "Format"
+
+    | Name     | Description                              | Type / Literal                                    |
+    | -------- | ---------------------------------------- | ------------------------------------------------- |
+    | type     | type                                     | "cycle_state_property"                            |
+    | block    | only matched block-states will be cycled | [BlockPredicate](general-types.md#blockpredicate) |
+    | property | the property name                        | string                                            |
+    | offsetX  | (optional) offsets to location           | int                                               |
+    | offsetY  | (optional) offsets to location           | int                                               |
+    | offsetZ  | (optional) offsets to location           | int                                               |
+
+## Special Built-in Actions
+
+These following actions will prevent the default behavior of the recipe (such as consuming input item). The default behaviors are explained on the recipes page.
+
+### Prevent Default Behavior (`prevent_default`)
+
+Prevents default behavior and do nothing.
+
+!!! note "Format"
+
+    | Name | Description | Type / Literal    |
+    | ---- | ----------- | ----------------- |
+    | type | type        | "prevent_default" |
+
+### Damage Input Item (`damage_item`)
+
+Consumes the input item's durability.
+
+This action is not [repeatable](concepts.md#repeatability).
+
+!!! note "Format"
+
+    | Name   | Description       | Type / Literal |
+    | ------ | ----------------- | -------------- |
+    | type   | type              | "damage_item"  |
+    | damage | (optional) damage | int            |

@@ -2,7 +2,7 @@
 
 ## Ingredient
 
-An Ingredient is a predicate of ItemStack.
+An ingredient is a predicate of ItemStack.
 
 !!! note "Format"
 

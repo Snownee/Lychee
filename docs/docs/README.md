@@ -1,6 +1,6 @@
 # Preface
 
-Lychee is a mod allows you to define custom interactions using JSON recipes and datapack.
+Lychee is a mod that allows you to define custom interactions using JSON recipes and datapack.
 
 You can download Lychee on CurseForge:
 
@@ -20,7 +20,7 @@ Currently Lychee has support for the following recipe type (with full JEI/REI su
 
 ## Dependency
 
-Kiwi is an optional dependency to have some additional particles.
+Kiwi is an optional dependency to have some extra particles.
 
 ## Adding Recipes
 

@@ -65,7 +65,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 	}
 	```
 
-	Stripping an oak log with iron axe, you will have 50% chance to obtain a diamond:
+	Stripping an oak log with an iron axe, you will have 50% chance to obtain a diamond:
 
 	```json
 	{
@@ -389,3 +389,54 @@ Default behavior: Block drops items from loot table.
 !!! note
 
 	You can tag items with `lychee:explosives` to let them be shown as catalysts in JEI / REI.
+
+### Random Block Ticking
+
+*Since: 3.2*
+
+Event when a block is randomly ticked.
+
+Default behavior: Do the default ticking behavior.
+
+!!! note "Format"
+
+    | Name     | Description | Type / Literal                                    |
+    | -------- | ----------- | ------------------------------------------------- |
+    | type     | type        | "lychee:random_block_ticking"                     |
+    | block_in | the block   | [BlockPredicate](general-types.md#blockpredicate) |
+
+!!! note
+
+	This recipe type does not have JEI/REI integration.
+
+### Dripstone dripping
+
+*Since: 3.2*
+
+Event when a block is randomly ticked.
+
+Default behavior: Do the default ticking behavior.
+
+!!! note "Format"
+
+    | Name         | Description                                    | Type / Literal                                    |
+    | ------------ | ---------------------------------------------- | ------------------------------------------------- |
+    | type         | type                                           | "lychee:dripstone_dripping"                       |
+    | source_block | block that two blocks above the root dripstone | [BlockPredicate](general-types.md#blockpredicate) |
+    | target_block | block that being dripped                       | [BlockPredicate](general-types.md#blockpredicate) |
+
+??? example
+
+	```json
+	{
+		"type": "lychee:dripstone_dripping",
+		"source_block": "water",
+		"target_block": "sponge",
+		"post": [
+			{
+				"type": "place",
+				"block": "wet_sponge"
+			}
+		]
+	}
+	```
