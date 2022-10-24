@@ -64,6 +64,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		/* off */
 		return recipeTypes.stream()
 				.map($ -> ((MostUsedBlockProvider) $).getMostUsedBlock())
+				.filter($ -> !$.getFirst().isAir())
 				.max((a, b) -> a.getSecond() - b.getSecond())
 				.map(Pair::getFirst)
 				.orElse(Blocks.AIR.defaultBlockState());

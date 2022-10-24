@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -190,6 +191,8 @@ public class DripstoneRecipe extends LycheeRecipe<DripstoneContext> implements B
 		public void fromJson(DripstoneRecipe pRecipe, JsonObject pSerializedRecipe) {
 			pRecipe.sourceBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.get("source_block"));
 			pRecipe.targetBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.get("target_block"));
+			Preconditions.checkArgument(pRecipe.sourceBlock != BlockPredicate.ANY, "source_block can't be wildcard");
+			Preconditions.checkArgument(pRecipe.targetBlock != BlockPredicate.ANY, "target_block can't be wildcard");
 		}
 
 		@Override

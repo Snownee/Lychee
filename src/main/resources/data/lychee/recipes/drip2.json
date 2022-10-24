@@ -1,11 +1,28 @@
 {
   "type": "lychee:dripstone_dripping",
+  "comment": "Test",
   "source_block": "redstone_block",
   "target_block": "sponge",
   "post": [
     {
       "type": "place",
       "block": "calcite"
+    },
+    {
+      "type": "place",
+      "block": "red_shulker_box"
+    },
+    {
+      "type": "place",
+      "block": "chest"
+    },
+    {
+      "type": "place",
+      "block": "oak_sign"
+    },
+    {
+      "type": "place",
+      "block": "red_banner"
     }
   ]
 }

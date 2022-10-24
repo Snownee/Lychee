@@ -7,6 +7,8 @@
 "recipeType.lychee.lightning_channeling": "Lightning Channeling",
 "recipeType.lychee.item_exploding": "Item Exploding",
 "recipeType.lychee.block_exploding": "Block Exploding",
+"recipeType.lychee.random_block_ticking": "Random Block Ticking",
+"recipeType.lychee.dripstone_dripping": "Dripstone Dripping",
 "postAction.lychee.place": "Place %s",
 "postAction.lychee.place.consume": "Consume Block",
 "postAction.lychee.drop_xp": "{0} Xp",

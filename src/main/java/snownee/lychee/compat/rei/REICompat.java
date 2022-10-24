@@ -40,6 +40,7 @@ import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.compat.rei.category.BlockCrushingRecipeCategory;
 import snownee.lychee.compat.rei.category.BlockExplodingRecipeCategory;
 import snownee.lychee.compat.rei.category.BlockInteractionRecipeCategory;
+import snownee.lychee.compat.rei.category.DripstoneRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemBurningRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemExplodingRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemInsideRecipeCategory;
@@ -47,6 +48,7 @@ import snownee.lychee.compat.rei.category.ItemShapelessRecipeCategory;
 import snownee.lychee.compat.rei.display.BlockCrushingDisplay;
 import snownee.lychee.compat.rei.display.BlockExplodingDisplay;
 import snownee.lychee.compat.rei.display.BlockInteractionDisplay;
+import snownee.lychee.compat.rei.display.DripstoneRecipeDisplay;
 import snownee.lychee.compat.rei.display.ItemBurningDisplay;
 import snownee.lychee.compat.rei.display.ItemInsideDisplay;
 import snownee.lychee.compat.rei.display.ItemShapelessDisplay;
@@ -70,6 +72,7 @@ public class REICompat implements REIClientPlugin {
 	@SuppressWarnings("rawtypes")
 	public static final CategoryIdentifier<ItemShapelessDisplay> ITEM_EXPLODING = CategoryIdentifier.of(RecipeTypes.ITEM_EXPLODING.id);
 	public static final CategoryIdentifier<BlockExplodingDisplay> BLOCK_EXPLODING = CategoryIdentifier.of(RecipeTypes.BLOCK_EXPLODING.id);
+	public static final CategoryIdentifier<DripstoneRecipeDisplay> DRIPSTONE_DRIPPING = CategoryIdentifier.of(RecipeTypes.DRIPSTONE_DRIPPING.id);
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -82,6 +85,7 @@ public class REICompat implements REIClientPlugin {
 		registration.add(new ItemShapelessRecipeCategory<>(RecipeTypes.LIGHTNING_CHANNELING, EntryStacks.of(Items.LIGHTNING_ROD)));
 		registration.add(new ItemExplodingRecipeCategory(RecipeTypes.ITEM_EXPLODING, EntryStacks.of(Items.TNT)));
 		registration.add(new BlockExplodingRecipeCategory(RecipeTypes.BLOCK_EXPLODING, GuiGameElement.of(Items.TNT)));
+		registration.add(new DripstoneRecipeCategory(RecipeTypes.DRIPSTONE_DRIPPING));
 
 		for (ItemStack stack : RecipeTypes.BLOCK_CRUSHING.blockKeysToItems()) {
 			registration.addWorkstations(BLOCK_CRUSHING, EntryStacks.of(stack));
@@ -95,6 +99,7 @@ public class REICompat implements REIClientPlugin {
 			EntryStack<ItemStack> stack = EntryStacks.of(item);
 			registration.addWorkstations(BLOCK_EXPLODING, stack);
 		}
+		registration.addWorkstations(DRIPSTONE_DRIPPING, EntryStacks.of(Items.POINTED_DRIPSTONE));
 	}
 
 	@Override
@@ -107,6 +112,7 @@ public class REICompat implements REIClientPlugin {
 		registerFiller(registration, RecipeTypes.LIGHTNING_CHANNELING, ItemShapelessDisplay::new);
 		registerFiller(registration, RecipeTypes.ITEM_EXPLODING, ItemShapelessDisplay::new);
 		registerFiller(registration, RecipeTypes.BLOCK_EXPLODING, BlockExplodingDisplay::new);
+		registerFiller(registration, RecipeTypes.DRIPSTONE_DRIPPING, DripstoneRecipeDisplay::new);
 
 		LUtil.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
 			return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();

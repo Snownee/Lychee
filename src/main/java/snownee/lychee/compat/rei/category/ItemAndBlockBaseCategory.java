@@ -58,6 +58,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		/* off */
 		return recipeTypes.stream()
 				.map($ -> ((MostUsedBlockProvider) $).getMostUsedBlock())
+				.filter($ -> !$.getFirst().isAir())
 				.max((a, b) -> a.getSecond() - b.getSecond())
 				.map(Pair::getFirst)
 				.orElse(Blocks.AIR.defaultBlockState());
@@ -127,7 +128,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 			ingredientGroup(widgets, startPoint, recipe, 12, 21, preventDefault);
 		}
 
-		actionGroup(widgets, startPoint, recipe, bounds.width - startPoint.x + bounds.x - 35, y);
+		actionGroup(widgets, startPoint, recipe, getRealWidth() - 24, y);
 
 		ReactiveWidget reactive;
 		Component description = getMethodDescription(recipe);
