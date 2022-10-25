@@ -97,11 +97,25 @@ Executes a command.
 
 !!! note "Format"
 
-    | Name    | Description                            | Type / Literal |
-    | ------- | -------------------------------------- | -------------- |
-    | type    | type                                   | "execute"      |
-    | command | the command to run                     | string         |
-    | hide    | (optional) hide this action in JEI/REI | boolean        |
+    | Name    | Description                                              | Type / Literal |
+    | ------- | -------------------------------------------------------- | -------------- |
+    | type    | type                                                     | "execute"      |
+    | command | the command to run                                       | string         |
+    | hide    | (optional) hide this action in JEI/REI. false by default | boolean        |
+
+??? example
+
+	Spawns particles:
+
+	```json
+	{
+		"type": "execute",
+		"command": "particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20",
+		"hide": true
+	}
+	```
+
+	For how to use `particle` command, please read the [wiki](https://minecraft.fandom.com/wiki/Commands/particle).
 
 ### Drop Experience (`drop_xp`)
 
@@ -244,7 +258,7 @@ This action only works for interaction recipes.
 
 ### Delay (`delay`)
 
-*Since 3.2*
+*Since: 3.2*
 
 Wait for several seconds, then execute the following actions.
 
@@ -261,7 +275,7 @@ Wait for several seconds, then execute the following actions.
 
 ### Break (`break`)
 
-*Since 3.2*
+*Since: 3.2*
 
 Stop executing the following actions.
 
@@ -273,7 +287,7 @@ Stop executing the following actions.
 
 ### Cycle State Property (`cycle_state_property`)
 
-*Since 3.2*
+*Since: 3.2*
 
 Cycles a property's value in a block-state.
 
