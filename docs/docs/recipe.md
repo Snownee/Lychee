@@ -369,7 +369,7 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 
 !!! note
 
-	You can tag items with `lychee:explosives` to let them be shown in JEI / REI.
+	You can tag items with `lychee:item_exploding_catalysts` to let them be shown in JEI / REI.
 
 ### Block Exploding
 
@@ -388,7 +388,7 @@ Default behavior: Block drops items from loot table.
 
 !!! note
 
-	You can tag items with `lychee:explosives` to let them be shown as catalysts in JEI / REI.
+	You can tag items with `lychee:block_exploding_catalysts` to let them be shown as catalysts in JEI / REI.
 
 ### Random Block Ticking
 
