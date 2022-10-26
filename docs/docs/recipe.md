@@ -396,6 +396,8 @@ Default behavior: Block drops items from loot table.
 
 Event when a block is randomly ticked.
 
+This recipe type is not [repeatable](concepts.md#repeatability).
+
 Default behavior: Do the default ticking behavior.
 
 !!! note "Format"
@@ -407,13 +409,15 @@ Default behavior: Do the default ticking behavior.
 
 !!! note
 
-	This recipe type does not have JEI/REI integration.
+	This recipe type does not have JEI / REI integration.
 
 ### Dripstone dripping
 
 *Since: 3.2*
 
 Event when a block is randomly ticked.
+
+This recipe type is not [repeatable](concepts.md#repeatability).
 
 Default behavior: Do the default ticking behavior.
 
