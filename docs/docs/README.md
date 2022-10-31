@@ -31,3 +31,10 @@ Or you can add recipes using [CraftTweaker](https://www.curseforge.com/minecraft
 ## Contact
 
 Having trouble creating recipe, or got an idea for Lychee? You can [join our Discord](http://discord.snownee.com/), or [create a new issue in Lychee's GitHub repository](https://github.com/Snownee/Lychee/issues).
+
+## Frequently Asked Questions
+
+### Why is my recipe not working?
+
+1. Make sure your recipe file is a valid JSON. You can use [this site](https://jsonlint.com/) to validate your JSON.
+2. Check if your recipe is shown in JEI / REI. If not, search the error output in logs for some helpful information.

@@ -94,6 +94,14 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 	}
 	```
 
+!!! note
+
+	Use `"item": "air"` to require interaction with empty hand.
+
+!!! warning
+
+	It is not recommended to use recipe contextual conditions in it, because some contextual conditions are not supported to run on the client side (like `execute`).
+
 ### Click on a Block with Item
 
 Event when a player click on a block with item.
@@ -109,6 +117,14 @@ This recipe type is not [repeatable](concepts.md#repeatability).
     | type     | type                      | "lychee:block_clicking"                           |
     | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient)         |
     | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate) |
+
+!!! note
+
+	Use `"item": "air"` to require interaction with empty hand.
+
+!!! warning
+
+	It is not recommended to use recipe contextual conditions in it, because some contextual conditions are not supported to run on the client side (like `execute`).
 
 ### Item Entity Burning
 
