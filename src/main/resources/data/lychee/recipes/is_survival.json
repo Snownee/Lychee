@@ -1,0 +1,19 @@
+{
+  "type": "lychee:block_interacting",
+  "item_in": {
+    "item": "air"
+  },
+  "block_in": "sand",
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    }
+  ],
+  "contextual": [
+    {
+      "type": "execute",
+      "command": "execute if entity @s[predicate=lychee:is_survival]"
+    }
+  ]
+}

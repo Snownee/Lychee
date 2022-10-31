@@ -116,6 +116,8 @@ java {
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude '/data/lychee/recipes'
+    exclude '/data/lychee/predicates'
+    
     exclude '**/*.bat'
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
