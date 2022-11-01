@@ -21,6 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -77,7 +78,7 @@ public class PlaceBlock extends PostAction {
 			return;
 		}
 		if (recipe instanceof BlockCrushingRecipe && !oldState.isAir()) {
-			level.levelEvent(2001, pos, Block.getId(oldState));
+			level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(oldState));
 		}
 		for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
 			Property property = entry.getKey();
@@ -120,7 +121,7 @@ public class PlaceBlock extends PostAction {
 		} else {
 			FluidState fluidstate = level.getFluidState(pos);
 			if (!(blockstate.getBlock() instanceof BaseFireBlock)) {
-				level.levelEvent(2001, pos, Block.getId(blockstate));
+				level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(blockstate));
 			}
 
 			if (drop) {

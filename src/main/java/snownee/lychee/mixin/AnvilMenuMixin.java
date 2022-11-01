@@ -15,6 +15,7 @@ import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.ItemCombinerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
@@ -101,7 +102,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	private void lychee_preventDefault(Player player, ItemStack stack, CallbackInfo ci) {
 		if (lychee$preventDefault) {
 			lychee$preventDefault = false;
-			access.execute((level, pos) -> level.levelEvent(1030, pos, 0));
+			access.execute((level, pos) -> level.levelEvent(LevelEvent.SOUND_ANVIL_USED, pos, 0));
 			ci.cancel();
 		}
 	}
