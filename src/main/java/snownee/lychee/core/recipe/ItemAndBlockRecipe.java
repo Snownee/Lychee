@@ -1,5 +1,6 @@
 package snownee.lychee.core.recipe;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import com.google.gson.JsonElement;
@@ -38,6 +39,11 @@ public abstract class ItemAndBlockRecipe<C extends LycheeContext> extends Lychee
 	}
 
 	@Override
+	public NonNullList<Ingredient> getIngredients() {
+		return NonNullList.of(Ingredient.EMPTY, input);
+	}
+
+	@Override
 	public boolean matches(LycheeContext ctx, Level pLevel) {
 		ItemStack stack;
 		Entity thisEntity = ctx.getParam(LootContextParams.THIS_ENTITY);
@@ -67,11 +73,6 @@ public abstract class ItemAndBlockRecipe<C extends LycheeContext> extends Lychee
 		return getId().compareTo(that.getId());
 	}
 
-	@Override
-	public NonNullList<Ingredient> getIngredients() {
-		return NonNullList.of(Ingredient.EMPTY, input);
-	}
-
 	public static class Serializer<T extends ItemAndBlockRecipe<?>> extends LycheeRecipe.Serializer<T> {
 
 		public Serializer(Function<ResourceLocation, T> factory) {
@@ -81,7 +82,7 @@ public abstract class ItemAndBlockRecipe<C extends LycheeContext> extends Lychee
 		@Override
 		public void fromJson(T pRecipe, JsonObject pSerializedRecipe) {
 			JsonElement element = pSerializedRecipe.get("item_in");
-			if (element instanceof JsonObject object && !object.has("type") && object.has("item") && object.get("item").getAsString().equals("air")) {
+			if (element instanceof JsonObject object && !object.has("type") && object.has("item") && "minecraft:air".equals(Objects.toString(ResourceLocation.tryParse(object.get("item").getAsString())))) {
 				pRecipe.input = Ingredient.of(ItemStack.EMPTY);
 			} else {
 				pRecipe.input = Ingredient.fromJson(element);
