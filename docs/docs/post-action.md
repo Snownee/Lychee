@@ -249,7 +249,7 @@ Add item cooldown to the item in player's hand, just like when you use ender pea
 
 This action only works for interaction recipes.
 
-??? note "Format"
+!!! note "Format"
 
     | Name | Description | Type / Literal      |
     | ---- | ----------- | ------------------- |
@@ -262,7 +262,7 @@ This action only works for interaction recipes.
 
 Wait for several seconds, then execute the following actions.
 
-??? note "Format"
+!!! note "Format"
 
     | Name | Description | Type / Literal |
     | ---- | ----------- | -------------- |
@@ -279,7 +279,7 @@ Wait for several seconds, then execute the following actions.
 
 Stop executing the following actions.
 
-??? note "Format"
+!!! note "Format"
 
     | Name | Description | Type / Literal |
     | ---- | ----------- | -------------- |
@@ -291,7 +291,7 @@ Stop executing the following actions.
 
 Cycles a property's value in a block-state.
 
-??? note "Format"
+!!! note "Format"
 
     | Name     | Description                              | Type / Literal                                    |
     | -------- | ---------------------------------------- | ------------------------------------------------- |
