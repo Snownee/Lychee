@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
@@ -42,7 +43,11 @@ public class RandomBlockTickingRecipeType extends BlockKeyRecipeType<LycheeConte
 			}
 		}
 		if (Lychee.hasKiwi) {
-			for (var level : Platform.getServer().getAllLevels()) {
+			MinecraftServer server = Platform.getServer();
+			if (server == null) {
+				return;
+			}
+			for (var level : server.getAllLevels()) {
 				for (var chunkHolder : ((ChunkMapAccess) level.getChunkSource().chunkMap).callGetChunks()) {
 					LevelChunk chunk = chunkHolder.getTickingChunk();
 					if (chunk != null) {

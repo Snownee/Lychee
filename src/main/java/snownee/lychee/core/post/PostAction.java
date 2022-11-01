@@ -3,6 +3,8 @@ package snownee.lychee.core.post;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -29,13 +31,13 @@ public abstract class PostAction extends ContextualHolder {
 	/**
 	 * @return true if do default behavior
 	 */
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		for (int i = 0; i < times; i++) {
 			apply(recipe, ctx, times);
 		}
 	}
 
-	protected abstract void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times);
+	protected abstract void apply(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times);
 
 	public List<ItemStack> getOutputItems() {
 		return List.of();
@@ -101,8 +103,10 @@ public abstract class PostAction extends ContextualHolder {
 
 	public final JsonObject toJson() {
 		JsonObject o = new JsonObject();
-		o.add("contextual", rawConditionsToJson());
 		o.addProperty("type", getType().getRegistryName().toString());
+		if (!getConditions().isEmpty()) {
+			o.add("contextual", rawConditionsToJson());
+		}
 		((PostActionType<PostAction>) getType()).toJson(this, o);
 		return o;
 	}

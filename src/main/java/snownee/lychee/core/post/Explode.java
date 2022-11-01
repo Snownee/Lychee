@@ -16,7 +16,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
@@ -53,9 +52,6 @@ public class Explode extends PostAction {
 	@Override
 	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
-		if (pos == null) {
-			pos = Vec3.atCenterOf(ctx.getParam(LycheeLootContextParams.BLOCK_POS));
-		}
 		pos = pos.add(offset.getX(), offset.getY(), offset.getZ());
 		float r = Math.min(radius + step * (Mth.sqrt(times) - 1), radius * 4);
 		ctx.getLevel().explode(ctx.getParamOrNull(LootContextParams.THIS_ENTITY), null, null, pos.x, pos.y, pos.z, r, fire, blockInteraction);
@@ -70,9 +66,9 @@ public class Explode extends PostAction {
 	@Override
 	public Component getDisplayName() {
 		String s = switch (blockInteraction) {
-			case NONE -> "none";
-			case BREAK -> "break";
-			case DESTROY -> "destroy";
+		case NONE -> "none";
+		case BREAK -> "break";
+		case DESTROY -> "destroy";
 		};
 		return Component.translatable(LUtil.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(getType())) + "." + s);
 	}
@@ -86,10 +82,10 @@ public class Explode extends PostAction {
 			boolean fire = GsonHelper.getAsBoolean(o, "fire", false);
 			String s = GsonHelper.getAsString(o, "block_interaction", "break");
 			BlockInteraction blockInteraction = switch (s) {
-				case "none" -> BlockInteraction.NONE;
-				case "break" -> BlockInteraction.BREAK;
-				case "destroy" -> BlockInteraction.DESTROY;
-				default -> throw new IllegalArgumentException("Unexpected value: " + s);
+			case "none" -> BlockInteraction.NONE;
+			case "break" -> BlockInteraction.BREAK;
+			case "destroy" -> BlockInteraction.DESTROY;
+			default -> throw new IllegalArgumentException("Unexpected value: " + s);
 			};
 			float radius = GsonHelper.getAsFloat(o, "radius", 4);
 			float radiusStep = GsonHelper.getAsFloat(o, "radius_step", 0.5F);

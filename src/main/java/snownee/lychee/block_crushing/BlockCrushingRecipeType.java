@@ -85,6 +85,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 							for (int i = 0; i < ctx.match.length; i++) {
 								if (ctx.match[i] > 0) {
 									ItemEntity itemEntity = ctx.filteredItems.get(i);
+									// ctx.getServerLevel().sendParticles(new ItemParticleOption(ParticleTypes.ITEM, itemEntity.getItem()), itemEntity.position().x, itemEntity.position().y, itemEntity.position().z, 9, .1, .05, .1, .5);
 									if (Lychee.hasKiwi) {
 										SCustomLevelEventPacket.sendItemParticles(itemEntity.getItem(), level, itemEntity.position());
 									}

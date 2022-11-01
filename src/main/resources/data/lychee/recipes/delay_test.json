@@ -24,6 +24,38 @@
     {
       "type": "drop_item",
       "item": "diamond"
+    },
+    {
+      "type": "delay",
+      "s": 1
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "delay",
+      "s": 1
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "delay",
+      "s": 1
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "delay",
+      "s": 1
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
     }
   ]
 }

@@ -19,7 +19,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.PostActionTypes;
-import snownee.lychee.RecipeTypes;
+import snownee.lychee.block_crushing.BlockCrushingRecipe;
 import snownee.lychee.block_exploding.BlockExplodingContext;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
@@ -48,7 +48,7 @@ public class DropItem extends PostAction {
 	@Override
 	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
-		if (recipe.getType() == RecipeTypes.BLOCK_CRUSHING) {
+		if (recipe instanceof BlockCrushingRecipe) {
 			BlockState landingBlock = ctx.getParam(LootContextParams.BLOCK_STATE);
 			if (landingBlock.is(LycheeTags.EXTEND_BOX)) {
 				pos = Vec3.atCenterOf(ctx.getParam(LycheeLootContextParams.BLOCK_POS));
