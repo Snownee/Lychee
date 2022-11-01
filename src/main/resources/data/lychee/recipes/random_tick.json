@@ -1,0 +1,10 @@
+{
+  "type": "lychee:random_block_ticking",
+  "block_in": "diamond_block",
+  "post": [
+    {
+      "type": "place",
+      "block": "dirt"
+    }
+  ]
+}

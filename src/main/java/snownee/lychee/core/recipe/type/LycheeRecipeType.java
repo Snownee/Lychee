@@ -30,7 +30,7 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 	public final ResourceLocation id;
 	public final Class<? extends T> clazz;
 	public final LootContextParamSet contextParamSet;
-	private boolean empty;
+	private boolean empty = true;
 	private boolean requiresClient;
 	protected List<T> recipes;
 	public boolean compactInputs;

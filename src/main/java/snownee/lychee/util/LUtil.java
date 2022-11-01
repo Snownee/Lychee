@@ -247,4 +247,9 @@ public class LUtil {
 		}
 		return offset;
 	}
+
+	public static boolean isPhysicalClient() {
+		return FMLEnvironment.dist.isClient();
+	}
+
 }

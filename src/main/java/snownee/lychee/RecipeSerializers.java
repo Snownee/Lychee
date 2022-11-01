@@ -14,6 +14,7 @@ import snownee.lychee.item_burning.ItemBurningRecipe;
 import snownee.lychee.item_exploding.ItemExplodingRecipe;
 import snownee.lychee.item_inside.ItemInsideRecipe;
 import snownee.lychee.lightning_channeling.LightningChannelingRecipe;
+import snownee.lychee.random_block_ticking.RandomBlockTickingRecipe;
 
 public final class RecipeSerializers {
 
@@ -29,6 +30,7 @@ public final class RecipeSerializers {
 	public static final LycheeRecipe.Serializer<LightningChannelingRecipe> LIGHTNING_CHANNELING = register("lightning_channeling", new ItemShapelessRecipe.Serializer<>(LightningChannelingRecipe::new));
 	public static final LycheeRecipe.Serializer<ItemExplodingRecipe> ITEM_EXPLODING = register("item_exploding", new ItemShapelessRecipe.Serializer<>(ItemExplodingRecipe::new));
 	public static final LycheeRecipe.Serializer<BlockExplodingRecipe> BLOCK_EXPLODING = register("block_exploding", new BlockExplodingRecipe.Serializer());
+	public static final LycheeRecipe.Serializer<RandomBlockTickingRecipe> RANDOM_BLOCK_TICKING = register("random_block_ticking", new RandomBlockTickingRecipe.Serializer());
 
 	public static <T extends LycheeRecipe.Serializer<?>> T register(String name, T t) {
 		ForgeRegistries.RECIPE_SERIALIZERS.register(new ResourceLocation(Lychee.ID, name), t);

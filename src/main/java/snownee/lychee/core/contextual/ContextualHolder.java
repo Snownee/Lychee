@@ -21,12 +21,14 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.InteractionResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.random_block_ticking.RandomBlockTickingRecipe;
 import snownee.lychee.util.LUtil;
 
-public abstract class ContextualHolder {
+public class ContextualHolder {
 
 	private List<ContextualCondition> conditions = Collections.EMPTY_LIST;
 	@Nullable
@@ -131,7 +133,12 @@ public abstract class ContextualHolder {
 	}
 
 	public int checkConditions(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+		boolean first = true;
 		for (ContextualCondition condition : conditions) {
+			if (first && condition.getType() == ContextualConditionTypes.CHANCE && getClass() == RandomBlockTickingRecipe.class) {
+				continue;
+			}
+			first = false;
 			times = condition.test(recipe, ctx, times);
 			if (times == 0) {
 				break;
