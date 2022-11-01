@@ -24,6 +24,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
+import snownee.lychee.core.ActionStatus.State;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
@@ -53,13 +54,15 @@ public class RandomSelect extends PostAction {
 	}
 
 	@Override
-	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		times *= IntBoundsHelper.random(rolls, ctx.getRandom());
 		if (times == 0) {
-			return true;
+			return;
 		}
 		if (entries.length == 1) {
-			return entries[0].doApply(recipe, ctx, entries[0].checkConditions(recipe, ctx, times));
+			int t = entries[0].checkConditions(recipe, ctx, times);
+			entries[0].doApply(recipe, ctx, t);
+			return;
 		}
 		List<PostAction> validActions = Lists.newArrayList();
 		int[] validWeights = new int[entries.length];
@@ -73,19 +76,20 @@ public class RandomSelect extends PostAction {
 			}
 		}
 		if (validActions.isEmpty()) {
-			return true;
+			return;
 		}
 		int[] childTimes = new int[validActions.size()];
 		for (int i = 0; i < times; i++) {
 			++childTimes[getRandomEntry(ctx.getRandom(), validWeights, totalWeights)];
 		}
-		boolean doDefault = true;
 		for (int i = 0; i < validActions.size(); i++) {
 			if (childTimes[i] > 0) {
-				doDefault &= validActions.get(i).doApply(recipe, ctx, childTimes[i]);
+				validActions.get(i).doApply(recipe, ctx, childTimes[i]);
+				if (ctx.status.state != State.RUNNING) {
+					return;
+				}
 			}
 		}
-		return doDefault;
 	}
 
 	private int getRandomEntry(RandomSource random, int[] weights, int totalWeights) {

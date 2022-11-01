@@ -81,7 +81,6 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 			int times = $.getRandomRepeats(entity.getItem().getCount(), ctx);
 			$.applyPostActions(ctx, times);
 			entity.getItem().shrink(times);
-
 		});
 	}
 

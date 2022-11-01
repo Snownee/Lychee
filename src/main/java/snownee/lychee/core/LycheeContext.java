@@ -27,6 +27,7 @@ public class LycheeContext extends EmptyContainer {
 	private final Map<LootContextParam<?>, Object> params;
 	private final Level level;
 	private LootContext cachedLootContext;
+	public final ActionStatus status = new ActionStatus();
 
 	protected LycheeContext(RandomSource pRandom, Level level, Map<LootContextParam<?>, Object> pParams) {
 		random = pRandom;

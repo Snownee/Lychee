@@ -32,9 +32,8 @@ public class DropXp extends PostAction {
 	}
 
 	@Override
-	public boolean doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		apply(recipe, ctx, times);
-		return true;
 	}
 
 	@Override

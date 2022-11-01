@@ -32,9 +32,9 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	@Shadow
 	private DataSlot cost;
 
-	private AnvilCraftingRecipe lycheeRecipe;
-	private AnvilContext lycheeCtx;
-	private boolean lycheePreventDefault;
+	private AnvilCraftingRecipe lychee$recipe;
+	private AnvilContext lychee$ctx;
+	private boolean lychee$preventDefault;
 
 	public AnvilMenuMixin(MenuType<?> p_39773_, int p_39774_, Inventory p_39775_, ContainerLevelAccess p_39776_) {
 		super(p_39773_, p_39774_, p_39775_, p_39776_);
@@ -42,8 +42,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
 	@Inject(at = @At("HEAD"), method = "createResult", cancellable = true)
 	private void lychee_createResult(CallbackInfo ci) {
-		lycheeRecipe = null;
-		lycheeCtx = null;
+		lychee$recipe = null;
+		lychee$ctx = null;
 		if (RecipeTypes.ANVIL_CRAFTING.isEmpty()) {
 			return;
 		}
@@ -67,8 +67,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 				resultSlots.setItem(0, ItemStack.EMPTY);
 				cost.set(0);
 			} else {
-				lycheeRecipe = $;
-				lycheeCtx = ctx;
+				lychee$recipe = $;
+				lychee$ctx = ctx;
 				resultSlots.setItem(0, output);
 				if (player.isCreative() || left.getCount() == 1) {
 					cost.set(ctx.levelCost);
@@ -85,10 +85,11 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
 	@Inject(at = @At("HEAD"), method = "onTake")
 	private void lychee_onTake(Player player, ItemStack stack, CallbackInfo ci) {
-		if (lycheeRecipe == null) {
-			lycheePreventDefault = false;
+		if (lychee$recipe == null) {
+			lychee$preventDefault = false;
 		} else {
-			lycheePreventDefault = !lycheeRecipe.applyPostActions(lycheeCtx, 1);
+			lychee$recipe.applyPostActions(lychee$ctx, 1);
+			lychee$preventDefault = !lychee$ctx.status.doDefault;
 		}
 	}
 
@@ -98,8 +99,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 			), method = "onTake", cancellable = true
 	)
 	private void lychee_preventDefault(Player player, ItemStack stack, CallbackInfo ci) {
-		if (lycheePreventDefault) {
-			lycheePreventDefault = false;
+		if (lychee$preventDefault) {
+			lychee$preventDefault = false;
 			access.execute((level, pos) -> level.levelEvent(1030, pos, 0));
 			ci.cancel();
 		}
