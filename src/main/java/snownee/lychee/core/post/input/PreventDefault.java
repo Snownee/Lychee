@@ -11,7 +11,7 @@ import snownee.lychee.core.recipe.LycheeRecipe;
 
 public class PreventDefault extends PostAction {
 
-	public static final PreventDefault INSTANCE = new PreventDefault();
+	public static final PreventDefault CLIENT_DUMMY = new PreventDefault();
 
 	@Override
 	public PostActionType<?> getType() {
@@ -36,7 +36,7 @@ public class PreventDefault extends PostAction {
 
 		@Override
 		public PreventDefault fromJson(JsonObject o) {
-			return INSTANCE;
+			return new PreventDefault();
 		}
 
 		@Override
@@ -45,7 +45,7 @@ public class PreventDefault extends PostAction {
 
 		@Override
 		public PreventDefault fromNetwork(FriendlyByteBuf buf) {
-			return INSTANCE;
+			return CLIENT_DUMMY;
 		}
 
 		@Override
