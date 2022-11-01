@@ -91,7 +91,8 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	public void applyPostActions(LycheeContext ctx, int times) {
 		if (!ctx.getLevel().isClientSide) {
 			ctx.runtime.reset();
-			ctx.runtime.applySequence(actions, this, ctx, times);
+			ctx.runtime.enqueue(actions, times);
+			ctx.runtime.run(this, ctx);
 		}
 	}
 

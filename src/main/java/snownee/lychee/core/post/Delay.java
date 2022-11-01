@@ -3,12 +3,12 @@ package snownee.lychee.core.post;
 import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Marker;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.PostActionTypes;
+import snownee.lychee.core.ActionRuntime.State;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
 
@@ -33,15 +33,21 @@ public class Delay extends PostAction {
 
 	@Override
 	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		makeDelayedActions(recipe.getId(), ctx);
+		if (ctx.runtime.marker == null) {
+			makeMarker(recipe, ctx);
+		}
+		ctx.runtime.marker.lychee$addDelay((int) (seconds * 20));
+		ctx.runtime.state = State.PAUSED;
 	}
 
-	public static void makeDelayedActions(ResourceLocation recipeId, LycheeContext ctx) {
+	public static void makeMarker(LycheeRecipe<?> recipe, LycheeContext ctx) {
 		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
 		Marker marker = EntityType.MARKER.create(ctx.getLevel());
 		marker.setPos(pos);
+		ctx.getLevel().addFreshEntity(marker);
 		LycheeMarker lycheeMarker = (LycheeMarker) marker;
-		lycheeMarker.lychee$setContext(recipeId, ctx);
+		lycheeMarker.lychee$setContext(recipe, ctx);
+		ctx.runtime.marker = lycheeMarker;
 	}
 
 	@Override
@@ -53,12 +59,12 @@ public class Delay extends PostAction {
 
 		@Override
 		public Delay fromJson(JsonObject o) {
-			return new Delay(o.get("seconds").getAsFloat());
+			return new Delay(o.get("s").getAsFloat());
 		}
 
 		@Override
 		public void toJson(Delay action, JsonObject o) {
-			o.addProperty("seconds", action.seconds);
+			o.addProperty("s", action.seconds);
 		}
 
 		@Override
@@ -73,9 +79,15 @@ public class Delay extends PostAction {
 	}
 
 	public interface LycheeMarker {
-		void lychee$setContext(ResourceLocation recipeId, LycheeContext ctx);
+		void lychee$setContext(LycheeRecipe<?> recipe, LycheeContext ctx);
+
+		void lychee$addDelay(int delay);
 
 		LycheeContext lychee$getContext();
+
+		default Marker getEntity() {
+			return (Marker) this;
+		}
 	}
 
 }

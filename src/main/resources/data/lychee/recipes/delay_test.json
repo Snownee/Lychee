@@ -1,0 +1,29 @@
+{
+  "type": "lychee:block_interacting",
+  "item_in": {
+    "item": "diamond"
+  },
+  "block_in": "redstone_block",
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "delay",
+      "s": 1
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "delay",
+      "s": 1
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    }
+  ]
+}
