@@ -132,6 +132,15 @@ public class ContextualHolder {
 		}
 	}
 
+	public JsonElement rawConditionsToJson() {
+		if (conditions.size() == 1) {
+			return conditions.get(0).toJson();
+		}
+		JsonArray array = new JsonArray();
+		conditions.forEach($ -> array.add($.toJson()));
+		return array;
+	}
+
 	public int checkConditions(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		boolean first = true;
 		for (ContextualCondition condition : conditions) {

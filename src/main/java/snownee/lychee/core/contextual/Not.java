@@ -64,6 +64,11 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 		}
 
 		@Override
+		public void toJson(Not condition, JsonObject o) {
+			o.add("contextual", condition.toJson());
+		}
+
+		@Override
 		public Not fromNetwork(FriendlyByteBuf buf) {
 			ContextualConditionType<?> type = LUtil.readRegistryId(LycheeRegistries.CONTEXTUAL, buf);
 			return new Not(type.fromNetwork(buf));

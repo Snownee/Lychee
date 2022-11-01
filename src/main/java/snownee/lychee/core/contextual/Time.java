@@ -67,6 +67,14 @@ public record Time(Ints value, @Nullable Long period) implements ContextualCondi
 		}
 
 		@Override
+		public void toJson(Time condition, JsonObject o) {
+			if (condition.period() != null) {
+				o.addProperty("period", condition.period());
+			}
+			o.add("value", condition.value().serializeToJson());
+		}
+
+		@Override
 		public Time fromNetwork(FriendlyByteBuf buf) {
 			Ints range = IntBoundsHelper.fromNetwork(buf);
 			Long period = buf.readLong();

@@ -80,7 +80,7 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 							}
 						}
 						match.get().applyPostActions(ctx, times);
-						if (ctx.status.doDefault && ctx.match != null) {
+						if (ctx.runtime.doDefault && ctx.match != null) {
 							for (int i = 0; i < ctx.match.length; i++) {
 								if (ctx.match[i] > 0) {
 									ItemEntity itemEntity = ctx.filteredItems.get(i);

@@ -85,6 +85,11 @@ public class DropItem extends PostAction {
 		}
 
 		@Override
+		public void toJson(DropItem action, JsonObject o) {
+			LUtil.itemstackToJson(action.stack, o);
+		}
+
+		@Override
 		public DropItem fromNetwork(FriendlyByteBuf buf) {
 			return new DropItem(buf.readItem());
 		}

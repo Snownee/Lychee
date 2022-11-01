@@ -252,4 +252,14 @@ public class LUtil {
 		return FMLEnvironment.dist.isClient();
 	}
 
+	public static void itemstackToJson(ItemStack stack, JsonObject jsonObject) {
+		jsonObject.addProperty("item", Registry.ITEM.getKey(stack.getItem()).toString());
+		if (stack.hasTag()) {
+			jsonObject.addProperty("nbt", stack.getTag().toString());
+		}
+		if (stack.getCount() > 1) {
+			jsonObject.addProperty("count", stack.getCount());
+		}
+	}
+
 }

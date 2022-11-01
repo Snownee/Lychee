@@ -20,7 +20,7 @@ public class PreventDefault extends PostAction {
 
 	@Override
 	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		ctx.status.doDefault = false;
+		ctx.runtime.doDefault = false;
 	}
 
 	@Override
@@ -37,6 +37,10 @@ public class PreventDefault extends PostAction {
 		@Override
 		public PreventDefault fromJson(JsonObject o) {
 			return INSTANCE;
+		}
+
+		@Override
+		public void toJson(PreventDefault action, JsonObject o) {
 		}
 
 		@Override

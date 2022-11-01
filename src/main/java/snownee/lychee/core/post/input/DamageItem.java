@@ -41,7 +41,7 @@ public class DamageItem extends PostAction {
 	@Override
 	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		apply(recipe, ctx, times);
-		ctx.status.doDefault = false;
+		ctx.runtime.doDefault = false;
 	}
 
 	@Override
@@ -111,6 +111,13 @@ public class DamageItem extends PostAction {
 		@Override
 		public DamageItem fromJson(JsonObject o) {
 			return new DamageItem(GsonHelper.getAsInt(o, "damage", 1));
+		}
+
+		@Override
+		public void toJson(DamageItem action, JsonObject o) {
+			if (action.damage != 1) {
+				o.addProperty("damage", 1);
+			}
 		}
 
 		@Override

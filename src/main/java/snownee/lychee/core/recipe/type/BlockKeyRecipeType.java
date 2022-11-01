@@ -126,7 +126,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 				if (!level.isClientSide && recipe.tickOrApply(ctx)) {
 					int times = recipe.getRandomRepeats(stack.getCount(), ctx);
 					recipe.applyPostActions(ctx, times);
-					if (ctx.status.doDefault && !stack.isEmpty()) {
+					if (ctx.runtime.doDefault && !stack.isEmpty()) {
 						stack.shrink(times);
 					}
 				}
@@ -158,7 +158,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 				break;
 			}
 		}
-		return ctx == null || ctx.status.doDefault;
+		return ctx == null || ctx.runtime.doDefault;
 	}
 
 }

@@ -95,7 +95,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 							}
 						}
 						match.get().applyPostActions(ctx, times);
-						if (!ctx.status.doDefault) {
+						if (!ctx.runtime.doDefault) {
 							((LycheeFallingBlockEntity) entity).lychee$cancelDrop();
 						}
 						if (!recipe.getMaxRepeats().isAny()) {

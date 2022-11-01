@@ -179,6 +179,21 @@ public class PlaceBlock extends PostAction {
 		}
 
 		@Override
+		public void toJson(PlaceBlock action, JsonObject o) {
+			BlockPos offset = action.offset;
+			if (offset.getX() != 0) {
+				o.addProperty("offsetX", offset.getX());
+			}
+			if (offset.getY() != 0) {
+				o.addProperty("offsetY", offset.getY());
+			}
+			if (offset.getZ() != 0) {
+				o.addProperty("offsetZ", offset.getX());
+			}
+			o.add("block", BlockPredicateHelper.toJson(action.block));
+		}
+
+		@Override
 		public PlaceBlock fromNetwork(FriendlyByteBuf buf) {
 			return new PlaceBlock(BlockPredicateHelper.fromNetwork(buf), buf.readBlockPos());
 		}

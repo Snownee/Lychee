@@ -57,6 +57,11 @@ public class Delay extends PostAction {
 		}
 
 		@Override
+		public void toJson(Delay action, JsonObject o) {
+			o.addProperty("seconds", action.seconds);
+		}
+
+		@Override
 		public Delay fromNetwork(FriendlyByteBuf buf) {
 			return CLIENT_DUMMY;
 		}

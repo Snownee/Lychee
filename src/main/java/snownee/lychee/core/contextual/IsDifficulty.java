@@ -3,6 +3,7 @@ package snownee.lychee.core.contextual;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -71,6 +72,17 @@ public record IsDifficulty(IntImmutableList difficulties) implements ContextualC
 				IntArrayList list = IntArrayList.of();
 				e.getAsJsonArray().forEach($ -> list.add(parseDifficulty($.getAsJsonPrimitive())));
 				return new IsDifficulty(new IntImmutableList(list));
+			}
+		}
+
+		@Override
+		public void toJson(IsDifficulty condition, JsonObject o) {
+			if (condition.difficulties().size() == 1) {
+				o.addProperty("difficulty", condition.difficulties().getInt(0));
+			} else {
+				JsonArray array = new JsonArray();
+				condition.difficulties().forEach(i -> array.add(i));
+				o.add("difficulty", array);
 			}
 		}
 

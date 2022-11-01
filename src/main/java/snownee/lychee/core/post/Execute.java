@@ -84,6 +84,14 @@ public class Execute extends PostAction {
 		}
 
 		@Override
+		public void toJson(Execute action, JsonObject o) {
+			o.addProperty("command", action.command);
+			if (action.hide) {
+				o.addProperty("hide", action.hide);
+			}
+		}
+
+		@Override
 		public Execute fromNetwork(FriendlyByteBuf buf) {
 			if (buf.readBoolean()) {
 				return new Execute("", buf.readBoolean());

@@ -1,6 +1,6 @@
-package snownee.lychee.core.post;
+package snownee.lychee.core;
 
-import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.LycheeRecipe;
 
 public class Job {

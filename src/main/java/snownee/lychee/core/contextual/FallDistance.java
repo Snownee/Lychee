@@ -45,6 +45,11 @@ public record FallDistance(Doubles range) implements ContextualCondition {
 		}
 
 		@Override
+		public void toJson(FallDistance condition, JsonObject o) {
+			o.add("range", condition.range().serializeToJson());
+		}
+
+		@Override
 		public FallDistance fromNetwork(FriendlyByteBuf buf) {
 			return new FallDistance(DoubleBoundsHelper.fromNetwork(buf));
 		}

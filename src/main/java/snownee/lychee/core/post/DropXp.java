@@ -62,6 +62,11 @@ public class DropXp extends PostAction {
 		}
 
 		@Override
+		public void toJson(DropXp action, JsonObject o) {
+			o.addProperty("xp", action.xp);
+		}
+
+		@Override
 		public DropXp fromNetwork(FriendlyByteBuf buf) {
 			return new DropXp(buf.readVarInt());
 		}

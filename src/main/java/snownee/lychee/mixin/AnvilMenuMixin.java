@@ -89,7 +89,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 			lychee$preventDefault = false;
 		} else {
 			lychee$recipe.applyPostActions(lychee$ctx, 1);
-			lychee$preventDefault = !lychee$ctx.status.doDefault;
+			lychee$preventDefault = !lychee$ctx.runtime.doDefault;
 		}
 	}
 
