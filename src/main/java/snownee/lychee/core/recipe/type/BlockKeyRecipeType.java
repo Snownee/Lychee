@@ -11,7 +11,6 @@ import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -34,8 +33,11 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.contextual.Chance;
+import snownee.lychee.core.contextual.ContextualCondition;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.BlockKeyRecipe;
+import snownee.lychee.core.recipe.ChanceRecipe;
 import snownee.lychee.core.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
@@ -45,6 +47,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 
 	protected final Map<Block, List<T>> recipesByBlock = Maps.newHashMap();
 	protected final List<T> anyBlockRecipes = Lists.newLinkedList();
+	public boolean extractChance;
 
 	public BlockKeyRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet paramSet) {
 		super(name, clazz, paramSet);
@@ -57,6 +60,12 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		super.buildCache();
 		Multimap<Block, T> multimap = HashMultimap.create();
 		for (T recipe : recipes) {
+			if (!recipe.getConditions().isEmpty()) {
+				ContextualCondition condition = recipe.getConditions().get(0);
+				if (condition instanceof Chance chance) {
+					((ChanceRecipe) recipe).setChance(chance.chance());
+				}
+			}
 			if (recipe.getBlock() == BlockPredicate.ANY) {
 				anyBlockRecipes.add(recipe);
 				continue;
@@ -144,21 +153,27 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		return has(state.getBlock());
 	}
 
-	public boolean process(Level level, BlockState state, Supplier<C> ctxSupplier, Predicate<T> filter) {
+	@Nullable
+	public Pair<C, T> process(Level level, BlockState state, Supplier<C> ctxSupplier) {
 		Collection<T> recipes = recipesByBlock.getOrDefault(state.getBlock(), Collections.EMPTY_LIST);
 		Iterable<T> iterable = Iterables.concat(recipes, anyBlockRecipes);
-		iterable = Iterables.filter(iterable, filter);
 		C ctx = null;
 		for (T recipe : iterable) {
+			if (extractChance) {
+				ChanceRecipe $ = (ChanceRecipe) recipe;
+				if ($.getChance() != 1 && $.getChance() <= level.random.nextFloat()) {
+					continue;
+				}
+			}
 			if (ctx == null) {
 				ctx = ctxSupplier.get();
 			}
 			if (tryMatch(recipe, level, ctx).isPresent()) {
 				recipe.applyPostActions(ctx, 1);
-				break;
+				return Pair.of(ctx, recipe);
 			}
 		}
-		return ctx == null || ctx.runtime.doDefault;
+		return null;
 	}
 
 }

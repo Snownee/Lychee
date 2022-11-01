@@ -41,7 +41,9 @@ public class LocationCheckMixin {
 	private void lychee_serialize(JsonObject object, LocationCheck locationCheck, JsonSerializationContext jsonSerializationContext, CallbackInfo ci) {
 		if (!object.get("predicate").isJsonNull()) {
 			LocationPredicateHelper predicate = (LocationPredicateHelper) ((LocationCheckAccess) locationCheck).getPredicate();
-			object.getAsJsonObject("predicate").addProperty("lychee:biome_tag", predicate.getBiomeTag().location().toString());
+			if (predicate.getBiomeTag() != null) {
+				object.getAsJsonObject("predicate").addProperty("lychee:biome_tag", predicate.getBiomeTag().location().toString());
+			}
 		}
 	}
 

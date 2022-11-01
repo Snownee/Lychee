@@ -8,6 +8,7 @@ import snownee.lychee.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
 import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.interaction.BlockClickingRecipe;
 import snownee.lychee.interaction.BlockInteractingRecipe;
 import snownee.lychee.item_burning.ItemBurningRecipe;
@@ -31,6 +32,7 @@ public final class RecipeSerializers {
 	public static final LycheeRecipe.Serializer<ItemExplodingRecipe> ITEM_EXPLODING = register("item_exploding", new ItemShapelessRecipe.Serializer<>(ItemExplodingRecipe::new));
 	public static final LycheeRecipe.Serializer<BlockExplodingRecipe> BLOCK_EXPLODING = register("block_exploding", new BlockExplodingRecipe.Serializer());
 	public static final LycheeRecipe.Serializer<RandomBlockTickingRecipe> RANDOM_BLOCK_TICKING = register("random_block_ticking", new RandomBlockTickingRecipe.Serializer());
+	public static final LycheeRecipe.Serializer<DripstoneRecipe> DRIPSTONE_DRIPPING = register("dripstone_dripping", new DripstoneRecipe.Serializer());
 
 	public static <T extends LycheeRecipe.Serializer<?>> T register(String name, T t) {
 		ForgeRegistries.RECIPE_SERIALIZERS.register(new ResourceLocation(Lychee.ID, name), t);
