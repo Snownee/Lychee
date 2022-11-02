@@ -33,7 +33,10 @@ public class DripstoneRecipeMod {
 	public static ParticleType<BlockParticleOption> DRIPSTONE_FALLING;
 	public static ParticleType<BlockParticleOption> DRIPSTONE_SPLASH;
 
+	public static boolean hasDFLib;
+
 	public static void onInitialize() {
+		hasDFLib = LUtil.isModLoaded("dripstone_fluid_lib");
 		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		eventBus.addListener(DripstoneRecipeMod::registerParticleTypes);
 	}
@@ -55,6 +58,11 @@ public class DripstoneRecipeMod {
 		if (sourceFluid.is(FluidTags.LAVA) || sourceFluid.is(FluidTags.WATER)) {
 			return false;
 		}
+		/*
+		if (DripstoneRecipeMod.hasDFLib && sourceFluid.getType() instanceof DripstoneInteractingFluid) {
+			return false;
+		}
+		*/
 		DripParticleHandler handler = getParticleHandler(sourceBlock);
 		if (handler == null) {
 			return false;
@@ -70,7 +78,6 @@ public class DripstoneRecipeMod {
 	@SuppressWarnings("deprecation")
 	public static DripParticleHandler getParticleHandler(BlockState sourceBlock) {
 		Block block = sourceBlock.getBlock();
-		particleHandlers.invalidateAll();
 		try {
 			return particleHandlers.get(block, () -> {
 				if (!LUtil.isPhysicalClient()) {

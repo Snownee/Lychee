@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -22,9 +21,10 @@ public final class Lychee {
 
 	public static final Logger LOGGER = LogManager.getLogger(Lychee.ID);
 
-	public static boolean hasKiwi = ModList.get().isLoaded("kiwi");
+	public static boolean hasKiwi;
 
 	public Lychee() {
+		hasKiwi = LUtil.isModLoaded("kiwi");
 		LycheeTags.init();
 		InteractionRecipeMod.onInitialize();
 		DripstoneRecipeMod.onInitialize();

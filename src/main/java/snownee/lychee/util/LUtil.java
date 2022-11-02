@@ -39,6 +39,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistry;
 import snownee.lychee.Lychee;
@@ -260,6 +261,10 @@ public class LUtil {
 		if (stack.getCount() > 1) {
 			jsonObject.addProperty("count", stack.getCount());
 		}
+	}
+
+	public static boolean isModLoaded(String modid) {
+		return ModList.get().isLoaded(modid);
 	}
 
 }

@@ -12,11 +12,17 @@ import net.minecraft.core.Direction.AxisDirection;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 @Mixin(PointedDripstoneBlock.class)
 public interface PointedDripstoneBlockAccess {
+
+	@Invoker
+	static boolean callIsStalactiteStartPos(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
+		throw new IllegalStateException();
+	}
 
 	@Invoker
 	static BlockPos callFindTip(BlockState blockState, LevelAccessor level, BlockPos blockPos, int i, boolean b) {
