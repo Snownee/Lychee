@@ -7,9 +7,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.dripstone_dripping.DripstoneRecipe;
+import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
 
 @Mixin(value = PointedDripstoneBlock.class, priority = 2000)
 public class PointedDripstoneBlockMixin {
@@ -24,4 +27,23 @@ public class PointedDripstoneBlockMixin {
 			ci.cancel();
 	}
 
+	@Inject(
+			at = @At(
+				"HEAD"
+			), method = "spawnDripParticle(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V", cancellable = true
+	)
+	private static void lychee_spawnDripParticle(Level level, BlockPos blockPos, BlockState blockState, CallbackInfo ci) {
+		if (DripstoneRecipeMod.spawnDripParticle(level, blockPos, blockState))
+			ci.cancel();
+	}
+
+	@Inject(
+			at = @At(
+					value = "INVOKE", target = "Lnet/minecraft/world/level/block/PointedDripstoneBlock;getFluidAboveStalactite(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Ljava/util/Optional;"
+			), method = "animateTick", cancellable = true
+	)
+	private void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource, CallbackInfo ci) {
+		if (DripstoneRecipeMod.spawnDripParticle(level, blockPos, blockState))
+			ci.cancel();
+	}
 }

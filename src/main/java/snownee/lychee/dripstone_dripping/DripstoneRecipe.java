@@ -159,7 +159,7 @@ public class DripstoneRecipe extends LycheeRecipe<DripstoneContext> implements B
 		return PointedDripstoneBlockAccess.callFindBlockVertical(level, blockPos2, Direction.DOWN.getAxisDirection(), biPredicate, predicate, 11).orElse(null);
 	}
 
-	private static BlockState getBlockAboveStalactite(Level level, BlockPos blockPos2, BlockState blockState) {
+	public static BlockState getBlockAboveStalactite(Level level, BlockPos blockPos2, BlockState blockState) {
 		//		if (!PointedDripstoneBlock.isStalactite(blockState)) {
 		//			return Optional.empty();
 		//		}
