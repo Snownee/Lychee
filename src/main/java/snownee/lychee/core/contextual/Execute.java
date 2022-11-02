@@ -32,7 +32,7 @@ public record Execute(String command, Ints bounds) implements ContextualConditio
 
 	@Override
 	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		if (command.isEmpty()) {
+		if (command.isEmpty() || ctx.getLevel().isClientSide) {
 			return 0;
 		}
 		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);

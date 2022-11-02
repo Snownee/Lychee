@@ -253,6 +253,7 @@ public class LUtil {
 		return FMLEnvironment.dist.isClient();
 	}
 
+	@SuppressWarnings("deprecation")
 	public static void itemstackToJson(ItemStack stack, JsonObject jsonObject) {
 		jsonObject.addProperty("item", Registry.ITEM.getKey(stack.getItem()).toString());
 		if (stack.hasTag()) {

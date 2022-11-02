@@ -8,8 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,6 +15,8 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.def.BlockPredicateHelper;
@@ -46,7 +46,7 @@ public class CycleStateProperty extends PlaceBlock {
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void render(PoseStack poseStack, int x, int y) {
 		List<BlockState> states = BlockPredicateHelper.getShowcaseBlockStates(block, Set.of(property));
 		BlockState state = LUtil.getCycledItem(states, Blocks.AIR.defaultBlockState(), 1000);

@@ -258,6 +258,8 @@ processResources {
 
 jar {
     exclude '/data/lychee/recipes'
+    exclude '/data/lychee/predicates'
+    
     exclude '/com'
     manifest {
         attributes([
