@@ -36,6 +36,7 @@ import snownee.lychee.compat.jei.category.BaseJEICategory;
 import snownee.lychee.compat.jei.category.BlockCrushingRecipeCategory;
 import snownee.lychee.compat.jei.category.BlockExplodingRecipeCategory;
 import snownee.lychee.compat.jei.category.BlockInteractionRecipeCategory;
+import snownee.lychee.compat.jei.category.DripstoneRecipeCategory;
 import snownee.lychee.compat.jei.category.ItemBurningRecipeCategory;
 import snownee.lychee.compat.jei.category.ItemExplodingRecipeCategory;
 import snownee.lychee.compat.jei.category.ItemInsideRecipeCategory;
@@ -62,6 +63,7 @@ public class JEICompat implements IModPlugin {
 	public static LightningChannelingRecipeCategory LIGHTNING_CHANNELING;
 	public static ItemExplodingRecipeCategory ITEM_EXPLODING;
 	public static BlockExplodingRecipeCategory BLOCK_EXPLODING;
+	public static DripstoneRecipeCategory DRIPSTONE_DRIPPING;
 
 	@Override
 	public ResourceLocation getPluginUid() {
@@ -69,7 +71,7 @@ public class JEICompat implements IModPlugin {
 	}
 
 	public Stream<BaseJEICategory<LycheeContext, LycheeRecipe<LycheeContext>>> getCategories() {
-		return (Stream<BaseJEICategory<LycheeContext, LycheeRecipe<LycheeContext>>>) (Object) Stream.of(ITEM_BURNING, ITEM_INSIDE, BLOCK_INTERACTING, BLOCK_CRUSHING, LIGHTNING_CHANNELING, ITEM_EXPLODING, BLOCK_EXPLODING);
+		return (Stream<BaseJEICategory<LycheeContext, LycheeRecipe<LycheeContext>>>) (Object) Stream.of(ITEM_BURNING, ITEM_INSIDE, BLOCK_INTERACTING, BLOCK_CRUSHING, LIGHTNING_CHANNELING, ITEM_EXPLODING, BLOCK_EXPLODING, DRIPSTONE_DRIPPING);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -85,6 +87,7 @@ public class JEICompat implements IModPlugin {
 		LIGHTNING_CHANNELING = new LightningChannelingRecipeCategory(RecipeTypes.LIGHTNING_CHANNELING);
 		ITEM_EXPLODING = new ItemExplodingRecipeCategory(RecipeTypes.ITEM_EXPLODING);
 		BLOCK_EXPLODING = new BlockExplodingRecipeCategory(RecipeTypes.BLOCK_EXPLODING, GuiGameElement.of(Items.TNT));
+		DRIPSTONE_DRIPPING = new DripstoneRecipeCategory(RecipeTypes.DRIPSTONE_DRIPPING);
 		getCategories().forEach(registration::addRecipeCategories);
 	}
 
@@ -123,6 +126,7 @@ public class JEICompat implements IModPlugin {
 		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
 			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), BLOCK_EXPLODING.getRecipeType());
 		}
+		registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, Items.POINTED_DRIPSTONE.getDefaultInstance(), DRIPSTONE_DRIPPING.getRecipeType());
 	}
 
 	@SuppressWarnings("static-access")
