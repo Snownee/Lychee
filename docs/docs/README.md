@@ -15,12 +15,15 @@ Currently Lychee has support for the following recipe type (with full JEI/REI su
 - Anvil crafting
 - Falling block crushing items or block
 - Lightning channeling
-- Item exploding
-- Block exploding
+- Random block ticking
+- Dripstone dripping
 
-## Dependency
+## Dependencies Information
 
-Kiwi is an optional dependency to have some extra particles.
+### Kiwi (Optional)
+
+1. The random block ticking recipe requires Kiwi to work.
+2. Creates item breaking particles when a falling block crushing on items.
 
 ## Adding Recipes
 
@@ -38,3 +41,12 @@ Having trouble creating recipe, or got an idea for Lychee? You can [join our Dis
 
 1. Make sure your recipe file is a valid JSON. You can use [this site](https://jsonlint.com/) to validate your JSON.
 2. Check if your recipe is shown in JEI / REI. If not, search the error output in logs for some helpful information.
+
+### Where are the CraftTweaker/KubeJS integrations?
+
+Currently, there are no built-in integrations, which means you need to add recipes in JSON format. Here are some usages in their docs: [CraftTweaker](https://docs.blamejared.com/1.19/en/vanilla/api/recipe/manager/GenericRecipesManager#addJsonRecipe) / [KubeJS](https://mods.latvian.dev/books/kubejs/page/recipeeventjs)
+
+There are some utility libraries from the community you may want to know:
+
+ - [LycheeTweaker for CraftTweaker](https://github.com/ProbablyNotPetey/LycheeTweaker) by ProbablyNotPetey
+ - Lychee.JS for KubeJS by Quentin765 (No links, search in the KubeJS discord)
