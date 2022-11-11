@@ -76,6 +76,8 @@ dependencies {
     modImplementation "curse.maven:kiwi-549404:3909202"
     annotationProcessor "curse.maven:kiwi-549404:3909202"
     
+    modImplementation "curse.maven:ingredient-extension-api-557735:4023288"
+    
     modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
 }
 

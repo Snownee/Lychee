@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.faux.ingredientextension.api.ingredient.IngredientHelper;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonObject;
 
@@ -28,6 +29,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -238,7 +240,21 @@ public class LUtil {
 	}
 
 	public static boolean isSimpleIngredient(Ingredient ingredient) {
+		if (Lychee.hasIngredientExtAPI) {
+			return !IngredientHelper.requiresTesting(List.of(ingredient));
+		}
 		return true;
+	}
+
+	public static BlockPos parseOffset(JsonObject o) {
+		int x = GsonHelper.getAsInt(o, "offsetX", 0);
+		int y = GsonHelper.getAsInt(o, "offsetY", 0);
+		int z = GsonHelper.getAsInt(o, "offsetZ", 0);
+		BlockPos offset = BlockPos.ZERO;
+		if (x != 0 || y != 0 || z != 0) {
+			offset = new BlockPos(x, y, z);
+		}
+		return offset;
 	}
 
 	public static boolean isPhysicalClient() {

@@ -77,13 +77,7 @@ public class Explode extends PostAction {
 
 		@Override
 		public Explode fromJson(JsonObject o) {
-			int x = GsonHelper.getAsInt(o, "offsetX", 0);
-			int y = GsonHelper.getAsInt(o, "offsetY", 0);
-			int z = GsonHelper.getAsInt(o, "offsetZ", 0);
-			BlockPos offset = BlockPos.ZERO;
-			if (x != 0 || y != 0 || z != 0) {
-				offset = new BlockPos(x, y, z);
-			}
+			BlockPos offset = LUtil.parseOffset(o);
 			boolean fire = GsonHelper.getAsBoolean(o, "fire", false);
 			String s = GsonHelper.getAsString(o, "block_interaction", "break");
 			BlockInteraction blockInteraction = switch (s) {
