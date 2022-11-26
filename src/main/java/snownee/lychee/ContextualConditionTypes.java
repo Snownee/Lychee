@@ -4,6 +4,7 @@ import net.minecraft.core.Registry;
 import snownee.lychee.core.contextual.And;
 import snownee.lychee.core.contextual.Chance;
 import snownee.lychee.core.contextual.ContextualConditionType;
+import snownee.lychee.core.contextual.DirectionCheck;
 import snownee.lychee.core.contextual.EntityHealth;
 import snownee.lychee.core.contextual.Execute;
 import snownee.lychee.core.contextual.FallDistance;
@@ -32,6 +33,7 @@ public final class ContextualConditionTypes {
 	public static final ContextualConditionType<FallDistance> FALL_DISTANCE = register("fall_distance", new FallDistance.Type());
 	public static final ContextualConditionType<EntityHealth> ENTITY_HEALTH = register("entity_health", new EntityHealth.Type());
 	public static final ContextualConditionType<IsSneaking> IS_SNEAKING = register("is_sneaking", new IsSneaking.Type());
+	public static final ContextualConditionType<DirectionCheck> DIRECTION = register("direction", new DirectionCheck.Type());
 
 	public static <T extends ContextualConditionType<?>> T register(String name, T t) {
 		Registry.register(LycheeRegistries.CONTEXTUAL, name, t);

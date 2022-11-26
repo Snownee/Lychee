@@ -53,7 +53,7 @@ public record Chance(float chance) implements ContextualCondition {
 
 		@Override
 		public void toNetwork(Chance condition, FriendlyByteBuf buf) {
-			buf.writeFloat(condition.chance);
+			buf.writeFloat(condition.chance());
 		}
 
 	}

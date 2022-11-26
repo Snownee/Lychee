@@ -77,9 +77,9 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 		@SuppressWarnings("rawtypes")
 		@Override
 		public void toNetwork(Not condition, FriendlyByteBuf buf) {
-			ContextualConditionType type = condition.condition.getType();
+			ContextualConditionType type = condition.condition().getType();
 			LUtil.writeRegistryId(LycheeRegistries.CONTEXTUAL, type, buf);
-			type.toNetwork(condition.condition, buf);
+			type.toNetwork(condition.condition(), buf);
 		}
 
 	}

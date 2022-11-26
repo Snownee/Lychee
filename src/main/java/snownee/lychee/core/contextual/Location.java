@@ -417,7 +417,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public void toNetwork(Location condition, FriendlyByteBuf buf) {
-			LocationCheckAccess access = (LocationCheckAccess) condition.check;
+			LocationCheckAccess access = (LocationCheckAccess) condition.check();
 			LocationPredicateHelper.toNetwork(access.getPredicate(), buf);
 			buf.writeBlockPos(access.getOffset());
 			ResourceLocation biomeTag = Optional.ofNullable(((LocationPredicateHelper) access.getPredicate()).getBiomeTag()).map(TagKey::location).orElse(null);

@@ -56,7 +56,7 @@ public record EntityHealth(Doubles range) implements ContextualCondition {
 
 		@Override
 		public void toNetwork(EntityHealth condition, FriendlyByteBuf buf) {
-			DoubleBoundsHelper.toNetwork(condition.range, buf);
+			DoubleBoundsHelper.toNetwork(condition.range(), buf);
 		}
 
 	}

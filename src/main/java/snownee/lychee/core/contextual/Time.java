@@ -86,8 +86,8 @@ public record Time(Ints value, @Nullable Long period) implements ContextualCondi
 
 		@Override
 		public void toNetwork(Time condition, FriendlyByteBuf buf) {
-			IntBoundsHelper.toNetwork(condition.value, buf);
-			buf.writeLong(condition.period == null ? Long.MIN_VALUE : condition.period);
+			IntBoundsHelper.toNetwork(condition.value(), buf);
+			buf.writeLong(condition.period() == null ? Long.MIN_VALUE : condition.period());
 		}
 
 	}

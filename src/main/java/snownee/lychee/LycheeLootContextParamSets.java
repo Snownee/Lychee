@@ -22,7 +22,7 @@ public final class LycheeLootContextParamSets {
 	});
 
 	public static final LootContextParamSet BLOCK_INTERACTION = LootContextParamSetsAccess.callRegister("lychee:block_interaction", $ -> {
-		$.required(LootContextParams.ORIGIN).required(LootContextParams.THIS_ENTITY).required(LootContextParams.BLOCK_STATE).required(LycheeLootContextParams.BLOCK_POS).optional(LootContextParams.BLOCK_ENTITY).required(LootContextParams.TOOL);
+		$.required(LootContextParams.ORIGIN).required(LootContextParams.THIS_ENTITY).required(LootContextParams.BLOCK_STATE).required(LycheeLootContextParams.BLOCK_POS).optional(LootContextParams.BLOCK_ENTITY).required(LootContextParams.TOOL).required(LycheeLootContextParams.DIRECTION);
 	});
 
 	public static final LootContextParamSet ANVIL_CRAFTING = LootContextParamSetsAccess.callRegister("lychee:anvil_crafting", $ -> {
