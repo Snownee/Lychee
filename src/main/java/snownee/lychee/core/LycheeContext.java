@@ -90,6 +90,7 @@ public class LycheeContext extends EmptyContainer {
 	@SuppressWarnings("rawtypes")
 	public LootContext toLootContext() {
 		if (cachedLootContext == null) {
+			lazyGetBlockEntity();
 			LootContext.Builder builder = new LootContext.Builder((ServerLevel) level);
 			builder.withRandom(random);
 			params.forEach((p, o) -> builder.withParameter((LootContextParam) p, o));
@@ -105,10 +106,19 @@ public class LycheeContext extends EmptyContainer {
 		BlockPos pos = getParamOrNull(LycheeLootContextParams.BLOCK_POS);
 		if (pos == null) {
 			pos = new BlockPos(getParam(LootContextParams.ORIGIN));
+			setParam(LycheeLootContextParams.BLOCK_POS, pos);
 		}
 		BlockEntity blockEntity = level.getBlockEntity(pos);
 		if (blockEntity != null)
-			params.put(LootContextParams.BLOCK_ENTITY, blockEntity);
+			setParam(LootContextParams.BLOCK_ENTITY, blockEntity);
+	}
+
+	public void setParam(LootContextParam<?> param, Object value) {
+		params.put(param, value);
+	}
+
+	public void removeParam(LootContextParam<?> param) {
+		params.remove(param);
 	}
 
 	public JsonObject save() {

@@ -6,6 +6,10 @@
   "block_in": "oak_log",
   "post": [
     {
+      "type": "move_towards_face",
+      "factor": 2
+    },
+    {
       "type": "drop_item",
       "item": "diamond",
       "contextual": {
