@@ -245,7 +245,7 @@ This action can only be used in the [Block Crushing](recipe.md#block-crushing) r
 
 ### Add item cooldown (`add_item_cooldown`)
 
-Add item cooldown to the item in player's hand, just like when you use ender pearl.
+Adds item cooldown to the item in player's hand, just like when you use ender pearl.
 
 This action only works for interaction recipes.
 
@@ -256,11 +256,24 @@ This action only works for interaction recipes.
     | type | type        | "add_item_cooldown" |
     | s    | seconds     | number              |
 
+### Move towards face (`move_towards_face`)
+
+*Not implemented for Fabric 1.18.2*
+
+Moves the anchored position in the context towards the direction that being interacted. Only works for interaction recipes.
+
+!!! note "Format"
+
+    | Name   | Description                     | Type / Literal      |
+    | ------ | ------------------------------- | ------------------- |
+    | type   | type                            | "move_towards_face" |
+    | factor | (optional) factor. 1 by default | number              |
+
 ### Delay (`delay`)
 
 *Since: 3.2*
 
-Wait for several seconds, then execute the following actions.
+Waits for several seconds, then execute the following actions.
 
 !!! note "Format"
 
@@ -277,7 +290,7 @@ Wait for several seconds, then execute the following actions.
 
 *Since: 3.2*
 
-Stop executing the following actions.
+Stops executing the following actions.
 
 !!! note "Format"
 

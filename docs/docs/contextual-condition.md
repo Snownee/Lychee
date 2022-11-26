@@ -255,3 +255,18 @@ Checks if entity is crouching/sneaking.
     | Name | Description | Type / Literal |
     | ---- | ----------- | -------------- |
     | type | type        | "is_sneaking"  |
+
+### Direction Check (`direction`)
+
+*Not implemented for Fabric 1.18.2*
+
+Checks the direction that being interacted. Only works for interaction recipes.
+
+!!! note "Format"
+
+    | Name      | Description | Type / Literal |
+    | --------- | ----------- | -------------- |
+    | type      | type        | "direction"    |
+    | direction | direction   | string         |
+
+		Allowed value for "direction": "up", "down", "north", "south", "east", "west", "side", "forward"
