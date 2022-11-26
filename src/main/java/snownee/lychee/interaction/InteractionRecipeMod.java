@@ -9,6 +9,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
 
@@ -29,6 +30,7 @@ public class InteractionRecipeMod {
 			return;
 		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(event.getLevel());
 		builder.withParameter(LootContextParams.TOOL, stack);
+		builder.withParameter(LycheeLootContextParams.DIRECTION, event.getFace());
 		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(player, stack, event.getPos(), event.getHitVec().getLocation(), builder);
 		if (result.isPresent()) {
 			event.setCanceled(true);
@@ -46,6 +48,7 @@ public class InteractionRecipeMod {
 			return;
 		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(event.getLevel());
 		builder.withParameter(LootContextParams.TOOL, stack);
+		builder.withParameter(LycheeLootContextParams.DIRECTION, event.getFace());
 		Vec3 vec = Vec3.atCenterOf(event.getPos());
 		Optional<BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(player, stack, event.getPos(), vec, builder);
 		if (result.isPresent()) {

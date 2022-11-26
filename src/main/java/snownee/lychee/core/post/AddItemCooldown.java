@@ -25,8 +25,7 @@ public class AddItemCooldown extends PostAction {
 
 	@Override
 	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		if (times > 0)
-			apply(recipe, ctx, times);
+		apply(recipe, ctx, times);
 	}
 
 	@Override
