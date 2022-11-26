@@ -75,7 +75,7 @@ public record IsWeather(String id, Predicate<Level> predicate) implements Contex
 
 		@Override
 		public void toNetwork(IsWeather condition, FriendlyByteBuf buf) {
-			buf.writeUtf(condition.id);
+			buf.writeUtf(condition.id());
 		}
 
 	}

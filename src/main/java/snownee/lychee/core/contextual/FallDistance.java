@@ -56,7 +56,7 @@ public record FallDistance(Doubles range) implements ContextualCondition {
 
 		@Override
 		public void toNetwork(FallDistance condition, FriendlyByteBuf buf) {
-			DoubleBoundsHelper.toNetwork(condition.range, buf);
+			DoubleBoundsHelper.toNetwork(condition.range(), buf);
 		}
 
 	}

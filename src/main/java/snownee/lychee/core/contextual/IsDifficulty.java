@@ -102,8 +102,8 @@ public record IsDifficulty(IntImmutableList difficulties) implements ContextualC
 
 		@Override
 		public void toNetwork(IsDifficulty condition, FriendlyByteBuf buf) {
-			buf.writeVarInt(condition.difficulties.size());
-			condition.difficulties.forEach(buf::writeVarInt);
+			buf.writeVarInt(condition.difficulties().size());
+			condition.difficulties().forEach(buf::writeVarInt);
 		}
 
 	}
