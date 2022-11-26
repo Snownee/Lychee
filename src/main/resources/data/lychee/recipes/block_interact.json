@@ -4,6 +4,12 @@
     "item": "iron_axe"
   },
   "block_in": "oak_log",
+  "contextual": [
+    {
+      "type": "direction",
+      "direction": "up"
+    }
+  ],
   "post": [
     {
       "type": "move_towards_face",
