@@ -69,6 +69,7 @@ public final class Lychee {
 		}
 		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(event.getWorld());
 		builder.withParameter(LootContextParams.TOOL, stack);
+		builder.withParameter(LycheeLootContextParams.DIRECTION, event.getFace());
 		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(player, stack, event.getPos(), event.getHitVec().getLocation(), builder);
 		if (result.isPresent()) {
 			event.setCanceled(true);
@@ -84,6 +85,7 @@ public final class Lychee {
 		}
 		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(event.getWorld());
 		builder.withParameter(LootContextParams.TOOL, stack);
+		builder.withParameter(LycheeLootContextParams.DIRECTION, event.getFace());
 		Vec3 vec = Vec3.atCenterOf(event.getPos());
 		Optional<BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(player, stack, event.getPos(), vec, builder);
 		if (result.isPresent()) {

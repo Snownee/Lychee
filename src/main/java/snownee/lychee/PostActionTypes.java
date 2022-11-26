@@ -9,6 +9,7 @@ import snownee.lychee.core.post.DropXp;
 import snownee.lychee.core.post.Execute;
 import snownee.lychee.core.post.Explode;
 import snownee.lychee.core.post.Hurt;
+import snownee.lychee.core.post.MoveTowardsFace;
 import snownee.lychee.core.post.PlaceBlock;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.post.RandomSelect;
@@ -31,6 +32,7 @@ public class PostActionTypes {
 	public static final PostActionType<Explode> EXPLODE = register("explode", new Explode.Type());
 	public static final PostActionType<Hurt> HURT = register("hurt", new Hurt.Type());
 	public static final PostActionType<AddItemCooldown> ADD_ITEM_COOLDOWN = register("add_item_cooldown", new AddItemCooldown.Type());
+	public static final PostActionType<MoveTowardsFace> MOVE_TOWARDS_FACE = register("move_towards_face", new MoveTowardsFace.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		ModLoadingContext.get().setActiveContainer(null); // bypass Forge warning
