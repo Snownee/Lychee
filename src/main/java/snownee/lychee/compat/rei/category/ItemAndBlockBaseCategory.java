@@ -128,7 +128,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 			ingredientGroup(widgets, startPoint, recipe, 12, 21, preventDefault);
 		}
 
-		actionGroup(widgets, startPoint, recipe, getRealWidth() - 24, y);
+		actionGroup(widgets, startPoint, recipe, getRealWidth() - 34, y);
 
 		ReactiveWidget reactive;
 		Component description = getMethodDescription(recipe);
