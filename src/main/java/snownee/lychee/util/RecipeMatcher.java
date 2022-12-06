@@ -7,8 +7,9 @@ import java.util.function.Predicate;
 
 public class RecipeMatcher<T> {
 
-	private List<T> inputs;
-	private int[] inputCapacity;
+	public List<T> inputs;
+	public List<? extends Predicate<T>> tests;
+	public int[] inputCapacity;
 	public int[] inputUsed;
 	public int[][] use; // input to tests multimap. map to the indexes of the first N inputs according to the `inputUsed` array
 	private BitSet data;
@@ -16,6 +17,7 @@ public class RecipeMatcher<T> {
 
 	public RecipeMatcher(List<T> inputs, List<? extends Predicate<T>> tests, int[] inputCapacity) {
 		this.inputs = inputs;
+		this.tests = tests;
 		this.inputCapacity = inputCapacity;
 		inputUsed = new int[inputs.size()];
 		use = new int[inputs.size()][tests.size()];

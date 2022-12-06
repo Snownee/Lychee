@@ -1,0 +1,15 @@
+{
+  "type": "lychee:item_inside",
+  "item_in": [
+    {
+      "item": "sponge"
+    },
+    {
+      "item": "sponge"
+    },
+    {
+      "item": "wet_sponge"
+    }
+  ],
+  "block_in": "*"
+}

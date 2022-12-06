@@ -37,7 +37,7 @@ public class InteractionRecipeMod implements ModInitializer {
 		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(world);
 		builder.withParameter(LootContextParams.TOOL, stack);
 		builder.withParameter(LycheeLootContextParams.DIRECTION, hitResult.getDirection());
-		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(player, stack, hitResult.getBlockPos(), hitResult.getLocation(), builder);
+		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(player, hand, stack, hitResult.getBlockPos(), hitResult.getLocation(), builder);
 		if (result.isPresent()) {
 			return InteractionResult.SUCCESS;
 		}
@@ -55,7 +55,7 @@ public class InteractionRecipeMod implements ModInitializer {
 		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(world);
 		builder.withParameter(LootContextParams.TOOL, stack);
 		builder.withParameter(LycheeLootContextParams.DIRECTION, direction);
-		Optional<BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(player, stack, pos, vec, builder);
+		Optional<BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(player, hand, stack, pos, vec, builder);
 		if (result.isPresent()) {
 			return InteractionResult.SUCCESS;
 		}

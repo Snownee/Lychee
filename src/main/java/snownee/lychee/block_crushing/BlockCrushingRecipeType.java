@@ -4,8 +4,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
+
+import com.google.common.collect.Sets;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -20,6 +23,7 @@ import net.minecraft.world.phys.AABB;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.LycheeTags;
+import snownee.lychee.core.input.ItemHolder;
 import snownee.lychee.core.network.SCustomLevelEventPacket;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.util.LUtil;
@@ -73,25 +77,14 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 					if (match.isPresent()) {
 						matchedAny = matched = true;
 						int times = 1;
-						if (ctx.match != null && ctx.match.length > 0) {
+						if (ctx.getMatch() != null && ctx.getMatch().inputUsed.length > 0) {
+							int[] inputUsed = ctx.getMatch().inputUsed;
 							//System.out.println(Arrays.toString(ctx.match));
 							times = recipe.getRandomRepeats(Integer.MAX_VALUE, ctx);
-							for (int i = 0; i < ctx.match.length; i++) {
-								if (ctx.match[i] > 0) {
+							for (int i = 0; i < inputUsed.length; i++) {
+								if (inputUsed[i] > 0) {
 									ItemStack stack = ctx.filteredItems.get(i).getItem();
-									times = Math.min(times, stack.getCount() / ctx.match[i]);
-								}
-							}
-							for (int i = 0; i < ctx.match.length; i++) {
-								if (ctx.match[i] > 0) {
-									ItemEntity itemEntity = ctx.filteredItems.get(i);
-									// ctx.getServerLevel().sendParticles(new ItemParticleOption(ParticleTypes.ITEM, itemEntity.getItem()), itemEntity.position().x, itemEntity.position().y, itemEntity.position().z, 9, .1, .05, .1, .5);
-									if (Lychee.hasKiwi) {
-										SCustomLevelEventPacket.sendItemParticles(itemEntity.getItem(), ctx.getServerLevel(), itemEntity.position());
-									}
-									int count = ctx.match[i] * times;
-									itemEntity.getItem().shrink(count);
-									ctx.totalItems -= count;
+									times = Math.min(times, stack.getCount() / inputUsed[i]);
 								}
 							}
 						}
@@ -99,11 +92,24 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 						if (!ctx.runtime.doDefault) {
 							((LycheeFallingBlockEntity) entity).lychee$cancelDrop();
 						}
+						if (Lychee.hasKiwi) {
+							Set<ItemHolder> alreadySentParticles = Sets.newHashSet();
+							for (int i = 0; i < ctx.itemHolders.size(); i++) {
+								ItemHolder holder = ctx.itemHolders.get(i);
+								if (!ctx.itemHolders.ignoreConsumptionFlags.get(i) && !holder.get().isEmpty()) {
+									if (holder instanceof ItemHolder.InWorld && !alreadySentParticles.contains(holder)) {
+										alreadySentParticles.add(holder);
+										SCustomLevelEventPacket.sendItemParticles(holder.get(), ctx.getServerLevel(), ((ItemHolder.InWorld) holder).getEntity().position());
+									}
+								}
+							}
+						}
+						ctx.totalItems -= ctx.itemHolders.postApply(true, times);
 						if (!recipe.getMaxRepeats().isAny()) {
 							break major;
 						}
 						ctx.filteredItems = null;
-						ctx.match = null;
+						ctx.setMatch(null);
 						ctx.itemEntities.removeIf($ -> $.getItem().isEmpty());
 					}
 				} catch (Exception e) {

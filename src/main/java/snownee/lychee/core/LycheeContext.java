@@ -24,6 +24,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.core.input.ItemHolderCollection;
 import snownee.lychee.core.post.Delay.LycheeMarker;
 import snownee.lychee.core.post.PostAction;
 
@@ -33,6 +34,7 @@ public class LycheeContext extends EmptyContainer {
 	private final Level level;
 	private LootContext cachedLootContext;
 	public final ActionRuntime runtime = new ActionRuntime();
+	public ItemHolderCollection itemHolders = ItemHolderCollection.EMPTY;
 
 	protected LycheeContext(RandomSource pRandom, Level level, Map<LootContextParam<?>, Object> pParams) {
 		random = pRandom;

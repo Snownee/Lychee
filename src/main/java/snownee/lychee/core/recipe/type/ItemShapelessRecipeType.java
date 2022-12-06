@@ -70,31 +70,25 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 						}
 						matchedAny = matched = true;
 						int times = 1;
-						if (ctx.match != null && ctx.match.length > 0) {
+						if (ctx.getMatch() != null && ctx.getMatch().inputUsed.length > 0) {
+							int[] inputUsed = ctx.getMatch().inputUsed;
 							times = recipe.getRandomRepeats(Integer.MAX_VALUE, ctx);
-							for (int i = 0; i < ctx.match.length; i++) {
-								if (ctx.match[i] > 0) {
+							for (int i = 0; i < inputUsed.length; i++) {
+								if (inputUsed[i] > 0) {
 									ItemStack stack = ctx.filteredItems.get(i).getItem();
-									times = Math.min(times, stack.getCount() / ctx.match[i]);
+									times = Math.min(times, stack.getCount() / inputUsed[i]);
 								}
 							}
 						}
 						match.get().applyPostActions(ctx, times);
-						if (ctx.runtime.doDefault && ctx.match != null) {
-							for (int i = 0; i < ctx.match.length; i++) {
-								if (ctx.match[i] > 0) {
-									ItemEntity itemEntity = ctx.filteredItems.get(i);
-									int count = ctx.match[i] * times;
-									itemEntity.getItem().shrink(count);
-									ctx.totalItems -= count;
-								}
-							}
+						if (ctx.getMatch() != null) {
+							ctx.totalItems -= ctx.itemHolders.postApply(ctx.runtime.doDefault, times);
 						}
 						if (!recipe.getMaxRepeats().isAny()) {
 							break major;
 						}
 						ctx.filteredItems = null;
-						ctx.match = null;
+						ctx.setMatch(null);
 						ctx.itemEntities.removeIf($ -> $.getItem().isEmpty());
 					}
 				} catch (Exception e) {

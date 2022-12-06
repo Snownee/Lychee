@@ -1,6 +1,7 @@
 package snownee.lychee.block_crushing;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
@@ -60,12 +61,12 @@ public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingContext> impl
 		}).limit(ItemShapelessRecipe.MAX_INGREDIENTS).toList();
 		List<ItemStack> items = itemEntities.stream().map(ItemEntity::getItem).toList();
 		int[] amount = items.stream().mapToInt(ItemStack::getCount).toArray();
-		int[] match = RecipeMatcher.findMatches(items, ingredients, amount);
-		if (match == null) {
+		Optional<RecipeMatcher<ItemStack>> match = RecipeMatcher.findMatches(items, ingredients, amount);
+		if (match.isEmpty()) {
 			return false;
 		}
 		ctx.filteredItems = itemEntities;
-		ctx.match = match;
+		ctx.setMatch(match.get());
 		return true;
 	}
 
