@@ -19,7 +19,6 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.ILightingSettings;
@@ -120,12 +119,11 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 			matrixStack.popPose();
 		}));
 
-		boolean preventDefault = getCategoryIdentifier() != REICompat.BLOCK_EXPLODING && recipe.getPostActions().stream().anyMatch($ -> $.getType() == PostActionTypes.PREVENT_DEFAULT);
 		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
 		if (recipe instanceof ItemShapelessRecipe) {
-			ingredientGroup(widgets, startPoint, recipe, 40, y, preventDefault);
+			ingredientGroup(widgets, startPoint, recipe, 40, y);
 		} else {
-			ingredientGroup(widgets, startPoint, recipe, 12, 21, preventDefault);
+			ingredientGroup(widgets, startPoint, recipe, 12, 21);
 		}
 
 		actionGroup(widgets, startPoint, recipe, getRealWidth() - 34, y);

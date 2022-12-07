@@ -48,7 +48,7 @@ public class ItemShapelessRecipeCategory<C extends ItemShapelessContext, T exten
 		drawInfoBadge(widgets, display, startPoint);
 		int xCenter = bounds.getCenterX();
 		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
-		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y, false);
+		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y);
 		actionGroup(widgets, startPoint, recipe, xCenter + 50 - startPoint.x, y);
 		drawExtra(widgets, display, bounds);
 		return widgets;

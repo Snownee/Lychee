@@ -50,7 +50,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 	public void setRecipe(IRecipeLayoutBuilder builder, BlockCrushingRecipe recipe, IFocusGroup focuses) {
 		int xCenter = getWidth() / 2;
 		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
-		ingredientGroup(builder, recipe, xCenter - 45, y, false);
+		ingredientGroup(builder, recipe, xCenter - 45, y);
 		actionGroup(builder, recipe, xCenter + 50, y);
 		addBlockInputs(builder, recipe.getBlock());
 		addBlockInputs(builder, recipe.getLandingBlock());

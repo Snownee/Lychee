@@ -27,10 +27,10 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
+import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.rei.LEntryWidget;
 import snownee.lychee.compat.rei.REICompat;
 import snownee.lychee.compat.rei.REICompat.SlotType;
@@ -43,7 +43,6 @@ import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
-import snownee.lychee.util.Pair;
 
 public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> implements DisplayCategory<D> {
 
@@ -96,40 +95,15 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 		slotGroup(widgets, startPoint, x, y, recipe.getShowingPostActions(), BaseREICategory::actionSlot);
 	}
 
-	public void ingredientGroup(List<Widget> widgets, Point startPoint, T recipe, int x, int y, boolean catalyst) {
-		List<Pair<Ingredient, Integer>> ingredients;
-		if (recipe.getType().compactInputs) {
-			ingredients = Lists.newArrayList();
-			for (Ingredient ingredient : recipe.getIngredients()) {
-				Pair<Ingredient, Integer> match = null;
-				if (LUtil.isSimpleIngredient(ingredient)) {
-					for (Pair<Ingredient, Integer> toCompare : ingredients) {
-						if (LUtil.isSimpleIngredient(toCompare.getFirst()) && toCompare.getFirst().getStackingIds().equals(ingredient.getStackingIds())) {
-							match = toCompare;
-							break;
-						}
-					}
-				}
-				if (match == null) {
-					ingredients.add(Pair.of(ingredient, 1));
-				} else {
-					match.setSecond(match.getSecond() + 1);
-				}
-			}
-		} else {
-			ingredients = recipe.getIngredients().stream().map($ -> Pair.of($, 1)).toList();
-		}
+	public void ingredientGroup(List<Widget> widgets, Point startPoint, T recipe, int x, int y) {
+		var ingredients = JEIREI.generateInputs(recipe);
 		slotGroup(widgets, startPoint, x, y, ingredients, (widgets0, startPoint0, ingredient, x0, y0) -> {
-			LEntryWidget slot = REICompat.slot(startPoint, x0, y0, catalyst ? SlotType.CATALYST : SlotType.NORMAL);
-			slot.entries(EntryIngredients.ofItemStacks(Stream.of(ingredient.getFirst().getItems())
-					.map($ -> ingredient.getSecond() == 1 ? $ : $.copy())
-					.peek($ -> $.setCount(ingredient.getSecond()))
-					.toList()
-			));
+			LEntryWidget slot = REICompat.slot(startPoint, x0, y0, ingredient.middle != null ? SlotType.CATALYST : SlotType.NORMAL);
+			slot.entries(EntryIngredients.ofItemStacks(Stream.of(ingredient.left.getItems()).map($ -> ingredient.right == 1 ? $ : $.copy()).peek($ -> $.setCount(ingredient.right)).toList()));
 			slot.markInput();
-			if (catalyst) {
+			if (ingredient.middle != null && ingredient.middle != LUtil.EMPTY_TEXT) {
 				slot.addTooltipCallback(tooltip -> {
-					tooltip.add(recipe.getType().getPreventDefaultDescription(recipe));
+					tooltip.add(ingredient.middle);
 				});
 			}
 			widgets.add(slot);

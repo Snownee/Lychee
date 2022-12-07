@@ -35,12 +35,16 @@ public final class RecipeTypes {
 	}
 
 	public static void init() {
-		BLOCK_INTERACTING.setRequiresClient();
-		BLOCK_CLICKING.setRequiresClient();
-		DRIPSTONE_DRIPPING.setRequiresClient(); // we need the particle
-
+		BLOCK_INTERACTING.requiresClient = true;
+		BLOCK_CLICKING.requiresClient = true;
+		DRIPSTONE_DRIPPING.requiresClient = true; // we need the particle
 		RANDOM_BLOCK_TICKING.extractChance = true;
 		DRIPSTONE_DRIPPING.extractChance = true;
+		BLOCK_INTERACTING.canPreventConsumeInputs = true;
+		BLOCK_CLICKING.canPreventConsumeInputs = true;
+		ITEM_INSIDE.canPreventConsumeInputs = true;
+		LIGHTNING_CHANNELING.canPreventConsumeInputs = true;
+		ITEM_EXPLODING.canPreventConsumeInputs = true;
 	}
 
 	public static final Set<LycheeRecipeType<?, ?>> ALL = Sets.newLinkedHashSet();

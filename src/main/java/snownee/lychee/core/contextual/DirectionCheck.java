@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.network.FriendlyByteBuf;
@@ -80,7 +80,7 @@ public class DirectionCheck implements ContextualCondition {
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
-		String value = I18n.get("direction.lychee." + name);
+		Component value = Component.translatable("direction.lychee." + name).withStyle(ChatFormatting.WHITE);
 		return Component.translatable(makeDescriptionId(inverted), value);
 	}
 

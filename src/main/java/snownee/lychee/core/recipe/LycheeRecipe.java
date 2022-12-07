@@ -173,6 +173,9 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 				Integer min = recipe.maxRepeats.getMin();
 				Preconditions.checkArgument(min != null && min > 0, "Min value of max_repeats should be greater than 0");
 			}
+			for (PostAction action : recipe.getPostActions()) {
+				Preconditions.checkArgument(action.validate(recipe), "Error while validating action: %s", action);
+			}
 			return recipe;
 		}
 
@@ -185,7 +188,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 				if (LycheeConfig.debug)
 					Lychee.LOGGER.debug("Read recipe: {}", pRecipeId);
 				recipe.hideInRecipeViewer = pBuffer.readBoolean();
-				if (recipe.hideInRecipeViewer && !recipe.getType().requiresClient()) {
+				if (recipe.hideInRecipeViewer && !recipe.getType().requiresClient) {
 					return recipe;
 				}
 				recipe.conditionsFromNetwork(pBuffer);
@@ -216,7 +219,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			if (LycheeConfig.debug)
 				Lychee.LOGGER.debug("Write recipe: {}", pRecipe.getId());
 			pBuffer.writeBoolean(pRecipe.hideInRecipeViewer);
-			if (pRecipe.hideInRecipeViewer && !pRecipe.getType().requiresClient()) {
+			if (pRecipe.hideInRecipeViewer && !pRecipe.getType().requiresClient) {
 				return;
 			}
 			pRecipe.conditionsToNetwork(pBuffer);

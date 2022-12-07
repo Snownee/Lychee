@@ -31,11 +31,12 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 	public final Class<? extends T> clazz;
 	public final LootContextParamSet contextParamSet;
 	private boolean empty = true;
-	private boolean requiresClient;
 	protected List<T> recipes;
+	public boolean requiresClient;
 	public boolean compactInputs;
+	public boolean canPreventConsumeInputs;
 
-	public static final Component DEFAULT_PREVENT_TIP = Component.translatable("tip.lychee.prevent_default.default").withStyle(ChatFormatting.YELLOW);
+	public static final Component DEFAULT_PREVENT_TIP = Component.translatable("tip.lychee.preventDefault.default").withStyle(ChatFormatting.YELLOW);
 
 	public LycheeRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet contextParamSet) {
 		id = new ResourceLocation(Lychee.ID, name);
@@ -80,14 +81,6 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 
 	public Component getPreventDefaultDescription(LycheeRecipe<?> recipe) {
 		return DEFAULT_PREVENT_TIP;
-	}
-
-	public void setRequiresClient() {
-		requiresClient = true;
-	}
-
-	public boolean requiresClient() {
-		return requiresClient;
 	}
 
 	public static class ValidItemCache {

@@ -3,6 +3,7 @@ package snownee.lychee.core.post;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Lists;
@@ -17,6 +18,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.core.LycheeContext;
@@ -94,7 +96,7 @@ public abstract class PostAction extends ContextualHolder {
 
 	@Override
 	public String toString() {
-		return "PostAction";
+		return toJson().toString();
 	}
 
 	public boolean canRepeat() {
@@ -109,6 +111,13 @@ public abstract class PostAction extends ContextualHolder {
 		}
 		((PostActionType<PostAction>) getType()).toJson(this, o);
 		return o;
+	}
+
+	public boolean validate(LycheeRecipe<?> recipe) {
+		return true;
+	}
+
+	public void loadCatalystsInfo(LycheeRecipe<?> recipe, List<MutableTriple<Ingredient, Component, Integer>> ingredients) {
 	}
 
 }

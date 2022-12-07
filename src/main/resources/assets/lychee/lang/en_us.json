@@ -17,6 +17,7 @@
 "postAction.lychee.explode.break": "Explode (break blocks)",
 "postAction.lychee.explode.destroy": "Explode (destroy blocks)",
 "postAction.lychee.hurt": "Causes %s damage",
+"postAction.lychee.damage_item": "Damage: +%s",
 "contextual.lychee": "{0,choice,1#Condition|1<Conditions}:",
 "contextual.lychee.secret": "§o???",
 "contextual.lychee.or": "True for any:",
@@ -72,7 +73,7 @@
 "tip.lychee.nbtPredicate": "Has NBT predicate",
 "tip.lychee.block_interacting": "Use on block",
 "tip.lychee.block_clicking": "Click on block",
-"tip.lychee.prevent_default.default": "Will not be consumed",
+"tip.lychee.preventDefault.default": "No consumption",
 "tip.lychee.sec": "{0}s",
 "tip.lychee.randomChance.one": "Chance: %s",
 "tip.lychee.randomChance": "Chance: %s × %s"
