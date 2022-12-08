@@ -20,7 +20,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionResult;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public record IsDifficulty(IntImmutableList difficulties) implements ContextualCondition {
@@ -31,7 +31,7 @@ public record IsDifficulty(IntImmutableList difficulties) implements ContextualC
 	}
 
 	@Override
-	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return difficulties.contains(ctx.getLevel().getDifficulty().getId()) ? times : 0;
 	}
 

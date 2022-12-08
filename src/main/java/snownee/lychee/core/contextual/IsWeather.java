@@ -17,7 +17,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.Level;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public record IsWeather(String id, Predicate<Level> predicate) implements ContextualCondition {
 
@@ -39,7 +39,7 @@ public record IsWeather(String id, Predicate<Level> predicate) implements Contex
 	}
 
 	@Override
-	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return predicate.test(ctx.getLevel()) ? times : 0;
 	}
 

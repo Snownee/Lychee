@@ -22,7 +22,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public class Execute extends PostAction {
 
@@ -44,7 +44,7 @@ public class Execute extends PostAction {
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		if (command.isEmpty()) {
 			return;
 		}

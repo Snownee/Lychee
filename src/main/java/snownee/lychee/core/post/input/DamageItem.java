@@ -27,7 +27,7 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.Reference;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public class DamageItem extends PostAction {
@@ -46,16 +46,16 @@ public class DamageItem extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		IntList indexes = recipe.getItemIndexes(target);
 		Entity thisEntity = ctx.getParam(LootContextParams.THIS_ENTITY);
 		for (var index : indexes) {
-			ItemStack stack = ctx.itemHolders.get(index).get();
+			ItemStack stack = ctx.getItem(index);
 			if (!stack.isDamageableItem()) {
 				return;
 			}
@@ -109,12 +109,12 @@ public class DamageItem extends PostAction {
 	}
 
 	@Override
-	public boolean validate(LycheeRecipe<?> recipe) {
+	public boolean validate(ILycheeRecipe<?> recipe) {
 		return !recipe.getItemIndexes(target).isEmpty();
 	}
 
 	@Override
-	public void loadCatalystsInfo(LycheeRecipe<?> recipe, List<MutableTriple<Ingredient, Component, Integer>> ingredients) {
+	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<MutableTriple<Ingredient, Component, Integer>> ingredients) {
 		String key = LUtil.makeDescriptionId("postAction", getType().getRegistryName());
 		Component component = Component.translatable(key, damage).withStyle(ChatFormatting.YELLOW);
 		recipe.getItemIndexes(target).forEach(i -> ingredients.get(i).middle = component);

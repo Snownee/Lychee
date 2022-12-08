@@ -12,7 +12,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public class And extends ContextualHolder implements ContextualCondition {
 
@@ -22,7 +22,7 @@ public class And extends ContextualHolder implements ContextualCondition {
 	}
 
 	@Override
-	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return checkConditions(recipe, ctx, times);
 	}
 

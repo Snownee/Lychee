@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public record Chance(float chance) implements ContextualCondition {
@@ -18,7 +18,7 @@ public record Chance(float chance) implements ContextualCondition {
 	}
 
 	@Override
-	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		int n = 0;
 		for (int i = 0; i < times; i++) {
 			if (ctx.getRandom().nextFloat() < chance) {

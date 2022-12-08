@@ -23,7 +23,7 @@ import snownee.lychee.block_crushing.BlockCrushingRecipe;
 import snownee.lychee.block_exploding.BlockExplodingContext;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.ItemEntityAccess;
 import snownee.lychee.util.LUtil;
 
@@ -41,12 +41,12 @@ public class DropItem extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
 		if (recipe instanceof BlockCrushingRecipe) {
 			BlockState landingBlock = ctx.getParam(LootContextParams.BLOCK_STATE);

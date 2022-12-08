@@ -15,6 +15,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import snownee.lychee.core.ActionRuntime.State;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.Delay.LycheeMarker;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
 
@@ -22,11 +23,11 @@ import snownee.lychee.util.LUtil;
 public class MarkerMixin implements LycheeMarker {
 
 	private int lychee$ticks;
-	private LycheeRecipe<?> lychee$recipe;
+	private ILycheeRecipe<?> lychee$recipe;
 	private LycheeContext lychee$ctx;
 
 	@Override
-	public void lychee$setContext(LycheeRecipe<?> recipe, LycheeContext ctx) {
+	public void lychee$setContext(ILycheeRecipe<?> recipe, LycheeContext ctx) {
 		lychee$ctx = ctx;
 		lychee$recipe = recipe;
 	}
@@ -76,7 +77,7 @@ public class MarkerMixin implements LycheeMarker {
 		}
 		compoundTag.putInt("lychee:ticks", lychee$ticks);
 		compoundTag.putString("lychee:ctx", lychee$ctx.save().toString());
-		compoundTag.putString("lychee:recipe", lychee$recipe.getId().toString());
+		compoundTag.putString("lychee:recipe", ((Recipe<?>) lychee$recipe).getId().toString());
 	}
 
 }

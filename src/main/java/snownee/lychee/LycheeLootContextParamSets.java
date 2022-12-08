@@ -45,4 +45,8 @@ public final class LycheeLootContextParamSets {
 		$.required(LootContextParams.ORIGIN).required(LootContextParams.BLOCK_STATE).optional(LycheeLootContextParams.BLOCK_POS).optional(LootContextParams.BLOCK_ENTITY);
 	});
 
+	public static final LootContextParamSet CRAFTING = LootContextParamSetsAccess.callRegister("lychee:crafting", $ -> {
+		$.optional(LootContextParams.ORIGIN).optional(LootContextParams.THIS_ENTITY);
+	});
+
 }

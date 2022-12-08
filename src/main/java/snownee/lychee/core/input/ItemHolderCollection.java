@@ -6,10 +6,14 @@ import java.util.stream.Stream;
 
 import com.google.common.collect.Lists;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import snownee.lychee.core.LycheeContext;
+import snownee.lychee.util.LUtil;
 
 public abstract class ItemHolderCollection {
 
@@ -90,22 +94,32 @@ public abstract class ItemHolderCollection {
 
 	public static class Inventory extends ItemHolderCollection {
 
-		private Player player;
+		private LycheeContext ctx;
 
-		public Inventory(Player player, ItemHolder.Simple... holders) {
+		public Inventory(LycheeContext ctx, ItemHolder.Simple... holders) {
 			super(holders);
-			this.player = player;
+			this.ctx = ctx;
 		}
 
-		public static ItemHolderCollection of(Player player, ItemStack... items) {
-			return new Inventory(player, Stream.of(items).map(ItemHolder.Simple::new).toArray(ItemHolder.Simple[]::new));
+		public static ItemHolderCollection of(LycheeContext ctx, ItemStack... items) {
+			return new Inventory(ctx, Stream.of(items).map(ItemHolder.Simple::new).toArray(ItemHolder.Simple[]::new));
 		}
 
 		@Override
 		public int postApply(boolean consumeInputs, int times) {
+			Entity entity = ctx.getParamOrNull(LootContextParams.THIS_ENTITY);
+			Player player = null;
+			if (entity instanceof Player) {
+				player = (Player) entity;
+			}
+			Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
 			for (ItemStack stack : tempList) {
-				if (!player.addItem(stack)) {
-					player.drop(stack, false);
+				if (player != null) {
+					if (!player.addItem(stack)) {
+						player.drop(stack, false);
+					}
+				} else if (pos != null) {
+					LUtil.dropItemStack(ctx.getLevel(), pos.x, pos.y, pos.z, stack, null);
 				}
 			}
 			return consumeInputs ? consumeInputs(times) : 0;

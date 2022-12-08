@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.tuple.MutableTriple;
-import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
@@ -23,7 +22,7 @@ import snownee.lychee.LycheeRegistries;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public abstract class PostAction extends ContextualHolder {
@@ -33,13 +32,13 @@ public abstract class PostAction extends ContextualHolder {
 	/**
 	 * @return true if do default behavior
 	 */
-	public void doApply(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		for (int i = 0; i < times; i++) {
 			apply(recipe, ctx, times);
 		}
 	}
 
-	protected abstract void apply(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times);
+	protected abstract void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times);
 
 	public List<ItemStack> getOutputItems() {
 		return List.of();
@@ -113,11 +112,11 @@ public abstract class PostAction extends ContextualHolder {
 		return o;
 	}
 
-	public boolean validate(LycheeRecipe<?> recipe) {
+	public boolean validate(ILycheeRecipe<?> recipe) {
 		return true;
 	}
 
-	public void loadCatalystsInfo(LycheeRecipe<?> recipe, List<MutableTriple<Ingredient, Component, Integer>> ingredients) {
+	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<MutableTriple<Ingredient, Component, Integer>> ingredients) {
 	}
 
 }

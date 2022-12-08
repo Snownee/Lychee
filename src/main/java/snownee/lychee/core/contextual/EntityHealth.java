@@ -13,7 +13,7 @@ import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.DoubleBoundsHelper;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public record EntityHealth(Doubles range) implements ContextualCondition {
 
@@ -23,7 +23,7 @@ public record EntityHealth(Doubles range) implements ContextualCondition {
 	}
 
 	@Override
-	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Entity entity = ctx.getParam(LootContextParams.THIS_ENTITY);
 		double d = 0;
 		if (entity instanceof LivingEntity living) {

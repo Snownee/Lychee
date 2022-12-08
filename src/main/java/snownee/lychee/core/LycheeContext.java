@@ -16,6 +16,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -33,7 +34,7 @@ public class LycheeContext extends EmptyContainer {
 	private final Map<LootContextParam<?>, Object> params;
 	private final Level level;
 	private LootContext cachedLootContext;
-	public final ActionRuntime runtime = new ActionRuntime();
+	public ActionRuntime runtime;
 	public ItemHolderCollection itemHolders = ItemHolderCollection.EMPTY;
 
 	protected LycheeContext(RandomSource pRandom, Level level, Map<LootContextParam<?>, Object> pParams) {
@@ -121,6 +122,28 @@ public class LycheeContext extends EmptyContainer {
 
 	public void removeParam(LootContextParam<?> param) {
 		params.remove(param);
+	}
+
+	@Override
+	public int getContainerSize() {
+		return itemHolders.size();
+	}
+
+	@Override
+	public ItemStack getItem(int index) {
+		return itemHolders.get(index).get();
+	}
+
+	@Override
+	public void setItem(int index, ItemStack stack) {
+		itemHolders.replace(index, stack);
+	}
+
+	public void enqueueActions(List<PostAction> actions, int times, boolean startNew) {
+		if (runtime == null || startNew) {
+			runtime = new ActionRuntime();
+		}
+		runtime.enqueue(actions, times);
 	}
 
 	public JsonObject save() {

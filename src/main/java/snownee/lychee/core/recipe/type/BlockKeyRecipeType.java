@@ -123,10 +123,10 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 			if (tryMatch(recipe, level, ctx).isPresent()) {
 				if (!level.isClientSide && recipe.tickOrApply(ctx)) {
 					int times = recipe.getRandomRepeats(Math.max(1, stack.getCount()), ctx);
-					ctx.itemHolders = ItemHolderCollection.Inventory.of(player, stack);
+					ctx.itemHolders = ItemHolderCollection.Inventory.of(ctx, stack);
 					recipe.applyPostActions(ctx, times);
 					ctx.itemHolders.postApply(ctx.runtime.doDefault, times);
-					player.setItemInHand(hand, ctx.itemHolders.get(0).get());
+					player.setItemInHand(hand, ctx.getItem(0));
 				}
 				return Optional.of(recipe);
 			}

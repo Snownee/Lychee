@@ -19,7 +19,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public class DirectionCheck implements ContextualCondition {
 
@@ -74,7 +74,7 @@ public class DirectionCheck implements ContextualCondition {
 	}
 
 	@Override
-	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return predicate.test(ctx) ? times : 0;
 	}
 
