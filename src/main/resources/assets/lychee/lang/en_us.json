@@ -51,6 +51,8 @@
 "contextual.lychee.is_sneaking.not": "Requires not crouching",
 "contextual.lychee.direction": "Direction is: %s",
 "contextual.lychee.direction.not": "Direction is not: %s",
+"contextual.lychee.has_param": "Has param: %s",
+"contextual.lychee.has_param.not": "Has no param: %s",
 "direction.lychee.up": "Up",
 "direction.lychee.down": "Down",
 "direction.lychee.north": "North",
