@@ -246,6 +246,16 @@ public class LycheeCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 		return actions;
 	}
 
+	@Override
+	public ContextualHolder getContextualHolder() {
+		return conditions;
+	}
+
+	@Override
+	public String getComment() {
+		return comment;
+	}
+
 	public void addPostAction(PostAction action) {
 		Objects.requireNonNull(action);
 		if (actions == Collections.EMPTY_LIST) {
@@ -260,6 +270,11 @@ public class LycheeCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			assembling = Lists.newArrayList();
 		}
 		assembling.add(action);
+	}
+
+	@Override
+	public boolean showInRecipeViewer() {
+		return !hideInRecipeViewer;
 	}
 
 	@Override

@@ -87,6 +87,16 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		return actions;
 	}
 
+	@Override
+	public ContextualHolder getContextualHolder() {
+		return this;
+	}
+
+	@Override
+	public @Nullable String getComment() {
+		return comment;
+	}
+
 	public Ints getMaxRepeats() {
 		return maxRepeats;
 	}
@@ -99,6 +109,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		return Math.min(max, times);
 	}
 
+	@Override
 	public boolean showInRecipeViewer() {
 		return !hideInRecipeViewer;
 	}

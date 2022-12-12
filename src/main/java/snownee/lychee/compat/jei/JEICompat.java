@@ -2,6 +2,7 @@ package snownee.lychee.compat.jei;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Maps;
@@ -19,12 +20,16 @@ import mezz.jei.api.registration.IModIngredientRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
@@ -36,6 +41,7 @@ import snownee.lychee.compat.jei.category.BaseJEICategory;
 import snownee.lychee.compat.jei.category.BlockCrushingRecipeCategory;
 import snownee.lychee.compat.jei.category.BlockExplodingRecipeCategory;
 import snownee.lychee.compat.jei.category.BlockInteractionRecipeCategory;
+import snownee.lychee.compat.jei.category.CraftingRecipeCategoryExtension;
 import snownee.lychee.compat.jei.category.DripstoneRecipeCategory;
 import snownee.lychee.compat.jei.category.ItemBurningRecipeCategory;
 import snownee.lychee.compat.jei.category.ItemExplodingRecipeCategory;
@@ -45,7 +51,9 @@ import snownee.lychee.compat.jei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.PostAction;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.crafting.LycheeCraftingRecipe;
 import snownee.lychee.util.LUtil;
 
 @JeiPlugin
@@ -109,6 +117,11 @@ public class JEICompat implements IModPlugin {
 	}
 
 	@Override
+	public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
+		registration.getCraftingCategory().addCategoryExtension(LycheeCraftingRecipe.class, CraftingRecipeCategoryExtension::new);
+	}
+
+	@Override
 	public void registerIngredients(IModIngredientRegistration registration) {
 		registration.register(POST_ACTION, List.of(), new PostActionIngredientHelper(), PostActionIngredientRenderer.INSTANCE);
 	}
@@ -132,6 +145,17 @@ public class JEICompat implements IModPlugin {
 	@Override
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 		RUNTIME = jeiRuntime;
+		Minecraft.getInstance().execute(() -> {
+			/* off */
+			var recipes = LUtil.recipes(RecipeType.CRAFTING).stream()
+					.filter(ILycheeRecipe.class::isInstance)
+					.map(ILycheeRecipe.class::cast)
+					.filter(Predicate.not(ILycheeRecipe::showInRecipeViewer))
+					.map(CraftingRecipe.class::cast)
+					.toList();
+			/* on */
+			jeiRuntime.getRecipeManager().hideRecipes(mezz.jei.api.constants.RecipeTypes.CRAFTING, recipes);
+		});
 	}
 
 	private static final Map<AllGuiTextures, IDrawable> elMap = Maps.newIdentityHashMap();
