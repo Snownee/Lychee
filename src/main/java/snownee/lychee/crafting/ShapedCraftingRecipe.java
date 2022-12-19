@@ -55,7 +55,7 @@ import snownee.lychee.util.JsonPointer;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.Pair;
 
-public class LycheeCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<CraftingContext> {
+public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<CraftingContext> {
 
 	private static final Function<AbstractContainerMenu, Pair<Vec3, Player>> FALLBACK = menu -> null;
 	public static final Cache<Class<?>, Function<AbstractContainerMenu, Pair<Vec3, Player>>> CONTAINER_WORLD_LOCATOR = CacheBuilder.newBuilder().build();
@@ -113,7 +113,7 @@ public class LycheeCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	@Nullable
 	public String pattern;
 
-	public LycheeCraftingRecipe(ResourceLocation id, String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result) {
+	public ShapedCraftingRecipe(ResourceLocation id, String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result) {
 		super(id, group, width, height, ingredients, result);
 	}
 
@@ -287,10 +287,10 @@ public class LycheeCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 		return !conditions.getConditions().isEmpty() || !assembling.isEmpty();
 	}
 
-	public static class Serializer implements RecipeSerializer<LycheeCraftingRecipe> {
+	public static class Serializer implements RecipeSerializer<ShapedCraftingRecipe> {
 		@Override
-		public LycheeCraftingRecipe fromJson(ResourceLocation id, JsonObject jsonObject) {
-			LycheeCraftingRecipe recipe = fromNormal(RecipeSerializer.SHAPED_RECIPE.fromJson(id, jsonObject));
+		public ShapedCraftingRecipe fromJson(ResourceLocation id, JsonObject jsonObject) {
+			ShapedCraftingRecipe recipe = fromNormal(RecipeSerializer.SHAPED_RECIPE.fromJson(id, jsonObject));
 			recipe.hideInRecipeViewer = GsonHelper.getAsBoolean(jsonObject, "hide_in_viewer", false);
 			recipe.ghost = GsonHelper.getAsBoolean(jsonObject, "ghost", false);
 			recipe.comment = GsonHelper.getAsString(jsonObject, "comment", null);
@@ -311,10 +311,10 @@ public class LycheeCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 		}
 
 		@Override
-		public LycheeCraftingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
+		public ShapedCraftingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
 			if (LycheeConfig.debug)
 				Lychee.LOGGER.debug("Read recipe: {}", id);
-			LycheeCraftingRecipe recipe = fromNormal(RecipeSerializer.SHAPED_RECIPE.fromNetwork(id, buf));
+			ShapedCraftingRecipe recipe = fromNormal(RecipeSerializer.SHAPED_RECIPE.fromNetwork(id, buf));
 			recipe.hideInRecipeViewer = buf.readBoolean();
 			if (recipe.hideInRecipeViewer) {
 				return recipe;
@@ -334,13 +334,13 @@ public class LycheeCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			return recipe;
 		}
 
-		private static LycheeCraftingRecipe fromNormal(ShapedRecipe recipe) {
-			return new LycheeCraftingRecipe(recipe.getId(), recipe.getGroup(), recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), recipe.getResultItem());
+		private static ShapedCraftingRecipe fromNormal(ShapedRecipe recipe) {
+			return new ShapedCraftingRecipe(recipe.getId(), recipe.getGroup(), recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), recipe.getResultItem());
 		}
 
 		@SuppressWarnings("rawtypes")
 		@Override
-		public void toNetwork(FriendlyByteBuf buf, LycheeCraftingRecipe recipe) {
+		public void toNetwork(FriendlyByteBuf buf, ShapedCraftingRecipe recipe) {
 			if (LycheeConfig.debug)
 				Lychee.LOGGER.debug("Write recipe: {}", recipe.getId());
 			RecipeSerializer.SHAPED_RECIPE.toNetwork(buf, recipe);

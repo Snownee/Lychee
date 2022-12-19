@@ -9,7 +9,7 @@ import snownee.lychee.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
 import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
-import snownee.lychee.crafting.LycheeCraftingRecipe;
+import snownee.lychee.crafting.ShapedCraftingRecipe;
 import snownee.lychee.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.interaction.BlockClickingRecipe;
 import snownee.lychee.interaction.BlockInteractingRecipe;
@@ -35,7 +35,7 @@ public final class RecipeSerializers {
 	public static final LycheeRecipe.Serializer<BlockExplodingRecipe> BLOCK_EXPLODING = register("block_exploding", new BlockExplodingRecipe.Serializer());
 	public static final LycheeRecipe.Serializer<RandomBlockTickingRecipe> RANDOM_BLOCK_TICKING = register("random_block_ticking", new RandomBlockTickingRecipe.Serializer());
 	public static final LycheeRecipe.Serializer<DripstoneRecipe> DRIPSTONE_DRIPPING = register("dripstone_dripping", new DripstoneRecipe.Serializer());
-	public static final RecipeSerializer<LycheeCraftingRecipe> CRAFTING = register("crafting", new LycheeCraftingRecipe.Serializer());
+	public static final RecipeSerializer<ShapedCraftingRecipe> CRAFTING = register("crafting", new ShapedCraftingRecipe.Serializer());
 
 	public static <T extends RecipeSerializer<?>> T register(String name, T t) {
 		Registry.register(Registry.RECIPE_SERIALIZER, new ResourceLocation(Lychee.ID, name), t);
