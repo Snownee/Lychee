@@ -9,11 +9,18 @@ import java.util.function.Function;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import dev.architectury.event.EventResult;
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.gui.DisplayRenderer;
+import me.shedaniel.rei.api.client.gui.widgets.Arrow;
+import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.WidgetWithBounds;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
+import me.shedaniel.rei.api.client.registry.category.extension.CategoryExtensionProvider;
+import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
+import me.shedaniel.rei.api.client.registry.display.DisplayCategoryView;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
@@ -37,6 +44,7 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.rei.category.BaseREICategory;
 import snownee.lychee.compat.rei.category.BlockCrushingRecipeCategory;
 import snownee.lychee.compat.rei.category.BlockExplodingRecipeCategory;
 import snownee.lychee.compat.rei.category.BlockInteractionRecipeCategory;
@@ -52,8 +60,10 @@ import snownee.lychee.compat.rei.display.DripstoneRecipeDisplay;
 import snownee.lychee.compat.rei.display.ItemBurningDisplay;
 import snownee.lychee.compat.rei.display.ItemInsideDisplay;
 import snownee.lychee.compat.rei.display.ItemShapelessDisplay;
+import snownee.lychee.compat.rei.display.LycheeCraftingDisplay;
 import snownee.lychee.compat.rei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.core.post.PostAction;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
@@ -100,6 +110,40 @@ public class REICompat implements REIClientPlugin {
 			registration.addWorkstations(BLOCK_EXPLODING, stack);
 		}
 		registration.addWorkstations(DRIPSTONE_DRIPPING, EntryStacks.of(Items.POINTED_DRIPSTONE));
+
+		registration.get(CategoryIdentifier.of("minecraft", "plugins/crafting")).registerExtension(new CategoryExtensionProvider<Display>() {
+
+			@Override
+			public DisplayCategoryView<Display> provide(Display display, DisplayCategory<Display> category, DisplayCategoryView<Display> lastView) {
+				if (display instanceof LycheeCraftingDisplay d) {
+					ILycheeRecipe<?> recipe = d.recipe();
+					return new DisplayCategoryView<>() {
+						@Override
+						public DisplayRenderer getDisplayRenderer(Display display) {
+							return lastView.getDisplayRenderer(display);
+						}
+
+						@Override
+						public List<Widget> setupDisplay(Display display, Rectangle bounds) {
+							List<Widget> widgets = lastView.setupDisplay(display, bounds);
+							Rect2i rect = null;
+							for (Widget widget : widgets) {
+								if (widget instanceof Arrow arrow) {
+									rect = new Rect2i(arrow.getBounds().getCenterX() - bounds.getX() - 4, arrow.getY()-bounds.getY() - 9, 8, 8);
+									break;
+								}
+							}
+							if (rect != null) {
+								BaseREICategory.drawInfoBadge(widgets, recipe, bounds.getLocation(), rect);
+							}
+							return widgets;
+						}
+					};
+				}
+				return lastView;
+			}
+
+		});
 	}
 
 	@Override
@@ -120,6 +164,13 @@ public class REICompat implements REIClientPlugin {
 			List<ItemStack> right = List.of($.getRight().getItems()).stream().map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
 			return new AnvilRecipe($.getId(), List.of($.getLeft().getItems()), right, List.of($.getResultItem()));
 		}).forEach(registration::add);
+
+		registration.registerVisibilityPredicate((DisplayCategory<?> category, Display display) -> {
+			if (display instanceof LycheeCraftingDisplay d && !d.recipe().showInRecipeViewer()) {
+				return EventResult.interruptFalse();
+			}
+			return EventResult.pass();
+		});
 	}
 
 	private static <T extends LycheeRecipe<?>, D extends Display> void registerFiller(DisplayRegistry registration, LycheeRecipeType<?, ? extends T> recipeType, Function<? extends T, D> filler) {

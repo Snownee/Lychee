@@ -40,6 +40,7 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.RandomSelect;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
@@ -181,26 +182,29 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 	}
 
 	public void drawInfoBadge(List<Widget> widgets, D display, Point startPoint) {
-		T recipe = display.recipe;
-		if (!recipe.getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.comment)) {
+		drawInfoBadge(widgets, display.recipe, startPoint, infoRect);
+	}
+
+	public static void drawInfoBadge(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
+		if (!recipe.getContextualHolder().getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.getComment())) {
 			widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
 				matrixStack.pushPose();
-				matrixStack.translate(startPoint.x + infoRect.getX(), startPoint.y + infoRect.getY(), 0);
+				matrixStack.translate(startPoint.x + rect.getX(), startPoint.y + rect.getY(), 0);
 				matrixStack.scale(.5F, .5F, .5F);
 				AllGuiTextures.INFO.render(matrixStack, 0, 0);
 				matrixStack.popPose();
 			}));
-			ReactiveWidget reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, infoRect));
+			ReactiveWidget reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, rect));
 			reactive.setTooltipFunction($ -> {
 				List<Component> list = Lists.newArrayList();
-				if (!Strings.isNullOrEmpty(recipe.comment)) {
-					String comment = recipe.comment;
+				if (!Strings.isNullOrEmpty(recipe.getComment())) {
+					String comment = recipe.getComment();
 					if (I18n.exists(comment)) {
 						comment = I18n.get(comment);
 					}
 					Splitter.on('\n').splitToStream(comment).map(Component::literal).forEach(list::add);
 				}
-				recipe.getConditonTooltips(list, 0);
+				recipe.getContextualHolder().getConditonTooltips(list, 0);
 				return list.toArray(new Component[0]);
 			});
 			widgets.add(reactive);

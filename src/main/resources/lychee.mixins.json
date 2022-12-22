@@ -38,7 +38,8 @@
     "MarkerMixin",
     "PointedDripstoneBlockMixin",
     "RecipeManagerMixin",
-    "ReloadableServerResourcesMixin"
+    "ReloadableServerResourcesMixin",
+    "rei.DefaultCraftingDisplayMixin"
   ],
   "client": [
     "GameRendererAccess",
