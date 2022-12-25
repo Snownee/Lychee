@@ -11,17 +11,18 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
 
-public record HasParam(String name) implements ContextualCondition {
+//TODO
+public record CheckParam(String key, Object value) implements ContextualCondition {
 
 	@Override
 	public ContextualConditionType<?> getType() {
-		return ContextualConditionTypes.HAS_PARAM;
+		return ContextualConditionTypes.CHECK_PARAM;
 	}
 
 	@Override
 	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		for (LootContextParam<?> param : ctx.getParams().keySet()) {
-			if (name.equals(param.getName().getPath()) || name.equals(param.getName().toString())) {
+			if (key.equals(param.getName().getPath()) || key.equals(param.getName().toString())) {
 				return times;
 			}
 		}
@@ -30,30 +31,30 @@ public record HasParam(String name) implements ContextualCondition {
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
-		String key = makeDescriptionId(inverted);
-		return Component.translatable(key, LUtil.white(name));
+		String key = makeDescriptionId(inverted) + ".has";
+		return Component.translatable(key, LUtil.white(key));
 	}
 
-	public static class Type extends ContextualConditionType<HasParam> {
+	public static class Type extends ContextualConditionType<CheckParam> {
 
 		@Override
-		public HasParam fromJson(JsonObject o) {
-			return new HasParam(o.get("name").getAsString());
+		public CheckParam fromJson(JsonObject o) {
+			return new CheckParam(o.get("key").getAsString(), null);
 		}
 
 		@Override
-		public void toJson(HasParam condition, JsonObject o) {
-			o.addProperty("name", condition.name());
+		public void toJson(CheckParam condition, JsonObject o) {
+			o.addProperty("key", condition.key());
 		}
 
 		@Override
-		public HasParam fromNetwork(FriendlyByteBuf buf) {
-			return new HasParam(buf.readUtf());
+		public CheckParam fromNetwork(FriendlyByteBuf buf) {
+			return new CheckParam(buf.readUtf(), null);
 		}
 
 		@Override
-		public void toNetwork(HasParam condition, FriendlyByteBuf buf) {
-			buf.writeUtf(condition.name());
+		public void toNetwork(CheckParam condition, FriendlyByteBuf buf) {
+			buf.writeUtf(condition.key());
 		}
 
 	}
