@@ -17,6 +17,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -46,6 +47,7 @@ import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.input.ItemHolderCollection;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
+import snownee.lychee.core.post.input.SetItem;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.CraftingContainerAccess;
 import snownee.lychee.mixin.CraftingMenuAccess;
@@ -258,6 +260,11 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 
 	public void addPostAction(PostAction action) {
 		Objects.requireNonNull(action);
+		if (action instanceof SetItem setItem) {
+			if (getItemIndexes(setItem.target).contains(getIngredients().size())) {
+				throw new JsonSyntaxException("Can't set item to the result in \"post\", use \"assembling\".");
+			}
+		}
 		if (actions == Collections.EMPTY_LIST) {
 			actions = Lists.newArrayList();
 		}
@@ -266,6 +273,12 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 
 	public void addAssemblingAction(PostAction action) {
 		Objects.requireNonNull(action);
+		if (action instanceof SetItem setItem) {
+			IntList intList = getItemIndexes(setItem.target);
+			if (!intList.isEmpty() && !intList.contains(getIngredients().size())) {
+				throw new JsonSyntaxException("Can't set item to the ingredients in \"assembling\", use \"post\".");
+			}
+		}
 		if (assembling == Collections.EMPTY_LIST) {
 			assembling = Lists.newArrayList();
 		}
