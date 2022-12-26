@@ -76,7 +76,6 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 
 	@Override
 	public IntList getItemIndexes(Reference reference) {
-		int size = getIngredients().size();
 		JsonPointer pointer = null;
 		if (reference == Reference.DEFAULT) {
 			pointer = defaultItemPointer();
