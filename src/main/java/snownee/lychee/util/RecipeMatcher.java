@@ -7,17 +7,17 @@ import java.util.function.Predicate;
 public class RecipeMatcher<T> {
 
 	private List<T> inputs;
-	private int[] inputCapability;
-	private int[] inputUsed;
-	private int[][] use; // input to test
+	private int[] inputCapacity;
+	public int[] inputUsed;
+	public int[][] use; // input to tests multimap. map to the indexes of the first N inputs according to the `inputUsed` array
 	private BitSet data;
 	private BitSet mask;
 
-	public RecipeMatcher(List<T> inputs, List<? extends Predicate<T>> tests, int[] inputCapability) {
+	public RecipeMatcher(List<T> inputs, List<? extends Predicate<T>> tests, int[] inputCapacity) {
 		this.inputs = inputs;
-		this.inputCapability = inputCapability;
+		this.inputCapacity = inputCapacity;
 		inputUsed = new int[inputs.size()];
-		use = new int[tests.size()][tests.size()];
+		use = new int[inputs.size()][tests.size()];
 		data = new BitSet(inputs.size() * tests.size());
 		mask = new BitSet(inputs.size());
 		for (int i = 0; i < tests.size(); i++) {
@@ -43,7 +43,7 @@ public class RecipeMatcher<T> {
 		for (int i = 0; i < inputs.size(); i++) {
 			if (data.get(offset + i) && !mask.get(i)) {
 				mask.set(i);
-				if (inputUsed[i] < inputCapability[i]) {
+				if (inputUsed[i] < inputCapacity[i]) {
 					use[i][inputUsed[i]] = test;
 					++inputUsed[i];
 					return true;
