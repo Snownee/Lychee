@@ -22,5 +22,12 @@
       "target": "/key/B",
       "item": "air"
     }
+  ],
+  "assembling": [
+    {
+      "type": "set_item",
+      "target": "/result",
+      "item": "apple"
+    }
   ]
 }

@@ -15,9 +15,9 @@
   "material_cost": 2,
   "post": [
     {
-      "type": "drop_item",
-      "item": "diamond",
-      "count": 5
+      "type": "set_item",
+      "target": "/item_in/1",
+      "item": "apple"
     }
   ]
 }

@@ -22,6 +22,7 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.anvil_crafting.AnvilContext;
 import snownee.lychee.anvil_crafting.AnvilCraftingRecipe;
+import snownee.lychee.core.input.ItemHolderCollection;
 
 @Mixin(AnvilMenu.class)
 public abstract class AnvilMenuMixin extends ItemCombinerMenu {
@@ -35,7 +36,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
 	private AnvilCraftingRecipe lychee$recipe;
 	private AnvilContext lychee$ctx;
-	private boolean lychee$preventDefault;
+	private AnvilContext lychee$onTakeCtx;
 
 	public AnvilMenuMixin(MenuType<?> p_39773_, int p_39774_, Inventory p_39775_, ContainerLevelAccess p_39776_) {
 		super(p_39773_, p_39774_, p_39775_, p_39776_);
@@ -69,6 +70,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 				cost.set(0);
 			} else {
 				lychee$recipe = $;
+				// why use copy(): the originals will be modified by vanilla
+				ctx.itemHolders = ItemHolderCollection.Inventory.of(ctx, left.copy(), right.copy(), output);
 				lychee$ctx = ctx;
 				resultSlots.setItem(0, output);
 				if (player.isCreative() || left.getCount() == 1) {
@@ -86,11 +89,9 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
 	@Inject(at = @At("HEAD"), method = "onTake")
 	private void lychee_onTake(Player player, ItemStack stack, CallbackInfo ci) {
-		if (lychee$recipe == null) {
-			lychee$preventDefault = false;
-		} else {
+		if (lychee$recipe != null && lychee$ctx != null && !lychee$ctx.getLevel().isClientSide) {
+			lychee$onTakeCtx = lychee$ctx;
 			lychee$recipe.applyPostActions(lychee$ctx, 1);
-			lychee$preventDefault = !lychee$ctx.runtime.doDefault;
 		}
 	}
 
@@ -100,10 +101,19 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 			), method = "onTake", cancellable = true
 	)
 	private void lychee_preventDefault(Player player, ItemStack stack, CallbackInfo ci) {
-		if (lychee$preventDefault) {
-			lychee$preventDefault = false;
-			access.execute((level, pos) -> level.levelEvent(LevelEvent.SOUND_ANVIL_USED, pos, 0));
-			ci.cancel();
+		if (lychee$onTakeCtx != null) {
+			for (int i = 0; i < 2; i++) {
+				if (lychee$onTakeCtx.itemHolders.ignoreConsumptionFlags.get(i)) {
+					inputSlots.setItem(i, lychee$onTakeCtx.itemHolders.get(i).get());
+				}
+			}
+
+			boolean prevent = !lychee$onTakeCtx.runtime.doDefault;
+			lychee$onTakeCtx = null;
+			if (prevent) {
+				access.execute((level, pos) -> level.levelEvent(LevelEvent.SOUND_ANVIL_USED, pos, 0));
+				ci.cancel();
+			}
 		}
 	}
 
