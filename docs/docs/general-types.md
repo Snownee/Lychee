@@ -131,3 +131,11 @@ Describes a inclusive range for doubles.
     | max  | (optional) maximum value. +infinity by default | number         |
 
     DoubleBounds can also be a simple `number` to represent [n, n].
+
+## JsonPointer
+
+JsonPointer is a string syntax for identifying a specific value within a JSON. But the only thing you need to know is you should separate the path to the target with `/`.
+
+```
+/path/to/the/target
+```

@@ -180,7 +180,7 @@ Default behavior: Item is consumed.
     | item_in | the ticking item(s)                | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
     | time    | (optional) waiting time in seconds | int                                                                                      |
 
-		*Since 2.3, `item_in` can accept item list.
+    *Since 2.3, `item_in` can accept item list.
 
 ??? example
 
@@ -410,7 +410,7 @@ Default behavior: Block drops items from loot table.
 
 *Since: 3.2*
 
-Event when a block is randomly ticked.
+Event when a block is randomly ticked. [(Wiki about random tick)](https://minecraft.fandom.com/wiki/Tick#Random_tick)
 
 This recipe type is not [repeatable](concepts.md#repeatability).
 
@@ -460,3 +460,67 @@ Default behavior: Do the default ticking behavior.
 		]
 	}
 	```
+
+### Advanced shaped crafting
+
+*Since: 3.4*
+
+This allows you to add contextual conditions and actions, and control the behaviors of the ingredients and the result.
+
+This recipe type is not [repeatable](concepts.md#repeatability).
+
+Default behavior: none.
+
+!!! note "Format"
+
+    | Name       | Description                                                    | Type / Literal                                                 |
+    | ---------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
+    | type       | type                                                           | "lychee:crafting"                                              |
+    | pattern    | same as vanilla                                                |                                                                |
+    | key        | same as vanilla                                                |                                                                |
+    | result     | same as vanilla                                                |                                                                |
+    | group      | (optional) same as vanilla                                     |                                                                |
+    | assembling | (optional) actions that running before the result is displayed | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
+
+??? example
+
+	With the uses of the [`set_item`](post-action.md#set-item-set_item) action, you can customize the remainders and dynamically change the crafting result.
+
+	```json
+	{
+		"type": "lychee:crafting",
+		"pattern": [
+			"A",
+			"B"
+		],
+		"key": {
+			"A": {
+				"item": "pufferfish"
+			},
+			"B": {
+				"item": "water_bucket"
+			}
+		},
+		"result": {
+			"item": "apple"
+		},
+		"post": [
+			{
+				"type": "set_item",
+				"target": "/key/B",
+				"item": "air"
+			}
+		],
+		"assembling": [
+			{
+				"type": "set_item",
+				"target": "/result",
+				"item": "pufferfish_bucket"
+			}
+		]
+	}
+	```
+
+!!! note
+
+	No guarantee that modded crafting machines contains player and location information. You can use [`check_param`](contextual-condition.md#check-parameter-check_param) to require these parameters to be present when crafting.

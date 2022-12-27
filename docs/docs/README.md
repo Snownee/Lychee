@@ -17,6 +17,7 @@ Currently Lychee has support for the following recipe type (with full JEI/REI su
 - Lightning channeling
 - Random block ticking
 - Dripstone dripping
+- Advanced shaped crafting
 
 ## Dependencies Information
 

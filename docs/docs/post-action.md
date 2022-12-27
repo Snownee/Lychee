@@ -329,15 +329,32 @@ Prevents default behavior and do nothing.
     | ---- | ----------- | ----------------- |
     | type | type        | "prevent_default" |
 
-### Damage Input Item (`damage_item`)
+### Damage Item (`damage_item`)
 
-Consumes the input item's durability.
+Consumes the item's durability.
 
 This action is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name   | Description       | Type / Literal |
-    | ------ | ----------------- | -------------- |
-    | type   | type              | "damage_item"  |
-    | damage | (optional) damage | int            |
+    | Name   | Description                        | Type / Literal                              |
+    | ------ | ---------------------------------- | ------------------------------------------- |
+    | type   | type                               | "damage_item"                               |
+    | damage | (optional) damage                  | int                                         |
+    | target | (optional, since 3.4) target items | [JsonPointer](general-types.md#jsonpointer) |
+
+### Set Item (`set_item`)
+
+Replaces the inputs or the results.
+
+This action is not [repeatable](concepts.md#repeatability).
+
+!!! note "Format"
+
+    | Name   | Description                      | Type / Literal                              |
+    | ------ | -------------------------------- | ------------------------------------------- |
+    | type   | type                             | "set_item"                                  |
+    | target | (optional) target items          | [JsonPointer](general-types.md#jsonpointer) |
+    | item   | the item resource id             | string                                      |
+    | count  | (optional) item amount           | int                                         |
+    | nbt    | (Forge only) (optional) item nbt | object \| string                            |

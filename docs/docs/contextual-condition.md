@@ -270,3 +270,27 @@ Checks the direction that being interacted. Only works for interaction recipes.
     | direction | direction   | string         |
 
 		Allowed value for "direction": "up", "down", "north", "south", "east", "west", "side", "forward"
+
+### Check Parameter (`check_param`)
+
+*Since: 3.4*
+
+Checks if a parameter exists in the context.
+
+!!! note "Format"
+
+    | Name | Description    | Type / Literal |
+    | ---- | -------------- | -------------- |
+    | type | type           | "check_param"  |
+    | key  | parameter name | string         |
+
+??? example
+
+	Checks if we can know the location in the context.
+
+	```json
+	{
+		"type": "check_param",
+		"key": "origin"
+	}
+	```
