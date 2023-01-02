@@ -2,9 +2,12 @@ package snownee.lychee.core.recipe;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import it.unimi.dsi.fastutil.ints.IntList;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.Reference;
+import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.util.JsonPointer;
 
@@ -17,6 +20,13 @@ public interface ILycheeRecipe<C extends LycheeContext> {
 	}
 
 	List<PostAction> getPostActions();
+
+	ContextualHolder getContextualHolder();
+
+	@Nullable
+	String getComment();
+
+	boolean showInRecipeViewer();
 
 	default List<PostAction> getShowingPostActions() {
 		return getPostActions().stream().filter($ -> !$.isHidden()).toList();

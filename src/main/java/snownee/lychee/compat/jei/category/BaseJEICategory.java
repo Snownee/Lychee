@@ -43,6 +43,7 @@ import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.RandomSelect;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
@@ -213,9 +214,13 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	}
 
 	public void drawInfoBadge(T recipe, PoseStack matrixStack, double mouseX, double mouseY) {
-		if (!recipe.getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.comment)) {
+		drawInfoBadge(recipe, matrixStack, mouseX, mouseY, infoRect);
+	}
+
+	public static void drawInfoBadge(ILycheeRecipe<?> recipe, PoseStack matrixStack, double mouseX, double mouseY, Rect2i rect) {
+		if (!recipe.getContextualHolder().getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.getComment())) {
 			matrixStack.pushPose();
-			matrixStack.translate(infoRect.getX(), infoRect.getY(), 0);
+			matrixStack.translate(rect.getX(), rect.getY(), 0);
 			matrixStack.scale(.5F, .5F, .5F);
 			AllGuiTextures.INFO.render(matrixStack, 0, 0);
 			matrixStack.popPose();
@@ -224,19 +229,23 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	@Override
 	public List<Component> getTooltipStrings(T recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
-		if (infoRect.contains((int) mouseX, (int) mouseY)) {
+		return getTooltipStrings(recipe, mouseX, mouseY, infoRect);
+	}
+
+	public static List<Component> getTooltipStrings(ILycheeRecipe<?> recipe, double mouseX, double mouseY, Rect2i rect) {
+		if (rect.contains((int) mouseX, (int) mouseY)) {
 			List<Component> list = Lists.newArrayList();
-			if (!Strings.isNullOrEmpty(recipe.comment)) {
-				String comment = recipe.comment;
+			if (!Strings.isNullOrEmpty(recipe.getComment())) {
+				String comment = recipe.getComment();
 				if (I18n.exists(comment)) {
 					comment = I18n.get(comment);
 				}
 				Splitter.on('\n').splitToStream(comment).map(Component::literal).forEach(list::add);
 			}
-			recipe.getConditonTooltips(list, 0);
+			recipe.getContextualHolder().getConditonTooltips(list, 0);
 			return list;
 		}
-		return IRecipeCategory.super.getTooltipStrings(recipe, recipeSlotsView, mouseX, mouseY);
+		return List.of();
 	}
 
 	public boolean clickBlock(BlockState state, Key input) {

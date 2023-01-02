@@ -1,13 +1,13 @@
 {
   "type": "lychee:crafting",
-  "comment": "Test",
+  "hide_in_viewer": true,
   "pattern": [
     "A",
     "B"
   ],
   "key": {
     "A": {
-      "item": "pufferfish"
+      "item": "stone"
     },
     "B": {
       "item": "water_bucket"
