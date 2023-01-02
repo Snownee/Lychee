@@ -1,6 +1,7 @@
 package snownee.lychee.core.recipe;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
@@ -40,12 +41,12 @@ public abstract class ItemShapelessRecipe<T extends ItemShapelessRecipe<T>> exte
 		}).limit(MAX_INGREDIENTS).toList();
 		List<ItemStack> items = itemEntities.stream().map(ItemEntity::getItem).toList();
 		int[] amount = items.stream().mapToInt(ItemStack::getCount).toArray();
-		int[] match = RecipeMatcher.findMatches(items, ingredients, amount);
-		if (match == null) {
+		Optional<RecipeMatcher<ItemStack>> match = RecipeMatcher.findMatches(items, ingredients, amount);
+		if (match.isEmpty()) {
 			return false;
 		}
 		ctx.filteredItems = itemEntities;
-		ctx.match = match;
+		ctx.setMatch(match.get());
 		return true;
 	}
 

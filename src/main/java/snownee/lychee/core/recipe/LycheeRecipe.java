@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +13,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
+import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -23,11 +26,13 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.Reference;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.JsonPointer;
 import snownee.lychee.util.LUtil;
 
 public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHolder implements Recipe<C> {
@@ -115,6 +120,29 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	// true to apply
 	public boolean tickOrApply(C ctx) {
 		return true;
+	}
+
+	public IntList getItemIndexes(Reference reference) {
+		int size = getIngredients().size();
+		JsonPointer pointer = null;
+		if (reference == Reference.DEFAULT) {
+			pointer = defaultItemPointer();
+		} else if (reference.isPointer()) {
+			pointer = reference.getPointer();
+		}
+		if (pointer != null) {
+			if (pointer.size() == 1 && pointer.getString(0).equals("item_in")) {
+				return IntList.of(IntStream.range(0, size).toArray());
+			}
+			if (pointer.size() == 2 && pointer.getString(0).equals("item_in")) {
+				return IntList.of(pointer.getInt(1));
+			}
+		}
+		return IntList.of();
+	}
+
+	public JsonPointer defaultItemPointer() {
+		return new JsonPointer("/item_in");
 	}
 
 	@Override
@@ -205,6 +233,10 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		}
 
 		public abstract void toNetwork0(FriendlyByteBuf pBuffer, R pRecipe);
+
+		public ResourceLocation getRegistryName() {
+			return Registry.RECIPE_SERIALIZER.getKey(this);
+		}
 
 	}
 

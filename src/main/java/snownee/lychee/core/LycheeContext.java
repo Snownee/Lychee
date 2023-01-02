@@ -21,11 +21,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.core.input.ItemHolderCollection;
 import snownee.lychee.core.post.Delay.LycheeMarker;
 import snownee.lychee.core.post.PostAction;
 
@@ -35,6 +34,7 @@ public class LycheeContext extends EmptyContainer {
 	private final Level level;
 	private LootContext cachedLootContext;
 	public final ActionRuntime runtime = new ActionRuntime();
+	public ItemHolderCollection itemHolders = ItemHolderCollection.EMPTY;
 
 	protected LycheeContext(RandomSource pRandom, Level level, Map<LootContextParam<?>, Object> pParams) {
 		random = pRandom;
@@ -96,10 +96,7 @@ public class LycheeContext extends EmptyContainer {
 			LootContext.Builder builder = new LootContext.Builder((ServerLevel) level);
 			builder.withRandom(random);
 			params.forEach((p, o) -> builder.withParameter((LootContextParam) p, o));
-			if (params.containsKey(LycheeLootContextParams.BLOCK_POS)) {
-				builder.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(getParam(LycheeLootContextParams.BLOCK_POS)));
-			}
-			cachedLootContext = builder.create(LootContextParamSets.EMPTY);
+			cachedLootContext = builder.create(LycheeLootContextParamSets.ALL);
 		}
 		return cachedLootContext;
 	}

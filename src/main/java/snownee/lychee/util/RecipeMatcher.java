@@ -2,22 +2,25 @@ package snownee.lychee.util;
 
 import java.util.BitSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class RecipeMatcher<T> {
 
-	private List<T> inputs;
-	private int[] inputCapability;
-	private int[] inputUsed;
-	private int[][] use; // input to test
+	public List<T> inputs;
+	public List<? extends Predicate<T>> tests;
+	public int[] inputCapacity;
+	public int[] inputUsed;
+	public int[][] use; // input to tests multimap. map to the indexes of the first N inputs according to the `inputUsed` array
 	private BitSet data;
 	private BitSet mask;
 
-	public RecipeMatcher(List<T> inputs, List<? extends Predicate<T>> tests, int[] inputCapability) {
+	public RecipeMatcher(List<T> inputs, List<? extends Predicate<T>> tests, int[] inputCapacity) {
 		this.inputs = inputs;
-		this.inputCapability = inputCapability;
+		this.tests = tests;
+		this.inputCapacity = inputCapacity;
 		inputUsed = new int[inputs.size()];
-		use = new int[tests.size()][tests.size()];
+		use = new int[inputs.size()][tests.size()];
 		data = new BitSet(inputs.size() * tests.size());
 		mask = new BitSet(inputs.size());
 		for (int i = 0; i < tests.size(); i++) {
@@ -43,7 +46,7 @@ public class RecipeMatcher<T> {
 		for (int i = 0; i < inputs.size(); i++) {
 			if (data.get(offset + i) && !mask.get(i)) {
 				mask.set(i);
-				if (inputUsed[i] < inputCapability[i]) {
+				if (inputUsed[i] < inputCapacity[i]) {
 					use[i][inputUsed[i]] = test;
 					++inputUsed[i];
 					return true;
@@ -59,17 +62,17 @@ public class RecipeMatcher<T> {
 		return false;
 	}
 
-	public static <T> int[] findMatches(List<T> inputs, List<? extends Predicate<T>> tests, int[] amount) {
+	public static <T> Optional<RecipeMatcher<T>> findMatches(List<T> inputs, List<? extends Predicate<T>> tests, int[] amount) {
 		int sum = 0;
 		for (int i = 0; i < amount.length; i++) {
 			sum += amount[i];
 		}
 		int testSize = tests.size();
 		if (sum < testSize)
-			return null;
+			return Optional.empty();
 
 		RecipeMatcher<T> matcher = new RecipeMatcher<>(inputs, tests, amount);
-		return matcher.inputUsed;
+		return matcher.inputUsed == null ? Optional.empty() : Optional.of(matcher);
 	}
 
 }

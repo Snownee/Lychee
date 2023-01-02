@@ -28,7 +28,8 @@
       "block": "stripped_oak_log"
     },
     {
-      "type": "damage_item"
+      "type": "damage_item",
+      "target": "/item_in"
     },
     {
       "type": "random",

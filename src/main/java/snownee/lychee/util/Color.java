@@ -16,8 +16,6 @@ public class Color {
 	public final static Color BLACK = new Color(0, 0, 0).setImmutable();
 	public final static Color WHITE = new Color(255, 255, 255).setImmutable();
 	public final static Color RED = new Color(255, 0, 0).setImmutable();
-	public final static Color GREEN = new Color(0, 255, 0).setImmutable();
-	public final static Color SPRING_GREEN = new Color(0, 255, 187).setImmutable();
 
 	protected boolean mutable = true;
 	protected int value;

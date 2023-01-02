@@ -2,7 +2,6 @@ package snownee.lychee.core.recipe.type;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,8 +18,8 @@ import com.google.common.collect.Multimap;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -36,9 +35,9 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.Chance;
 import snownee.lychee.core.contextual.ContextualCondition;
 import snownee.lychee.core.def.BlockPredicateHelper;
+import snownee.lychee.core.input.ItemHolderCollection;
 import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ChanceRecipe;
-import snownee.lychee.core.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.Pair;
@@ -99,45 +98,35 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 	public List<ItemStack> blockKeysToItems() {
 		return recipesByBlock.keySet().stream().map(Block::asItem).filter($ -> {
 			return $ != Items.AIR;
-		}).sorted(Comparator.comparingInt(Item::getId)).map(Item::getDefaultInstance).toList();
+		}).sorted((a, b) -> {
+			return Integer.compare(Item.getId(a), Item.getId(b));
+		}).map(Item::getDefaultInstance).toList();
 	}
 
-	public Optional<T> process(Entity entity, ItemStack stack, BlockPos pos, Vec3 origin, LycheeContext.Builder<C> ctxBuilder) {
+	public Optional<T> process(Player player, InteractionHand hand, ItemStack stack, BlockPos pos, Vec3 origin, LycheeContext.Builder<C> ctxBuilder) {
 		if (isEmpty()) {
 			return Optional.empty();
 		}
-		ResourceLocation prevRecipeId = null;
-		if (entity instanceof LycheeCounter) {
-			prevRecipeId = ((LycheeCounter) entity).lychee$getRecipeId();
-			((LycheeCounter) entity).lychee$setRecipeId(null);
-		}
-		Level level = entity.level;
+		Level level = player.level;
 		BlockState blockstate = level.getBlockState(pos);
 		Collection<T> recipes = recipesByBlock.getOrDefault(blockstate.getBlock(), Collections.EMPTY_LIST);
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
 			return Optional.empty();
 		}
 		ctxBuilder.withParameter(LootContextParams.ORIGIN, LUtil.clampPos(origin, pos));
-		ctxBuilder.withParameter(LootContextParams.THIS_ENTITY, entity);
+		ctxBuilder.withParameter(LootContextParams.THIS_ENTITY, player);
 		ctxBuilder.withParameter(LootContextParams.BLOCK_STATE, blockstate);
 		ctxBuilder.withParameter(LycheeLootContextParams.BLOCK_POS, pos);
 		C ctx = ctxBuilder.create(contextParamSet);
-		T prevRecipe = (T) Optional.ofNullable(prevRecipeId).map(LUtil::recipe).filter($ -> $.getType() == this).orElse(null);
 		Iterable<T> iterable = Iterables.concat(recipes, anyBlockRecipes);
-		if (prevRecipe != null) {
-			iterable = Iterables.concat(List.of(prevRecipe), Iterables.filter(iterable, $ -> $ != prevRecipe));
-		}
 		for (T recipe : iterable) {
 			if (tryMatch(recipe, level, ctx).isPresent()) {
-				if (entity instanceof LycheeCounter) {
-					((LycheeCounter) entity).lychee$update(prevRecipeId, recipe);
-				}
 				if (!level.isClientSide && recipe.tickOrApply(ctx)) {
 					int times = recipe.getRandomRepeats(Math.max(1, stack.getCount()), ctx);
+					ctx.itemHolders = ItemHolderCollection.Inventory.of(player, stack);
 					recipe.applyPostActions(ctx, times);
-					if (ctx.runtime.doDefault && !stack.isEmpty()) {
-						stack.shrink(times);
-					}
+					ctx.itemHolders.postApply(ctx.runtime.doDefault, times);
+					player.setItemInHand(hand, ctx.itemHolders.get(0).get());
 				}
 				return Optional.of(recipe);
 			}

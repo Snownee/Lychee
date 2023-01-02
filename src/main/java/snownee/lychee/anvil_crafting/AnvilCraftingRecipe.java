@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -60,6 +61,14 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 	@Override
 	public ItemStack getResultItem() {
 		return output.copy();
+	}
+
+	@Override
+	public NonNullList<Ingredient> getIngredients() {
+		if (right.isEmpty()) {
+			return NonNullList.of(Ingredient.EMPTY, left);
+		}
+		return NonNullList.of(Ingredient.EMPTY, left, right);
 	}
 
 	@Override

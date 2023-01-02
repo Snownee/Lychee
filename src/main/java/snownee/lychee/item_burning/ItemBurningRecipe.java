@@ -13,6 +13,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.input.ItemHolderCollection;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 
@@ -79,8 +80,9 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		LycheeContext ctx = builder.create(RecipeTypes.ITEM_BURNING.contextParamSet);
 		RecipeTypes.ITEM_BURNING.findFirst(ctx, entity.level).ifPresent($ -> {
 			int times = $.getRandomRepeats(entity.getItem().getCount(), ctx);
+			ctx.itemHolders = ItemHolderCollection.InWorld.of(entity);
 			$.applyPostActions(ctx, times);
-			entity.getItem().shrink(times);
+			ctx.itemHolders.postApply(true, times);
 		});
 	}
 

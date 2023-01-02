@@ -152,7 +152,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		slotGroup(builder, x + 1, y + 1, 0, ingredients, (layout0, ingredient, i, x0, y0) -> {
 			IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, x0, y0);
 			slot.addItemStacks(Stream.of(ingredient.getFirst().getItems())
-					.map($ -> $.getCount() == 1 ? $ : $.copy())
+					.map($ -> ingredient.getSecond() == 1 ? $ : $.copy())
 					.peek($ -> $.setCount(ingredient.getSecond()))
 					.toList()
 			);
