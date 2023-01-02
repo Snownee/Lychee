@@ -32,10 +32,10 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
+import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.jei.JEICompat;
 import snownee.lychee.compat.jei.JEICompat.SlotType;
 import snownee.lychee.core.LycheeContext;
@@ -46,7 +46,6 @@ import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
-import snownee.lychee.util.Pair;
 
 public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeRecipe<C>> implements IRecipeCategory<T> {
 
@@ -126,38 +125,13 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		slotGroup(builder, x, y, 10000, recipe.getShowingPostActions(), BaseJEICategory::actionSlot);
 	}
 
-	public void ingredientGroup(IRecipeLayoutBuilder builder, T recipe, int x, int y, boolean catalyst) {
-		List<Pair<Ingredient, Integer>> ingredients;
-		if (recipe.getType().compactInputs) {
-			ingredients = Lists.newArrayList();
-			for (Ingredient ingredient : recipe.getIngredients()) {
-				Pair<Ingredient, Integer> match = null;
-				if (LUtil.isSimpleIngredient(ingredient)) {
-					for (Pair<Ingredient, Integer> toCompare : ingredients) {
-						if (LUtil.isSimpleIngredient(toCompare.getFirst()) && toCompare.getFirst().getStackingIds().equals(ingredient.getStackingIds())) {
-							match = toCompare;
-							break;
-						}
-					}
-				}
-				if (match == null) {
-					ingredients.add(Pair.of(ingredient, 1));
-				} else {
-					match.setSecond(match.getSecond() + 1);
-				}
-			}
-		} else {
-			ingredients = recipe.getIngredients().stream().map($ -> Pair.of($, 1)).toList();
-		}
+	public void ingredientGroup(IRecipeLayoutBuilder builder, T recipe, int x, int y) {
+		var ingredients = JEIREI.generateInputs(recipe);
 		slotGroup(builder, x + 1, y + 1, 0, ingredients, (layout0, ingredient, i, x0, y0) -> {
 			IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, x0, y0);
-			slot.addItemStacks(Stream.of(ingredient.getFirst().getItems())
-					.map($ -> ingredient.getSecond() == 1 ? $ : $.copy())
-					.peek($ -> $.setCount(ingredient.getSecond()))
-					.toList()
-			);
-			slot.setBackground(JEICompat.slot(catalyst ? SlotType.CATALYST : SlotType.NORMAL), -1, -1);
-			if (catalyst) {
+			slot.addItemStacks(Stream.of(ingredient.left.getItems()).map($ -> ingredient.right == 1 ? $ : $.copy()).peek($ -> $.setCount(ingredient.right)).toList());
+			slot.setBackground(JEICompat.slot(ingredient.middle != null ? SlotType.CATALYST : SlotType.NORMAL), -1, -1);
+			if (ingredient.middle != null && ingredient.middle != LUtil.EMPTY_TEXT) {
 				slot.addTooltipCallback((stack, tooltip) -> {
 					tooltip.add(recipe.getType().getPreventDefaultDescription(recipe));
 				});

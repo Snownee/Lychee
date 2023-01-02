@@ -1,8 +1,14 @@
 package snownee.lychee.core.post.input;
 
+import java.util.List;
+
+import org.apache.commons.lang3.tuple.MutableTriple;
+
 import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.crafting.Ingredient;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.PostAction;
@@ -30,6 +36,16 @@ public class PreventDefault extends PostAction {
 	@Override
 	public boolean isHidden() {
 		return true;
+	}
+
+	@Override
+	public void loadCatalystsInfo(LycheeRecipe<?> recipe, List<MutableTriple<Ingredient, Component, Integer>> ingredients) {
+		if (recipe.getType().canPreventConsumeInputs) {
+			for (var ingredient : ingredients) {
+				if (ingredient.middle == null)
+					ingredient.middle = recipe.getType().getPreventDefaultDescription(recipe);
+			}
+		}
 	}
 
 	public static class Type extends PostActionType<PreventDefault> {

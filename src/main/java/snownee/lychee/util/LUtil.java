@@ -47,6 +47,7 @@ import snownee.lychee.LycheeConfig;
 import snownee.lychee.mixin.RecipeManagerAccess;
 
 public class LUtil {
+	public static final Component EMPTY_TEXT = Component.empty();
 	private static final Random RANDOM = new Random();
 	private static RecipeManager recipeManager;
 

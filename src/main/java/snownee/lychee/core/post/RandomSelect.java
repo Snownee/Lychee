@@ -155,6 +155,16 @@ public class RandomSelect extends PostAction {
 		return canRepeat;
 	}
 
+	@Override
+	public boolean validate(LycheeRecipe<?> recipe) {
+		for (PostAction action : entries) {
+			if (!action.validate(recipe)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public static class Type extends PostActionType<RandomSelect> {
 
 		@Override

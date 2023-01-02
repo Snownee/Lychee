@@ -84,6 +84,11 @@ public class SetItem extends PostAction {
 		return false;
 	}
 
+	@Override
+	public boolean validate(LycheeRecipe<?> recipe) {
+		return !recipe.getItemIndexes(target).isEmpty();
+	}
+
 	public static class Type extends PostActionType<SetItem> {
 
 		@Override

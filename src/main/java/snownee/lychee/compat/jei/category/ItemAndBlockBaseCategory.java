@@ -20,12 +20,10 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.client.gui.ScreenElement;
-import snownee.lychee.compat.jei.JEICompat;
 import snownee.lychee.compat.jei.JEICompat.ScreenElementWrapper;
 import snownee.lychee.compat.jei.SideBlockIcon;
 import snownee.lychee.core.LycheeContext;
@@ -82,12 +80,11 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses) {
-		boolean preventDefault = this != JEICompat.BLOCK_EXPLODING && recipe.getPostActions().stream().anyMatch($ -> $.getType() == PostActionTypes.PREVENT_DEFAULT);
 		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
 		if (recipe instanceof ItemShapelessRecipe) {
-			ingredientGroup(builder, recipe, 38, y, preventDefault);
+			ingredientGroup(builder, recipe, 38, y);
 		} else {
-			ingredientGroup(builder, recipe, 12, 21, preventDefault);
+			ingredientGroup(builder, recipe, 12, 21);
 		}
 		actionGroup(builder, recipe, getWidth() - 29, y);
 		addBlockInputs(builder, getInputBlock(recipe));

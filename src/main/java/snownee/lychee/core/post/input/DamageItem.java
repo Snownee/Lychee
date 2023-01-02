@@ -1,11 +1,16 @@
 package snownee.lychee.core.post.input;
 
+import java.util.List;
 import java.util.function.Consumer;
+
+import org.apache.commons.lang3.tuple.MutableTriple;
 
 import com.google.gson.JsonObject;
 
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.GsonHelper;
@@ -15,6 +20,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.LycheeContext;
@@ -22,6 +28,7 @@ import snownee.lychee.core.Reference;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.util.LUtil;
 
 public class DamageItem extends PostAction {
 
@@ -99,6 +106,18 @@ public class DamageItem extends PostAction {
 	@Override
 	public boolean canRepeat() {
 		return false;
+	}
+
+	@Override
+	public boolean validate(LycheeRecipe<?> recipe) {
+		return !recipe.getItemIndexes(target).isEmpty();
+	}
+
+	@Override
+	public void loadCatalystsInfo(LycheeRecipe<?> recipe, List<MutableTriple<Ingredient, Component, Integer>> ingredients) {
+		String key = LUtil.makeDescriptionId("postAction", getType().getRegistryName());
+		Component component = Component.translatable(key, damage).withStyle(ChatFormatting.YELLOW);
+		recipe.getItemIndexes(target).forEach(i -> ingredients.get(i).middle = component);
 	}
 
 	public static class Type extends PostActionType<DamageItem> {
