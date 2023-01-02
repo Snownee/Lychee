@@ -53,7 +53,7 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
-import snownee.lychee.crafting.LycheeCraftingRecipe;
+import snownee.lychee.crafting.ShapedCraftingRecipe;
 import snownee.lychee.util.LUtil;
 
 @JeiPlugin
@@ -118,7 +118,7 @@ public class JEICompat implements IModPlugin {
 
 	@Override
 	public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
-		registration.getCraftingCategory().addCategoryExtension(LycheeCraftingRecipe.class, CraftingRecipeCategoryExtension::new);
+		registration.getCraftingCategory().addCategoryExtension(ShapedCraftingRecipe.class, CraftingRecipeCategoryExtension::new);
 	}
 
 	@Override
