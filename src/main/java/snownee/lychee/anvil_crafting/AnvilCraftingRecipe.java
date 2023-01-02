@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -14,9 +15,11 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.core.Reference;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.JsonPointer;
 
 public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements Comparable<AnvilCraftingRecipe> {
 
@@ -69,6 +72,39 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 			return NonNullList.of(Ingredient.EMPTY, left);
 		}
 		return NonNullList.of(Ingredient.EMPTY, left, right);
+	}
+
+	@Override
+	public IntList getItemIndexes(Reference reference) {
+		int size = getIngredients().size();
+		JsonPointer pointer = null;
+		if (reference == Reference.DEFAULT) {
+			pointer = defaultItemPointer();
+		} else if (reference.isPointer()) {
+			pointer = reference.getPointer();
+		}
+		if (pointer != null) {
+			if (pointer.size() == 1) {
+				if (pointer.getString(0).equals("output")) {
+					return IntList.of(2);
+				}
+				if (pointer.getString(0).equals("item_in")) {
+					return right.isEmpty() ? IntList.of(0) : IntList.of(0, 1);
+				}
+			}
+			if (pointer.size() == 2 && pointer.getString(0).equals("item_in")) {
+				int i = pointer.getInt(1);
+				if (i >= 0 && i < 2) {
+					return IntList.of(i);
+				}
+			}
+		}
+		return IntList.of();
+	}
+
+	@Override
+	public JsonPointer defaultItemPointer() {
+		return new JsonPointer("/output");
 	}
 
 	@Override
