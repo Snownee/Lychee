@@ -21,7 +21,7 @@ import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.DoubleBoundsHelper;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public class Hurt extends PostAction {
@@ -40,12 +40,12 @@ public class Hurt extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Entity entity = ctx.getParam(LootContextParams.THIS_ENTITY);
 		entity.invulnerableTime = 0;
 		entity.hurt(source.value, DoubleBoundsHelper.random(damage, ctx.getRandom()) * times);

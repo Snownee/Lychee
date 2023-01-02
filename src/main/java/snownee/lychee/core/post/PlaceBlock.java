@@ -40,7 +40,7 @@ import snownee.lychee.block_crushing.BlockCrushingRecipe;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.NbtPredicateAccess;
 import snownee.lychee.mixin.StatePropertiesPredicateAccess;
@@ -63,7 +63,7 @@ public class PlaceBlock extends PostAction {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		BlockPos pos = ctx.getParamOrNull(LycheeLootContextParams.BLOCK_POS);
 		if (pos == null) {
 			pos = new BlockPos(ctx.getParam(LootContextParams.ORIGIN));

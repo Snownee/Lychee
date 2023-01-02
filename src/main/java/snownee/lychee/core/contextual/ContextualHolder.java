@@ -24,7 +24,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.random_block_ticking.RandomBlockTickingRecipe;
 import snownee.lychee.util.LUtil;
 
@@ -141,7 +141,7 @@ public class ContextualHolder {
 		return array;
 	}
 
-	public int checkConditions(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int checkConditions(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		boolean first = true;
 		for (ContextualCondition condition : conditions) {
 			if (first && condition.getType() == ContextualConditionTypes.CHANCE && getClass() == RandomBlockTickingRecipe.class) {

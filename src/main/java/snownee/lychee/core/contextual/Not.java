@@ -14,7 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public record Not(ContextualCondition condition) implements ContextualCondition {
@@ -25,7 +25,7 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 	}
 
 	@Override
-	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return times - condition.test(recipe, ctx, times);
 	}
 

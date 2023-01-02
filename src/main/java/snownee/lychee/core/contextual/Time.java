@@ -18,7 +18,7 @@ import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.def.TimeCheckHelper;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.IntRangeAccess;
 import snownee.lychee.mixin.TimeCheckAccess;
 import snownee.lychee.util.LUtil;
@@ -31,7 +31,7 @@ public record Time(Ints value, @Nullable Long period) implements ContextualCondi
 	}
 
 	@Override
-	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return test(ctx.getLevel()) ? times : 0;
 	}
 

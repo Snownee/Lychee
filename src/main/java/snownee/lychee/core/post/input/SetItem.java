@@ -1,6 +1,7 @@
 package snownee.lychee.core.post.input;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -10,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -21,7 +23,7 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.Reference;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public class SetItem extends PostAction {
@@ -40,18 +42,18 @@ public class SetItem extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		IntList indexes = recipe.getItemIndexes(target);
 		for (var index : indexes) {
-			CompoundTag tag = ctx.itemHolders.get(index).get().getTag();
-			ctx.itemHolders.replace(index, stack.copy());
-			if (tag != null) {
-				ctx.itemHolders.get(index).get().getOrCreateTag().merge(tag);
+			CompoundTag tag = ctx.getItem(index).getTag();
+			ctx.setItem(index, stack.copy());
+			if (tag != null && !stack.isEmpty()) {
+				ctx.getItem(index).getOrCreateTag().merge(tag);
 			}
 			ctx.itemHolders.ignoreConsumptionFlags.set(index);
 		}
@@ -85,7 +87,7 @@ public class SetItem extends PostAction {
 	}
 
 	@Override
-	public boolean validate(LycheeRecipe<?> recipe) {
+	public boolean validate(ILycheeRecipe<?> recipe) {
 		return !recipe.getItemIndexes(target).isEmpty();
 	}
 
@@ -93,7 +95,13 @@ public class SetItem extends PostAction {
 
 		@Override
 		public SetItem fromJson(JsonObject o) {
-			return new SetItem(ShapedRecipe.itemStackFromJson(o), Reference.fromJson(o, "target"));
+			ItemStack stack;
+			if ("minecraft:air".equals(Objects.toString(ResourceLocation.tryParse(o.get("item").getAsString())))) {
+				stack = ItemStack.EMPTY;
+			} else {
+				stack = ShapedRecipe.itemStackFromJson(o);
+			}
+			return new SetItem(stack, Reference.fromJson(o, "target"));
 		}
 
 		@Override

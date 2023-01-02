@@ -35,7 +35,7 @@ import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.JsonPointer;
 import snownee.lychee.util.LUtil;
 
-public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHolder implements Recipe<C> {
+public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHolder implements ILycheeRecipe<C>, Recipe<C> {
 
 	private final ResourceLocation id;
 	private List<PostAction> actions = Collections.EMPTY_LIST;
@@ -82,23 +82,9 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		actions.add(action);
 	}
 
+	@Override
 	public List<PostAction> getPostActions() {
 		return actions;
-	}
-
-	public List<PostAction> getShowingPostActions() {
-		return getPostActions().stream().filter($ -> !$.isHidden()).toList();
-	}
-
-	/**
-	 * @return true if do default behavior
-	 */
-	public void applyPostActions(LycheeContext ctx, int times) {
-		if (!ctx.getLevel().isClientSide) {
-			ctx.runtime.reset();
-			ctx.runtime.enqueue(actions, times);
-			ctx.runtime.run(this, ctx);
-		}
 	}
 
 	public Ints getMaxRepeats() {
@@ -122,6 +108,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		return true;
 	}
 
+	@Override
 	public IntList getItemIndexes(Reference reference) {
 		int size = getIngredients().size();
 		JsonPointer pointer = null;
@@ -141,10 +128,6 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		return IntList.of();
 	}
 
-	public JsonPointer defaultItemPointer() {
-		return new JsonPointer("/item_in");
-	}
-
 	@Override
 	public abstract LycheeRecipeType<?, ?> getType();
 
@@ -160,16 +143,16 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		}
 
 		@Override
-		public final R fromJson(ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
+		public final R fromJson(ResourceLocation pRecipeId, JsonObject jsonObject) {
 			R recipe = factory.apply(pRecipeId);
-			recipe.hideInRecipeViewer = GsonHelper.getAsBoolean(pSerializedRecipe, "hide_in_viewer", false);
-			recipe.ghost = GsonHelper.getAsBoolean(pSerializedRecipe, "ghost", false);
-			recipe.comment = GsonHelper.getAsString(pSerializedRecipe, "comment", null);
-			recipe.parseConditions(pSerializedRecipe.get("contextual"));
-			PostAction.parseActions(pSerializedRecipe.get("post"), recipe::addPostAction);
-			fromJson(recipe, pSerializedRecipe);
-			if (pSerializedRecipe.has("max_repeats")) {
-				recipe.maxRepeats = Ints.fromJson(pSerializedRecipe.get("max_repeats"));
+			recipe.hideInRecipeViewer = GsonHelper.getAsBoolean(jsonObject, "hide_in_viewer", false);
+			recipe.ghost = GsonHelper.getAsBoolean(jsonObject, "ghost", false);
+			recipe.comment = GsonHelper.getAsString(jsonObject, "comment", null);
+			recipe.parseConditions(jsonObject.get("contextual"));
+			PostAction.parseActions(jsonObject.get("post"), recipe::addPostAction);
+			fromJson(recipe, jsonObject);
+			if (jsonObject.has("max_repeats")) {
+				recipe.maxRepeats = Ints.fromJson(jsonObject.get("max_repeats"));
 				Integer min = recipe.maxRepeats.getMin();
 				Preconditions.checkArgument(min != null && min > 0, "Min value of max_repeats should be greater than 0");
 			}
@@ -182,30 +165,30 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		public abstract void fromJson(R pRecipe, JsonObject pSerializedRecipe);
 
 		@Override
-		public final R fromNetwork(ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
+		public final R fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
 			try {
-				R recipe = factory.apply(pRecipeId);
+				R recipe = factory.apply(id);
 				if (LycheeConfig.debug)
-					Lychee.LOGGER.debug("Read recipe: {}", pRecipeId);
-				recipe.hideInRecipeViewer = pBuffer.readBoolean();
+					Lychee.LOGGER.debug("Read recipe: {}", id);
+				recipe.hideInRecipeViewer = buf.readBoolean();
 				if (recipe.hideInRecipeViewer && !recipe.getType().requiresClient) {
 					return recipe;
 				}
-				recipe.conditionsFromNetwork(pBuffer);
+				recipe.conditionsFromNetwork(buf);
 
-				int size = pBuffer.readVarInt();
+				int size = buf.readVarInt();
 				for (int i = 0; i < size; i++) {
-					PostActionType<?> type = LUtil.readRegistryId(LycheeRegistries.POST_ACTION, pBuffer);
-					PostAction action = type.fromNetwork(pBuffer);
-					action.conditionsFromNetwork(pBuffer);
+					PostActionType<?> type = LUtil.readRegistryId(LycheeRegistries.POST_ACTION, buf);
+					PostAction action = type.fromNetwork(buf);
+					action.conditionsFromNetwork(buf);
 					recipe.addPostAction(action);
 				}
 
-				recipe.comment = pBuffer.readUtf();
-				fromNetwork(recipe, pBuffer);
+				recipe.comment = buf.readUtf();
+				fromNetwork(recipe, buf);
 				return recipe;
 			} catch (Exception e) {
-				Lychee.LOGGER.error("Exception while reading Lychee recipe: {}", pRecipeId);
+				Lychee.LOGGER.error("Exception while reading Lychee recipe: {}", id);
 				Lychee.LOGGER.catching(e);
 				return null;
 			}
@@ -215,24 +198,24 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 		@SuppressWarnings("rawtypes")
 		@Override
-		public final void toNetwork(FriendlyByteBuf pBuffer, R pRecipe) {
+		public final void toNetwork(FriendlyByteBuf buf, R recipe) {
 			if (LycheeConfig.debug)
-				Lychee.LOGGER.debug("Write recipe: {}", pRecipe.getId());
-			pBuffer.writeBoolean(pRecipe.hideInRecipeViewer);
-			if (pRecipe.hideInRecipeViewer && !pRecipe.getType().requiresClient) {
+				Lychee.LOGGER.debug("Write recipe: {}", recipe.getId());
+			buf.writeBoolean(recipe.hideInRecipeViewer);
+			if (recipe.hideInRecipeViewer && !recipe.getType().requiresClient) {
 				return;
 			}
-			pRecipe.conditionsToNetwork(pBuffer);
-			List<PostAction> actions = pRecipe.getPostActions();
-			pBuffer.writeVarInt(actions.size());
+			recipe.conditionsToNetwork(buf);
+			List<PostAction> actions = recipe.getPostActions();
+			buf.writeVarInt(actions.size());
 			for (PostAction action : actions) {
 				PostActionType type = action.getType();
-				LUtil.writeRegistryId(LycheeRegistries.POST_ACTION, type, pBuffer);
-				type.toNetwork(action, pBuffer);
-				action.conditionsToNetwork(pBuffer);
+				LUtil.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
+				type.toNetwork(action, buf);
+				action.conditionsToNetwork(buf);
 			}
-			pBuffer.writeUtf(Strings.nullToEmpty(pRecipe.comment));
-			toNetwork0(pBuffer, pRecipe);
+			buf.writeUtf(Strings.nullToEmpty(recipe.comment));
+			toNetwork0(buf, recipe);
 		}
 
 		public abstract void toNetwork0(FriendlyByteBuf pBuffer, R pRecipe);

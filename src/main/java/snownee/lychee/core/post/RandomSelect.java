@@ -28,7 +28,7 @@ import snownee.lychee.core.Job;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public class RandomSelect extends PostAction {
@@ -54,7 +54,7 @@ public class RandomSelect extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		times *= IntBoundsHelper.random(rolls, ctx.getRandom());
 		if (times == 0) {
 			return;
@@ -104,7 +104,7 @@ public class RandomSelect extends PostAction {
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 	}
 
 	@Override
@@ -156,7 +156,7 @@ public class RandomSelect extends PostAction {
 	}
 
 	@Override
-	public boolean validate(LycheeRecipe<?> recipe) {
+	public boolean validate(ILycheeRecipe<?> recipe) {
 		for (PostAction action : entries) {
 			if (!action.validate(recipe)) {
 				return false;

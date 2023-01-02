@@ -18,7 +18,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.GsonContextImpl;
 import snownee.lychee.util.LUtil;
 
@@ -28,7 +28,7 @@ public interface ContextualCondition {
 
 	ContextualConditionType<? extends ContextualCondition> getType();
 
-	int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times);
+	int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times);
 
 	MutableComponent getDescription(boolean inverted);
 

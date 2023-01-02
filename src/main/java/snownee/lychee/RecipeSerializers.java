@@ -1,6 +1,7 @@
 package snownee.lychee;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.registries.ForgeRegistries;
 import snownee.lychee.anvil_crafting.AnvilCraftingRecipe;
 import snownee.lychee.block_crushing.BlockCrushingRecipe;
@@ -8,6 +9,7 @@ import snownee.lychee.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.core.recipe.ItemAndBlockRecipe;
 import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.crafting.LycheeCraftingRecipe;
 import snownee.lychee.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.interaction.BlockClickingRecipe;
 import snownee.lychee.interaction.BlockInteractingRecipe;
@@ -33,8 +35,9 @@ public final class RecipeSerializers {
 	public static final LycheeRecipe.Serializer<BlockExplodingRecipe> BLOCK_EXPLODING = register("block_exploding", new BlockExplodingRecipe.Serializer());
 	public static final LycheeRecipe.Serializer<RandomBlockTickingRecipe> RANDOM_BLOCK_TICKING = register("random_block_ticking", new RandomBlockTickingRecipe.Serializer());
 	public static final LycheeRecipe.Serializer<DripstoneRecipe> DRIPSTONE_DRIPPING = register("dripstone_dripping", new DripstoneRecipe.Serializer());
+	public static final RecipeSerializer<LycheeCraftingRecipe> CRAFTING = register("crafting", new LycheeCraftingRecipe.Serializer());
 
-	public static <T extends LycheeRecipe.Serializer<?>> T register(String name, T t) {
+	public static <T extends RecipeSerializer<?>> T register(String name, T t) {
 		ForgeRegistries.RECIPE_SERIALIZERS.register(new ResourceLocation(Lychee.ID, name), t);
 		return t;
 	}

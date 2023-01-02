@@ -6,7 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.ActionRuntime.State;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public class Break extends PostAction {
 
@@ -18,12 +18,12 @@ public class Break extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		ctx.runtime.state = State.STOPPED;
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 	}
 
 	@Override

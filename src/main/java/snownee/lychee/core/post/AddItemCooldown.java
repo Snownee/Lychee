@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public class AddItemCooldown extends PostAction {
 
@@ -24,12 +24,12 @@ public class AddItemCooldown extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Player player = (Player) ctx.getParam(LootContextParams.THIS_ENTITY);
 		ItemStack stack = ctx.getParam(LootContextParams.TOOL);
 		player.getCooldowns().addCooldown(stack.getItem(), (int) (seconds * 20 * times));

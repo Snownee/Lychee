@@ -8,7 +8,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.block_crushing.LycheeFallingBlockEntity;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public class AnvilDamageChance extends PostAction {
 
@@ -24,7 +24,7 @@ public class AnvilDamageChance extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Entity entity = ctx.getParam(LootContextParams.THIS_ENTITY);
 		if (entity instanceof LycheeFallingBlockEntity) {
 			((LycheeFallingBlockEntity) entity).lychee$anvilDamageChance(chance);
@@ -32,7 +32,7 @@ public class AnvilDamageChance extends PostAction {
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 	}
 
 	@Override

@@ -41,7 +41,7 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.LocationPredicateHelper;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.LightPredicateAccess;
 import snownee.lychee.mixin.LocationCheckAccess;
@@ -292,7 +292,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	}
 
 	@Override
-	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		if (ctx.getLevel().isClientSide) {
 			return testClient((ClientLevel) ctx.getLevel(), ctx.getParamOrNull(LycheeLootContextParams.BLOCK_POS), ctx.getParamOrNull(LootContextParams.ORIGIN)) == InteractionResult.SUCCESS ? times : 0;
 		} else {

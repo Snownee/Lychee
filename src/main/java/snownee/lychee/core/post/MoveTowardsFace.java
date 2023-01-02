@@ -10,7 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public class MoveTowardsFace extends PostAction {
 
@@ -26,12 +26,12 @@ public class MoveTowardsFace extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		BlockPos pos = ctx.getParamOrNull(LycheeLootContextParams.BLOCK_POS);
 		if (pos == null) {
 			pos = new BlockPos(ctx.getParam(LootContextParams.ORIGIN));

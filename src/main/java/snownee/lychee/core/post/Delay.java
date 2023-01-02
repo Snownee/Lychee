@@ -10,7 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.ActionRuntime.State;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public class Delay extends PostAction {
 
@@ -27,12 +27,12 @@ public class Delay extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		if (ctx.runtime.marker == null) {
 			makeMarker(recipe, ctx);
 		}
@@ -40,7 +40,7 @@ public class Delay extends PostAction {
 		ctx.runtime.state = State.PAUSED;
 	}
 
-	public static void makeMarker(LycheeRecipe<?> recipe, LycheeContext ctx) {
+	public static void makeMarker(ILycheeRecipe<?> recipe, LycheeContext ctx) {
 		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
 		Marker marker = EntityType.MARKER.create(ctx.getLevel());
 		marker.moveTo(pos);
@@ -79,7 +79,7 @@ public class Delay extends PostAction {
 	}
 
 	public interface LycheeMarker {
-		void lychee$setContext(LycheeRecipe<?> recipe, LycheeContext ctx);
+		void lychee$setContext(ILycheeRecipe<?> recipe, LycheeContext ctx);
 
 		void lychee$addDelay(int delay);
 

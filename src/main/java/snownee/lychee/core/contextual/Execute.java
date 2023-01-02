@@ -18,7 +18,7 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public record Execute(String command, Ints bounds) implements ContextualCondition {
 
@@ -31,7 +31,7 @@ public record Execute(String command, Ints bounds) implements ContextualConditio
 	}
 
 	@Override
-	public int test(LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		if (command.isEmpty() || ctx.getLevel().isClientSide) {
 			return 0;
 		}

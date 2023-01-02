@@ -1,0 +1,25 @@
+{
+  "type": "lychee:crafting",
+  "pattern": [
+    "A",
+    "B"
+  ],
+  "key": {
+    "A": {
+      "item": "pufferfish"
+    },
+    "B": {
+      "item": "water_bucket"
+    }
+  },
+  "result": {
+    "item": "pufferfish_bucket"
+  },
+  "post": [
+    {
+      "type": "set_item",
+      "target": "/key/B",
+      "item": "air"
+    }
+  ]
+}
