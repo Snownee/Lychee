@@ -68,6 +68,10 @@ public class LycheeContext extends EmptyContainer {
 		}
 	}
 
+	public Map<LootContextParam<?>, Object> getParams() {
+		return params;
+	}
+
 	/**
 	    * Get the value of the given parameter if it is present in this context, null otherwise.
 	    */
