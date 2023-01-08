@@ -1,0 +1,26 @@
+{
+    "type": "lychee:block_interacting",
+    "item_in": {
+        "type": "lychee:always_true"
+    },
+    "block_in": {
+        "tag": "minecraft:beds"
+    },
+    "contextual": [
+        {
+            "type": "location",
+            "predicate": {
+                "dimension": "minecraft:the_nether"
+            }
+        }
+    ],
+    "post": [
+        {
+            "type": "prevent_default"
+        },
+        {
+            "type": "execute",
+            "command": "playsound minecraft:block.fire.extinguish action @a ~ ~ ~"
+        }
+    ]
+}

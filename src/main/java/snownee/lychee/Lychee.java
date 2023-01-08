@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.api.ModInitializer;
+import snownee.lychee.compat.ingredient_extension.IngredientExtensionCompat;
 import snownee.lychee.util.LUtil;
 
 public final class Lychee implements ModInitializer {
@@ -24,6 +25,9 @@ public final class Lychee implements ModInitializer {
 		ContextualConditionTypes.init();
 		PostActionTypes.init();
 		RecipeSerializers.init();
+		if (hasIngredientExtAPI) {
+			IngredientExtensionCompat.init();
+		}
 	}
 
 }
