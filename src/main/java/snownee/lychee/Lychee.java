@@ -3,12 +3,15 @@ package snownee.lychee;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.NewRegistryEvent;
 import net.minecraftforge.registries.RegisterEvent;
+import snownee.lychee.compat.ingredient_extension.AlwaysTrueIngredient;
 import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.dripstone_dripping.client.DripstoneRecipeModClient;
 import snownee.lychee.interaction.InteractionRecipeMod;
@@ -42,7 +45,10 @@ public final class Lychee {
 	public static void register(RegisterEvent event) {
 		event.register(LycheeRegistries.CONTEXTUAL.getRegistryKey(), helper -> ContextualConditionTypes.init());
 		event.register(LycheeRegistries.POST_ACTION.getRegistryKey(), helper -> PostActionTypes.init());
-		event.register(ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), helper -> RecipeSerializers.init());
+		event.register(ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), helper -> {
+			RecipeSerializers.init();
+			CraftingHelper.register(new ResourceLocation(Lychee.ID, "always_true"), AlwaysTrueIngredient.Serializer.INSTANCE);
+		});
 		event.register(ForgeRegistries.RECIPE_TYPES.getRegistryKey(), helper -> RecipeTypes.init());
 	}
 
