@@ -1,7 +1,7 @@
 {
   "type": "lychee:dripstone_dripping",
   "comment": "Test",
-  "source_block": "redstone_block",
+  "source_block": "red_banner",
   "target_block": "sponge",
   "post": [
     {
