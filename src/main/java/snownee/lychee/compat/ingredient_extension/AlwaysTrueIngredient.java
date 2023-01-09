@@ -2,7 +2,6 @@ package snownee.lychee.compat.ingredient_extension;
 
 import java.io.IOException;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +18,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 public class AlwaysTrueIngredient extends IngredientExtendable {
 
 	private AlwaysTrueIngredient() {
-		super(Stream.of());
+		super(new ItemStack[0]);
 	}
 
 	@Override
