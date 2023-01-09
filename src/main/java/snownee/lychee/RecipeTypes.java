@@ -31,6 +31,7 @@ import snownee.lychee.random_block_ticking.RandomBlockTickingRecipeType;
 public final class RecipeTypes {
 
 	static {
+		LycheeLootContextParams.init();
 		LycheeLootContextParamSets.init();
 	}
 
