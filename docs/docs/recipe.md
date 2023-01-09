@@ -98,6 +98,10 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 	Use `"item": "air"` to require interaction with empty hand.
 
+!!! note
+
+	Use `"item_in": {"type": "lychee:always_true"}` to match any item. (require [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
+
 !!! warning
 
 	It is not recommended to use recipe contextual conditions in it, because some contextual conditions are not supported to run on the client side (like `execute`).
@@ -121,6 +125,10 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 !!! note
 
 	Use `"item": "air"` to require interaction with empty hand.
+
+!!! note
+
+	Use `"item_in": {"type": "lychee:always_true"}` to match any item. (require [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
 
 !!! warning
 
