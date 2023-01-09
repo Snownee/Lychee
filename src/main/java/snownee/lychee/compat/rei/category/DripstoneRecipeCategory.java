@@ -3,7 +3,6 @@ package snownee.lychee.compat.rei.category;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
@@ -21,6 +20,8 @@ import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.client.gui.ILightingSettings;
+import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.rei.REICompat;
 import snownee.lychee.compat.rei.ReactiveWidget;
 import snownee.lychee.compat.rei.display.DripstoneRecipeDisplay;
@@ -68,14 +69,11 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 			}
 
 			matrixStack.pushPose();
-			matrixStack.translate(0, 0, 300);
-			matrixStack.mulPose(Vector3f.XP.rotationDegrees(-12.5f));
-			matrixStack.mulPose(Vector3f.YP.rotationDegrees(22.5f));
-			matrixStack.translate(15, 35, 0);
-			GuiGameElement.of(getSourceBlock(recipe)).scale(12).atLocal(0, -2, 2).rotateBlock(0, 45, 0).render(matrixStack);
-			GuiGameElement.of(Blocks.DRIPSTONE_BLOCK.defaultBlockState()).scale(12).atLocal(0, -1, 2).rotateBlock(0, 45, 0).render(matrixStack);
-			GuiGameElement.of(Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)).scale(12).atLocal(0, 0, 2).rotateBlock(0, 45, 0).render(matrixStack);
-			GuiGameElement.of(targetBlock).scale(12).atLocal(0, 1.5, 2).rotateBlock(0, 45, 0).render(matrixStack);
+			matrixStack.translate(22, 24, 300);
+			drawBlock(getSourceBlock(recipe), matrixStack, 0, -2, 0);
+			drawBlock(Blocks.DRIPSTONE_BLOCK.defaultBlockState(), matrixStack, 0, -1, 0);
+			drawBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN), matrixStack, 0, 0, 0);
+			drawBlock(targetBlock, matrixStack, 0, 1.5, 0);
 			matrixStack.popPose();
 
 			matrixStack.popPose();
@@ -105,6 +103,10 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 		widgets.add(reactive);
 
 		return widgets;
+	}
+
+	private static void drawBlock(BlockState state, PoseStack matrixStack, double localX, double localY, double localZ) {
+		GuiGameElement.of(state).scale(12).lighting(JEIREI.BLOCK_LIGHTING).atLocal(localX, localY, localZ).rotateBlock(12.5, -22.5, 0).render(matrixStack);
 	}
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {

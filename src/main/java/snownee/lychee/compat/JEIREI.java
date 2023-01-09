@@ -10,11 +10,30 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.Ingredient;
+import snownee.lychee.client.gui.CustomLightingSettings;
+import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
 
 public class JEIREI {
+
+	/* off */
+	public static ILightingSettings BLOCK_LIGHTING = CustomLightingSettings.builder()
+			.firstLightRotation(-30, 45)
+			.secondLightRotation(0, 65)
+			.build();
+
+	public static ILightingSettings SIDE_ICON_LIGHTING = CustomLightingSettings.builder()
+			.firstLightRotation(135, 35)
+			.secondLightRotation(-20, 50)
+			.build();
+
+	public static ILightingSettings FUSED_TNT_LIGHTING = CustomLightingSettings.builder()
+			.firstLightRotation(-120, 20)
+			.secondLightRotation(200, 45)
+			.build();
+	/* on */
 
 	public static List<MutableTriple<Ingredient, Component, Integer>> generateInputs(LycheeRecipe<?> recipe) {
 		/* off */

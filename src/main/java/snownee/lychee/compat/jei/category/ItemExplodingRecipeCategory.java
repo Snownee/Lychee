@@ -14,15 +14,13 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.item.Items;
-import snownee.lychee.client.gui.CustomLightingSettings;
-import snownee.lychee.client.gui.ILightingSettings;
+import snownee.lychee.compat.JEIREI;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.item_exploding.ItemExplodingRecipe;
 
 public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<ItemExplodingRecipe> {
 
-	private static final ILightingSettings LIGHT = CustomLightingSettings.builder().firstLightRotation(-120, 20).secondLightRotation(200, 45).build();
 	private PrimedTnt tnt;
 
 	public ItemExplodingRecipeCategory(LycheeRecipeType<ItemShapelessContext, ItemExplodingRecipe> recipeType) {
@@ -56,7 +54,7 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 		Quaternion quaternion = Quaternion.fromXYZDegrees(new Vector3f(200, -20, 0));
 		matrixStack.mulPose(quaternion);
 
-		LIGHT.applyLighting();
+		JEIREI.FUSED_TNT_LIGHTING.applyLighting();
 		EntityRenderDispatcher entityrenderermanager = mc.getEntityRenderDispatcher();
 		quaternion.conj();
 		entityrenderermanager.overrideCameraOrientation(quaternion);

@@ -22,8 +22,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.jei.JEICompat.ScreenElementWrapper;
 import snownee.lychee.compat.jei.SideBlockIcon;
 import snownee.lychee.core.LycheeContext;
@@ -116,18 +116,17 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 		/* off */
 		GuiGameElement.of(state)
-				.rotateBlock(12.5, -22.5, 0)
+				.rotateBlock(12.5, 202.5, 0)
 				.scale(15)
-				.lighting(ILightingSettings.DEFAULT_JEI)
-				.atLocal(0, 0, 2)
-				.at(inputBlockRect.getX() + 4, inputBlockRect.getY() + 16)
+				.lighting(JEIREI.BLOCK_LIGHTING)
+				.atLocal(0, 0.2, 0)
+				.at(inputBlockRect.getX(), inputBlockRect.getY())
 				.render(matrixStack);
 		/* on */
 	}
 
 	@Override
 	public List<Component> getTooltipStrings(T recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
-		inputBlockRect.setPosition(inputBlockRect.getX(), inputBlockRect.getY());
 		if (getClass() != ItemBurningRecipeCategory.class && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
 			return BlockPredicateHelper.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe));
 		}
@@ -147,7 +146,6 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 	@Override
 	public boolean handleInput(T recipe, double mouseX, double mouseY, Key input) {
-		inputBlockRect.setPosition(inputBlockRect.getX(), inputBlockRect.getY());
 		if (getClass() != ItemBurningRecipeCategory.class && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
 			return clickBlock(getRenderingBlock(recipe), input);
 		}

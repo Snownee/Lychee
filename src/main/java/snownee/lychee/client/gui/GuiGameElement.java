@@ -2,7 +2,6 @@ package snownee.lychee.client.gui;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.platform.Lighting;
@@ -18,8 +17,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
@@ -30,6 +27,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
@@ -49,6 +47,9 @@ public class GuiGameElement {
 	public static GuiRenderBuilder of(BlockState state) {
 		if (state.getRenderShape() != RenderShape.MODEL && state.getFluidState().isEmpty()) {
 			return GuiGameElement.of(state.getBlock());
+		}
+		if (state.getBlock() instanceof StairBlock) {
+			state = state.setValue(StairBlock.FACING, state.getValue(StairBlock.FACING).getOpposite());
 		}
 		return new GuiBlockStateRenderBuilder(state);
 	}
@@ -113,7 +114,7 @@ public class GuiGameElement {
 		}
 
 		protected void transformMatrix(PoseStack matrixStack) {
-			matrixStack.translate(x, y, z);
+			matrixStack.translate(x + 3, y + 13, z);
 			matrixStack.scale((float) scale, (float) scale, (float) scale);
 			matrixStack.translate(xLocal, yLocal, zLocal);
 			UIRenderHelper.flipForGuiRender(matrixStack);
@@ -216,6 +217,7 @@ public class GuiGameElement {
 
 		public GuiItemRenderBuilder(ItemStack stack) {
 			this.stack = stack;
+			scale = 10;
 		}
 
 		public GuiItemRenderBuilder(ItemLike provider) {
@@ -226,56 +228,35 @@ public class GuiGameElement {
 		public void render(PoseStack matrixStack) {
 			prepareMatrix(matrixStack);
 			transformMatrix(matrixStack);
-			renderItemIntoGUI(matrixStack, stack, customLighting == null);
+			renderItemIntoGUI(matrixStack, stack);
 			cleanUpMatrix(matrixStack);
 		}
 
-		public static void renderItemIntoGUI(PoseStack matrixStack, ItemStack stack, boolean useDefaultLighting) {
-			ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
-			BakedModel bakedModel = renderer.getModel(stack, null, null, 0);
+		protected void transformMatrix(PoseStack matrixStack) {
+			matrixStack.translate(x, y, z);
+			matrixStack.translate(xLocal * scale, yLocal * scale, zLocal * scale);
+		}
 
-			Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
-			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
-			RenderSystem.enableBlend();
-			RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-			matrixStack.pushPose();
-			matrixStack.translate(0, 0, 100.0F + renderer.blitOffset);
-			matrixStack.translate(8.0F, -8.0F, 0.0F);
-			matrixStack.scale(16.0F, 16.0F, 16.0F);
-			MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-			boolean flatLighting = !bakedModel.usesBlockLight();
-			if (useDefaultLighting && flatLighting) {
-				Lighting.setupForFlatItems();
-			}
-
-			renderer.render(stack, ItemTransforms.TransformType.GUI, false, matrixStack, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, bakedModel);
-			buffer.endBatch();
+		public void renderItemIntoGUI(PoseStack matrixStack, ItemStack stack) {
 			RenderSystem.enableDepthTest();
-			if (useDefaultLighting && flatLighting) {
-				Lighting.setupFor3DItems();
-			}
 
-			matrixStack.popPose();
+			PoseStack modelViewStack = RenderSystem.getModelViewStack();
+			modelViewStack.pushPose();
+			modelViewStack.mulPoseMatrix(matrixStack.last().pose());
+			float scale = (float) this.scale / 10;
+			float o = 8 * scale;
+			modelViewStack.translate(o, o, 0);
+			modelViewStack.scale(scale, scale, scale);
+			modelViewStack.translate(-8, -8 * scale, 0);
+			Minecraft.getInstance().getItemRenderer().renderAndDecorateItem(stack, 0, 0);
+
+			modelViewStack.popPose();
+			RenderSystem.applyModelViewMatrix();
+			RenderSystem.disableDepthTest();
 		}
 
 		@Override
-		public GuiRenderBuilder atLocal(double x, double y, double z) {
-			return this;
-		}
-
-		@Override
-		public GuiRenderBuilder rotate(double xRot, double yRot, double zRot) {
-			return this;
-		}
-
-		@Override
-		public GuiRenderBuilder rotateBlock(double xRot, double yRot, double zRot) {
-			return this;
-		}
-
-		@Override
-		public GuiRenderBuilder scale(double scale) {
+		public GuiRenderBuilder lighting(ILightingSettings lighting) {
 			return this;
 		}
 

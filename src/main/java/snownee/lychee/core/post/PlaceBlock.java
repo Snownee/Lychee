@@ -175,7 +175,7 @@ public class PlaceBlock extends PostAction {
 			GuiGameElement.of(Items.BARRIER).render(poseStack, x, y);
 			return;
 		}
-		GuiGameElement.of(state).rotateBlock(22.5f, 45f, 0).scale(10).atLocal(0.3, 1.3, 2).render(poseStack, x, y);
+		GuiGameElement.of(state).rotateBlock(30, 225, 0).scale(10).render(poseStack, x, y);
 	}
 
 	@Override

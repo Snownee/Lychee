@@ -5,7 +5,6 @@ import java.util.List;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -23,14 +22,15 @@ import snownee.lychee.block_crushing.BlockCrushingContext;
 import snownee.lychee.block_crushing.BlockCrushingRecipe;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.compat.JEIREI;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
 
 public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingContext, BlockCrushingRecipe> {
 
-	public static final Rect2i fallingBlockRect = new Rect2i(5, -35, 20, 35);
-	public static final Rect2i landingBlockRect = new Rect2i(5, 0, 20, 20);
+	public static final Rect2i fallingBlockRect = new Rect2i(0, -35, 20, 35);
+	public static final Rect2i landingBlockRect = new Rect2i(0, 0, 20, 20);
 
 	public BlockCrushingRecipeCategory(LycheeRecipeType<BlockCrushingContext, BlockCrushingRecipe> recipeType) {
 		super(recipeType);
@@ -62,9 +62,9 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
 		BlockState fallingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
 		BlockState landingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
-		int x = recipe.getIngredients().isEmpty() ? 36 : 72;
+		int x = recipe.getIngredients().isEmpty() ? 41 : 77;
 		boolean anyLandingBlock = recipe.getLandingBlock() == BlockPredicate.ANY;
-		int y = anyLandingBlock ? 45 : 33;
+		int y = anyLandingBlock ? 45 : 36;
 
 		float ticks = (System.currentTimeMillis() % 2000) / 1000F;
 		ticks = Math.min(1, ticks);
@@ -72,7 +72,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 
 		if (landingBlock.getLightEmission() < 5) {
 			matrixStack.pushPose();
-			matrixStack.translate(x + (anyLandingBlock ? 16 : 18), y + (anyLandingBlock ? 1 : 18), 0);
+			matrixStack.translate(x + 10.5, y + (anyLandingBlock ? 1 : 16), 0);
 			float shadow = 0.6F;
 			if (anyLandingBlock) {
 				shadow = 0.2F + ticks * 0.2F;
@@ -84,21 +84,18 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 		}
 
 		matrixStack.pushPose();
-		matrixStack.translate(0, 0, 300);
-		matrixStack.mulPose(Vector3f.XP.rotationDegrees(-12.5f));
-		matrixStack.mulPose(Vector3f.YP.rotationDegrees(22.5f));
-		matrixStack.translate(x, y, 0);
-		GuiGameElement.of(fallingBlock).scale(15).atLocal(0, ticks * 1.3 - 1.3, 2).rotateBlock(0, 45, 0).render(matrixStack);
+		matrixStack.translate(x, y - 13, 0);
+		GuiGameElement.of(fallingBlock).scale(15).atLocal(0, ticks * 1.3 - 1.3, 0).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).at(0, 0, 500).render(matrixStack);
 		if (!landingBlock.isAir()) {
-			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 2).rotateBlock(0, 45, 0).render(matrixStack);
+			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 0).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).render(matrixStack);
 		}
 		matrixStack.popPose();
 	}
 
 	@Override
 	public List<Component> getTooltipStrings(BlockCrushingRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
-		int x = recipe.getIngredients().isEmpty() ? 36 : 72;
-		int y = recipe.getLandingBlock() == BlockPredicate.ANY ? 45 : 33;
+		int x = recipe.getIngredients().isEmpty() ? 41 : 77;
+		int y = recipe.getLandingBlock() == BlockPredicate.ANY ? 45 : 36;
 		x = (int) mouseX - x;
 		y = (int) mouseY - y;
 		if (fallingBlockRect.contains(x, y)) {
@@ -115,8 +112,8 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 	@Override
 	public boolean handleInput(BlockCrushingRecipe recipe, double mouseX, double mouseY, Key input) {
 		if (input.getType() == InputConstants.Type.MOUSE) {
-			int x = recipe.getIngredients().isEmpty() ? 36 : 72;
-			int y = recipe.getLandingBlock() == BlockPredicate.ANY ? 45 : 33;
+			int x = recipe.getIngredients().isEmpty() ? 41 : 77;
+			int y = recipe.getLandingBlock() == BlockPredicate.ANY ? 45 : 36;
 			x = (int) mouseX - x;
 			y = (int) mouseY - y;
 			if (fallingBlockRect.contains(x, y)) {

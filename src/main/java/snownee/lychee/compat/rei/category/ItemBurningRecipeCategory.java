@@ -19,6 +19,7 @@ public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<LycheeCo
 
 	public ItemBurningRecipeCategory(LycheeRecipeType<LycheeContext, ItemBurningRecipe> recipeType) {
 		super(List.of(recipeType), AllGuiTextures.JEI_DOWN_ARROW);
+		methodRect.setX(27);
 	}
 
 	@Override

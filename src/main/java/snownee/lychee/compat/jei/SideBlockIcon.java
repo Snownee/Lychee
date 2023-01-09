@@ -6,9 +6,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.JEIREI;
 
 public class SideBlockIcon extends RenderElement {
 
@@ -30,10 +30,10 @@ public class SideBlockIcon extends RenderElement {
 		ms.popPose();
 		/* off */
 		GuiGameElement.of(blockProvider.get())
-				.lighting(ILightingSettings.DEFAULT_JEI)
+				.lighting(JEIREI.SIDE_ICON_LIGHTING)
 				.scale(7)
-				.rotateBlock(12.5f, 22.5f, 0)
-				.at(x + 6, y + 16)
+				.rotateBlock(30, 202.5, 0)
+				.at(x + 4, y + 2)
 				.render(ms);
 		/* on */
 	}

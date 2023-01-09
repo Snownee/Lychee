@@ -1,6 +1,6 @@
 {
   "type": "lychee:block_crushing",
-  "landing_block": "glass",
+  "landing_block": "chest",
   "post": {
     "type": "place",
     "block": "*"

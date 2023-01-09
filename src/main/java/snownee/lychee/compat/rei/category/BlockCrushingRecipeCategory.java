@@ -3,7 +3,6 @@ package snownee.lychee.compat.rei.category;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
@@ -22,6 +21,7 @@ import snownee.lychee.block_crushing.BlockCrushingContext;
 import snownee.lychee.block_crushing.BlockCrushingRecipe;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.rei.REICompat;
 import snownee.lychee.compat.rei.ReactiveWidget;
 import snownee.lychee.compat.rei.display.BlockCrushingDisplay;
@@ -31,8 +31,8 @@ import snownee.lychee.util.LUtil;
 
 public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingContext, BlockCrushingRecipe, BlockCrushingDisplay> {
 
-	public static final Rect2i fallingBlockRect = new Rect2i(5, -35, 20, 35);
-	public static final Rect2i landingBlockRect = new Rect2i(5, 0, 20, 20);
+	public static final Rect2i fallingBlockRect = new Rect2i(0, -35, 20, 35);
+	public static final Rect2i landingBlockRect = new Rect2i(0, 0, 20, 20);
 
 	public BlockCrushingRecipeCategory(LycheeRecipeType<BlockCrushingContext, BlockCrushingRecipe> recipeType) {
 		super(recipeType);
@@ -61,7 +61,7 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 		List<Widget> widgets = super.setupDisplay(display, bounds);
 		drawInfoBadge(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
-			int x = recipe.getIngredients().isEmpty() ? 36 : 72;
+			int x = recipe.getIngredients().isEmpty() ? 41 : 77;
 			boolean anyLandingBlock = recipe.getLandingBlock() == BlockPredicate.ANY;
 			int y = anyLandingBlock ? 45 : 33;
 
@@ -75,7 +75,7 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 			BlockState landingBlock = getLandingBlock(recipe);
 			if (landingBlock.getLightEmission() < 5) {
 				matrixStack.pushPose();
-				matrixStack.translate(x + (anyLandingBlock ? 16 : 18), y + (anyLandingBlock ? 1 : 18), 0);
+				matrixStack.translate(x + 10.5, y + (anyLandingBlock ? 1 : 16), 0);
 				float shadow = 0.6F;
 				if (anyLandingBlock) {
 					shadow = 0.2F + ticks * 0.2F;
@@ -87,13 +87,10 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 			}
 
 			matrixStack.pushPose();
-			matrixStack.translate(0, 0, 300);
-			matrixStack.mulPose(Vector3f.XP.rotationDegrees(-12.5f));
-			matrixStack.mulPose(Vector3f.YP.rotationDegrees(22.5f));
-			matrixStack.translate(x, y, 0);
-			GuiGameElement.of(getFallingBlock(recipe)).scale(15).atLocal(0, ticks * 1.3 - 1.3, 2).rotateBlock(0, 45, 0).render(matrixStack);
+			matrixStack.translate(x, y - 13, 0);
+			GuiGameElement.of(getFallingBlock(recipe)).scale(15).atLocal(0, ticks * 1.3 - 1.3, 2).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).at(0, 0, 500).render(matrixStack);
 			if (!landingBlock.isAir()) {
-				GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 2).rotateBlock(0, 45, 0).render(matrixStack);
+				GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 2).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).render(matrixStack);
 			}
 			matrixStack.popPose();
 			matrixStack.popPose();
@@ -104,10 +101,10 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y);
 		actionGroup(widgets, startPoint, recipe, xCenter + 50 - startPoint.x, y);
 
-		int x = recipe.getIngredients().isEmpty() ? 36 : 72;
+		int x = recipe.getIngredients().isEmpty() ? 41 : 77;
 		y = recipe.getLandingBlock() == BlockPredicate.ANY ? 45 : 33;
-		fallingBlockRect.setPosition(x + 5, y - 35);
-		landingBlockRect.setPosition(x + 5, y);
+		fallingBlockRect.setPosition(x, y - 35);
+		landingBlockRect.setPosition(x, y);
 
 		ReactiveWidget reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, fallingBlockRect));
 		reactive.setTooltipFunction($ -> {

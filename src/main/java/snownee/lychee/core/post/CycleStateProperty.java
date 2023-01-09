@@ -50,7 +50,7 @@ public class CycleStateProperty extends PlaceBlock {
 	public void render(PoseStack poseStack, int x, int y) {
 		List<BlockState> states = BlockPredicateHelper.getShowcaseBlockStates(block, Set.of(property));
 		BlockState state = LUtil.getCycledItem(states, Blocks.AIR.defaultBlockState(), 1000);
-		GuiGameElement.of(state).rotateBlock(22.5f, 45f, 0).scale(10).atLocal(0.3, 1.3, 2).render(poseStack, x, y);
+		GuiGameElement.of(state).rotateBlock(30, 225, 0).scale(10).render(poseStack, x, y);
 	}
 
 	public static Property<?> findProperty(BlockPredicate blockPredicate, String name) {
