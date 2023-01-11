@@ -2,7 +2,6 @@ package snownee.lychee.core.post;
 
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.ParseResults;
 
 import net.fabricmc.api.EnvType;
@@ -48,7 +47,10 @@ public class Execute extends PostAction {
 		if (command.isEmpty()) {
 			return;
 		}
-		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
+		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
+		if (pos == null) {
+			pos = Vec3.ZERO;
+		}
 		Entity entity = ctx.getParamOrNull(LootContextParams.THIS_ENTITY);
 		Vec2 rotation = Vec2.ZERO;
 		Component displayName = DEFAULT_NAME;
@@ -58,12 +60,10 @@ public class Execute extends PostAction {
 			displayName = entity.getDisplayName();
 			name = entity.getName().getString();
 		}
-		CommandSourceStack sourceStack = new CommandSourceStack(CommandSource.NULL, pos, rotation, ctx.getServerLevel(), 2, name, displayName, ctx.getLevel().getServer(), entity);
+		CommandSourceStack sourceStack = new CommandSourceStack(CommandSource.NULL, pos, rotation, ctx.getServerLevel(), 2, name, displayName, ctx.getServerLevel().getServer(), entity);
 		for (int i = 0; i < times; i++) {
-			Commands cmds = ctx.getLevel().getServer().getCommands();
-			CommandDispatcher<CommandSourceStack> dispatcher = cmds.getDispatcher();
-			//todo: check if it's available
-			ParseResults<CommandSourceStack> results = dispatcher.parse(command, sourceStack);
+			Commands cmds = ctx.getServerLevel().getServer().getCommands();
+			ParseResults<CommandSourceStack> results = cmds.getDispatcher().parse(command, sourceStack);
 			cmds.performCommand(results, command);
 		}
 	}
