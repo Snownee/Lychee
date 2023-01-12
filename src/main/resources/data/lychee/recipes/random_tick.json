@@ -1,6 +1,12 @@
 {
   "type": "lychee:random_block_ticking",
   "block_in": "diamond_block",
+  "contextual": [
+    {
+      "type": "execute",
+      "command": "execute if block ~ ~-1 ~ minecraft:diamond_block"
+    }
+  ],
   "post": [
     {
       "type": "place",
