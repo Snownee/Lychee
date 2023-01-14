@@ -55,7 +55,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		if (con == null) {
 			return Blocks.AIR.defaultBlockState();
 		}
-		return JEIREI.getMostUsedBlock((List<BlockKeyRecipe<?>>) recipes).getFirst();
+		return JEIREI.getMostUsedBlock(recipes).getFirst();
 	}
 
 	@Nullable

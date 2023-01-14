@@ -85,7 +85,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 
 		matrixStack.pushPose();
 		matrixStack.translate(x, y - 13, 0);
-		GuiGameElement.of(fallingBlock).scale(15).atLocal(0, ticks * 1.3 - 1.3, 0).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).at(0, 0, 500).render(matrixStack);
+		GuiGameElement.of(fallingBlock).scale(15).atLocal(0, ticks * 1.3 - 1.3, 0).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).at(0, 0, 300).render(matrixStack);
 		if (!landingBlock.isAir()) {
 			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 0).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).render(matrixStack);
 		}

@@ -102,10 +102,11 @@ public class JEIREI {
 		return Component.translatable(key);
 	}
 
-	public static Pair<BlockState, Integer> getMostUsedBlock(List<BlockKeyRecipe<?>> recipes) {
+	public static <T extends LycheeRecipe<?>> Pair<BlockState, Integer> getMostUsedBlock(List<T> recipes) {
 		Object2IntMap<Block> blockStateCount = new Object2IntOpenHashMap<>();
 		Map<Block, BlockPredicate> blockPredicateMap = Maps.newHashMap();
-		for (BlockKeyRecipe<?> recipe : recipes) {
+		for (T object : recipes) {
+			BlockKeyRecipe<?> recipe = (BlockKeyRecipe<?>) object;
 			for (Block block : BlockPredicateHelper.getMatchedBlocks(recipe.getBlock())) {
 				blockStateCount.mergeInt(block, 1, Integer::sum);
 				blockPredicateMap.putIfAbsent(block, recipe.getBlock());
