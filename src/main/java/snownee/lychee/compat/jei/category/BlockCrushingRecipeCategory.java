@@ -42,7 +42,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 	}
 
 	@Override
-	public IDrawable createIcon(IGuiHelper guiHelper) {
+	public IDrawable createIcon(IGuiHelper guiHelper, List<BlockCrushingRecipe> recipes) {
 		return guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, Items.ANVIL.getDefaultInstance());
 	}
 

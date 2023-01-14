@@ -1,5 +1,7 @@
 package snownee.lychee.compat.jei.category;
 
+import java.util.List;
+
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -15,7 +17,7 @@ public class LightningChannelingRecipeCategory extends ItemShapelessRecipeCatego
 	}
 
 	@Override
-	public IDrawable createIcon(IGuiHelper guiHelper) {
+	public IDrawable createIcon(IGuiHelper guiHelper, List<LightningChannelingRecipe> recipes) {
 		return guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, Items.LIGHTNING_ROD.getDefaultInstance());
 	}
 

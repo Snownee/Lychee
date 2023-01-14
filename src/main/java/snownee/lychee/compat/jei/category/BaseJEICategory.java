@@ -25,7 +25,6 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.runtime.IRecipesGui;
-import net.minecraft.Util;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
@@ -54,9 +53,10 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	public static final int height = 59;
 	public final List<LycheeRecipeType<C, T>> recipeTypes;
 	protected IDrawable bg;
-	protected IDrawable icon;
+	public IDrawable icon;
 	protected Rect2i infoRect;
-	protected RecipeType<T> recipeType;
+	public List<T> initialRecipes;
+	public RecipeType<T> recipeType;
 
 	public BaseJEICategory(LycheeRecipeType<C, T> recipeType) {
 		this(List.of(recipeType));
@@ -64,7 +64,6 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	public BaseJEICategory(List<LycheeRecipeType<C, T>> recipeTypes) {
 		this.recipeTypes = recipeTypes;
-		recipeType = new RecipeType<>(recipeTypes.get(0).id, recipeTypes.get(0).clazz);
 		infoRect = new Rect2i(0, 25, 8, 8);
 	}
 
@@ -88,17 +87,14 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	@Override
 	public IDrawable getIcon() {
-		if (icon == null) {
-			icon = createIcon(JEICompat.GUI);
-		}
 		return icon;
 	}
 
-	public abstract IDrawable createIcon(IGuiHelper guiHelper);
+	public abstract IDrawable createIcon(IGuiHelper guiHelper, List<T> recipes);
 
 	@Override
 	public Component getTitle() {
-		return Component.translatable(Util.makeDescriptionId("recipeType", recipeType.getUid()));
+		return JEIREI.makeTitle(recipeType.getUid());
 	}
 
 	public int getWidth() {

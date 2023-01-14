@@ -1,5 +1,7 @@
 package snownee.lychee.compat.jei.category;
 
+import java.util.List;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
@@ -28,7 +30,7 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 	}
 
 	@Override
-	public IDrawable createIcon(IGuiHelper guiHelper) {
+	public IDrawable createIcon(IGuiHelper guiHelper, List<ItemExplodingRecipe> recipes) {
 		return guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, Items.TNT.getDefaultInstance());
 	}
 

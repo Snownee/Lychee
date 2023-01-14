@@ -32,9 +32,7 @@ import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.core.recipe.type.MostUsedBlockProvider;
 import snownee.lychee.util.LUtil;
-import snownee.lychee.util.Pair;
 
 public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extends LycheeRecipe<C>> extends BaseJEICategory<C, T> {
 
@@ -50,23 +48,16 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	}
 
 	@Override
-	public IDrawable createIcon(IGuiHelper guiHelper) {
-		return new ScreenElementWrapper(new SideBlockIcon(mainIcon, Suppliers.memoize(this::getIconBlock)));
+	public IDrawable createIcon(IGuiHelper guiHelper, List<T> recipes) {
+		return new ScreenElementWrapper(new SideBlockIcon(mainIcon, Suppliers.memoize(() -> getIconBlock(recipes))));
 	}
 
-	public BlockState getIconBlock() {
+	public BlockState getIconBlock(List<T> recipes) {
 		ClientPacketListener con = Minecraft.getInstance().getConnection();
 		if (con == null) {
 			return Blocks.AIR.defaultBlockState();
 		}
-		/* off */
-		return recipeTypes.stream()
-				.map($ -> ((MostUsedBlockProvider) $).getMostUsedBlock())
-				.filter($ -> !$.getFirst().isAir())
-				.max((a, b) -> a.getSecond() - b.getSecond())
-				.map(Pair::getFirst)
-				.orElse(Blocks.AIR.defaultBlockState());
-		/* on */
+		return JEIREI.getMostUsedBlock((List<BlockKeyRecipe<?>>) initialRecipes).getFirst();
 	}
 
 	@Nullable

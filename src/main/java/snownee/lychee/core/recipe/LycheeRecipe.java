@@ -44,6 +44,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	public boolean hideInRecipeViewer;
 	@Nullable
 	public String comment;
+	public String group = "default";
 
 	public LycheeRecipe(ResourceLocation id) {
 		this.id = id;
@@ -159,6 +160,8 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			recipe.hideInRecipeViewer = GsonHelper.getAsBoolean(jsonObject, "hide_in_viewer", false);
 			recipe.ghost = GsonHelper.getAsBoolean(jsonObject, "ghost", false);
 			recipe.comment = GsonHelper.getAsString(jsonObject, "comment", null);
+			recipe.group = GsonHelper.getAsString(jsonObject, "group", recipe.group);
+			Preconditions.checkArgument(ResourceLocation.isValidResourceLocation(recipe.group), "%s is not a valid ResourceLocation", recipe.group);
 			recipe.parseConditions(jsonObject.get("contextual"));
 			PostAction.parseActions(jsonObject.get("post"), recipe::addPostAction);
 			fromJson(recipe, jsonObject);
@@ -196,6 +199,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 				}
 
 				recipe.comment = buf.readUtf();
+				recipe.group = buf.readUtf();
 				fromNetwork(recipe, buf);
 				return recipe;
 			} catch (Exception e) {
@@ -226,6 +230,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 				action.conditionsToNetwork(buf);
 			}
 			buf.writeUtf(Strings.nullToEmpty(recipe.comment));
+			buf.writeUtf(recipe.group);
 			toNetwork0(buf, recipe);
 		}
 

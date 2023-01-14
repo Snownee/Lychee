@@ -1,10 +1,11 @@
 {
     "type": "lychee:block_interacting",
-    "item_in": {
-        "type": "lychee:always_true"
-    },
+    "group": "test",
     "block_in": {
         "tag": "minecraft:beds"
+    },
+    "item_in": {
+        "type": "lychee:always_true"
     },
     "contextual": [
         {

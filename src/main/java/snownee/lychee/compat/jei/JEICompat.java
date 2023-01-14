@@ -1,9 +1,11 @@
 package snownee.lychee.compat.jei;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -30,6 +32,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.ItemLike;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
@@ -37,6 +40,8 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.JEIREI;
+import snownee.lychee.compat.JEIREI.CategoryCreationContext;
 import snownee.lychee.compat.jei.category.BaseJEICategory;
 import snownee.lychee.compat.jei.category.BlockCrushingRecipeCategory;
 import snownee.lychee.compat.jei.category.BlockExplodingRecipeCategory;
@@ -50,9 +55,12 @@ import snownee.lychee.compat.jei.category.LightningChannelingRecipeCategory;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.post.PostAction;
+import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.crafting.ShapedCraftingRecipe;
 import snownee.lychee.util.LUtil;
 
@@ -64,22 +72,11 @@ public class JEICompat implements IModPlugin {
 	public static IJeiRuntime RUNTIME;
 	public static IJeiHelpers HELPERS;
 	public static IGuiHelper GUI;
-	public static ItemBurningRecipeCategory ITEM_BURNING;
-	public static ItemInsideRecipeCategory ITEM_INSIDE;
-	public static BlockInteractionRecipeCategory BLOCK_INTERACTING;
-	public static BlockCrushingRecipeCategory BLOCK_CRUSHING;
-	public static LightningChannelingRecipeCategory LIGHTNING_CHANNELING;
-	public static ItemExplodingRecipeCategory ITEM_EXPLODING;
-	public static BlockExplodingRecipeCategory BLOCK_EXPLODING;
-	public static DripstoneRecipeCategory DRIPSTONE_DRIPPING;
+	public static final Map<ResourceLocation, Map<ResourceLocation, BaseJEICategory<?, ?>>> CATEGORIES = Maps.newHashMap();
 
 	@Override
 	public ResourceLocation getPluginUid() {
 		return UID;
-	}
-
-	public Stream<BaseJEICategory<LycheeContext, LycheeRecipe<LycheeContext>>> getCategories() {
-		return (Stream<BaseJEICategory<LycheeContext, LycheeRecipe<LycheeContext>>>) (Object) Stream.of(ITEM_BURNING, ITEM_INSIDE, BLOCK_INTERACTING, BLOCK_CRUSHING, LIGHTNING_CHANNELING, ITEM_EXPLODING, BLOCK_EXPLODING, DRIPSTONE_DRIPPING);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -87,23 +84,38 @@ public class JEICompat implements IModPlugin {
 	public void registerCategories(IRecipeCategoryRegistration registration) {
 		HELPERS = registration.getJeiHelpers();
 		GUI = HELPERS.getGuiHelper();
-		ITEM_BURNING = new ItemBurningRecipeCategory(RecipeTypes.ITEM_BURNING);
-		ITEM_INSIDE = new ItemInsideRecipeCategory(RecipeTypes.ITEM_INSIDE, AllGuiTextures.JEI_DOWN_ARROW);
-		ScreenElement mainIcon = RecipeTypes.BLOCK_INTERACTING.isEmpty() ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
-		BLOCK_INTERACTING = new BlockInteractionRecipeCategory((List) List.of(RecipeTypes.BLOCK_INTERACTING, RecipeTypes.BLOCK_CLICKING), mainIcon);
-		BLOCK_CRUSHING = new BlockCrushingRecipeCategory(RecipeTypes.BLOCK_CRUSHING);
-		LIGHTNING_CHANNELING = new LightningChannelingRecipeCategory(RecipeTypes.LIGHTNING_CHANNELING);
-		ITEM_EXPLODING = new ItemExplodingRecipeCategory(RecipeTypes.ITEM_EXPLODING);
-		BLOCK_EXPLODING = new BlockExplodingRecipeCategory(RecipeTypes.BLOCK_EXPLODING, GuiGameElement.of(Items.TNT));
-		DRIPSTONE_DRIPPING = new DripstoneRecipeCategory(RecipeTypes.DRIPSTONE_DRIPPING);
-		getCategories().forEach(registration::addRecipeCategories);
+
+		Map<ResourceLocation, Function<CategoryCreationContext, BaseJEICategory<?, ?>>> factories = Maps.newHashMap();
+		factories.put(RecipeTypes.ITEM_BURNING.categoryId, $ -> new ItemBurningRecipeCategory(RecipeTypes.ITEM_BURNING));
+		factories.put(RecipeTypes.ITEM_INSIDE.categoryId, $ -> new ItemInsideRecipeCategory(RecipeTypes.ITEM_INSIDE, AllGuiTextures.JEI_DOWN_ARROW));
+		factories.put(RecipeTypes.BLOCK_INTERACTING.categoryId, $ -> {
+			ScreenElement mainIcon = $.recipes().stream().map(LycheeRecipe::getType).anyMatch(Predicate.isEqual(RecipeTypes.BLOCK_INTERACTING)) ? AllGuiTextures.RIGHT_CLICK : AllGuiTextures.LEFT_CLICK;
+			return new BlockInteractionRecipeCategory((List) List.of(RecipeTypes.BLOCK_INTERACTING, RecipeTypes.BLOCK_CLICKING), mainIcon);
+		});
+		factories.put(RecipeTypes.BLOCK_CRUSHING.categoryId, $ -> new BlockCrushingRecipeCategory(RecipeTypes.BLOCK_CRUSHING));
+		factories.put(RecipeTypes.LIGHTNING_CHANNELING.categoryId, $ -> new LightningChannelingRecipeCategory(RecipeTypes.LIGHTNING_CHANNELING));
+		factories.put(RecipeTypes.ITEM_EXPLODING.categoryId, $ -> new ItemExplodingRecipeCategory(RecipeTypes.ITEM_EXPLODING));
+		factories.put(RecipeTypes.BLOCK_EXPLODING.categoryId, $ -> new BlockExplodingRecipeCategory(RecipeTypes.BLOCK_EXPLODING, GuiGameElement.of(Items.TNT)));
+		factories.put(RecipeTypes.DRIPSTONE_DRIPPING.categoryId, $ -> new DripstoneRecipeCategory(RecipeTypes.DRIPSTONE_DRIPPING));
+
+		CATEGORIES.clear();
+		JEIREI.registerCategories(factories::containsKey, (categoryId, context) -> {
+			BaseJEICategory<?, ?> category = factories.get(categoryId).apply(context);
+			category.recipeType = new mezz.jei.api.recipe.RecipeType(JEIREI.composeCategoryIdentifier(categoryId, context.group()), category.recipeTypes.get(0).clazz);
+			category.initialRecipes = (List) context.recipes();
+			category.icon = category.createIcon(GUI, (List) context.recipes());
+			registration.addRecipeCategories(category);
+			CATEGORIES.computeIfAbsent(categoryId, $ -> Maps.newHashMap()).put(context.group(), category);
+		});
 	}
 
 	@Override
 	public void registerRecipes(IRecipeRegistration registration) {
-		getCategories().forEach($ -> {
-			$.recipeTypes.forEach($$ -> {
-				registration.addRecipes($.getRecipeType(), LUtil.recipes($$).stream().filter(LycheeRecipe::showInRecipeViewer).toList());
+		CATEGORIES.values().forEach($ -> {
+			$.values().forEach($$ -> {
+				@SuppressWarnings("rawtypes")
+				BaseJEICategory category = (BaseJEICategory) $$;
+				registration.addRecipes(category.recipeType, category.initialRecipes);
 			});
 		});
 
@@ -128,20 +140,42 @@ public class JEICompat implements IModPlugin {
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-		for (ItemStack stack : RecipeTypes.BLOCK_CRUSHING.blockKeysToItems()) {
-			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, stack, BLOCK_CRUSHING.getRecipeType());
-		}
-		registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, Items.LIGHTNING_ROD.getDefaultInstance(), LIGHTNING_CHANNELING.getRecipeType());
+		forEachCategories(RecipeTypes.BLOCK_CRUSHING, $ -> {
+			/* off */
+			$.initialRecipes.stream()
+					.map(BlockKeyRecipe::getBlock)
+					.distinct()
+					.map(BlockPredicateHelper::getMatchedBlocks)
+					.flatMap(Collection::stream)
+					.distinct()
+					.map(ItemLike::asItem)
+					.filter(Predicate.not(Items.AIR::equals))
+					.map(Item::getDefaultInstance)
+					.forEach($$ -> registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, $$, $.getRecipeType()));
+			/* on */
+		});
+		forEachCategories(RecipeTypes.LIGHTNING_CHANNELING, $ -> {
+			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, Items.LIGHTNING_ROD.getDefaultInstance(), $.getRecipeType());
+		});
 		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
-			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), ITEM_EXPLODING.getRecipeType());
+			forEachCategories(RecipeTypes.ITEM_EXPLODING, $ -> {
+				registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), $.getRecipeType());
+			});
 		}
 		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
-			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), BLOCK_EXPLODING.getRecipeType());
+			forEachCategories(RecipeTypes.BLOCK_EXPLODING, $ -> {
+				registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), $.getRecipeType());
+			});
 		}
-		registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, Items.POINTED_DRIPSTONE.getDefaultInstance(), DRIPSTONE_DRIPPING.getRecipeType());
+		forEachCategories(RecipeTypes.DRIPSTONE_DRIPPING, $ -> {
+			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, Items.POINTED_DRIPSTONE.getDefaultInstance(), $.getRecipeType());
+		});
 	}
 
-	@SuppressWarnings("static-access")
+	private static <C extends LycheeContext, T extends LycheeRecipe<C>> void forEachCategories(LycheeRecipeType<C, T> recipeType, Consumer<BaseJEICategory<C, T>> consumer) {
+		CATEGORIES.get(recipeType.categoryId).values().stream().map($ -> (BaseJEICategory<C, T>) $).forEach(consumer);
+	}
+
 	@Override
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 		RUNTIME = jeiRuntime;

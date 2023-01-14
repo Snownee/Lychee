@@ -95,7 +95,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 		Map<Block, BlockPredicate> blockPredicateMap = Maps.newHashMap();
 		for (ItemInsideRecipe recipe : recipes) {
 			for (Block block : BlockPredicateHelper.getMatchedBlocks(recipe.getBlock())) {
-				blockStateCount.merge(block, 1, Integer::sum);
+				blockStateCount.mergeInt(block, 1, Integer::sum);
 				blockPredicateMap.putIfAbsent(block, recipe.getBlock());
 			}
 		}
