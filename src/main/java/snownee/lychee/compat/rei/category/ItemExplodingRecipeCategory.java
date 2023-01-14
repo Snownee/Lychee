@@ -10,12 +10,14 @@ import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
+import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.item.Items;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.rei.display.ItemShapelessDisplay;
@@ -27,8 +29,8 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 
 	private PrimedTnt tnt;
 
-	public ItemExplodingRecipeCategory(LycheeRecipeType<ItemShapelessContext, ItemExplodingRecipe> recipeType, Renderer icon) {
-		super(recipeType, icon);
+	public ItemExplodingRecipeCategory(LycheeRecipeType<ItemShapelessContext, ItemExplodingRecipe> recipeType) {
+		super(recipeType);
 	}
 
 	@Override
@@ -67,6 +69,11 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 			matrixStack.popPose();
 		});
 		widgets.add(widget);
+	}
+
+	@Override
+	public Renderer createIcon(List<ItemExplodingRecipe> recipes) {
+		return EntryStacks.of(Items.TNT);
 	}
 
 }

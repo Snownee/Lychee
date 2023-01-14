@@ -17,11 +17,11 @@ import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
 import me.shedaniel.rei.api.client.view.ViewSearchBuilder;
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.impl.client.gui.widget.QueuedTooltip.TooltipEntryImpl;
-import net.minecraft.Util;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
@@ -50,8 +50,10 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 	public static final int width = 150;
 	public static final int height = 59;
 	protected final List<LycheeRecipeType<C, T>> recipeTypes;
-	protected Renderer icon;
+	public Renderer icon;
 	protected Rect2i infoRect;
+	public List<T> initialRecipes;
+	public CategoryIdentifier<D> categoryIdentifier;
 
 	public BaseREICategory(LycheeRecipeType<C, T> recipeType) {
 		this(List.of(recipeType));
@@ -63,13 +65,20 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 	}
 
 	@Override
+	public CategoryIdentifier<? extends D> getCategoryIdentifier() {
+		return categoryIdentifier;
+	}
+
+	@Override
 	public Renderer getIcon() {
 		return icon;
 	}
 
+	public abstract Renderer createIcon(List<T> recipes);
+
 	@Override
 	public Component getTitle() {
-		return Component.translatable(Util.makeDescriptionId("recipeType", getIdentifier()));
+		return JEIREI.makeTitle(getIdentifier());
 	}
 
 	@Override

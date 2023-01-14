@@ -25,7 +25,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -42,7 +41,7 @@ import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.Pair;
 
-public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<C> & BlockKeyRecipe<?>> extends LycheeRecipeType<C, T> implements MostUsedBlockProvider {
+public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<C> & BlockKeyRecipe<?>> extends LycheeRecipeType<C, T> {
 
 	protected final Map<Block, List<T>> recipesByBlock = Maps.newHashMap();
 	protected final List<T> anyBlockRecipes = Lists.newLinkedList();
@@ -78,21 +77,6 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 			list.sort(null);
 			recipesByBlock.put(e.getKey(), list);
 		}
-	}
-
-	@Override
-	public Pair<BlockState, Integer> getMostUsedBlock() {
-		Entry<Block, List<T>> most = null;
-		for (Entry<Block, List<T>> entry : recipesByBlock.entrySet()) {
-			if (most == null || most.getValue().size() < entry.getValue().size()) {
-				most = entry;
-			}
-		}
-		if (most == null) {
-			return Pair.of(Blocks.AIR.defaultBlockState(), 0);
-		}
-		BlockState state = BlockPredicateHelper.anyBlockState(most.getValue().stream().findAny().get().getBlock());
-		return Pair.of(state, most.getValue().size());
 	}
 
 	public List<ItemStack> blockKeysToItems() {

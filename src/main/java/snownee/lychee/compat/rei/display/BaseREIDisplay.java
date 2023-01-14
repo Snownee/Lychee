@@ -3,6 +3,7 @@ package snownee.lychee.compat.rei.display;
 import java.util.List;
 import java.util.Optional;
 
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.entry.EntryStack;
@@ -18,9 +19,16 @@ import snownee.lychee.core.recipe.LycheeRecipe;
 public abstract class BaseREIDisplay<T extends LycheeRecipe<?>> implements Display {
 
 	public final T recipe;
+	private final CategoryIdentifier<?> categoryId;
 
-	public BaseREIDisplay(T recipe) {
+	public BaseREIDisplay(T recipe, CategoryIdentifier<?> categoryId) {
 		this.recipe = recipe;
+		this.categoryId = categoryId;
+	}
+
+	@Override
+	public CategoryIdentifier<?> getCategoryIdentifier() {
+		return categoryId;
 	}
 
 	public static EntryIngredient postAction(PostAction action) {

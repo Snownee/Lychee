@@ -6,9 +6,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
-import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.Rect2i;
@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.rei.REICompat;
 import snownee.lychee.compat.rei.ReactiveWidget;
@@ -38,13 +37,7 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 
 	public DripstoneRecipeCategory(DripstoneRecipeType recipeType) {
 		super(recipeType);
-		icon = EntryStacks.of(Items.POINTED_DRIPSTONE);
 		infoRect.setX(-10);
-	}
-
-	@Override
-	public CategoryIdentifier<? extends DripstoneRecipeDisplay> getCategoryIdentifier() {
-		return REICompat.DRIPSTONE_DRIPPING;
 	}
 
 	@Override
@@ -115,6 +108,11 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 
 	private BlockState getTargetBlock(DripstoneRecipe recipe) {
 		return LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
+	}
+
+	@Override
+	public Renderer createIcon(List<DripstoneRecipe> recipes) {
+		return EntryStacks.of(Items.POINTED_DRIPSTONE);
 	}
 
 }

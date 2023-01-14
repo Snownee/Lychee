@@ -1,10 +1,13 @@
 package snownee.lychee.compat.rei;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -24,7 +27,6 @@ import me.shedaniel.rei.api.client.registry.display.DisplayCategoryView;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
-import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry;
 import me.shedaniel.rei.api.common.util.EntryStacks;
@@ -36,6 +38,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.LycheeTags;
@@ -44,6 +47,8 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.JEIREI;
+import snownee.lychee.compat.JEIREI.CategoryCreationContext;
 import snownee.lychee.compat.rei.category.BaseREICategory;
 import snownee.lychee.compat.rei.category.BlockCrushingRecipeCategory;
 import snownee.lychee.compat.rei.category.BlockExplodingRecipeCategory;
@@ -52,64 +57,88 @@ import snownee.lychee.compat.rei.category.DripstoneRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemBurningRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemExplodingRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemInsideRecipeCategory;
-import snownee.lychee.compat.rei.category.ItemShapelessRecipeCategory;
+import snownee.lychee.compat.rei.category.LightningChannelingRecipeCategory;
+import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.compat.rei.display.BlockCrushingDisplay;
 import snownee.lychee.compat.rei.display.BlockExplodingDisplay;
-import snownee.lychee.compat.rei.display.BlockInteractionDisplay;
 import snownee.lychee.compat.rei.display.DripstoneRecipeDisplay;
+import snownee.lychee.compat.rei.display.ItemAndBlockBaseDisplay;
 import snownee.lychee.compat.rei.display.ItemBurningDisplay;
-import snownee.lychee.compat.rei.display.ItemInsideDisplay;
 import snownee.lychee.compat.rei.display.ItemShapelessDisplay;
 import snownee.lychee.compat.rei.display.LycheeCraftingDisplay;
 import snownee.lychee.compat.rei.ingredient.PostActionIngredientHelper;
+import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.post.PostAction;
+import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.item_exploding.ItemExplodingRecipe;
+import snownee.lychee.lightning_channeling.LightningChannelingRecipe;
 import snownee.lychee.util.LUtil;
 
 public class REICompat implements REIClientPlugin {
 
 	public static final ResourceLocation UID = new ResourceLocation(Lychee.ID, "main");
 	public static final EntryType<PostAction> POST_ACTION = EntryType.deferred(LycheeRegistries.POST_ACTION.key().location());
-
-	public static final CategoryIdentifier<ItemBurningDisplay> ITEM_BURNING = CategoryIdentifier.of(RecipeTypes.ITEM_BURNING.id);
-	public static final CategoryIdentifier<ItemInsideDisplay> ITEM_INSIDE = CategoryIdentifier.of(RecipeTypes.ITEM_INSIDE.id);
-	public static final CategoryIdentifier<BlockInteractionDisplay> BLOCK_INTERACTION = CategoryIdentifier.of(RecipeTypes.BLOCK_INTERACTING.id);
-	public static final CategoryIdentifier<BlockCrushingDisplay> BLOCK_CRUSHING = CategoryIdentifier.of(RecipeTypes.BLOCK_CRUSHING.id);
-	@SuppressWarnings("rawtypes")
-	public static final CategoryIdentifier<ItemShapelessDisplay> LIGHTNING_CHANNELING = CategoryIdentifier.of(RecipeTypes.LIGHTNING_CHANNELING.id);
-	@SuppressWarnings("rawtypes")
-	public static final CategoryIdentifier<ItemShapelessDisplay> ITEM_EXPLODING = CategoryIdentifier.of(RecipeTypes.ITEM_EXPLODING.id);
-	public static final CategoryIdentifier<BlockExplodingDisplay> BLOCK_EXPLODING = CategoryIdentifier.of(RecipeTypes.BLOCK_EXPLODING.id);
-	public static final CategoryIdentifier<DripstoneRecipeDisplay> DRIPSTONE_DRIPPING = CategoryIdentifier.of(RecipeTypes.DRIPSTONE_DRIPPING.id);
+	public static final Map<ResourceLocation, Map<ResourceLocation, BaseREICategory<?, ?, ?>>> CATEGORIES = Maps.newHashMap();
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void registerCategories(CategoryRegistry registration) {
-		registration.add(new ItemBurningRecipeCategory(RecipeTypes.ITEM_BURNING));
-		registration.add(new ItemInsideRecipeCategory(RecipeTypes.ITEM_INSIDE, AllGuiTextures.JEI_DOWN_ARROW));
-		ScreenElement mainIcon = RecipeTypes.BLOCK_INTERACTING.isEmpty() ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
-		registration.add(new BlockInteractionRecipeCategory((List) List.of(RecipeTypes.BLOCK_INTERACTING, RecipeTypes.BLOCK_CLICKING), mainIcon));
-		registration.add(new BlockCrushingRecipeCategory(RecipeTypes.BLOCK_CRUSHING));
-		registration.add(new ItemShapelessRecipeCategory<>(RecipeTypes.LIGHTNING_CHANNELING, EntryStacks.of(Items.LIGHTNING_ROD)));
-		registration.add(new ItemExplodingRecipeCategory(RecipeTypes.ITEM_EXPLODING, EntryStacks.of(Items.TNT)));
-		registration.add(new BlockExplodingRecipeCategory(RecipeTypes.BLOCK_EXPLODING, GuiGameElement.of(Items.TNT)));
-		registration.add(new DripstoneRecipeCategory(RecipeTypes.DRIPSTONE_DRIPPING));
+		Map<ResourceLocation, Function<CategoryCreationContext, BaseREICategory<?, ?, ?>>> factories = Maps.newHashMap();
+		factories.put(RecipeTypes.ITEM_BURNING.categoryId, $ -> new ItemBurningRecipeCategory(RecipeTypes.ITEM_BURNING));
+		factories.put(RecipeTypes.ITEM_INSIDE.categoryId, $ -> new ItemInsideRecipeCategory(RecipeTypes.ITEM_INSIDE, AllGuiTextures.JEI_DOWN_ARROW));
+		factories.put(RecipeTypes.BLOCK_INTERACTING.categoryId, $ -> {
+			ScreenElement mainIcon = $.recipes().stream().map(LycheeRecipe::getType).anyMatch(Predicate.isEqual(RecipeTypes.BLOCK_INTERACTING)) ? AllGuiTextures.RIGHT_CLICK : AllGuiTextures.LEFT_CLICK;
+			return new BlockInteractionRecipeCategory((List) List.of(RecipeTypes.BLOCK_INTERACTING, RecipeTypes.BLOCK_CLICKING), mainIcon);
+		});
+		factories.put(RecipeTypes.BLOCK_CRUSHING.categoryId, $ -> new BlockCrushingRecipeCategory(RecipeTypes.BLOCK_CRUSHING));
+		factories.put(RecipeTypes.LIGHTNING_CHANNELING.categoryId, $ -> new LightningChannelingRecipeCategory(RecipeTypes.LIGHTNING_CHANNELING));
+		factories.put(RecipeTypes.ITEM_EXPLODING.categoryId, $ -> new ItemExplodingRecipeCategory(RecipeTypes.ITEM_EXPLODING));
+		factories.put(RecipeTypes.BLOCK_EXPLODING.categoryId, $ -> new BlockExplodingRecipeCategory(RecipeTypes.BLOCK_EXPLODING, GuiGameElement.of(Items.TNT)));
+		factories.put(RecipeTypes.DRIPSTONE_DRIPPING.categoryId, $ -> new DripstoneRecipeCategory(RecipeTypes.DRIPSTONE_DRIPPING));
 
-		for (ItemStack stack : RecipeTypes.BLOCK_CRUSHING.blockKeysToItems()) {
-			registration.addWorkstations(BLOCK_CRUSHING, EntryStacks.of(stack));
-		}
-		registration.addWorkstations(LIGHTNING_CHANNELING, EntryStacks.of(Items.LIGHTNING_ROD));
+		JEIREI.registerCategories(factories::containsKey, (categoryId, context) -> {
+			BaseREICategory<?, ?, ?> category = factories.get(categoryId).apply(context);
+			category.categoryIdentifier = CategoryIdentifier.of(JEIREI.composeCategoryIdentifier(categoryId, context.group()));
+			category.initialRecipes = (List) context.recipes();
+			category.icon = category.createIcon((List) context.recipes());
+			registration.add(category);
+			CATEGORIES.computeIfAbsent(categoryId, $ -> Maps.newHashMap()).put(context.group(), category);
+		});
+
+		forEachCategories(RecipeTypes.BLOCK_CRUSHING, $ -> {
+			/* off */
+			$.initialRecipes.stream()
+					.map(BlockKeyRecipe::getBlock)
+					.distinct()
+					.map(BlockPredicateHelper::getMatchedBlocks)
+					.flatMap(Collection::stream)
+					.distinct()
+					.map(ItemLike::asItem)
+					.filter(Predicate.not(Items.AIR::equals))
+					.map(Item::getDefaultInstance)
+					.forEach($$ -> registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of($$)));
+			/* on */
+		});
+		forEachCategories(RecipeTypes.LIGHTNING_CHANNELING, $ -> {
+			registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(Items.LIGHTNING_ROD));
+		});
 		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
-			EntryStack<ItemStack> stack = EntryStacks.of(item);
-			registration.addWorkstations(ITEM_EXPLODING, stack);
+			forEachCategories(RecipeTypes.ITEM_EXPLODING, $ -> {
+				registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(item.getDefaultInstance()));
+			});
 		}
 		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
-			EntryStack<ItemStack> stack = EntryStacks.of(item);
-			registration.addWorkstations(BLOCK_EXPLODING, stack);
+			forEachCategories(RecipeTypes.BLOCK_EXPLODING, $ -> {
+				registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(item.getDefaultInstance()));
+			});
 		}
-		registration.addWorkstations(DRIPSTONE_DRIPPING, EntryStacks.of(Items.POINTED_DRIPSTONE));
+		forEachCategories(RecipeTypes.DRIPSTONE_DRIPPING, $ -> {
+			registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(Items.POINTED_DRIPSTONE));
+		});
 
 		registration.get(CategoryIdentifier.of("minecraft", "plugins/crafting")).registerExtension(new CategoryExtensionProvider<Display>() {
 
@@ -129,7 +158,7 @@ public class REICompat implements REIClientPlugin {
 							Rect2i rect = null;
 							for (Widget widget : widgets) {
 								if (widget instanceof Arrow arrow) {
-									rect = new Rect2i(arrow.getBounds().getCenterX() - bounds.getX() - 4, arrow.getY()-bounds.getY() - 9, 8, 8);
+									rect = new Rect2i(arrow.getBounds().getCenterX() - bounds.getX() - 4, arrow.getY() - bounds.getY() - 9, 8, 8);
 									break;
 								}
 							}
@@ -146,17 +175,31 @@ public class REICompat implements REIClientPlugin {
 		});
 	}
 
+	private static <C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> void forEachCategories(LycheeRecipeType<C, T> recipeType, Consumer<BaseREICategory<C, T, D>> consumer) {
+		CATEGORIES.get(recipeType.categoryId).values().stream().map($ -> (BaseREICategory<C, T, D>) $).forEach(consumer);
+	}
+
 	@Override
 	public void registerDisplays(DisplayRegistry registration) {
-		registerFiller(registration, RecipeTypes.ITEM_BURNING, ItemBurningDisplay::new);
-		registerFiller(registration, RecipeTypes.ITEM_INSIDE, ItemInsideDisplay::new);
-		registerFiller(registration, RecipeTypes.BLOCK_INTERACTING, BlockInteractionDisplay::new);
-		registerFiller(registration, RecipeTypes.BLOCK_CLICKING, BlockInteractionDisplay::new);
-		registerFiller(registration, RecipeTypes.BLOCK_CRUSHING, BlockCrushingDisplay::new);
-		registerFiller(registration, RecipeTypes.LIGHTNING_CHANNELING, ItemShapelessDisplay::new);
-		registerFiller(registration, RecipeTypes.ITEM_EXPLODING, ItemShapelessDisplay::new);
-		registerFiller(registration, RecipeTypes.BLOCK_EXPLODING, BlockExplodingDisplay::new);
-		registerFiller(registration, RecipeTypes.DRIPSTONE_DRIPPING, DripstoneRecipeDisplay::new);
+		Map<ResourceLocation, BiFunction<LycheeRecipe<?>, CategoryIdentifier<?>, BaseREIDisplay<?>>> factories = Maps.newHashMap();
+		registerDisplayFactory(factories, RecipeTypes.ITEM_BURNING.categoryId, ItemBurningDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.ITEM_INSIDE.categoryId, ItemAndBlockBaseDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.BLOCK_INTERACTING.categoryId, ItemAndBlockBaseDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.BLOCK_CRUSHING.categoryId, BlockCrushingDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.LIGHTNING_CHANNELING.categoryId, ItemShapelessDisplay<LightningChannelingRecipe>::new);
+		registerDisplayFactory(factories, RecipeTypes.ITEM_EXPLODING.categoryId, ItemShapelessDisplay<ItemExplodingRecipe>::new);
+		registerDisplayFactory(factories, RecipeTypes.BLOCK_EXPLODING.categoryId, BlockExplodingDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.DRIPSTONE_DRIPPING.categoryId, DripstoneRecipeDisplay::new);
+
+		CATEGORIES.values().forEach($ -> {
+			$.values().forEach($$ -> {
+				var category = (BaseREICategory<LycheeContext, LycheeRecipe<LycheeContext>, BaseREIDisplay<LycheeRecipe<LycheeContext>>>) $$;
+				category.initialRecipes.forEach($$$ -> {
+					ResourceLocation categoryId = $$$.getType().categoryId;
+					registration.add(factories.get(categoryId).apply($$$, $$.categoryIdentifier));
+				});
+			});
+		});
 
 		LUtil.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
 			return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
@@ -173,8 +216,9 @@ public class REICompat implements REIClientPlugin {
 		});
 	}
 
-	private static <T extends LycheeRecipe<?>, D extends Display> void registerFiller(DisplayRegistry registration, LycheeRecipeType<?, ? extends T> recipeType, Function<? extends T, D> filler) {
-		registration.registerRecipeFiller((Class<T>) recipeType.clazz, type -> Objects.equals(recipeType, type), LycheeRecipe::showInRecipeViewer, filler);
+	@SuppressWarnings("rawtypes")
+	private static <C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> void registerDisplayFactory(Map<ResourceLocation, BiFunction<LycheeRecipe<?>, CategoryIdentifier<?>, BaseREIDisplay<?>>> factories, ResourceLocation id, BiFunction<T, CategoryIdentifier<D>, ? extends D> factory) {
+		factories.put(id, (BiFunction) factory);
 	}
 
 	@Override

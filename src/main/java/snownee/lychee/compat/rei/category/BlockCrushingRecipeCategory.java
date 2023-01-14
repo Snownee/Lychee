@@ -6,9 +6,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
-import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.gui.GuiComponent;
@@ -36,12 +36,6 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 
 	public BlockCrushingRecipeCategory(LycheeRecipeType<BlockCrushingContext, BlockCrushingRecipe> recipeType) {
 		super(recipeType);
-		icon = EntryStacks.of(Items.ANVIL);
-	}
-
-	@Override
-	public CategoryIdentifier<? extends BlockCrushingDisplay> getCategoryIdentifier() {
-		return REICompat.BLOCK_CRUSHING;
 	}
 
 	@Override
@@ -88,7 +82,7 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 
 			matrixStack.pushPose();
 			matrixStack.translate(x, y - 13, 0);
-			GuiGameElement.of(getFallingBlock(recipe)).scale(15).atLocal(0, ticks * 1.3 - 1.3, 2).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).at(0, 0, 500).render(matrixStack);
+			GuiGameElement.of(getFallingBlock(recipe)).scale(15).atLocal(0, ticks * 1.3 - 1.3, 2).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).at(0, 0, 300).render(matrixStack);
 			if (!landingBlock.isAir()) {
 				GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 2).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).render(matrixStack);
 			}
@@ -137,6 +131,11 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 
 	private BlockState getLandingBlock(BlockCrushingRecipe recipe) {
 		return LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
+	}
+
+	@Override
+	public Renderer createIcon(List<BlockCrushingRecipe> recipes) {
+		return EntryStacks.of(Items.ANVIL);
 	}
 
 }

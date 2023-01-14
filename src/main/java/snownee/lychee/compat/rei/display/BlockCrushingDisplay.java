@@ -7,17 +7,11 @@ import com.google.common.collect.Lists;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import snownee.lychee.block_crushing.BlockCrushingRecipe;
-import snownee.lychee.compat.rei.REICompat;
 
 public class BlockCrushingDisplay extends BaseREIDisplay<BlockCrushingRecipe> {
 
-	public BlockCrushingDisplay(BlockCrushingRecipe recipe) {
-		super(recipe);
-	}
-
-	@Override
-	public CategoryIdentifier<?> getCategoryIdentifier() {
-		return REICompat.BLOCK_CRUSHING;
+	public BlockCrushingDisplay(BlockCrushingRecipe recipe, CategoryIdentifier<?> categoryId) {
+		super(recipe, categoryId);
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -19,6 +20,7 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.ScreenElement;
@@ -34,34 +36,26 @@ import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.core.recipe.type.MostUsedBlockProvider;
 import snownee.lychee.util.LUtil;
-import snownee.lychee.util.Pair;
 
 public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> extends BaseREICategory<C, T, D> {
 
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
+	private final ScreenElement mainIcon;
 
 	public ItemAndBlockBaseCategory(List<LycheeRecipeType<C, T>> recipeTypes, ScreenElement mainIcon) {
 		super(recipeTypes);
-		icon = new ScreenElementWrapper(new SideBlockIcon(mainIcon, Suppliers.memoize(this::getIconBlock)));
+		this.mainIcon = mainIcon;
 		infoRect.setPosition(8, 32);
 	}
 
-	public BlockState getIconBlock() {
+	public BlockState getIconBlock(List<T> recipes) {
 		ClientPacketListener con = Minecraft.getInstance().getConnection();
 		if (con == null) {
 			return Blocks.AIR.defaultBlockState();
 		}
-		/* off */
-		return recipeTypes.stream()
-				.map($ -> ((MostUsedBlockProvider) $).getMostUsedBlock())
-				.filter($ -> !$.getFirst().isAir())
-				.max((a, b) -> a.getSecond() - b.getSecond())
-				.map(Pair::getFirst)
-				.orElse(Blocks.AIR.defaultBlockState());
-		/* on */
+		return JEIREI.getMostUsedBlock((List<BlockKeyRecipe<?>>) recipes).getFirst();
 	}
 
 	@Nullable
@@ -138,7 +132,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 			widgets.add(reactive);
 		}
 
-		if (getCategoryIdentifier() != REICompat.ITEM_BURNING) {
+		if (recipeTypes.get(0) != RecipeTypes.ITEM_BURNING) {
 			reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, inputBlockRect));
 			reactive.setTooltipFunction($ -> {
 				List<Component> list = BlockPredicateHelper.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe));
@@ -151,6 +145,11 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		}
 
 		return widgets;
+	}
+
+	@Override
+	public Renderer createIcon(List<T> recipes) {
+		return new ScreenElementWrapper(new SideBlockIcon(mainIcon, Suppliers.memoize(() -> getIconBlock(recipes))));
 	}
 
 }

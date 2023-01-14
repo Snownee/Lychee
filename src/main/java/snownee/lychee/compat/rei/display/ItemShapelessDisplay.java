@@ -5,13 +5,8 @@ import snownee.lychee.core.recipe.ItemShapelessRecipe;
 
 public class ItemShapelessDisplay<T extends ItemShapelessRecipe<T>> extends BaseREIDisplay<T> {
 
-	public ItemShapelessDisplay(T recipe) {
-		super(recipe);
-	}
-
-	@Override
-	public CategoryIdentifier<?> getCategoryIdentifier() {
-		return CategoryIdentifier.of(recipe.getType().id);
+	public ItemShapelessDisplay(T recipe, CategoryIdentifier<?> categoryId) {
+		super(recipe, categoryId);
 	}
 
 }
