@@ -21,6 +21,7 @@ public record CheckParam(String key, Object value) implements ContextualConditio
 
 	@Override
 	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+		ctx.lazyGetBlockEntity();
 		for (LootContextParam<?> param : ctx.getParams().keySet()) {
 			if (key.equals(param.getName().getPath()) || key.equals(param.getName().toString())) {
 				return times;
