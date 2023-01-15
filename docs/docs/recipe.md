@@ -13,6 +13,7 @@
     | comment        | (optional) language key to show in JEI/REI                                  | string                                                                                             |
     | ghost          | (optional) only show in JEI/REI but does not take effect                    | true \| false                                                                                      |
     | hide_in_viewer | (optional) hide in JEI/REI                                                  | true \| false                                                                                      |
+    | group          | (optional) show this recipe in a new category in JEI/REI                    | string (ResourceLocation)                                                                          |
     | max_repeats    | (optional) max repeats for a processing. not work for a unrepeatable recipe | int                                                                                                |
     |                | additional properties...                                                    |                                                                                                    |
 
@@ -27,6 +28,7 @@
     | comment           | (optional) language key to show in JEI/REI                                  | string                                                                                             |
     | ghost             | (optional) only show in JEI/REI but does not take effect                    | true \| false                                                                                      |
     | hide_in_viewer    | (optional) hide in JEI/REI                                                  | true \| false                                                                                      |
+    | group             | (optional) show this recipe in a new category in JEI/REI                    | string (ResourceLocation)                                                                          |
     | max_repeats       | (optional) max repeats for a processing. not work for a unrepeatable recipe | int                                                                                                |
     |                   | additional properties...                                                    |                                                                                                    |
 
