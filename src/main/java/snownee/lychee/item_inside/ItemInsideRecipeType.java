@@ -3,7 +3,6 @@ package snownee.lychee.item_inside;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,13 +12,11 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -28,7 +25,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -36,15 +32,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.ItemShapelessContext;
-import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.type.ItemShapelessRecipeType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.core.recipe.type.MostUsedBlockProvider;
 import snownee.lychee.util.LUtil;
-import snownee.lychee.util.Pair;
 
-public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext, ItemInsideRecipe> implements MostUsedBlockProvider {
+public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext, ItemInsideRecipe> {
 
 	private List<ItemInsideRecipe> specialRecipes = Lists.newArrayList();
 	private Multimap<Item, ItemInsideRecipe> recipesByItem = ArrayListMultimap.create();
@@ -88,27 +81,6 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 				return false;
 			});
 		}
-	}
-
-	@Override
-	public Pair<BlockState, Integer> getMostUsedBlock() {
-		Object2IntMap<Block> blockStateCount = new Object2IntOpenHashMap<>();
-		Map<Block, BlockPredicate> blockPredicateMap = Maps.newHashMap();
-		for (ItemInsideRecipe recipe : recipes) {
-			for (Block block : BlockPredicateHelper.getMatchedBlocks(recipe.getBlock())) {
-				blockStateCount.merge(block, 1, Integer::sum);
-				blockPredicateMap.putIfAbsent(block, recipe.getBlock());
-			}
-		}
-		if (blockStateCount.isEmpty()) {
-			return Pair.of(Blocks.AIR.defaultBlockState(), 0);
-		}
-		/* off */
-		return blockStateCount.object2IntEntrySet().stream()
-				.max(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
-				.map($ -> Pair.of(BlockPredicateHelper.anyBlockState(blockPredicateMap.get($.getKey())), $.getIntValue()))
-				.orElseGet(() -> Pair.of(Blocks.AIR.defaultBlockState(), 0));
-		/* on */
 	}
 
 	public void process(Entity entity, ItemStack stack, BlockPos pos, Vec3 origin) {

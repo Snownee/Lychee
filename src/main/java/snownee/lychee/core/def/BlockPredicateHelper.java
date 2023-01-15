@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -66,7 +67,7 @@ public class BlockPredicateHelper {
 	}
 
 	public static List<ItemStack> getMatchedItemStacks(BlockPredicate predicate) {
-		return getMatchedBlocks(predicate).stream().map(Block::asItem).filter(s -> s != Items.AIR).map(Item::getDefaultInstance).toList();
+		return getMatchedBlocks(predicate).stream().map(Block::asItem).filter(Predicate.not(Items.AIR::equals)).map(Item::getDefaultInstance).toList();
 	}
 
 	public static boolean fastMatch(BlockPredicate predicate, LycheeContext context) {

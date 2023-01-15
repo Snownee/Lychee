@@ -20,7 +20,7 @@ public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<LycheeCo
 	}
 
 	@Override
-	public BlockState getIconBlock() {
+	public BlockState getIconBlock(List<ItemBurningRecipe> recipes) {
 		return Blocks.FIRE.defaultBlockState();
 	}
 
@@ -32,7 +32,7 @@ public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<LycheeCo
 
 	@Override
 	public BlockState getRenderingBlock(ItemBurningRecipe recipe) {
-		return getIconBlock();
+		return getIconBlock(List.of(recipe));
 	}
 
 }

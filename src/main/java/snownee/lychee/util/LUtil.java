@@ -67,7 +67,7 @@ public class LUtil {
 	}
 
 	public static String wrapNamespace(String modid) {
-		return "minecraft".equals(modid) ? Lychee.ID : modid;
+		return ResourceLocation.DEFAULT_NAMESPACE.equals(modid) ? Lychee.ID : modid;
 	}
 
 	@OnlyIn(Dist.CLIENT)

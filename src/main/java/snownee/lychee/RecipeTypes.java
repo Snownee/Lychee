@@ -40,12 +40,15 @@ public final class RecipeTypes {
 		BLOCK_CLICKING.requiresClient = true;
 		DRIPSTONE_DRIPPING.requiresClient = true; // we need the particle
 		RANDOM_BLOCK_TICKING.extractChance = true;
+		RANDOM_BLOCK_TICKING.hasStandaloneCategory = false;
 		DRIPSTONE_DRIPPING.extractChance = true;
 		BLOCK_INTERACTING.canPreventConsumeInputs = true;
 		BLOCK_CLICKING.canPreventConsumeInputs = true;
+		BLOCK_CLICKING.categoryId = BLOCK_INTERACTING.categoryId; // they share the same category
 		ITEM_INSIDE.canPreventConsumeInputs = true;
 		LIGHTNING_CHANNELING.canPreventConsumeInputs = true;
 		ITEM_EXPLODING.canPreventConsumeInputs = true;
+		ANVIL_CRAFTING.hasStandaloneCategory = false;
 	}
 
 	public static final Set<LycheeRecipeType<?, ?>> ALL = Sets.newLinkedHashSet();

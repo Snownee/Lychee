@@ -28,18 +28,23 @@ import snownee.lychee.util.LUtil;
 
 public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>> implements RecipeType<T> {
 	public final ResourceLocation id;
+	public ResourceLocation categoryId;
 	public final Class<? extends T> clazz;
 	public final LootContextParamSet contextParamSet;
 	private boolean empty = true;
+	/**
+	 * Ghost recipes not included
+	 */
 	protected List<T> recipes;
 	public boolean requiresClient;
 	public boolean compactInputs;
 	public boolean canPreventConsumeInputs;
+	public boolean hasStandaloneCategory = true;
 
 	public static final Component DEFAULT_PREVENT_TIP = Component.translatable("tip.lychee.preventDefault.default").withStyle(ChatFormatting.YELLOW);
 
 	public LycheeRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet contextParamSet) {
-		id = new ResourceLocation(Lychee.ID, name);
+		id = categoryId = name.contains(":") ? new ResourceLocation(name) : new ResourceLocation(Lychee.ID, name);
 		this.clazz = clazz;
 		this.contextParamSet = contextParamSet == null ? LootContextParamSets.get(id) : contextParamSet;
 		Objects.requireNonNull(this.contextParamSet);
@@ -57,6 +62,10 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 
 	public List<T> recipes() {
 		return recipes;
+	}
+
+	public List<T> inViewerRecipes() {
+		return LUtil.recipes(this).stream().filter(LycheeRecipe::showInRecipeViewer).toList();
 	}
 
 	public void updateEmptyState() {
