@@ -36,6 +36,8 @@ public class LycheeContext extends EmptyContainer {
 	private LootContext cachedLootContext;
 	public ActionRuntime runtime;
 	public ItemHolderCollection itemHolders = ItemHolderCollection.EMPTY;
+	@Nullable
+	public JsonObject json;
 
 	protected LycheeContext(RandomSource pRandom, Level level, Map<LootContextParam<?>, Object> pParams) {
 		random = pRandom;
@@ -161,6 +163,9 @@ public class LycheeContext extends EmptyContainer {
 		}
 		jsonObject.add("jobs", jobs);
 		jsonObject.add("jobRepeats", jobRepeats);
+		if (json != null) {
+			jsonObject.add("json", json);
+		}
 		return jsonObject;
 	}
 
@@ -178,6 +183,9 @@ public class LycheeContext extends EmptyContainer {
 		}
 		ctx.runtime.jobs.addAll(0, jobList);
 		ctx.runtime.marker = marker;
+		if (jsonObject.has("json")) {
+			ctx.json = jsonObject.getAsJsonObject("json");
+		}
 		return ctx;
 	}
 

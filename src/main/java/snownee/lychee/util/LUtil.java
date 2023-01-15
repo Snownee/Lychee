@@ -6,6 +6,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import com.mojang.serialization.JsonOps;
+
+import net.minecraft.nbt.CompoundTag;
+
+import net.minecraft.nbt.NbtOps;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.faux.ingredientextension.api.ingredient.IngredientHelper;
@@ -276,6 +282,14 @@ public class LUtil {
 
 	public static boolean isModLoaded(String modid) {
 		return FabricLoader.getInstance().isModLoaded(modid);
+	}
+
+	public static JsonObject tagToJson(CompoundTag tag) {
+		return NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, tag).getAsJsonObject();
+	}
+
+	public static CompoundTag jsonToTag(JsonObject json) {
+		return (CompoundTag) JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json);
 	}
 
 }

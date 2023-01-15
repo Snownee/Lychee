@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.tuple.MutableTriple;
+import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -16,6 +18,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import snownee.lychee.LycheeRegistries;
@@ -24,14 +27,16 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
+import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.json.JsonSchema;
 
 public abstract class PostAction extends ContextualHolder {
 
+	@Nullable
+	public String path;
+
 	public abstract PostActionType<?> getType();
 
-	/**
-	 * @return true if do default behavior
-	 */
 	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		for (int i = 0; i < times; i++) {
 			apply(recipe, ctx, times);
@@ -61,6 +66,9 @@ public abstract class PostAction extends ContextualHolder {
 		PostActionType<?> type = LycheeRegistries.POST_ACTION.get(key);
 		PostAction action = type.fromJson(o);
 		action.parseConditions(o.get("contextual"));
+		if (o.has("_path")) {
+			action.path = GsonHelper.getAsString(o, "_path");
+		}
 		return action;
 	}
 
@@ -108,6 +116,9 @@ public abstract class PostAction extends ContextualHolder {
 		if (!getConditions().isEmpty()) {
 			o.add("contextual", rawConditionsToJson());
 		}
+		if (!Strings.isNullOrEmpty(path)) {
+			o.addProperty("_path", path);
+		}
 		((PostActionType<PostAction>) getType()).toJson(this, o);
 		return o;
 	}
@@ -117,6 +128,16 @@ public abstract class PostAction extends ContextualHolder {
 	}
 
 	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<MutableTriple<Ingredient, Component, Integer>> ingredients) {
+	}
+
+	public void getUsedPointers(ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
+	}
+
+	public @Nullable JsonSchema.Node generateSchema() {
+		return null;
+	}
+
+	public void preApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 	}
 
 }

@@ -2,12 +2,15 @@ package snownee.lychee.core.post;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -26,6 +29,9 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.ItemEntityAccess;
 import snownee.lychee.util.LUtil;
+import snownee.lychee.util.json.JsonPatch;
+import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.json.JsonSchema;
 
 public class DropItem extends PostAction {
 
@@ -38,6 +44,13 @@ public class DropItem extends PostAction {
 	@Override
 	public PostActionType<?> getType() {
 		return PostActionTypes.DROP_ITEM;
+	}
+
+	@Override
+	public void preApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+		if (path != null) {
+			JsonPatch.replace(ctx.json, new JsonPointer(path), LUtil.tagToJson(stack.save(new CompoundTag())));
+		}
 	}
 
 	@Override
@@ -54,10 +67,15 @@ public class DropItem extends PostAction {
 				pos = Vec3.atCenterOf(ctx.getParam(LycheeLootContextParams.BLOCK_POS));
 			}
 		}
-		ItemStack stack = this.stack.copy();
+		ItemStack stack;
+		if (path == null) {
+			stack = this.stack.copy();
+		} else {
+			stack = ItemStack.of(LUtil.jsonToTag(new JsonPointer(path).find(ctx.json).getAsJsonObject()));
+		}
 		stack.setCount(stack.getCount() * times);
 		if (ctx.getClass() == BlockExplodingContext.class) {
-			((BlockExplodingContext) ctx).items.add(stack);
+			ctx.itemHolders.tempList.add(stack);
 		} else {
 			LUtil.dropItemStack(ctx.getLevel(), pos.x, pos.y, pos.z, stack, $ -> {
 				((ItemEntityAccess) $).setHealth(80);
@@ -75,6 +93,13 @@ public class DropItem extends PostAction {
 	@Environment(EnvType.CLIENT)
 	public void render(PoseStack poseStack, int x, int y) {
 		GuiGameElement.of(stack).render(poseStack, x, y);
+	}
+
+	@Override
+	public @Nullable JsonSchema.Node generateSchema() {
+		JsonSchema.Anchor anchor = new JsonSchema.Anchor("item", path);
+		anchor.override = LUtil.tagToJson(stack.save(new CompoundTag()));
+		return anchor;
 	}
 
 	public static class Type extends PostActionType<DropItem> {

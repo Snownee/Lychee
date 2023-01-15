@@ -15,11 +15,10 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.core.Reference;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.util.JsonPointer;
+import snownee.lychee.util.json.JsonPointer;
 
 public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements Comparable<AnvilCraftingRecipe> {
 
@@ -75,27 +74,19 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 	}
 
 	@Override
-	public IntList getItemIndexes(Reference reference) {
-		JsonPointer pointer = null;
-		if (reference == Reference.DEFAULT) {
-			pointer = defaultItemPointer();
-		} else if (reference.isPointer()) {
-			pointer = reference.getPointer();
-		}
-		if (pointer != null) {
-			if (pointer.size() == 1) {
-				if (pointer.getString(0).equals("output")) {
-					return IntList.of(2);
-				}
-				if (pointer.getString(0).equals("item_in")) {
-					return right.isEmpty() ? IntList.of(0) : IntList.of(0, 1);
-				}
+	public IntList getItemIndexes(JsonPointer pointer) {
+		if (pointer.size() == 1) {
+			if (pointer.getString(0).equals("output")) {
+				return IntList.of(2);
 			}
-			if (pointer.size() == 2 && pointer.getString(0).equals("item_in")) {
-				int i = pointer.getInt(1);
-				if (i >= 0 && i < 2) {
-					return IntList.of(i);
-				}
+			if (pointer.getString(0).equals("item_in")) {
+				return right.isEmpty() ? IntList.of(0) : IntList.of(0, 1);
+			}
+		}
+		if (pointer.size() == 2 && pointer.getString(0).equals("item_in")) {
+			int i = pointer.getInt(1);
+			if (i >= 0 && i < 2) {
+				return IntList.of(i);
 			}
 		}
 		return IntList.of();
@@ -103,7 +94,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 
 	@Override
 	public JsonPointer defaultItemPointer() {
-		return new JsonPointer("/output");
+		return OUTPUT;
 	}
 
 	@Override

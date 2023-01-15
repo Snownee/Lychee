@@ -51,7 +51,7 @@ public class MarkerMixin implements LycheeMarker {
 			return;
 		}
 		lychee$ctx.runtime.state = State.RUNNING;
-		lychee$ctx.runtime.run(lychee$recipe, lychee$ctx);
+		lychee$ctx.runtime.run(lychee$recipe, lychee$ctx, 1);
 		if (lychee$ctx.runtime.state == State.STOPPED) {
 			getEntity().discard();
 		}

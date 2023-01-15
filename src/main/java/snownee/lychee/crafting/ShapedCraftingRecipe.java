@@ -9,7 +9,6 @@ import java.util.stream.StreamSupport;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -42,7 +41,6 @@ import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.RecipeSerializers;
-import snownee.lychee.core.Reference;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.input.ItemHolderCollection;
 import snownee.lychee.core.post.PostAction;
@@ -53,9 +51,11 @@ import snownee.lychee.mixin.CraftingContainerAccess;
 import snownee.lychee.mixin.CraftingMenuAccess;
 import snownee.lychee.mixin.InventoryMenuAccess;
 import snownee.lychee.mixin.ShapedRecipeAccess;
-import snownee.lychee.util.JsonPointer;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.Pair;
+import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.json.JsonSchema;
+import snownee.lychee.util.json.JsonSchema.ObjectNode;
 
 public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<CraftingContext> {
 
@@ -180,7 +180,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			return ItemStack.EMPTY;
 		}
 		ctx.enqueueActions(assembling, 1, true);
-		ctx.runtime.run(this, ctx);
+		ctx.runtime.run(this, ctx, 1);
 		return ctx.getItem(ctx.getContainerSize() - 1);
 	}
 
@@ -208,39 +208,51 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 
 	@Override
 	public JsonPointer defaultItemPointer() {
-		return new JsonPointer("/result");
+		return RESULT;
 	}
 
 	@Override
-	public IntList getItemIndexes(Reference reference) {
+	public IntList getItemIndexes(JsonPointer pointer) {
 		int size = getIngredients().size();
-		JsonPointer pointer = null;
-		if (reference == Reference.DEFAULT) {
-			pointer = defaultItemPointer();
-		} else if (reference.isPointer()) {
-			pointer = reference.getPointer();
+		if (pointer.size() == 1 && pointer.getString(0).equals("result")) {
+			return IntList.of(size);
 		}
-		if (pointer != null) {
-			if (pointer.size() == 1 && pointer.getString(0).equals("result")) {
-				return IntList.of(size);
+		if (pointer.size() == 2 && pointer.getString(0).equals("key")) {
+			String key = pointer.getString(1);
+			if (key.length() != 1) {
+				return IntList.of();
 			}
-			if (pointer.size() == 2 && pointer.getString(0).equals("key")) {
-				String key = pointer.getString(1);
-				if (key.length() != 1) {
-					return IntList.of();
+			IntList list = IntArrayList.of();
+			int cp = key.codePointAt(0);
+			int l = pattern.length();
+			for (int i = 0; i < l; i++) {
+				if (cp == pattern.codePointAt(i)) {
+					list.add(i);
 				}
-				IntList list = IntArrayList.of();
-				int cp = key.codePointAt(0);
-				int l = pattern.length();
-				for (int i = 0; i < l; i++) {
-					if (cp == pattern.codePointAt(i)) {
-						list.add(i);
-					}
-				}
-				return list;
 			}
+			return list;
 		}
-		return IntList.of();
+		return IntList.of(size);
+	}
+
+	@Override
+	public JsonSchema generateSchema(JsonObject jsonObject) {
+		JsonSchema schema = new JsonSchema();
+		int size = getIngredients().size();
+		ObjectNode keys = schema.root.add("key", new JsonSchema.ObjectNode());
+		for (int i = 0; i < size; i++) {
+			String k = Character.toString(pattern.codePointAt(i));
+			if (k.equals(" ")) {
+				continue;
+			}
+			if (!keys.has(k)) {
+				keys.add(k, new JsonSchema.ArrayNode());
+			}
+			keys.get(k).asArray().add(new JsonSchema.Anchor("item", Integer.toString(i)));
+		}
+		schema.root.add("result", new JsonSchema.Anchor("item", Integer.toString(size)));
+		ILycheeRecipe.generateActionsSchema(jsonObject, new JsonPointer("/assembling"), assembling, schema);
+		return schema;
 	}
 
 	@Override
@@ -317,9 +329,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			recipe.conditions.parseConditions(jsonObject.get("contextual"));
 			PostAction.parseActions(jsonObject.get("post"), recipe::addPostAction);
 			PostAction.parseActions(jsonObject.get("assembling"), recipe::addAssemblingAction);
-			for (PostAction action : Iterables.concat(recipe.getPostActions(), recipe.assembling)) {
-				Preconditions.checkArgument(action.validate(recipe), "Error while validating action: %s", action);
-			}
+			ILycheeRecipe.processActions(recipe, Iterables.concat(recipe.getPostActions(), recipe.assembling), jsonObject);
 			return recipe;
 		}
 
@@ -374,4 +384,5 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			buf.writeUtf(Strings.nullToEmpty(recipe.pattern));
 		}
 	}
+
 }

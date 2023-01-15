@@ -3,7 +3,7 @@
   "item_in": {
     "item": "air"
   },
-  "block_in": "stone",
+  "block_in": "deepslate_iron_ore",
   "post": [
     {
       "type": "drop_item",

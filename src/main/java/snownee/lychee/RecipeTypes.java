@@ -1,7 +1,10 @@
 package snownee.lychee;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 import net.minecraft.core.Registry;
@@ -13,6 +16,7 @@ import snownee.lychee.block_exploding.BlockExplodingContext;
 import snownee.lychee.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.core.recipe.type.ItemShapelessRecipeType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
@@ -27,6 +31,7 @@ import snownee.lychee.item_inside.ItemInsideRecipeType;
 import snownee.lychee.lightning_channeling.LightningChannelingRecipe;
 import snownee.lychee.random_block_ticking.RandomBlockTickingRecipe;
 import snownee.lychee.random_block_ticking.RandomBlockTickingRecipeType;
+import snownee.lychee.util.json.JsonPointer;
 
 public final class RecipeTypes {
 
@@ -49,6 +54,32 @@ public final class RecipeTypes {
 		LIGHTNING_CHANNELING.canPreventConsumeInputs = true;
 		ITEM_EXPLODING.canPreventConsumeInputs = true;
 		ANVIL_CRAFTING.hasStandaloneCategory = false;
+
+		/* off */
+		LIGHTNING_CHANNELING.anchorDefinition
+				= ITEM_BURNING.anchorDefinition
+				= ITEM_EXPLODING.anchorDefinition
+				= Map.of("item", List.of(ILycheeRecipe.ITEM_IN));
+
+		// we may have block anchors in the future, so here we start a new line
+		BLOCK_INTERACTING.anchorDefinition
+				= BLOCK_CLICKING.anchorDefinition
+				= ITEM_INSIDE.anchorDefinition
+				= Map.of("item", List.of(ILycheeRecipe.ITEM_IN));
+
+		BLOCK_CRUSHING.anchorDefinition = Map.of("item", List.of(ILycheeRecipe.ITEM_IN));
+
+		ANVIL_CRAFTING.anchorDefinition = Map.of("item", List.of(ILycheeRecipe.ITEM_IN, new JsonPointer("/item_out")));
+
+		BLOCK_EXPLODING.anchorDefinition
+				= RANDOM_BLOCK_TICKING.anchorDefinition
+				= DRIPSTONE_DRIPPING.anchorDefinition
+				= Map.of();
+		/* on */
+
+		for (LycheeRecipeType<?, ?> type : ALL) {
+			Preconditions.checkNotNull(type.anchorDefinition, "Recipe type %s has no anchorDefinition", type);
+		}
 	}
 
 	public static final Set<LycheeRecipeType<?, ?>> ALL = Sets.newLinkedHashSet();

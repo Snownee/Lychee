@@ -20,8 +20,9 @@ public abstract class ItemHolderCollection {
 	public static final ItemHolderCollection EMPTY = InWorld.of();
 
 	protected final ItemHolder[] holders;
-	protected final List<ItemStack> tempList = Lists.newArrayList();
+	public final List<ItemStack> tempList = Lists.newArrayList();
 	public final BitSet ignoreConsumptionFlags;
+//	protected final Int2ObjectMap<ItemHolder> extraHolders = new Int2ObjectArrayMap<>();
 
 	public ItemHolderCollection(ItemHolder... holders) {
 		this.holders = holders;
@@ -29,6 +30,9 @@ public abstract class ItemHolderCollection {
 	}
 
 	public ItemHolder get(int index) {
+//		if (index >= holders.length) {
+//			return extraHolders.get(index);
+//		}
 		return holders[index];
 	}
 
@@ -39,8 +43,14 @@ public abstract class ItemHolderCollection {
 	}
 
 	public ItemHolder replace(int index, ItemStack item) {
-		ItemHolder holder = get(index).replace(item, tempList::add);
+		ItemHolder holder;
+//		if (index >= holders.length) {
+//			holder = extraHolders.computeIfAbsent(index, $ -> new ItemHolder.Simple(item));
+//			holder.set(item);
+//		} else {
+		holder = get(index).replace(item, tempList::add);
 		holders[index] = holder;
+//		}
 		return holder;
 	}
 
@@ -61,6 +71,14 @@ public abstract class ItemHolderCollection {
 	public int size() {
 		return holders.length;
 	}
+
+//	public int totalHolders() {
+//		return size() + extraHolders.size();
+//	}
+
+//	public void putExtra(int index, ItemHolder holder) {
+//		extraHolders.put(index, holder);
+//	}
 
 	public static class InWorld extends ItemHolderCollection {
 

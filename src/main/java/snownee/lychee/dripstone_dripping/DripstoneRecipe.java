@@ -160,7 +160,7 @@ public class DripstoneRecipe extends LycheeRecipe<DripstoneContext> implements B
 		breakAction.withCondition(new Not(new Location(check)));
 		ctx.runtime.jobs.push(new Job(breakAction, 1));
 		ctx.runtime.jobs.push(new Job(new Delay(j / 20F), 1));
-		ctx.runtime.run(recipe, ctx);
+		ctx.runtime.run(recipe, ctx, 1);
 		return true;
 	}
 

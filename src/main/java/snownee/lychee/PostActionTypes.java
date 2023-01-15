@@ -16,6 +16,7 @@ import snownee.lychee.core.post.PlaceBlock;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.post.input.DamageItem;
+import snownee.lychee.core.post.input.NBTPatch;
 import snownee.lychee.core.post.input.PreventDefault;
 import snownee.lychee.core.post.input.SetItem;
 
@@ -40,6 +41,7 @@ public class PostActionTypes {
 	public static final PostActionType<CycleStateProperty> CYCLE_STATE_PROPERTY = register("cycle_state_property", new CycleStateProperty.Type());
 	public static final PostActionType<MoveTowardsFace> MOVE_TOWARDS_FACE = register("move_towards_face", new MoveTowardsFace.Type());
 	public static final PostActionType<SetItem> SET_ITEM = register("set_item", new SetItem.Type());
+	public static final PostActionType<NBTPatch> NBT_PATCH = register("nbt_patch", new NBTPatch.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		Registry.register(LycheeRegistries.POST_ACTION, name, t);

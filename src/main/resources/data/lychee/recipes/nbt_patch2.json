@@ -1,0 +1,52 @@
+{
+  "type": "lychee:crafting",
+  "comment": "Test",
+  "pattern": [
+    "AA",
+    "BB"
+  ],
+  "key": {
+    "A": {
+      "item": "feather"
+    },
+    "B": {
+      "item": "stone"
+    }
+  },
+  "result": {
+    "item": "pufferfish_bucket"
+  },
+  "post": [
+    {
+      "type": "nbt_patch",
+      "op": "deep_merge",
+      "path": "/post/1",
+      "value": {
+        "tag": {
+          "display": {
+            "Name": "Test"
+          }
+        }
+      }
+    },
+    {
+      "type": "set_item",
+      "target": "/key/A",
+      "item": "feather"
+    }
+  ],
+  "assembling": [
+    {
+      "type": "nbt_patch",
+      "op": "deep_merge",
+      "path": "/result",
+      "value": {
+        "tag": {
+          "display": {
+            "Name": "Test"
+          }
+        }
+      }
+    }
+  ]
+}

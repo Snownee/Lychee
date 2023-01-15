@@ -1,0 +1,53 @@
+{
+  "type": "lychee:block_interacting",
+  "block_in": "stone",
+  "item_in": {
+    "item": "feather"
+  },
+  "post": [
+    {
+      "type": "prevent_default"
+    },
+    {
+      "type": "drop_item",
+      "item": "diamond"
+    },
+    {
+      "type": "nbt_patch",
+      "op": "deep_merge",
+      "path": "/item_in",
+      "value": {
+        "tag": {}
+      }
+    },
+    {
+      "type": "nbt_patch",
+      "op": "copy",
+      "path": "/item_in/tag/test",
+      "from": "/item_in/id"
+    },
+    {
+      "type": "nbt_patch",
+      "op": "add",
+      "path": "/item_in/Count",
+      "value": 2
+    },
+    {
+      "type": "nbt_patch",
+      "op": "replace",
+      "path": "/post/1",
+      "value": {
+        "id": "apple",
+        "Count": 1,
+        "tag": {
+          "test": 1
+        }
+      }
+    },
+    {
+      "type": "nbt_patch",
+      "op": "remove",
+      "path": "/post/1/tag"
+    }
+  ]
+}
