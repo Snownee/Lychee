@@ -194,7 +194,7 @@ Default behavior: Item is consumed.
 
 ??? example
 
-	Drop a buck into a full water cauldron, it returns a water bucket and empty the cauldron:
+	Drop a bucket into a full water cauldron, it returns a water bucket and empty the cauldron:
 
 	```json
 	{
