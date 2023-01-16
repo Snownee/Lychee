@@ -52,7 +52,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 ??? example
 
-	Prevent player from carving pumpkins:
+	Prevent player from carving pumpkins. Here the `prevent_default` means do not consume the shears.
 
 	```json
 	{
@@ -102,11 +102,11 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note
 
-	Use `"item_in": {"type": "lychee:always_true"}` to match any item. (require [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
+	Since 3.5: Use `"item_in": {"type": "lychee:always_true"}` to match any item. (require [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
 
 !!! warning
 
-	It is not recommended to use recipe contextual conditions in it, because some contextual conditions are not supported to run on the client side (like `execute`).
+	It is not recommended to use recipe contextual conditions in it, because some contextual conditions are not supported to run on the client side.
 
 ### Click on a Block with Item
 
@@ -130,11 +130,11 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note
 
-	Use `"item_in": {"type": "lychee:always_true"}` to match any item. (require [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
+	Since 3.5: Use `"item_in": {"type": "lychee:always_true"}` to match any item. (require [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
 
 !!! warning
 
-	It is not recommended to use recipe contextual conditions in it, because some contextual conditions are not supported to run on the client side (like `execute`).
+	It is not recommended to use recipe contextual conditions in it, because some contextual conditions are not supported to run on the client side.
 
 ### Item Entity Burning
 
@@ -190,7 +190,7 @@ Default behavior: Item is consumed.
     | item_in | the ticking item(s)                | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
     | time    | (optional) waiting time in seconds | int                                                                                      |
 
-    *Since 2.3, `item_in` can accept item list.
+    *Since 2.3, `item_in` can accept ingredient list.
 
 ??? example
 
@@ -437,7 +437,7 @@ Default behavior: Do the default ticking behavior.
 
 	This recipe type does not have JEI / REI integration.
 
-### Dripstone dripping
+### Dripstone Dripping
 
 *Since: 3.2*
 
@@ -471,7 +471,7 @@ Default behavior: Do the default ticking behavior.
 	}
 	```
 
-### Advanced shaped crafting
+### Advanced Shaped Crafting
 
 *Since: 3.4*
 
