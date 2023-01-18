@@ -21,7 +21,7 @@ public class ActionRuntime {
 		RUNNING, PAUSED, STOPPED
 	}
 
-	public void enqueue(List<PostAction> actions, int times) {
+	void enqueue(List<PostAction> actions, int times) {
 		jobs.addAll(0, actions.stream().map($ -> new Job($, times)).toList());
 	}
 
