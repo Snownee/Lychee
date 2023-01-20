@@ -102,7 +102,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note
 
-	Since 3.5: Use `"item_in": {"type": "lychee:always_true"}` to match any item. (require [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
+	Since 3.5: Use `"item_in": {"type": "lychee:always_true"}` to match any item. (requires [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
 
 !!! warning
 
@@ -130,7 +130,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note
 
-	Since 3.5: Use `"item_in": {"type": "lychee:always_true"}` to match any item. (require [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
+	Since 3.5: Use `"item_in": {"type": "lychee:always_true"}` to match any item. (requires [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
 
 !!! warning
 
@@ -184,11 +184,12 @@ Default behavior: Item is consumed.
 
 !!! note "Format"
 
-    | Name    | Description                        | Type / Literal                                                                           |
-    | ------- | ---------------------------------- | ---------------------------------------------------------------------------------------- |
-    | type    | type                               | "lychee:item_inside"                                                                     |
-    | item_in | the ticking item(s)                | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | time    | (optional) waiting time in seconds | int                                                                                      |
+    | Name     | Description                        | Type / Literal                                                                           |
+    | -------- | ---------------------------------- | ---------------------------------------------------------------------------------------- |
+    | type     | type                               | "lychee:item_inside"                                                                     |
+    | item_in  | the ticking item(s)                | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | block_in | the block where the item(s) in     | [BlockPredicate](general-types.md#blockpredicate)                                        |
+    | time     | (optional) waiting time in seconds | int                                                                                      |
 
     *Since 2.3, `item_in` can accept ingredient list.
 
