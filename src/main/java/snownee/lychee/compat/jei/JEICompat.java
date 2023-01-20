@@ -173,7 +173,7 @@ public class JEICompat implements IModPlugin {
 	}
 
 	private static <C extends LycheeContext, T extends LycheeRecipe<C>> void forEachCategories(LycheeRecipeType<C, T> recipeType, Consumer<BaseJEICategory<C, T>> consumer) {
-		CATEGORIES.get(recipeType.categoryId).values().stream().map($ -> (BaseJEICategory<C, T>) $).forEach(consumer);
+		CATEGORIES.getOrDefault(recipeType.categoryId, Map.of()).values().stream().map($ -> (BaseJEICategory<C, T>) $).forEach(consumer);
 	}
 
 	@Override

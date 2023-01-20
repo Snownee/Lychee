@@ -106,7 +106,7 @@ public class DripstoneRecipe extends LycheeRecipe<DripstoneContext> implements B
 	@Override
 	public void applyPostActions(LycheeContext ctx, int times) {
 		if (!ctx.getLevel().isClientSide) {
-			ctx.runtime.enqueue(getPostActions(), times);
+			ctx.enqueueActions(getPostActions(), times, true);
 		}
 	}
 

@@ -176,7 +176,7 @@ public class REICompat implements REIClientPlugin {
 	}
 
 	private static <C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> void forEachCategories(LycheeRecipeType<C, T> recipeType, Consumer<BaseREICategory<C, T, D>> consumer) {
-		CATEGORIES.get(recipeType.categoryId).values().stream().map($ -> (BaseREICategory<C, T, D>) $).forEach(consumer);
+		CATEGORIES.getOrDefault(recipeType.categoryId, Map.of()).values().stream().map($ -> (BaseREICategory<C, T, D>) $).forEach(consumer);
 	}
 
 	@Override
