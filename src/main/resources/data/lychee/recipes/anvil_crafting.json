@@ -19,5 +19,11 @@
       "target": "/item_in/1",
       "item": "apple"
     }
-  ]
+  ],
+  "contextual": {
+    "type": "location",
+    "predicate": {
+      "dimension": "overworld"
+    }
+  }
 }

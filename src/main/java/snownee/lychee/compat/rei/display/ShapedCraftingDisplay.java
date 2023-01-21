@@ -4,7 +4,7 @@ import me.shedaniel.rei.plugin.common.displays.crafting.DefaultShapedDisplay;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.crafting.ShapedCraftingRecipe;
 
-public class ShapedCraftingDisplay extends DefaultShapedDisplay implements LycheeCraftingDisplay {
+public class ShapedCraftingDisplay extends DefaultShapedDisplay implements DisplayRecipeProvider {
 
 	private final ShapedCraftingRecipe recipe;
 

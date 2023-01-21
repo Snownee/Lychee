@@ -30,13 +30,11 @@ import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry;
 import me.shedaniel.rei.api.common.util.EntryStacks;
-import me.shedaniel.rei.plugin.common.displays.anvil.AnvilRecipe;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import snownee.lychee.Lychee;
@@ -58,14 +56,15 @@ import snownee.lychee.compat.rei.category.ItemBurningRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemExplodingRecipeCategory;
 import snownee.lychee.compat.rei.category.ItemInsideRecipeCategory;
 import snownee.lychee.compat.rei.category.LightningChannelingRecipeCategory;
+import snownee.lychee.compat.rei.display.AnvilCraftingDisplay;
 import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.compat.rei.display.BlockCrushingDisplay;
 import snownee.lychee.compat.rei.display.BlockExplodingDisplay;
+import snownee.lychee.compat.rei.display.DisplayRecipeProvider;
 import snownee.lychee.compat.rei.display.DripstoneRecipeDisplay;
 import snownee.lychee.compat.rei.display.ItemAndBlockBaseDisplay;
 import snownee.lychee.compat.rei.display.ItemBurningDisplay;
 import snownee.lychee.compat.rei.display.ItemShapelessDisplay;
-import snownee.lychee.compat.rei.display.LycheeCraftingDisplay;
 import snownee.lychee.compat.rei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
@@ -140,39 +139,36 @@ public class REICompat implements REIClientPlugin {
 			registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(Items.POINTED_DRIPSTONE));
 		});
 
-		registration.get(CategoryIdentifier.of("minecraft", "plugins/crafting")).registerExtension(new CategoryExtensionProvider<Display>() {
+		CategoryExtensionProvider<Display> extensionProvider = (display, category, lastView) -> {
+			if (display instanceof DisplayRecipeProvider d) {
+				ILycheeRecipe<?> recipe = d.recipe();
+				return new DisplayCategoryView<>() {
+					@Override
+					public DisplayRenderer getDisplayRenderer(Display display) {
+						return lastView.getDisplayRenderer(display);
+					}
 
-			@Override
-			public DisplayCategoryView<Display> provide(Display display, DisplayCategory<Display> category, DisplayCategoryView<Display> lastView) {
-				if (display instanceof LycheeCraftingDisplay d) {
-					ILycheeRecipe<?> recipe = d.recipe();
-					return new DisplayCategoryView<>() {
-						@Override
-						public DisplayRenderer getDisplayRenderer(Display display) {
-							return lastView.getDisplayRenderer(display);
-						}
-
-						@Override
-						public List<Widget> setupDisplay(Display display, Rectangle bounds) {
-							List<Widget> widgets = lastView.setupDisplay(display, bounds);
-							Rect2i rect = null;
-							for (Widget widget : widgets) {
-								if (widget instanceof Arrow arrow) {
-									rect = new Rect2i(arrow.getBounds().getCenterX() - bounds.getX() - 4, arrow.getY() - bounds.getY() - 9, 8, 8);
-									break;
-								}
+					@Override
+					public List<Widget> setupDisplay(Display display, Rectangle bounds) {
+						List<Widget> widgets = lastView.setupDisplay(display, bounds);
+						Rect2i rect = null;
+						for (Widget widget : widgets) {
+							if (widget instanceof Arrow arrow) {
+								rect = new Rect2i(arrow.getBounds().getCenterX() - bounds.getX() - 4, Math.max(arrow.getY() - bounds.getY() - 9, 4), 8, 8);
+								break;
 							}
-							if (rect != null) {
-								BaseREICategory.drawInfoBadge(widgets, recipe, bounds.getLocation(), rect);
-							}
-							return widgets;
 						}
-					};
-				}
-				return lastView;
+						if (rect != null) {
+							BaseREICategory.drawInfoBadge(widgets, recipe, bounds.getLocation(), rect);
+						}
+						return widgets;
+					}
+				};
 			}
-
-		});
+			return lastView;
+		};
+		registration.get(CategoryIdentifier.of("minecraft", "plugins/crafting")).registerExtension(extensionProvider);
+		registration.get(CategoryIdentifier.of("minecraft", "plugins/anvil")).registerExtension(extensionProvider);
 	}
 
 	private static <C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> void forEachCategories(LycheeRecipeType<C, T> recipeType, Consumer<BaseREICategory<C, T, D>> consumer) {
@@ -201,15 +197,16 @@ public class REICompat implements REIClientPlugin {
 			});
 		});
 
-		LUtil.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
-			return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
-		}).map($ -> {
-			List<ItemStack> right = List.of($.getRight().getItems()).stream().map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
-			return new AnvilRecipe($.getId(), List.of($.getLeft().getItems()), right, List.of($.getResultItem()));
-		}).forEach(registration::add);
+		try {
+			LUtil.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
+				return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
+			}).map(AnvilCraftingDisplay::new).forEach(registration::add);
+		} catch (Throwable e) {
+			Lychee.LOGGER.catching(e);
+		}
 
 		registration.registerVisibilityPredicate((DisplayCategory<?> category, Display display) -> {
-			if (display instanceof LycheeCraftingDisplay d && !d.recipe().showInRecipeViewer()) {
+			if (display instanceof DisplayRecipeProvider d && !d.recipe().showInRecipeViewer()) {
 				return EventResult.interruptFalse();
 			}
 			return EventResult.pass();
