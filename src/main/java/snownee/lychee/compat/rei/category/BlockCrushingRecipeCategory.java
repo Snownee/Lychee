@@ -24,12 +24,12 @@ import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.rei.REICompat;
 import snownee.lychee.compat.rei.ReactiveWidget;
-import snownee.lychee.compat.rei.display.BlockCrushingDisplay;
+import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
 
-public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingContext, BlockCrushingRecipe, BlockCrushingDisplay> {
+public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingContext, BlockCrushingRecipe, BaseREIDisplay<BlockCrushingRecipe>> {
 
 	public static final Rect2i fallingBlockRect = new Rect2i(0, -35, 20, 35);
 	public static final Rect2i landingBlockRect = new Rect2i(0, 0, 20, 20);
@@ -39,7 +39,7 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 	}
 
 	@Override
-	public int getDisplayWidth(BlockCrushingDisplay display) {
+	public int getDisplayWidth(BaseREIDisplay<BlockCrushingRecipe> display) {
 		return getRealWidth();
 	}
 
@@ -49,7 +49,7 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 	}
 
 	@Override
-	public List<Widget> setupDisplay(BlockCrushingDisplay display, Rectangle bounds) {
+	public List<Widget> setupDisplay(BaseREIDisplay<BlockCrushingRecipe> display, Rectangle bounds) {
 		Point startPoint = new Point(bounds.getCenterX() - getRealWidth() / 2, bounds.getY() + 4);
 		BlockCrushingRecipe recipe = display.recipe;
 		List<Widget> widgets = super.setupDisplay(display, bounds);

@@ -163,8 +163,13 @@ public class PlaceBlock extends PostAction {
 	}
 
 	@Override
-	public List<ItemStack> getOutputItems() {
+	public List<ItemStack> getItemOutputs() {
 		return BlockPredicateHelper.getMatchedItemStacks(block);
+	}
+
+	@Override
+	public List<BlockPredicate> getBlockOutputs() {
+		return List.of(block);
 	}
 
 	@Override

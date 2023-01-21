@@ -6,17 +6,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import com.mojang.serialization.JsonOps;
-
-import net.minecraft.nbt.CompoundTag;
-
-import net.minecraft.nbt.NbtOps;
-
 import org.jetbrains.annotations.Nullable;
 
 import com.faux.ingredientextension.api.ingredient.IngredientHelper;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -28,6 +23,8 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;

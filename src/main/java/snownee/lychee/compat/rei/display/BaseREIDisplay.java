@@ -2,21 +2,23 @@ package snownee.lychee.compat.rei.display;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Streams;
+
+import dev.architectury.fluid.FluidStack;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
-import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
-import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import snownee.lychee.compat.rei.REICompat;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.post.PostAction;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 
-public abstract class BaseREIDisplay<T extends LycheeRecipe<?>> implements Display {
+public class BaseREIDisplay<T extends LycheeRecipe<?>> implements Display {
 
 	public final T recipe;
 	private final CategoryIdentifier<?> categoryId;
@@ -31,32 +33,41 @@ public abstract class BaseREIDisplay<T extends LycheeRecipe<?>> implements Displ
 		return categoryId;
 	}
 
-	public static EntryIngredient postAction(PostAction action) {
-		List<ItemStack> items = action.getOutputItems();
-		if (items.isEmpty()) {
-			return EntryIngredient.of(EntryStack.of(REICompat.POST_ACTION, action));
-		} else {
-			return EntryIngredients.ofItemStacks(items);
-		}
-	}
-
-	public static void addBlockInputs(List<EntryIngredient> items, BlockPredicate block) {
-		if (block == null)
-			return;
-		List<ItemStack> items1 = BlockPredicateHelper.getMatchedItemStacks(block);
-		if (!items1.isEmpty()) {
-			items.add(EntryIngredients.ofItemStacks(items1));
-		}
-	}
-
 	@Override
 	public List<EntryIngredient> getInputEntries() {
-		return EntryIngredients.ofIngredients(recipe.getIngredients());
+		List<EntryIngredient> ingredients = Lists.newArrayList(EntryIngredients.ofIngredients(recipe.getIngredients()));
+		/* off */
+		recipe.getBlockInputs().stream()
+				.map(BlockPredicateHelper::getMatchedFluids)
+				.flatMap(Set::stream)
+				.distinct()
+				.map($ -> EntryIngredients.of(FluidStack.create($, FluidStack.bucketAmount())))
+				.forEach(ingredients::add);
+		/* on */
+		return ingredients;
+	}
+
+	public static List<EntryIngredient> getOutputEntries(ILycheeRecipe<?> recipe) {
+		List<EntryIngredient> ingredients = Lists.newArrayList();
+		/* off */
+		Streams.stream(recipe.getAllShowingActions())
+				.map(PostAction::getItemOutputs)
+				.flatMap(List::stream)
+				.map(EntryIngredients::of)
+				.forEach(ingredients::add);
+		recipe.getBlockOutputs().stream()
+				.map(BlockPredicateHelper::getMatchedFluids)
+				.flatMap(Set::stream)
+				.distinct()
+				.map($ -> EntryIngredients.of(FluidStack.create($, FluidStack.bucketAmount())))
+				.forEach(ingredients::add);
+		/* on */
+		return ingredients;
 	}
 
 	@Override
 	public List<EntryIngredient> getOutputEntries() {
-		return recipe.getShowingPostActions().stream().map(BaseREIDisplay::postAction).toList();
+		return getOutputEntries(recipe);
 	}
 
 	@Override

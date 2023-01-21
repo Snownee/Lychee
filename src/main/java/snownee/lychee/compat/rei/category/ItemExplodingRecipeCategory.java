@@ -20,12 +20,12 @@ import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.item.Items;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.compat.JEIREI;
-import snownee.lychee.compat.rei.display.ItemShapelessDisplay;
+import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.item_exploding.ItemExplodingRecipe;
 
-public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<ItemShapelessContext, ItemExplodingRecipe, ItemShapelessDisplay<ItemExplodingRecipe>> {
+public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<ItemShapelessContext, ItemExplodingRecipe, BaseREIDisplay<ItemExplodingRecipe>> {
 
 	private PrimedTnt tnt;
 
@@ -34,7 +34,7 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 	}
 
 	@Override
-	public void drawExtra(List<Widget> widgets, ItemShapelessDisplay<ItemExplodingRecipe> display, Rectangle bounds) {
+	public void drawExtra(List<Widget> widgets, BaseREIDisplay<ItemExplodingRecipe> display, Rectangle bounds) {
 		Widget widget = Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
 			Minecraft mc = Minecraft.getInstance();
 			if (tnt == null) {

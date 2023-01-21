@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -24,10 +23,10 @@ import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.impl.client.gui.widget.QueuedTooltip.TooltipEntryImpl;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.JEIREI;
@@ -95,18 +94,12 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 		return 120;
 	}
 
-	//	@Override
-	//	public abstract void setIngredients(T recipe, IIngredients ingredients);
-	//
-	//	@Override
-	//	public abstract void setRecipe(IRecipeLayout layout, T recipe, IIngredients ingredients);
-
 	public void actionGroup(List<Widget> widgets, Point startPoint, T recipe, int x, int y) {
 		slotGroup(widgets, startPoint, x, y, recipe.getShowingPostActions(), BaseREICategory::actionSlot);
 	}
 
 	public void ingredientGroup(List<Widget> widgets, Point startPoint, T recipe, int x, int y) {
-		var ingredients = JEIREI.generateInputs(recipe);
+		var ingredients = JEIREI.generateShapelessInputs(recipe);
 		slotGroup(widgets, startPoint, x, y, ingredients, (widgets0, startPoint0, ingredient, x0, y0) -> {
 			LEntryWidget slot = REICompat.slot(startPoint, x0, y0, ingredient.middle != null ? SlotType.CATALYST : SlotType.NORMAL);
 			slot.entries(EntryIngredients.ofItemStacks(Stream.of(ingredient.left.getItems()).map($ -> ingredient.right == 1 ? $ : $.copy()).peek($ -> $.setCount(ingredient.right)).toList()));
@@ -204,18 +197,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 				matrixStack.popPose();
 			}));
 			ReactiveWidget reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, rect));
-			reactive.setTooltipFunction($ -> {
-				List<Component> list = Lists.newArrayList();
-				if (!Strings.isNullOrEmpty(recipe.getComment())) {
-					String comment = recipe.getComment();
-					if (I18n.exists(comment)) {
-						comment = I18n.get(comment);
-					}
-					Splitter.on('\n').splitToStream(comment).map(Component::literal).forEach(list::add);
-				}
-				recipe.getContextualHolder().getConditonTooltips(list, 0);
-				return list.toArray(new Component[0]);
-			});
+			reactive.setTooltipFunction($ -> JEIREI.getRecipeTooltip(recipe).toArray(new Component[0]));
 			widgets.add(reactive);
 		}
 	}
@@ -225,14 +207,19 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 			state = Blocks.ANVIL.defaultBlockState();
 		}
 		ItemStack stack = state.getBlock().asItem().getDefaultInstance();
-		if (stack.isEmpty()) {
+		EntryStack<?> entry;
+		if (!stack.isEmpty()) {
+			entry = EntryStacks.of(stack);
+		} else if (state.getBlock() instanceof LiquidBlock) {
+			entry = EntryStacks.of(state.getFluidState().getType());
+		} else {
 			return false;
 		}
 		ViewSearchBuilder searchBuilder = ViewSearchBuilder.builder();
 		if (button == 0) {
-			searchBuilder.addRecipesFor(EntryStacks.of(stack));
+			searchBuilder.addRecipesFor(entry);
 		} else if (button == 1) {
-			searchBuilder.addUsagesFor(EntryStacks.of(stack));
+			searchBuilder.addUsagesFor(entry);
 		} else {
 			return false;
 		}

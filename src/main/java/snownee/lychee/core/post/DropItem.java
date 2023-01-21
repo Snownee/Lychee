@@ -132,7 +132,7 @@ public class DropItem extends PostAction {
 	}
 
 	@Override
-	public List<ItemStack> getOutputItems() {
+	public List<ItemStack> getItemOutputs() {
 		return List.of(stack);
 	}
 

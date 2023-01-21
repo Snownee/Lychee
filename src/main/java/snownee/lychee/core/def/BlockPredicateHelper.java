@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.google.common.cache.Cache;
@@ -38,11 +39,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.mixin.BlockPredicateAccess;
@@ -62,6 +66,18 @@ public class BlockPredicateHelper {
 			blocks.addAll(LUtil.tagElements(Registry.BLOCK, access.getTag()));
 		}
 		return blocks;
+	}
+
+	public static Set<Fluid> getMatchedFluids(BlockPredicate predicate){
+		/* off */
+		return getMatchedBlocks(predicate).stream()
+				.filter(LiquidBlock.class::isInstance)
+				.map(Block::defaultBlockState)
+				.map(BlockState::getFluidState)
+				.filter(Predicate.not(FluidState::isEmpty))
+				.map(FluidState::getType)
+				.collect(Collectors.toSet());
+		/* on */
 	}
 
 	public static List<ItemStack> getMatchedItemStacks(BlockPredicate predicate) {

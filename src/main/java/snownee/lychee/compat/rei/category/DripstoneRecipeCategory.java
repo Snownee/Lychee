@@ -23,14 +23,14 @@ import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.rei.REICompat;
 import snownee.lychee.compat.rei.ReactiveWidget;
-import snownee.lychee.compat.rei.display.DripstoneRecipeDisplay;
+import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.dripstone_dripping.DripstoneContext;
 import snownee.lychee.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.dripstone_dripping.DripstoneRecipeType;
 import snownee.lychee.util.LUtil;
 
-public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, DripstoneRecipe, DripstoneRecipeDisplay> {
+public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, DripstoneRecipe, BaseREIDisplay<DripstoneRecipe>> {
 
 	private Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
 	private Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
@@ -41,7 +41,7 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 	}
 
 	@Override
-	public List<Widget> setupDisplay(DripstoneRecipeDisplay display, Rectangle bounds) {
+	public List<Widget> setupDisplay(BaseREIDisplay<DripstoneRecipe> display, Rectangle bounds) {
 		Point startPoint = new Point(bounds.getCenterX() - getRealWidth() / 2, bounds.getY() + 4);
 		DripstoneRecipe recipe = display.recipe;
 		List<Widget> widgets = super.setupDisplay(display, bounds);

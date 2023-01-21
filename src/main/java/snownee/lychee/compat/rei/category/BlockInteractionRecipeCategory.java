@@ -13,12 +13,12 @@ import net.minecraft.network.chat.Component;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.ScreenElement;
-import snownee.lychee.compat.rei.display.ItemAndBlockBaseDisplay;
+import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.interaction.BlockInteractingRecipe;
 
-public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<LycheeContext, BlockInteractingRecipe, ItemAndBlockBaseDisplay<BlockInteractingRecipe>> {
+public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<LycheeContext, BlockInteractingRecipe, BaseREIDisplay<BlockInteractingRecipe>> {
 
 	public BlockInteractionRecipeCategory(List<BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe>> recipeTypes, ScreenElement mainIcon) {
 		super(List.copyOf(recipeTypes), mainIcon);

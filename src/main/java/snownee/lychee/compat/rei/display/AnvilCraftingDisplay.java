@@ -2,6 +2,7 @@ package snownee.lychee.compat.rei.display;
 
 import java.util.List;
 
+import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.plugin.common.displays.anvil.AnvilRecipe;
 import me.shedaniel.rei.plugin.common.displays.anvil.DefaultAnvilDisplay;
 import net.minecraft.world.item.ItemStack;
@@ -27,4 +28,10 @@ public class AnvilCraftingDisplay extends DefaultAnvilDisplay implements Display
 		return lycheeRecipe;
 	}
 
+	@Override
+	public List<EntryIngredient> getOutputEntries() {
+		List<EntryIngredient> ingredients = BaseREIDisplay.getOutputEntries(recipe());
+		ingredients.addAll(0, super.getOutputEntries());
+		return ingredients;
+	}
 }

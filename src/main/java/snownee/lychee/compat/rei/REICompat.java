@@ -58,13 +58,7 @@ import snownee.lychee.compat.rei.category.ItemInsideRecipeCategory;
 import snownee.lychee.compat.rei.category.LightningChannelingRecipeCategory;
 import snownee.lychee.compat.rei.display.AnvilCraftingDisplay;
 import snownee.lychee.compat.rei.display.BaseREIDisplay;
-import snownee.lychee.compat.rei.display.BlockCrushingDisplay;
-import snownee.lychee.compat.rei.display.BlockExplodingDisplay;
 import snownee.lychee.compat.rei.display.DisplayRecipeProvider;
-import snownee.lychee.compat.rei.display.DripstoneRecipeDisplay;
-import snownee.lychee.compat.rei.display.ItemAndBlockBaseDisplay;
-import snownee.lychee.compat.rei.display.ItemBurningDisplay;
-import snownee.lychee.compat.rei.display.ItemShapelessDisplay;
 import snownee.lychee.compat.rei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
@@ -73,8 +67,6 @@ import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.item_exploding.ItemExplodingRecipe;
-import snownee.lychee.lightning_channeling.LightningChannelingRecipe;
 import snownee.lychee.util.LUtil;
 
 public class REICompat implements REIClientPlugin {
@@ -178,14 +170,14 @@ public class REICompat implements REIClientPlugin {
 	@Override
 	public void registerDisplays(DisplayRegistry registration) {
 		Map<ResourceLocation, BiFunction<LycheeRecipe<?>, CategoryIdentifier<?>, BaseREIDisplay<?>>> factories = Maps.newHashMap();
-		registerDisplayFactory(factories, RecipeTypes.ITEM_BURNING.categoryId, ItemBurningDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.ITEM_INSIDE.categoryId, ItemAndBlockBaseDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.BLOCK_INTERACTING.categoryId, ItemAndBlockBaseDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.BLOCK_CRUSHING.categoryId, BlockCrushingDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.LIGHTNING_CHANNELING.categoryId, ItemShapelessDisplay<LightningChannelingRecipe>::new);
-		registerDisplayFactory(factories, RecipeTypes.ITEM_EXPLODING.categoryId, ItemShapelessDisplay<ItemExplodingRecipe>::new);
-		registerDisplayFactory(factories, RecipeTypes.BLOCK_EXPLODING.categoryId, BlockExplodingDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.DRIPSTONE_DRIPPING.categoryId, DripstoneRecipeDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.ITEM_BURNING.categoryId, BaseREIDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.ITEM_INSIDE.categoryId, BaseREIDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.BLOCK_INTERACTING.categoryId, BaseREIDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.BLOCK_CRUSHING.categoryId, BaseREIDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.LIGHTNING_CHANNELING.categoryId, BaseREIDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.ITEM_EXPLODING.categoryId, BaseREIDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.BLOCK_EXPLODING.categoryId, BaseREIDisplay::new);
+		registerDisplayFactory(factories, RecipeTypes.DRIPSTONE_DRIPPING.categoryId, BaseREIDisplay::new);
 
 		CATEGORIES.values().forEach($ -> {
 			$.values().forEach($$ -> {
