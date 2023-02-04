@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Streams;
 
 import dev.architectury.fluid.FluidStack;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
@@ -50,7 +49,7 @@ public class BaseREIDisplay<T extends LycheeRecipe<?>> implements Display {
 	public static List<EntryIngredient> getOutputEntries(ILycheeRecipe<?> recipe) {
 		List<EntryIngredient> ingredients = Lists.newArrayList();
 		/* off */
-		Streams.stream(recipe.getAllShowingActions())
+		ILycheeRecipe.filterHidden(recipe.getAllActions())
 				.map(PostAction::getItemOutputs)
 				.flatMap(List::stream)
 				.map(EntryIngredients::of)

@@ -2,9 +2,11 @@ package snownee.lychee.crafting;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.jetbrains.annotations.Nullable;
@@ -12,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.base.Strings;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -54,8 +55,6 @@ import snownee.lychee.mixin.ShapedRecipeAccess;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.json.JsonPointer;
-import snownee.lychee.util.json.JsonSchema;
-import snownee.lychee.util.json.JsonSchema.ObjectNode;
 
 public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<CraftingContext> {
 
@@ -179,7 +178,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 		if (ctx == null) {
 			return ItemStack.EMPTY;
 		}
-		ctx.enqueueActions(assembling, 1, true);
+		ctx.enqueueActions(assembling.stream(), 1, true);
 		ctx.runtime.run(this, ctx, 1);
 		return ctx.getItem(ctx.getContainerSize() - 1);
 	}
@@ -236,33 +235,13 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	}
 
 	@Override
-	public JsonSchema generateSchema(JsonObject jsonObject) {
-		JsonSchema schema = new JsonSchema();
-		int size = getIngredients().size();
-		ObjectNode keys = schema.root.add("key", new JsonSchema.ObjectNode());
-		for (int i = 0; i < size; i++) {
-			String k = Character.toString(pattern.codePointAt(i));
-			if (k.equals(" ")) {
-				continue;
-			}
-			if (!keys.has(k)) {
-				keys.add(k, new JsonSchema.ArrayNode());
-			}
-			keys.get(k).asArray().add(new JsonSchema.Anchor("item", Integer.toString(i)));
-		}
-		schema.root.add("result", new JsonSchema.Anchor("item", Integer.toString(size)));
-		ILycheeRecipe.generateActionsSchema(jsonObject, new JsonPointer("/assembling"), assembling, schema);
-		return schema;
+	public Stream<PostAction> getPostActions() {
+		return actions.stream();
 	}
 
 	@Override
-	public List<PostAction> getPostActions() {
-		return actions;
-	}
-
-	@Override
-	public Iterable<PostAction> getAllShowingActions() {
-		return Iterables.concat(actions, assembling);
+	public Stream<PostAction> getAllActions() {
+		return Stream.concat(getPostActions(), assembling.stream());
 	}
 
 	@Override
@@ -317,6 +296,14 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 		return !conditions.getConditions().isEmpty() || !assembling.isEmpty();
 	}
 
+	@Override
+	public boolean isActionPath(JsonPointer pointer) {
+		if (pointer.isRoot())
+			return false;
+		String token = pointer.getString(0);
+		return "assemble".equals(token) || "post".equals(token);
+	}
+
 	public static class Serializer implements RecipeSerializer<ShapedCraftingRecipe> {
 		@Override
 		public ShapedCraftingRecipe fromJson(ResourceLocation id, JsonObject jsonObject) {
@@ -334,7 +321,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			recipe.conditions.parseConditions(jsonObject.get("contextual"));
 			PostAction.parseActions(jsonObject.get("post"), recipe::addPostAction);
 			PostAction.parseActions(jsonObject.get("assembling"), recipe::addAssemblingAction);
-			ILycheeRecipe.processActions(recipe, Iterables.concat(recipe.getPostActions(), recipe.assembling), jsonObject);
+			ILycheeRecipe.processActions(recipe, Map.of(POST, recipe.actions, new JsonPointer("/assembling"), recipe.assembling), jsonObject);
 			return recipe;
 		}
 
@@ -377,9 +364,8 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 				return;
 			}
 			recipe.conditions.conditionsToNetwork(buf);
-			List<PostAction> actions = recipe.getPostActions();
-			buf.writeVarInt(actions.size());
-			for (PostAction action : actions) {
+			buf.writeVarInt(recipe.actions.size());
+			for (PostAction action : recipe.actions) {
 				PostActionType type = action.getType();
 				LUtil.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
 				type.toNetwork(action, buf);

@@ -1,4 +1,9 @@
 {
+  "KiwiConfig": [
+    {
+      "target": "snownee.lychee.LycheeConfig"
+    }
+  ],
   "KiwiPacket": [
     {
       "target": "snownee.lychee.core.network.SCustomLevelEventPacket",

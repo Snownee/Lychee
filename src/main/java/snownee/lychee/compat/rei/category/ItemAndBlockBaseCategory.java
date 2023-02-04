@@ -113,7 +113,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 			matrixStack.popPose();
 		}));
 
-		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
+		int y = recipe.getIngredients().size() > 9 || recipe.showingActionsCount() > 9 ? 26 : 28;
 		if (recipe instanceof ItemShapelessRecipe) {
 			ingredientGroup(widgets, startPoint, recipe, 40, y);
 		} else {

@@ -2,8 +2,7 @@ package snownee.lychee.core.post;
 
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
-
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -29,9 +28,7 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.ItemEntityAccess;
 import snownee.lychee.util.LUtil;
-import snownee.lychee.util.json.JsonPatch;
 import snownee.lychee.util.json.JsonPointer;
-import snownee.lychee.util.json.JsonSchema;
 
 public class DropItem extends PostAction {
 
@@ -44,13 +41,6 @@ public class DropItem extends PostAction {
 	@Override
 	public PostActionType<?> getType() {
 		return PostActionTypes.DROP_ITEM;
-	}
-
-	@Override
-	public void preApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		if (path != null) {
-			JsonPatch.replace(ctx.json, new JsonPointer(path), LUtil.tagToJson(stack.save(new CompoundTag())));
-		}
 	}
 
 	@Override
@@ -96,10 +86,19 @@ public class DropItem extends PostAction {
 	}
 
 	@Override
-	public @Nullable JsonSchema.Node generateSchema() {
-		JsonSchema.Anchor anchor = new JsonSchema.Anchor("item", path);
-		anchor.override = LUtil.tagToJson(stack.save(new CompoundTag()));
-		return anchor;
+	public Component getDisplayName() {
+		return stack.getHoverName();
+	}
+
+	@Override
+	public List<ItemStack> getItemOutputs() {
+		return List.of(stack);
+	}
+
+	@Override
+	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
+		path = pointer.toString();
+		return LUtil.tagToJson(stack.save(new CompoundTag()));
 	}
 
 	public static class Type extends PostActionType<DropItem> {
@@ -125,15 +124,4 @@ public class DropItem extends PostAction {
 		}
 
 	}
-
-	@Override
-	public Component getDisplayName() {
-		return stack.getHoverName();
-	}
-
-	@Override
-	public List<ItemStack> getItemOutputs() {
-		return List.of(stack);
-	}
-
 }

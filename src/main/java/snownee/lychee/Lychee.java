@@ -4,9 +4,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.api.ModInitializer;
+import snownee.kiwi.Mod;
 import snownee.lychee.compat.ingredient_extension.IngredientExtensionCompat;
 import snownee.lychee.util.LUtil;
 
+@Mod(Lychee.ID)
 public final class Lychee implements ModInitializer {
 	public static final String ID = "lychee";
 

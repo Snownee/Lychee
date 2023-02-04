@@ -95,7 +95,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 	}
 
 	public void actionGroup(List<Widget> widgets, Point startPoint, T recipe, int x, int y) {
-		slotGroup(widgets, startPoint, x, y, recipe.getShowingPostActions(), BaseREICategory::actionSlot);
+		slotGroup(widgets, startPoint, x, y, ILycheeRecipe.filterHidden(recipe.getPostActions()).toList(), BaseREICategory::actionSlot);
 	}
 
 	public void ingredientGroup(List<Widget> widgets, Point startPoint, T recipe, int x, int y) {

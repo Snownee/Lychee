@@ -24,7 +24,7 @@
       "value": {
         "tag": {
           "display": {
-            "Name": "Test"
+            "Name": "{\"text\":\"Test\"}"
           }
         }
       }
@@ -43,7 +43,7 @@
       "value": {
         "tag": {
           "display": {
-            "Name": "Test"
+            "Name": "{\"text\":\"Test\"}"
           }
         }
       }

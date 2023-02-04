@@ -1,7 +1,6 @@
 package snownee.lychee.core.recipe.type;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -26,7 +25,6 @@ import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.LUtil;
-import snownee.lychee.util.json.JsonPointer;
 
 public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>> implements RecipeType<T> {
 	public final ResourceLocation id;
@@ -42,7 +40,6 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 	public boolean compactInputs;
 	public boolean canPreventConsumeInputs;
 	public boolean hasStandaloneCategory = true;
-	public Map<String, List<JsonPointer>> anchorDefinition;
 
 	public static final Component DEFAULT_PREVENT_TIP = Component.translatable("tip.lychee.preventDefault.default").withStyle(ChatFormatting.YELLOW);
 

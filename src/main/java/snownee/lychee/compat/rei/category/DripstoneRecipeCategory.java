@@ -72,7 +72,7 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 			matrixStack.popPose();
 		}));
 
-		int y = recipe.getShowingPostActions().size() > 9 ? 26 : 28;
+		int y = recipe.showingActionsCount() > 9 ? 26 : 28;
 		actionGroup(widgets, startPoint, recipe, getRealWidth() - 24, y);
 
 		ReactiveWidget reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, sourceBlockRect));

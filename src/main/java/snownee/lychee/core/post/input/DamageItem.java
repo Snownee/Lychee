@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang3.tuple.MutableTriple;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -109,8 +110,8 @@ public class DamageItem extends PostAction {
 	}
 
 	@Override
-	public boolean validate(ILycheeRecipe<?> recipe) {
-		return !recipe.getItemIndexes(target).isEmpty();
+	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
+		Preconditions.checkArgument(recipe.getItemIndexes(target).size() > 0, "No target found for %s", target);
 	}
 
 	@Override

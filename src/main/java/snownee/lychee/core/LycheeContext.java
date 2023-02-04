@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -145,7 +146,7 @@ public class LycheeContext extends EmptyContainer {
 		itemHolders.replace(index, stack);
 	}
 
-	public void enqueueActions(List<PostAction> actions, int times, boolean startNew) {
+	public void enqueueActions(Stream<PostAction> actions, int times, boolean startNew) {
 		if (runtime == null || startNew) {
 			runtime = new ActionRuntime();
 		}

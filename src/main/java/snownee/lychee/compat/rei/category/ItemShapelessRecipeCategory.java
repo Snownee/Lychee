@@ -39,7 +39,7 @@ public abstract class ItemShapelessRecipeCategory<C extends ItemShapelessContext
 		List<Widget> widgets = super.setupDisplay(display, bounds);
 		drawInfoBadge(widgets, display, startPoint);
 		int xCenter = bounds.getCenterX();
-		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
+		int y = recipe.getIngredients().size() > 9 || recipe.showingActionsCount() > 9 ? 26 : 28;
 		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y);
 		actionGroup(widgets, startPoint, recipe, xCenter + 50 - startPoint.x, y);
 		drawExtra(widgets, display, bounds);

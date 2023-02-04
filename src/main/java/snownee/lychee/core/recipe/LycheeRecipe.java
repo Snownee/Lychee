@@ -2,10 +2,11 @@ package snownee.lychee.core.recipe;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -34,12 +35,11 @@ import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.json.JsonPointer;
-import snownee.lychee.util.json.JsonSchema;
 
 public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHolder implements ILycheeRecipe<C>, Recipe<C> {
 
 	private final ResourceLocation id;
-	private List<PostAction> actions = Collections.EMPTY_LIST;
+	List<PostAction> actions = Collections.EMPTY_LIST;
 	protected Ints maxRepeats = Ints.ANY;
 	public boolean ghost;
 	public boolean hideInRecipeViewer;
@@ -85,8 +85,8 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	}
 
 	@Override
-	public List<PostAction> getPostActions() {
-		return actions;
+	public Stream<PostAction> getPostActions() {
+		return actions.stream();
 	}
 
 	@Override
@@ -128,21 +128,12 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			return IntList.of(IntStream.range(0, size).toArray());
 		}
 		if (pointer.size() == 2 && pointer.getString(0).equals("item_in")) {
-			return IntList.of(pointer.getInt(1));
-		}
-		return IntList.of();
-	}
-
-	@Override
-	public JsonSchema generateSchema(JsonObject jsonObject) {
-		JsonSchema schema = new JsonSchema();
-		for (Entry<String, List<JsonPointer>> entry : getType().anchorDefinition.entrySet()) {
-			String type = entry.getKey();
-			for (JsonPointer pointer : entry.getValue()) {
-				schema.buildObjectOrList(jsonObject, pointer, (i, isObject) -> new JsonSchema.Anchor(type));
+			try {
+				return IntList.of(pointer.getInt(1));
+			} catch (NumberFormatException e) {
 			}
 		}
-		return schema;
+		return IntList.of();
 	}
 
 	@Override
@@ -169,7 +160,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			Preconditions.checkArgument(ResourceLocation.isValidResourceLocation(recipe.group), "%s is not a valid ResourceLocation", recipe.group);
 			recipe.parseConditions(jsonObject.get("contextual"));
 			PostAction.parseActions(jsonObject.get("post"), recipe::addPostAction);
-			ILycheeRecipe.processActions(recipe, recipe.getPostActions(), jsonObject);
+			ILycheeRecipe.processActions(recipe, Map.of(POST, recipe.actions), jsonObject);
 			fromJson(recipe, jsonObject);
 			if (jsonObject.has("max_repeats")) {
 				recipe.maxRepeats = Ints.fromJson(jsonObject.get("max_repeats"));
@@ -224,9 +215,8 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 				return;
 			}
 			recipe.conditionsToNetwork(buf);
-			List<PostAction> actions = recipe.getPostActions();
-			buf.writeVarInt(actions.size());
-			for (PostAction action : actions) {
+			buf.writeVarInt(recipe.actions.size());
+			for (PostAction action : recipe.actions) {
 				PostActionType type = action.getType();
 				LUtil.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
 				type.toNetwork(action, buf);
