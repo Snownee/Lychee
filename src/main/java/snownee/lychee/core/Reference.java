@@ -4,12 +4,11 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
-import snownee.lychee.util.JsonPointer;
+import snownee.lychee.util.json.JsonPointer;
 
 public abstract class Reference {
 
-	public static Reference fromJson(JsonObject parent, String key) {
-		String value = GsonHelper.getAsString(parent, key, "default");
+	public static Reference create(String value) {
 		if ("default".equals(value)) {
 			return DEFAULT;
 		}
@@ -17,6 +16,10 @@ public abstract class Reference {
 			return new Pointer(new JsonPointer(value));
 		}
 		return new Constant(value);
+	}
+
+	public static Reference fromJson(JsonObject parent, String key) {
+		return create(GsonHelper.getAsString(parent, key, "default"));
 	}
 
 	public static void toJson(Reference reference, JsonObject parent, String key) {
@@ -27,12 +30,11 @@ public abstract class Reference {
 	}
 
 	public static Reference fromNetwork(FriendlyByteBuf buf) {
-		// TODO Auto-generated method stub
-		return null;
+		return create(buf.readUtf());
 	}
 
 	public static void toNetwork(Reference reference, FriendlyByteBuf buf) {
-
+		buf.writeUtf(reference.toString());
 	}
 
 	public boolean isPointer() {
@@ -51,6 +53,11 @@ public abstract class Reference {
 		public Pointer(JsonPointer pointer) {
 			this.pointer = pointer;
 		}
+
+		@Override
+		public String toString() {
+			return pointer.toString();
+		}
 	}
 
 	public static class Constant extends Reference {
@@ -58,6 +65,11 @@ public abstract class Reference {
 
 		public Constant(String name) {
 			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
 		}
 	}
 

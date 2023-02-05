@@ -2,6 +2,7 @@ package snownee.lychee.core.recipe;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.IntStream;
@@ -26,14 +27,14 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.Reference;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.util.JsonPointer;
 import snownee.lychee.util.LUtil;
+import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.json.JsonSchema;
 
 public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHolder implements ILycheeRecipe<C>, Recipe<C> {
 
@@ -121,23 +122,27 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	}
 
 	@Override
-	public IntList getItemIndexes(Reference reference) {
+	public IntList getItemIndexes(JsonPointer pointer) {
 		int size = getIngredients().size();
-		JsonPointer pointer = null;
-		if (reference == Reference.DEFAULT) {
-			pointer = defaultItemPointer();
-		} else if (reference.isPointer()) {
-			pointer = reference.getPointer();
+		if (pointer.size() == 1 && pointer.getString(0).equals("item_in")) {
+			return IntList.of(IntStream.range(0, size).toArray());
 		}
-		if (pointer != null) {
-			if (pointer.size() == 1 && pointer.getString(0).equals("item_in")) {
-				return IntList.of(IntStream.range(0, size).toArray());
-			}
-			if (pointer.size() == 2 && pointer.getString(0).equals("item_in")) {
-				return IntList.of(pointer.getInt(1));
-			}
+		if (pointer.size() == 2 && pointer.getString(0).equals("item_in")) {
+			return IntList.of(pointer.getInt(1));
 		}
 		return IntList.of();
+	}
+
+	@Override
+	public JsonSchema generateSchema(JsonObject jsonObject) {
+		JsonSchema schema = new JsonSchema();
+		for (Entry<String, List<JsonPointer>> entry : getType().anchorDefinition.entrySet()) {
+			String type = entry.getKey();
+			for (JsonPointer pointer : entry.getValue()) {
+				schema.buildObjectOrList(jsonObject, pointer, (i, isObject) -> new JsonSchema.Anchor(type));
+			}
+		}
+		return schema;
 	}
 
 	@Override
@@ -164,14 +169,12 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			Preconditions.checkArgument(ResourceLocation.isValidResourceLocation(recipe.group), "%s is not a valid ResourceLocation", recipe.group);
 			recipe.parseConditions(jsonObject.get("contextual"));
 			PostAction.parseActions(jsonObject.get("post"), recipe::addPostAction);
+			ILycheeRecipe.processActions(recipe, recipe.getPostActions(), jsonObject);
 			fromJson(recipe, jsonObject);
 			if (jsonObject.has("max_repeats")) {
 				recipe.maxRepeats = Ints.fromJson(jsonObject.get("max_repeats"));
 				Integer min = recipe.maxRepeats.getMin();
 				Preconditions.checkArgument(min != null && min > 0, "Min value of max_repeats should be greater than 0");
-			}
-			for (PostAction action : recipe.getPostActions()) {
-				Preconditions.checkArgument(action.validate(recipe), "Error while validating action: %s", action);
 			}
 			return recipe;
 		}

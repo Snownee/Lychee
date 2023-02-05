@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Streams;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -18,6 +19,8 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -267,6 +270,14 @@ public class LUtil {
 
 	public static boolean isModLoaded(String modid) {
 		return ModList.get().isLoaded(modid);
+	}
+
+	public static JsonObject tagToJson(CompoundTag tag) {
+		return NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, tag).getAsJsonObject();
+	}
+
+	public static CompoundTag jsonToTag(JsonObject json) {
+		return (CompoundTag) JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json);
 	}
 
 }

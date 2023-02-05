@@ -3,6 +3,7 @@ package snownee.lychee.core.post;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -30,6 +31,7 @@ import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
+import snownee.lychee.util.json.JsonPointer;
 
 public class RandomSelect extends PostAction {
 
@@ -163,6 +165,13 @@ public class RandomSelect extends PostAction {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public void getUsedPointers(ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
+		for (PostAction action : entries) {
+			action.getUsedPointers(recipe, consumer);
+		}
 	}
 
 	public static class Type extends PostActionType<RandomSelect> {
