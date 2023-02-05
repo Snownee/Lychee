@@ -1,9 +1,14 @@
 package snownee.lychee;
 
+import java.util.function.Function;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -50,6 +55,12 @@ public final class Lychee {
 			CraftingHelper.register(new ResourceLocation(Lychee.ID, "always_true"), AlwaysTrueIngredient.Serializer.INSTANCE);
 		});
 		event.register(ForgeRegistries.RECIPE_TYPES.getRegistryKey(), helper -> RecipeTypes.init());
+	}
+
+	@SubscribeEvent
+	public static void RegisterRecipeBookCategories(RegisterRecipeBookCategoriesEvent event) {
+		Function<Recipe<?>, RecipeBookCategories> lookup = $ -> RecipeBookCategories.UNKNOWN;
+		RecipeTypes.ALL.forEach($ -> event.registerRecipeCategoryFinder($, lookup));
 	}
 
 }
