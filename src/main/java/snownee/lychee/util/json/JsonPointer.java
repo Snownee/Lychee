@@ -106,6 +106,10 @@ public class JsonPointer {
 		return Objects.hash(tokens);
 	}
 
+	public JsonPointer append(String token) {
+		return new JsonPointer(this + "/" + token);
+	}
+
 	public static class Serializer implements JsonDeserializer<JsonPointer>, JsonSerializer<JsonPointer> {
 
 		@Override

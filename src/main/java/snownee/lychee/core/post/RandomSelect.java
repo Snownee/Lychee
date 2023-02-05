@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -30,6 +31,7 @@ import snownee.lychee.core.Job;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
+import snownee.lychee.core.post.input.NBTPatch;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.json.JsonPointer;
@@ -128,7 +130,6 @@ public class RandomSelect extends PostAction {
 		return LUtil.getCycledItem(List.of(entries), entries[0], 1000).getDisplayName();
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public List<Component> getTooltips(PostAction child) {
 		int index = Arrays.asList(entries).indexOf(child);
 		List<Component> list = entries.length == 1 ? Lists.newArrayList(getDisplayName()) : child.getBaseTooltips();
@@ -164,13 +165,11 @@ public class RandomSelect extends PostAction {
 	}
 
 	@Override
-	public boolean validate(ILycheeRecipe<?> recipe) {
+	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 		for (PostAction action : entries) {
-			if (!action.validate(recipe)) {
-				return false;
-			}
+			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in RandomSelect");
+			action.validate(recipe, patchContext);
 		}
-		return true;
 	}
 
 	@Override
@@ -178,6 +177,19 @@ public class RandomSelect extends PostAction {
 		for (PostAction action : entries) {
 			action.getUsedPointers(recipe, consumer);
 		}
+	}
+
+	@Override
+	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
+		int i = 0;
+		JsonArray array = new JsonArray();
+		for (PostAction action : entries) {
+			array.add(action.provideJsonInfo(recipe, pointer.append("entries/" + i), recipeObject));
+			i++;
+		}
+		JsonObject jsonObject = new JsonObject();
+		jsonObject.add("entries", array);
+		return jsonObject;
 	}
 
 	public static class Type extends PostActionType<RandomSelect> {

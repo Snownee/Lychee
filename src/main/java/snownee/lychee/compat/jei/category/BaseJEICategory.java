@@ -12,7 +12,6 @@ import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient;
 import mezz.jei.api.gui.builder.IIngredientAcceptor;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -128,7 +127,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	public abstract void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses);
 
 	public void actionGroup(IRecipeLayoutBuilder builder, T recipe, int x, int y) {
-		slotGroup(builder, x, y, 10000, recipe.getShowingPostActions(), BaseJEICategory::actionSlot);
+		slotGroup(builder, x, y, 10000, ILycheeRecipe.filterHidden(recipe.getAllActions()).toList(), BaseJEICategory::actionSlot);
 	}
 
 	public void ingredientGroup(IRecipeLayoutBuilder builder, T recipe, int x, int y) {
@@ -173,7 +172,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	public static void actionSlot(IRecipeLayoutBuilder builder, PostAction action, int index, int x, int y) {
 		IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, x + 1, y + 1);
 		Map<ItemStack, PostAction> itemMap = Maps.newIdentityHashMap();
-		buildActionSlot(slot, action, itemMap);
+		buildActionSlot(builder, action, itemMap, slot);
 		slot.addTooltipCallback((view, tooltip) -> {
 			var optional = view.getDisplayedIngredient();
 			if (optional.isEmpty()) {
@@ -200,16 +199,20 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		slot.setBackground(JEICompat.slot(action.getConditions().isEmpty() ? SlotType.NORMAL : SlotType.CHANCE), -1, -1);
 	}
 
-	private static void buildActionSlot(IRecipeSlotBuilder slot, PostAction action, Map<ItemStack, PostAction> itemMap) {
+	private static void buildActionSlot(IRecipeLayoutBuilder layout, PostAction action, Map<ItemStack, PostAction> itemMap, IRecipeSlotBuilder slot) {
 		if (action instanceof DropItem dropitem) {
 			slot.addItemStack(dropitem.stack);
 			itemMap.put(dropitem.stack, dropitem);
 		} else if (action instanceof RandomSelect random) {
 			for (PostAction entry : random.entries) {
-				buildActionSlot(slot, entry, itemMap);
+				buildActionSlot(layout, entry, itemMap, slot);
 			}
 		} else {
 			slot.addIngredient(JEICompat.POST_ACTION, action);
+			List<ItemStack> itemOutputs = action.getItemOutputs();
+			if (!itemOutputs.isEmpty()) {
+				layout.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStacks(itemOutputs);
+			}
 		}
 	}
 
@@ -257,7 +260,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 				gui.show(factory.createFocus(role, VanillaTypes.ITEM_STACK, stack));
 				return true;
 			} else if (state.getBlock() instanceof LiquidBlock) {
-				IPlatformFluidHelper<IJeiFluidIngredient> fluidHelper = (IPlatformFluidHelper<IJeiFluidIngredient>) JEICompat.HELPERS.getPlatformFluidHelper();
+				IPlatformFluidHelper<Object> fluidHelper = (IPlatformFluidHelper<Object>) JEICompat.HELPERS.getPlatformFluidHelper();
 				Fluid fluid = state.getFluidState().getType();
 				gui.show(factory.createFocus(role, fluidHelper.getFluidIngredientType(), fluidHelper.create(fluid, fluidHelper.bucketVolume())));
 				return true;

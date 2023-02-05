@@ -10,6 +10,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -29,7 +30,6 @@ import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.json.JsonPointer;
-import snownee.lychee.util.json.JsonSchema;
 
 public abstract class PostAction extends ContextualHolder {
 
@@ -67,8 +67,8 @@ public abstract class PostAction extends ContextualHolder {
 		PostActionType<?> type = LycheeRegistries.POST_ACTION.getValue(key);
 		PostAction action = type.fromJson(o);
 		action.parseConditions(o.get("contextual"));
-		if (o.has("_path")) {
-			action.path = GsonHelper.getAsString(o, "_path");
+		if (o.has("@path")) {
+			action.path = GsonHelper.getAsString(o, "@path");
 		}
 		return action;
 	}
@@ -118,14 +118,13 @@ public abstract class PostAction extends ContextualHolder {
 			o.add("contextual", rawConditionsToJson());
 		}
 		if (!Strings.isNullOrEmpty(path)) {
-			o.addProperty("_path", path);
+			o.addProperty("@path", path);
 		}
 		((PostActionType<PostAction>) getType()).toJson(this, o);
 		return o;
 	}
 
-	public boolean validate(ILycheeRecipe<?> recipe) {
-		return true;
+	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 	}
 
 	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<MutableTriple<Ingredient, Component, Integer>> ingredients) {
@@ -134,14 +133,14 @@ public abstract class PostAction extends ContextualHolder {
 	public void getUsedPointers(ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
 	}
 
-	public @Nullable JsonSchema.Node generateSchema() {
-		return null;
-	}
-
-	public void preApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void preApply(ILycheeRecipe<?> recipe, LycheeContext ctx, ILycheeRecipe.NBTPatchContext patchContext) {
 	}
 
 	public List<BlockPredicate> getBlockOutputs() {
 		return List.of();
+	}
+
+	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
+		return JsonNull.INSTANCE;
 	}
 }

@@ -84,9 +84,12 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 			}
 		}
 		if (pointer.size() == 2 && pointer.getString(0).equals("item_in")) {
-			int i = pointer.getInt(1);
-			if (i >= 0 && i < 2) {
-				return IntList.of(i);
+			try {
+				int i = pointer.getInt(1);
+				if (i >= 0 && i < 2) {
+					return IntList.of(i);
+				}
+			} catch (NumberFormatException e) {
 			}
 		}
 		return IntList.of();

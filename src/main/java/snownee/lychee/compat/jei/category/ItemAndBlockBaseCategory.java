@@ -71,7 +71,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses) {
-		int y = recipe.getIngredients().size() > 9 || recipe.getShowingPostActions().size() > 9 ? 26 : 28;
+		int y = recipe.getIngredients().size() > 9 || recipe.showingActionsCount() > 9 ? 26 : 28;
 		if (recipe instanceof ItemShapelessRecipe) {
 			ingredientGroup(builder, recipe, 38, y);
 		} else {

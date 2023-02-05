@@ -27,11 +27,11 @@ public class JsonPatch {
 	}
 
 	public final Type op;
-	public final JsonPointer path;
+	public JsonPointer path;
 	@Nullable
-	public final JsonPointer from;
+	public JsonPointer from;
 	@Nullable
-	public final JsonElement value;
+	public JsonElement value;
 
 	public JsonPatch(Type op, JsonPointer path, @Nullable JsonPointer from, @Nullable JsonElement value) {
 		this.op = op;

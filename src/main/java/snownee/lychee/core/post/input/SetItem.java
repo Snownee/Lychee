@@ -3,8 +3,8 @@ package snownee.lychee.core.post.input;
 import java.util.List;
 import java.util.Objects;
 
-import org.jetbrains.annotations.Nullable;
-
+import com.google.common.base.Preconditions;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -27,9 +27,7 @@ import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.LUtil;
-import snownee.lychee.util.json.JsonPatch;
 import snownee.lychee.util.json.JsonPointer;
-import snownee.lychee.util.json.JsonSchema;
 
 public class SetItem extends PostAction {
 
@@ -44,13 +42,6 @@ public class SetItem extends PostAction {
 	@Override
 	public PostActionType<?> getType() {
 		return PostActionTypes.SET_ITEM;
-	}
-
-	@Override
-	public void preApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		if (path != null) {
-			JsonPatch.replace(ctx.json, new JsonPointer(path), LUtil.tagToJson(stack.save(new CompoundTag())));
-		}
 	}
 
 	@Override
@@ -105,15 +96,14 @@ public class SetItem extends PostAction {
 	}
 
 	@Override
-	public boolean validate(ILycheeRecipe<?> recipe) {
-		return !recipe.getItemIndexes(target).isEmpty();
+	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
+		Preconditions.checkArgument(recipe.getItemIndexes(target).size() > 0, "No target found for %s", target);
 	}
 
 	@Override
-	public @Nullable JsonSchema.Node generateSchema() {
-		JsonSchema.Anchor anchor = new JsonSchema.Anchor("item", path);
-		anchor.override = LUtil.tagToJson(stack.save(new CompoundTag()));
-		return anchor;
+	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
+		path = pointer.toString();
+		return LUtil.tagToJson(stack.save(new CompoundTag()));
 	}
 
 	public static class Type extends PostActionType<SetItem> {

@@ -30,7 +30,6 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.CustomLightingSettings;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
@@ -64,9 +63,7 @@ public class JEIREI {
 				.map($ -> MutableTriple.of($, (Component) null, 1))
 				.collect(Collectors.toCollection(ArrayList::new));
 		/* on */
-		for (PostAction action : recipe.getPostActions()) {
-			action.loadCatalystsInfo(recipe, ingredients);
-		}
+		recipe.getPostActions().forEach(action -> action.loadCatalystsInfo(recipe, ingredients));
 		if (!recipe.getType().compactInputs) {
 			return ingredients;
 		}

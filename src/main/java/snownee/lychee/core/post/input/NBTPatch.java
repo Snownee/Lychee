@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
 import snownee.lychee.Lychee;
+import snownee.lychee.LycheeConfig;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.ActionRuntime.State;
 import snownee.lychee.core.LycheeContext;
@@ -36,11 +37,28 @@ public class NBTPatch extends PostAction {
 	}
 
 	@Override
-	public void preApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void preApply(ILycheeRecipe<?> recipe, LycheeContext ctx, ILycheeRecipe.NBTPatchContext patchContext) {
 		Preconditions.checkNotNull(ctx.json);
+
+		JsonPointer from = patch.from;
+		if (from != null) {
+			from = patchContext.convertPath(from, (first, second) -> {
+				return "/" + recipe.getItemIndexes(new JsonPointer(first)).getInt(0) + second;
+			});
+		}
+		JsonPatch patchClone = new JsonPatch(patch.op, patch.path, from, patch.value);
+
 		try {
-			//			Lychee.LOGGER.info(ctx.json);
-			patch.apply(ctx.json); // we will never patch the root element here
+			if (recipe.isActionPath(patch.path)) {
+				patchClone.apply(ctx.json); // we will never patch the root element here
+			} else {
+				for (Integer index : recipe.getItemIndexes(patchContext.convertPath(patch.path, (first, second) -> first))) {
+					patchClone.path = patchContext.convertPath(patch.path, (first, second) -> "/" + index + second);
+					patchClone.apply(ctx.json);
+					if (LycheeConfig.debug)
+						Lychee.LOGGER.info(ctx.json);
+				}
+			}
 		} catch (Exception e) {
 			if (patch.op == JsonPatch.Type.test) {
 				ctx.runtime.state = State.STOPPED;
@@ -57,6 +75,16 @@ public class NBTPatch extends PostAction {
 		consumer.accept(patch.path);
 		if (patch.from != null) {
 			consumer.accept(patch.from);
+		}
+	}
+
+	@Override
+	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
+		Preconditions.checkArgument(patchContext.countTargets(recipe, patch.path) > 0, "No target found for %s", patch.path);
+		if (patch.from != null) {
+			int size = patchContext.countTargets(recipe, patch.from);
+			Preconditions.checkArgument(size > 0, "No source found for %s", patch.from);
+			Preconditions.checkArgument(size == 1, "Ambiguous source for %s", patch.from);
 		}
 	}
 
