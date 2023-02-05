@@ -116,6 +116,11 @@ public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingContext> impl
 	}
 
 	@Override
+	public List<BlockPredicate> getBlockInputs() {
+		return List.of(fallingBlock, landingBlock);
+	}
+
+	@Override
 	public int compareTo(BlockCrushingRecipe that) {
 		int i;
 		i = Integer.compare(getMaxRepeats().isAny() ? 1 : 0, that.getMaxRepeats().isAny() ? 1 : 0);

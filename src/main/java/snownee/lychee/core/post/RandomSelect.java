@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -110,8 +111,13 @@ public class RandomSelect extends PostAction {
 	}
 
 	@Override
-	public List<ItemStack> getOutputItems() {
-		return Stream.of(entries).flatMap($ -> $.getOutputItems().stream()).toList();
+	public List<ItemStack> getItemOutputs() {
+		return Stream.of(entries).map(PostAction::getItemOutputs).flatMap(List::stream).toList();
+	}
+
+	@Override
+	public List<BlockPredicate> getBlockOutputs() {
+		return Stream.of(entries).map(PostAction::getBlockOutputs).flatMap(List::stream).toList();
 	}
 
 	@Override

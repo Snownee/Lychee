@@ -46,8 +46,7 @@ public class DripstoneRecipeCategory extends BaseJEICategory<DripstoneContext, D
 	public void setRecipe(IRecipeLayoutBuilder builder, DripstoneRecipe recipe, IFocusGroup focuses) {
 		int y = recipe.getShowingPostActions().size() > 9 ? 26 : 28;
 		actionGroup(builder, recipe, getWidth() - 28, y);
-		addBlockInputs(builder, recipe.getSourceBlock());
-		addBlockInputs(builder, recipe.getBlock());
+		addBlockIngredients(builder, recipe);
 	}
 
 	@Override

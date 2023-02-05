@@ -10,12 +10,15 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.MutableTriple;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -29,6 +32,7 @@ import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.BlockKeyRecipe;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.LUtil;
@@ -53,7 +57,7 @@ public class JEIREI {
 			.build();
 	/* on */
 
-	public static List<MutableTriple<Ingredient, Component, Integer>> generateInputs(LycheeRecipe<?> recipe) {
+	public static List<MutableTriple<Ingredient, Component, Integer>> generateShapelessInputs(LycheeRecipe<?> recipe) {
 		/* off */
 		List<MutableTriple<Ingredient, Component, Integer>> ingredients = recipe.getIngredients()
 				.stream()
@@ -140,6 +144,19 @@ public class JEIREI {
 				registrar.accept(categoryId, context);
 			});
 		});
+	}
+
+	public static List<Component> getRecipeTooltip(ILycheeRecipe<?> recipe) {
+		List<Component> list = Lists.newArrayList();
+		if (!Strings.isNullOrEmpty(recipe.getComment())) {
+			String comment = recipe.getComment();
+			if (I18n.exists(comment)) {
+				comment = I18n.get(comment);
+			}
+			Splitter.on('\n').splitToStream(comment).map(Component::literal).forEach(list::add);
+		}
+		recipe.getContextualHolder().getConditonTooltips(list, 0);
+		return list;
 	}
 
 }

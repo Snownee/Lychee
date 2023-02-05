@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -45,7 +46,7 @@ public abstract class PostAction extends ContextualHolder {
 
 	protected abstract void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times);
 
-	public List<ItemStack> getOutputItems() {
+	public List<ItemStack> getItemOutputs() {
 		return List.of();
 	}
 
@@ -140,4 +141,7 @@ public abstract class PostAction extends ContextualHolder {
 	public void preApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 	}
 
+	public List<BlockPredicate> getBlockOutputs() {
+		return List.of();
+	}
 }

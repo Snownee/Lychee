@@ -261,6 +261,11 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	}
 
 	@Override
+	public Iterable<PostAction> getAllShowingActions() {
+		return Iterables.concat(actions, assembling);
+	}
+
+	@Override
 	public ContextualHolder getContextualHolder() {
 		return conditions;
 	}

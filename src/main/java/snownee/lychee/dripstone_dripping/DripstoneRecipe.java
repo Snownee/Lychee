@@ -1,5 +1,6 @@
 package snownee.lychee.dripstone_dripping;
 
+import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -101,6 +102,11 @@ public class DripstoneRecipe extends LycheeRecipe<DripstoneContext> implements B
 
 	public BlockPredicate getSourceBlock() {
 		return sourceBlock;
+	}
+
+	@Override
+	public List<BlockPredicate> getBlockInputs() {
+		return List.of(sourceBlock, targetBlock);
 	}
 
 	@Override

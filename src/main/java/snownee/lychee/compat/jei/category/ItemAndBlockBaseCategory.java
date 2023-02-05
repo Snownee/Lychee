@@ -78,7 +78,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 			ingredientGroup(builder, recipe, 12, 21);
 		}
 		actionGroup(builder, recipe, getWidth() - 29, y);
-		addBlockInputs(builder, getInputBlock(recipe));
+		addBlockIngredients(builder, recipe);
 	}
 
 	public void drawExtra(T recipe, PoseStack matrixStack, double mouseX, double mouseY, int centerX) {

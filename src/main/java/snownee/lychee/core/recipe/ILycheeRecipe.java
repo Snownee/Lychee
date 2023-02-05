@@ -9,13 +9,14 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.collect.Streams;
 import com.google.gson.JsonObject;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.resources.ResourceLocation;
-import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.Reference;
 import snownee.lychee.core.contextual.ContextualHolder;
@@ -70,6 +71,21 @@ public interface ILycheeRecipe<C extends LycheeContext> {
 			ctx.enqueueActions(getPostActions(), times, true);
 			ctx.runtime.run(this, ctx, times);
 		}
+	}
+
+	default List<BlockPredicate> getBlockInputs() {
+		if (this instanceof BlockKeyRecipe<?> blockKeyRecipe) {
+			return List.of(blockKeyRecipe.getBlock());
+		}
+		return List.of();
+	}
+
+	default List<BlockPredicate> getBlockOutputs() {
+		return Streams.stream(getAllShowingActions()).map(PostAction::getBlockOutputs).flatMap(List::stream).toList();
+	}
+
+	default Iterable<PostAction> getAllShowingActions() {
+		return getPostActions();
 	}
 
 	JsonSchema generateSchema(JsonObject jsonObject);
