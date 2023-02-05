@@ -43,7 +43,8 @@
   ],
   "client": [
     "GameRendererAccess",
-    "ClientPacketListenerMixin"
+    "ClientPacketListenerMixin",
+    "ClientRecipeBookMixin"
   ],
   "injectors": {
     "defaultRequire": 1,
