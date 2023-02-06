@@ -6,12 +6,12 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 
 ## Basic Format
 
-| Name        | Description                                                        | Type / Literal |
-| ----------- | ------------------------------------------------------------------ | -------------- |
-| type        | type                                                               | string         |
-| secret      | ^optional^displays as "???" in player's tooltip                    | boolean        |
-| description | ^optional^overrides the default description with a translation key | string         |
-|             | additional properties...                                           |                |
+| Name        | Description                                                         | Type / Literal |
+| ----------- | ------------------------------------------------------------------- | -------------- |
+| type        | type                                                                | string         |
+| secret      | displays as "???" in player's tooltip ^optional^                    | boolean        |
+| description | overrides the default description with a translation key ^optional^ | string         |
+|             | additional properties...                                            |                |
 
 !!! note
 
@@ -78,13 +78,13 @@ Checks if a `location_check` predicate is passed.
 
 !!! note "Format"
 
-    | Name      | Description                   | Type / Literal                                          |
-    | --------- | ----------------------------- | ------------------------------------------------------- |
-    | type      | type                          | "location"                                              |
-    | offsetX   | ^optional^offsets to location | int                                                     |
-    | offsetY   | ^optional^offsets to location | int                                                     |
-    | offsetZ   | ^optional^offsets to location | int                                                     |
-    | predicate | location predicate            | [LocationPredicate](general-types.md#locationpredicate) |
+    | Name      | Description                    | Type / Literal                                          |
+    | --------- | ------------------------------ | ------------------------------------------------------- |
+    | type      | type                           | "location"                                              |
+    | offsetX   | offsets to location ^optional^ | int                                                     |
+    | offsetY   | offsets to location ^optional^ | int                                                     |
+    | offsetZ   | offsets to location ^optional^ | int                                                     |
+    | predicate | location predicate             | [LocationPredicate](general-types.md#locationpredicate) |
 
 ??? example
 
@@ -161,11 +161,11 @@ Compares the current game time (the age of the world in game ticks) against give
 
 !!! note "Format"
 
-    | Name   | Description        | Type / Literal                          |
-    | ------ | ------------------ | --------------------------------------- |
-    | type   | type               | "time"                                  |
-    | value  | the time           | [IntBounds](general-types.md#intbounds) |
-    | period | ^optional^see wiki | int                                     |
+    | Name   | Description         | Type / Literal                          |
+    | ------ | ------------------- | --------------------------------------- |
+    | type   | type                | "time"                                  |
+    | value  | the time            | [IntBounds](general-types.md#intbounds) |
+    | period | see wiki ^optional^ | int                                     |
 
     See [Minecraft Wiki](https://minecraft.fandom.com/wiki/Predicate). Only supports constant value.
 
@@ -190,11 +190,11 @@ Executes a command and see if the range matches the return value.
 
 !!! note "Format"
 
-    | Name    | Description                            | Type / Literal                          |
-    | ------- | -------------------------------------- | --------------------------------------- |
-    | type    | type                                   | "execute"                               |
-    | command | the command to run                     | string                                  |
-    | value   | ^optional^the range. [1,+∞) by default | [IntBounds](general-types.md#intbounds) |
+    | Name    | Description                             | Type / Literal                          |
+    | ------- | --------------------------------------- | --------------------------------------- |
+    | type    | type                                    | "execute"                               |
+    | command | the command to run                      | string                                  |
+    | value   | the range. [1,+∞) by default ^optional^ | [IntBounds](general-types.md#intbounds) |
 
 ### Fall Distance Check
 
