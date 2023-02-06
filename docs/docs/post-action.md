@@ -97,11 +97,11 @@ Executes a command.
 
 !!! note "Format"
 
-    | Name    | Description                                              | Type / Literal |
-    | ------- | -------------------------------------------------------- | -------------- |
-    | type    | type                                                     | "execute"      |
-    | command | the command to run                                       | string         |
-    | hide    | hide this action in JEI/REI. false by default ^optional^ | boolean        |
+    | Name    | Description                                                       | Type / Literal |
+    | ------- | ----------------------------------------------------------------- | -------------- |
+    | type    | type                                                              | "execute"      |
+    | command | the command to run                                                | string         |
+    | hide    | hide this action in JEI/REI. ^optional^{ title="default: false" } | boolean        |
 
 ??? example
 
@@ -202,7 +202,7 @@ Causes damage to the entity.
     | damage | range of damage                                     | DoubleBounds   |
     | source | damage source type. "generic" by default ^optional^ | string         |
     
-    Source allowed values: generic, magic, out_of_world, anvil, wither, freeze, drown, fall, in_fire, on_fire, lava
+    Allowed values for `source`: generic, magic, out_of_world, anvil, wither, freeze, drown, fall, in_fire, on_fire, lava
 
 ??? example
 

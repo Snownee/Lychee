@@ -22,6 +22,7 @@ theme:
     features:
         - content.code.annotate
         - content.tabs.link
+        - content.tooltips
         - navigation.expand
     palette:
         - media: "(prefers-color-scheme: light)"
