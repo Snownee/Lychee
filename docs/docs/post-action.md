@@ -20,12 +20,12 @@ Spawns an item entity on the ground.
 
 !!! note "Format"
 
-    | Name  | Description                      | Type / Literal   |
-    | ----- | -------------------------------- | ---------------- |
-    | type  | type                             | "drop_item"      |
-    | item  | the item resource id             | string           |
-    | count | item amount ^optional^           | int              |
-    | nbt   | (Forge only) item nbt ^optional^ | object \| string |
+    | Name  | Description                                  | Type / Literal   |
+    | ----- | -------------------------------------------- | ---------------- |
+    | type  | type                                         | "drop_item"      |
+    | item  | the item resource id                         | string           |
+    | count | item amount ^optional^{ title="default: 1" } | int              |
+    | nbt   | (Forge only) item nbt ^optional^             | object \| string |
 
 ??? example
 
@@ -97,11 +97,11 @@ Executes a command.
 
 !!! note "Format"
 
-    | Name    | Description                                                   | Type / Literal |
-    | ------- | ------------------------------------------------------------- | -------------- |
-    | type    | type                                                          | "execute"      |
-    | command | the command to run                                            | string         |
-    | hide    | hide this action in JEI/REI. [^optional^](# "default: false") | boolean        |
+    | Name    | Description                                                      | Type / Literal |
+    | ------- | ---------------------------------------------------------------- | -------------- |
+    | type    | type                                                             | "execute"      |
+    | command | the command to run                                               | string         |
+    | hide    | hide this action in JEI/REI ^optional^{ title="default: false" } | boolean        |
 
 ??? example
 
@@ -196,11 +196,11 @@ Causes damage to the entity.
 
 !!! note "Format"
 
-    | Name   | Description                                         | Type / Literal |
-    | ------ | --------------------------------------------------- | -------------- |
-    | type   | type                                                | "hurt"         |
-    | damage | range of damage                                     | DoubleBounds   |
-    | source | damage source type. "generic" by default ^optional^ | string         |
+    | Name   | Description                                                 | Type / Literal                                |
+    | ------ | ----------------------------------------------------------- | --------------------------------------------- |
+    | type   | type                                                        | "hurt"                                        |
+    | damage | range of damage                                             | [DoubleBounds](general-types.md#doublebounds) |
+    | source | damage source type ^optional^{ title='default: "generic"' } | string                                        |
     
     Allowed values for `source`: generic, magic, out_of_world, anvil, wither, freeze, drown, fall, in_fire, on_fire, lava
 
@@ -264,10 +264,10 @@ Moves the anchored position in the context towards the direction that being inte
 
 !!! note "Format"
 
-    | Name   | Description                     | Type / Literal      |
-    | ------ | ------------------------------- | ------------------- |
-    | type   | type                            | "move_towards_face" |
-    | factor | factor. 1 by default ^optional^ | number              |
+    | Name   | Description                             | Type / Literal      |
+    | ------ | --------------------------------------- | ------------------- |
+    | type   | type                                    | "move_towards_face" |
+    | factor | factor ^optional^{ title="default: 1" } | number              |
 
 ### Delay
 
@@ -337,11 +337,11 @@ This action is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name   | Description                        | Type / Literal                              |
-    | ------ | ---------------------------------- | ------------------------------------------- |
-    | type   | type                               | "damage_item"                               |
-    | damage | damage ^optional^                  | int                                         |
-    | target | (optional, since 3.4) target items | [JsonPointer](general-types.md#jsonpointer) |
+    | Name   | Description                                        | Type / Literal                              |
+    | ------ | -------------------------------------------------- | ------------------------------------------- |
+    | type   | type                                               | "damage_item"                               |
+    | damage | damage ^optional^                                  | int                                         |
+    | target | target items ^optional^{ title="added since 3.4" } | [JsonPointer](general-types.md#jsonpointer) |
 
 ### Set Item
 

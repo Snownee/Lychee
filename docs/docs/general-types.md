@@ -112,10 +112,10 @@ Describes a inclusive range for integers.
 
 !!! note "Format"
 
-    | Name | Description                                    | Type / Literal |
-    | ---- | ---------------------------------------------- | -------------- |
-    | min  | minimum value. -infinity by default ^optional^ | int            |
-    | max  | maximum value. +infinity by default ^optional^ | int            |
+    | Name | Description                                            | Type / Literal |
+    | ---- | ------------------------------------------------------ | -------------- |
+    | min  | minimum value ^optional^{ title="default: -infinity" } | int            |
+    | max  | maximum value ^optional^{ title="default: +infinity" } | int            |
 
     IntBounds can also be a simple `int` to represent [n, n].
 
@@ -125,10 +125,10 @@ Describes a inclusive range for doubles.
 
 !!! note "Format"
 
-    | Name | Description                                    | Type / Literal |
-    | ---- | ---------------------------------------------- | -------------- |
-    | min  | minimum value. -infinity by default ^optional^ | number         |
-    | max  | maximum value. +infinity by default ^optional^ | number         |
+    | Name | Description                                            | Type / Literal |
+    | ---- | ------------------------------------------------------ | -------------- |
+    | min  | minimum value ^optional^{ title="default: -infinity" } | number         |
+    | max  | maximum value ^optional^{ title="default: +infinity" } | number         |
 
     DoubleBounds can also be a simple `number` to represent [n, n].
 
@@ -136,6 +136,6 @@ Describes a inclusive range for doubles.
 
 JsonPointer is a string syntax for identifying a specific value within a JSON. But the only thing you need to know is you should separate the path to the target with `/`.
 
-```
-/path/to/the/target
+``` json
+"/path/to/the/target"
 ```

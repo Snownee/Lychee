@@ -9,3 +9,7 @@
 .md-typeset table:not([class]) {
     display: table;
 }
+
+sup[title] {
+	font-weight: bold;
+}

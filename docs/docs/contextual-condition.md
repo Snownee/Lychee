@@ -190,11 +190,11 @@ Executes a command and see if the range matches the return value.
 
 !!! note "Format"
 
-    | Name    | Description                             | Type / Literal                          |
-    | ------- | --------------------------------------- | --------------------------------------- |
-    | type    | type                                    | "execute"                               |
-    | command | the command to run                      | string                                  |
-    | value   | the range. [1,+∞) by default ^optional^ | [IntBounds](general-types.md#intbounds) |
+    | Name    | Description                                     | Type / Literal                          |
+    | ------- | ----------------------------------------------- | --------------------------------------- |
+    | type    | type                                            | "execute"                               |
+    | command | the command to run                              | string                                  |
+    | value   | the range ^optional^{ title="default: [1,+∞)" } | [IntBounds](general-types.md#intbounds) |
 
 ### Fall Distance Check
 
