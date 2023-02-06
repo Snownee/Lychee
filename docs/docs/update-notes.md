@@ -3,6 +3,7 @@
 ## 3.7
 
  - Added item NBT patching.
+ - Allows to look up Lychee recipes through fluids.
  - Added anvil crafting recipe's comment and conditions display for REI (Fabric).
 
 ## 3.6

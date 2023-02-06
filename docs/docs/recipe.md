@@ -7,14 +7,14 @@
     | Name           | Description                                                                 | Type / Literal                                                                                     |
     | -------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
     | type           | type                                                                        | string                                                                                             |
-    | conditions     | (optional) conditions                                                       | [ForgeCondition](https://docs.minecraftforge.net/en/1.19.x/resources/server/conditional/)[]        |
-    | contextual     | (optional) contextual conditions                                            | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
-    | post           | (optional) post actions                                                     | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
-    | comment        | (optional) language key to show in JEI/REI                                  | string                                                                                             |
-    | ghost          | (optional) only show in JEI/REI but does not take effect                    | true \| false                                                                                      |
-    | hide_in_viewer | (optional) hide in JEI/REI                                                  | true \| false                                                                                      |
-    | group          | (optional) show this recipe in a new category in JEI/REI                    | string (ResourceLocation)                                                                          |
-    | max_repeats    | (optional) max repeats for a processing. not work for a unrepeatable recipe | int                                                                                                |
+    | conditions     | ^optional^conditions                                                       | [ForgeCondition](https://docs.minecraftforge.net/en/1.19.x/resources/server/conditional/)[]        |
+    | contextual     | ^optional^contextual conditions                                            | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+    | post           | ^optional^post actions                                                     | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
+    | comment        | ^optional^language key to show in JEI/REI                                  | string                                                                                             |
+    | ghost          | ^optional^only show in JEI/REI but does not take effect                    | true \| false                                                                                      |
+    | hide_in_viewer | ^optional^hide in JEI/REI                                                  | true \| false                                                                                      |
+    | group          | ^optional^show this recipe in a new category in JEI/REI                    | string (ResourceLocation)                                                                          |
+    | max_repeats    | ^optional^max repeats for a processing. not work for a unrepeatable recipe | int                                                                                                |
     |                | additional properties...                                                    |                                                                                                    |
 
 === "Fabric"
@@ -22,14 +22,14 @@
     | Name              | Description                                                                 | Type / Literal                                                                                     |
     | ----------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
     | type              | type                                                                        | string                                                                                             |
-    | fabric:conditions | (optional) conditions                                                       | [FabricCondition](https://github.com/FabricMC/fabric/pull/1656)[]                                  |
-    | contextual        | (optional) contextual conditions                                            | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
-    | post              | (optional) post actions                                                     | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
-    | comment           | (optional) language key to show in JEI/REI                                  | string                                                                                             |
-    | ghost             | (optional) only show in JEI/REI but does not take effect                    | true \| false                                                                                      |
-    | hide_in_viewer    | (optional) hide in JEI/REI                                                  | true \| false                                                                                      |
-    | group             | (optional) show this recipe in a new category in JEI/REI                    | string (ResourceLocation)                                                                          |
-    | max_repeats       | (optional) max repeats for a processing. not work for a unrepeatable recipe | int                                                                                                |
+    | fabric:conditions | ^optional^conditions                                                       | [FabricCondition](https://github.com/FabricMC/fabric/pull/1656)[]                                  |
+    | contextual        | ^optional^contextual conditions                                            | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+    | post              | ^optional^post actions                                                     | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
+    | comment           | ^optional^language key to show in JEI/REI                                  | string                                                                                             |
+    | ghost             | ^optional^only show in JEI/REI but does not take effect                    | true \| false                                                                                      |
+    | hide_in_viewer    | ^optional^hide in JEI/REI                                                  | true \| false                                                                                      |
+    | group             | ^optional^show this recipe in a new category in JEI/REI                    | string (ResourceLocation)                                                                          |
+    | max_repeats       | ^optional^max repeats for a processing. not work for a unrepeatable recipe | int                                                                                                |
     |                   | additional properties...                                                    |                                                                                                    |
 
 ## Recipe Types
@@ -189,7 +189,7 @@ Default behavior: Item is consumed.
     | type     | type                               | "lychee:item_inside"                                                                     |
     | item_in  | the ticking item(s)                | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
     | block_in | the block where the item(s) in     | [BlockPredicate](general-types.md#blockpredicate)                                        |
-    | time     | (optional) waiting time in seconds | int                                                                                      |
+    | time     | ^optional^waiting time in seconds | int                                                                                      |
 
     *Since 2.3, `item_in` can accept ingredient list.
 
@@ -279,9 +279,9 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
     | Name          | Description                                              | Type / Literal                                                                           |
     | ------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
     | type          | type                                                     | "lychee:block_crushing"                                                                  |
-    | item_in       | (optional) the crushed items                             | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | falling_block | (optional) the falling block. default are all the anvils | [BlockPredicate](general-types.md#blockpredicate)                                        |
-    | landing_block | (optional) the landing block. default is any block       | [BlockPredicate](general-types.md#blockpredicate)                                        |
+    | item_in       | ^optional^the crushed items                             | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | falling_block | ^optional^the falling block. default are all the anvils | [BlockPredicate](general-types.md#blockpredicate)                                        |
+    | landing_block | ^optional^the landing block. default is any block       | [BlockPredicate](general-types.md#blockpredicate)                                        |
 
 ??? example
 
@@ -361,7 +361,7 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
     | Name    | Description                           | Type / Literal                                                                           |
     | ------- | ------------------------------------- | ---------------------------------------------------------------------------------------- |
     | type    | type                                  | "lychee:lightning_channeling"                                                            |
-    | item_in | (optional) items nearby the lightning | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | item_in | ^optional^items nearby the lightning | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
 
 ??? example
 
@@ -392,7 +392,7 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
     | Name    | Description                                | Type / Literal                                                                           |
     | ------- | ------------------------------------------ | ---------------------------------------------------------------------------------------- |
     | type    | type                                       | "lychee:item_exploding"                                                                  |
-    | item_in | (optional) items affected by the explosion | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | item_in | ^optional^items affected by the explosion | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
 
 !!! note
 
@@ -411,7 +411,7 @@ Default behavior: Block drops items from loot table.
     | Name     | Description                                 | Type / Literal                                    |
     | -------- | ------------------------------------------- | ------------------------------------------------- |
     | type     | type                                        | "lychee:block_exploding"                          |
-    | block_in | (optional) block destroyed by the explosion | [BlockPredicate](general-types.md#blockpredicate) |
+    | block_in | ^optional^block destroyed by the explosion | [BlockPredicate](general-types.md#blockpredicate) |
 
 !!! note
 
@@ -490,8 +490,8 @@ Default behavior: none.
     | pattern    | same as vanilla                                                |                                                                |
     | key        | same as vanilla                                                |                                                                |
     | result     | same as vanilla                                                |                                                                |
-    | group      | (optional) same as vanilla                                     |                                                                |
-    | assembling | (optional) actions that running before the result is displayed | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
+    | group      | ^optional^same as vanilla                                     |                                                                |
+    | assembling | ^optional^actions that running before the result is displayed | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
 
 ??? example
 

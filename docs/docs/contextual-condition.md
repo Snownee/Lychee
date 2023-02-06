@@ -6,12 +6,12 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 
 ## Basic Format
 
-| Name        | Description                                                         | Type / Literal |
-| ----------- | ------------------------------------------------------------------- | -------------- |
-| type        | type                                                                | string         |
-| secret      | (optional) displays as "???" in player's tooltip                    | boolean        |
-| description | (optional) overrides the default description with a translation key | string         |
-|             | additional properties...                                            |                |
+| Name        | Description                                                        | Type / Literal |
+| ----------- | ------------------------------------------------------------------ | -------------- |
+| type        | type                                                               | string         |
+| secret      | ^optional^displays as "???" in player's tooltip                    | boolean        |
+| description | ^optional^overrides the default description with a translation key | string         |
+|             | additional properties...                                           |                |
 
 !!! note
 
@@ -19,7 +19,7 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 
 ## Built-in Conditions
 
-### Inverted (`not`)
+### Inverted
 
 Inverts another condition.
 
@@ -30,7 +30,7 @@ Inverts another condition.
     | type       | type        | "not"                                        |
     | contextual | condition   | [ContextualCondition](#contextual-condition) |
 
-### True for Any (`or`)
+### True for Any
 
 Checks if any of the wrapped conditions is passed.
 
@@ -41,7 +41,7 @@ Checks if any of the wrapped conditions is passed.
     | type       | type        | "or"                                           |
     | contextual | conditions  | [ContextualCondition](#contextual-condition)[] |
 
-### True for All (`and`)
+### True for All
 
 Checks if all the wrapped conditions are passed.
 
@@ -52,7 +52,7 @@ Checks if all the wrapped conditions are passed.
     | type       | type        | "and"                                          |
     | contextual | conditions  | [ContextualCondition](#contextual-condition)[] |
 
-### Random Chance (`chance`)
+### Random Chance
 
 Generates a random number between 0.0 and 1.0, and checks if it is less than a specified value.
 
@@ -72,19 +72,19 @@ Generates a random number between 0.0 and 1.0, and checks if it is less than a s
 	}
 	```
 
-### Location Check (`location`)
+### Location Check
 
 Checks if a `location_check` predicate is passed.
 
 !!! note "Format"
 
-    | Name      | Description                    | Type / Literal                                          |
-    | --------- | ------------------------------ | ------------------------------------------------------- |
-    | type      | type                           | "location"                                              |
-    | offsetX   | (optional) offsets to location | int                                                     |
-    | offsetY   | (optional) offsets to location | int                                                     |
-    | offsetZ   | (optional) offsets to location | int                                                     |
-    | predicate | location predicate             | [LocationPredicate](general-types.md#locationpredicate) |
+    | Name      | Description                   | Type / Literal                                          |
+    | --------- | ----------------------------- | ------------------------------------------------------- |
+    | type      | type                          | "location"                                              |
+    | offsetX   | ^optional^offsets to location | int                                                     |
+    | offsetY   | ^optional^offsets to location | int                                                     |
+    | offsetZ   | ^optional^offsets to location | int                                                     |
+    | predicate | location predicate            | [LocationPredicate](general-types.md#locationpredicate) |
 
 ??? example
 
@@ -122,7 +122,7 @@ Special usage: you can use `lychee:biome_tag` option to specify biome tag.
 
 	Fluid state predicate is not supported yet. (because I am lazy)
 
-### Weather Check (`weather`)
+### Weather Check
 
 Checks weather.
 
@@ -133,7 +133,7 @@ Checks weather.
     | type    | type        | "weather"                      |
     | weather | weather     | "clear" \| "rain" \| "thunder" |
 
-### Difficulty Check (`difficulty`)
+### Difficulty Check
 
 Checks if world is in any of the listed difficulties.
 
@@ -155,17 +155,17 @@ Checks if world is in any of the listed difficulties.
 	}
 	```
 
-### Time Check (`time`)
+### Time Check
 
 Compares the current game time (the age of the world in game ticks) against given values.
 
 !!! note "Format"
 
-    | Name   | Description         | Type / Literal                          |
-    | ------ | ------------------- | --------------------------------------- |
-    | type   | type                | "time"                                  |
-    | value  | the time            | [IntBounds](general-types.md#intbounds) |
-    | period | (optional) see wiki | int                                     |
+    | Name   | Description        | Type / Literal                          |
+    | ------ | ------------------ | --------------------------------------- |
+    | type   | type               | "time"                                  |
+    | value  | the time           | [IntBounds](general-types.md#intbounds) |
+    | period | ^optional^see wiki | int                                     |
 
     See [Minecraft Wiki](https://minecraft.fandom.com/wiki/Predicate). Only supports constant value.
 
@@ -184,19 +184,19 @@ Compares the current game time (the age of the world in game ticks) against give
 	}
 	```
 
-### Command Check (`execute`)
+### Command Check
 
 Executes a command and see if the range matches the return value.
 
 !!! note "Format"
 
-    | Name    | Description                             | Type / Literal                          |
-    | ------- | --------------------------------------- | --------------------------------------- |
-    | type    | type                                    | "execute"                               |
-    | command | the command to run                      | string                                  |
-    | value   | (optional) the range. [1,+∞) by default | [IntBounds](general-types.md#intbounds) |
+    | Name    | Description                            | Type / Literal                          |
+    | ------- | -------------------------------------- | --------------------------------------- |
+    | type    | type                                   | "execute"                               |
+    | command | the command to run                     | string                                  |
+    | value   | ^optional^the range. [1,+∞) by default | [IntBounds](general-types.md#intbounds) |
 
-### Fall Distance Check (`fall_distance`)
+### Fall Distance Check
 
 Checks entity fall distance. Mainly for block crushing recipes.
 
@@ -207,7 +207,7 @@ Checks entity fall distance. Mainly for block crushing recipes.
     | type  | type        | "fall_distance"                               |
     | range | the range   | [DoubleBounds](general-types.md#doublebounds) |
 
-### Entity Health Check (`entity_health`)
+### Entity Health Check
 
 Checks if entity's is in a range.
 
@@ -246,7 +246,7 @@ Checks if entity's is in a range.
 	}
 	```
 
-### Requires Entity Crouching (`is_sneaking`)
+### Requires Entity Crouching
 
 Checks if entity is crouching/sneaking.
 
@@ -256,7 +256,7 @@ Checks if entity is crouching/sneaking.
     | ---- | ----------- | -------------- |
     | type | type        | "is_sneaking"  |
 
-### Direction Check (`direction`)
+### Direction Check
 
 *Not implemented for Fabric 1.18.2*
 
@@ -271,7 +271,7 @@ Checks the direction that being interacted. Only works for interaction recipes.
 
 		Allowed value for "direction": "up", "down", "north", "south", "east", "west", "side", "forward"
 
-### Check Parameter (`check_param`)
+### Check Parameter
 
 *Since: 3.4*
 
