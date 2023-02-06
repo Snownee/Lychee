@@ -97,11 +97,11 @@ Executes a command.
 
 !!! note "Format"
 
-    | Name    | Description                                                       | Type / Literal |
-    | ------- | ----------------------------------------------------------------- | -------------- |
-    | type    | type                                                              | "execute"      |
-    | command | the command to run                                                | string         |
-    | hide    | hide this action in JEI/REI. ^optional^{ title="default: false" } | boolean        |
+    | Name    | Description                                                   | Type / Literal |
+    | ------- | ------------------------------------------------------------- | -------------- |
+    | type    | type                                                          | "execute"      |
+    | command | the command to run                                            | string         |
+    | hide    | hide this action in JEI/REI. [^optional^](# "default: false") | boolean        |
 
 ??? example
 
