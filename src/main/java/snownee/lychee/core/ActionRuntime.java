@@ -29,7 +29,7 @@ public class ActionRuntime {
 	}
 
 	public void run(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		ILycheeRecipe.NBTPatchContext patchContext = ILycheeRecipe.patchContexts.get(recipe.getId());
+		ILycheeRecipe.NBTPatchContext patchContext = ILycheeRecipe.patchContexts.get(recipe.lychee$getId());
 		if (patchContext != null && ctx.json == null) {
 			ctx.json = patchContext.template().deepCopy();
 			for (Integer index : patchContext.usedIndexes()) {

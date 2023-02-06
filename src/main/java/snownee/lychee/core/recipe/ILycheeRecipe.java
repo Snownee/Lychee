@@ -25,6 +25,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.Recipe;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.Reference;
@@ -40,7 +41,9 @@ public interface ILycheeRecipe<C extends LycheeContext> {
 	JsonPointer RESULT = new JsonPointer("/result");
 	JsonPointer POST = new JsonPointer("/post");
 
-	ResourceLocation getId();
+	default ResourceLocation lychee$getId() {
+		return ((Recipe<?>) this).getId();
+	}
 
 	default IntList getItemIndexes(Reference reference) {
 		JsonPointer pointer = null;
@@ -178,9 +181,9 @@ public interface ILycheeRecipe<C extends LycheeContext> {
 				}
 			}
 			patchContext.setValue(new NBTPatchContext(jsonObject, usedIndexes, splits));
-			patchContexts.put(recipe.getId(), patchContext.getValue());
+			patchContexts.put(recipe.lychee$getId(), patchContext.getValue());
 		} else { // here we remove data from the last reload
-			patchContexts.remove(recipe.getId());
+			patchContexts.remove(recipe.lychee$getId());
 		}
 		recipe.getAllActions().forEach(action -> {
 			try {
