@@ -12,6 +12,7 @@ nav:
     - "General Types": general-types.md
     - Advanced:
         - Concepts: concepts.md
+        - Fragment: fragment.md
     - "Update Notes": update-notes.md
 
 theme:

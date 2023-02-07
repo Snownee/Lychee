@@ -1,5 +1,9 @@
 # Update Notes
 
+## 3.8
+
+ - Added fragment system.
+
 ## 3.7
 
  - Added item NBT patching.
