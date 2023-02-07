@@ -120,6 +120,7 @@ jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude '/data/lychee/recipes'
     exclude '/data/lychee/predicates'
+    exclude '/data/lychee/lychee_fragments'
     
     exclude '**/*.bat'
     from("LICENSE") {
