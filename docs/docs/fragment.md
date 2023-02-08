@@ -142,7 +142,6 @@ You can define variables together with the fragment path, and reference it in th
         }
       ]
     }
-
     ```
 
 === "`lychee_fragments/comment.json`"
@@ -151,16 +150,4 @@ You can define variables together with the fragment path, and reference it in th
     {
       "value": "An example of ${name}"
     }
-
-
-
-
-
-
-
-
-
-
-
-    
     ```
