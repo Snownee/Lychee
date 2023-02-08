@@ -30,7 +30,7 @@ public class Fragments extends SimpleJsonResourceReloadListener {
 	}
 
 	public void process(JsonElement json) {
-		if (!LycheeConfig.enableFragment)
+		if (!LycheeConfig.enableFragment || fragments.isEmpty())
 			return;
 		try {
 			JsonFragment.process(json, new JsonFragment.Context(fragments::get, Maps.newHashMap()));
