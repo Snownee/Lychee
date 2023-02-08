@@ -358,3 +358,80 @@ This action is not [repeatable](concepts.md#repeatability).
     | item   | the item resource id             | string                                      |
     | count  | item amount ^optional^           | int                                         |
     | nbt    | (Forge only) item nbt ^optional^ | object \| string                            |
+
+### NBT Patch
+
+NBT patch the inputs or the results. It is mainly used to modify NBT of the results. For rules, please refer to [JSON Patch | jsonpatch.com](https://jsonpatch.com/) and [RFC 7386: JSON Merge Patch](https://www.rfc-editor.org/rfc/rfc7386).
+
+!!! note "Format"
+
+    | Name  | Description       | Type / Literal |
+    | ----- | ----------------- | -------------- |
+    | type  | type              | "nbt_patch"    |
+    | op    | operation type    | string         |
+    | path  | target            | string         |
+    | from  | source ^optional^ | string         |
+    | value | value ^optional^  | any            |
+
+Here, Lychee adds a new operation type called "deep_merge", which does exactly what its name implies.
+
+!!! note
+
+		This action will be executed before any other action, regardless of its position in all actions.
+
+??? example
+
+	```json
+	{
+		"type": "lychee:crafting",
+		"comment": "Test",
+		"pattern": [
+			"AA",
+			"BB"
+		],
+		"key": {
+			"A": {
+				"item": "feather"
+			},
+			"B": {
+				"item": "stone"
+			}
+		},
+		"result": {
+			"item": "pufferfish_bucket"
+		},
+		"post": [
+			{
+				"type": "nbt_patch",
+				"op": "deep_merge",
+				"path": "/post/1",
+				"value": {
+					"tag": {
+						"display": {
+							"Name": "{\"text\":\"Test\"}"
+						}
+					}
+				}
+			},
+			{
+				"type": "set_item",
+				"target": "/key/A",
+				"item": "feather"
+			}
+		],
+		"assembling": [
+			{
+				"type": "nbt_patch",
+				"op": "deep_merge",
+				"path": "/result",
+				"value": {
+					"tag": {
+						"display": {
+							"Name": "{\"text\":\"Test\"}"
+						}
+					}
+				}
+			}
+		]
+	}
+	```
