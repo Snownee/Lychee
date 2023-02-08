@@ -48,6 +48,7 @@ import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.post.input.SetItem;
 import snownee.lychee.core.recipe.ILycheeRecipe;
+import snownee.lychee.fragment.Fragments;
 import snownee.lychee.mixin.CraftingContainerAccess;
 import snownee.lychee.mixin.CraftingMenuAccess;
 import snownee.lychee.mixin.InventoryMenuAccess;
@@ -307,6 +308,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	public static class Serializer implements RecipeSerializer<ShapedCraftingRecipe> {
 		@Override
 		public ShapedCraftingRecipe fromJson(ResourceLocation id, JsonObject jsonObject) {
+			Fragments.INSTANCE.process(jsonObject);
 			ShapedCraftingRecipe recipe = fromNormal(RecipeSerializer.SHAPED_RECIPE.fromJson(id, jsonObject));
 			recipe.hideInRecipeViewer = GsonHelper.getAsBoolean(jsonObject, "hide_in_viewer", false);
 			recipe.ghost = GsonHelper.getAsBoolean(jsonObject, "ghost", false);

@@ -5,6 +5,9 @@ import snownee.kiwi.config.KiwiConfig;
 @KiwiConfig
 public final class LycheeConfig {
 
-	public static boolean debug = false;
+	@KiwiConfig.Path("debug.enable")
+	public static boolean debug;
+	@KiwiConfig.Path("fragment.enable")
+	public static boolean enableFragment = true;
 
 }

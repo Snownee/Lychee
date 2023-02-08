@@ -58,7 +58,7 @@ public final class Lychee {
 	}
 
 	@SubscribeEvent
-	public static void RegisterRecipeBookCategories(RegisterRecipeBookCategoriesEvent event) {
+	public static void registerRecipeBookCategories(RegisterRecipeBookCategoriesEvent event) {
 		Function<Recipe<?>, RecipeBookCategories> lookup = $ -> RecipeBookCategories.UNKNOWN;
 		RecipeTypes.ALL.forEach($ -> event.registerRecipeCategoryFinder($, lookup));
 	}

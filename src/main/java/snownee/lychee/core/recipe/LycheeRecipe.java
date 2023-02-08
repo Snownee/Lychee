@@ -33,6 +33,7 @@ import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.fragment.Fragments;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.json.JsonPointer;
 
@@ -152,6 +153,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 		@Override
 		public final R fromJson(ResourceLocation pRecipeId, JsonObject jsonObject) {
+			Fragments.INSTANCE.process(jsonObject);
 			R recipe = factory.apply(pRecipeId);
 			recipe.hideInRecipeViewer = GsonHelper.getAsBoolean(jsonObject, "hide_in_viewer", false);
 			recipe.ghost = GsonHelper.getAsBoolean(jsonObject, "ghost", false);
