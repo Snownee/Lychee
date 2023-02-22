@@ -1,10 +1,12 @@
 package snownee.lychee.item_inside;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
@@ -13,10 +15,9 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
 
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2FloatMap;
+import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -52,31 +53,14 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 		specialRecipes.clear();
 		recipesByItem.clear();
 		super.buildCache();
-		recipes.forEach(ItemInsideRecipe::buildCache);
-		Object2IntMap<Item> itemCount = new Object2IntOpenHashMap<>();
-		Set<ItemInsideRecipe> simpleRecipes = Sets.newLinkedHashSet();
-		for (ItemInsideRecipe recipe : recipes) {
-			if (recipe.isSpecial()) {
-				specialRecipes.add(recipe);
-				continue;
-			}
-			simpleRecipes.add(recipe);
-			for (Item item : recipe.cachedItemList) {
-				itemCount.mergeInt(item, 1, Integer::sum);
-			}
-		}
-		List<Item> sorted = itemCount.object2IntEntrySet().stream().sorted(Comparator.comparingInt(Object2IntMap.Entry::getIntValue)).map(Object2IntMap.Entry::getKey).toList();
-		for (Item selectedItem : sorted) {
-			if (itemCount.getInt(selectedItem) <= 0) {
-				continue;
-			}
-			simpleRecipes.removeIf(recipe -> {
-				if (recipe.cachedItemList.contains(selectedItem)) {
-					for (Item item : recipe.cachedItemList) {
-						itemCount.mergeInt(item, -1, Integer::sum);
-					}
-					recipesByItem.put(selectedItem, recipe);
-					return true;
+		Object2FloatMap<Item> itemCount = new Object2FloatOpenHashMap<>();
+		List<Cache> caches = recipes.stream().map($ -> $.buildCache(itemCount, specialRecipes)).filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
+		List<Item> sorted = itemCount.object2FloatEntrySet().stream().sorted((a, b) -> Float.compare(b.getFloatValue(), a.getFloatValue())).map(Object2FloatMap.Entry::getKey).toList();
+		for (Item item : sorted) {
+			caches.removeIf(cache -> {
+				if (cache.ingredients.stream().anyMatch($ -> $.contains(item))) {
+					recipesByItem.put(item, cache.recipe);
+					return cache.ingredients.stream().peek($ -> $.remove(item)).anyMatch(Set::isEmpty);
 				}
 				return false;
 			});
@@ -123,6 +107,9 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 			((LycheeCounter) entity).lychee$update(prevRecipeId.getValue(), recipe);
 			return recipe.tickOrApply(ctx);
 		});
+	}
+
+	static record Cache(ItemInsideRecipe recipe, List<Set<Item>> ingredients) {
 	}
 
 }
