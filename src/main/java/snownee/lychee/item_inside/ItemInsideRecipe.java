@@ -2,11 +2,15 @@ package snownee.lychee.item_inside;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.Set;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 import com.google.gson.JsonObject;
 
+import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -26,6 +30,7 @@ import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.item_inside.ItemInsideRecipeType.Cache;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.RecipeMatcher;
 
@@ -33,7 +38,6 @@ public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe> impl
 
 	private int time;
 	protected BlockPredicate block;
-	List<Item> cachedItemList;
 	private boolean special;
 
 	public ItemInsideRecipe(ResourceLocation id) {
@@ -92,20 +96,28 @@ public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe> impl
 		return block;
 	}
 
-	public void buildCache() {
-		cachedItemList = null;
+	@Nullable
+	public Cache buildCache(Object2FloatMap<Item> itemWeights, List<ItemInsideRecipe> specialRecipes) {
 		special = !getIngredients().stream().anyMatch(LUtil::isSimpleIngredient);
-		if (special)
-			return;
+		if (special) {
+			specialRecipes.add(this);
+			return null;
+		}
 		/* off */
-		cachedItemList = getIngredients().stream()
-				.filter(LUtil::isSimpleIngredient)
+		var mappedIngredients = getIngredients().stream()
 				.map(Ingredient::getItems)
-				.flatMap(Stream::of)
-				.map(ItemStack::getItem)
-				.distinct()
+				.map($ -> {
+					Set<Item> items = Sets.newHashSet();
+					float weight = 1F / $.length;
+					for (ItemStack stack : $) {
+						items.add(stack.getItem());
+						itemWeights.merge(stack.getItem(), weight, (a, b) -> a + b);
+					}
+					return items;
+				})
 				.toList();
 		/* on */
+		return new Cache(this, mappedIngredients);
 	}
 
 	@Override
