@@ -3,10 +3,12 @@ package snownee.lychee.core.post;
 import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Marker;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import snownee.lychee.Lychee;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.ActionRuntime.State;
 import snownee.lychee.core.LycheeContext;
@@ -41,9 +43,11 @@ public class Delay extends PostAction {
 	}
 
 	public static void makeMarker(ILycheeRecipe<?> recipe, LycheeContext ctx) {
-		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
 		Marker marker = EntityType.MARKER.create(ctx.getLevel());
-		marker.moveTo(pos);
+		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
+		if (pos != null)
+			marker.moveTo(pos);
+		marker.setCustomName(Component.literal(Lychee.ID));
 		ctx.getLevel().addFreshEntity(marker);
 		LycheeMarker lycheeMarker = (LycheeMarker) marker;
 		lycheeMarker.lychee$setContext(recipe, ctx);

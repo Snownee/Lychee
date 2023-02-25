@@ -199,8 +199,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 				fromNetwork(recipe, buf);
 				return recipe;
 			} catch (Exception e) {
-				Lychee.LOGGER.error("Exception while reading Lychee recipe: {}", id);
-				Lychee.LOGGER.catching(e);
+				Lychee.LOGGER.error("Exception while reading Lychee recipe: " + id, e);
 				return null;
 			}
 		}

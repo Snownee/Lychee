@@ -78,7 +78,7 @@ public class DripstoneRecipeMod implements ModInitializer {
 				return new DripParticleHandler.Simple(color, defaultState.getLightEmission() > 4);
 			});
 		} catch (ExecutionException e) {
-			Lychee.LOGGER.catching(e);
+			Lychee.LOGGER.error("", e);
 		}
 		return null;
 	}

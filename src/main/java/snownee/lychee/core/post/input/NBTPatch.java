@@ -56,7 +56,7 @@ public class NBTPatch extends PostAction {
 					patchClone.path = patchContext.convertPath(patch.path, (first, second) -> "/" + index + second);
 					patchClone.apply(ctx.json);
 					if (LycheeConfig.debug)
-						Lychee.LOGGER.info(ctx.json);
+						Lychee.LOGGER.info(ctx.json.toString());
 				}
 			}
 		} catch (Exception e) {

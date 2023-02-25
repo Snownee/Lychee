@@ -194,7 +194,7 @@ public class REICompat implements REIClientPlugin {
 				return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
 			}).map(AnvilCraftingDisplay::new).forEach(registration::add);
 		} catch (Throwable e) {
-			Lychee.LOGGER.catching(e);
+			Lychee.LOGGER.error("", e);
 		}
 
 		registration.registerVisibilityPredicate((DisplayCategory<?> category, Display display) -> {
