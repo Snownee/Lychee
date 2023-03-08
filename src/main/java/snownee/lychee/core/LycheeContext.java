@@ -174,6 +174,7 @@ public class LycheeContext extends EmptyContainer {
 		var builder = new LycheeContext.Builder<>(marker.getEntity().level);
 		builder.withParameter(LootContextParams.ORIGIN, marker.getEntity().position());
 		LycheeContext ctx = builder.create(LycheeLootContextParamSets.ALL);
+		ctx.runtime = new ActionRuntime();
 		ctx.runtime.doDefault = jsonObject.get("doDefault").getAsBoolean();
 		JsonArray jobs = jsonObject.getAsJsonArray("jobs");
 		JsonArray jobRepeats = jsonObject.getAsJsonArray("jobRepeats");
