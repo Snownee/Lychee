@@ -12,7 +12,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
@@ -35,9 +34,8 @@ public class InteractionRecipeMod implements ModInitializer {
 		if (player.getCooldowns().isOnCooldown(stack.getItem()))
 			return InteractionResult.PASS;
 		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(world);
-		builder.withParameter(LootContextParams.TOOL, stack);
 		builder.withParameter(LycheeLootContextParams.DIRECTION, hitResult.getDirection());
-		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(player, hand, stack, hitResult.getBlockPos(), hitResult.getLocation(), builder);
+		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(player, hand, hitResult.getBlockPos(), hitResult.getLocation(), builder);
 		if (result.isPresent()) {
 			return InteractionResult.SUCCESS;
 		}
@@ -53,9 +51,8 @@ public class InteractionRecipeMod implements ModInitializer {
 			return InteractionResult.PASS;
 		Vec3 vec = Vec3.atCenterOf(pos);
 		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(world);
-		builder.withParameter(LootContextParams.TOOL, stack);
 		builder.withParameter(LycheeLootContextParams.DIRECTION, direction);
-		Optional<BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(player, hand, stack, pos, vec, builder);
+		Optional<BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(player, hand, pos, vec, builder);
 		if (result.isPresent()) {
 			return InteractionResult.SUCCESS;
 		}

@@ -111,7 +111,7 @@ public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe> impl
 					float weight = 1F / $.length;
 					for (ItemStack stack : $) {
 						items.add(stack.getItem());
-						itemWeights.merge(stack.getItem(), weight, (a, b) -> a + b);
+						itemWeights.merge(stack.getItem(), weight, Float::sum);
 					}
 					return items;
 				})

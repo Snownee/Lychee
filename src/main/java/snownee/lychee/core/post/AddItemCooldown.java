@@ -31,7 +31,7 @@ public class AddItemCooldown extends PostAction {
 	@Override
 	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Player player = (Player) ctx.getParam(LootContextParams.THIS_ENTITY);
-		ItemStack stack = ctx.getParam(LootContextParams.TOOL);
+		ItemStack stack = ctx.getItem(0);
 		player.getCooldowns().addCooldown(stack.getItem(), (int) (seconds * 20 * times));
 	}
 

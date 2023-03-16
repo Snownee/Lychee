@@ -1,0 +1,24 @@
+{
+  "type": "lychee:block_interacting",
+  "item_in": [
+    {
+      "item": "iron_ingot"
+    },
+    {
+      "item": "flint"
+    }
+  ],
+  "block_in": "*",
+  "post": [
+    {
+      "type": "move_towards_face"
+    },
+    {
+      "type": "place",
+      "block": "fire"
+    },
+    {
+      "type": "prevent_default"
+    }
+  ]
+}

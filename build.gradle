@@ -35,6 +35,13 @@ repositories {
         url = "https://mvn.devos.one/snapshots/"
     }
     maven { url = "https://api.modrinth.com/maven" }
+    maven {
+        // saps.dev Maven (KubeJS and Rhino)
+        url = "https://maven.saps.dev/minecraft"
+        content {
+            includeGroup "dev.latvian.mods"
+        }
+    }
     flatDir { dir 'libs' }
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
@@ -76,10 +83,12 @@ dependencies {
 
     modImplementation "curse.maven:kiwi-549404:3909202"
     annotationProcessor "curse.maven:kiwi-549404:3909202"
-    
+
     modImplementation "curse.maven:ingredient-extension-api-557735:4134668"
-    
+
     modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
+
+    modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
 }
 
 loom {
@@ -121,7 +130,7 @@ jar {
     exclude '/data/lychee/recipes'
     exclude '/data/lychee/predicates'
     exclude '/data/lychee/lychee_fragments'
-    
+
     exclude '**/*.bat'
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }

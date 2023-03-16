@@ -36,6 +36,7 @@ import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.interaction.BlockInteractingRecipe;
 import snownee.lychee.util.LUtil;
 
 public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> extends BaseREICategory<C, T, D> {
@@ -116,6 +117,8 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		int y = recipe.getIngredients().size() > 9 || recipe.showingActionsCount() > 9 ? 26 : 28;
 		if (recipe instanceof ItemShapelessRecipe) {
 			ingredientGroup(widgets, startPoint, recipe, 40, y);
+		} else if (recipe instanceof BlockInteractingRecipe) {
+			ingredientGroup(widgets, startPoint, recipe, 22, 21);
 		} else {
 			ingredientGroup(widgets, startPoint, recipe, 12, 21);
 		}

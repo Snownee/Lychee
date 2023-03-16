@@ -21,6 +21,9 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Lyc
 
 	public BlockInteractionRecipeCategory(List<BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe>> recipeTypes, ScreenElement mainIcon) {
 		super(List.copyOf(recipeTypes), mainIcon);
+		inputBlockRect.setX(inputBlockRect.getX() + 18);
+		methodRect.setX(methodRect.getX() + 18);
+		infoRect.setX(infoRect.getX() + 10);
 	}
 
 	@Override
@@ -43,12 +46,17 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Lyc
 		} else {
 			icon = recipe.getType() == RecipeTypes.BLOCK_CLICKING ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
 		}
-		icon.render(matrixStack, 33, 15);
+		icon.render(matrixStack, 51, 15);
 	}
 
 	private KeyMapping getKeyMapping(BlockInteractingRecipe recipe) {
 		boolean click = recipe.getType() == RecipeTypes.BLOCK_CLICKING;
 		return click ? Minecraft.getInstance().options.keyAttack : Minecraft.getInstance().options.keyUse;
+	}
+	
+	@Override
+	public int getWidth() {
+		return super.getWidth() + 20;
 	}
 
 }
