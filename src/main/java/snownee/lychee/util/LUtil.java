@@ -45,6 +45,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
+import snownee.lychee.core.contextual.CustomCondition;
 import snownee.lychee.core.post.CustomAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.RecipeManagerAccess;
@@ -54,6 +55,14 @@ public class LUtil {
 	public static final Event<CustomActionListener> CUSTOM_ACTION_EVENT = EventFactory.createArrayBacked(CustomActionListener.class, listeners -> (id, action, recipe, patchContext) -> {
 		for (CustomActionListener listener : listeners) {
 			if (listener.on(id, action, recipe, patchContext)) {
+				return true;
+			}
+		}
+		return false;
+	});
+	public static final Event<CustomConditionListener> CUSTOM_CONDITION_EVENT = EventFactory.createArrayBacked(CustomConditionListener.class, listeners -> (id, condition) -> {
+		for (CustomConditionListener listener : listeners) {
+			if (listener.on(id, condition)) {
 				return true;
 			}
 		}
@@ -271,11 +280,23 @@ public class LUtil {
 		CUSTOM_ACTION_EVENT.register(listener);
 	}
 
+	public static void registerCustomConditionListener(CustomConditionListener listener) {
+		CUSTOM_CONDITION_EVENT.register(listener);
+	}
+
 	public static void postCustomActionEvent(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 		CUSTOM_ACTION_EVENT.invoker().on(id, action, recipe, patchContext);
 	}
 
+	public static void postCustomConditionEvent(String id, CustomCondition condition) {
+		CUSTOM_CONDITION_EVENT.invoker().on(id, condition);
+	}
+
 	public interface CustomActionListener {
 		boolean on(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext);
+	}
+
+	public interface CustomConditionListener {
+		boolean on(String id, CustomCondition condition);
 	}
 }
