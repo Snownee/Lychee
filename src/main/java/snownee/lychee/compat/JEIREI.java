@@ -109,6 +109,9 @@ public class JEIREI {
 		for (T object : recipes) {
 			BlockKeyRecipe<?> recipe = (BlockKeyRecipe<?>) object;
 			for (Block block : BlockPredicateHelper.getMatchedBlocks(recipe.getBlock())) {
+				if (block.defaultBlockState().isAir()) {
+					continue;
+				}
 				blockStateCount.mergeInt(block, 1, Integer::sum);
 				blockPredicateMap.putIfAbsent(block, recipe.getBlock());
 			}
