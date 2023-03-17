@@ -11,7 +11,7 @@ import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.item_inside.ItemInsideRecipe;
 import snownee.lychee.item_inside.ItemInsideRecipeType;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.ClientProxy;
 
 public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemShapelessContext, ItemInsideRecipe, BaseREIDisplay<ItemInsideRecipe>> {
 
@@ -26,7 +26,7 @@ public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemShape
 	public List<Widget> setupDisplay(BaseREIDisplay<ItemInsideRecipe> display, Rectangle bounds) {
 		List<Widget> widgets = super.setupDisplay(display, bounds);
 		if (display.recipe.getTime() > 0) {
-			widgets.add(Widgets.createLabel(new Point(bounds.x + methodRect.getX() + 10, bounds.y + methodRect.getY() - 6), LUtil.format("tip.lychee.sec", display.recipe.getTime())).color(0xFF666666, 0xFFBBBBBB).noShadow().centered());
+			widgets.add(Widgets.createLabel(new Point(bounds.x + methodRect.getX() + 10, bounds.y + methodRect.getY() - 6), ClientProxy.format("tip.lychee.sec", display.recipe.getTime())).color(0xFF666666, 0xFFBBBBBB).noShadow().centered());
 		}
 		return widgets;
 	}

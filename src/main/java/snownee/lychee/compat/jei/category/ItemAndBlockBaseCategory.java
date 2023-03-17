@@ -143,7 +143,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		if (getClass() != ItemBurningRecipeCategory.class && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
 			return clickBlock(getRenderingBlock(recipe), input);
 		}
-		return false;
+		return super.handleInput(recipe, mouseX, mouseY, input);
 	}
 
 }

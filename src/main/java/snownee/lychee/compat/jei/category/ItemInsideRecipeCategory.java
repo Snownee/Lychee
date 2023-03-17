@@ -11,7 +11,7 @@ import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.item_inside.ItemInsideRecipe;
 import snownee.lychee.item_inside.ItemInsideRecipeType;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.ClientProxy;
 
 public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemShapelessContext, ItemInsideRecipe> {
 
@@ -26,7 +26,7 @@ public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemShape
 	public void drawExtra(ItemInsideRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY, int centerX) {
 		super.drawExtra(recipe, matrixStack, mouseX, mouseY, centerX);
 		if (recipe.getTime() > 0) {
-			Component component = LUtil.format("tip.lychee.sec", recipe.getTime());
+			Component component = ClientProxy.format("tip.lychee.sec", recipe.getTime());
 			Font font = Minecraft.getInstance().font;
 			font.draw(matrixStack, component, methodRect.getX() + 10 - font.width(component) / 2, methodRect.getY() - 8, 0x666666);
 		}

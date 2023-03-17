@@ -1,6 +1,5 @@
 package snownee.lychee.util;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -14,12 +13,9 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 
 import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -28,7 +24,6 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -72,35 +67,6 @@ public class LUtil {
 
 	public static String wrapNamespace(String modid) {
 		return ResourceLocation.DEFAULT_NAMESPACE.equals(modid) ? Lychee.ID : modid;
-	}
-
-	@Environment(EnvType.CLIENT)
-	public static MutableComponent getDimensionDisplayName(ResourceKey<Level> dimension) {
-		String key = Util.makeDescriptionId("dimension", dimension.location());
-		if (I18n.exists(key)) {
-			return Component.translatable(key);
-		} else {
-			return Component.literal(capitaliseAllWords(dimension.location().getPath()));
-		}
-	}
-
-	@Environment(EnvType.CLIENT)
-	public static MutableComponent getStructureDisplayName(ResourceLocation rawName) {
-		String key = "structure." + rawName.getNamespace() + "." + rawName.getPath();
-		if (I18n.exists(key)) {
-			return Component.translatable(key);
-		} else {
-			return Component.literal(capitaliseAllWords(rawName.getPath()));
-		}
-	}
-
-	@Environment(EnvType.CLIENT)
-	public static MutableComponent format(String s, Object... objects) {
-		try {
-			return Component.literal(MessageFormat.format(I18n.get(s), objects));
-		} catch (Exception e) {
-			return Component.translatable(s, objects);
-		}
 	}
 
 	public static MutableComponent white(CharSequence s) {

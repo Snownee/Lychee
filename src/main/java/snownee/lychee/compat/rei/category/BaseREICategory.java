@@ -42,6 +42,7 @@ import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.LUtil;
 
 public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> implements DisplayCategory<D> {
@@ -198,6 +199,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 			}));
 			ReactiveWidget reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, rect));
 			reactive.setTooltipFunction($ -> JEIREI.getRecipeTooltip(recipe).toArray(new Component[0]));
+			reactive.setOnClick((widget, button) -> ClientProxy.postInfoBadgeClickEvent(recipe, button));
 			widgets.add(reactive);
 		}
 	}

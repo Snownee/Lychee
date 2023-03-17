@@ -15,6 +15,7 @@ import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.LUtil;
 
 public class DropXp extends PostAction {
@@ -43,7 +44,7 @@ public class DropXp extends PostAction {
 
 	@Override
 	public Component getDisplayName() {
-		return LUtil.format(LUtil.makeDescriptionId("postAction", getType().getRegistryName()), xp);
+		return ClientProxy.format(LUtil.makeDescriptionId("postAction", getType().getRegistryName()), xp);
 	}
 
 	@Override

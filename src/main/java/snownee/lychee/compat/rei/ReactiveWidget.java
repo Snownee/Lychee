@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import me.shedaniel.math.Point;
@@ -87,10 +88,10 @@ public class ReactiveWidget extends WidgetWithBounds {
 	}
 
 	@Override
-	public boolean keyPressed(int int_1, int int_2, int int_3) {
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if (!isClickable() || !isFocusable() || !focused)
 			return false;
-		if (int_1 != 257 && int_1 != 32 && int_1 != 335)
+		if (keyCode != 257 && keyCode != 32 && keyCode != 335)
 			return false;
 		Widgets.produceClickSound();
 		if (onClick != null)

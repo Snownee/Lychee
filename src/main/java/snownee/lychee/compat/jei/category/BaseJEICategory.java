@@ -47,6 +47,7 @@ import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.LUtil;
 
 public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeRecipe<C>> implements IRecipeCategory<T> {
@@ -54,11 +55,11 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	public static final int width = 119;
 	public static final int height = 59;
 	public final List<LycheeRecipeType<C, T>> recipeTypes;
-	protected IDrawable bg;
 	public IDrawable icon;
-	protected Rect2i infoRect;
 	public List<T> initialRecipes;
 	public RecipeType<T> recipeType;
+	protected IDrawable bg;
+	protected Rect2i infoRect;
 
 	public BaseJEICategory(LycheeRecipeType<C, T> recipeType) {
 		this(List.of(recipeType));
@@ -67,6 +68,111 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	public BaseJEICategory(List<LycheeRecipeType<C, T>> recipeTypes) {
 		this.recipeTypes = recipeTypes;
 		infoRect = new Rect2i(0, 25, 8, 8);
+	}
+
+	public static void addBlockIngredients(IRecipeLayoutBuilder builder, LycheeRecipe<?> recipe) {
+		addBlockIngredients(builder, recipe.getBlockInputs(), RecipeIngredientRole.INPUT);
+		addBlockIngredients(builder, recipe.getBlockOutputs(), RecipeIngredientRole.OUTPUT);
+	}
+
+	public static void addBlockIngredients(IRecipeLayoutBuilder builder, Iterable<BlockPredicate> blocks, RecipeIngredientRole role) {
+		for (BlockPredicate block : blocks) {
+			List<ItemStack> items = BlockPredicateHelper.getMatchedItemStacks(block);
+			Set<Fluid> fluids = BlockPredicateHelper.getMatchedFluids(block);
+			if (!items.isEmpty() || !fluids.isEmpty()) {
+				IIngredientAcceptor<?> acceptor = builder.addInvisibleIngredients(role);
+				acceptor.addItemStacks(items);
+				fluids.forEach(fluid -> acceptor.addFluidStack(fluid, JEICompat.HELPERS.getPlatformFluidHelper().bucketVolume()));
+			}
+		}
+	}
+
+	public static <T> void slotGroup(IRecipeLayoutBuilder builder, int x, int y, int startIndex, List<T> items, SlotLayoutFunction<T> layoutFunction) {
+		int size = Math.min(items.size(), 9);
+		int gridX = (int) Math.ceil(Math.sqrt(size));
+		int gridY = (int) Math.ceil((float) size / gridX);
+
+		x -= gridX * 9;
+		y -= gridY * 9;
+
+		int index = 0;
+		for (int i = 0; i < gridY; i++) {
+			for (int j = 0; j < gridX; j++) {
+				if (index >= size) {
+					break;
+				}
+				layoutFunction.apply(builder, items.get(index), startIndex + index, x + j * 19, y + i * 19);
+				++index;
+			}
+		}
+	}
+
+	public static void actionSlot(IRecipeLayoutBuilder builder, PostAction action, int index, int x, int y) {
+		IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, x + 1, y + 1);
+		Map<ItemStack, PostAction> itemMap = Maps.newIdentityHashMap();
+		buildActionSlot(builder, action, itemMap, slot);
+		slot.addTooltipCallback((view, tooltip) -> {
+			var optional = view.getDisplayedIngredient();
+			if (optional.isEmpty()) {
+				return;
+			}
+			var ingr = optional.get();
+			var raw = ingr.getIngredient();
+			if (!itemMap.containsKey(raw)) {
+				return;
+			}
+			tooltip.clear();
+//			if (raw instanceof ItemStack) {
+//
+//			}
+			raw = itemMap.get(raw);
+			List<Component> list;
+			if (action instanceof RandomSelect) {
+				list = ((RandomSelect) action).getTooltips((PostAction) raw);
+			} else {
+				list = action.getTooltips();
+			}
+			tooltip.addAll(list);
+		});
+		slot.setBackground(JEICompat.slot(action.getConditions().isEmpty() ? SlotType.NORMAL : SlotType.CHANCE), -1, -1);
+	}
+
+	private static void buildActionSlot(IRecipeLayoutBuilder layout, PostAction action, Map<ItemStack, PostAction> itemMap, IRecipeSlotBuilder slot) {
+		if (action instanceof DropItem dropitem) {
+			slot.addItemStack(dropitem.stack);
+			itemMap.put(dropitem.stack, dropitem);
+		} else if (action instanceof RandomSelect random) {
+			for (PostAction entry : random.entries) {
+				buildActionSlot(layout, entry, itemMap, slot);
+			}
+		} else {
+			slot.addIngredient(JEICompat.POST_ACTION, action);
+			List<ItemStack> itemOutputs = action.getItemOutputs();
+			if (!itemOutputs.isEmpty()) {
+				layout.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStacks(itemOutputs);
+			}
+		}
+	}
+
+	public static void drawInfoBadge(ILycheeRecipe<?> recipe, PoseStack matrixStack, double mouseX, double mouseY, Rect2i rect) {
+		if (hasInfoBadge(recipe)) {
+			matrixStack.pushPose();
+			matrixStack.translate(rect.getX(), rect.getY(), 0);
+			matrixStack.scale(.5F, .5F, .5F);
+			AllGuiTextures.INFO.render(matrixStack, 0, 0);
+			matrixStack.popPose();
+		}
+	}
+
+	public static boolean hasInfoBadge(ILycheeRecipe<?> recipe) {
+		return !recipe.getContextualHolder().getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.getComment());
+	}
+
+	public static List<Component> getTooltipStrings(ILycheeRecipe<?> recipe, double mouseX, double mouseY, Rect2i rect) {
+		if (rect.contains((int) mouseX, (int) mouseY)) {
+			return JEIREI.getRecipeTooltip(recipe);
+		}
+		return List.of();
 	}
 
 	@Override
@@ -107,23 +213,6 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		return height;
 	}
 
-	public static void addBlockIngredients(IRecipeLayoutBuilder builder, LycheeRecipe<?> recipe) {
-		addBlockIngredients(builder, recipe.getBlockInputs(), RecipeIngredientRole.INPUT);
-		addBlockIngredients(builder, recipe.getBlockOutputs(), RecipeIngredientRole.OUTPUT);
-	}
-
-	public static void addBlockIngredients(IRecipeLayoutBuilder builder, Iterable<BlockPredicate> blocks, RecipeIngredientRole role) {
-		for (BlockPredicate block : blocks) {
-			List<ItemStack> items = BlockPredicateHelper.getMatchedItemStacks(block);
-			Set<Fluid> fluids = BlockPredicateHelper.getMatchedFluids(block);
-			if (!items.isEmpty() || !fluids.isEmpty()) {
-				IIngredientAcceptor<?> acceptor = builder.addInvisibleIngredients(role);
-				acceptor.addItemStacks(items);
-				fluids.forEach(fluid -> acceptor.addFluidStack(fluid, JEICompat.HELPERS.getPlatformFluidHelper().bucketVolume()));
-			}
-		}
-	}
-
 	@Override
 	public abstract void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses);
 
@@ -145,78 +234,6 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		});
 	}
 
-	public static <T> void slotGroup(IRecipeLayoutBuilder builder, int x, int y, int startIndex, List<T> items, SlotLayoutFunction<T> layoutFunction) {
-		int size = Math.min(items.size(), 9);
-		int gridX = (int) Math.ceil(Math.sqrt(size));
-		int gridY = (int) Math.ceil((float) size / gridX);
-
-		x -= gridX * 9;
-		y -= gridY * 9;
-
-		int index = 0;
-		for (int i = 0; i < gridY; i++) {
-			for (int j = 0; j < gridX; j++) {
-				if (index >= size) {
-					break;
-				}
-				layoutFunction.apply(builder, items.get(index), startIndex + index, x + j * 19, y + i * 19);
-				++index;
-			}
-		}
-	}
-
-	@FunctionalInterface
-	public interface SlotLayoutFunction<T> {
-		void apply(IRecipeLayoutBuilder builder, T item, int index, int x, int y);
-	}
-
-	public static void actionSlot(IRecipeLayoutBuilder builder, PostAction action, int index, int x, int y) {
-		IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.OUTPUT, x + 1, y + 1);
-		Map<ItemStack, PostAction> itemMap = Maps.newIdentityHashMap();
-		buildActionSlot(builder, action, itemMap, slot);
-		slot.addTooltipCallback((view, tooltip) -> {
-			var optional = view.getDisplayedIngredient();
-			if (optional.isEmpty()) {
-				return;
-			}
-			var ingr = optional.get();
-			var raw = ingr.getIngredient();
-			if (!itemMap.containsKey(raw)) {
-				return;
-			}
-			tooltip.clear();
-			if (raw instanceof ItemStack) {
-
-			}
-			raw = itemMap.get(raw);
-			List<Component> list;
-			if (action instanceof RandomSelect) {
-				list = ((RandomSelect) action).getTooltips((PostAction) raw);
-			} else {
-				list = action.getTooltips();
-			}
-			tooltip.addAll(list);
-		});
-		slot.setBackground(JEICompat.slot(action.getConditions().isEmpty() ? SlotType.NORMAL : SlotType.CHANCE), -1, -1);
-	}
-
-	private static void buildActionSlot(IRecipeLayoutBuilder layout, PostAction action, Map<ItemStack, PostAction> itemMap, IRecipeSlotBuilder slot) {
-		if (action instanceof DropItem dropitem) {
-			slot.addItemStack(dropitem.stack);
-			itemMap.put(dropitem.stack, dropitem);
-		} else if (action instanceof RandomSelect random) {
-			for (PostAction entry : random.entries) {
-				buildActionSlot(layout, entry, itemMap, slot);
-			}
-		} else {
-			slot.addIngredient(JEICompat.POST_ACTION, action);
-			List<ItemStack> itemOutputs = action.getItemOutputs();
-			if (!itemOutputs.isEmpty()) {
-				layout.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStacks(itemOutputs);
-			}
-		}
-	}
-
 	@Override
 	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
 		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
@@ -226,26 +243,17 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		drawInfoBadge(recipe, matrixStack, mouseX, mouseY, infoRect);
 	}
 
-	public static void drawInfoBadge(ILycheeRecipe<?> recipe, PoseStack matrixStack, double mouseX, double mouseY, Rect2i rect) {
-		if (!recipe.getContextualHolder().getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.getComment())) {
-			matrixStack.pushPose();
-			matrixStack.translate(rect.getX(), rect.getY(), 0);
-			matrixStack.scale(.5F, .5F, .5F);
-			AllGuiTextures.INFO.render(matrixStack, 0, 0);
-			matrixStack.popPose();
-		}
-	}
-
 	@Override
 	public List<Component> getTooltipStrings(T recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
 		return getTooltipStrings(recipe, mouseX, mouseY, infoRect);
 	}
 
-	public static List<Component> getTooltipStrings(ILycheeRecipe<?> recipe, double mouseX, double mouseY, Rect2i rect) {
-		if (rect.contains((int) mouseX, (int) mouseY)) {
-			return JEIREI.getRecipeTooltip(recipe);
+	@Override
+	public boolean handleInput(T recipe, double mouseX, double mouseY, Key input) {
+		if (input.getType() == InputConstants.Type.MOUSE && hasInfoBadge(recipe) && infoRect.contains((int) mouseX, (int) mouseY)) {
+			return ClientProxy.postInfoBadgeClickEvent(recipe, input.getValue());
 		}
-		return List.of();
+		return false;
 	}
 
 	public boolean clickBlock(BlockState state, Key input) {
@@ -268,6 +276,11 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 			}
 		}
 		return false;
+	}
+
+	@FunctionalInterface
+	public interface SlotLayoutFunction<T> {
+		void apply(IRecipeLayoutBuilder builder, T item, int index, int x, int y);
 	}
 
 }

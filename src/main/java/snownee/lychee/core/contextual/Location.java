@@ -46,6 +46,7 @@ import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.LightPredicateAccess;
 import snownee.lychee.mixin.LocationCheckAccess;
 import snownee.lychee.mixin.LocationPredicateAccess;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.LUtil;
 
 public record Location(LocationCheck check) implements ContextualCondition {
@@ -193,7 +194,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		@Override
 		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
-			MutableComponent name = LUtil.getDimensionDisplayName(access.getDimension()).withStyle(ChatFormatting.WHITE);
+			MutableComponent name = ClientProxy.getDimensionDisplayName(access.getDimension()).withStyle(ChatFormatting.WHITE);
 			ContextualCondition.desc(tooltips, result, indent, Component.translatable(key + "." + getName(), name));
 		}
 	}
@@ -273,7 +274,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		@Override
 		@Environment(EnvType.CLIENT)
 		public void appendTooltips(List<Component> tooltips, int indent, String key, LocationPredicateAccess access, InteractionResult result) {
-			MutableComponent name = LUtil.getStructureDisplayName(access.getStructure().location()).withStyle(ChatFormatting.WHITE);
+			MutableComponent name = ClientProxy.getStructureDisplayName(access.getStructure().location()).withStyle(ChatFormatting.WHITE);
 			ContextualCondition.desc(tooltips, result, indent, Component.translatable(key + "." + getName(), name));
 		}
 	}
