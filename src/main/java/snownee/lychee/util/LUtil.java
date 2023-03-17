@@ -13,6 +13,8 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 
 import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -43,10 +45,20 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
+import snownee.lychee.core.post.CustomAction;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.RecipeManagerAccess;
 
 public class LUtil {
 	public static final Component EMPTY_TEXT = Component.empty();
+	public static final Event<CustomActionListener> CUSTOM_ACTION_EVENT = EventFactory.createArrayBacked(CustomActionListener.class, listeners -> (id, action, recipe, patchContext) -> {
+		for (CustomActionListener listener : listeners) {
+			if (listener.on(id, action, recipe, patchContext)) {
+				return true;
+			}
+		}
+		return false;
+	});
 	private static final Random RANDOM = new Random();
 	private static RecipeManager recipeManager;
 
@@ -255,4 +267,15 @@ public class LUtil {
 		return (CompoundTag) JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json);
 	}
 
+	public static void registerCustomActionListener(CustomActionListener listener) {
+		CUSTOM_ACTION_EVENT.register(listener);
+	}
+
+	public static void postCustomActionEvent(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
+		CUSTOM_ACTION_EVENT.invoker().on(id, action, recipe, patchContext);
+	}
+
+	public interface CustomActionListener {
+		boolean on(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext);
+	}
 }

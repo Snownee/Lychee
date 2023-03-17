@@ -9,4 +9,5 @@ public interface LycheeKubeJSEvents {
 	EventGroup GROUP = EventGroup.of("LycheeEvents");
 
 	EventHandler CLICKED_INFO_BADGE = GROUP.client("clickedInfoBadge", () -> ClickedInfoBadgeEventJS.class).extra(Extra.ID).cancelable();
+	EventHandler CUSTOM_ACTION = GROUP.server("customAction", () -> CustomActionEventJS.class).extra(Extra.STRING).cancelable();
 }

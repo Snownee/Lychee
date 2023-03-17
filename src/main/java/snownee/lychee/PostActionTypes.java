@@ -4,6 +4,7 @@ import net.minecraft.core.Registry;
 import snownee.lychee.core.post.AddItemCooldown;
 import snownee.lychee.core.post.AnvilDamageChance;
 import snownee.lychee.core.post.Break;
+import snownee.lychee.core.post.CustomAction;
 import snownee.lychee.core.post.CycleStateProperty;
 import snownee.lychee.core.post.Delay;
 import snownee.lychee.core.post.DropItem;
@@ -42,6 +43,7 @@ public class PostActionTypes {
 	public static final PostActionType<MoveTowardsFace> MOVE_TOWARDS_FACE = register("move_towards_face", new MoveTowardsFace.Type());
 	public static final PostActionType<SetItem> SET_ITEM = register("set_item", new SetItem.Type());
 	public static final PostActionType<NBTPatch> NBT_PATCH = register("nbt_patch", new NBTPatch.Type());
+	public static final PostActionType<CustomAction> CUSTOM = register("custom", new CustomAction.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		Registry.register(LycheeRegistries.POST_ACTION, name, t);

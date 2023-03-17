@@ -8,6 +8,11 @@
     {
       "type": "drop_item",
       "item": "diamond"
+    },
+    {
+      "type": "custom",
+      "id": "log",
+      "msg": "You mined a diamond!"
     }
   ],
   "contextual": [
