@@ -30,6 +30,9 @@ public class InteractionRecipeMod implements ModInitializer {
 		if (player.isSpectator()) {
 			return InteractionResult.PASS;
 		}
+		if (hand == InteractionHand.OFF_HAND && player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty()) {
+			return InteractionResult.PASS;
+		}
 		ItemStack stack = player.getItemInHand(hand);
 		if (player.getCooldowns().isOnCooldown(stack.getItem()))
 			return InteractionResult.PASS;
