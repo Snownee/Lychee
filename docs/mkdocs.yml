@@ -12,7 +12,8 @@ nav:
     - "General Types": general-types.md
     - Advanced:
         - Concepts: concepts.md
-        - Fragment: fragment.md
+        - "JSON Fragment": fragment.md
+        - "KubeJS Integration": kubejs.md
     - "Update Notes": update-notes.md
 
 theme:

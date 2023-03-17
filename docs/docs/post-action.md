@@ -2,7 +2,7 @@
 
 Post-action is an action to be executed.
 
-Usually, you can add post actions to a Lychee's recipe, and they will be executed after the recipe is successfully matched.
+You can add post actions to a Lychee's recipe, and they will be executed after the recipe is successfully matched.
 
 ## Basic Format
 

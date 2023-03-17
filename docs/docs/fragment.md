@@ -1,4 +1,4 @@
-# Fragment
+# JSON Fragment
 
 Fragment is a reusable JSON element that can be attached to your Lychee recipes.
 

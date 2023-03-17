@@ -44,11 +44,13 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name     | Description               | Type / Literal                                    |
-    | -------- | ------------------------- | ------------------------------------------------- |
-    | type     | type                      | "lychee:block_interacting"                        |
-    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient)         |
-    | block_in | the block being used      | [BlockPredicate](general-types.md#blockpredicate) |
+    | Name     | Description               | Type / Literal                                                                           |
+    | -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+    | type     | type                      | "lychee:block_interacting"                                                               |
+    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | block_in | the block being used      | [BlockPredicate](general-types.md#blockpredicate)                                        |
+
+		*Since 3.9, `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.*
 
 ??? example
 
@@ -118,11 +120,13 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name     | Description               | Type / Literal                                    |
-    | -------- | ------------------------- | ------------------------------------------------- |
-    | type     | type                      | "lychee:block_clicking"                           |
-    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient)         |
-    | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate) |
+    | Name     | Description               | Type / Literal                                                                           |
+    | -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+    | type     | type                      | "lychee:block_clicking"                                                                  |
+    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate)                                        |
+
+		*Since 3.9, `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.*
 
 !!! note
 

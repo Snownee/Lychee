@@ -45,7 +45,7 @@ Having trouble creating recipe, or got an idea for Lychee? You can [join our Dis
 
 ### Where are the CraftTweaker/KubeJS integrations?
 
-Currently, there are no built-in integrations, which means you need to add recipes in JSON format. Here are some usages in their docs: [CraftTweaker](https://docs.blamejared.com/1.19/en/vanilla/api/recipe/manager/GenericRecipesManager#addJsonRecipe) / [KubeJS](https://mods.latvian.dev/books/kubejs/page/recipeeventjs)
+Currently, there are no built-in integrations for adding recipes, which means you need to add recipes in JSON format. Here are some usages in their docs: [CraftTweaker](https://docs.blamejared.com/1.19/en/vanilla/api/recipe/manager/GenericRecipesManager#addJsonRecipe) / [KubeJS 1.19.2+](https://mods.latvian.dev/books/kubejs/page/recipes-event-servereventsrecipes#bkmrk-custom%2Fmodded-json-r) / [KubeJS 1.18](https://mods.latvian.dev/books/kubejs-legacy/page/recipeeventjs)
 
 There are some utility libraries from the community you may want to know:
 
