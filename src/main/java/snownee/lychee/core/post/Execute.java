@@ -25,8 +25,7 @@ import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public class Execute extends PostAction {
 
-	public static final Execute DUMMY_SHOW = new Execute("", false);
-	public static final Execute DUMMY_HIDE = new Execute("", true);
+	public static final Execute DUMMY = new Execute("", false);
 	public static final Component DEFAULT_NAME = Component.literal(Lychee.ID);
 
 	private final String command;
@@ -75,7 +74,7 @@ public class Execute extends PostAction {
 	}
 
 	@Override
-	public boolean isHidden() {
+	public boolean preventSync() {
 		return hide;
 	}
 
@@ -90,22 +89,21 @@ public class Execute extends PostAction {
 		public void toJson(Execute action, JsonObject o) {
 			o.addProperty("command", action.command);
 			if (action.hide) {
-				o.addProperty("hide", action.hide);
+				o.addProperty("hide", true);
 			}
 		}
 
 		@Override
 		public Execute fromNetwork(FriendlyByteBuf buf) {
 			if (buf.readBoolean()) {
-				return new Execute("", buf.readBoolean());
+				return new Execute("", false);
 			}
-			return buf.readBoolean() ? DUMMY_HIDE : DUMMY_SHOW;
+			return DUMMY;
 		}
 
 		@Override
 		public void toNetwork(Execute action, FriendlyByteBuf buf) {
 			buf.writeBoolean(action.getConditions().isEmpty());
-			buf.writeBoolean(action.hide);
 		}
 
 	}

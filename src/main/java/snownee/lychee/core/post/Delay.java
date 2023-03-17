@@ -55,7 +55,7 @@ public class Delay extends PostAction {
 	}
 
 	@Override
-	public boolean isHidden() {
+	public boolean preventSync() {
 		return true;
 	}
 
@@ -73,11 +73,12 @@ public class Delay extends PostAction {
 
 		@Override
 		public Delay fromNetwork(FriendlyByteBuf buf) {
-			return CLIENT_DUMMY;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public void toNetwork(Delay action, FriendlyByteBuf buf) {
+			throw new UnsupportedOperationException();
 		}
 
 	}

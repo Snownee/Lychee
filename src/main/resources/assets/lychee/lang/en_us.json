@@ -17,7 +17,6 @@
 "postAction.lychee.explode.break": "Explode (break blocks)",
 "postAction.lychee.explode.destroy": "Explode (destroy blocks)",
 "postAction.lychee.hurt": "Causes %s damage",
-"postAction.lychee.damage_item": "Damage: +%s",
 "contextual.lychee": "{0,choice,1#Condition|1<Conditions}:",
 "contextual.lychee.secret": "§o???",
 "contextual.lychee.or": "True for any:",

@@ -42,7 +42,7 @@ public class MoveTowardsFace extends PostAction {
 	}
 
 	@Override
-	public boolean isHidden() {
+	public boolean preventSync() {
 		return true;
 	}
 
@@ -60,12 +60,12 @@ public class MoveTowardsFace extends PostAction {
 
 		@Override
 		public MoveTowardsFace fromNetwork(FriendlyByteBuf buf) {
-			return new MoveTowardsFace(buf.readFloat());
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public void toNetwork(MoveTowardsFace action, FriendlyByteBuf buf) {
-			buf.writeFloat(action.factor);
+			throw new UnsupportedOperationException();
 		}
 
 	}

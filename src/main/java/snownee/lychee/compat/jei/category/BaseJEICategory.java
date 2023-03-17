@@ -143,7 +143,8 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 			itemMap.put(dropitem.stack, dropitem);
 		} else if (action instanceof RandomSelect random) {
 			for (PostAction entry : random.entries) {
-				buildActionSlot(layout, entry, itemMap, slot);
+				if (!entry.isHidden())
+					buildActionSlot(layout, entry, itemMap, slot);
 			}
 		} else {
 			slot.addIngredient(JEICompat.POST_ACTION, action);

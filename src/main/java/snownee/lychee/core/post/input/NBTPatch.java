@@ -19,8 +19,6 @@ import snownee.lychee.util.json.JsonPointer;
 
 public class NBTPatch extends PostAction {
 
-	private static final NBTPatch DUMMY = new NBTPatch(null);
-
 	private final JsonPatch patch;
 
 	public NBTPatch(JsonPatch patch) {
@@ -89,7 +87,7 @@ public class NBTPatch extends PostAction {
 	}
 
 	@Override
-	public boolean isHidden() {
+	public boolean preventSync() {
 		return true;
 	}
 
@@ -109,11 +107,12 @@ public class NBTPatch extends PostAction {
 
 		@Override
 		public NBTPatch fromNetwork(FriendlyByteBuf buf) {
-			return DUMMY;
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
 		public void toNetwork(NBTPatch action, FriendlyByteBuf buf) {
+			throw new UnsupportedOperationException();
 		}
 
 	}
