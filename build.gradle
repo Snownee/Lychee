@@ -180,6 +180,7 @@ modrinth {
         // The type can either be `project` or `version`
         required.project "fabric-api"
         optional.project "kiwi"
+        optional.project "kubejs"
     }
 }
 
