@@ -165,10 +165,14 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    //maven {
-    //    name = "jei"
-    //    url = "https://dvs1.progwml6.com/files/maven"
-    //}
+    maven {
+        // saps.dev Maven (KubeJS and Rhino)
+        url = "https://maven.saps.dev/minecraft"
+        content {
+            includeGroup "dev.latvian.mods"
+        }
+    }
+    maven { url "https://maven.shedaniel.me/" }
     maven {
         // location of the maven that hosts JEI files
         name = "Progwml6 maven"
@@ -183,13 +187,6 @@ repositories {
         url = "https://www.cursemaven.com"
         content {
             includeGroup "curse.maven"
-        }
-    }
-    maven {
-        // saps.dev Maven (KubeJS and Rhino)
-        url = "https://maven.saps.dev/minecraft"
-        content {
-            includeGroup "dev.latvian.mods"
         }
     }
     maven { url 'https://maven.blamejared.com' }
@@ -235,7 +232,9 @@ dependencies {
     //implementation fg.deobf("libs:Jade-1.17.1:3.1.6")
     // runtimeOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.1:9.0.0+24")
     
-    implementation(fg.deobf("dev.latvian.mods:kubejs-forge:${kubejs_version}"))
+    implementation fg.deobf("dev.latvian.mods:kubejs-forge:${kubejs_version}")
+    implementation fg.deobf("dev.latvian.mods:rhino-forge:${rhino_version}")
+    implementation fg.deobf("dev.architectury:architectury-forge:${architectury_version}")
 }
 
 // This block of code expands all the gradle properties in the specified resource targets.
@@ -324,5 +323,6 @@ modrinth {
         // The scope can be `required`, `optional`, `incompatible`, or `embedded`
         // The type can either be `project` or `version`
         optional.project "kiwi"
+        optional.project "kubejs"
     }
 }

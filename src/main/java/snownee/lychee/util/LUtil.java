@@ -1,6 +1,5 @@
 package snownee.lychee.util;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
@@ -13,9 +12,7 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -24,7 +21,6 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
@@ -40,8 +36,6 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -71,35 +65,6 @@ public class LUtil {
 
 	public static String wrapNamespace(String modid) {
 		return ResourceLocation.DEFAULT_NAMESPACE.equals(modid) ? Lychee.ID : modid;
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public static MutableComponent getDimensionDisplayName(ResourceKey<Level> dimension) {
-		String key = Util.makeDescriptionId("dimension", dimension.location());
-		if (I18n.exists(key)) {
-			return Component.translatable(key);
-		} else {
-			return Component.literal(capitaliseAllWords(dimension.location().getPath()));
-		}
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public static MutableComponent getStructureDisplayName(ResourceLocation rawName) {
-		String key = "structure." + rawName.getNamespace() + "." + rawName.getPath();
-		if (I18n.exists(key)) {
-			return Component.translatable(key);
-		} else {
-			return Component.literal(capitaliseAllWords(rawName.getPath()));
-		}
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public static MutableComponent format(String s, Object... objects) {
-		try {
-			return Component.literal(MessageFormat.format(I18n.get(s), objects));
-		} catch (Exception e) {
-			return Component.translatable(s, objects);
-		}
 	}
 
 	public static MutableComponent white(CharSequence s) {

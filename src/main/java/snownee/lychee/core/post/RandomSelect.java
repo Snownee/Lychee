@@ -33,6 +33,7 @@ import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.post.input.NBTPatch;
 import snownee.lychee.core.recipe.ILycheeRecipe;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.json.JsonPointer;
 
@@ -146,7 +147,7 @@ public class RandomSelect extends PostAction {
 		}
 		int c = showingConditionsCount() + child.showingConditionsCount();
 		if (c > 0) {
-			list.add(LUtil.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
+			list.add(ClientProxy.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
 		}
 		getConditonTooltips(list, 0);
 		child.getConditonTooltips(list, 0);

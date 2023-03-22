@@ -124,7 +124,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 				return clickBlock(landingBlock, input);
 			}
 		}
-		return false;
+		return super.handleInput(recipe, mouseX, mouseY, input);
 	}
 
 }

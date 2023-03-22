@@ -107,7 +107,7 @@ public class DripstoneRecipeCategory extends BaseJEICategory<DripstoneContext, D
 				return clickBlock(landingBlock, input);
 			}
 		}
-		return false;
+		return super.handleInput(recipe, mouseX, mouseY, input);
 	}
 
 }

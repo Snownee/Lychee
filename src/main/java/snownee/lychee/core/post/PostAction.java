@@ -28,6 +28,7 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.recipe.ILycheeRecipe;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.json.JsonPointer;
 
@@ -92,7 +93,7 @@ public abstract class PostAction extends ContextualHolder {
 		List<Component> list = getBaseTooltips();
 		int c = showingConditionsCount();
 		if (c > 0) {
-			list.add(LUtil.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
+			list.add(ClientProxy.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
 		}
 		getConditonTooltips(list, 0);
 		return list;
