@@ -51,6 +51,7 @@ public class CustomAction extends PostAction {
 		LUtil.postCustomActionEvent(GsonHelper.getAsString(data, "id"), this, recipe, patchContext);
 	}
 
+	@FunctionalInterface
 	public interface Apply {
 		void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times);
 	}

@@ -42,6 +42,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistry;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
+import snownee.lychee.core.contextual.CustomCondition;
 import snownee.lychee.core.post.CustomAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.RecipeManagerAccess;
@@ -51,6 +52,7 @@ public class LUtil {
 	private static final Random RANDOM = new Random();
 	private static RecipeManager recipeManager;
 	private static final List<CustomActionListener> customActionListeners = ObjectArrayList.of();
+	private static final List<CustomConditionListener> customConditionListeners = ObjectArrayList.of();
 
 	public static void dropItemStack(Level pLevel, double pX, double pY, double pZ, ItemStack pStack, @Nullable Consumer<ItemEntity> extraStep) {
 		while (!pStack.isEmpty()) {
@@ -253,6 +255,10 @@ public class LUtil {
 		customActionListeners.add(listener);
 	}
 
+	public static synchronized void registerCustomConditionListener(CustomConditionListener listener) {
+		customConditionListeners.add(listener);
+	}
+
 	public static synchronized void postCustomActionEvent(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 		for (CustomActionListener listener : customActionListeners) {
 			if (listener.on(id, action, recipe, patchContext)) {
@@ -261,8 +267,20 @@ public class LUtil {
 		}
 	}
 
+	public static synchronized void postCustomConditionEvent(String id, CustomCondition condition) {
+		for (CustomConditionListener listener : customConditionListeners) {
+			if (listener.on(id, condition)) {
+				return;
+			}
+		}
+	}
+
 	public interface CustomActionListener {
 		boolean on(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext);
+	}
+
+	public interface CustomConditionListener {
+		boolean on(String id, CustomCondition condition);
 	}
 
 }

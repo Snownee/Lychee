@@ -6,6 +6,7 @@ import snownee.lychee.core.contextual.And;
 import snownee.lychee.core.contextual.Chance;
 import snownee.lychee.core.contextual.CheckParam;
 import snownee.lychee.core.contextual.ContextualConditionType;
+import snownee.lychee.core.contextual.CustomCondition;
 import snownee.lychee.core.contextual.DirectionCheck;
 import snownee.lychee.core.contextual.EntityHealth;
 import snownee.lychee.core.contextual.Execute;
@@ -37,6 +38,7 @@ public final class ContextualConditionTypes {
 	public static final ContextualConditionType<IsSneaking> IS_SNEAKING = register("is_sneaking", new IsSneaking.Type());
 	public static final ContextualConditionType<DirectionCheck> DIRECTION = register("direction", new DirectionCheck.Type());
 	public static final ContextualConditionType<CheckParam> CHECK_PARAM = register("check_param", new CheckParam.Type());
+	public static final ContextualConditionType<CustomCondition> CUSTOM = register("custom", new CustomCondition.Type());
 
 	public static <T extends ContextualConditionType<?>> T register(String name, T t) {
 		ModLoadingContext.get().setActiveContainer(null); // bypass Forge warning
