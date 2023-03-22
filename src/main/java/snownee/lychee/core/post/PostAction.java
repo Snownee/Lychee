@@ -100,6 +100,10 @@ public abstract class PostAction extends ContextualHolder {
 	}
 
 	public boolean isHidden() {
+		return preventSync();
+	}
+
+	public boolean preventSync() {
 		return false;
 	}
 

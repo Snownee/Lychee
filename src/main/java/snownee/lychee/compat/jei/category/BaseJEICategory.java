@@ -12,6 +12,7 @@ import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient;
 import mezz.jei.api.gui.builder.IIngredientAcceptor;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
@@ -121,9 +122,9 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 				return;
 			}
 			tooltip.clear();
-			//			if (raw instanceof ItemStack) {
-			//
-			//			}
+//			if (raw instanceof ItemStack) {
+//
+//			}
 			raw = itemMap.get(raw);
 			List<Component> list;
 			if (action instanceof RandomSelect) {
@@ -142,7 +143,8 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 			itemMap.put(dropitem.stack, dropitem);
 		} else if (action instanceof RandomSelect random) {
 			for (PostAction entry : random.entries) {
-				buildActionSlot(layout, entry, itemMap, slot);
+				if (!entry.isHidden())
+					buildActionSlot(layout, entry, itemMap, slot);
 			}
 		} else {
 			slot.addIngredient(JEICompat.POST_ACTION, action);
@@ -268,7 +270,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 				gui.show(factory.createFocus(role, VanillaTypes.ITEM_STACK, stack));
 				return true;
 			} else if (state.getBlock() instanceof LiquidBlock) {
-				IPlatformFluidHelper fluidHelper = JEICompat.HELPERS.getPlatformFluidHelper();
+				IPlatformFluidHelper<IJeiFluidIngredient> fluidHelper = (IPlatformFluidHelper<IJeiFluidIngredient>) JEICompat.HELPERS.getPlatformFluidHelper();
 				Fluid fluid = state.getFluidState().getType();
 				gui.show(factory.createFocus(role, fluidHelper.getFluidIngredientType(), fluidHelper.create(fluid, fluidHelper.bucketVolume())));
 				return true;

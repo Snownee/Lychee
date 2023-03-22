@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -43,15 +44,19 @@ public class RandomSelect extends PostAction {
 	public final int[] weights;
 	public final MinMaxBounds.Ints rolls;
 	public final boolean canRepeat;
+	public final boolean hidden;
+	public final boolean preventSync;
 	public final int totalWeight;
 
-	public RandomSelect(PostAction[] entries, int[] weights, MinMaxBounds.Ints rolls) {
+	public RandomSelect(PostAction[] entries, int[] weights, int totalWeight, MinMaxBounds.Ints rolls) {
 		Preconditions.checkArgument(entries.length == weights.length);
 		this.entries = entries;
 		this.weights = weights;
+		this.totalWeight = totalWeight;
 		this.rolls = rolls;
 		canRepeat = Stream.of(entries).allMatch(PostAction::canRepeat);
-		totalWeight = IntStream.of(weights).sum();
+		hidden = Stream.of(entries).allMatch(PostAction::isHidden);
+		preventSync = Stream.of(entries).allMatch(PostAction::preventSync);
 	}
 
 	@Override
@@ -166,6 +171,16 @@ public class RandomSelect extends PostAction {
 	}
 
 	@Override
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	@Override
+	public boolean preventSync() {
+		return preventSync;
+	}
+
+	@Override
 	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 		for (PostAction action : entries) {
 			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in RandomSelect");
@@ -216,7 +231,7 @@ public class RandomSelect extends PostAction {
 			} else {
 				rolls = IntBoundsHelper.ONE;
 			}
-			return new RandomSelect(entries, weights, rolls);
+			return new RandomSelect(entries, weights, IntStream.of(weights).sum(), rolls);
 		}
 
 		@Override
@@ -239,6 +254,7 @@ public class RandomSelect extends PostAction {
 
 		@Override
 		public RandomSelect fromNetwork(FriendlyByteBuf buf) {
+			int totalWeight = buf.readVarInt();
 			int size = buf.readVarInt();
 			PostAction[] entries = new PostAction[size];
 			int[] weights = new int[size];
@@ -249,20 +265,23 @@ public class RandomSelect extends PostAction {
 				action.conditionsFromNetwork(buf);
 				entries[i] = action;
 			}
-			return new RandomSelect(entries, weights, IntBoundsHelper.fromNetwork(buf));
+			return new RandomSelect(entries, weights, totalWeight, IntBoundsHelper.fromNetwork(buf));
 		}
 
 		@SuppressWarnings("rawtypes")
 		@Override
 		public void toNetwork(RandomSelect action, FriendlyByteBuf buf) {
-			int size = action.entries.length;
-			buf.writeVarInt(size);
-			for (int i = 0; i < size; i++) {
+			buf.writeVarInt(action.totalWeight);
+			buf.writeVarInt((int) Stream.of(action.entries).filter(Predicate.not(PostAction::preventSync)).count());
+			for (int i = 0; i < action.entries.length; i++) {
+				PostAction entry = action.entries[i];
+				if (entry.preventSync())
+					continue;
 				buf.writeVarInt(action.weights[i]);
-				PostActionType type = action.entries[i].getType();
+				PostActionType type = entry.getType();
 				LUtil.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
-				type.toNetwork(action.entries[i], buf);
-				action.entries[i].conditionsToNetwork(buf);
+				type.toNetwork(entry, buf);
+				entry.conditionsToNetwork(buf);
 			}
 			IntBoundsHelper.toNetwork(action.rolls, buf);
 		}

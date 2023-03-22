@@ -4,7 +4,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -160,6 +162,27 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			return Ingredient.fromJson(element);
 		}
 
+		public static void actionsToNetwork(FriendlyByteBuf buf, List<PostAction> actions) {
+			actions = actions.stream().filter(Predicate.not(PostAction::preventSync)).toList();
+			buf.writeVarInt(actions.size());
+			for (PostAction action : actions) {
+				PostActionType type = action.getType();
+				LUtil.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
+				type.toNetwork(action, buf);
+				action.conditionsToNetwork(buf);
+			}
+		}
+
+		public static void actionsFromNetwork(FriendlyByteBuf buf, Consumer<PostAction> consumer) {
+			int size = buf.readVarInt();
+			for (int i = 0; i < size; i++) {
+				PostActionType<?> type = LUtil.readRegistryId(LycheeRegistries.POST_ACTION, buf);
+				PostAction action = type.fromNetwork(buf);
+				action.conditionsFromNetwork(buf);
+				consumer.accept(action);
+			}
+		}
+
 		@Override
 		public final R fromJson(ResourceLocation pRecipeId, JsonObject jsonObject) {
 			Fragments.INSTANCE.process(jsonObject);
@@ -194,15 +217,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 					return recipe;
 				}
 				recipe.conditionsFromNetwork(buf);
-
-				int size = buf.readVarInt();
-				for (int i = 0; i < size; i++) {
-					PostActionType<?> type = LUtil.readRegistryId(LycheeRegistries.POST_ACTION, buf);
-					PostAction action = type.fromNetwork(buf);
-					action.conditionsFromNetwork(buf);
-					recipe.addPostAction(action);
-				}
-
+				actionsFromNetwork(buf, recipe::addPostAction);
 				recipe.comment = buf.readUtf();
 				recipe.group = buf.readUtf();
 				fromNetwork(recipe, buf);
@@ -225,13 +240,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 				return;
 			}
 			recipe.conditionsToNetwork(buf);
-			buf.writeVarInt(recipe.actions.size());
-			for (PostAction action : recipe.actions) {
-				PostActionType type = action.getType();
-				LUtil.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
-				type.toNetwork(action, buf);
-				action.conditionsToNetwork(buf);
-			}
+			actionsToNetwork(buf, recipe.actions);
 			buf.writeUtf(Strings.nullToEmpty(recipe.comment));
 			buf.writeUtf(recipe.group);
 			toNetwork0(buf, recipe);

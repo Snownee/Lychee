@@ -48,6 +48,7 @@ import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.post.input.SetItem;
 import snownee.lychee.core.recipe.ILycheeRecipe;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.fragment.Fragments;
 import snownee.lychee.mixin.CraftingContainerAccess;
 import snownee.lychee.mixin.CraftingMenuAccess;
@@ -59,8 +60,8 @@ import snownee.lychee.util.json.JsonPointer;
 
 public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<CraftingContext> {
 
-	private static final Function<AbstractContainerMenu, Pair<Vec3, Player>> FALLBACK = menu -> null;
 	public static final Cache<Class<?>, Function<AbstractContainerMenu, Pair<Vec3, Player>>> CONTAINER_WORLD_LOCATOR = CacheBuilder.newBuilder().build();
+	private static final Function<AbstractContainerMenu, Pair<Vec3, Player>> FALLBACK = menu -> null;
 
 	static {
 		CONTAINER_WORLD_LOCATOR.put(CraftingMenu.class, menu -> {
@@ -71,6 +72,19 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			InventoryMenuAccess access = (InventoryMenuAccess) menu;
 			return Pair.of(access.getOwner().position(), access.getOwner());
 		});
+	}
+
+	private final ContextualHolder conditions = new ContextualHolder();
+	public boolean ghost;
+	public boolean hideInRecipeViewer;
+	@Nullable
+	public String comment;
+	@Nullable
+	public String pattern;
+	private List<PostAction> actions = Collections.EMPTY_LIST;
+	private List<PostAction> assembling = Collections.EMPTY_LIST;
+	public ShapedCraftingRecipe(ResourceLocation id, String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result) {
+		super(id, group, width, height, ingredients, result);
 	}
 
 	private static Pair<Vec3, Player> getMenuContext(AbstractContainerMenu menu) {
@@ -103,20 +117,6 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 		CraftingContext ctx = builder.create(LycheeLootContextParamSets.CRAFTING);
 		((LycheeCraftingContainer) container).lychee$setContext(ctx);
 		return ctx;
-	}
-
-	private final ContextualHolder conditions = new ContextualHolder();
-	private List<PostAction> actions = Collections.EMPTY_LIST;
-	private List<PostAction> assembling = Collections.EMPTY_LIST;
-	public boolean ghost;
-	public boolean hideInRecipeViewer;
-	@Nullable
-	public String comment;
-	@Nullable
-	public String pattern;
-
-	public ShapedCraftingRecipe(ResourceLocation id, String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result) {
-		super(id, group, width, height, ingredients, result);
 	}
 
 	@Override
@@ -306,6 +306,10 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	}
 
 	public static class Serializer implements RecipeSerializer<ShapedCraftingRecipe> {
+		private static ShapedCraftingRecipe fromNormal(ShapedRecipe recipe) {
+			return new ShapedCraftingRecipe(recipe.getId(), recipe.getGroup(), recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), recipe.getResultItem());
+		}
+
 		@Override
 		public ShapedCraftingRecipe fromJson(ResourceLocation id, JsonObject jsonObject) {
 			Fragments.INSTANCE.process(jsonObject);
@@ -337,22 +341,10 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 				return recipe;
 			}
 			recipe.conditions.conditionsFromNetwork(buf);
-
-			int size = buf.readVarInt();
-			for (int i = 0; i < size; i++) {
-				PostActionType<?> type = LUtil.readRegistryId(LycheeRegistries.POST_ACTION, buf);
-				PostAction action = type.fromNetwork(buf);
-				action.conditionsFromNetwork(buf);
-				recipe.addPostAction(action);
-			}
-
+			LycheeRecipe.Serializer.actionsFromNetwork(buf, recipe::addPostAction);
 			recipe.comment = buf.readUtf();
 			recipe.pattern = buf.readUtf();
 			return recipe;
-		}
-
-		private static ShapedCraftingRecipe fromNormal(ShapedRecipe recipe) {
-			return new ShapedCraftingRecipe(recipe.getId(), recipe.getGroup(), recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), recipe.getResultItem());
 		}
 
 		@SuppressWarnings("rawtypes")
@@ -366,13 +358,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 				return;
 			}
 			recipe.conditions.conditionsToNetwork(buf);
-			buf.writeVarInt(recipe.actions.size());
-			for (PostAction action : recipe.actions) {
-				PostActionType type = action.getType();
-				LUtil.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
-				type.toNetwork(action, buf);
-				action.conditionsToNetwork(buf);
-			}
+			LycheeRecipe.Serializer.actionsToNetwork(buf, recipe.actions);
 			buf.writeUtf(Strings.nullToEmpty(recipe.comment));
 			buf.writeUtf(Strings.nullToEmpty(recipe.pattern));
 		}
