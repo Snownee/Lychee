@@ -11,6 +11,7 @@ import com.google.common.collect.Streams;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -41,12 +42,15 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.IForgeRegistry;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
+import snownee.lychee.core.post.CustomAction;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.RecipeManagerAccess;
 
 public class LUtil {
 	public static final Component EMPTY_TEXT = Component.empty();
 	private static final Random RANDOM = new Random();
 	private static RecipeManager recipeManager;
+	private static final List<CustomActionListener> customActionListeners = ObjectArrayList.of();
 
 	public static void dropItemStack(Level pLevel, double pX, double pY, double pZ, ItemStack pStack, @Nullable Consumer<ItemEntity> extraStep) {
 		while (!pStack.isEmpty()) {
@@ -243,6 +247,22 @@ public class LUtil {
 
 	public static CompoundTag jsonToTag(JsonObject json) {
 		return (CompoundTag) JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json);
+	}
+
+	public static synchronized void registerCustomActionListener(CustomActionListener listener) {
+		customActionListeners.add(listener);
+	}
+
+	public static synchronized void postCustomActionEvent(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
+		for (CustomActionListener listener : customActionListeners) {
+			if (listener.on(id, action, recipe, patchContext)) {
+				return;
+			}
+		}
+	}
+
+	public interface CustomActionListener {
+		boolean on(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext);
 	}
 
 }
