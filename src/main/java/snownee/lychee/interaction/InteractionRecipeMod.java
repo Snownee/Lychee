@@ -2,6 +2,7 @@ package snownee.lychee.interaction;
 
 import java.util.Optional;
 
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -22,6 +23,9 @@ public class InteractionRecipeMod {
 	public static void useItemOn(PlayerInteractEvent.RightClickBlock event) {
 		Player player = event.getEntity();
 		if (player.isSpectator()) {
+			return;
+		}
+		if (event.getHand() == InteractionHand.OFF_HAND && player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty()) {
 			return;
 		}
 		ItemStack stack = event.getItemStack();
