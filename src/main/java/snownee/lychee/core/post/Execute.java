@@ -42,6 +42,11 @@ public class Execute extends PostAction {
 	}
 
 	@Override
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+		apply(recipe, ctx, times);
+	}
+
+	@Override
 	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		if (command.isEmpty()) {
 			return;

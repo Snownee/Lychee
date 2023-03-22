@@ -41,7 +41,7 @@ public abstract class PostAction extends ContextualHolder {
 
 	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		for (int i = 0; i < times; i++) {
-			apply(recipe, ctx, times);
+			apply(recipe, ctx, 1);
 		}
 	}
 
