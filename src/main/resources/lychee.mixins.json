@@ -1,6 +1,7 @@
 {
   "required": true,
   "package": "snownee.lychee.mixin",
+  "plugin": "snownee.lychee.mixin.MixinPlugin",
   "compatibilityLevel": "JAVA_16",
   "refmap": "lychee.refmap.json",
   "mixins": [
@@ -36,7 +37,7 @@
     "RecipeManagerAccess",
     "RecipeManagerMixin",
     "ReloadableServerResourcesMixin",
-    "ResourceManagerHelperImplMixin",
+    "fabric.ResourceManagerHelperImplMixin",
     "ShapedRecipeAccess",
     "StatePropertiesPredicateAccess",
     "TimeCheckAccess",

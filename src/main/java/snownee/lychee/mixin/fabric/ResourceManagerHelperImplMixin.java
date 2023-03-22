@@ -1,4 +1,4 @@
-package snownee.lychee.mixin;
+package snownee.lychee.mixin.fabric;
 
 import java.util.List;
 
