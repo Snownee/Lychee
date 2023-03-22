@@ -28,7 +28,7 @@ public class ActionRuntime {
 		jobs.addAll(0, actions.map($ -> new Job($, times)).toList());
 	}
 
-	public void run(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public void run(ILycheeRecipe<?> recipe, LycheeContext ctx) {
 		ILycheeRecipe.NBTPatchContext patchContext = ILycheeRecipe.patchContexts.get(recipe.lychee$getId());
 		if (patchContext != null && ctx.json == null) {
 			ctx.json = patchContext.template().deepCopy();
@@ -58,15 +58,13 @@ public class ActionRuntime {
 						//						System.out.println(ItemStack.of(tag).getTag());
 						ctx.setItem(index, ItemStack.of(tag));
 					} catch (Throwable e) {
-						Lychee.LOGGER.error("Error parsing json result into item " + ctx.json);
-						Lychee.LOGGER.catching(e);
+						Lychee.LOGGER.error("Error parsing json result into item " + ctx.json, e);
 						ctx.runtime.state = State.STOPPED;
 					}
 				}
 			}
 		} catch (Throwable e) {
-			Lychee.LOGGER.error("Error running actions");
-			Lychee.LOGGER.catching(e);
+			Lychee.LOGGER.error("Error running actions", e);
 			ctx.runtime.state = State.STOPPED;
 		}
 	}

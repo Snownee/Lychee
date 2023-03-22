@@ -15,7 +15,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 
 public class Fragments extends SimpleJsonResourceReloadListener {
-	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().setLenient().create();
+	public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().setLenient().create();
 	private final Map<String, JsonElement> fragments = Maps.newHashMap();
 	public static final Fragments INSTANCE = new Fragments("lychee_fragments");
 

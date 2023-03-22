@@ -88,7 +88,7 @@ public interface ILycheeRecipe<C extends LycheeContext> {
 	default void applyPostActions(LycheeContext ctx, int times) {
 		if (!ctx.getLevel().isClientSide) {
 			ctx.enqueueActions(getPostActions(), times, true);
-			ctx.runtime.run(this, ctx, times);
+			ctx.runtime.run(this, ctx);
 		}
 	}
 

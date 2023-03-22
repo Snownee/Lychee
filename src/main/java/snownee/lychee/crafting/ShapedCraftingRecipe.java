@@ -180,7 +180,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			return ItemStack.EMPTY;
 		}
 		ctx.enqueueActions(assembling.stream(), 1, true);
-		ctx.runtime.run(this, ctx, 1);
+		ctx.runtime.run(this, ctx);
 		return ctx.getItem(ctx.getContainerSize() - 1);
 	}
 

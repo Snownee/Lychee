@@ -92,7 +92,7 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 						ctx.itemEntities.removeIf($ -> $.getItem().isEmpty());
 					}
 				} catch (Exception e) {
-					Lychee.LOGGER.catching(e);
+					Lychee.LOGGER.error("", e);
 					break major;
 				}
 			}

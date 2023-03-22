@@ -113,7 +113,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 						ctx.itemEntities.removeIf($ -> $.getItem().isEmpty());
 					}
 				} catch (Exception e) {
-					Lychee.LOGGER.catching(e);
+					Lychee.LOGGER.error("", e);
 					break major;
 				}
 			}

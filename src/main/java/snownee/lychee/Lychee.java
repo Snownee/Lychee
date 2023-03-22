@@ -2,8 +2,9 @@ package snownee.lychee;
 
 import java.util.function.Function;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+
+import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +28,7 @@ import snownee.lychee.util.LUtil;
 public final class Lychee {
 	public static final String ID = "lychee";
 
-	public static final Logger LOGGER = LogManager.getLogger(Lychee.ID);
+	public static final Logger LOGGER = LogUtils.getLogger();
 
 	public static boolean hasKiwi;
 
