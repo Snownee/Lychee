@@ -1,9 +1,7 @@
 package snownee.lychee.core.recipe;
 
-import java.util.Objects;
 import java.util.function.Function;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -50,7 +48,7 @@ public abstract class ItemAndBlockRecipe<C extends LycheeContext> extends Lychee
 		if (thisEntity instanceof ItemEntity) {
 			stack = ((ItemEntity) thisEntity).getItem();
 		} else {
-			stack = ctx.getParam(LootContextParams.TOOL);
+			stack = ctx.getItem(0);
 		}
 		return input.test(stack) && BlockPredicateHelper.fastMatch(block, ctx);
 	}
@@ -81,12 +79,7 @@ public abstract class ItemAndBlockRecipe<C extends LycheeContext> extends Lychee
 
 		@Override
 		public void fromJson(T pRecipe, JsonObject pSerializedRecipe) {
-			JsonElement element = pSerializedRecipe.get("item_in");
-			if (element instanceof JsonObject object && !object.has("type") && object.has("item") && "minecraft:air".equals(Objects.toString(ResourceLocation.tryParse(object.get("item").getAsString())))) {
-				pRecipe.input = Ingredient.of(ItemStack.EMPTY);
-			} else {
-				pRecipe.input = Ingredient.fromJson(element);
-			}
+			pRecipe.input = parseIngredientOrAir(pSerializedRecipe.get("item_in"));
 			pRecipe.block = BlockPredicateHelper.fromJson(pSerializedRecipe.get("block_in"));
 		}
 

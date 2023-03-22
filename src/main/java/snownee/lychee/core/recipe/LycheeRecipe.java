@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -22,6 +23,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import snownee.lychee.Lychee;
@@ -40,13 +42,13 @@ import snownee.lychee.util.json.JsonPointer;
 public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHolder implements ILycheeRecipe<C>, Recipe<C> {
 
 	private final ResourceLocation id;
-	List<PostAction> actions = Collections.EMPTY_LIST;
-	protected Ints maxRepeats = Ints.ANY;
 	public boolean ghost;
 	public boolean hideInRecipeViewer;
 	@Nullable
 	public String comment;
 	public String group = "default";
+	protected Ints maxRepeats = Ints.ANY;
+	List<PostAction> actions = Collections.EMPTY_LIST;
 
 	public LycheeRecipe(ResourceLocation id) {
 		this.id = id;
@@ -149,6 +151,13 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 		public Serializer(Function<ResourceLocation, R> factory) {
 			this.factory = factory;
+		}
+
+		public static Ingredient parseIngredientOrAir(JsonElement element) {
+			if (element instanceof JsonObject object && !object.has("type") && object.has("item") && "minecraft:air".equals(Objects.toString(ResourceLocation.tryParse(object.get("item").getAsString())))) {
+				return Ingredient.of(ItemStack.EMPTY);
+			}
+			return Ingredient.fromJson(element);
 		}
 
 		@Override

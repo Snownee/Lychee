@@ -87,7 +87,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		}).map(Item::getDefaultInstance).toList();
 	}
 
-	public Optional<T> process(Player player, InteractionHand hand, ItemStack stack, BlockPos pos, Vec3 origin, LycheeContext.Builder<C> ctxBuilder) {
+	public Optional<T> process(Player player, InteractionHand hand, BlockPos pos, Vec3 origin, LycheeContext.Builder<C> ctxBuilder) {
 		if (isEmpty()) {
 			return Optional.empty();
 		}
@@ -102,15 +102,19 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		ctxBuilder.withParameter(LootContextParams.BLOCK_STATE, blockstate);
 		ctxBuilder.withParameter(LycheeLootContextParams.BLOCK_POS, pos);
 		C ctx = ctxBuilder.create(contextParamSet);
+		ItemStack stack = player.getItemInHand(hand);
+		ItemStack otherStack = player.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
+		ctx.itemHolders = ItemHolderCollection.Inventory.of(ctx, stack, otherStack);
 		Iterable<T> iterable = Iterables.concat(recipes, anyBlockRecipes);
 		for (T recipe : iterable) {
 			if (tryMatch(recipe, level, ctx).isPresent()) {
 				if (!level.isClientSide && recipe.tickOrApply(ctx)) {
-					int times = recipe.getRandomRepeats(Math.max(1, stack.getCount()), ctx);
-					ctx.itemHolders = ItemHolderCollection.Inventory.of(ctx, stack);
+					int times = Math.min(ctx.getItem(0).getCount(), ctx.getItem(1).getCount());
+					times = recipe.getRandomRepeats(Math.max(1, times), ctx);
 					recipe.applyPostActions(ctx, times);
 					ctx.itemHolders.postApply(ctx.runtime.doDefault, times);
 					player.setItemInHand(hand, ctx.getItem(0));
+					player.setItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, ctx.getItem(1));
 				}
 				return Optional.of(recipe);
 			}
