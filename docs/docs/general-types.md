@@ -29,13 +29,7 @@ An ingredient is a predicate of ItemStack.
         | type | ingredient type          | string         |
         |      | additional properties... |                |
 
-        Checks for item id and nbt:
-
-        | Name | Description      | Type / Literal   |
-        | ---- | ---------------- | ---------------- |
-        | type | ingredient type  | "forge:nbt"      |
-        | item | item resource id | string           |
-        | nbt  | the item nbt     | object \| string |
+        You can use Forge's built-in features to check item nbt or combine several ingredients to one compound ingredient: [Documentation](https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types)
 
         ```
         {
@@ -45,16 +39,6 @@ An ingredient is a predicate of ItemStack.
                 "BucketContent": "minecraft:milk"
             }
         }
-        ```
-
-        You can combine several ingredients to one compound ingredient:
-
-        ```
-        [
-          Ingredient,
-          Ingredient,
-          Ingredient
-        ]
         ```
 
 ## BlockPredicate
