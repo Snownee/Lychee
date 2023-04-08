@@ -276,6 +276,7 @@ jar {
     exclude '/data/lychee/predicates'
     
     exclude '/com'
+    exclude '/team'
     manifest {
         attributes([
                 "Specification-Title": mod_id,
