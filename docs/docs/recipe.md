@@ -2,6 +2,8 @@
 
 ## Basic Format
 
+Recipes should be placed in `data/<namespace>/recipes/` folder, like normal data-driven recipes.
+
 === "Forge"
 
     | Name           | Description                                                                 | Type / Literal                                                                                     |
