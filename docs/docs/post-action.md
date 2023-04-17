@@ -173,6 +173,20 @@ Randomly selects entries from an action list to apply. Similar to loot table.
 	}
 	```
 
+### If-Else Statement
+
+*Since: 3.10*
+
+Executes a list of actions if the contextual conditions are met or not.
+
+!!! note "Format"
+
+		| Name | Description                                                               | Type / Literal                                                 |
+		| ---- | ------------------------------------------------------------------------- | -------------------------------------------------------------- |
+		| type | type                                                                      | "if"                                                           |
+		| then | a list of actions to be executed if the conditions are met ^optional^     | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
+		| else | a list of actions to be executed if the conditions are not met ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
+
 ### Create Explosion
 
 Creates an explosion at where the interaction occurs.
@@ -359,7 +373,7 @@ This action is not [repeatable](concepts.md#repeatability).
     | count  | item amount ^optional^           | int                                         |
     | nbt    | (Forge only) item nbt ^optional^ | object \| string                            |
 
-### NBT Patch
+### NBT Patch (Experimental)
 
 NBT patch the inputs or the results. It is mainly used to modify NBT of the results. For rules, please refer to [JSON Patch | jsonpatch.com](https://jsonpatch.com/) and [RFC 7386: JSON Merge Patch](https://www.rfc-editor.org/rfc/rfc7386).
 

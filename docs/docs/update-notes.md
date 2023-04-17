@@ -1,10 +1,14 @@
 # Update Notes
 
+## 3.10
+
+ - Added if-else statement post action type.
+
 ## 3.9
 
- - Basic KubeJS integration for adding custom actions and conditions
- - KubeJS integration for executing codes when clicking the info badge in JEI/REI
- - Now you can specify item in the other hand for block interaction recipes
+ - Basic KubeJS integration for adding custom actions and conditions.
+ - KubeJS integration for executing codes when clicking the info badge in JEI/REI.
+ - Now you can specify item in the other hand for block interaction recipes.
 
 ## 3.8
 
