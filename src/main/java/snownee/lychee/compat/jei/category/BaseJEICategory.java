@@ -3,6 +3,7 @@ package snownee.lychee.compat.jei.category;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
@@ -41,6 +42,7 @@ import snownee.lychee.compat.jei.JEICompat;
 import snownee.lychee.compat.jei.JEICompat.SlotType;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
+import snownee.lychee.core.post.CompoundAction;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.RandomSelect;
@@ -141,11 +143,8 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		if (action instanceof DropItem dropitem) {
 			slot.addItemStack(dropitem.stack);
 			itemMap.put(dropitem.stack, dropitem);
-		} else if (action instanceof RandomSelect random) {
-			for (PostAction entry : random.entries) {
-				if (!entry.isHidden())
-					buildActionSlot(layout, entry, itemMap, slot);
-			}
+		} else if (action instanceof CompoundAction compoundAction) {
+			compoundAction.getChildActions().filter(Predicate.not(PostAction::isHidden)).forEach(child -> buildActionSlot(layout, child, itemMap, slot));
 		} else {
 			slot.addIngredient(JEICompat.POST_ACTION, action);
 			List<ItemStack> itemOutputs = action.getItemOutputs();

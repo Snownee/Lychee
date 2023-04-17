@@ -12,6 +12,7 @@ import snownee.lychee.core.post.DropXp;
 import snownee.lychee.core.post.Execute;
 import snownee.lychee.core.post.Explode;
 import snownee.lychee.core.post.Hurt;
+import snownee.lychee.core.post.If;
 import snownee.lychee.core.post.MoveTowardsFace;
 import snownee.lychee.core.post.PlaceBlock;
 import snownee.lychee.core.post.PostActionType;
@@ -44,6 +45,7 @@ public class PostActionTypes {
 	public static final PostActionType<SetItem> SET_ITEM = register("set_item", new SetItem.Type());
 	public static final PostActionType<NBTPatch> NBT_PATCH = register("nbt_patch", new NBTPatch.Type());
 	public static final PostActionType<CustomAction> CUSTOM = register("custom", new CustomAction.Type());
+	public static final PostActionType<If> IF = register("if", new If.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		Registry.register(LycheeRegistries.POST_ACTION, name, t);

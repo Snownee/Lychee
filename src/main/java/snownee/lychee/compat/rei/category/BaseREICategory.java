@@ -2,6 +2,7 @@ package snownee.lychee.compat.rei.category;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.google.common.base.Strings;
@@ -36,7 +37,9 @@ import snownee.lychee.compat.rei.REICompat.SlotType;
 import snownee.lychee.compat.rei.ReactiveWidget;
 import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.post.CompoundAction;
 import snownee.lychee.core.post.DropItem;
+import snownee.lychee.core.post.If;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.recipe.ILycheeRecipe;
@@ -115,11 +118,8 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 			EntryStack<ItemStack> entry = EntryStacks.of(dropitem.stack);
 			entries.add(entry);
 			itemMap.put(entry, dropitem);
-		} else if (action instanceof RandomSelect random) {
-			for (PostAction entry : random.entries) {
-				if (!entry.isHidden())
-					buildActionSlot(entries, entry, itemMap);
-			}
+		} else if (action instanceof CompoundAction compoundAction) {
+			compoundAction.getChildActions().filter(Predicate.not(PostAction::isHidden)).forEach(child -> buildActionSlot(entries, child, itemMap));
 		} else {
 			entries.add(EntryStack.of(REICompat.POST_ACTION, action));
 		}

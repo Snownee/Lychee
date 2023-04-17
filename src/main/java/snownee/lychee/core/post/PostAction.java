@@ -18,6 +18,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -36,20 +37,6 @@ public abstract class PostAction extends ContextualHolder {
 
 	@Nullable
 	public String path;
-
-	public abstract PostActionType<?> getType();
-
-	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		for (int i = 0; i < times; i++) {
-			apply(recipe, ctx, 1);
-		}
-	}
-
-	protected abstract void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times);
-
-	public List<ItemStack> getItemOutputs() {
-		return List.of();
-	}
 
 	public static void parseActions(JsonElement element, Consumer<PostAction> consumer) {
 		if (element == null) {
@@ -72,6 +59,27 @@ public abstract class PostAction extends ContextualHolder {
 			action.path = GsonHelper.getAsString(o, "@path");
 		}
 		return action;
+	}
+
+	public static PostAction read(FriendlyByteBuf buf) {
+		PostActionType<?> type = LUtil.readRegistryId(LycheeRegistries.POST_ACTION, buf);
+		PostAction action = type.fromNetwork(buf);
+		action.conditionsFromNetwork(buf);
+		return action;
+	}
+
+	public abstract PostActionType<?> getType();
+
+	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+		for (int i = 0; i < times; i++) {
+			apply(recipe, ctx, 1);
+		}
+	}
+
+	protected abstract void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times);
+
+	public List<ItemStack> getItemOutputs() {
+		return List.of();
 	}
 
 	public Component getDisplayName() {
@@ -147,5 +155,8 @@ public abstract class PostAction extends ContextualHolder {
 
 	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
 		return JsonNull.INSTANCE;
+	}
+
+	public void onFailure(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 	}
 }

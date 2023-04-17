@@ -38,7 +38,7 @@ import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.LUtil;
 import snownee.lychee.util.json.JsonPointer;
 
-public class RandomSelect extends PostAction {
+public class RandomSelect extends PostAction implements CompoundAction {
 
 	public final PostAction[] entries;
 	public final int[] weights;
@@ -54,9 +54,9 @@ public class RandomSelect extends PostAction {
 		this.weights = weights;
 		this.totalWeight = totalWeight;
 		this.rolls = rolls;
-		canRepeat = Stream.of(entries).allMatch(PostAction::canRepeat);
-		hidden = Stream.of(entries).allMatch(PostAction::isHidden);
-		preventSync = Stream.of(entries).allMatch(PostAction::preventSync);
+		canRepeat = Arrays.stream(entries).allMatch(PostAction::canRepeat);
+		hidden = Arrays.stream(entries).allMatch(PostAction::isHidden);
+		preventSync = Arrays.stream(entries).allMatch(PostAction::preventSync);
 	}
 
 	@Override
@@ -209,6 +209,11 @@ public class RandomSelect extends PostAction {
 		return jsonObject;
 	}
 
+	@Override
+	public Stream<PostAction> getChildActions() {
+		return Arrays.stream(entries);
+	}
+
 	public static class Type extends PostActionType<RandomSelect> {
 
 		@Override
@@ -261,10 +266,7 @@ public class RandomSelect extends PostAction {
 			int[] weights = new int[size];
 			for (int i = 0; i < size; i++) {
 				weights[i] = buf.readVarInt();
-				PostActionType<?> type = LUtil.readRegistryId(LycheeRegistries.POST_ACTION, buf);
-				PostAction action = type.fromNetwork(buf);
-				action.conditionsFromNetwork(buf);
-				entries[i] = action;
+				entries[i] = PostAction.read(buf);
 			}
 			return new RandomSelect(entries, weights, totalWeight, IntBoundsHelper.fromNetwork(buf));
 		}
