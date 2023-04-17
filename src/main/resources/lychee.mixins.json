@@ -21,6 +21,7 @@
     "IntRangeAccess",
     "IntsAccess",
     "ItemEntityAccess",
+    "ItemEntityHurtMixin",
     "ItemEntityMixin",
     "LightningBoltMixin",
     "LightPredicateAccess",
@@ -37,10 +38,10 @@
     "RecipeManagerAccess",
     "RecipeManagerMixin",
     "ReloadableServerResourcesMixin",
-    "fabric.ResourceManagerHelperImplMixin",
     "ShapedRecipeAccess",
     "StatePropertiesPredicateAccess",
     "TimeCheckAccess",
+    "fabric.ResourceManagerHelperImplMixin",
     "rei.DefaultCraftingDisplayMixin"
   ],
   "client": [
