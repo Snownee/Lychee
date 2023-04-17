@@ -60,6 +60,33 @@
           "item": "dirt"
         }
       ]
+    },
+    {
+      "type": "if",
+      "contextual": {
+        "type": "chance",
+        "chance": 0.5
+      },
+      "then": [
+        {
+          "type": "drop_item",
+          "item": "gold_ingot",
+          "contextual": {
+            "type": "weather",
+            "weather": "rain"
+          }
+        },
+        {
+          "type": "drop_item",
+          "item": "ender_pearl"
+        }
+      ],
+      "else": [
+        {
+          "type": "drop_item",
+          "item": "dirt"
+        }
+      ]
     }
   ]
 }

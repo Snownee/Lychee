@@ -16,6 +16,8 @@ public class Job {
 		int t = action.checkConditions(recipe, ctx, times);
 		if (t > 0) {
 			action.doApply(recipe, ctx, t);
+		} else {
+			action.onFailure(recipe, ctx, times);
 		}
 	}
 }
