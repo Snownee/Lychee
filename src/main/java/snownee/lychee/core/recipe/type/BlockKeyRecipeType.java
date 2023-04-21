@@ -111,6 +111,9 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 				if (!level.isClientSide && recipe.tickOrApply(ctx)) {
 					int times = Math.min(ctx.getItem(0).getCount(), ctx.getItem(1).getCount());
 					times = recipe.getRandomRepeats(Math.max(1, times), ctx);
+					if (recipe.getIngredients().size() == 1) {
+						ctx.itemHolders.ignoreConsumptionFlags.set(1);
+					}
 					recipe.applyPostActions(ctx, times);
 					ctx.itemHolders.postApply(ctx.runtime.doDefault, times);
 					player.setItemInHand(hand, ctx.getItem(0));
