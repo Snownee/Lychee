@@ -10,6 +10,9 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class MixinPlugin implements IMixinConfigPlugin {
+	private static boolean hasMod(String modid) {
+		return FabricLoader.getInstance().isModLoaded(modid);
+	}
 
 	@Override
 	public void onLoad(String mixinPackage) {
@@ -23,7 +26,13 @@ public class MixinPlugin implements IMixinConfigPlugin {
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
 		if (mixinClassName.startsWith("snownee.lychee.mixin.fabric.")) {
-			return !FabricLoader.getInstance().isModLoaded("quilted_fabric_api");
+			return !hasMod("quilted_fabric_api");
+		}
+		if ("snownee.lychee.mixin.ItemEntityHurtMixin".equals(mixinClassName)) {
+			return !hasMod("itemphysic");
+		}
+		if ("snownee.lychee.mixin.itemphysic.ItemEntityHurtMixin".equals(mixinClassName)) {
+			return hasMod("itemphysic");
 		}
 		return true;
 	}

@@ -42,7 +42,8 @@
     "StatePropertiesPredicateAccess",
     "TimeCheckAccess",
     "fabric.ResourceManagerHelperImplMixin",
-    "rei.DefaultCraftingDisplayMixin"
+    "rei.DefaultCraftingDisplayMixin",
+    "itemphysic.ItemEntityHurtMixin"
   ],
   "client": [
     "ClientPacketListenerMixin",
