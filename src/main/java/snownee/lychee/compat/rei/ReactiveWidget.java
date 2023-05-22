@@ -8,7 +8,6 @@ import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import me.shedaniel.math.Point;

@@ -8,3 +8,5 @@ accessible class net/minecraft/client/particle/DripParticle$DripstoneFallAndLand
 accessible method net/minecraft/client/particle/DripParticle$DripstoneFallAndLandParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDLnet/minecraft/world/level/material/Fluid;Lnet/minecraft/core/particles/ParticleOptions;)V
 accessible class net/minecraft/client/particle/DripParticle$DripHangParticle
 accessible method net/minecraft/client/particle/DripParticle$DripHangParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDLnet/minecraft/world/level/material/Fluid;Lnet/minecraft/core/particles/ParticleOptions;)V
+accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
+accessible method net/minecraft/world/item/crafting/Ingredient$ItemValue <init> (Lnet/minecraft/world/item/ItemStack;)V

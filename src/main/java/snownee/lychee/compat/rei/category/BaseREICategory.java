@@ -39,7 +39,6 @@ import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.CompoundAction;
 import snownee.lychee.core.post.DropItem;
-import snownee.lychee.core.post.If;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.RandomSelect;
 import snownee.lychee.core.recipe.ILycheeRecipe;
