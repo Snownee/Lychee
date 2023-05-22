@@ -38,6 +38,17 @@ public class ActionRuntime {
 			}
 			//			Lychee.LOGGER.info(ctx.json);
 			jobs.forEach($ -> $.action.preApply(recipe, ctx, patchContext));
+			//				Lychee.LOGGER.info(ctx.json);
+			for (Integer index : patchContext.usedIndexes()) {
+				try {
+					CompoundTag tag = LUtil.jsonToTag(ctx.json.getAsJsonObject(Integer.toString(index)));
+					//						System.out.println(ItemStack.of(tag).getTag());
+					ctx.setItem(index, ItemStack.of(tag));
+				} catch (Throwable e) {
+					Lychee.LOGGER.error("Error parsing json result into item " + ctx.json, e);
+					ctx.runtime.state = State.STOPPED;
+				}
+			}
 		}
 
 		try {
@@ -49,19 +60,6 @@ public class ActionRuntime {
 			}
 			if (ctx.runtime.state == State.RUNNING || jobs.isEmpty()) {
 				ctx.runtime.state = State.STOPPED;
-			}
-			if (patchContext != null) {
-				//				Lychee.LOGGER.info(ctx.json);
-				for (Integer index : patchContext.usedIndexes()) {
-					try {
-						CompoundTag tag = LUtil.jsonToTag(ctx.json.getAsJsonObject(Integer.toString(index)));
-						//						System.out.println(ItemStack.of(tag).getTag());
-						ctx.setItem(index, ItemStack.of(tag));
-					} catch (Throwable e) {
-						Lychee.LOGGER.error("Error parsing json result into item " + ctx.json, e);
-						ctx.runtime.state = State.STOPPED;
-					}
-				}
 			}
 		} catch (Throwable e) {
 			Lychee.LOGGER.error("Error running actions", e);

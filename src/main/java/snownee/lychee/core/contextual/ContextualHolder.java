@@ -22,6 +22,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.ContextualConditionTypes;
+import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
@@ -30,12 +31,12 @@ import snownee.lychee.util.LUtil;
 
 public class ContextualHolder {
 
+	private static final Component SECRET_TITLE = Component.translatable("contextual.lychee.secret").withStyle(ChatFormatting.GRAY);
 	private List<ContextualCondition> conditions = Collections.EMPTY_LIST;
 	@Nullable
 	private BitSet secretFlags;
 	@Nullable
 	private List<Component> overrideDesc;
-	private static final Component SECRET_TITLE = Component.translatable("contextual.lychee.secret").withStyle(ChatFormatting.GRAY);
 
 	public List<ContextualCondition> getConditions() {
 		return conditions;
@@ -142,18 +143,23 @@ public class ContextualHolder {
 	}
 
 	public int checkConditions(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		boolean first = true;
-		for (ContextualCondition condition : conditions) {
-			if (first && condition.getType() == ContextualConditionTypes.CHANCE && getClass() == RandomBlockTickingRecipe.class) {
-				continue;
+		try {
+			boolean first = true;
+			for (ContextualCondition condition : conditions) {
+				if (first && condition.getType() == ContextualConditionTypes.CHANCE && getClass() == RandomBlockTickingRecipe.class) {
+					continue;
+				}
+				first = false;
+				times = condition.test(recipe, ctx, times);
+				if (times == 0) {
+					break;
+				}
 			}
-			first = false;
-			times = condition.test(recipe, ctx, times);
-			if (times == 0) {
-				break;
-			}
+			return times;
+		} catch (Throwable e) {
+			Lychee.LOGGER.error("Failed to check conditions for recipe {}", recipe.lychee$getId(), e);
+			return 0;
 		}
-		return times;
 	}
 
 	public boolean isSecretCondition(int index) {

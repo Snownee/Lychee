@@ -1,5 +1,13 @@
 package snownee.lychee.anvil_crafting;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,6 +24,7 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.def.IntBoundsHelper;
+import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.json.JsonPointer;
@@ -27,6 +36,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 	protected int levelCost;
 	protected int materialCost;
 	protected ItemStack output;
+	private List<PostAction> assembling = Collections.EMPTY_LIST;
 
 	public AnvilCraftingRecipe(ResourceLocation id) {
 		super(id);
@@ -45,7 +55,10 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 	public ItemStack assemble(AnvilContext ctx) {
 		ctx.levelCost = levelCost;
 		ctx.materialCost = materialCost;
-		return getResultItem();
+		ctx.itemHolders.replace(2, getResultItem());
+		ctx.enqueueActions(assembling.stream(), 1, true);
+		ctx.runtime.run(this, ctx);
+		return ctx.getItem(2);
 	}
 
 	public Ingredient getLeft() {
@@ -76,7 +89,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 	@Override
 	public IntList getItemIndexes(JsonPointer pointer) {
 		if (pointer.size() == 1) {
-			if (pointer.getString(0).equals("output")) {
+			if (pointer.getString(0).equals("item_out")) {
 				return IntList.of(2);
 			}
 			if (pointer.getString(0).equals("item_in")) {
@@ -97,7 +110,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 
 	@Override
 	public JsonPointer defaultItemPointer() {
-		return OUTPUT;
+		return ITEM_OUT;
 	}
 
 	@Override
@@ -113,6 +126,32 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 	@Override
 	public int compareTo(AnvilCraftingRecipe that) {
 		return Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
+	}
+
+	public void addAssemblingAction(PostAction action) {
+		Objects.requireNonNull(action);
+		if (assembling == Collections.EMPTY_LIST) {
+			assembling = Lists.newArrayList();
+		}
+		assembling.add(action);
+	}
+
+	@Override
+	public Stream<PostAction> getAllActions() {
+		return Stream.concat(getPostActions(), assembling.stream());
+	}
+
+	@Override
+	public boolean isActionPath(JsonPointer pointer) {
+		if (pointer.isRoot())
+			return false;
+		String token = pointer.getString(0);
+		return "assembling".equals(token) || "post".equals(token);
+	}
+
+	@Override
+	public Map<JsonPointer, List<PostAction>> getActionGroups() {
+		return Map.of(POST, actions, new JsonPointer("/assembling"), assembling);
 	}
 
 	public static class Serializer extends LycheeRecipe.Serializer<AnvilCraftingRecipe> {
@@ -133,8 +172,10 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 			} else {
 				pRecipe.left = Ingredient.fromJson(itemIn);
 			}
+			PostAction.parseActions(pSerializedRecipe.get("assembling"), pRecipe::addAssemblingAction);
 			pRecipe.output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(pSerializedRecipe, ("item_out")));
-			pRecipe.levelCost = GsonHelper.getAsInt(pSerializedRecipe, "level_cost", 0);
+			pRecipe.levelCost = GsonHelper.getAsInt(pSerializedRecipe, "level_cost", 1);
+			Preconditions.checkArgument(pRecipe.levelCost > 0, "level_cost must be greater than 0");
 			pRecipe.materialCost = GsonHelper.getAsInt(pSerializedRecipe, "material_cost", 1);
 		}
 
