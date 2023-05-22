@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
@@ -20,7 +21,8 @@ public enum IsSneaking implements ContextualCondition {
 
 	@Override
 	public int test(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		return ctx.getParam(LootContextParams.THIS_ENTITY).isCrouching() ? times : 0;
+		Entity entity = ctx.getParam(LootContextParams.THIS_ENTITY);
+		return entity.isCrouching() || entity.isShiftKeyDown() ? times : 0;
 	}
 
 	@Override
