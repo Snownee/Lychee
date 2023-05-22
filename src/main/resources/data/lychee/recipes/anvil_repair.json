@@ -2,7 +2,10 @@
   "type": "lychee:anvil_crafting",
   "item_in": [
     {
-      "item": "diamond_sword"
+      "item": "diamond_sword",
+      "lychee:tag": {
+        "Damage": 1
+      }
     },
     {
       "item": "dirt"
