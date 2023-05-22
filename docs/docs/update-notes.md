@@ -1,5 +1,10 @@
 # Update Notes
 
+## 3.11
+
+ - Added assembling actions support to anvil crafting recipes.
+ - Allowed to use `lychee:tag` in `Ingredient` or `ItemStack` in NBT to assign a tag to the item.
+
 ## 3.10
 
  - Added if-else statement post action type.

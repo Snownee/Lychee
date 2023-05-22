@@ -238,13 +238,14 @@ Default behavior: Anvil is damaged.
 
 !!! note "Format"
 
-    | Name          | Description                                             | Type / Literal                                                                           |
-    | ------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-    | type          | type                                                    | "lychee:anvil_crafting"                                                                  |
-    | item_in       | the input items (the second one is optional)            | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | item_out      | the result item                                         | ItemStack                                                                                |
-    | level_cost    | player's xp level                                       | int                                                                                      |
-    | material_cost | amount of items that will be cost from right input slot | int                                                                                      |
+    | Name          | Description                                                                | Type / Literal                                                                           |
+    | ------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+    | type          | type                                                                       | "lychee:anvil_crafting"                                                                  |
+    | item_in       | the input items (the second one is optional)                               | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | item_out      | the result item                                                            | ItemStack                                                                                |
+    | level_cost    | player's xp level                                                          | int && >=1                                                                               |
+    | material_cost | amount of items that will be cost from right input slot                    | int                                                                                      |
+    | assembling    | actions that running before the result is displayed ^optional. since 3.11^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
 
 ??? example
 
