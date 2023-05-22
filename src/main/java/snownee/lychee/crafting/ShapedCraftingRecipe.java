@@ -40,12 +40,10 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeLootContextParamSets;
-import snownee.lychee.LycheeRegistries;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.input.ItemHolderCollection;
 import snownee.lychee.core.post.PostAction;
-import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.post.input.SetItem;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
@@ -54,7 +52,6 @@ import snownee.lychee.mixin.CraftingContainerAccess;
 import snownee.lychee.mixin.CraftingMenuAccess;
 import snownee.lychee.mixin.InventoryMenuAccess;
 import snownee.lychee.mixin.ShapedRecipeAccess;
-import snownee.lychee.util.LUtil;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.json.JsonPointer;
 
@@ -83,6 +80,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	public String pattern;
 	private List<PostAction> actions = Collections.EMPTY_LIST;
 	private List<PostAction> assembling = Collections.EMPTY_LIST;
+
 	public ShapedCraftingRecipe(ResourceLocation id, String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result) {
 		super(id, group, width, height, ingredients, result);
 	}
@@ -302,7 +300,12 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 		if (pointer.isRoot())
 			return false;
 		String token = pointer.getString(0);
-		return "assemble".equals(token) || "post".equals(token);
+		return "assembling".equals(token) || "post".equals(token);
+	}
+
+	@Override
+	public Map<JsonPointer, List<PostAction>> getActionGroups() {
+		return Map.of(POST, actions, new JsonPointer("/assembling"), assembling);
 	}
 
 	public static class Serializer implements RecipeSerializer<ShapedCraftingRecipe> {
@@ -327,7 +330,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			recipe.conditions.parseConditions(jsonObject.get("contextual"));
 			PostAction.parseActions(jsonObject.get("post"), recipe::addPostAction);
 			PostAction.parseActions(jsonObject.get("assembling"), recipe::addAssemblingAction);
-			ILycheeRecipe.processActions(recipe, Map.of(POST, recipe.actions, new JsonPointer("/assembling"), recipe.assembling), jsonObject);
+			ILycheeRecipe.processActions(recipe, jsonObject);
 			return recipe;
 		}
 

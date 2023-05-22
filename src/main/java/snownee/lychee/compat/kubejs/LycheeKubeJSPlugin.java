@@ -4,6 +4,7 @@ import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import net.minecraft.world.InteractionResult;
 import snownee.lychee.Lychee;
+import snownee.lychee.core.Reference;
 import snownee.lychee.core.contextual.CustomCondition;
 import snownee.lychee.core.post.CustomAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
@@ -42,6 +43,7 @@ public class LycheeKubeJSPlugin extends KubeJSPlugin {
 	@Override
 	public void registerBindings(BindingsEvent event) {
 		event.add("InteractionResult", InteractionResult.class);
+		event.add("LycheeReference", Reference.class);
 	}
 
 }

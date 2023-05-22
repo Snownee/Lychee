@@ -37,7 +37,7 @@ import snownee.lychee.util.json.JsonPointer;
 public interface ILycheeRecipe<C extends LycheeContext> {
 
 	JsonPointer ITEM_IN = new JsonPointer("/item_in");
-	JsonPointer OUTPUT = new JsonPointer("/output");
+	JsonPointer ITEM_OUT = new JsonPointer("/item_out");
 	JsonPointer RESULT = new JsonPointer("/result");
 	JsonPointer POST = new JsonPointer("/post");
 
@@ -69,6 +69,8 @@ public interface ILycheeRecipe<C extends LycheeContext> {
 	default Stream<PostAction> getAllActions() {
 		return getPostActions();
 	}
+
+	Map<JsonPointer, List<PostAction>> getActionGroups();
 
 	static Stream<PostAction> filterHidden(Stream<PostAction> stream) {
 		return stream.filter(Predicate.not(PostAction::isHidden));
@@ -146,7 +148,7 @@ public interface ILycheeRecipe<C extends LycheeContext> {
 		return !pointer.isRoot() && "post".equals(pointer.getString(0));
 	}
 
-	static void processActions(ILycheeRecipe<?> recipe, Map<JsonPointer, List<PostAction>> actionGroups, JsonObject recipeObject) {
+	static void processActions(ILycheeRecipe<?> recipe, JsonObject recipeObject) {
 		MutableObject<NBTPatchContext> patchContext = new MutableObject<>();
 		Set<JsonPointer> usedPointers = Sets.newHashSet();
 		recipe.getAllActions().forEach(action -> action.getUsedPointers(recipe, usedPointers::add));
@@ -172,7 +174,7 @@ public interface ILycheeRecipe<C extends LycheeContext> {
 				}
 			});
 			JsonObject jsonObject = new JsonObject();
-			for (Map.Entry<JsonPointer, List<PostAction>> entry : actionGroups.entrySet()) {
+			for (Map.Entry<JsonPointer, List<PostAction>> entry : recipe.getActionGroups().entrySet()) {
 				JsonPointer pointer = entry.getKey();
 				List<PostAction> actions = entry.getValue();
 				JsonElement element = processActionGroup(recipe, pointer, actions, recipeObject);

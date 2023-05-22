@@ -50,7 +50,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	public String comment;
 	public String group = "default";
 	protected Ints maxRepeats = Ints.ANY;
-	List<PostAction> actions = Collections.EMPTY_LIST;
+	protected List<PostAction> actions = Collections.EMPTY_LIST;
 
 	public LycheeRecipe(ResourceLocation id) {
 		this.id = id;
@@ -140,6 +140,11 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		}
 		return IntList.of();
 	}
+	
+	@Override
+	public Map<JsonPointer, List<PostAction>> getActionGroups() {
+		return Map.of(POST, actions);
+	}
 
 	@Override
 	public abstract LycheeRecipeType<?, ?> getType();
@@ -194,8 +199,8 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			Preconditions.checkArgument(ResourceLocation.isValidResourceLocation(recipe.group), "%s is not a valid ResourceLocation", recipe.group);
 			recipe.parseConditions(jsonObject.get("contextual"));
 			PostAction.parseActions(jsonObject.get("post"), recipe::addPostAction);
-			ILycheeRecipe.processActions(recipe, Map.of(POST, recipe.actions), jsonObject);
 			fromJson(recipe, jsonObject);
+			ILycheeRecipe.processActions(recipe, jsonObject);
 			if (jsonObject.has("max_repeats")) {
 				recipe.maxRepeats = Ints.fromJson(jsonObject.get("max_repeats"));
 				Integer min = recipe.maxRepeats.getMin();

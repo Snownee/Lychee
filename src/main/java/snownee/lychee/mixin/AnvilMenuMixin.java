@@ -63,6 +63,8 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		}
 		builder.withParameter(LootContextParams.THIS_ENTITY, player);
 		AnvilContext ctx = builder.create(RecipeTypes.ANVIL_CRAFTING.contextParamSet);
+		// why use copy(): the originals will be modified by vanilla
+		ctx.itemHolders = ItemHolderCollection.Inventory.of(ctx, left.copy(), right.copy(), ItemStack.EMPTY);
 		RecipeTypes.ANVIL_CRAFTING.findFirst(ctx, player.level).ifPresent($ -> {
 			ItemStack output = $.assemble(ctx);
 			if (output.isEmpty()) {
@@ -70,8 +72,6 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 				cost.set(0);
 			} else {
 				lychee$recipe = $;
-				// why use copy(): the originals will be modified by vanilla
-				ctx.itemHolders = ItemHolderCollection.Inventory.of(ctx, left.copy(), right.copy(), output);
 				lychee$ctx = ctx;
 				resultSlots.setItem(0, output);
 				if (player.isCreative() || left.getCount() == 1) {
