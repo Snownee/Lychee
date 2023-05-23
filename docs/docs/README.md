@@ -30,7 +30,7 @@ Currently Lychee has support for the following recipe type (with full JEI/REI su
 
 To create a new recipe that works in every world you create, you will need a datapack loader mod, such as [OpenLoader](https://www.curseforge.com/minecraft/mc-mods/open-loader).
 
-Or you can add recipes using [CraftTweaker](https://www.curseforge.com/minecraft/mc-mods/crafttweaker) or KubeJS ([Forge](https://www.curseforge.com/minecraft/mc-mods/kubejs-forge) / [Fabric](https://www.curseforge.com/minecraft/mc-mods/kubejs-fabric)).
+Or you can add recipes using [CraftTweaker](https://www.curseforge.com/minecraft/mc-mods/crafttweaker) or [KubeJS](https://www.curseforge.com/minecraft/mc-mods/kubejs).
 
 ## Contact
 
