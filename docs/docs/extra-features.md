@@ -8,13 +8,13 @@ You can use `lychee:tag` in `Ingredient` or `ItemStack` to assign a NBT tag to t
 
 !!! example
 
-  ```json
-  {
-    "item": "diamond_sword",
-    "lychee:tag": {
-      "display": {
-        "Name": "{\"text\":\"Lychee\"}"
+    ```json
+    {
+      "item": "diamond_sword",
+      "lychee:tag": {
+        "display": {
+          "Name": "{\"text\":\"Lychee\"}"
+        }
       }
     }
-  }
-  ```
+    ```
