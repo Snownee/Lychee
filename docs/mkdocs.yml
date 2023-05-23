@@ -10,6 +10,7 @@ nav:
     - "Post Actions": post-action.md
     - Recipes: recipe.md
     - "General Types": general-types.md
+    - "Extra Features": extra-features.md
     - Advanced:
         - Concepts: concepts.md
         - "JSON Fragment": fragment.md

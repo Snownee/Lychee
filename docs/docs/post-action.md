@@ -351,11 +351,11 @@ This action is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name   | Description                                        | Type / Literal                              |
-    | ------ | -------------------------------------------------- | ------------------------------------------- |
-    | type   | type                                               | "damage_item"                               |
-    | damage | damage ^optional^                                  | int                                         |
-    | target | target items ^optional^{ title="added since 3.4" } | [JsonPointer](general-types.md#jsonpointer) |
+    | Name              | Description             | Type / Literal                              |
+    | ----------------- | ----------------------- | ------------------------------------------- |
+    | type              | type                    | "damage_item"                               |
+    | damage            | damage ^optional^       | int                                         |
+    | target^since 3.4^ | target items ^optional^ | [JsonPointer](general-types.md#jsonpointer) |
 
 ### Set Item
 

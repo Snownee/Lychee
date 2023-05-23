@@ -3,7 +3,7 @@
 ## 3.11
 
  - Added assembling actions support to anvil crafting recipes.
- - Allowed to use `lychee:tag` in `Ingredient` or `ItemStack` in NBT to assign a tag to the item.
+ - Allowed to use `lychee:tag` in `Ingredient` or `ItemStack` to assign a NBT tag to the item.
 
 ## 3.10
 

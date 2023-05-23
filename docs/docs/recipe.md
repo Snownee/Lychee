@@ -238,14 +238,14 @@ Default behavior: Anvil is damaged.
 
 !!! note "Format"
 
-    | Name          | Description                                                                | Type / Literal                                                                           |
-    | ------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-    | type          | type                                                                       | "lychee:anvil_crafting"                                                                  |
-    | item_in       | the input items (the second one is optional)                               | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | item_out      | the result item                                                            | ItemStack                                                                                |
-    | level_cost    | player's xp level                                                          | int && >=1                                                                               |
-    | material_cost | amount of items that will be cost from right input slot                    | int                                                                                      |
-    | assembling    | actions that running before the result is displayed ^optional. since 3.11^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
+    | Name                   | Description                                                    | Type / Literal                                                                           |
+    | ---------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+    | type                   | type                                                           | "lychee:anvil_crafting"                                                                  |
+    | item_in                | the input items (the second one is optional)                   | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | item_out               | the result item                                                | ItemStack                                                                                |
+    | level_cost             | player's xp level                                              | int && >=1                                                                               |
+    | material_cost          | amount of items that will be cost from right input slot        | int                                                                                      |
+    | assembling^since 3.11^ | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
 
 ??? example
 
@@ -538,6 +538,8 @@ Default behavior: none.
 		]
 	}
 	```
+
+	[Here](kubejs.md#example-repairing-tool-with-anvil-and-custom-item) is a more advanced example that uses KubeJS Integration.
 
 !!! note
 
