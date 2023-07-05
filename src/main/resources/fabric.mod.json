@@ -40,6 +40,9 @@
     "minecraft": ">=1.19.2",
     "java": ">=17"
   },
+  "breaks": {
+    "kubejs": "<1902.6.1-"
+  },
 
   "custom": {
     "modmenu": {

@@ -2,6 +2,7 @@ package snownee.lychee.compat.kubejs;
 
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
+import dev.latvian.mods.kubejs.script.ScriptType;
 import net.minecraft.world.InteractionResult;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.Reference;
@@ -24,15 +25,21 @@ public class LycheeKubeJSPlugin extends KubeJSPlugin {
 	}
 
 	private boolean onCustomAction(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
-		return LycheeKubeJSEvents.CUSTOM_ACTION.post(id, new CustomActionEventJS(id, action, recipe, patchContext));
+		if (LycheeKubeJSEvents.CUSTOM_ACTION.hasListeners())
+			return LycheeKubeJSEvents.CUSTOM_ACTION.post(ScriptType.STARTUP, id, new CustomActionEventJS(id, action, recipe, patchContext)).override();
+		return false;
 	}
 
 	private boolean onCustomCondition(String id, CustomCondition condition) {
-		return LycheeKubeJSEvents.CUSTOM_CONDITION.post(id, new CustomConditionEventJS(id, condition));
+		if (LycheeKubeJSEvents.CUSTOM_CONDITION.hasListeners())
+			return LycheeKubeJSEvents.CUSTOM_CONDITION.post(ScriptType.STARTUP, id, new CustomConditionEventJS(id, condition)).override();
+		return false;
 	}
 
 	private boolean onInfoBadgeClicked(ILycheeRecipe<?> recipe, int button) {
-		return LycheeKubeJSEvents.CLICKED_INFO_BADGE.post(recipe.lychee$getId(), new ClickedInfoBadgeEventJS(recipe, button));
+		if (LycheeKubeJSEvents.CLICKED_INFO_BADGE.hasListeners())
+			return LycheeKubeJSEvents.CLICKED_INFO_BADGE.post(ScriptType.CLIENT, recipe.lychee$getId(), new ClickedInfoBadgeEventJS(recipe, button)).override();
+		return false;
 	}
 
 	@Override
