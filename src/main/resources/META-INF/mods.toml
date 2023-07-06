@@ -6,14 +6,16 @@ license = "ARR"
 modId="lychee"
 version="${file.jarVersion}"
 displayName="Lychee Tweaker"
-authors="Snownee, MikhailTapio"
+authors="Snownee"
+credits="MikhailTapio"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/lychee"
-description="In-World Crafting"
+description="Data-driven in-world crafting"
+logoFile="logo.png"
 
 [[dependencies.lychee]]
-    modId="forge"
-    mandatory=true
-    versionRange="[40,)"
+    modId="kiwi"
+    mandatory=false
+    versionRange="[8,9)"
     ordering="NONE"
     side="BOTH"
 
