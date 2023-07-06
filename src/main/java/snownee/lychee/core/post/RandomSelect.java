@@ -133,7 +133,6 @@ public class RandomSelect extends PostAction implements CompoundAction {
 		return LUtil.getCycledItem(List.of(entries), entries[0], 1000).getDisplayName();
 	}
 
-	@Environment(EnvType.CLIENT)
 	public List<Component> getTooltips(PostAction child) {
 		int index = Arrays.asList(entries).indexOf(child);
 		List<Component> list = entries.length == 1 && emptyWeight == 0 ? Lists.newArrayList(getDisplayName()) : child.getBaseTooltips();
