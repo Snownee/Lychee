@@ -17,5 +17,12 @@ description="In-World Crafting"
     ordering="NONE"
     side="BOTH"
 
+[[dependencies.lychee]]
+    modId="kubejs"
+    mandatory=false
+    versionRange="[1902.6.1,)"
+    ordering="NONE"
+    side="BOTH"
+
 [modproperties.lychee]
     catalogueItemIcon="minecraft:crafting_table" #Support for Catalogue mod
