@@ -16,7 +16,8 @@
             "chance": 0.5
           }
         }
-      ]
+      ],
+      "empty_weight": 1
     }
   ]
 }

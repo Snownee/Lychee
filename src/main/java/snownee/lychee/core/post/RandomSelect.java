@@ -25,7 +25,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.Job;
@@ -47,12 +46,14 @@ public class RandomSelect extends PostAction implements CompoundAction {
 	public final boolean hidden;
 	public final boolean preventSync;
 	public final int totalWeight;
+	public final int emptyWeight;
 
-	public RandomSelect(PostAction[] entries, int[] weights, int totalWeight, MinMaxBounds.Ints rolls) {
+	public RandomSelect(PostAction[] entries, int[] weights, int totalWeight, int emptyWeight, MinMaxBounds.Ints rolls) {
 		Preconditions.checkArgument(entries.length == weights.length);
 		this.entries = entries;
 		this.weights = weights;
 		this.totalWeight = totalWeight;
+		this.emptyWeight = emptyWeight;
 		this.rolls = rolls;
 		canRepeat = Arrays.stream(entries).allMatch(PostAction::canRepeat);
 		hidden = Arrays.stream(entries).allMatch(PostAction::isHidden);
@@ -70,10 +71,6 @@ public class RandomSelect extends PostAction implements CompoundAction {
 		if (times == 0) {
 			return;
 		}
-		if (entries.length == 1) {
-			ctx.runtime.jobs.push(new Job(entries[0], times));
-			return;
-		}
 		List<PostAction> validActions = Lists.newArrayList();
 		int[] validWeights = new int[entries.length];
 		int totalWeights = 0;
@@ -88,9 +85,13 @@ public class RandomSelect extends PostAction implements CompoundAction {
 		if (validActions.isEmpty()) {
 			return;
 		}
+		totalWeights += emptyWeight;
 		int[] childTimes = new int[validActions.size()];
 		for (int i = 0; i < times; i++) {
-			++childTimes[getRandomEntry(ctx.getRandom(), validWeights, totalWeights)];
+			int index = getRandomEntry(ctx.getRandom(), validWeights, totalWeights);
+			if (index >= 0) {
+				++childTimes[index];
+			}
 		}
 		for (int i = 0; i < validActions.size(); i++) {
 			if (childTimes[i] > 0) {
@@ -100,9 +101,6 @@ public class RandomSelect extends PostAction implements CompoundAction {
 	}
 
 	private int getRandomEntry(RandomSource random, int[] weights, int totalWeights) {
-		if (weights.length == 1) {
-			return 0;
-		}
 		int j = random.nextInt(totalWeights);
 		for (int i = 0; i < weights.length; i++) {
 			j -= weights[i];
@@ -110,8 +108,7 @@ public class RandomSelect extends PostAction implements CompoundAction {
 				return i;
 			}
 		}
-		Lychee.LOGGER.error("Something is wrong!");
-		return 0;
+		return -1;
 	}
 
 	@Override
@@ -130,7 +127,7 @@ public class RandomSelect extends PostAction implements CompoundAction {
 
 	@Override
 	public Component getDisplayName() {
-		if (entries.length == 1) {
+		if (entries.length == 1 && emptyWeight == 0) {
 			return Component.literal("%s × %s".formatted(entries[0].getDisplayName().getString(), BoundsHelper.getDescription(rolls).getString()));
 		}
 		return LUtil.getCycledItem(List.of(entries), entries[0], 1000).getDisplayName();
@@ -138,11 +135,11 @@ public class RandomSelect extends PostAction implements CompoundAction {
 
 	public List<Component> getTooltips(PostAction child) {
 		int index = Arrays.asList(entries).indexOf(child);
-		List<Component> list = entries.length == 1 ? Lists.newArrayList(getDisplayName()) : child.getBaseTooltips();
+		List<Component> list = entries.length == 1 && emptyWeight == 0 ? Lists.newArrayList(getDisplayName()) : child.getBaseTooltips();
 		if (index == -1) {
 			return list; //TODO nested actions?
 		}
-		if (entries.length > 1) {
+		if (entries.length > 1 || emptyWeight > 0) {
 			String chance = LUtil.chance(weights[index] / (float) totalWeight);
 			if (rolls == IntBoundsHelper.ONE) {
 				list.add(Component.translatable("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
@@ -236,7 +233,9 @@ public class RandomSelect extends PostAction implements CompoundAction {
 			} else {
 				rolls = IntBoundsHelper.ONE;
 			}
-			return new RandomSelect(entries, weights, IntStream.of(weights).sum(), rolls);
+			int emptyWeight = GsonHelper.getAsInt(o, "empty_weight", 0);
+			Preconditions.checkArgument(emptyWeight >= 0, "empty_weight should be greater or equal to 0");
+			return new RandomSelect(entries, weights, IntStream.of(weights).sum() + emptyWeight, emptyWeight, rolls);
 		}
 
 		@Override
@@ -255,11 +254,15 @@ public class RandomSelect extends PostAction implements CompoundAction {
 			if (action.rolls != IntBoundsHelper.ONE) {
 				o.add("rolls", action.rolls.serializeToJson());
 			}
+			if (action.emptyWeight != 0) {
+				o.addProperty("empty_weight", action.emptyWeight);
+			}
 		}
 
 		@Override
 		public RandomSelect fromNetwork(FriendlyByteBuf buf) {
 			int totalWeight = buf.readVarInt();
+			int emptyWeight = buf.readVarInt();
 			int size = buf.readVarInt();
 			PostAction[] entries = new PostAction[size];
 			int[] weights = new int[size];
@@ -267,13 +270,14 @@ public class RandomSelect extends PostAction implements CompoundAction {
 				weights[i] = buf.readVarInt();
 				entries[i] = PostAction.read(buf);
 			}
-			return new RandomSelect(entries, weights, totalWeight, IntBoundsHelper.fromNetwork(buf));
+			return new RandomSelect(entries, weights, totalWeight, emptyWeight, IntBoundsHelper.fromNetwork(buf));
 		}
 
 		@SuppressWarnings("rawtypes")
 		@Override
 		public void toNetwork(RandomSelect action, FriendlyByteBuf buf) {
 			buf.writeVarInt(action.totalWeight);
+			buf.writeVarInt(action.emptyWeight);
 			buf.writeVarInt((int) Stream.of(action.entries).filter(Predicate.not(PostAction::preventSync)).count());
 			for (int i = 0; i < action.entries.length; i++) {
 				PostAction entry = action.entries[i];
