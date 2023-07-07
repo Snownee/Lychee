@@ -1,5 +1,11 @@
 # Recipes
 
+!!! info
+
+	Try [**Fruitful Generator**](https://fruitful-generator.github.io/) !
+	
+	It's a convenient tool for creating Lychee recipes.
+
 ## Basic Format
 
 Recipes should be placed in `data/<namespace>/recipes/` folder, like normal data-driven recipes.
@@ -46,13 +52,13 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name     | Description               | Type / Literal                                                                           |
-    | -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
-    | type     | type                      | "lychee:block_interacting"                                                               |
-    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | block_in | the block being used      | [BlockPredicate](general-types.md#blockpredicate)                                        |
+	| Name     | Description               | Type / Literal                                                                           |
+	| -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+	| type     | type                      | "lychee:block_interacting"                                                               |
+	| item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+	| block_in | the block being used      | [BlockPredicate](general-types.md#blockpredicate)                                        |
 
-		*Since 3.9, `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.*
+	Since 3.9: `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
 
 ??? example
 
@@ -122,13 +128,13 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name     | Description               | Type / Literal                                                                           |
-    | -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
-    | type     | type                      | "lychee:block_clicking"                                                                  |
-    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate)                                        |
+	| Name     | Description               | Type / Literal                                                                           |
+	| -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+	| type     | type                      | "lychee:block_clicking"                                                                  |
+	| item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+	| block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate)                                        |
 
-		*Since 3.9, `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.*
+	Since 3.9: `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
 
 !!! note
 
@@ -197,8 +203,6 @@ Default behavior: Item is consumed.
     | block_in | the block where the item(s) in     | [BlockPredicate](general-types.md#blockpredicate)                                        |
     | time     | waiting time in seconds ^optional^ | int                                                                                      |
 
-    *Since 2.3, `item_in` can accept ingredient list.
-
 ??? example
 
 	Drop a bucket into a full water cauldron, it returns a water bucket and empty the cauldron:
@@ -228,6 +232,10 @@ Default behavior: Item is consumed.
 	}
 	```
 
+!!! note
+
+	If the block is a fluid block, the block id is not always the same as the fluid id. To see the block id, you should use Jade mod and enable the "Registry Name" option in the plugin settings.
+
 ### Anvil Crafting
 
 It is not recommended to add contextual conditions or actions to the recipe, because JEI/REI does not support drawing extra things on an anvil recipe.
@@ -238,14 +246,14 @@ Default behavior: Anvil is damaged.
 
 !!! note "Format"
 
-    | Name                    | Description                                                    | Type / Literal                                                                           |
-    | ----------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-    | type                    | type                                                           | "lychee:anvil_crafting"                                                                  |
-    | item_in                 | the input items (the second one is optional)                   | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | item_out                | the result item                                                | ItemStack                                                                                |
-    | level_cost              | player's xp level                                              | int && >=1                                                                               |
-    | material_cost           | amount of items that will be cost from right input slot        | int                                                                                      |
-    | assembling ^since^ ^3.11^ | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
+    | Name                         | Description                                                    | Type / Literal                                                                           |
+    | ---------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+    | type                         | type                                                           | "lychee:anvil_crafting"                                                                  |
+    | item_in                      | the input items (the second one is optional)                   | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | item_out                     | the result item                                                | ItemStack                                                                                |
+    | level_cost                   | player's xp level                                              | int && >=1                                                                               |
+    | material_cost                | amount of items that will be cost from right input slot        | int                                                                                      |
+    | assembling^since&nbsp;3.11^ | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
 
 ??? example
 

@@ -1,5 +1,10 @@
 # Update Notes
 
+## 3.12
+
+ - Added support for KubeJS 6.1
+ - Added `empty_weight` option to `random` action type.
+
 ## 3.11
 
  - Added assembling actions support to anvil crafting recipes.

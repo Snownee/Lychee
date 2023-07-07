@@ -269,7 +269,7 @@ Checks the direction that being interacted. Only works for interaction recipes.
     | type      | type        | "direction"    |
     | direction | direction   | string         |
 
-		Allowed value for "direction": "up", "down", "north", "south", "east", "west", "side", "forward"
+	Allowed value for "direction": "up", "down", "north", "south", "east", "west", "side", "forward"
 
 ### Check Parameter
 

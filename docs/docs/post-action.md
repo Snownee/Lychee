@@ -134,13 +134,14 @@ Randomly selects entries from an action list to apply. Similar to loot table.
 
 !!! note "Format"
 
-    | Name    | Description                                          | Type / Literal                          |
-    | ------- | ---------------------------------------------------- | --------------------------------------- |
-    | type    | type                                                 | "random"                                |
-    | rolls   | specifies the number of rolls on the pool ^optional^ | [IntBounds](general-types.md#intbounds) |
-    | entries | a list of actions that can be applied                | WeightedPostAction[]                    |
+    | Name                          | Description                                          | Type / Literal                          |
+    | ----------------------------- | ---------------------------------------------------- | --------------------------------------- |
+    | type                          | type                                                 | "random"                                |
+    | rolls                         | specifies the number of rolls on the pool ^optional^ | [IntBounds](general-types.md#intbounds) |
+    | entries                       | a list of actions that can be applied                | WeightedPostAction[]                    |
+    | empty_weight^since&nbsp;3.12^ | ^optional^{ title="default: 0" }                     | int                                     |
 
-    The format of WeightedPostAction is just like a normal PostAction, but you can add a `weight` entry to it to decide how often this action is chosen out of all the actions.
+    The format of `WeightedPostAction` is just like a normal PostAction, but you can add a `weight` entry to it to decide how often this action is chosen out of all the actions.
 
 ??? example
 
@@ -351,11 +352,11 @@ This action is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name              | Description             | Type / Literal                              |
-    | ----------------- | ----------------------- | ------------------------------------------- |
-    | type              | type                    | "damage_item"                               |
-    | damage            | damage ^optional^       | int                                         |
-    | target^since 3.4^ | target items ^optional^ | [JsonPointer](general-types.md#jsonpointer) |
+    | Name                   | Description             | Type / Literal                              |
+    | ---------------------- | ----------------------- | ------------------------------------------- |
+    | type                   | type                    | "damage_item"                               |
+    | damage                 | damage ^optional^       | int                                         |
+    | target^since&nbsp;3.4^ | target items ^optional^ | [JsonPointer](general-types.md#jsonpointer) |
 
 ### Set Item
 
