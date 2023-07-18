@@ -58,7 +58,7 @@ public class SetItem extends PostAction {
 			if (path == null) {
 				stack = this.stack.copy();
 			} else {
-				stack = ItemStack.of(LUtil.jsonToTag(new JsonPointer(path).find(ctx.json).getAsJsonObject()));
+				stack = ItemStack.of(LUtil.jsonToTag(new JsonPointer(path).find(ctx.json)));
 			}
 			ctx.setItem(index, stack);
 			if (tag != null && !stack.isEmpty()) {

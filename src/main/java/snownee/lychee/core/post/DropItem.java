@@ -61,7 +61,7 @@ public class DropItem extends PostAction {
 		if (path == null) {
 			stack = this.stack.copy();
 		} else {
-			stack = ItemStack.of(LUtil.jsonToTag(new JsonPointer(path).find(ctx.json).getAsJsonObject()));
+			stack = ItemStack.of(LUtil.jsonToTag(new JsonPointer(path).find(ctx.json)));
 		}
 		stack.setCount(stack.getCount() * times);
 		if (ctx.getClass() == BlockExplodingContext.class) {

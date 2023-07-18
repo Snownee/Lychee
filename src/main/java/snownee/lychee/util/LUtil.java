@@ -8,7 +8,9 @@ import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Streams;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -19,6 +21,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -247,8 +250,16 @@ public class LUtil {
 		return NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, tag).getAsJsonObject();
 	}
 
-	public static CompoundTag jsonToTag(JsonObject json) {
-		return (CompoundTag) JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json);
+	public static CompoundTag jsonToTag(JsonElement json) {
+		if (json.isJsonObject()) {
+			return (CompoundTag) JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json);
+		} else {
+			try {
+				return TagParser.parseTag(json.getAsString());
+			} catch (CommandSyntaxException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
 	}
 
 	public static synchronized void registerCustomActionListener(CustomActionListener listener) {
