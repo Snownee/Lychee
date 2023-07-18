@@ -1,5 +1,10 @@
 # Update Notes
 
+## 3.12.1
+
+ - [`lychee:tag`](extra-features.md#lycheetag) now supports string as NBT tag value.
+ - Added support for Fabric Recipe API. The "always true" ingredient for Fabric is changed a bit.
+
 ## 3.12
 
  - Added support for KubeJS 6.1
@@ -8,7 +13,7 @@
 ## 3.11
 
  - Added assembling actions support to anvil crafting recipes.
- - Allowed to use `lychee:tag` in `Ingredient` or `ItemStack` to assign a NBT tag to the item.
+ - Allowed to use [`lychee:tag`](extra-features.md#lycheetag) in `Ingredient` or `ItemStack` to assign a NBT tag to the item.
 
 ## 3.10
 

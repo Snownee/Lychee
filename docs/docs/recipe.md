@@ -112,7 +112,31 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note
 
-	Since 3.5: Use `"item_in": {"type": "lychee:always_true"}` to match any item. (requires [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
+	Since 3.12.1: Use a special ingredient to match any item:
+
+	=== "Forge"
+
+		```json
+		{
+			"type": "lychee:block_interacting",
+			"item_in": {
+				"type": "lychee:always_true"
+			},
+			"block_in": "minecraft:stone"
+		}
+		```
+
+	=== "Fabric"
+
+		```json
+		{
+			"type": "lychee:block_interacting",
+			"item_in": {
+				"fabric:type": "lychee:always_true"
+			},
+			"block_in": "minecraft:stone"
+		}
+		```
 
 !!! warning
 
@@ -142,7 +166,31 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note
 
-	Since 3.5: Use `"item_in": {"type": "lychee:always_true"}` to match any item. (requires [Ingredient Extension API](https://www.curseforge.com/minecraft/mc-mods/ingredient-extension-api) if on Fabric)
+	Since 3.12.1: Use a special ingredient to match any item:
+
+	=== "Forge"
+
+		```json
+		{
+			"type": "lychee:block_clicking",
+			"item_in": {
+				"type": "lychee:always_true"
+			},
+			"block_in": "minecraft:stone"
+		}
+		```
+
+	=== "Fabric"
+
+		```json
+		{
+			"type": "lychee:block_clicking",
+			"item_in": {
+				"fabric:type": "lychee:always_true"
+			},
+			"block_in": "minecraft:stone"
+		}
+		```
 
 !!! warning
 

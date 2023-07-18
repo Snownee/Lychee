@@ -18,3 +18,5 @@ You can use `lychee:tag` in `Ingredient` or `ItemStack` to assign a NBT tag to t
       }
     }
     ```
+  
+  String value is also supported.
