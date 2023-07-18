@@ -67,13 +67,7 @@ public class CycleStateProperty extends PlaceBlock {
 
 		@Override
 		public CycleStateProperty fromJson(JsonObject o) {
-			int x = GsonHelper.getAsInt(o, "offsetX", 0);
-			int y = GsonHelper.getAsInt(o, "offsetY", 0);
-			int z = GsonHelper.getAsInt(o, "offsetZ", 0);
-			BlockPos offset = BlockPos.ZERO;
-			if (x != 0 || y != 0 || z != 0) {
-				offset = new BlockPos(x, y, z);
-			}
+			BlockPos offset = LUtil.parseOffset(o);
 			BlockPredicate block = BlockPredicateHelper.fromJson(o.get("block"));
 			return new CycleStateProperty(block, offset, findProperty(block, GsonHelper.getAsString(o, "property")));
 		}

@@ -5,8 +5,9 @@ import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import snownee.kiwi.Mod;
-import snownee.lychee.compat.ingredient_extension.IngredientExtensionCompat;
+import snownee.lychee.compat.fabric_recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.util.LUtil;
 
 @Mod(Lychee.ID)
@@ -28,9 +29,7 @@ public final class Lychee implements ModInitializer {
 		ContextualConditionTypes.init();
 		PostActionTypes.init();
 		RecipeSerializers.init();
-		if (hasIngredientExtAPI) {
-			IngredientExtensionCompat.init();
-		}
+		CustomIngredientSerializer.register(AlwaysTrueIngredient.SERIALIZER);
 	}
 
 }

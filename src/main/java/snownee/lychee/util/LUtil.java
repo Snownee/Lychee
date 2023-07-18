@@ -234,12 +234,10 @@ public class LUtil {
 	}
 
 	public static boolean isSimpleIngredient(Ingredient ingredient) {
-		if (Lychee.hasIngredientExtAPI) {
-			if (IngredientHelper.requiresTesting(List.of(ingredient))) {
-				return false;
-			}
+		if (Lychee.hasIngredientExtAPI && IngredientHelper.requiresTesting(List.of(ingredient))) {
+			return false;
 		}
-		return Ingredient.class == ingredient.getClass();
+		return !ingredient.requiresTesting();
 	}
 
 	public static BlockPos parseOffset(JsonObject o) {
