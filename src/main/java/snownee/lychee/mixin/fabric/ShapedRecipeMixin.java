@@ -22,7 +22,7 @@ public class ShapedRecipeMixin {
 		if (!jsonObject.has("lychee:tag")) {
 			return;
 		}
-		CompoundTag tag = LUtil.jsonToTag(jsonObject.getAsJsonObject("lychee:tag"));
+		CompoundTag tag = LUtil.jsonToTag(jsonObject.get("lychee:tag"));
 		ItemStack itemStack = new ItemStack(item, count);
 		itemStack.getOrCreateTag().merge(tag);
 		cir.setReturnValue(itemStack);

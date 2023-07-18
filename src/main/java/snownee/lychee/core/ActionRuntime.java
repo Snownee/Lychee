@@ -41,7 +41,7 @@ public class ActionRuntime {
 			//				Lychee.LOGGER.info(ctx.json);
 			for (Integer index : patchContext.usedIndexes()) {
 				try {
-					CompoundTag tag = LUtil.jsonToTag(ctx.json.getAsJsonObject(Integer.toString(index)));
+					CompoundTag tag = LUtil.jsonToTag(ctx.json.get(Integer.toString(index)));
 					//						System.out.println(ItemStack.of(tag).getTag());
 					ctx.setItem(index, ItemStack.of(tag));
 				} catch (Throwable e) {
