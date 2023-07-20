@@ -26,7 +26,7 @@ public interface ClientProxy {
 	}
 
 	static MutableComponent getStructureDisplayName(ResourceLocation rawName) {
-		String key = "structure." + rawName.getNamespace() + "." + rawName.getPath();
+		String key = Util.makeDescriptionId("structure", rawName);
 		if (I18n.exists(key)) {
 			return Component.translatable(key);
 		} else {

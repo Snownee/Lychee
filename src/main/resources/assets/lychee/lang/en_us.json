@@ -68,7 +68,7 @@
   "weather.lychee.rain": "Rain",
   "weather.lychee.thunder": "Thunder",
   "dimension.minecraft.overworld": "Overworld",
-  "dimension.minecraft.nether": "Nether",
+  "dimension.minecraft.the_nether": "The Nether",
   "dimension.minecraft.the_end": "The End",
   "result.lychee.success": "§a✔ ",
   "result.lychee.fail": "§4✕ ",
@@ -82,5 +82,13 @@
   "tip.lychee.randomChance.one": "Chance: %s",
   "tip.lychee.randomChance": "Chance: %s × %s",
   "tip.lychee.ifFailure": "If failed: §4✕",
-  "tip.lychee.ifSuccess": "If succeeded: §a✔"
+  "tip.lychee.ifSuccess": "If succeeded: §a✔",
+  "structure.minecraft.igloo": "Igloo",
+  "structure.minecraft.village": "Village",
+  "structure.minecraft.mansion": "Woodland Mansion",
+  "structure.minecraft.stronghold": "Stronghold",
+  "structure.minecraft.end_city": "End City",
+  "structure.minecraft.swamp_hut": "Swamp Hut",
+  "structure.minecraft.mineshaft": "Mineshaft",
+  "structure.minecraft.fortress": "Nether Fortress"
 }
