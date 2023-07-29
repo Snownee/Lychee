@@ -5,7 +5,7 @@
         "tag": "minecraft:beds"
     },
     "item_in": {
-        "fabric:type": "lychee:always_true"
+        "type": "lychee:always_true"
     },
     "contextual": [
         {
