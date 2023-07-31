@@ -13,6 +13,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.Renderer;
+import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
@@ -45,7 +46,6 @@ import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.ClientProxy;
-import snownee.lychee.util.LUtil;
 
 public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> implements DisplayCategory<D> {
 
@@ -95,10 +95,13 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 		slot.entries(entries);
 		widgets.add(slot);
 		slot.addTooltipCallback(tooltip -> {
+			if (tooltip == null) {
+				return null;
+			}
 			Object raw = tooltip.getContextStack();
 			if (!itemMap.containsKey(raw)) {
 				//System.out.println(itemMap);
-				return;
+				return tooltip;
 			}
 			tooltip.entries().clear();
 			raw = itemMap.get(raw);
@@ -109,6 +112,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 				list = action.getTooltips();
 			}
 			tooltip.entries().addAll(list.stream().map(TooltipEntryImpl::new).toList());
+			return tooltip;
 		});
 	}
 
@@ -178,12 +182,17 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 	public void ingredientGroup(List<Widget> widgets, Point startPoint, T recipe, int x, int y) {
 		var ingredients = JEIREI.generateShapelessInputs(recipe);
 		slotGroup(widgets, startPoint, x, y, ingredients, (widgets0, startPoint0, ingredient, x0, y0) -> {
-			LEntryWidget slot = REICompat.slot(startPoint, x0, y0, ingredient.middle != null ? SlotType.CATALYST : SlotType.NORMAL);
-			slot.entries(EntryIngredients.ofItemStacks(Stream.of(ingredient.left.getItems()).map($ -> ingredient.right == 1 ? $ : $.copy()).peek($ -> $.setCount(ingredient.right)).toList()));
+			ItemStack[] items = ingredient.ingredient.getItems();
+			LEntryWidget slot = REICompat.slot(startPoint, x0, y0, ingredient.isCatalyst ? SlotType.CATALYST : SlotType.NORMAL);
+			slot.entries(EntryIngredients.ofItemStacks(Stream.of(items).map($ -> ingredient.count == 1 ? $ : $.copy()).peek($ -> $.setCount(ingredient.count)).toList()));
 			slot.markInput();
-			if (ingredient.middle != null && ingredient.middle != LUtil.EMPTY_TEXT) {
+			if (!ingredient.tooltips.isEmpty()) {
 				slot.addTooltipCallback(tooltip -> {
-					tooltip.add(ingredient.middle);
+					if (tooltip == null) {
+						tooltip = Tooltip.create();
+					}
+					ingredient.tooltips.forEach(tooltip::add);
+					return tooltip;
 				});
 			}
 			widgets.add(slot);

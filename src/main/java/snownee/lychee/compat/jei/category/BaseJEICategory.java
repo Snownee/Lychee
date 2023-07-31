@@ -50,7 +50,6 @@ import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.ClientProxy;
-import snownee.lychee.util.LUtil;
 
 public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeRecipe<C>> implements IRecipeCategory<T> {
 
@@ -223,12 +222,13 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	public void ingredientGroup(IRecipeLayoutBuilder builder, T recipe, int x, int y) {
 		var ingredients = JEIREI.generateShapelessInputs(recipe);
 		slotGroup(builder, x + 1, y + 1, 0, ingredients, (layout0, ingredient, i, x0, y0) -> {
+			ItemStack[] items = ingredient.ingredient.getItems();
 			IRecipeSlotBuilder slot = builder.addSlot(RecipeIngredientRole.INPUT, x0, y0);
-			slot.addItemStacks(Stream.of(ingredient.left.getItems()).map($ -> ingredient.right == 1 ? $ : $.copy()).peek($ -> $.setCount(ingredient.right)).toList());
-			slot.setBackground(JEICompat.slot(ingredient.middle != null ? SlotType.CATALYST : SlotType.NORMAL), -1, -1);
-			if (ingredient.middle != null && ingredient.middle != LUtil.EMPTY_TEXT) {
+			slot.addItemStacks(Stream.of(items).map($ -> ingredient.count == 1 ? $ : $.copy()).peek($ -> $.setCount(ingredient.count)).toList());
+			slot.setBackground(JEICompat.slot(ingredient.isCatalyst ? SlotType.CATALYST : SlotType.NORMAL), -1, -1);
+			if (!ingredient.tooltips.isEmpty()) {
 				slot.addTooltipCallback((stack, tooltip) -> {
-					tooltip.add(recipe.getType().getPreventDefaultDescription(recipe));
+					tooltip.addAll(ingredient.tooltips);
 				});
 			}
 		});

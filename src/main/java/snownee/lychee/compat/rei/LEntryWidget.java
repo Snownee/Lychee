@@ -1,6 +1,6 @@
 package snownee.lychee.compat.rei;
 
-import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +17,7 @@ import snownee.lychee.client.gui.ScreenElement;
 public class LEntryWidget extends EntryWidget {
 
 	private ScreenElement bg;
-	private Consumer<Tooltip> tooltipCallback;
+	private UnaryOperator<@Nullable Tooltip> tooltipCallback;
 
 	public LEntryWidget(Point point) {
 		super(point);
@@ -46,12 +46,12 @@ public class LEntryWidget extends EntryWidget {
 	public @Nullable Tooltip getCurrentTooltip(TooltipContext ctx) {
 		Tooltip tooltip = super.getCurrentTooltip(ctx);
 		if (tooltipCallback != null) {
-			tooltipCallback.accept(tooltip);
+			tooltip = tooltipCallback.apply(tooltip);
 		}
 		return tooltip;
 	}
 
-	public void addTooltipCallback(Consumer<Tooltip> tooltipCallback) {
+	public void addTooltipCallback(UnaryOperator<@Nullable Tooltip> tooltipCallback) {
 		this.tooltipCallback = tooltipCallback;
 	}
 

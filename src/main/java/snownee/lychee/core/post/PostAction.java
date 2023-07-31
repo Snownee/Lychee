@@ -3,7 +3,6 @@ package snownee.lychee.core.post;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang3.tuple.MutableTriple;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Strings;
@@ -23,9 +22,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.client.gui.AllGuiTextures;
+import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.recipe.ILycheeRecipe;
@@ -140,7 +139,7 @@ public abstract class PostAction extends ContextualHolder {
 	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 	}
 
-	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<MutableTriple<Ingredient, Component, Integer>> ingredients) {
+	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
 	}
 
 	public void getUsedPointers(ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {

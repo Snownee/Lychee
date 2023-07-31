@@ -140,7 +140,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		}
 		return IntList.of();
 	}
-	
+
 	@Override
 	public Map<JsonPointer, List<PostAction>> getActionGroups() {
 		return Map.of(POST, actions);
@@ -154,6 +154,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 	public static abstract class Serializer<R extends LycheeRecipe<?>> implements RecipeSerializer<R> {
 
+		public static final Ingredient EMPTY_INGREDIENT = Ingredient.of(ItemStack.EMPTY);
 		protected final Function<ResourceLocation, R> factory;
 
 		public Serializer(Function<ResourceLocation, R> factory) {
@@ -162,7 +163,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 		public static Ingredient parseIngredientOrAir(JsonElement element) {
 			if (element instanceof JsonObject object && !object.has("type") && object.has("item") && "minecraft:air".equals(Objects.toString(ResourceLocation.tryParse(object.get("item").getAsString())))) {
-				return Ingredient.of(ItemStack.EMPTY);
+				return EMPTY_INGREDIENT;
 			}
 			return Ingredient.fromJson(element);
 		}

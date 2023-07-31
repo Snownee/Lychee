@@ -17,6 +17,7 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -48,13 +49,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
+import snownee.lychee.compat.IngredientInfo;
+import snownee.lychee.compat.fabric_recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.core.contextual.CustomCondition;
 import snownee.lychee.core.post.CustomAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.mixin.RecipeManagerAccess;
 
 public class LUtil {
-	public static final Component EMPTY_TEXT = Component.empty();
 	public static final Event<CustomActionListener> CUSTOM_ACTION_EVENT = EventFactory.createArrayBacked(CustomActionListener.class, listeners -> (id, action, recipe, patchContext) -> {
 		for (CustomActionListener listener : listeners) {
 			if (listener.on(id, action, recipe, patchContext)) {
@@ -299,6 +302,17 @@ public class LUtil {
 
 	public static void postCustomConditionEvent(String id, CustomCondition condition) {
 		CUSTOM_CONDITION_EVENT.invoker().on(id, condition);
+	}
+
+	public static IngredientInfo.Type getIngredientType(Ingredient ingredient) {
+		if (ingredient == LycheeRecipe.Serializer.EMPTY_INGREDIENT) {
+			return IngredientInfo.Type.AIR;
+		}
+		CustomIngredient customIngredient = ingredient.getCustomIngredient();
+		if (customIngredient != null && customIngredient.getSerializer() == AlwaysTrueIngredient.SERIALIZER) {
+			return IngredientInfo.Type.ANY;
+		}
+		return IngredientInfo.Type.NORMAL;
 	}
 
 	public interface CustomActionListener {
