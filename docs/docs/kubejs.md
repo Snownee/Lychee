@@ -163,4 +163,4 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', (event) => {
   console.log(event.recipe.id)
   console.log(event.button == 0) // 0 for left click, 1 for right click
 })
-````
+```
