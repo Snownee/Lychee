@@ -1,7 +1,6 @@
 package snownee.lychee.core.def;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -12,6 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
@@ -194,7 +194,7 @@ public class BlockPredicateHelper {
 		try {
 			return CACHE.get(predicate, () -> getShowcaseBlockStates(predicate, ITERABLE_PROPERTIES));
 		} catch (ExecutionException e) {
-			return Collections.EMPTY_LIST;
+			return List.of();
 		}
 	}
 
@@ -202,7 +202,7 @@ public class BlockPredicateHelper {
 	public static List<BlockState> getShowcaseBlockStates(BlockPredicate predicate, Collection<Property<?>> iterableProperties) {
 		Set<Block> blocks = getMatchedBlocks(predicate);
 		if (blocks.isEmpty()) {
-			return Collections.EMPTY_LIST;
+			return List.of();
 		}
 		List<BlockState> states = Lists.newArrayList();
 		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
@@ -255,15 +255,19 @@ public class BlockPredicateHelper {
 				String min, max;
 				Property property = definition.getProperty(matcher.getName());
 				List<Comparable> sorted = null;
-				if (!object.has("min") || !object.has("max")) {
+
+				boolean hasMin = object.has("min");
+				boolean hasMax = object.has("max");
+				Preconditions.checkArgument(hasMin || hasMax);
+				if (!hasMin || !hasMax) {
 					sorted = property.getPossibleValues().stream().sorted().toList();
 				}
-				if (object.has("min")) {
+				if (hasMin) {
 					min = object.get("min").getAsString();
 				} else {
 					min = property.getName(sorted.get(0));
 				}
-				if (object.has("max")) {
+				if (hasMax) {
 					max = object.get("max").getAsString();
 				} else {
 					max = property.getName(sorted.get(sorted.size() - 1));
