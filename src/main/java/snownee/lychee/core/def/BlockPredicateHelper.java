@@ -55,6 +55,14 @@ import snownee.lychee.util.LUtil;
 
 public class BlockPredicateHelper {
 
+	public static final NbtPredicate NBT_PREDICATE_DUMMY = new NbtPredicate(new CompoundTag());
+	private static final Cache<BlockPredicate, List<BlockState>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
+	public static Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet();
+
+	static {
+		ITERABLE_PROPERTIES.addAll(List.of(BlockStateProperties.AGE_1, BlockStateProperties.AGE_2, BlockStateProperties.AGE_3, BlockStateProperties.AGE_5, BlockStateProperties.AGE_7, BlockStateProperties.CANDLES, BlockStateProperties.BITES, BlockStateProperties.POWER, BlockStateProperties.POWERED, BlockStateProperties.LIT, BlockStateProperties.BERRIES, BlockStateProperties.OPEN, BlockStateProperties.DELAY, BlockStateProperties.DISTANCE, BlockStateProperties.LAYERS, BlockStateProperties.PICKLES, BlockStateProperties.LEVEL, BlockStateProperties.LEVEL_HONEY, BlockStateProperties.LEVEL_CAULDRON, BlockStateProperties.DRIPSTONE_THICKNESS));
+	}
+
 	// handle BlockPredicate.ANY by yourself!
 	public static Set<Block> getMatchedBlocks(BlockPredicate predicate) {
 		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
@@ -68,7 +76,7 @@ public class BlockPredicateHelper {
 		return blocks;
 	}
 
-	public static Set<Fluid> getMatchedFluids(BlockPredicate predicate){
+	public static Set<Fluid> getMatchedFluids(BlockPredicate predicate) {
 		/* off */
 		return getMatchedBlocks(predicate).stream()
 				.filter(LiquidBlock.class::isInstance)
@@ -117,6 +125,10 @@ public class BlockPredicateHelper {
 			if ("*".equals(id)) {
 				return BlockPredicate.ANY;
 			}
+			if (id.startsWith("#")) {
+				TagKey<Block> key = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(id.substring(1)));
+				return new BlockPredicate(key, null, StatePropertiesPredicate.ANY, NbtPredicate.ANY);
+			}
 			Block block = Registry.BLOCK.get(new ResourceLocation(id));
 			return new BlockPredicate(null, Set.of(block), StatePropertiesPredicate.ANY, NbtPredicate.ANY);
 		}
@@ -129,8 +141,6 @@ public class BlockPredicateHelper {
 		}
 		return predicate.serializeToJson();
 	}
-
-	public static final NbtPredicate NBT_PREDICATE_DUMMY = new NbtPredicate(new CompoundTag());
 
 	public static BlockPredicate fromNetwork(FriendlyByteBuf pBuffer) {
 		int blockCount = pBuffer.readVarInt();
@@ -181,13 +191,6 @@ public class BlockPredicateHelper {
 
 	public static BlockState anyBlockState(BlockPredicate predicate) {
 		return getShowcaseBlockStates(predicate).stream().findFirst().orElse(Blocks.AIR.defaultBlockState());
-	}
-
-	public static Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet();
-	private static final Cache<BlockPredicate, List<BlockState>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
-
-	static {
-		ITERABLE_PROPERTIES.addAll(List.of(BlockStateProperties.AGE_1, BlockStateProperties.AGE_2, BlockStateProperties.AGE_3, BlockStateProperties.AGE_5, BlockStateProperties.AGE_7, BlockStateProperties.CANDLES, BlockStateProperties.BITES, BlockStateProperties.POWER, BlockStateProperties.POWERED, BlockStateProperties.LIT, BlockStateProperties.BERRIES, BlockStateProperties.OPEN, BlockStateProperties.DELAY, BlockStateProperties.DISTANCE, BlockStateProperties.LAYERS, BlockStateProperties.PICKLES, BlockStateProperties.LEVEL, BlockStateProperties.LEVEL_HONEY, BlockStateProperties.LEVEL_CAULDRON, BlockStateProperties.DRIPSTONE_THICKNESS));
 	}
 
 	public static List<BlockState> getShowcaseBlockStates(BlockPredicate predicate) {
