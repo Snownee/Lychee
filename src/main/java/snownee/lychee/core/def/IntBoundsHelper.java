@@ -54,4 +54,5 @@ public class IntBoundsHelper {
 		}
 		return Mth.randomBetweenInclusive(random, min, max);
 	}
+
 }

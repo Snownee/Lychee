@@ -2,12 +2,12 @@ package snownee.lychee.compat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.tuple.MutableTriple;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -18,11 +18,11 @@ import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,7 +34,7 @@ import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 
 public class JEIREI {
@@ -56,23 +56,24 @@ public class JEIREI {
 			.build();
 	/* on */
 
-	public static List<MutableTriple<Ingredient, Component, Integer>> generateShapelessInputs(LycheeRecipe<?> recipe) {
+	public static List<IngredientInfo> generateShapelessInputs(LycheeRecipe<?> recipe) {
 		/* off */
-		List<MutableTriple<Ingredient, Component, Integer>> ingredients = recipe.getIngredients()
+		List<IngredientInfo> ingredients = recipe.getIngredients()
 				.stream()
-				.map($ -> MutableTriple.of($, (Component) null, 1))
+				.map(IngredientInfo::new)
 				.collect(Collectors.toCollection(ArrayList::new));
 		/* on */
 		recipe.getPostActions().forEach(action -> action.loadCatalystsInfo(recipe, ingredients));
 		if (!recipe.getType().compactInputs) {
+			addIngredientTips(recipe, ingredients);
 			return ingredients;
 		}
-		List<MutableTriple<Ingredient, Component, Integer>> newIngredients = Lists.newArrayList();
+		List<IngredientInfo> newIngredients = Lists.newArrayList();
 		for (var ingredient : ingredients) {
-			MutableTriple<Ingredient, Component, Integer> match = null;
-			if (LUtil.isSimpleIngredient(ingredient.left)) {
+			IngredientInfo match = null;
+			if (CommonProxy.isSimpleIngredient(ingredient.ingredient)) {
 				for (var toCompare : newIngredients) {
-					if (toCompare.middle == ingredient.middle && LUtil.isSimpleIngredient(toCompare.left) && toCompare.left.getStackingIds().equals(ingredient.left.getStackingIds())) {
+					if (Objects.equals(toCompare.tooltips, ingredient.tooltips) && CommonProxy.isSimpleIngredient(toCompare.ingredient) && toCompare.ingredient.getStackingIds().equals(ingredient.ingredient.getStackingIds())) {
 						match = toCompare;
 						break;
 					}
@@ -81,13 +82,20 @@ public class JEIREI {
 			if (match == null) {
 				newIngredients.add(ingredient);
 			} else {
-				match.setRight(match.right + 1);
+				match.count += ingredient.count;
 			}
 		}
+		addIngredientTips(recipe, newIngredients);
 		return newIngredients;
 	}
 
-	public record CategoryCreationContext(ResourceLocation group, List<LycheeRecipe<?>> recipes) {
+	public static void addIngredientTips(LycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
+		for (IngredientInfo ingredient : ingredients) {
+			IngredientInfo.Type type = CommonProxy.getIngredientType(ingredient.ingredient);
+			if (type != IngredientInfo.Type.NORMAL) {
+				ingredient.addTooltip(Component.translatable("tip.lychee.ingredient." + type.name().toLowerCase(Locale.ROOT)));
+			}
+		}
 	}
 
 	public static ResourceLocation composeCategoryIdentifier(ResourceLocation categoryId, ResourceLocation group) {
@@ -155,8 +163,12 @@ public class JEIREI {
 			}
 			Splitter.on('\n').splitToStream(comment).map(Component::literal).forEach(list::add);
 		}
-		recipe.getContextualHolder().getConditonTooltips(list, 0);
+		Minecraft mc = Minecraft.getInstance();
+		recipe.getContextualHolder().getConditionTooltips(list, 0, mc.level, mc.player);
 		return list;
+	}
+
+	public record CategoryCreationContext(ResourceLocation group, List<LycheeRecipe<?>> recipes) {
 	}
 
 }

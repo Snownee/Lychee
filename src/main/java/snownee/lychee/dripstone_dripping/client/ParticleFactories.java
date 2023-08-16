@@ -14,7 +14,7 @@ import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
 //Modified from Dripstone Fluid Lib
 public class ParticleFactories {
 	private static void postParticle(DripParticle particle, BlockState blockState, ClientLevel level, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-		DripParticleHandler handler = DripstoneRecipeMod.getParticleHandler(blockState);
+		DripParticleHandler handler = DripstoneRecipeMod.getParticleHandler(level, blockState);
 		if (handler == null) {
 			return;
 		}

@@ -26,7 +26,7 @@ import snownee.lychee.LycheeTags;
 import snownee.lychee.core.input.ItemHolder;
 import snownee.lychee.core.network.SCustomLevelEventPacket;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingContext, BlockCrushingRecipe> {
 
@@ -41,7 +41,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 		if (isEmpty()) {
 			return;
 		}
-		BlockPos pos = LUtil.getOnPos(entity);
+		BlockPos pos = CommonProxy.getOnPos(entity);
 		BlockState fallingBlock = entity.getBlockState();
 		Collection<BlockCrushingRecipe> recipes = recipesByBlock.getOrDefault(fallingBlock.getBlock(), Collections.EMPTY_LIST);
 		if (recipes.isEmpty()) {
@@ -92,7 +92,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 						if (!ctx.runtime.doDefault) {
 							((LycheeFallingBlockEntity) entity).lychee$cancelDrop();
 						}
-						if (Lychee.hasKiwi) {
+						if (CommonProxy.hasKiwi) {
 							Set<ItemHolder> alreadySentParticles = Sets.newHashSet();
 							for (int i = 0; i < ctx.itemHolders.size(); i++) {
 								ItemHolder holder = ctx.itemHolders.get(i);

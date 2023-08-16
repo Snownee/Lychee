@@ -31,7 +31,7 @@ public class LightningEntityMixin {
 	private void lychee_tick(CallbackInfo ci) {
 		if (!RecipeTypes.LIGHTNING_CHANNELING.isEmpty() && lightningState == 0 && !lychee$hitItems.isEmpty()) {
 			LightningBolt entity = (LightningBolt) (Object) this;
-			LightningChannelingRecipe.on(entity, lychee$hitItems);
+			LightningChannelingRecipe.on(entity, List.copyOf(lychee$hitItems));
 		}
 	}
 

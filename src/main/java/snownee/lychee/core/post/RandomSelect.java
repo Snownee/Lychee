@@ -13,9 +13,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.network.FriendlyByteBuf;
@@ -23,8 +21,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.Job;
@@ -33,8 +29,7 @@ import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.post.input.NBTPatch;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.ClientProxy;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.json.JsonPointer;
 
 public class RandomSelect extends PostAction implements CompoundAction {
@@ -130,36 +125,7 @@ public class RandomSelect extends PostAction implements CompoundAction {
 		if (entries.length == 1 && emptyWeight == 0) {
 			return Component.literal("%s × %s".formatted(entries[0].getDisplayName().getString(), BoundsHelper.getDescription(rolls).getString()));
 		}
-		return LUtil.getCycledItem(List.of(entries), entries[0], 1000).getDisplayName();
-	}
-
-	public List<Component> getTooltips(PostAction child) {
-		int index = Arrays.asList(entries).indexOf(child);
-		List<Component> list = entries.length == 1 && emptyWeight == 0 ? Lists.newArrayList(getDisplayName()) : child.getBaseTooltips();
-		if (index == -1) {
-			return list; //TODO nested actions?
-		}
-		if (entries.length > 1 || emptyWeight > 0) {
-			String chance = LUtil.chance(weights[index] / (float) totalWeight);
-			if (rolls == IntBoundsHelper.ONE) {
-				list.add(Component.translatable("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
-			} else {
-				list.add(Component.translatable("tip.lychee.randomChance", chance, BoundsHelper.getDescription(rolls)).withStyle(ChatFormatting.YELLOW));
-			}
-		}
-		int c = showingConditionsCount() + child.showingConditionsCount();
-		if (c > 0) {
-			list.add(ClientProxy.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
-		}
-		getConditonTooltips(list, 0);
-		child.getConditonTooltips(list, 0);
-		return list;
-	}
-
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void render(PoseStack poseStack, int x, int y) {
-		// should not be run, except from old versions
+		return CommonProxy.getCycledItem(List.of(entries), entries[0], 1000).getDisplayName();
 	}
 
 	@Override
@@ -285,7 +251,7 @@ public class RandomSelect extends PostAction implements CompoundAction {
 					continue;
 				buf.writeVarInt(action.weights[i]);
 				PostActionType type = entry.getType();
-				LUtil.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
+				CommonProxy.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
 				type.toNetwork(entry, buf);
 				entry.conditionsToNetwork(buf);
 			}

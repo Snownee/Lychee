@@ -1,23 +1,17 @@
 package snownee.lychee.core.post;
 
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
-import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.ClientProxy;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class DropXp extends PostAction {
 
@@ -45,14 +39,7 @@ public class DropXp extends PostAction {
 
 	@Override
 	public Component getDisplayName() {
-		return ClientProxy.format(LUtil.makeDescriptionId("postAction", getType().getRegistryName()), xp);
-	}
-
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void render(PoseStack poseStack, int x, int y) {
-		//TODO this is not ideal. render xp orb in the future
-		GuiGameElement.of(Items.EXPERIENCE_BOTTLE).render(poseStack, x, y);
+		return ClientProxy.format(CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()), xp);
 	}
 
 	public static class Type extends PostActionType<DropXp> {

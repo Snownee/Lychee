@@ -8,9 +8,9 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public interface DripParticleHandler {
 
-	public static final Simple SIMPLE_DUMMY = new Simple(0, false);
+	Simple SIMPLE_DUMMY = new Simple(0, false);
 
-	public record Simple(int color, boolean glowing) implements DripParticleHandler {
+	record Simple(int color, boolean glowing) implements DripParticleHandler {
 
 		@Override
 		public void addParticle(Level level, BlockPos blockPos, BlockState blockState, double x, double y, double z) {

@@ -12,9 +12,11 @@ public abstract class ItemHolder {
 	protected abstract void set(ItemStack stack);
 
 	public ItemHolder replace(ItemStack item, Consumer<ItemStack> consumer) {
-		get().shrink(item.getCount());
 		if (!get().isEmpty()) {
-			consumer.accept(get());
+			get().shrink(item.getCount());
+			if (!get().isEmpty()) {
+				consumer.accept(get());
+			}
 		}
 		set(item);
 		return this;

@@ -3,18 +3,18 @@ package snownee.lychee.core.contextual;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
@@ -44,9 +44,8 @@ public record IsWeather(String id, Predicate<Level> predicate) implements Contex
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
-	public InteractionResult testInTooltips() {
-		return predicate.test(Minecraft.getInstance().level) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+	public InteractionResult testInTooltips(Level level, @Nullable Player player) {
+		return predicate.test(level) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import net.minecraft.util.GsonHelper;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class CustomAction extends PostAction {
 
@@ -48,7 +48,7 @@ public class CustomAction extends PostAction {
 
 	@Override
 	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
-		LUtil.postCustomActionEvent(GsonHelper.getAsString(data, "id"), this, recipe, patchContext);
+		CommonProxy.postCustomActionEvent(GsonHelper.getAsString(data, "id"), this, recipe, patchContext);
 	}
 
 	@FunctionalInterface

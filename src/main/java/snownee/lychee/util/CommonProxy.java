@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -11,14 +12,20 @@ import com.google.common.collect.Streams;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions.Deserializer;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
@@ -39,23 +46,84 @@ import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.NewRegistryEvent;
+import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryManager;
+import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
+import snownee.lychee.LycheeRegistries;
+import snownee.lychee.LycheeTags;
+import snownee.lychee.PostActionTypes;
+import snownee.lychee.RecipeSerializers;
+import snownee.lychee.RecipeTypes;
+import snownee.lychee.compat.IngredientInfo;
+import snownee.lychee.compat.ingredient_extension.AlwaysTrueIngredient;
 import snownee.lychee.core.contextual.CustomCondition;
 import snownee.lychee.core.post.CustomAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
+import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.mixin.RecipeManagerAccess;
 
-public class LUtil {
-	public static final Component EMPTY_TEXT = Component.empty();
+@Mod(Lychee.ID)
+public class CommonProxy {
 	private static final Random RANDOM = new Random();
-	private static RecipeManager recipeManager;
 	private static final List<CustomActionListener> customActionListeners = ObjectArrayList.of();
 	private static final List<CustomConditionListener> customConditionListeners = ObjectArrayList.of();
+	public static boolean hasKiwi = isModLoaded("kiwi");
+	public static boolean hasDFLib = isModLoaded("dripstone_fluid_lib");
+	private static RecipeManager recipeManager;
+
+	public CommonProxy() {
+		LycheeTags.init();
+		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		modEventBus.addListener(CommonProxy::newRegistries);
+		modEventBus.addListener(CommonProxy::register);
+		modEventBus.addListener(CommonProxy::registerRecipeBookCategories);
+		if (isPhysicalClient()) {
+			ClientProxy.init();
+		}
+	}
+
+	public static void newRegistries(NewRegistryEvent event) {
+		LycheeRegistries.init(event);
+	}
+
+	public static void register(RegisterEvent event) {
+		event.register(LycheeRegistries.CONTEXTUAL.key(), helper -> ContextualConditionTypes.init());
+		event.register(LycheeRegistries.POST_ACTION.key(), helper -> {
+			PostActionTypes.init();
+			if (isPhysicalClient()) {
+				ClientProxy.registerPostActionRenderers();
+			}
+		});
+		event.register(ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), helper -> {
+			RecipeSerializers.init();
+			CraftingHelper.register(new ResourceLocation(Lychee.ID, "always_true"), AlwaysTrueIngredient.Serializer.INSTANCE);
+		});
+		event.register(ForgeRegistries.RECIPE_TYPES.getRegistryKey(), helper -> RecipeTypes.init());
+		event.register(ForgeRegistries.PARTICLE_TYPES.getRegistryKey(), helper -> {
+			helper.register(new ResourceLocation(Lychee.ID, "dripstone_dripping"), DripstoneRecipeMod.DRIPSTONE_DRIPPING);
+			helper.register(new ResourceLocation(Lychee.ID, "dripstone_falling"), DripstoneRecipeMod.DRIPSTONE_FALLING);
+			helper.register(new ResourceLocation(Lychee.ID, "dripstone_splash"), DripstoneRecipeMod.DRIPSTONE_SPLASH);
+		});
+	}
+
+	public static void registerRecipeBookCategories(RegisterRecipeBookCategoriesEvent event) {
+		Function<Recipe<?>, RecipeBookCategories> lookup = $ -> RecipeBookCategories.UNKNOWN;
+		RecipeTypes.ALL.forEach($ -> event.registerRecipeCategoryFinder($, lookup));
+	}
 
 	public static void dropItemStack(Level pLevel, double pX, double pY, double pZ, ItemStack pStack, @Nullable Consumer<ItemEntity> extraStep) {
 		while (!pStack.isEmpty()) {
@@ -138,12 +206,20 @@ public class LUtil {
 		return bool ? InteractionResult.SUCCESS : InteractionResult.FAIL;
 	}
 
-	public static <T> T readRegistryId(IForgeRegistry<T> registry, FriendlyByteBuf buf) {
-		return buf.readRegistryIdUnsafe(registry);
+	public static <T> T readRegistryId(LycheeRegistries.MappedRegistry<T> registry, FriendlyByteBuf buf) {
+		return buf.readRegistryIdUnsafe(registry.registry());
 	}
 
-	public static <T> void writeRegistryId(IForgeRegistry<T> registry, T entry, FriendlyByteBuf buf) {
-		buf.writeRegistryIdUnsafe(registry, entry);
+	public static <T> void writeRegistryId(LycheeRegistries.MappedRegistry<T> registry, T entry, FriendlyByteBuf buf) {
+		buf.writeRegistryIdUnsafe(registry.registry(), entry);
+	}
+
+	public static <T> T readRegistryId(MappedRegistry<T> registry, FriendlyByteBuf buf) {
+		return buf.readRegistryIdUnsafe(RegistryManager.ACTIVE.getRegistry(registry.key()));
+	}
+
+	public static <T> void writeRegistryId(MappedRegistry<T> registry, T entry, FriendlyByteBuf buf) {
+		buf.writeRegistryIdUnsafe(RegistryManager.ACTIVE.getRegistry(registry.key()), entry);
 	}
 
 	public static RecipeManager recipeManager() {
@@ -157,7 +233,7 @@ public class LUtil {
 	}
 
 	public static void setRecipeManager(RecipeManager recipeManager) {
-		LUtil.recipeManager = recipeManager;
+		CommonProxy.recipeManager = recipeManager;
 		if (LycheeConfig.debug) {
 			Lychee.LOGGER.trace("Setting recipe manager..");
 		}
@@ -284,6 +360,29 @@ public class LUtil {
 				return;
 			}
 		}
+	}
+
+	public static boolean hasModdedDripParticle(FluidState fluid) {
+		return false;
+	}
+
+	public static IngredientInfo.Type getIngredientType(Ingredient ingredient) {
+		if (ingredient == LycheeRecipe.Serializer.EMPTY_INGREDIENT) {
+			return IngredientInfo.Type.AIR;
+		}
+		if (ingredient.getSerializer() == AlwaysTrueIngredient.Serializer.INSTANCE) {
+			return IngredientInfo.Type.ANY;
+		}
+		return IngredientInfo.Type.NORMAL;
+	}
+
+	public static ParticleType<BlockParticleOption> registerParticleType(Deserializer<BlockParticleOption> deserializer) {
+		return new ParticleType<>(false, deserializer) {
+			@Override
+			public Codec<BlockParticleOption> codec() {
+				return BlockParticleOption.codec(this);
+			}
+		};
 	}
 
 	public interface CustomActionListener {

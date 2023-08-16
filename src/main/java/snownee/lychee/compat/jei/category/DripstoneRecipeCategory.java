@@ -26,7 +26,7 @@ import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.dripstone_dripping.DripstoneContext;
 import snownee.lychee.dripstone_dripping.DripstoneRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class DripstoneRecipeCategory extends BaseJEICategory<DripstoneContext, DripstoneRecipe> {
 
@@ -52,8 +52,8 @@ public class DripstoneRecipeCategory extends BaseJEICategory<DripstoneContext, D
 	@Override
 	public void draw(DripstoneRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
 		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
-		BlockState sourceBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
-		BlockState targetBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
+		BlockState sourceBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
+		BlockState targetBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
 
 		if (targetBlock.getLightEmission() < 5) {
 			matrixStack.pushPose();
@@ -83,11 +83,11 @@ public class DripstoneRecipeCategory extends BaseJEICategory<DripstoneContext, D
 		int x = (int) mouseX;
 		int y = (int) mouseY;
 		if (sourceBlockRect.contains(x, y)) {
-			BlockState sourceBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
+			BlockState sourceBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
 			return BlockPredicateHelper.getTooltips(sourceBlock, recipe.getSourceBlock());
 		}
 		if (targetBlockRect.contains(x, y)) {
-			BlockState targetBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
+			BlockState targetBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
 			return BlockPredicateHelper.getTooltips(targetBlock, recipe.getBlock());
 		}
 		return super.getTooltipStrings(recipe, recipeSlotsView, mouseX, mouseY);
@@ -99,11 +99,11 @@ public class DripstoneRecipeCategory extends BaseJEICategory<DripstoneContext, D
 			int x = (int) mouseX;
 			int y = (int) mouseY;
 			if (sourceBlockRect.contains(x, y)) {
-				BlockState fallingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
+				BlockState fallingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
 				return clickBlock(fallingBlock, input);
 			}
 			if (targetBlockRect.contains(x, y)) {
-				BlockState landingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
+				BlockState landingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
 				return clickBlock(landingBlock, input);
 			}
 		}

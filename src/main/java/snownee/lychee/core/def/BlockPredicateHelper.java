@@ -1,7 +1,6 @@
 package snownee.lychee.core.def;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -12,6 +11,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
@@ -48,16 +48,22 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraftforge.registries.ForgeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.StatePropertiesPredicateAccess;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class BlockPredicateHelper {
 
+	public static final NbtPredicate NBT_PREDICATE_DUMMY = new NbtPredicate(new CompoundTag());
+	private static final Cache<BlockPredicate, List<BlockState>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
+	public static Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet();
+
+	static {
+		ITERABLE_PROPERTIES.addAll(List.of(BlockStateProperties.AGE_1, BlockStateProperties.AGE_2, BlockStateProperties.AGE_3, BlockStateProperties.AGE_5, BlockStateProperties.AGE_7, BlockStateProperties.CANDLES, BlockStateProperties.BITES, BlockStateProperties.POWER, BlockStateProperties.POWERED, BlockStateProperties.LIT, BlockStateProperties.BERRIES, BlockStateProperties.OPEN, BlockStateProperties.DELAY, BlockStateProperties.DISTANCE, BlockStateProperties.LAYERS, BlockStateProperties.PICKLES, BlockStateProperties.LEVEL, BlockStateProperties.LEVEL_HONEY, BlockStateProperties.LEVEL_CAULDRON, BlockStateProperties.DRIPSTONE_THICKNESS));
+	}
+
 	// handle BlockPredicate.ANY by yourself!
-	@SuppressWarnings("deprecation")
 	public static Set<Block> getMatchedBlocks(BlockPredicate predicate) {
 		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
 		Set<Block> blocks = Sets.newLinkedHashSet();
@@ -65,12 +71,12 @@ public class BlockPredicateHelper {
 			blocks.addAll(access.getBlocks());
 		}
 		if (access.getTag() != null) {
-			blocks.addAll(LUtil.tagElements(Registry.BLOCK, access.getTag()));
+			blocks.addAll(CommonProxy.tagElements(Registry.BLOCK, access.getTag()));
 		}
 		return blocks;
 	}
 
-	public static Set<Fluid> getMatchedFluids(BlockPredicate predicate){
+	public static Set<Fluid> getMatchedFluids(BlockPredicate predicate) {
 		/* off */
 		return getMatchedBlocks(predicate).stream()
 				.filter(LiquidBlock.class::isInstance)
@@ -113,12 +119,15 @@ public class BlockPredicateHelper {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public static BlockPredicate fromJson(JsonElement jsonElement) {
 		if (jsonElement != null && jsonElement.isJsonPrimitive()) {
 			String id = jsonElement.getAsString();
 			if ("*".equals(id)) {
 				return BlockPredicate.ANY;
+			}
+			if (id.startsWith("#")) {
+				TagKey<Block> key = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(id.substring(1)));
+				return new BlockPredicate(key, null, StatePropertiesPredicate.ANY, NbtPredicate.ANY);
 			}
 			Block block = Registry.BLOCK.get(new ResourceLocation(id));
 			return new BlockPredicate(null, Set.of(block), StatePropertiesPredicate.ANY, NbtPredicate.ANY);
@@ -133,8 +142,6 @@ public class BlockPredicateHelper {
 		return predicate.serializeToJson();
 	}
 
-	public static final NbtPredicate NBT_PREDICATE_DUMMY = new NbtPredicate(new CompoundTag());
-
 	public static BlockPredicate fromNetwork(FriendlyByteBuf pBuffer) {
 		int blockCount = pBuffer.readVarInt();
 		if (blockCount == -1) {
@@ -144,11 +151,11 @@ public class BlockPredicateHelper {
 		if (blockCount > 0) {
 			blocks = Sets.newHashSet();
 			for (int i = 0; i < blockCount; i++) {
-				blocks.add(LUtil.readRegistryId(ForgeRegistries.BLOCKS, pBuffer));
+				blocks.add(CommonProxy.readRegistryId(Registry.BLOCK, pBuffer));
 			}
 		}
 		TagKey<Block> tag = null;
-		ResourceLocation tagId = LUtil.readNullableRL(pBuffer);
+		ResourceLocation tagId = CommonProxy.readNullableRL(pBuffer);
 		if (tagId != null) {
 			tag = TagKey.create(Registry.BLOCK_REGISTRY, tagId);
 		}
@@ -169,14 +176,14 @@ public class BlockPredicateHelper {
 		} else {
 			pBuffer.writeVarInt(blocks.size());
 			for (Block block : blocks) {
-				LUtil.writeRegistryId(ForgeRegistries.BLOCKS, block, pBuffer);
+				CommonProxy.writeRegistryId(Registry.BLOCK, block, pBuffer);
 			}
 		}
 		ResourceLocation tagId = null;
 		TagKey<Block> tag = access.getTag();
 		if (tag != null)
 			tagId = tag.location();
-		LUtil.writeNullableRL(tagId, pBuffer);
+		CommonProxy.writeNullableRL(tagId, pBuffer);
 		PropertiesPredicateHelper.toNetwork(access.getProperties(), pBuffer);
 		NbtPredicate nbtPredicate = access.getNbt();
 		pBuffer.writeBoolean(nbtPredicate != NbtPredicate.ANY);
@@ -186,18 +193,11 @@ public class BlockPredicateHelper {
 		return getShowcaseBlockStates(predicate).stream().findFirst().orElse(Blocks.AIR.defaultBlockState());
 	}
 
-	public static Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet();
-	private static final Cache<BlockPredicate, List<BlockState>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
-
-	static {
-		ITERABLE_PROPERTIES.addAll(List.of(BlockStateProperties.AGE_1, BlockStateProperties.AGE_2, BlockStateProperties.AGE_3, BlockStateProperties.AGE_5, BlockStateProperties.AGE_7, BlockStateProperties.CANDLES, BlockStateProperties.BITES, BlockStateProperties.POWER, BlockStateProperties.POWERED, BlockStateProperties.LIT, BlockStateProperties.BERRIES, BlockStateProperties.OPEN, BlockStateProperties.DELAY, BlockStateProperties.DISTANCE, BlockStateProperties.LAYERS, BlockStateProperties.PICKLES, BlockStateProperties.LEVEL, BlockStateProperties.LEVEL_HONEY, BlockStateProperties.LEVEL_CAULDRON, BlockStateProperties.DRIPSTONE_THICKNESS));
-	}
-
 	public static List<BlockState> getShowcaseBlockStates(BlockPredicate predicate) {
 		try {
 			return CACHE.get(predicate, () -> getShowcaseBlockStates(predicate, ITERABLE_PROPERTIES));
 		} catch (ExecutionException e) {
-			return Collections.EMPTY_LIST;
+			return List.of();
 		}
 	}
 
@@ -205,7 +205,7 @@ public class BlockPredicateHelper {
 	public static List<BlockState> getShowcaseBlockStates(BlockPredicate predicate, Collection<Property<?>> iterableProperties) {
 		Set<Block> blocks = getMatchedBlocks(predicate);
 		if (blocks.isEmpty()) {
-			return Collections.EMPTY_LIST;
+			return List.of();
 		}
 		List<BlockState> states = Lists.newArrayList();
 		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
@@ -258,15 +258,19 @@ public class BlockPredicateHelper {
 				String min, max;
 				Property property = definition.getProperty(matcher.getName());
 				List<Comparable> sorted = null;
-				if (!object.has("min") || !object.has("max")) {
+
+				boolean hasMin = object.has("min");
+				boolean hasMax = object.has("max");
+				Preconditions.checkArgument(hasMin || hasMax);
+				if (!hasMin || !hasMax) {
 					sorted = property.getPossibleValues().stream().sorted().toList();
 				}
-				if (object.has("min")) {
+				if (hasMin) {
 					min = object.get("min").getAsString();
 				} else {
 					min = property.getName(sorted.get(0));
 				}
-				if (object.has("max")) {
+				if (hasMax) {
 					max = object.get("max").getAsString();
 				} else {
 					max = property.getName(sorted.get(sorted.size() - 1));

@@ -3,28 +3,42 @@ package snownee.lychee.core.contextual;
 import java.util.List;
 import java.util.Locale;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.Deserializers;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.GsonContextImpl;
-import snownee.lychee.util.LUtil;
 
 public interface ContextualCondition {
 	Gson predicateGson = Deserializers.createConditionSerializer().create();
 	GsonContextImpl gsonContext = new GsonContextImpl(predicateGson);
+
+	static void desc(List<Component> tooltips, InteractionResult result, int indent, MutableComponent content) {
+		MutableComponent indentComponent = Component.literal("  ".repeat(indent));
+		indentComponent.append(I18n.get("result.lychee." + result.toString().toLowerCase(Locale.ENGLISH)));
+		indentComponent.append(content.withStyle(ChatFormatting.GRAY));
+		tooltips.add(indentComponent);
+	}
+
+	static ContextualCondition parse(JsonObject o) {
+		ResourceLocation key = new ResourceLocation(o.get("type").getAsString());
+		ContextualConditionType<?> type = LycheeRegistries.CONTEXTUAL.get(key);
+		return type.fromJson(o);
+	}
 
 	ContextualConditionType<? extends ContextualCondition> getType();
 
@@ -33,39 +47,19 @@ public interface ContextualCondition {
 	MutableComponent getDescription(boolean inverted);
 
 	default String makeDescriptionId(boolean inverted) {
-		String key = LUtil.makeDescriptionId("contextual", LycheeRegistries.CONTEXTUAL.getKey(getType()));
+		String key = CommonProxy.makeDescriptionId("contextual", getType().getRegistryName());
 		if (inverted) {
 			key += ".not";
 		}
 		return key;
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	default void appendTooltips(List<Component> tooltips, int indent, boolean inverted) {
-		InteractionResult result = InteractionResult.PASS;
-		if (Minecraft.getInstance().level != null) {
-			result = testInTooltips();
-		}
-		desc(tooltips, result, indent, getDescription(inverted));
+	default void appendTooltips(List<Component> tooltips, Level level, @Nullable Player player, int indent, boolean inverted) {
+		desc(tooltips, testInTooltips(level, player), indent, getDescription(inverted));
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	static void desc(List<Component> tooltips, InteractionResult result, int indent, MutableComponent content) {
-		MutableComponent indentComponent = Component.literal("  ".repeat(indent));
-		indentComponent.append(I18n.get("result.lychee." + result.toString().toLowerCase(Locale.ENGLISH)));
-		indentComponent.append(content.withStyle(ChatFormatting.GRAY));
-		tooltips.add(indentComponent);
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	default InteractionResult testInTooltips() {
+	default InteractionResult testInTooltips(Level level, @Nullable Player player) {
 		return InteractionResult.PASS;
-	}
-
-	static ContextualCondition parse(JsonObject o) {
-		ResourceLocation key = new ResourceLocation(o.get("type").getAsString());
-		ContextualConditionType<?> type = LycheeRegistries.CONTEXTUAL.getValue(key);
-		return type.fromJson(o);
 	}
 
 	default JsonObject toJson() {

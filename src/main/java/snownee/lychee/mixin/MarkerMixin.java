@@ -17,7 +17,7 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.Delay.LycheeMarker;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.fragment.Fragments;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 @Mixin(Marker.class)
 public class MarkerMixin implements LycheeMarker {
@@ -63,7 +63,7 @@ public class MarkerMixin implements LycheeMarker {
 			lychee$ticks = compoundTag.getInt("lychee:ticks");
 			lychee$ctx = LycheeContext.load(Fragments.GSON.fromJson(compoundTag.getString("lychee:ctx"), JsonObject.class), this);
 			ResourceLocation recipeId = ResourceLocation.tryParse(compoundTag.getString("lychee:recipe"));
-			Recipe<?> recipe = LUtil.recipe(recipeId);
+			Recipe<?> recipe = CommonProxy.recipe(recipeId);
 			if (recipe instanceof ILycheeRecipe) {
 				lychee$recipe = (ILycheeRecipe<?>) recipe;
 			}

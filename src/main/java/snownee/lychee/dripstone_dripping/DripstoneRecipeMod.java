@@ -4,50 +4,27 @@ import java.util.concurrent.ExecutionException;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.mojang.serialization.Codec;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class DripstoneRecipeMod {
 
 	public static final Cache<Block, DripParticleHandler> particleHandlers = CacheBuilder.newBuilder().build();
 
-	public static ParticleType<BlockParticleOption> DRIPSTONE_DRIPPING;
-	public static ParticleType<BlockParticleOption> DRIPSTONE_FALLING;
-	public static ParticleType<BlockParticleOption> DRIPSTONE_SPLASH;
-
-	public static boolean hasDFLib;
-
-	public static void onInitialize() {
-		hasDFLib = LUtil.isModLoaded("dripstone_fluid_lib");
-		IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		eventBus.addListener(DripstoneRecipeMod::registerParticleTypes);
-	}
-
-	public static void registerParticleTypes(RegisterEvent event) {
-		if (ForgeRegistries.PARTICLE_TYPES.equals(event.getForgeRegistry())) {
-			ForgeRegistries.PARTICLE_TYPES.register(new ResourceLocation(Lychee.ID, "dripstone_dripping"), DRIPSTONE_DRIPPING = new DripstoneParticleType());
-			ForgeRegistries.PARTICLE_TYPES.register(new ResourceLocation(Lychee.ID, "dripstone_falling"), DRIPSTONE_FALLING = new DripstoneParticleType());
-			ForgeRegistries.PARTICLE_TYPES.register(new ResourceLocation(Lychee.ID, "dripstone_splash"), DRIPSTONE_SPLASH = new DripstoneParticleType());
-		}
-	}
+	public static final ParticleType<BlockParticleOption> DRIPSTONE_DRIPPING = CommonProxy.registerParticleType(BlockParticleOption.DESERIALIZER);
+	public static final ParticleType<BlockParticleOption> DRIPSTONE_FALLING = CommonProxy.registerParticleType(BlockParticleOption.DESERIALIZER);
+	public static final ParticleType<BlockParticleOption> DRIPSTONE_SPLASH = CommonProxy.registerParticleType(BlockParticleOption.DESERIALIZER);
 
 	public static boolean spawnDripParticle(Level level, BlockPos blockPos, BlockState blockState) {
 		BlockState sourceBlock = DripstoneRecipe.getBlockAboveStalactite(level, blockPos, blockState);
@@ -58,12 +35,10 @@ public class DripstoneRecipeMod {
 		if (sourceFluid.is(FluidTags.LAVA) || sourceFluid.is(FluidTags.WATER)) {
 			return false;
 		}
-		/*
-		if (DripstoneRecipeMod.hasDFLib && sourceFluid.getType() instanceof DripstoneInteractingFluid) {
+		if (CommonProxy.hasModdedDripParticle(sourceFluid)) {
 			return false;
 		}
-		*/
-		DripParticleHandler handler = getParticleHandler(sourceBlock);
+		DripParticleHandler handler = getParticleHandler(level, sourceBlock);
 		if (handler == null) {
 			return false;
 		}
@@ -75,35 +50,21 @@ public class DripstoneRecipeMod {
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
-	public static DripParticleHandler getParticleHandler(BlockState sourceBlock) {
+	public static DripParticleHandler getParticleHandler(Level level, BlockState sourceBlock) {
 		Block block = sourceBlock.getBlock();
 		try {
 			return particleHandlers.get(block, () -> {
-				if (!LUtil.isPhysicalClient()) {
+				if (!CommonProxy.isPhysicalClient()) {
 					return DripParticleHandler.SIMPLE_DUMMY;
 				}
 				BlockState defaultState = block.defaultBlockState();
-				int color = defaultState.getMapColor(Minecraft.getInstance().level, BlockPos.ZERO).col;
+				int color = defaultState.getMapColor(level, BlockPos.ZERO).col;
 				return new DripParticleHandler.Simple(color, defaultState.getLightEmission() > 4);
 			});
 		} catch (ExecutionException e) {
 			Lychee.LOGGER.error("", e);
 		}
 		return null;
-	}
-
-	public static class DripstoneParticleType extends ParticleType<BlockParticleOption> {
-
-		public DripstoneParticleType() {
-			super(false, BlockParticleOption.DESERIALIZER);
-		}
-
-		@Override
-		public Codec<BlockParticleOption> codec() {
-			return BlockParticleOption.codec(this);
-		}
-
 	}
 
 }

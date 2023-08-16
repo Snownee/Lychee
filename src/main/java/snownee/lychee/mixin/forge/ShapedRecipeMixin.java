@@ -11,7 +11,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 @Mixin(value = ShapedRecipe.class, priority = 2000)
 public class ShapedRecipeMixin {
@@ -21,7 +21,7 @@ public class ShapedRecipeMixin {
 		if (!jsonObject.has("lychee:tag")) {
 			return;
 		}
-		CompoundTag tag = LUtil.jsonToTag(jsonObject.get("lychee:tag"));
+		CompoundTag tag = CommonProxy.jsonToTag(jsonObject.get("lychee:tag"));
 		ItemStack itemStack = CraftingHelper.getItemStack(jsonObject, true, false);
 		itemStack.getOrCreateTag().merge(tag);
 		cir.setReturnValue(itemStack);

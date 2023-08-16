@@ -7,9 +7,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.PacketDistributor.TargetPoint;
@@ -36,7 +36,7 @@ public class SCustomLevelEventPacket extends PacketHandler {
 		});
 	}
 
-	public static void sendItemParticles(ItemStack stack, Level level, Vec3 pos) {
+	public static void sendItemParticles(ItemStack stack, ServerLevel level, Vec3 pos) {
 		I.send(PacketDistributor.NEAR.with(TargetPoint.p(pos.x, pos.y, pos.z, 16, level.dimension())), buf -> {
 			buf.writeItem(stack);
 			buf.writeFloat((float) pos.x);

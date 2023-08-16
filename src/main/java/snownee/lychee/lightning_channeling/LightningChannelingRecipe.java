@@ -1,6 +1,6 @@
 package snownee.lychee.lightning_channeling;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 import net.minecraft.resources.ResourceLocation;
@@ -30,7 +30,7 @@ public class LightningChannelingRecipe extends ItemShapelessRecipe<LightningChan
 		return RecipeTypes.LIGHTNING_CHANNELING;
 	}
 
-	public static void on(LightningBolt lightningBolt, Collection<Entity> list1) {
+	public static void on(LightningBolt lightningBolt, List<Entity> list1) {
 		Stream<ItemEntity> itemEntities = list1.stream().filter($ -> {
 			return $ instanceof ItemEntity;
 		}).map(ItemEntity.class::cast);

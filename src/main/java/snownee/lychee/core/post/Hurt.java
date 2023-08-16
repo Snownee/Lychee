@@ -3,7 +3,6 @@ package snownee.lychee.core.post;
 import java.util.Locale;
 
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,18 +10,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import snownee.lychee.LycheeRegistries;
 import snownee.lychee.PostActionTypes;
-import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.DoubleBoundsHelper;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class Hurt extends PostAction {
 
@@ -53,14 +47,7 @@ public class Hurt extends PostAction {
 
 	@Override
 	public Component getDisplayName() {
-		return Component.translatable(LUtil.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(getType())), BoundsHelper.getDescription(damage));
-	}
-
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void render(PoseStack poseStack, int x, int y) {
-		//TODO this is not ideal. render bleed icon in the future
-		GuiGameElement.of(Items.IRON_SWORD).render(poseStack, x, y);
+		return Component.translatable(CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()), BoundsHelper.getDescription(damage));
 	}
 
 	public static class Type extends PostActionType<Hurt> {

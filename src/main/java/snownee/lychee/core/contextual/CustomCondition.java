@@ -1,6 +1,8 @@
 package snownee.lychee.core.contextual;
 
-import java.util.function.Supplier;
+import java.util.function.BiFunction;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -10,22 +12,22 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.InteractionResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class CustomCondition implements ContextualCondition {
 
 	public final JsonObject data;
 	public Test testFunc;
-	public Supplier<InteractionResult> testInTooltipsFunc = () -> InteractionResult.PASS;
+	public BiFunction<Level, @Nullable Player, InteractionResult> testInTooltipsFunc = (level, player) -> InteractionResult.PASS;
 
 	public CustomCondition(JsonObject data) {
 		this.data = data;
-		LUtil.postCustomConditionEvent(GsonHelper.getAsString(data, "id"), this);
+		CommonProxy.postCustomConditionEvent(GsonHelper.getAsString(data, "id"), this);
 	}
 
 	@Override
@@ -41,10 +43,9 @@ public class CustomCondition implements ContextualCondition {
 		return 0;
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	@Override
-	public InteractionResult testInTooltips() {
-		return testInTooltipsFunc.get();
+	public InteractionResult testInTooltips(Level level, @Nullable Player player) {
+		return testInTooltipsFunc.apply(level, player);
 	}
 
 	@Override

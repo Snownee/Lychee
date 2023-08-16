@@ -13,7 +13,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
 import snownee.lychee.mixin.LightPredicateAccess;
 import snownee.lychee.mixin.LocationPredicateAccess;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public interface LocationPredicateHelper {
 
@@ -28,15 +28,15 @@ public interface LocationPredicateHelper {
 		if (ints != Ints.ANY) {
 			builder.setLight(LightPredicate.Builder.light().setComposite(ints).build());
 		}
-		ResourceLocation dim = LUtil.readNullableRL(pBuffer);
+		ResourceLocation dim = CommonProxy.readNullableRL(pBuffer);
 		if (dim != null) {
 			builder.setDimension(ResourceKey.create(Registry.DIMENSION_REGISTRY, dim));
 		}
-		ResourceLocation biome = LUtil.readNullableRL(pBuffer);
+		ResourceLocation biome = CommonProxy.readNullableRL(pBuffer);
 		if (biome != null) {
 			builder.setBiome(ResourceKey.create(Registry.BIOME_REGISTRY, biome));
 		}
-		ResourceLocation feature = LUtil.readNullableRL(pBuffer);
+		ResourceLocation feature = CommonProxy.readNullableRL(pBuffer);
 		if (feature != null) {
 			builder.setStructure(ResourceKey.create(Registry.STRUCTURE_REGISTRY, feature));
 		}
@@ -57,11 +57,11 @@ public interface LocationPredicateHelper {
 		Ints ints = ((LightPredicateAccess) access.getLight()).getComposite();
 		IntBoundsHelper.toNetwork(ints, pBuffer);
 		ResourceLocation dim = Optional.ofNullable(access.getDimension()).map(ResourceKey::location).orElse(null);
-		LUtil.writeNullableRL(dim, pBuffer);
+		CommonProxy.writeNullableRL(dim, pBuffer);
 		ResourceLocation biome = Optional.ofNullable(access.getBiome()).map(ResourceKey::location).orElse(null);
-		LUtil.writeNullableRL(biome, pBuffer);
+		CommonProxy.writeNullableRL(biome, pBuffer);
 		ResourceLocation feature = Optional.ofNullable(access.getStructure()).map(ResourceKey::location).orElse(null);
-		LUtil.writeNullableRL(feature, pBuffer);
+		CommonProxy.writeNullableRL(feature, pBuffer);
 		Boolean smokey = access.getSmokey();
 		if (smokey == null) {
 			pBuffer.writeByte(2);

@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public abstract class ItemAndBlockRecipe<C extends LycheeContext> extends LycheeRecipe<C> implements BlockKeyRecipe<ItemAndBlockRecipe<C>> {
 
@@ -65,7 +65,7 @@ public abstract class ItemAndBlockRecipe<C extends LycheeContext> extends Lychee
 		i = Integer.compare(block == BlockPredicate.ANY ? 1 : 0, that.block == BlockPredicate.ANY ? 1 : 0);
 		if (i != 0)
 			return i;
-		i = Integer.compare(LUtil.isSimpleIngredient(input) ? 1 : 0, LUtil.isSimpleIngredient(that.input) ? 1 : 0);
+		i = Integer.compare(CommonProxy.isSimpleIngredient(input) ? 1 : 0, CommonProxy.isSimpleIngredient(that.input) ? 1 : 0);
 		if (i != 0)
 			return i;
 		return getId().compareTo(that.getId());

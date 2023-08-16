@@ -3,34 +3,26 @@ package snownee.lychee.core.post;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang3.tuple.MutableTriple;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import snownee.lychee.LycheeRegistries;
-import snownee.lychee.client.gui.AllGuiTextures;
+import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.ClientProxy;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.json.JsonPointer;
 
 public abstract class PostAction extends ContextualHolder {
@@ -52,7 +44,7 @@ public abstract class PostAction extends ContextualHolder {
 
 	public static PostAction parse(JsonObject o) {
 		ResourceLocation key = new ResourceLocation(o.get("type").getAsString());
-		PostActionType<?> type = LycheeRegistries.POST_ACTION.getValue(key);
+		PostActionType<?> type = LycheeRegistries.POST_ACTION.get(key);
 		PostAction action = type.fromJson(o);
 		action.parseConditions(o.get("contextual"));
 		if (o.has("@path")) {
@@ -62,7 +54,7 @@ public abstract class PostAction extends ContextualHolder {
 	}
 
 	public static PostAction read(FriendlyByteBuf buf) {
-		PostActionType<?> type = LUtil.readRegistryId(LycheeRegistries.POST_ACTION, buf);
+		PostActionType<?> type = CommonProxy.readRegistryId(LycheeRegistries.POST_ACTION, buf);
 		PostAction action = type.fromNetwork(buf);
 		action.conditionsFromNetwork(buf);
 		return action;
@@ -83,28 +75,7 @@ public abstract class PostAction extends ContextualHolder {
 	}
 
 	public Component getDisplayName() {
-		return Component.translatable(LUtil.makeDescriptionId("postAction", getType().getRegistryName()));
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public void render(PoseStack poseStack, int x, int y) {
-		AllGuiTextures.JEI_QUESTION_MARK.render(poseStack, x + 2, y + 1);
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public List<Component> getBaseTooltips() {
-		return Lists.newArrayList(getDisplayName());
-	}
-
-	@OnlyIn(Dist.CLIENT)
-	public List<Component> getTooltips() {
-		List<Component> list = getBaseTooltips();
-		int c = showingConditionsCount();
-		if (c > 0) {
-			list.add(ClientProxy.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
-		}
-		getConditonTooltips(list, 0);
-		return list;
+		return Component.translatable(CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()));
 	}
 
 	public boolean isHidden() {
@@ -140,7 +111,7 @@ public abstract class PostAction extends ContextualHolder {
 	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 	}
 
-	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<MutableTriple<Ingredient, Component, Integer>> ingredients) {
+	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
 	}
 
 	public void getUsedPointers(ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
