@@ -340,9 +340,9 @@ public class CommonProxy implements ModInitializer {
 
 	public static boolean hasModdedDripParticle(FluidState fluid) {
 		if (hasDFLib && fluid.getType() instanceof DripstoneInteractingFluid) {
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public static ParticleType<BlockParticleOption> registerParticleType(ParticleOptions.Deserializer<BlockParticleOption> deserializer) {

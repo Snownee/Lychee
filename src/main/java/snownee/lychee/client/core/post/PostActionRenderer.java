@@ -29,6 +29,8 @@ public interface PostActionRenderer<T extends PostAction> {
 	}
 
 	static <T extends PostAction> void register(PostActionType<T> type, PostActionRenderer<T> renderer) {
+		Objects.requireNonNull(type);
+		Objects.requireNonNull(renderer);
 		RENDERERS.put(type, renderer);
 	}
 

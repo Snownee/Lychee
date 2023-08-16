@@ -38,7 +38,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import snownee.lychee.Lychee;
-import snownee.lychee.LycheeRegistries;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
@@ -72,7 +71,7 @@ import snownee.lychee.util.CommonProxy;
 public class REICompat implements REIClientPlugin {
 
 	public static final ResourceLocation UID = new ResourceLocation(Lychee.ID, "main");
-	public static final EntryType<PostAction> POST_ACTION = EntryType.deferred(LycheeRegistries.POST_ACTION.key().location());
+	public static final EntryType<PostAction> POST_ACTION = EntryType.deferred(new ResourceLocation(Lychee.ID, "post_action"));
 	public static final Map<ResourceLocation, Map<ResourceLocation, BaseREICategory<?, ?, ?>>> CATEGORIES = Maps.newHashMap();
 
 	@SuppressWarnings("rawtypes")
