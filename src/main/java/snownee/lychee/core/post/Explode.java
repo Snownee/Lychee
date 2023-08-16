@@ -3,24 +3,19 @@ package snownee.lychee.core.post;
 import java.util.Locale;
 
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.PostActionTypes;
-import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class Explode extends PostAction {
 
@@ -57,12 +52,6 @@ public class Explode extends PostAction {
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
-	public void render(PoseStack poseStack, int x, int y) {
-		GuiGameElement.of(Items.TNT).render(poseStack, x, y);
-	}
-
-	@Override
 	public Component getDisplayName() {
 		String s = switch (blockInteraction) {
 		case NONE -> "none";
@@ -70,14 +59,14 @@ public class Explode extends PostAction {
 		case DESTROY -> "destroy";
 		default -> throw new IllegalArgumentException("Unexpected value: " + blockInteraction);
 		};
-		return Component.translatable(LUtil.makeDescriptionId("postAction", getType().getRegistryName()) + "." + s);
+		return Component.translatable(CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()) + "." + s);
 	}
 
 	public static class Type extends PostActionType<Explode> {
 
 		@Override
 		public Explode fromJson(JsonObject o) {
-			BlockPos offset = LUtil.parseOffset(o);
+			BlockPos offset = CommonProxy.parseOffset(o);
 			boolean fire = GsonHelper.getAsBoolean(o, "fire", false);
 			String s = GsonHelper.getAsString(o, "block_interaction", "break");
 			BlockInteraction blockInteraction = switch (s) {

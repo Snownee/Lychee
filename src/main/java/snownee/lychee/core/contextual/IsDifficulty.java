@@ -3,6 +3,8 @@ package snownee.lychee.core.contextual;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,18 +12,17 @@ import com.google.gson.JsonPrimitive;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntImmutableList;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public record IsDifficulty(IntImmutableList difficulties) implements ContextualCondition {
 
@@ -36,9 +37,8 @@ public record IsDifficulty(IntImmutableList difficulties) implements ContextualC
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
-	public InteractionResult testInTooltips() {
-		return difficulties.contains(Minecraft.getInstance().level.getDifficulty().getId()) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+	public InteractionResult testInTooltips(Level level, @Nullable Player player) {
+		return difficulties.contains(level.getDifficulty().getId()) ? InteractionResult.SUCCESS : InteractionResult.FAIL;
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public record IsDifficulty(IntImmutableList difficulties) implements ContextualC
 		List<String> names = difficulties.intParallelStream().mapToObj(Difficulty::byId).map(Difficulty::getDisplayName).map(Component::getString).toList();
 		int size = names.size();
 		if (size == 1) {
-			return Component.translatable(key, LUtil.white(names.get(0)));
+			return Component.translatable(key, CommonProxy.white(names.get(0)));
 		} else {
 			StringBuilder sb = new StringBuilder();
 			key += ".more";
@@ -57,7 +57,7 @@ public record IsDifficulty(IntImmutableList difficulties) implements ContextualC
 				}
 				sb.append(names.get(i));
 			}
-			return Component.translatable(key, LUtil.white(sb), LUtil.white(names.get(size - 1)));
+			return Component.translatable(key, CommonProxy.white(sb), CommonProxy.white(names.get(size - 1)));
 		}
 	}
 

@@ -8,7 +8,7 @@ import net.minecraft.network.chat.MutableComponent;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public record Chance(float chance) implements ContextualCondition {
 
@@ -31,7 +31,7 @@ public record Chance(float chance) implements ContextualCondition {
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
 		String key = makeDescriptionId(inverted);
-		return Component.translatable(key, LUtil.white(LUtil.chance(chance)));
+		return Component.translatable(key, CommonProxy.white(CommonProxy.chance(chance)));
 	}
 
 	public static class Type extends ContextualConditionType<Chance> {

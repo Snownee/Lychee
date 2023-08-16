@@ -10,16 +10,16 @@ import snownee.lychee.core.contextual.CustomCondition;
 import snownee.lychee.core.post.CustomAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.ClientProxy;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class LycheeKubeJSPlugin extends KubeJSPlugin {
 
 	@Override
 	public void init() {
 		Lychee.LOGGER.info("LycheeKubeJSPlugin is there!");
-		LUtil.registerCustomActionListener(this::onCustomAction);
-		LUtil.registerCustomConditionListener(this::onCustomCondition);
-		if (LUtil.isPhysicalClient()) {
+		CommonProxy.registerCustomActionListener(this::onCustomAction);
+		CommonProxy.registerCustomConditionListener(this::onCustomCondition);
+		if (CommonProxy.isPhysicalClient()) {
 			ClientProxy.registerInfoBadgeClickListener(this::onInfoBadgeClicked);
 		}
 	}

@@ -18,8 +18,8 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.dripstone_dripping.DripstoneRecipe;
-import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.random_block_ticking.RandomlyTickable;
+import snownee.lychee.util.CommonProxy;
 
 @Mixin(BlockStateBase.class)
 public class BlockStateMixin {
@@ -44,7 +44,7 @@ public class BlockStateMixin {
 			}
 		}
 
-		if (DripstoneRecipeMod.hasDFLib && DripstoneRecipe.safeTick(state, serverLevel, blockPos, randomSource)) {
+		if (CommonProxy.hasDFLib && DripstoneRecipe.safeTick(state, serverLevel, blockPos, randomSource)) {
 			ci.cancel();
 		}
 	}

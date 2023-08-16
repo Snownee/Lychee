@@ -18,6 +18,7 @@ import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -33,7 +34,7 @@ import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 
 public class JEIREI {
@@ -70,9 +71,9 @@ public class JEIREI {
 		List<IngredientInfo> newIngredients = Lists.newArrayList();
 		for (var ingredient : ingredients) {
 			IngredientInfo match = null;
-			if (LUtil.isSimpleIngredient(ingredient.ingredient)) {
+			if (CommonProxy.isSimpleIngredient(ingredient.ingredient)) {
 				for (var toCompare : newIngredients) {
-					if (Objects.equals(toCompare.tooltips, ingredient.tooltips) && LUtil.isSimpleIngredient(toCompare.ingredient) && toCompare.ingredient.getStackingIds().equals(ingredient.ingredient.getStackingIds())) {
+					if (Objects.equals(toCompare.tooltips, ingredient.tooltips) && CommonProxy.isSimpleIngredient(toCompare.ingredient) && toCompare.ingredient.getStackingIds().equals(ingredient.ingredient.getStackingIds())) {
 						match = toCompare;
 						break;
 					}
@@ -90,7 +91,7 @@ public class JEIREI {
 
 	public static void addIngredientTips(LycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
 		for (IngredientInfo ingredient : ingredients) {
-			IngredientInfo.Type type = LUtil.getIngredientType(ingredient.ingredient);
+			IngredientInfo.Type type = CommonProxy.getIngredientType(ingredient.ingredient);
 			if (type != IngredientInfo.Type.NORMAL) {
 				ingredient.addTooltip(Component.translatable("tip.lychee.ingredient." + type.name().toLowerCase(Locale.ROOT)));
 			}
@@ -162,7 +163,8 @@ public class JEIREI {
 			}
 			Splitter.on('\n').splitToStream(comment).map(Component::literal).forEach(list::add);
 		}
-		recipe.getContextualHolder().getConditonTooltips(list, 0);
+		Minecraft mc = Minecraft.getInstance();
+		recipe.getContextualHolder().getConditionTooltips(list, 0, mc.level, mc.player);
 		return list;
 	}
 

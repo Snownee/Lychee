@@ -36,7 +36,7 @@ import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.type.ItemShapelessRecipeType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext, ItemInsideRecipe> {
 
@@ -93,12 +93,12 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 			return true;
 		});
 		ItemShapelessContext.Builder<ItemShapelessContext> ctxBuilder = new ItemShapelessContext.Builder<>(level, items);
-		ctxBuilder.withParameter(LootContextParams.ORIGIN, LUtil.clampPos(origin, pos));
+		ctxBuilder.withParameter(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
 		ctxBuilder.withParameter(LootContextParams.THIS_ENTITY, entity);
 		ctxBuilder.withParameter(LootContextParams.BLOCK_STATE, blockstate);
 		ctxBuilder.withParameter(LycheeLootContextParams.BLOCK_POS, pos);
 		ItemShapelessContext ctx = ctxBuilder.create(contextParamSet);
-		ItemInsideRecipe prevRecipe = (ItemInsideRecipe) Optional.ofNullable(prevRecipeId.getValue()).map(LUtil::recipe).filter($ -> $.getType() == this).orElse(null);
+		ItemInsideRecipe prevRecipe = (ItemInsideRecipe) Optional.ofNullable(prevRecipeId.getValue()).map(CommonProxy::recipe).filter($ -> $.getType() == this).orElse(null);
 		Iterable<ItemInsideRecipe> iterable = Iterables.concat(recipes, specialRecipes);
 		if (prevRecipe != null) {
 			iterable = Iterables.concat(List.of(prevRecipe), Iterables.filter(iterable, $ -> $ != prevRecipe));

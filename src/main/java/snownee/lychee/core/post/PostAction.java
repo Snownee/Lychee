@@ -6,16 +6,11 @@ import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -23,13 +18,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.LycheeRegistries;
-import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.ClientProxy;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.json.JsonPointer;
 
 public abstract class PostAction extends ContextualHolder {
@@ -61,7 +54,7 @@ public abstract class PostAction extends ContextualHolder {
 	}
 
 	public static PostAction read(FriendlyByteBuf buf) {
-		PostActionType<?> type = LUtil.readRegistryId(LycheeRegistries.POST_ACTION, buf);
+		PostActionType<?> type = CommonProxy.readRegistryId(LycheeRegistries.POST_ACTION, buf);
 		PostAction action = type.fromNetwork(buf);
 		action.conditionsFromNetwork(buf);
 		return action;
@@ -82,28 +75,7 @@ public abstract class PostAction extends ContextualHolder {
 	}
 
 	public Component getDisplayName() {
-		return Component.translatable(LUtil.makeDescriptionId("postAction", getType().getRegistryName()));
-	}
-
-	@Environment(EnvType.CLIENT)
-	public void render(PoseStack poseStack, int x, int y) {
-		AllGuiTextures.JEI_QUESTION_MARK.render(poseStack, x + 2, y + 1);
-	}
-
-	@Environment(EnvType.CLIENT)
-	public List<Component> getBaseTooltips() {
-		return Lists.newArrayList(getDisplayName());
-	}
-
-	@Environment(EnvType.CLIENT)
-	public List<Component> getTooltips() {
-		List<Component> list = getBaseTooltips();
-		int c = showingConditionsCount();
-		if (c > 0) {
-			list.add(ClientProxy.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
-		}
-		getConditonTooltips(list, 0);
-		return list;
+		return Component.translatable(CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()));
 	}
 
 	public boolean isHidden() {

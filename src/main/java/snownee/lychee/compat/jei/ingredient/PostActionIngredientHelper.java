@@ -8,7 +8,7 @@ import mezz.jei.api.ingredients.subtypes.UidContext;
 import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.compat.jei.JEICompat;
 import snownee.lychee.core.post.PostAction;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class PostActionIngredientHelper implements IIngredientHelper<PostAction> {
 
@@ -35,7 +35,7 @@ public class PostActionIngredientHelper implements IIngredientHelper<PostAction>
 	@Override
 	public String getDisplayModId(PostAction postAction) {
 		String modid = postAction.getType().getRegistryName().getNamespace();
-		return LUtil.wrapNamespace(modid);
+		return CommonProxy.wrapNamespace(modid);
 	}
 
 	@Override

@@ -22,7 +22,6 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
-import me.shedaniel.rei.impl.client.gui.widget.QueuedTooltip.TooltipEntryImpl;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -30,6 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.client.core.post.PostActionRenderer;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.rei.LEntryWidget;
@@ -106,12 +106,12 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 			tooltip.entries().clear();
 			raw = itemMap.get(raw);
 			List<Component> list;
-			if (action instanceof RandomSelect) {
-				list = ((RandomSelect) action).getTooltips((PostAction) raw);
+			if (action instanceof RandomSelect randomSelect) {
+				list = PostActionRenderer.getTooltipsFromRandom(randomSelect, (PostAction) raw);
 			} else {
-				list = action.getTooltips();
+				list = PostActionRenderer.of(action).getTooltips(action);
 			}
-			tooltip.entries().addAll(list.stream().map(TooltipEntryImpl::new).toList());
+			tooltip.entries().addAll(list.stream().map(Tooltip::entry).toList());
 			return tooltip;
 		});
 	}

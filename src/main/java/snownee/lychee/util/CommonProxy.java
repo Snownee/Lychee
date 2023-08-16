@@ -14,16 +14,25 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 
+import io.github.tropheusj.dripstone_fluid_lib.DripstoneInteractingFluid;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
+import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
@@ -46,18 +55,29 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
+import snownee.kiwi.Mod;
+import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
+import snownee.lychee.LycheeRegistries;
+import snownee.lychee.LycheeTags;
+import snownee.lychee.PostActionTypes;
+import snownee.lychee.RecipeSerializers;
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.compat.fabric_recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.core.contextual.CustomCondition;
 import snownee.lychee.core.post.CustomAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
+import snownee.lychee.interaction.InteractionRecipeMod;
 import snownee.lychee.mixin.RecipeManagerAccess;
 
-public class LUtil {
+@Mod(Lychee.ID)
+public class CommonProxy implements ModInitializer {
 	public static final Event<CustomActionListener> CUSTOM_ACTION_EVENT = EventFactory.createArrayBacked(CustomActionListener.class, listeners -> (id, action, recipe, patchContext) -> {
 		for (CustomActionListener listener : listeners) {
 			if (listener.on(id, action, recipe, patchContext)) {
@@ -75,6 +95,9 @@ public class LUtil {
 		return false;
 	});
 	private static final Random RANDOM = new Random();
+	public static boolean hasKiwi = isModLoaded("kiwi");
+	public static boolean hasIngredientExtAPI = isModLoaded("ingredient-extension-api");
+	public static boolean hasDFLib = isModLoaded("dripstone_fluid_lib");
 	private static RecipeManager recipeManager;
 
 	public static void dropItemStack(Level pLevel, double pX, double pY, double pZ, ItemStack pStack, @Nullable Consumer<ItemEntity> extraStep) {
@@ -177,7 +200,7 @@ public class LUtil {
 	}
 
 	public static void setRecipeManager(RecipeManager recipeManager) {
-		LUtil.recipeManager = recipeManager;
+		CommonProxy.recipeManager = recipeManager;
 		if (LycheeConfig.debug) {
 			Lychee.LOGGER.trace("Setting recipe manager..");
 		}
@@ -237,7 +260,7 @@ public class LUtil {
 	}
 
 	public static boolean isSimpleIngredient(Ingredient ingredient) {
-		if (Lychee.hasIngredientExtAPI && IngredientHelper.requiresTesting(List.of(ingredient))) {
+		if (hasIngredientExtAPI && IngredientHelper.requiresTesting(List.of(ingredient))) {
 			return false;
 		}
 		return !ingredient.requiresTesting();
@@ -313,6 +336,50 @@ public class LUtil {
 			return IngredientInfo.Type.ANY;
 		}
 		return IngredientInfo.Type.NORMAL;
+	}
+
+	public static boolean hasModdedDripParticle(FluidState fluid) {
+		if (hasDFLib && fluid.getType() instanceof DripstoneInteractingFluid) {
+			return false;
+		}
+		return true;
+	}
+
+	public static ParticleType<BlockParticleOption> registerParticleType(ParticleOptions.Deserializer<BlockParticleOption> deserializer) {
+		return FabricParticleTypes.complex(deserializer);
+	}
+
+	@Override
+	public void onInitialize() {
+/*		if (hasKiwi) {
+			FabricLoader.getInstance().getModContainer("kiwi").map(ModContainer::getMetadata).map(ModMetadata::getVersion).ifPresent(version -> {
+				try {
+					Version minVersion = Version.parse("11.1.1");
+					if (minVersion.compareTo(version) > 0) {
+						throw new RuntimeException("Kiwi version is too low! Please update to at least 11.1.1");
+					}
+				} catch (VersionParsingException e) {
+					throw new RuntimeException(e);
+				}
+			});
+		}*/
+
+		RecipeTypes.init();
+		LycheeTags.init();
+		LycheeRegistries.init();
+		ContextualConditionTypes.init();
+		PostActionTypes.init();
+		RecipeSerializers.init();
+		CustomIngredientSerializer.register(AlwaysTrueIngredient.SERIALIZER);
+
+		// Interaction recipes
+		UseBlockCallback.EVENT.register(InteractionRecipeMod::useItemOn);
+		AttackBlockCallback.EVENT.register(InteractionRecipeMod::clickItemOn);
+
+		// Dripstone recipes
+		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_dripping"), DripstoneRecipeMod.DRIPSTONE_DRIPPING);
+		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_falling"), DripstoneRecipeMod.DRIPSTONE_FALLING);
+		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_splash"), DripstoneRecipeMod.DRIPSTONE_SPLASH);
 	}
 
 	public interface CustomActionListener {

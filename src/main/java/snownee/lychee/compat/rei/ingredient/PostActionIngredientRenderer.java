@@ -9,6 +9,7 @@ import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.gui.widgets.TooltipContext;
 import me.shedaniel.rei.api.common.entry.EntryStack;
+import snownee.lychee.client.core.post.PostActionRenderer;
 import snownee.lychee.core.post.PostAction;
 
 public enum PostActionIngredientRenderer implements EntryRenderer<PostAction> {
@@ -17,13 +18,14 @@ public enum PostActionIngredientRenderer implements EntryRenderer<PostAction> {
 
 	@Override
 	public void render(EntryStack<PostAction> entry, PoseStack poseStack, Rectangle bounds, int mx, int my, float delta) {
-		if (!entry.isEmpty())
-			entry.getValue().render(poseStack, bounds.x, bounds.y);
+		if (entry.isEmpty())
+			return;
+		PostActionRenderer.of(entry.getValue()).render(entry.getValue(), poseStack, bounds.x, bounds.y);
 	}
 
 	@Override
 	public @Nullable Tooltip getTooltip(EntryStack<PostAction> entry, TooltipContext context) {
-		return Tooltip.create(entry.getValue().getTooltips());
+		return Tooltip.create(PostActionRenderer.of(entry.getValue()).getTooltips(entry.getValue()));
 	}
 
 }

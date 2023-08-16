@@ -62,7 +62,7 @@ import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.crafting.ShapedCraftingRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 @JeiPlugin
 public class JEICompat implements IModPlugin {
@@ -119,7 +119,7 @@ public class JEICompat implements IModPlugin {
 			});
 		});
 
-		List<IJeiAnvilRecipe> recipes = LUtil.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
+		List<IJeiAnvilRecipe> recipes = CommonProxy.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
 			return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
 		}).map($ -> {
 			List<ItemStack> right = List.of($.getRight().getItems()).stream().map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
@@ -157,12 +157,12 @@ public class JEICompat implements IModPlugin {
 		forEachCategories(RecipeTypes.LIGHTNING_CHANNELING, $ -> {
 			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, Items.LIGHTNING_ROD.getDefaultInstance(), $.getRecipeType());
 		});
-		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
+		for (Item item : CommonProxy.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.ITEM_EXPLODING, $ -> {
 				registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), $.getRecipeType());
 			});
 		}
-		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
+		for (Item item : CommonProxy.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.BLOCK_EXPLODING, $ -> {
 				registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), $.getRecipeType());
 			});
@@ -181,7 +181,7 @@ public class JEICompat implements IModPlugin {
 		RUNTIME = jeiRuntime;
 		Minecraft.getInstance().execute(() -> {
 			/* off */
-			var recipes = LUtil.recipes(RecipeType.CRAFTING).stream()
+			var recipes = CommonProxy.recipes(RecipeType.CRAFTING).stream()
 					.filter(ILycheeRecipe.class::isInstance)
 					.map(ILycheeRecipe.class::cast)
 					.filter(Predicate.not(ILycheeRecipe::showInRecipeViewer))

@@ -11,7 +11,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.core.post.Delay.LycheeMarker;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class ActionRuntime {
 
@@ -34,14 +34,14 @@ public class ActionRuntime {
 			ctx.json = patchContext.template().deepCopy();
 			for (Integer index : patchContext.usedIndexes()) {
 				ItemStack item = ctx.getItem(index);
-				ctx.json.add(index.toString(), LUtil.tagToJson(item.save(new CompoundTag())));
+				ctx.json.add(index.toString(), CommonProxy.tagToJson(item.save(new CompoundTag())));
 			}
 			//			Lychee.LOGGER.info(ctx.json);
 			jobs.forEach($ -> $.action.preApply(recipe, ctx, patchContext));
 			//				Lychee.LOGGER.info(ctx.json);
 			for (Integer index : patchContext.usedIndexes()) {
 				try {
-					CompoundTag tag = LUtil.jsonToTag(ctx.json.get(Integer.toString(index)));
+					CompoundTag tag = CommonProxy.jsonToTag(ctx.json.get(Integer.toString(index)));
 					//						System.out.println(ItemStack.of(tag).getTag());
 					ctx.setItem(index, ItemStack.of(tag));
 				} catch (Throwable e) {

@@ -18,12 +18,10 @@
 
   "entrypoints": {
     "main": [
-      "snownee.lychee.Lychee",
-      "snownee.lychee.dripstone_dripping.DripstoneRecipeMod",
-      "snownee.lychee.interaction.InteractionRecipeMod"
+      "snownee.lychee.util.CommonProxy"
     ],
     "client": [
-      "snownee.lychee.dripstone_dripping.client.DripstoneRecipeModClient"
+      "snownee.lychee.util.ClientProxy"
     ],
     "rei_client": [
       "snownee.lychee.compat.rei.REICompat"

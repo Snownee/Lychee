@@ -2,20 +2,22 @@ package snownee.lychee.core.contextual;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonObject;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public record Not(ContextualCondition condition) implements ContextualCondition {
 
@@ -30,16 +32,12 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
-	public InteractionResult testInTooltips() {
-		switch (condition.testInTooltips()) {
-		case SUCCESS:
-			return InteractionResult.FAIL;
-		case FAIL:
-			return InteractionResult.SUCCESS;
-		default:
-			return InteractionResult.PASS;
-		}
+	public InteractionResult testInTooltips(Level level, @Nullable Player player) {
+		return switch (condition.testInTooltips(level, player)) {
+			case SUCCESS -> InteractionResult.FAIL;
+			case FAIL -> InteractionResult.SUCCESS;
+			default -> InteractionResult.PASS;
+		};
 	}
 
 	@Override
@@ -48,9 +46,8 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
-	public void appendTooltips(List<Component> tooltips, int indent, boolean inverted) {
-		ContextualCondition.super.appendTooltips(tooltips, indent, !inverted);
+	public void appendTooltips(List<Component> tooltips, Level level, @Nullable Player player, int indent, boolean inverted) {
+		ContextualCondition.super.appendTooltips(tooltips, level, player, indent, !inverted);
 	}
 
 	public static class Type extends ContextualConditionType<Not> {
@@ -70,7 +67,7 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 
 		@Override
 		public Not fromNetwork(FriendlyByteBuf buf) {
-			ContextualConditionType<?> type = LUtil.readRegistryId(LycheeRegistries.CONTEXTUAL, buf);
+			ContextualConditionType<?> type = CommonProxy.readRegistryId(LycheeRegistries.CONTEXTUAL, buf);
 			return new Not(type.fromNetwork(buf));
 		}
 
@@ -78,7 +75,7 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 		@Override
 		public void toNetwork(Not condition, FriendlyByteBuf buf) {
 			ContextualConditionType type = condition.condition().getType();
-			LUtil.writeRegistryId(LycheeRegistries.CONTEXTUAL, type, buf);
+			CommonProxy.writeRegistryId(LycheeRegistries.CONTEXTUAL, type, buf);
 			type.toNetwork(condition.condition(), buf);
 		}
 

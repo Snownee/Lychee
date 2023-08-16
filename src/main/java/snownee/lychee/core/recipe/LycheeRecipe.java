@@ -1,6 +1,5 @@
 package snownee.lychee.core.recipe;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,7 +37,7 @@ import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.fragment.Fragments;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.json.JsonPointer;
 
 public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHolder implements ILycheeRecipe<C>, Recipe<C> {
@@ -50,7 +49,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	public String comment;
 	public String group = "default";
 	protected Ints maxRepeats = Ints.ANY;
-	protected List<PostAction> actions = Collections.EMPTY_LIST;
+	protected List<PostAction> actions = List.of();
 
 	public LycheeRecipe(ResourceLocation id) {
 		this.id = id;
@@ -80,7 +79,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 
 	public void addPostAction(PostAction action) {
 		Objects.requireNonNull(action);
-		if (actions == Collections.EMPTY_LIST) {
+		if (actions.isEmpty()) {
 			actions = Lists.newArrayList();
 		}
 		if (!action.canRepeat()) {
@@ -173,7 +172,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			buf.writeVarInt(actions.size());
 			for (PostAction action : actions) {
 				PostActionType type = action.getType();
-				LUtil.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
+				CommonProxy.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
 				type.toNetwork(action, buf);
 				action.conditionsToNetwork(buf);
 			}
@@ -182,7 +181,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		public static void actionsFromNetwork(FriendlyByteBuf buf, Consumer<PostAction> consumer) {
 			int size = buf.readVarInt();
 			for (int i = 0; i < size; i++) {
-				PostActionType<?> type = LUtil.readRegistryId(LycheeRegistries.POST_ACTION, buf);
+				PostActionType<?> type = CommonProxy.readRegistryId(LycheeRegistries.POST_ACTION, buf);
 				PostAction action = type.fromNetwork(buf);
 				action.conditionsFromNetwork(buf);
 				consumer.accept(action);

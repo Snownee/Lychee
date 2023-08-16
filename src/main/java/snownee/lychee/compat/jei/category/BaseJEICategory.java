@@ -36,6 +36,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import snownee.lychee.client.core.post.PostActionRenderer;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.jei.JEICompat;
@@ -128,10 +129,10 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 //			}
 			raw = itemMap.get(raw);
 			List<Component> list;
-			if (action instanceof RandomSelect) {
-				list = ((RandomSelect) action).getTooltips((PostAction) raw);
+			if (action instanceof RandomSelect randomSelect) {
+				list = PostActionRenderer.getTooltipsFromRandom(randomSelect, (PostAction) raw);
 			} else {
-				list = action.getTooltips();
+				list = PostActionRenderer.of(action).getTooltips(action);
 			}
 			tooltip.addAll(list);
 		});

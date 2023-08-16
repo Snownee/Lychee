@@ -1,11 +1,8 @@
 package snownee.lychee.core.post;
 
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.ParseResults;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -13,13 +10,11 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.Lychee;
 import snownee.lychee.PostActionTypes;
-import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 
@@ -70,12 +65,6 @@ public class Execute extends PostAction {
 			ParseResults<CommandSourceStack> results = cmds.getDispatcher().parse(command, sourceStack);
 			cmds.performCommand(results, command);
 		}
-	}
-
-	@Override
-	@Environment(EnvType.CLIENT)
-	public void render(PoseStack poseStack, int x, int y) {
-		GuiGameElement.of(Items.COMMAND_BLOCK).render(poseStack, x, y);
 	}
 
 	@Override

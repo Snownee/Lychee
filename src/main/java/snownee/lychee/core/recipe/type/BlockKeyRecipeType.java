@@ -38,7 +38,7 @@ import snownee.lychee.core.input.ItemHolderCollection;
 import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ChanceRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 
 public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<C> & BlockKeyRecipe<?>> extends LycheeRecipeType<C, T> {
@@ -97,7 +97,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
 			return Optional.empty();
 		}
-		ctxBuilder.withParameter(LootContextParams.ORIGIN, LUtil.clampPos(origin, pos));
+		ctxBuilder.withParameter(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
 		ctxBuilder.withParameter(LootContextParams.THIS_ENTITY, player);
 		ctxBuilder.withParameter(LootContextParams.BLOCK_STATE, blockstate);
 		ctxBuilder.withParameter(LycheeLootContextParams.BLOCK_POS, pos);

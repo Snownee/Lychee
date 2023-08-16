@@ -10,10 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.FriendlyByteBuf;
@@ -25,7 +22,6 @@ import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.input.NBTPatch;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
-import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.json.JsonPointer;
 
 public class If extends PostAction implements CompoundAction {
@@ -44,7 +40,7 @@ public class If extends PostAction implements CompoundAction {
 		preventSync = getChildActions().allMatch(PostAction::preventSync);
 	}
 
-	private void getConsequenceTooltips(List<Component> list, PostAction[] actions, String translation) {
+	public void getConsequenceTooltips(List<Component> list, PostAction[] actions, String translation) {
 		if (actions.length == 0) {
 			return;
 		}
@@ -95,26 +91,6 @@ public class If extends PostAction implements CompoundAction {
 	@Override
 	public List<BlockPredicate> getBlockOutputs() {
 		return getChildActions().map(PostAction::getBlockOutputs).flatMap(List::stream).toList();
-	}
-
-	@Override
-	@Environment(EnvType.CLIENT)
-	public List<Component> getTooltips() {
-		List<Component> list = Lists.newArrayList();
-		int c = showingConditionsCount();
-		if (c > 0) {
-			list.add(ClientProxy.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
-		}
-		getConditonTooltips(list, 0);
-		getConsequenceTooltips(list, successEntries, "tip.lychee.ifSuccess");
-		getConsequenceTooltips(list, failureEntries, "tip.lychee.ifFailure");
-		return list;
-	}
-
-	@Override
-	@Environment(EnvType.CLIENT)
-	public void render(PoseStack poseStack, int x, int y) {
-
 	}
 
 	@Override

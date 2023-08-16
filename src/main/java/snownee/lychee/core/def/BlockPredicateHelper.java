@@ -51,7 +51,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.StatePropertiesPredicateAccess;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class BlockPredicateHelper {
 
@@ -71,7 +71,7 @@ public class BlockPredicateHelper {
 			blocks.addAll(access.getBlocks());
 		}
 		if (access.getTag() != null) {
-			blocks.addAll(LUtil.tagElements(Registry.BLOCK, access.getTag()));
+			blocks.addAll(CommonProxy.tagElements(Registry.BLOCK, access.getTag()));
 		}
 		return blocks;
 	}
@@ -151,11 +151,11 @@ public class BlockPredicateHelper {
 		if (blockCount > 0) {
 			blocks = Sets.newHashSet();
 			for (int i = 0; i < blockCount; i++) {
-				blocks.add(LUtil.readRegistryId(Registry.BLOCK, pBuffer));
+				blocks.add(CommonProxy.readRegistryId(Registry.BLOCK, pBuffer));
 			}
 		}
 		TagKey<Block> tag = null;
-		ResourceLocation tagId = LUtil.readNullableRL(pBuffer);
+		ResourceLocation tagId = CommonProxy.readNullableRL(pBuffer);
 		if (tagId != null) {
 			tag = TagKey.create(Registry.BLOCK_REGISTRY, tagId);
 		}
@@ -176,14 +176,14 @@ public class BlockPredicateHelper {
 		} else {
 			pBuffer.writeVarInt(blocks.size());
 			for (Block block : blocks) {
-				LUtil.writeRegistryId(Registry.BLOCK, block, pBuffer);
+				CommonProxy.writeRegistryId(Registry.BLOCK, block, pBuffer);
 			}
 		}
 		ResourceLocation tagId = null;
 		TagKey<Block> tag = access.getTag();
 		if (tag != null)
 			tagId = tag.location();
-		LUtil.writeNullableRL(tagId, pBuffer);
+		CommonProxy.writeNullableRL(tagId, pBuffer);
 		PropertiesPredicateHelper.toNetwork(access.getProperties(), pBuffer);
 		NbtPredicate nbtPredicate = access.getNbt();
 		pBuffer.writeBoolean(nbtPredicate != NbtPredicate.ANY);

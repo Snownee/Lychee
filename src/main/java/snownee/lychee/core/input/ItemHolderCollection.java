@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.core.LycheeContext;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public abstract class ItemHolderCollection {
 
@@ -137,7 +137,7 @@ public abstract class ItemHolderCollection {
 						player.drop(stack, false);
 					}
 				} else if (pos != null) {
-					LUtil.dropItemStack(ctx.getLevel(), pos.x, pos.y, pos.z, stack, null);
+					CommonProxy.dropItemStack(ctx.getLevel(), pos.x, pos.y, pos.z, stack, null);
 				}
 			}
 			return consumeInputs ? consumeInputs(times) : 0;

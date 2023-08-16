@@ -12,7 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 @Mixin(value = Ingredient.class, priority = 2000)
 public class IngredientMixin {
@@ -22,7 +22,7 @@ public class IngredientMixin {
 		if (!jsonObject.has("lychee:tag")) {
 			return;
 		}
-		CompoundTag tag = LUtil.jsonToTag(jsonObject.get("lychee:tag"));
+		CompoundTag tag = CommonProxy.jsonToTag(jsonObject.get("lychee:tag"));
 		Item item = ShapedRecipe.itemFromJson(jsonObject);
 		ItemStack itemStack = new ItemStack(item);
 		itemStack.getOrCreateTag().merge(tag);

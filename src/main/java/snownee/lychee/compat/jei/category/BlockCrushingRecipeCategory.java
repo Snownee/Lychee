@@ -25,7 +25,7 @@ import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.JEIREI;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingContext, BlockCrushingRecipe> {
 
@@ -59,8 +59,8 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 	@Override
 	public void draw(BlockCrushingRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
 		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
-		BlockState fallingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
-		BlockState landingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
+		BlockState fallingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
+		BlockState landingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
 		int x = recipe.getIngredients().isEmpty() ? 41 : 77;
 		boolean anyLandingBlock = recipe.getLandingBlock() == BlockPredicate.ANY;
 		int y = anyLandingBlock ? 45 : 36;
@@ -98,11 +98,11 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 		x = (int) mouseX - x;
 		y = (int) mouseY - y;
 		if (fallingBlockRect.contains(x, y)) {
-			BlockState fallingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
+			BlockState fallingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
 			return BlockPredicateHelper.getTooltips(fallingBlock, recipe.getBlock());
 		}
 		if (recipe.getLandingBlock() != BlockPredicate.ANY && landingBlockRect.contains(x, y)) {
-			BlockState landingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
+			BlockState landingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
 			return BlockPredicateHelper.getTooltips(landingBlock, recipe.getLandingBlock());
 		}
 		return super.getTooltipStrings(recipe, recipeSlotsView, mouseX, mouseY);
@@ -116,11 +116,11 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 			x = (int) mouseX - x;
 			y = (int) mouseY - y;
 			if (fallingBlockRect.contains(x, y)) {
-				BlockState fallingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
+				BlockState fallingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
 				return clickBlock(fallingBlock, input);
 			}
 			if (recipe.getLandingBlock() != BlockPredicate.ANY && landingBlockRect.contains(x, y)) {
-				BlockState landingBlock = LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
+				BlockState landingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
 				return clickBlock(landingBlock, input);
 			}
 		}

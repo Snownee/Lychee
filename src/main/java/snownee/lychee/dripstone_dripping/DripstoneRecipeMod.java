@@ -5,15 +5,9 @@ import java.util.concurrent.ExecutionException;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import io.github.tropheusj.dripstone_fluid_lib.DripstoneInteractingFluid;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -22,25 +16,15 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
-public class DripstoneRecipeMod implements ModInitializer {
+public class DripstoneRecipeMod {
 
 	public static final Cache<Block, DripParticleHandler> particleHandlers = CacheBuilder.newBuilder().build();
 
-	public static final ParticleType<BlockParticleOption> DRIPSTONE_DRIPPING = FabricParticleTypes.complex(BlockParticleOption.DESERIALIZER);
-	public static final ParticleType<BlockParticleOption> DRIPSTONE_FALLING = FabricParticleTypes.complex(BlockParticleOption.DESERIALIZER);
-	public static final ParticleType<BlockParticleOption> DRIPSTONE_SPLASH = FabricParticleTypes.complex(BlockParticleOption.DESERIALIZER);
-
-	public static boolean hasDFLib;
-
-	@Override
-	public void onInitialize() {
-		hasDFLib = LUtil.isModLoaded("dripstone_fluid_lib");
-		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_dripping"), DRIPSTONE_DRIPPING);
-		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_falling"), DRIPSTONE_FALLING);
-		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_splash"), DRIPSTONE_SPLASH);
-	}
+	public static final ParticleType<BlockParticleOption> DRIPSTONE_DRIPPING = CommonProxy.registerParticleType(BlockParticleOption.DESERIALIZER);
+	public static final ParticleType<BlockParticleOption> DRIPSTONE_FALLING = CommonProxy.registerParticleType(BlockParticleOption.DESERIALIZER);
+	public static final ParticleType<BlockParticleOption> DRIPSTONE_SPLASH = CommonProxy.registerParticleType(BlockParticleOption.DESERIALIZER);
 
 	public static boolean spawnDripParticle(Level level, BlockPos blockPos, BlockState blockState) {
 		BlockState sourceBlock = DripstoneRecipe.getBlockAboveStalactite(level, blockPos, blockState);
@@ -51,10 +35,10 @@ public class DripstoneRecipeMod implements ModInitializer {
 		if (sourceFluid.is(FluidTags.LAVA) || sourceFluid.is(FluidTags.WATER)) {
 			return false;
 		}
-		if (DripstoneRecipeMod.hasDFLib && sourceFluid.getType() instanceof DripstoneInteractingFluid) {
+		if (CommonProxy.hasModdedDripParticle(sourceFluid)) {
 			return false;
 		}
-		DripParticleHandler handler = getParticleHandler(sourceBlock);
+		DripParticleHandler handler = getParticleHandler(level, sourceBlock);
 		if (handler == null) {
 			return false;
 		}
@@ -66,15 +50,15 @@ public class DripstoneRecipeMod implements ModInitializer {
 		return true;
 	}
 
-	public static DripParticleHandler getParticleHandler(BlockState sourceBlock) {
+	public static DripParticleHandler getParticleHandler(Level level, BlockState sourceBlock) {
 		Block block = sourceBlock.getBlock();
 		try {
 			return particleHandlers.get(block, () -> {
-				if (!LUtil.isPhysicalClient()) {
+				if (!CommonProxy.isPhysicalClient()) {
 					return DripParticleHandler.SIMPLE_DUMMY;
 				}
 				BlockState defaultState = block.defaultBlockState();
-				int color = defaultState.getMapColor(Minecraft.getInstance().level, BlockPos.ZERO).col;
+				int color = defaultState.getMapColor(level, BlockPos.ZERO).col;
 				return new DripParticleHandler.Simple(color, defaultState.getLightEmission() > 4);
 			});
 		} catch (ExecutionException e) {

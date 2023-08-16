@@ -8,10 +8,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.core.BlockPos;
@@ -20,7 +17,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
@@ -37,14 +33,13 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.block_crushing.BlockCrushingRecipe;
-import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.NbtPredicateAccess;
 import snownee.lychee.mixin.StatePropertiesPredicateAccess;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class PlaceBlock extends PostAction {
 
@@ -155,7 +150,7 @@ public class PlaceBlock extends PostAction {
 	@Override
 	public Component getDisplayName() {
 		BlockState state = BlockPredicateHelper.anyBlockState(block);
-		String key = LUtil.makeDescriptionId("postAction", PostActionTypes.PLACE.getRegistryName());
+		String key = CommonProxy.makeDescriptionId("postAction", PostActionTypes.PLACE.getRegistryName());
 		if (state.isAir()) {
 			return Component.translatable(key + ".consume");
 		}
@@ -173,17 +168,6 @@ public class PlaceBlock extends PostAction {
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
-	public void render(PoseStack poseStack, int x, int y) {
-		BlockState state = BlockPredicateHelper.anyBlockState(block);
-		if (state.isAir()) {
-			GuiGameElement.of(Items.BARRIER).render(poseStack, x, y);
-			return;
-		}
-		GuiGameElement.of(state).rotateBlock(30, 225, 0).scale(10).render(poseStack, x, y);
-	}
-
-	@Override
 	public boolean canRepeat() {
 		return false;
 	}
@@ -192,7 +176,7 @@ public class PlaceBlock extends PostAction {
 
 		@Override
 		public PlaceBlock fromJson(JsonObject o) {
-			return new PlaceBlock(BlockPredicateHelper.fromJson(o.get("block")), LUtil.parseOffset(o));
+			return new PlaceBlock(BlockPredicateHelper.fromJson(o.get("block")), CommonProxy.parseOffset(o));
 		}
 
 		@Override

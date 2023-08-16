@@ -27,7 +27,7 @@ import snownee.lychee.core.Reference;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class DamageItem extends PostAction {
 
@@ -114,7 +114,7 @@ public class DamageItem extends PostAction {
 
 	@Override
 	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
-		String key = LUtil.makeDescriptionId("postAction", getType().getRegistryName());
+		String key = CommonProxy.makeDescriptionId("postAction", getType().getRegistryName());
 		Component component = Component.translatable(key, damage).withStyle(ChatFormatting.YELLOW);
 		recipe.getItemIndexes(target).forEach(i -> {
 			IngredientInfo info = ingredients.get(i);

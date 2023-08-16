@@ -14,7 +14,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.mixin.ChunkMapAccess;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class RandomBlockTickingRecipeType extends BlockKeyRecipeType<LycheeContext, RandomBlockTickingRecipe> {
 
@@ -32,7 +32,7 @@ public class RandomBlockTickingRecipeType extends BlockKeyRecipeType<LycheeConte
 		for (Block block : Registry.BLOCK) {
 			((RandomlyTickable) block).lychee$setTickable(has(block));
 		}
-		if (Lychee.hasKiwi) {
+		if (CommonProxy.hasKiwi) {
 			MinecraftServer server = Platform.getServer();
 			if (server == null) {
 				return;
@@ -50,7 +50,7 @@ public class RandomBlockTickingRecipeType extends BlockKeyRecipeType<LycheeConte
 		} else {
 			String s = "Random block ticking recipes require Kiwi to be installed!";
 			Lychee.LOGGER.warn(s);
-			if (LUtil.isPhysicalClient()) {
+			if (CommonProxy.isPhysicalClient()) {
 				Minecraft client = Minecraft.getInstance();
 				if (client.player != null) {
 					client.player.sendSystemMessage(Component.literal(s));

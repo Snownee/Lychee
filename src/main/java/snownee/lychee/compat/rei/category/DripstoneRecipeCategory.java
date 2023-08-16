@@ -28,7 +28,7 @@ import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.dripstone_dripping.DripstoneContext;
 import snownee.lychee.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.dripstone_dripping.DripstoneRecipeType;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, DripstoneRecipe, BaseREIDisplay<DripstoneRecipe>> {
 
@@ -103,11 +103,11 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 	}
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {
-		return LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
+		return CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
 	}
 
 	private BlockState getTargetBlock(DripstoneRecipe recipe) {
-		return LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
+		return CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
 	}
 
 	@Override

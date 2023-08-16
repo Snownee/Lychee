@@ -6,27 +6,21 @@ import java.util.Objects;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import snownee.lychee.PostActionTypes;
-import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.Reference;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.json.JsonPointer;
 
 public class SetItem extends PostAction {
@@ -58,7 +52,7 @@ public class SetItem extends PostAction {
 			if (path == null) {
 				stack = this.stack.copy();
 			} else {
-				stack = ItemStack.of(LUtil.jsonToTag(new JsonPointer(path).find(ctx.json)));
+				stack = ItemStack.of(CommonProxy.jsonToTag(new JsonPointer(path).find(ctx.json)));
 			}
 			ctx.setItem(index, stack);
 			if (tag != null && !stack.isEmpty()) {
@@ -66,18 +60,6 @@ public class SetItem extends PostAction {
 			}
 			ctx.itemHolders.ignoreConsumptionFlags.set(index);
 		}
-	}
-
-	@Override
-	@Environment(EnvType.CLIENT)
-	public List<Component> getBaseTooltips() {
-		return stack.getTooltipLines(null, Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
-	}
-
-	@Override
-	@Environment(EnvType.CLIENT)
-	public void render(PoseStack poseStack, int x, int y) {
-		GuiGameElement.of(stack).render(poseStack, x, y);
 	}
 
 	@Override
@@ -103,7 +85,7 @@ public class SetItem extends PostAction {
 	@Override
 	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
 		path = pointer.toString();
-		return LUtil.tagToJson(stack.save(new CompoundTag()));
+		return CommonProxy.tagToJson(stack.save(new CompoundTag()));
 	}
 
 	public static class Type extends PostActionType<SetItem> {
@@ -121,7 +103,7 @@ public class SetItem extends PostAction {
 
 		@Override
 		public void toJson(SetItem action, JsonObject o) {
-			LUtil.itemstackToJson(action.stack, o);
+			CommonProxy.itemstackToJson(action.stack, o);
 			Reference.toJson(action.target, o, "target");
 		}
 

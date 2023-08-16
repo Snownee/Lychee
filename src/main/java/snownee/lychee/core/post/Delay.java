@@ -16,7 +16,6 @@ import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public class Delay extends PostAction {
 
-	public static final Delay CLIENT_DUMMY = new Delay(0);
 	public final float seconds;
 
 	public Delay(float seconds) {

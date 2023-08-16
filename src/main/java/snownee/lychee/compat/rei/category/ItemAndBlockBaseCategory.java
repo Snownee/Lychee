@@ -37,7 +37,7 @@ import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.interaction.BlockInteractingRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> extends BaseREICategory<C, T, D> {
 
@@ -65,7 +65,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	}
 
 	public BlockState getRenderingBlock(T recipe) {
-		return LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(getInputBlock(recipe)), Blocks.AIR.defaultBlockState(), 1000);
+		return CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(getInputBlock(recipe)), Blocks.AIR.defaultBlockState(), 1000);
 	}
 
 	public void drawExtra(T recipe, PoseStack matrixStack, double mouseX, double mouseY, int centerX) {

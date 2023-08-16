@@ -4,16 +4,14 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonObject;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.IntBoundsHelper;
@@ -21,7 +19,7 @@ import snownee.lychee.core.def.TimeCheckHelper;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.IntRangeAccess;
 import snownee.lychee.mixin.TimeCheckAccess;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public record Time(Ints value, @Nullable Long period) implements ContextualCondition {
 
@@ -36,17 +34,12 @@ public record Time(Ints value, @Nullable Long period) implements ContextualCondi
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
-	public InteractionResult testInTooltips() {
-		ClientLevel level = Minecraft.getInstance().level;
-		if (level == null) {
-			return InteractionResult.PASS;
-		}
-		return LUtil.interactionResult(test(level));
+	public InteractionResult testInTooltips(Level level, @Nullable Player player) {
+		return CommonProxy.interactionResult(test(level));
 	}
 
-	public boolean test(Level level) {
-		long i = level.getDayTime();
+	public boolean test(LevelAccessor level) {
+		long i = level.dayTime();
 		if (period != null) {
 			i %= period;
 		}

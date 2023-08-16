@@ -2,9 +2,6 @@ package snownee.lychee.interaction;
 
 import java.util.Optional;
 
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -18,15 +15,9 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
 
-public class InteractionRecipeMod implements ModInitializer {
+public class InteractionRecipeMod {
 
-	@Override
-	public void onInitialize() {
-		UseBlockCallback.EVENT.register(this::useItemOn);
-		AttackBlockCallback.EVENT.register(this::clickItemOn);
-	}
-
-	private InteractionResult useItemOn(Player player, Level world, InteractionHand hand, BlockHitResult hitResult) {
+	public static InteractionResult useItemOn(Player player, Level world, InteractionHand hand, BlockHitResult hitResult) {
 		if (player.isSpectator()) {
 			return InteractionResult.PASS;
 		}
@@ -45,7 +36,7 @@ public class InteractionRecipeMod implements ModInitializer {
 		return InteractionResult.PASS;
 	}
 
-	private InteractionResult clickItemOn(Player player, Level world, InteractionHand hand, BlockPos pos, Direction direction) {
+	public static InteractionResult clickItemOn(Player player, Level world, InteractionHand hand, BlockPos pos, Direction direction) {
 		if (player.isSpectator()) {
 			return InteractionResult.PASS;
 		}

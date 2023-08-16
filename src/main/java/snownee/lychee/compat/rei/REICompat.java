@@ -67,7 +67,7 @@ import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class REICompat implements REIClientPlugin {
 
@@ -117,12 +117,12 @@ public class REICompat implements REIClientPlugin {
 		forEachCategories(RecipeTypes.LIGHTNING_CHANNELING, $ -> {
 			registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(Items.LIGHTNING_ROD));
 		});
-		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
+		for (Item item : CommonProxy.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.ITEM_EXPLODING, $ -> {
 				registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(item.getDefaultInstance()));
 			});
 		}
-		for (Item item : LUtil.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
+		for (Item item : CommonProxy.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.BLOCK_EXPLODING, $ -> {
 				registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(item.getDefaultInstance()));
 			});
@@ -190,7 +190,7 @@ public class REICompat implements REIClientPlugin {
 		});
 
 		try {
-			LUtil.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
+			CommonProxy.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
 				return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
 			}).map(AnvilCraftingDisplay::new).forEach(registration::add);
 		} catch (Throwable e) {

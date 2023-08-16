@@ -16,14 +16,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import snownee.lychee.compat.rei.REICompat;
 import snownee.lychee.core.post.PostAction;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class PostActionIngredientHelper implements EntryDefinition<PostAction> {
 
 	@Override
 	public @Nullable String getContainingNamespace(EntryStack<PostAction> entry, PostAction value) {
 		String modid = value.getType().getRegistryName().getNamespace();
-		return LUtil.wrapNamespace(modid);
+		return CommonProxy.wrapNamespace(modid);
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 //TODO
 public record CheckParam(String key, Object value) implements ContextualCondition {
@@ -33,7 +33,7 @@ public record CheckParam(String key, Object value) implements ContextualConditio
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
 		String key = makeDescriptionId(inverted) + ".has";
-		return Component.translatable(key, LUtil.white(key));
+		return Component.translatable(key, CommonProxy.white(key));
 	}
 
 	public static class Type extends ContextualConditionType<CheckParam> {

@@ -2,14 +2,16 @@ package snownee.lychee.core.contextual;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonObject;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
@@ -27,11 +29,10 @@ public class And extends ContextualHolder implements ContextualCondition {
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
-	public InteractionResult testInTooltips() {
+	public InteractionResult testInTooltips(Level level, @Nullable Player player) {
 		boolean allSuccess = true;
 		for (ContextualCondition condition : getConditions()) {
-			InteractionResult result = condition.testInTooltips();
+			InteractionResult result = condition.testInTooltips(level, player);
 			if (result == InteractionResult.FAIL) {
 				return result;
 			}
@@ -48,10 +49,10 @@ public class And extends ContextualHolder implements ContextualCondition {
 	}
 
 	@Override
-	public void appendTooltips(List<Component> tooltips, int indent, boolean inverted) {
-		ContextualCondition.super.appendTooltips(tooltips, indent, inverted);
+	public void appendTooltips(List<Component> tooltips, Level level, @Nullable Player player, int indent, boolean inverted) {
+		ContextualCondition.super.appendTooltips(tooltips, level, player, indent, inverted);
 		for (ContextualCondition condition : getConditions()) {
-			condition.appendTooltips(tooltips, indent + 1, false);
+			condition.appendTooltips(tooltips, level, player, indent + 1, false);
 		}
 	}
 

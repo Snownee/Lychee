@@ -1,7 +1,6 @@
 package snownee.lychee.core.contextual;
 
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,27 +11,26 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.random_block_ticking.RandomBlockTickingRecipe;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class ContextualHolder {
 
 	private static final Component SECRET_TITLE = Component.translatable("contextual.lychee.secret").withStyle(ChatFormatting.GRAY);
-	private List<ContextualCondition> conditions = Collections.EMPTY_LIST;
+	private List<ContextualCondition> conditions = List.of();
 	@Nullable
 	private BitSet secretFlags;
 	@Nullable
@@ -48,7 +46,7 @@ public class ContextualHolder {
 
 	public void withCondition(ContextualCondition condition) {
 		Objects.requireNonNull(condition);
-		if (conditions == Collections.EMPTY_LIST) {
+		if (conditions.isEmpty()) {
 			conditions = Lists.newArrayList();
 		}
 		conditions.add(condition);
@@ -88,7 +86,7 @@ public class ContextualHolder {
 	public void conditionsFromNetwork(FriendlyByteBuf pBuffer) {
 		int size = pBuffer.readVarInt();
 		for (int i = 0; i < size; i++) {
-			ContextualConditionType<?> type = LUtil.readRegistryId(LycheeRegistries.CONTEXTUAL, pBuffer);
+			ContextualConditionType<?> type = CommonProxy.readRegistryId(LycheeRegistries.CONTEXTUAL, pBuffer);
 			withCondition(type.fromNetwork(pBuffer));
 		}
 		if (pBuffer.readBoolean()) {
@@ -112,7 +110,7 @@ public class ContextualHolder {
 		pBuffer.writeVarInt(conditions.size());
 		for (ContextualCondition condition : conditions) {
 			ContextualConditionType type = condition.getType();
-			LUtil.writeRegistryId(LycheeRegistries.CONTEXTUAL, type, pBuffer);
+			CommonProxy.writeRegistryId(LycheeRegistries.CONTEXTUAL, type, pBuffer);
 			type.toNetwork(condition, pBuffer);
 		}
 		pBuffer.writeBoolean(secretFlags != null);
@@ -170,24 +168,21 @@ public class ContextualHolder {
 		}
 	}
 
-	@Environment(EnvType.CLIENT)
-	public void getConditonTooltips(List<Component> list, int indent) {
+	public void getConditionTooltips(List<Component> list, int indent, @Nullable Level level, @Nullable Player player) {
+		if (level == null) {
+			//TODO notify player that the condition is not available
+			return;
+		}
 		int i = 0;
 		for (ContextualCondition condition : getConditions()) {
 			if (isSecretCondition(i)) {
-				InteractionResult result = InteractionResult.PASS;
-				if (Minecraft.getInstance().level != null) {
-					result = condition.testInTooltips();
-				}
+				InteractionResult result = condition.testInTooltips(level, player);
 				ContextualCondition.desc(list, result, indent, SECRET_TITLE.copy());
 			} else if (isOverridenDesc(i)) {
-				InteractionResult result = InteractionResult.PASS;
-				if (Minecraft.getInstance().level != null) {
-					result = condition.testInTooltips();
-				}
+				InteractionResult result = condition.testInTooltips(level, player);
 				ContextualCondition.desc(list, result, indent, overrideDesc.get(i).copy());
 			} else {
-				condition.appendTooltips(list, indent, false);
+				condition.appendTooltips(list, level, player, indent, false);
 			}
 			++i;
 		}

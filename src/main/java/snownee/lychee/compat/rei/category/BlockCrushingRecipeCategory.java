@@ -27,7 +27,7 @@ import snownee.lychee.compat.rei.ReactiveWidget;
 import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.util.LUtil;
+import snownee.lychee.util.CommonProxy;
 
 public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingContext, BlockCrushingRecipe, BaseREIDisplay<BlockCrushingRecipe>> {
 
@@ -126,11 +126,11 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 	}
 
 	private BlockState getFallingBlock(BlockCrushingRecipe recipe) {
-		return LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
+		return CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
 	}
 
 	private BlockState getLandingBlock(BlockCrushingRecipe recipe) {
-		return LUtil.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
+		return CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
 	}
 
 	@Override
