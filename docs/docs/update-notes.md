@@ -1,5 +1,10 @@
 # Update Notes
 
+## 3.13
+
+ - Added native REI support for Forge
+ - Now you can define a tag-based `BlockPredicate` using a string prefixed with "#".
+
 ## 3.12.1
 
  - [`lychee:tag`](extra-features.md#lycheetag) now supports string as NBT tag value.
