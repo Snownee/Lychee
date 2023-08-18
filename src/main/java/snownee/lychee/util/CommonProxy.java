@@ -49,7 +49,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -74,6 +77,7 @@ import snownee.lychee.core.post.CustomAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
+import snownee.lychee.interaction.InteractionRecipeMod;
 import snownee.lychee.mixin.RecipeManagerAccess;
 
 @Mod(Lychee.ID)
@@ -91,6 +95,12 @@ public class CommonProxy {
 		modEventBus.addListener(CommonProxy::newRegistries);
 		modEventBus.addListener(CommonProxy::register);
 		modEventBus.addListener(CommonProxy::registerRecipeBookCategories);
+		MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.RightClickBlock.class, event -> {
+			event.setCanceled(InteractionRecipeMod.useItemOn(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec()).consumesAction());
+		});
+		MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.LeftClickBlock.class, event -> {
+			event.setCanceled(InteractionRecipeMod.clickItemOn(event.getEntity(), event.getLevel(), event.getHand(), event.getPos(), event.getFace()).consumesAction());
+		});
 		if (isPhysicalClient()) {
 			ClientProxy.init();
 		}
