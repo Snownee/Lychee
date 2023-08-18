@@ -28,12 +28,6 @@ public class MixinPlugin implements IMixinConfigPlugin {
 		if (mixinClassName.startsWith("snownee.lychee.mixin.fabric.")) {
 			return !hasMod("quilted_fabric_api");
 		}
-		if ("snownee.lychee.mixin.ItemEntityHurtMixin".equals(mixinClassName)) {
-			return !hasMod("itemphysic");
-		}
-		if ("snownee.lychee.mixin.itemphysic.ItemEntityHurtMixin".equals(mixinClassName)) {
-			return hasMod("itemphysic");
-		}
 		return true;
 	}
 

@@ -1,6 +1,5 @@
 package snownee.lychee.mixin.rei;
 
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,7 +13,6 @@ import snownee.lychee.crafting.ShapedCraftingRecipe;
 @Mixin(DefaultCraftingDisplay.class)
 public class DefaultCraftingDisplayMixin {
 
-	@Nullable
 	@Inject(at = @At("HEAD"), method = "of", cancellable = true)
 	private static void of(Recipe<?> recipe, CallbackInfoReturnable<DefaultCraftingDisplay<?>> ci) {
 		if (recipe instanceof ShapedCraftingRecipe) {

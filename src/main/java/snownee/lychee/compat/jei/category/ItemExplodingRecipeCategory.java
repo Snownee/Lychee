@@ -2,15 +2,16 @@ package snownee.lychee.compat.jei.category;
 
 import java.util.List;
 
+import org.joml.Quaternionf;
+
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.EntityType;
@@ -35,8 +36,8 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 	}
 
 	@Override
-	public void draw(ItemExplodingRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
+	public void draw(ItemExplodingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
+		drawInfoBadge(recipe, graphics, mouseX, mouseY);
 
 		Minecraft mc = Minecraft.getInstance();
 		if (tnt == null) {
@@ -49,16 +50,18 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 		}
 		tnt.setFuse(fuse);
 
+		PoseStack matrixStack = graphics.pose();
 		matrixStack.pushPose();
 		matrixStack.translate(85, 34, 20);
 		matrixStack.scale(15, 15, 15);
 
-		Quaternion quaternion = Quaternion.fromXYZDegrees(new Vector3f(200, -20, 0));
+		float toRad = 0.01745329251F;
+		Quaternionf quaternion = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
 		matrixStack.mulPose(quaternion);
 
 		JEIREI.FUSED_TNT_LIGHTING.applyLighting();
 		EntityRenderDispatcher entityrenderermanager = mc.getEntityRenderDispatcher();
-		quaternion.conj();
+		quaternion.conjugate();
 		entityrenderermanager.overrideCameraOrientation(quaternion);
 		entityrenderermanager.setRenderShadow(false);
 		BufferSource irendertypebuffer$impl = mc.renderBuffers().bufferSource();

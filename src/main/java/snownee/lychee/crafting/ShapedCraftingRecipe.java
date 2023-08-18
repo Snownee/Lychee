@@ -1,10 +1,10 @@
 package snownee.lychee.crafting;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -22,6 +22,7 @@ import com.google.gson.JsonSyntaxException;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -30,7 +31,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -48,24 +51,44 @@ import snownee.lychee.core.post.input.SetItem;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.fragment.Fragments;
-import snownee.lychee.mixin.CraftingContainerAccess;
 import snownee.lychee.mixin.CraftingMenuAccess;
 import snownee.lychee.mixin.InventoryMenuAccess;
 import snownee.lychee.mixin.ShapedRecipeAccess;
+import snownee.lychee.mixin.TransientCraftingContainerAccess;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.json.JsonPointer;
 
 public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<CraftingContext> {
 
-	public static final Cache<Class<?>, Function<AbstractContainerMenu, Pair<Vec3, Player>>> CONTAINER_WORLD_LOCATOR = CacheBuilder.newBuilder().build();
-	private static final Function<AbstractContainerMenu, Pair<Vec3, Player>> FALLBACK = menu -> null;
+	public static final Cache<Class<?>, Function<CraftingContainer, Pair<Vec3, Player>>> CONTAINER_WORLD_LOCATOR = CacheBuilder.newBuilder().build();
+	public static final Cache<Class<?>, Function<AbstractContainerMenu, Pair<Vec3, Player>>> MENU_WORLD_LOCATOR = CacheBuilder.newBuilder().build();
+	private static final Cache<CraftingContainer, CraftingContext> CONTEXT_CACHE = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.SECONDS).build();
 
 	static {
-		CONTAINER_WORLD_LOCATOR.put(CraftingMenu.class, menu -> {
+		CONTAINER_WORLD_LOCATOR.put(TransientCraftingContainer.class, container -> {
+			TransientCraftingContainerAccess access = (TransientCraftingContainerAccess) container;
+			AbstractContainerMenu menu = access.getMenu();
+			try {
+				return MENU_WORLD_LOCATOR.get(menu.getClass(), () -> {
+					Class<?> clazz = menu.getClass().getSuperclass();
+					while (clazz != AbstractContainerMenu.class) {
+						var locator = MENU_WORLD_LOCATOR.getIfPresent(clazz);
+						if (locator != null) {
+							return locator;
+						}
+						clazz = clazz.getSuperclass();
+					}
+					return menu1 -> null;
+				}).apply(menu);
+			} catch (ExecutionException e) {
+				return null;
+			}
+		});
+		MENU_WORLD_LOCATOR.put(CraftingMenu.class, menu -> {
 			CraftingMenuAccess access = (CraftingMenuAccess) menu;
 			return Pair.of(access.getAccess().evaluate((level, pos) -> Vec3.atCenterOf(pos), access.getPlayer().position()), access.getPlayer());
 		});
-		CONTAINER_WORLD_LOCATOR.put(InventoryMenu.class, menu -> {
+		MENU_WORLD_LOCATOR.put(InventoryMenu.class, menu -> {
 			InventoryMenuAccess access = (InventoryMenuAccess) menu;
 			return Pair.of(access.getOwner().position(), access.getOwner());
 		});
@@ -78,42 +101,41 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	public String comment;
 	@Nullable
 	public String pattern;
-	private List<PostAction> actions = Collections.EMPTY_LIST;
-	private List<PostAction> assembling = Collections.EMPTY_LIST;
+	private List<PostAction> actions = List.of();
+	private List<PostAction> assembling = List.of();
 
-	public ShapedCraftingRecipe(ResourceLocation id, String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result) {
-		super(id, group, width, height, ingredients, result);
+	public ShapedCraftingRecipe(ResourceLocation id, String group, CraftingBookCategory category, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result, boolean showNotification) {
+		super(id, group, category, width, height, ingredients, result, showNotification);
 	}
 
-	private static Pair<Vec3, Player> getMenuContext(AbstractContainerMenu menu) {
+	@Nullable
+	private static Pair<Vec3, Player> getContainerContext(CraftingContainer container) {
 		try {
-			var func = CONTAINER_WORLD_LOCATOR.get(menu.getClass(), () -> {
-				Class<?> clazz = menu.getClass().getSuperclass();
-				while (clazz != AbstractContainerMenu.class) {
+			return CONTAINER_WORLD_LOCATOR.get(container.getClass(), () -> {
+				Class<?> clazz = container.getClass().getSuperclass();
+				while (clazz != CraftingContainer.class) {
 					var locator = CONTAINER_WORLD_LOCATOR.getIfPresent(clazz);
 					if (locator != null) {
 						return locator;
 					}
 					clazz = clazz.getSuperclass();
 				}
-				return FALLBACK;
-			});
-			return func.apply(menu);
+				return container1 -> null;
+			}).apply(container);
 		} catch (ExecutionException e) {
 			return null;
 		}
 	}
 
 	public static CraftingContext makeContext(CraftingContainer container, Level level, int matchX, int matchY, boolean mirror) {
-		var menu = ((CraftingContainerAccess) container).getMenu();
-		var pair = getMenuContext(menu);
+		var pair = getContainerContext(container);
 		var builder = new CraftingContext.Builder(level, matchX, matchY, mirror);
 		if (pair != null) {
 			builder.withOptionalParameter(LootContextParams.ORIGIN, pair.getFirst());
 			builder.withOptionalParameter(LootContextParams.THIS_ENTITY, pair.getSecond());
 		}
 		CraftingContext ctx = builder.create(LycheeLootContextParamSets.CRAFTING);
-		((LycheeCraftingContainer) container).lychee$setContext(ctx);
+		CONTEXT_CACHE.put(container, ctx);
 		return ctx;
 	}
 
@@ -149,7 +171,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 		CraftingContext ctx = makeContext(container, level, i, j, mirror);
 		matched = conditions.checkConditions(this, ctx, 1) > 0;
 		if (matched) {
-			ItemStack result = getResultItem().copy();
+			ItemStack result = getResultItem(level.registryAccess()).copy();
 			List<Ingredient> ingredients = getIngredients();
 			ItemStack[] items = new ItemStack[ingredients.size() + 1];
 			int startIndex = container.getWidth() * ctx.matchY + ctx.matchX;
@@ -171,9 +193,9 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer container) {
+	public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
 		//		Lychee.LOGGER.info("assemble");
-		CraftingContext ctx = ((LycheeCraftingContainer) container).lychee$getContext();
+		CraftingContext ctx = CONTEXT_CACHE.getIfPresent(container);
 		if (ctx == null) {
 			return ItemStack.EMPTY;
 		}
@@ -185,8 +207,8 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	@Override
 	public NonNullList<ItemStack> getRemainingItems(CraftingContainer container) {
 		//		Lychee.LOGGER.info("getRemainingItems");
-		CraftingContext ctx = ((LycheeCraftingContainer) container).lychee$getContext();
 		NonNullList<ItemStack> items = super.getRemainingItems(container);
+		CraftingContext ctx = CONTEXT_CACHE.getIfPresent(container);
 		if (ctx == null) {
 			return items;
 		}
@@ -260,7 +282,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 				throw new JsonSyntaxException("Can't set item to the result in \"post\", use \"assembling\".");
 			}
 		}
-		if (actions == Collections.EMPTY_LIST) {
+		if (actions.isEmpty()) {
 			actions = Lists.newArrayList();
 		}
 		actions.add(action);
@@ -274,7 +296,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 				throw new JsonSyntaxException("Can't set item to the ingredients in \"assembling\", use \"post\".");
 			}
 		}
-		if (assembling == Collections.EMPTY_LIST) {
+		if (assembling.isEmpty()) {
 			assembling = Lists.newArrayList();
 		}
 		assembling.add(action);
@@ -310,7 +332,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 
 	public static class Serializer implements RecipeSerializer<ShapedCraftingRecipe> {
 		private static ShapedCraftingRecipe fromNormal(ShapedRecipe recipe) {
-			return new ShapedCraftingRecipe(recipe.getId(), recipe.getGroup(), recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), recipe.getResultItem());
+			return new ShapedCraftingRecipe(recipe.getId(), recipe.getGroup(), recipe.category(), recipe.getWidth(), recipe.getHeight(), recipe.getIngredients(), ((ShapedRecipeAccess) recipe).getResult(), recipe.showNotification());
 		}
 
 		@Override

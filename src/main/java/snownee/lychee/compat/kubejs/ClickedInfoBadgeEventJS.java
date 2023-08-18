@@ -1,4 +1,4 @@
-package snownee.lychee.compat.kubejs;
+/*package snownee.lychee.compat.kubejs;
 
 import dev.latvian.mods.kubejs.client.ClientEventJS;
 import snownee.lychee.core.recipe.ILycheeRecipe;
@@ -14,3 +14,4 @@ public class ClickedInfoBadgeEventJS extends ClientEventJS {
 	}
 
 }
+*/

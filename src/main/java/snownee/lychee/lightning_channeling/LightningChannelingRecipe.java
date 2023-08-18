@@ -34,7 +34,7 @@ public class LightningChannelingRecipe extends ItemShapelessRecipe<LightningChan
 		Stream<ItemEntity> itemEntities = list1.stream().filter($ -> {
 			return $ instanceof ItemEntity;
 		}).map(ItemEntity.class::cast);
-		RecipeTypes.LIGHTNING_CHANNELING.process(lightningBolt.level, itemEntities, $ -> {
+		RecipeTypes.LIGHTNING_CHANNELING.process(lightningBolt.level(), itemEntities, $ -> {
 			$.withParameter(LootContextParams.ORIGIN, lightningBolt.position());
 			$.withParameter(LootContextParams.THIS_ENTITY, lightningBolt);
 		});

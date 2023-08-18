@@ -74,11 +74,11 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	public static void on(ItemEntity entity) {
-		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(entity.level);
+		LycheeContext.Builder<LycheeContext> builder = new LycheeContext.Builder<>(entity.level());
 		builder.withParameter(LootContextParams.ORIGIN, entity.position());
 		builder.withParameter(LootContextParams.THIS_ENTITY, entity);
 		LycheeContext ctx = builder.create(RecipeTypes.ITEM_BURNING.contextParamSet);
-		RecipeTypes.ITEM_BURNING.findFirst(ctx, entity.level).ifPresent($ -> {
+		RecipeTypes.ITEM_BURNING.findFirst(ctx, entity.level()).ifPresent($ -> {
 			int times = $.getRandomRepeats(entity.getItem().getCount(), ctx);
 			ctx.itemHolders = ItemHolderCollection.InWorld.of(entity);
 			$.applyPostActions(ctx, times);

@@ -2,6 +2,7 @@ package snownee.lychee.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -20,21 +21,23 @@ import snownee.lychee.block_crushing.LycheeFallingBlockEntity;
 @Mixin(FallingBlockEntity.class)
 public abstract class FallingBlockEntityMixin extends Entity implements LycheeFallingBlockEntity {
 
+	@Unique
+	private boolean lychee$matched;
+	@Unique
+	private float lychee$anvilDamageChance = -1;
+	@Shadow
+	private boolean cancelDrop;
+	@Shadow
+	private BlockState blockState;
+
 	public FallingBlockEntityMixin(EntityType<?> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
 	}
 
-	@Shadow
-	boolean cancelDrop;
-	@Shadow
-	BlockState blockState;
-	boolean lychee$matched;
-	float lychee$anvilDamageChance = -1;
-
 	@Inject(at = @At("HEAD"), method = "causeFallDamage")
 	private void lychee_causeFallDamage(float pFallDistance, float pMultiplier, DamageSource pSource, CallbackInfoReturnable<Boolean> ci) {
 		FallingBlockEntity entity = (FallingBlockEntity) (Object) this;
-		if (entity.level.isClientSide) {
+		if (entity.level().isClientSide) {
 			return;
 		}
 		RecipeTypes.BLOCK_CRUSHING.process(entity);

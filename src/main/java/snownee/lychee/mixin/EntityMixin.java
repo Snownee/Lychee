@@ -19,7 +19,7 @@ public class EntityMixin {
 			return;
 		}
 		Entity entity = (Entity) (Object) this;
-		if (entity.isAlive() && entity.getType() == EntityType.ITEM && !entity.level.isClientSide && entity.tickCount % 20 == 10) {
+		if (entity.isAlive() && entity.getType() == EntityType.ITEM && !entity.level().isClientSide && entity.tickCount % 20 == 10) {
 			RecipeTypes.ITEM_INSIDE.process(entity, ((ItemEntity) entity).getItem(), entity.blockPosition(), entity.position());
 		}
 	}

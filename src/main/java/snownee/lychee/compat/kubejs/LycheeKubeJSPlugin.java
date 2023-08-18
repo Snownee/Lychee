@@ -1,4 +1,4 @@
-package snownee.lychee.compat.kubejs;
+/*package snownee.lychee.compat.kubejs;
 
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
@@ -54,3 +54,4 @@ public class LycheeKubeJSPlugin extends KubeJSPlugin {
 	}
 
 }
+*/

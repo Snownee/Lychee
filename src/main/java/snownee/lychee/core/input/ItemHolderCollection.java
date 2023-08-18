@@ -102,8 +102,8 @@ public abstract class ItemHolderCollection {
 					continue;
 				}
 				Vec3 pos = itemEntity.position();
-				ItemEntity newEntity = new ItemEntity(itemEntity.level, pos.x, pos.y, pos.z, stack);
-				itemEntity.level.addFreshEntity(newEntity);
+				ItemEntity newEntity = new ItemEntity(itemEntity.level(), pos.x, pos.y, pos.z, stack);
+				itemEntity.level().addFreshEntity(newEntity);
 			}
 			return consumeInputs ? consumeInputs(times) : 0;
 		}

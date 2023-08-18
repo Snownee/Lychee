@@ -5,6 +5,7 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import snownee.lychee.anvil_crafting.AnvilContext;
 import snownee.lychee.anvil_crafting.AnvilCraftingRecipe;
 import snownee.lychee.block_crushing.BlockCrushingRecipe;
@@ -66,7 +67,7 @@ public final class RecipeTypes {
 
 	public static <T extends LycheeRecipeType<?, ?>> T register(T recipeType) {
 		ALL.add(recipeType);
-		return Registry.register(Registry.RECIPE_TYPE, recipeType.id, recipeType);
+		return Registry.register(BuiltInRegistries.RECIPE_TYPE, recipeType.id, recipeType);
 	}
 
 	public static void buildCache() {

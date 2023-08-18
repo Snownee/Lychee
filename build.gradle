@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.12.54'
+    id 'fabric-loom' version '1.1-SNAPSHOT'
     id 'maven-publish'
     id "me.shedaniel.unified-publishing" version "0.1.+"
 }
@@ -81,14 +81,12 @@ dependencies {
     //modImplementation "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
     //annotationProcessor "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
 
-    modImplementation "curse.maven:kiwi-549404:3909202"
-    annotationProcessor "curse.maven:kiwi-549404:3909202"
-
-    modImplementation "curse.maven:ingredient-extension-api-557735:4134668"
+    modImplementation "curse.maven:kiwi-549404:4688477"
+    annotationProcessor "curse.maven:kiwi-549404:4688477"
 
     modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
 
-    modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
+    //modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
 }
 
 loom {
@@ -172,7 +170,7 @@ unifiedPublishing {
         version = project.mod_version // Optional, Inferred from project by default
         changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "" // Optional, in markdown format
         releaseType = project.release_type // Optional, use "release", "beta" or "alpha"
-        gameVersions = ["1.19.2"]
+        gameVersions = ["1.20", "1.20.1"]
         gameLoaders = ["fabric", "quilt"]
 
         mainPublication tasks.remapJar // Declares the publicated jar

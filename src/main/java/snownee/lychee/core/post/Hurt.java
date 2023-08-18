@@ -1,16 +1,16 @@
 package snownee.lychee.core.post;
 
-import java.util.Locale;
-
 import com.google.gson.JsonObject;
 
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.Lychee;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.def.BoundsHelper;
@@ -21,9 +21,9 @@ import snownee.lychee.util.CommonProxy;
 public class Hurt extends PostAction {
 
 	public final MinMaxBounds.Doubles damage;
-	public final SourceType source;
+	public final ResourceLocation source;
 
-	public Hurt(MinMaxBounds.Doubles damage, SourceType source) {
+	public Hurt(MinMaxBounds.Doubles damage, ResourceLocation source) {
 		this.damage = damage;
 		this.source = source;
 	}
@@ -42,7 +42,11 @@ public class Hurt extends PostAction {
 	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Entity entity = ctx.getParam(LootContextParams.THIS_ENTITY);
 		entity.invulnerableTime = 0;
-		entity.hurt(source.value, DoubleBoundsHelper.random(damage, ctx.getRandom()) * times);
+		try {
+			entity.hurt(entity.damageSources().source(ResourceKey.create(Registries.DAMAGE_TYPE, source)), DoubleBoundsHelper.random(damage, ctx.getRandom()) * times);
+		} catch (Exception e) {
+			Lychee.LOGGER.error("Failed to hurt entity", e);
+		}
 	}
 
 	@Override
@@ -54,56 +58,25 @@ public class Hurt extends PostAction {
 
 		@Override
 		public Hurt fromJson(JsonObject o) {
-			return new Hurt(MinMaxBounds.Doubles.fromJson(o.get("damage")), SourceType.parse(GsonHelper.getAsString(o, "source", SourceType.GENERIC.name())));
+			return new Hurt(MinMaxBounds.Doubles.fromJson(o.get("damage")), new ResourceLocation("generic"));
 		}
 
 		@Override
 		public void toJson(Hurt action, JsonObject o) {
 			o.add("damage", action.damage.serializeToJson());
-			if (action.source != SourceType.GENERIC) {
-				o.addProperty("source", action.source.name().toLowerCase(Locale.ENGLISH));
-			}
+			o.addProperty("source", action.source.toString());
 		}
 
 		@Override
 		public Hurt fromNetwork(FriendlyByteBuf buf) {
-			return new Hurt(DoubleBoundsHelper.fromNetwork(buf), buf.readEnum(SourceType.class));
+			return new Hurt(DoubleBoundsHelper.fromNetwork(buf), buf.readResourceLocation());
 		}
 
 		@Override
 		public void toNetwork(Hurt action, FriendlyByteBuf buf) {
 			DoubleBoundsHelper.toNetwork(action.damage, buf);
-			buf.writeEnum(action.source);
+			buf.writeResourceLocation(action.source);
 		}
 
 	}
-
-	public enum SourceType {
-		GENERIC(DamageSource.GENERIC),
-		MAGIC(DamageSource.MAGIC),
-		OUT_OF_WORLD(DamageSource.OUT_OF_WORLD),
-		ANVIL(DamageSource.ANVIL),
-		WITHER(DamageSource.WITHER),
-		FREEZE(DamageSource.FREEZE),
-		DROWN(DamageSource.DROWN),
-		FALL(DamageSource.FALL),
-		IN_FIRE(DamageSource.IN_FIRE),
-		ON_FIRE(DamageSource.ON_FIRE),
-		LAVA(DamageSource.LAVA);
-
-		public final DamageSource value;
-
-		SourceType(DamageSource value) {
-			this.value = value;
-		}
-
-		public static SourceType parse(String s) {
-			try {
-				return valueOf(s.toUpperCase(Locale.ENGLISH));
-			} catch (Throwable e) {
-				throw new IllegalArgumentException(e);
-			}
-		}
-	}
-
 }

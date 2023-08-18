@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,7 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.phys.Vec3;
 import snownee.lychee.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.item_exploding.ItemExplodingRecipe;
 
@@ -26,35 +28,39 @@ import snownee.lychee.item_exploding.ItemExplodingRecipe;
 public class ExplosionMixin {
 
 	@Shadow
+	public float radius;
+	@Final
+	@Shadow
 	private Level level;
 	// the field "position" is added by forge
+	@Final
 	@Shadow
 	private double x;
+	@Final
 	@Shadow
 	private double y;
+	@Final
 	@Shadow
 	private double z;
-	@Shadow
-	private float radius;
 
 	@Inject(
 			at = @At(
-				"TAIL"
-			), method = "Lnet/minecraft/world/level/Explosion;explode()V", locals = LocalCapture.CAPTURE_FAILHARD
+					"TAIL"
+			), method = "explode()V", locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void lychee_explode(CallbackInfo ci, Set<BlockPos> set, int i, float f2, int k1, int l1, int i2, int i1, int j2, int j1, List<Entity> list) {
+	private void lychee_explode(CallbackInfo ci, Set<BlockPos> set, float q, int k, int l, int r, int s, int t, int u, List<Entity> list, Vec3 vec3, int v) {
 		ItemExplodingRecipe.on(level, x, y, z, list, radius);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Redirect(
 			at = @At(
-					value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getDrops(Lnet/minecraft/world/level/storage/loot/LootContext$Builder;)Ljava/util/List;"
-			), method = "Lnet/minecraft/world/level/Explosion;finalizeExplosion(Z)V"
+					value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getDrops(Lnet/minecraft/world/level/storage/loot/LootParams$Builder;)Ljava/util/List;"
+			), method = "finalizeExplosion(Z)V"
 	)
-	public List<ItemStack> lychee_getDrops(BlockState state, LootContext.Builder pBuilder) {
-		Supplier<List<ItemStack>> drops = () -> state.getBlock().getDrops(state, pBuilder);
-		return BlockExplodingRecipe.on(level, state, pBuilder, drops);
+	public List<ItemStack> lychee_getDrops(BlockState state, LootParams.Builder builder) {
+		Supplier<List<ItemStack>> drops = () -> state.getBlock().getDrops(state, builder);
+		return BlockExplodingRecipe.on(level, state, builder, drops);
 	}
 
 }

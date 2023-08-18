@@ -9,9 +9,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 public interface ItemEntityAccess {
 
 	@Accessor
-	int getHealth();
-
-	@Accessor
 	void setHealth(int health);
 
 }

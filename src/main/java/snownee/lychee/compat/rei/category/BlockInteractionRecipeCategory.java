@@ -4,11 +4,10 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
@@ -33,7 +32,7 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Lyc
 	}
 
 	@Override
-	public void drawExtra(BlockInteractingRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY, int centerX) {
+	public void drawExtra(BlockInteractingRecipe recipe, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
 		KeyMapping keyMapping = getKeyMapping(recipe);
 		//		if (keyMapping.getKey().getValue() == -1) { // key is unset or unknown
 		//
@@ -47,7 +46,7 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Lyc
 		} else {
 			icon = recipe.getType() == RecipeTypes.BLOCK_CLICKING ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
 		}
-		icon.render(matrixStack, 51, 15);
+		icon.render(graphics, 51, 15);
 	}
 
 	private KeyMapping getKeyMapping(BlockInteractingRecipe recipe) {

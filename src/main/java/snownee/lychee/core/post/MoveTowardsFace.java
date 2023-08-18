@@ -34,7 +34,7 @@ public class MoveTowardsFace extends PostAction {
 	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		BlockPos pos = ctx.getParamOrNull(LycheeLootContextParams.BLOCK_POS);
 		if (pos == null) {
-			pos = new BlockPos(ctx.getParam(LootContextParams.ORIGIN));
+			pos = BlockPos.containing(ctx.getParam(LootContextParams.ORIGIN));
 		}
 		Vec3 vec = new Vec3(ctx.getParam(LycheeLootContextParams.DIRECTION).step()).scale(factor);
 		ctx.setParam(LootContextParams.ORIGIN, vec.add(Vec3.atCenterOf(pos)));

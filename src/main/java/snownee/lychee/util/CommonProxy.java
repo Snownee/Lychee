@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.faux.ingredientextension.api.ingredient.IngredientHelper;
 import com.google.common.collect.Streams;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -33,6 +32,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
@@ -221,10 +221,10 @@ public class CommonProxy implements ModInitializer {
 		int j = Mth.floor(entity.getY() - 0.05); // vanilla is 0.2. carpet's height is 0.13
 		int k = Mth.floor(entity.getZ());
 		BlockPos blockpos = new BlockPos(i, j, k);
-		if (entity.level.isEmptyBlock(blockpos)) {
+		if (entity.level().isEmptyBlock(blockpos)) {
 			BlockPos blockpos1 = blockpos.below();
-			BlockState blockstate = entity.level.getBlockState(blockpos1);
-			if (collisionExtendsVertically(blockstate, entity.level, blockpos1, entity)) {
+			BlockState blockstate = entity.level().getBlockState(blockpos1);
+			if (collisionExtendsVertically(blockstate, entity.level(), blockpos1, entity)) {
 				return blockpos1;
 			}
 		}
@@ -260,9 +260,6 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static boolean isSimpleIngredient(Ingredient ingredient) {
-		if (hasIngredientExtAPI && IngredientHelper.requiresTesting(List.of(ingredient))) {
-			return false;
-		}
 		return !ingredient.requiresTesting();
 	}
 
@@ -282,7 +279,7 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static void itemstackToJson(ItemStack stack, JsonObject jsonObject) {
-		jsonObject.addProperty("item", Registry.ITEM.getKey(stack.getItem()).toString());
+		jsonObject.addProperty("item", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
 		if (stack.hasTag()) {
 			jsonObject.addProperty("nbt", stack.getTag().toString());
 		}
@@ -377,9 +374,9 @@ public class CommonProxy implements ModInitializer {
 		AttackBlockCallback.EVENT.register(InteractionRecipeMod::clickItemOn);
 
 		// Dripstone recipes
-		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_dripping"), DripstoneRecipeMod.DRIPSTONE_DRIPPING);
-		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_falling"), DripstoneRecipeMod.DRIPSTONE_FALLING);
-		Registry.register(Registry.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_splash"), DripstoneRecipeMod.DRIPSTONE_SPLASH);
+		Registry.register(BuiltInRegistries.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_dripping"), DripstoneRecipeMod.DRIPSTONE_DRIPPING);
+		Registry.register(BuiltInRegistries.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_falling"), DripstoneRecipeMod.DRIPSTONE_FALLING);
+		Registry.register(BuiltInRegistries.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_splash"), DripstoneRecipeMod.DRIPSTONE_SPLASH);
 	}
 
 	public interface CustomActionListener {

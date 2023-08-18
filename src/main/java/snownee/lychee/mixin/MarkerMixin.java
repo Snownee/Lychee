@@ -1,6 +1,7 @@
 package snownee.lychee.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -22,8 +23,11 @@ import snownee.lychee.util.CommonProxy;
 @Mixin(Marker.class)
 public class MarkerMixin implements LycheeMarker {
 
+	@Unique
 	private int lychee$ticks;
+	@Unique
 	private ILycheeRecipe<?> lychee$recipe;
+	@Unique
 	private LycheeContext lychee$ctx;
 
 	@Override

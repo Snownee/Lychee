@@ -1,6 +1,7 @@
 package snownee.lychee.compat;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -129,7 +130,7 @@ public class JEIREI {
 		}
 		/* off */
 		return blockStateCount.object2IntEntrySet().stream()
-				.max((a, b) -> Integer.compare(a.getIntValue(), b.getIntValue()))
+				.max(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
 				.map($ -> Pair.of(BlockPredicateHelper.anyBlockState(blockPredicateMap.get($.getKey())), $.getIntValue()))
 				.orElseGet(() -> Pair.of(Blocks.AIR.defaultBlockState(), 0));
 		/* on */

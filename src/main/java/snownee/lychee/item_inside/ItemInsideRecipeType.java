@@ -80,7 +80,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 		if (recipes.isEmpty() && specialRecipes.isEmpty()) {
 			return;
 		}
-		Level level = entity.level;
+		Level level = entity.level();
 		BlockState blockstate = level.getBlockState(pos);
 		Block block = blockstate.getBlock();
 		List<ItemEntity> items = level.getEntitiesOfClass(ItemEntity.class, AABB.ofSize(origin, 3, 3, 3), $ -> {

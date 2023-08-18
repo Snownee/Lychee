@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -25,7 +25,9 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Registry;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -119,13 +121,17 @@ public class JEICompat implements IModPlugin {
 			});
 		});
 
-		List<IJeiAnvilRecipe> recipes = CommonProxy.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
-			return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
-		}).map($ -> {
-			List<ItemStack> right = List.of($.getRight().getItems()).stream().map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
-			return registration.getVanillaRecipeFactory().createAnvilRecipe(List.of($.getLeft().getItems()), right, List.of($.getResultItem()));
-		}).toList();
-		registration.addRecipes(mezz.jei.api.constants.RecipeTypes.ANVIL, recipes);
+		try {
+			List<IJeiAnvilRecipe> recipes = CommonProxy.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
+				return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
+			}).map($ -> {
+				List<ItemStack> right = Stream.of($.getRight().getItems()).map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
+				return registration.getVanillaRecipeFactory().createAnvilRecipe(List.of($.getLeft().getItems()), right, List.of($.getResultItem()));
+			}).toList();
+			registration.addRecipes(mezz.jei.api.constants.RecipeTypes.ANVIL, recipes);
+		} catch (Throwable e) {
+			Lychee.LOGGER.error("", e);
+		}
 	}
 
 	@Override
@@ -157,12 +163,12 @@ public class JEICompat implements IModPlugin {
 		forEachCategories(RecipeTypes.LIGHTNING_CHANNELING, $ -> {
 			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, Items.LIGHTNING_ROD.getDefaultInstance(), $.getRecipeType());
 		});
-		for (Item item : CommonProxy.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
+		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.ITEM_EXPLODING, $ -> {
 				registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), $.getRecipeType());
 			});
 		}
-		for (Item item : CommonProxy.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
+		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.BLOCK_EXPLODING, $ -> {
 				registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), $.getRecipeType());
 			});
@@ -233,8 +239,8 @@ public class JEICompat implements IModPlugin {
 		}
 
 		@Override
-		public void draw(PoseStack poseStack, int x, int y) {
-			element.render(poseStack, x, y);
+		public void draw(GuiGraphics graphics, int x, int y) {
+			element.render(graphics, x, y);
 		}
 
 		@Override

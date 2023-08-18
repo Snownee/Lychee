@@ -1,7 +1,9 @@
 package snownee.lychee.mixin;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -28,14 +30,18 @@ import snownee.lychee.core.input.ItemHolderCollection;
 public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
 	@Shadow
-	public int repairItemCountCost;
+	private int repairItemCountCost;
 	@Shadow
 	private String itemName;
+	@Final
 	@Shadow
 	private DataSlot cost;
 
+	@Unique
 	private AnvilCraftingRecipe lychee$recipe;
+	@Unique
 	private AnvilContext lychee$ctx;
+	@Unique
 	private AnvilContext lychee$onTakeCtx;
 
 	public AnvilMenuMixin(MenuType<?> p_39773_, int p_39774_, Inventory p_39775_, ContainerLevelAccess p_39776_) {
@@ -54,19 +60,19 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 			return;
 		}
 		ItemStack right = inputSlots.getItem(1);
-		AnvilContext.Builder builder = new AnvilContext.Builder(player.level, left, right, itemName);
+		AnvilContext.Builder builder = new AnvilContext.Builder(player.level(), left, right, itemName);
 		BlockPos pos = access.evaluate((level, pos0) -> pos0).orElseGet(player::blockPosition);
 		builder.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
 		if (access != ContainerLevelAccess.NULL) {
 			builder.withOptionalParameter(LycheeLootContextParams.BLOCK_POS, pos);
-			builder.withOptionalParameter(LootContextParams.BLOCK_STATE, player.level.getBlockState(pos));
+			builder.withOptionalParameter(LootContextParams.BLOCK_STATE, player.level().getBlockState(pos));
 		}
 		builder.withParameter(LootContextParams.THIS_ENTITY, player);
 		AnvilContext ctx = builder.create(RecipeTypes.ANVIL_CRAFTING.contextParamSet);
 		// why use copy(): the originals will be modified by vanilla
 		ctx.itemHolders = ItemHolderCollection.Inventory.of(ctx, left.copy(), right.copy(), ItemStack.EMPTY);
-		RecipeTypes.ANVIL_CRAFTING.findFirst(ctx, player.level).ifPresent($ -> {
-			ItemStack output = $.assemble(ctx);
+		RecipeTypes.ANVIL_CRAFTING.findFirst(ctx, player.level()).ifPresent($ -> {
+			ItemStack output = $.assemble(ctx, player.level().registryAccess());
 			if (output.isEmpty()) {
 				resultSlots.setItem(0, ItemStack.EMPTY);
 				cost.set(0);

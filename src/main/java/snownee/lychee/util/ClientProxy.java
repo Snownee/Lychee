@@ -6,17 +6,14 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.minecraft.Util;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import snownee.lychee.Lychee;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.core.post.CycleStatePropertyPostActionRenderer;
 import snownee.lychee.client.core.post.IfPostActionRenderer;
@@ -81,12 +78,6 @@ public class ClientProxy implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		ClientSpriteRegistryCallback.event(InventoryMenu.BLOCK_ATLAS).register(((atlasTexture, registry) -> {
-			for (int i = 0; i <= 3; i++) {
-				registry.register(new ResourceLocation(Lychee.ID, "particle/splash_" + i));
-			}
-		}));
-
 		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_DRIPPING, ParticleFactories.Dripping::new);
 		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_FALLING, ParticleFactories.Falling::new);
 		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_SPLASH, ParticleFactories.Splash::new);

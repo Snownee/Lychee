@@ -3,9 +3,9 @@ package snownee.lychee.util;
 import java.util.function.UnaryOperator;
 
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 import com.google.common.hash.Hashing;
-import com.mojang.math.Vector3f;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;

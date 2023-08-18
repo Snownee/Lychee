@@ -27,7 +27,8 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate.PropertyMatcher;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -71,7 +72,7 @@ public class BlockPredicateHelper {
 			blocks.addAll(access.getBlocks());
 		}
 		if (access.getTag() != null) {
-			blocks.addAll(CommonProxy.tagElements(Registry.BLOCK, access.getTag()));
+			blocks.addAll(CommonProxy.tagElements(BuiltInRegistries.BLOCK, access.getTag()));
 		}
 		return blocks;
 	}
@@ -89,7 +90,7 @@ public class BlockPredicateHelper {
 	}
 
 	public static List<ItemStack> getMatchedItemStacks(BlockPredicate predicate) {
-		return getMatchedBlocks(predicate).stream().map(Block::asItem).filter(Predicate.not(Items.AIR::equals)).map(Item::getDefaultInstance).toList();
+		return getMatchedBlocks(predicate).stream().map(Block::asItem).filter(Predicate.not(Items.AIR::equals)).distinct().map(Item::getDefaultInstance).toList();
 	}
 
 	public static boolean fastMatch(BlockPredicate predicate, LycheeContext context) {
@@ -126,10 +127,10 @@ public class BlockPredicateHelper {
 				return BlockPredicate.ANY;
 			}
 			if (id.startsWith("#")) {
-				TagKey<Block> key = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(id.substring(1)));
+				TagKey<Block> key = TagKey.create(Registries.BLOCK, new ResourceLocation(id.substring(1)));
 				return new BlockPredicate(key, null, StatePropertiesPredicate.ANY, NbtPredicate.ANY);
 			}
-			Block block = Registry.BLOCK.get(new ResourceLocation(id));
+			Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(id));
 			return new BlockPredicate(null, Set.of(block), StatePropertiesPredicate.ANY, NbtPredicate.ANY);
 		}
 		return BlockPredicate.fromJson(jsonElement);
@@ -151,13 +152,13 @@ public class BlockPredicateHelper {
 		if (blockCount > 0) {
 			blocks = Sets.newHashSet();
 			for (int i = 0; i < blockCount; i++) {
-				blocks.add(CommonProxy.readRegistryId(Registry.BLOCK, pBuffer));
+				blocks.add(CommonProxy.readRegistryId(BuiltInRegistries.BLOCK, pBuffer));
 			}
 		}
 		TagKey<Block> tag = null;
 		ResourceLocation tagId = CommonProxy.readNullableRL(pBuffer);
 		if (tagId != null) {
-			tag = TagKey.create(Registry.BLOCK_REGISTRY, tagId);
+			tag = TagKey.create(Registries.BLOCK, tagId);
 		}
 		StatePropertiesPredicate propertiesPredicate = PropertiesPredicateHelper.fromNetwork(pBuffer);
 		NbtPredicate nbtPredicate = pBuffer.readBoolean() ? NBT_PREDICATE_DUMMY : NbtPredicate.ANY;
@@ -176,7 +177,7 @@ public class BlockPredicateHelper {
 		} else {
 			pBuffer.writeVarInt(blocks.size());
 			for (Block block : blocks) {
-				CommonProxy.writeRegistryId(Registry.BLOCK, block, pBuffer);
+				CommonProxy.writeRegistryId(BuiltInRegistries.BLOCK, block, pBuffer);
 			}
 		}
 		ResourceLocation tagId = null;

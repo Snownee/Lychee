@@ -2,6 +2,8 @@ package snownee.lychee.core.post;
 
 import java.util.Locale;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.gson.JsonObject;
 
 import net.minecraft.core.BlockPos;
@@ -9,7 +11,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.PostActionTypes;
@@ -33,6 +38,12 @@ public class Explode extends PostAction {
 		this.step = step;
 	}
 
+	private void explode(Level level, @Nullable Entity entity, double d, double e, double f, float g) {
+		Explosion explosion = new Explosion(level, entity, null, null, d, e, f, g, fire, blockInteraction);
+		explosion.explode();
+		explosion.finalizeExplosion(true);
+	}
+
 	@Override
 	public PostActionType<?> getType() {
 		return PostActionTypes.EXPLODE;
@@ -48,16 +59,16 @@ public class Explode extends PostAction {
 		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
 		pos = pos.add(offset.getX(), offset.getY(), offset.getZ());
 		float r = Math.min(radius + step * (Mth.sqrt(times) - 1), radius * 4);
-		ctx.getLevel().explode(ctx.getParamOrNull(LootContextParams.THIS_ENTITY), null, null, pos.x, pos.y, pos.z, r, fire, blockInteraction);
+		explode(ctx.getLevel(), ctx.getParamOrNull(LootContextParams.THIS_ENTITY), pos.x, pos.y, pos.z, r);
 	}
 
 	@Override
 	public Component getDisplayName() {
 		String s = switch (blockInteraction) {
-		case NONE -> "none";
-		case BREAK -> "break";
-		case DESTROY -> "destroy";
-		default -> throw new IllegalArgumentException("Unexpected value: " + blockInteraction);
+			case KEEP -> "keep";
+			case DESTROY_WITH_DECAY -> "destroy_with_decay";
+			case DESTROY -> "destroy";
+			default -> throw new IllegalArgumentException("Unexpected value: " + blockInteraction);
 		};
 		return Component.translatable(CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()) + "." + s);
 	}
@@ -68,12 +79,12 @@ public class Explode extends PostAction {
 		public Explode fromJson(JsonObject o) {
 			BlockPos offset = CommonProxy.parseOffset(o);
 			boolean fire = GsonHelper.getAsBoolean(o, "fire", false);
-			String s = GsonHelper.getAsString(o, "block_interaction", "break");
+			String s = GsonHelper.getAsString(o, "block_interaction", "destroy");
 			BlockInteraction blockInteraction = switch (s) {
-			case "none" -> BlockInteraction.NONE;
-			case "break" -> BlockInteraction.BREAK;
-			case "destroy" -> BlockInteraction.DESTROY;
-			default -> throw new IllegalArgumentException("Unexpected value: " + s);
+				case "none", "keep" -> BlockInteraction.KEEP;
+				case "break", "destroy_with_decay" -> BlockInteraction.DESTROY_WITH_DECAY;
+				case "destroy" -> BlockInteraction.DESTROY;
+				default -> throw new IllegalArgumentException("Unexpected value: " + s);
 			};
 			float radius = GsonHelper.getAsFloat(o, "radius", 4);
 			float radiusStep = GsonHelper.getAsFloat(o, "radius_step", 0.5F);
@@ -90,8 +101,8 @@ public class Explode extends PostAction {
 			if (offset.getZ() != 0)
 				o.addProperty("offsetZ", offset.getX());
 			if (action.fire)
-				o.addProperty("fire", action.fire);
-			if (action.blockInteraction != BlockInteraction.BREAK)
+				o.addProperty("fire", true);
+			if (action.blockInteraction != BlockInteraction.DESTROY)
 				o.addProperty("block_interaction", action.blockInteraction.name().toLowerCase(Locale.ENGLISH));
 			if (action.radius != 4)
 				o.addProperty("radius", action.radius);

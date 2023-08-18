@@ -19,7 +19,7 @@ import snownee.lychee.util.CommonProxy;
 @Mixin(value = RecipeManager.class, priority = 9)
 public class RecipeManagerMixin {
 
-	@Inject(at = @At("HEAD"), method = "apply")
+	@Inject(at = @At("HEAD"), method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V")
 	private void lychee_apply(Map<ResourceLocation, JsonElement> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler, CallbackInfo ci) {
 		CommonProxy.setRecipeManager((RecipeManager) (Object) this);
 	}

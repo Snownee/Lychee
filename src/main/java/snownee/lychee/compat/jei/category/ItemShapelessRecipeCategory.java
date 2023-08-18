@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
+import net.minecraft.client.gui.GuiGraphics;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
@@ -30,12 +31,13 @@ public abstract class ItemShapelessRecipeCategory<T extends ItemShapelessRecipe<
 	}
 
 	@Override
-	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
+	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
+		drawInfoBadge(recipe, graphics, mouseX, mouseY);
+		PoseStack matrixStack = graphics.pose();
 		matrixStack.pushPose();
 		matrixStack.translate(76, 16, 0);
-		matrixStack.scale(1.5F, 1.5F, 0);
-		getIcon().draw(matrixStack);
+		matrixStack.scale(1.5F, 1.5F, 1.5F);
+		getIcon().draw(graphics);
 		matrixStack.popPose();
 	}
 

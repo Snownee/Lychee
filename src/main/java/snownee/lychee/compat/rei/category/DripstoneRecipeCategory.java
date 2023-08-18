@@ -10,7 +10,7 @@ import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.util.EntryStacks;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -46,7 +46,8 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 		DripstoneRecipe recipe = display.recipe;
 		List<Widget> widgets = super.setupDisplay(display, bounds);
 		drawInfoBadge(widgets, display, startPoint);
-		widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
+		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
+			PoseStack matrixStack = graphics.pose();
 			matrixStack.pushPose();
 			matrixStack.translate(startPoint.x, startPoint.y, 0);
 
@@ -57,16 +58,16 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 				float shadow = 0.5F;
 				matrixStack.scale(shadow, shadow, shadow);
 				matrixStack.translate(-26, -5.5, 0);
-				AllGuiTextures.JEI_SHADOW.render(matrixStack, 0, 0);
+				AllGuiTextures.JEI_SHADOW.render(graphics, 0, 0);
 				matrixStack.popPose();
 			}
 
 			matrixStack.pushPose();
 			matrixStack.translate(22, 24, 300);
-			drawBlock(getSourceBlock(recipe), matrixStack, 0, -2, 0);
-			drawBlock(Blocks.DRIPSTONE_BLOCK.defaultBlockState(), matrixStack, 0, -1, 0);
-			drawBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN), matrixStack, 0, 0, 0);
-			drawBlock(targetBlock, matrixStack, 0, 1.5, 0);
+			drawBlock(getSourceBlock(recipe), graphics, 0, -2, 0);
+			drawBlock(Blocks.DRIPSTONE_BLOCK.defaultBlockState(), graphics, 0, -1, 0);
+			drawBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN), graphics, 0, 0, 0);
+			drawBlock(targetBlock, graphics, 0, 1.5, 0);
 			matrixStack.popPose();
 
 			matrixStack.popPose();
@@ -98,8 +99,8 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 		return widgets;
 	}
 
-	private static void drawBlock(BlockState state, PoseStack matrixStack, double localX, double localY, double localZ) {
-		GuiGameElement.of(state).scale(12).lighting(JEIREI.BLOCK_LIGHTING).atLocal(localX, localY, localZ).rotateBlock(12.5, -22.5, 0).render(matrixStack);
+	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {
+		GuiGameElement.of(state).scale(12).lighting(JEIREI.BLOCK_LIGHTING).atLocal(localX, localY, localZ).rotateBlock(12.5, -22.5, 0).render(graphics);
 	}
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {

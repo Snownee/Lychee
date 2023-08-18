@@ -7,10 +7,10 @@ import java.util.Objects;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
@@ -58,7 +58,7 @@ public interface PostActionRenderer<T extends PostAction> {
 		return list;
 	}
 
-	default void render(T action, PoseStack poseStack, int x, int y) {
+	default void render(T action, GuiGraphics graphics, int x, int y) {
 	}
 
 	default List<Component> getBaseTooltips(T action) {
