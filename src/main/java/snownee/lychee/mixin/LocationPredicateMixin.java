@@ -1,6 +1,7 @@
 package snownee.lychee.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -16,15 +17,16 @@ import snownee.lychee.core.def.LocationPredicateHelper;
 @Mixin(LocationPredicate.class)
 public class LocationPredicateMixin implements LocationPredicateHelper {
 
+	@Unique
 	private TagKey<Biome> lychee$biomeTag;
 
 	@Override
-	public void setBiomeTag(TagKey<Biome> biomeTag) {
+	public void lychee$setBiomeTag(TagKey<Biome> biomeTag) {
 		lychee$biomeTag = biomeTag;
 	}
 
 	@Override
-	public TagKey<Biome> getBiomeTag() {
+	public TagKey<Biome> lychee$getBiomeTag() {
 		return lychee$biomeTag;
 	}
 

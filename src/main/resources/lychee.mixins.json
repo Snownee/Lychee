@@ -18,6 +18,7 @@
     "EntityMixin",
     "ExplosionMixin",
     "FallingBlockEntityMixin",
+    "IngredientMixin",
     "IntRangeAccess",
     "IntsAccess",
     "ItemEntityAccess",

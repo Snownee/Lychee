@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -69,10 +70,23 @@ public class JEICompat implements IModPlugin {
 
 	public static final ResourceLocation UID = new ResourceLocation(Lychee.ID, "main");
 	public static final IIngredientType<PostAction> POST_ACTION = () -> PostAction.class;
+	public static final Map<ResourceLocation, Map<ResourceLocation, BaseJEICategory<?, ?>>> CATEGORIES = Maps.newHashMap();
+	private static final Map<AllGuiTextures, IDrawable> elMap = Maps.newIdentityHashMap();
 	public static IJeiRuntime RUNTIME;
 	public static IJeiHelpers HELPERS;
 	public static IGuiHelper GUI;
-	public static final Map<ResourceLocation, Map<ResourceLocation, BaseJEICategory<?, ?>>> CATEGORIES = Maps.newHashMap();
+
+	private static <C extends LycheeContext, T extends LycheeRecipe<C>> void forEachCategories(LycheeRecipeType<C, T> recipeType, Consumer<BaseJEICategory<C, T>> consumer) {
+		CATEGORIES.getOrDefault(recipeType.categoryId, Map.of()).values().stream().map($ -> (BaseJEICategory<C, T>) $).forEach(consumer);
+	}
+
+	public static IDrawable slot(SlotType slotType) {
+		return slotType.element;
+	}
+
+	public static IDrawable el(AllGuiTextures element) {
+		return elMap.computeIfAbsent(element, ScreenElementWrapper::new);
+	}
 
 	@Override
 	public ResourceLocation getPluginUid() {
@@ -119,13 +133,17 @@ public class JEICompat implements IModPlugin {
 			});
 		});
 
-		List<IJeiAnvilRecipe> recipes = CommonProxy.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
-			return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
-		}).map($ -> {
-			List<ItemStack> right = List.of($.getRight().getItems()).stream().map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
-			return registration.getVanillaRecipeFactory().createAnvilRecipe(List.of($.getLeft().getItems()), right, List.of($.getResultItem()));
-		}).toList();
-		registration.addRecipes(mezz.jei.api.constants.RecipeTypes.ANVIL, recipes);
+		try {
+			List<IJeiAnvilRecipe> recipes = CommonProxy.recipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ -> {
+				return !$.getResultItem().isEmpty() && !$.isSpecial() && $.showInRecipeViewer();
+			}).map($ -> {
+				List<ItemStack> right = Stream.of($.getRight().getItems()).map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
+				return registration.getVanillaRecipeFactory().createAnvilRecipe(List.of($.getLeft().getItems()), right, List.of($.getResultItem()));
+			}).toList();
+			registration.addRecipes(mezz.jei.api.constants.RecipeTypes.ANVIL, recipes);
+		} catch (Throwable e) {
+			Lychee.LOGGER.error("", e);
+		}
 	}
 
 	@Override
@@ -172,10 +190,6 @@ public class JEICompat implements IModPlugin {
 		});
 	}
 
-	private static <C extends LycheeContext, T extends LycheeRecipe<C>> void forEachCategories(LycheeRecipeType<C, T> recipeType, Consumer<BaseJEICategory<C, T>> consumer) {
-		CATEGORIES.getOrDefault(recipeType.categoryId, Map.of()).values().stream().map($ -> (BaseJEICategory<C, T>) $).forEach(consumer);
-	}
-
 	@Override
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 		RUNTIME = jeiRuntime;
@@ -192,8 +206,6 @@ public class JEICompat implements IModPlugin {
 		});
 	}
 
-	private static final Map<AllGuiTextures, IDrawable> elMap = Maps.newIdentityHashMap();
-
 	public enum SlotType {
 		NORMAL(AllGuiTextures.JEI_SLOT),
 		CHANCE(AllGuiTextures.JEI_CHANCE_SLOT),
@@ -206,19 +218,11 @@ public class JEICompat implements IModPlugin {
 		}
 	}
 
-	public static IDrawable slot(SlotType slotType) {
-		return slotType.element;
-	}
-
-	public static IDrawable el(AllGuiTextures element) {
-		return elMap.computeIfAbsent(element, ScreenElementWrapper::new);
-	}
-
 	public static class ScreenElementWrapper implements IDrawable {
 
+		private final ScreenElement element;
 		private int width = 16;
 		private int height = 16;
-		private final ScreenElement element;
 
 		private ScreenElementWrapper(AllGuiTextures element) {
 			this.element = element;

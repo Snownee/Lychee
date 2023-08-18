@@ -33,7 +33,7 @@ public class LocationCheckMixin {
 		object = object.getAsJsonObject("predicate");
 		if (object.has("lychee:biome_tag")) {
 			ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(object, "lychee:biome_tag"));
-			((LocationPredicateHelper) predicate).setBiomeTag(TagKey.create(Registry.BIOME_REGISTRY, id));
+			((LocationPredicateHelper) predicate).lychee$setBiomeTag(TagKey.create(Registry.BIOME_REGISTRY, id));
 		}
 	}
 
@@ -41,8 +41,8 @@ public class LocationCheckMixin {
 	private void lychee_serialize(JsonObject object, LocationCheck locationCheck, JsonSerializationContext jsonSerializationContext, CallbackInfo ci) {
 		if (!object.get("predicate").isJsonNull()) {
 			LocationPredicateHelper predicate = (LocationPredicateHelper) ((LocationCheckAccess) locationCheck).getPredicate();
-			if (predicate.getBiomeTag() != null) {
-				object.getAsJsonObject("predicate").addProperty("lychee:biome_tag", predicate.getBiomeTag().location().toString());
+			if (predicate.lychee$getBiomeTag() != null) {
+				object.getAsJsonObject("predicate").addProperty("lychee:biome_tag", predicate.lychee$getBiomeTag().location().toString());
 			}
 		}
 	}

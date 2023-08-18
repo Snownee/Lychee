@@ -70,7 +70,7 @@ public interface LocationPredicateHelper {
 		}
 	}
 
-	void setBiomeTag(TagKey<Biome> biomeTag);
+	void lychee$setBiomeTag(TagKey<Biome> biomeTag);
 
-	TagKey<Biome> getBiomeTag();
+	TagKey<Biome> lychee$getBiomeTag();
 }

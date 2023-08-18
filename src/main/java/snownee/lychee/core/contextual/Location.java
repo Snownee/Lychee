@@ -297,7 +297,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public boolean isAny(LocationPredicateAccess access) {
-			return access.getBiome() == null && ((LocationPredicateHelper) access).getBiomeTag() == null;
+			return access.getBiome() == null && ((LocationPredicateHelper) access).lychee$getBiomeTag() == null;
 		}
 
 		@Override
@@ -306,7 +306,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			if (access.getBiome() != null && biome.is(access.getBiome().location())) {
 				return InteractionResult.SUCCESS;
 			}
-			TagKey<Biome> tag = ((LocationPredicateHelper) access).getBiomeTag();
+			TagKey<Biome> tag = ((LocationPredicateHelper) access).lychee$getBiomeTag();
 			if (tag != null && biome.is(tag)) {
 				return InteractionResult.SUCCESS;
 			}
@@ -319,7 +319,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			if (access.getBiome() != null) {
 				valueKey = Util.makeDescriptionId("biome", access.getBiome().location());
 			} else {
-				valueKey = Util.makeDescriptionId("biomeTag", ((LocationPredicateHelper) access).getBiomeTag().location());
+				valueKey = Util.makeDescriptionId("biomeTag", ((LocationPredicateHelper) access).lychee$getBiomeTag().location());
 			}
 			MutableComponent name = Component.translatable(valueKey).withStyle(ChatFormatting.WHITE);
 			ContextualCondition.desc(tooltips, result, indent, Component.translatable(key + "." + getName(), name));
@@ -385,7 +385,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			ResourceLocation biomeTag = CommonProxy.readNullableRL(buf);
 			if (biomeTag != null) {
 				LocationPredicateHelper access = (LocationPredicateHelper) ((LocationCheckAccess) check).getPredicate();
-				access.setBiomeTag(TagKey.create(Registry.BIOME_REGISTRY, biomeTag));
+				access.lychee$setBiomeTag(TagKey.create(Registry.BIOME_REGISTRY, biomeTag));
 			}
 			return new Location(check);
 		}
@@ -395,7 +395,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			LocationCheckAccess access = (LocationCheckAccess) condition.check();
 			LocationPredicateHelper.toNetwork(access.getPredicate(), buf);
 			buf.writeBlockPos(access.getOffset());
-			ResourceLocation biomeTag = Optional.ofNullable(((LocationPredicateHelper) access.getPredicate()).getBiomeTag()).map(TagKey::location).orElse(null);
+			ResourceLocation biomeTag = Optional.ofNullable(((LocationPredicateHelper) access.getPredicate()).lychee$getBiomeTag()).map(TagKey::location).orElse(null);
 			CommonProxy.writeNullableRL(biomeTag, buf);
 		}
 

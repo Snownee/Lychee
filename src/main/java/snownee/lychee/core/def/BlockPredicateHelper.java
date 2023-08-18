@@ -89,7 +89,7 @@ public class BlockPredicateHelper {
 	}
 
 	public static List<ItemStack> getMatchedItemStacks(BlockPredicate predicate) {
-		return getMatchedBlocks(predicate).stream().map(Block::asItem).filter(Predicate.not(Items.AIR::equals)).map(Item::getDefaultInstance).toList();
+		return getMatchedBlocks(predicate).stream().map(Block::asItem).filter(Predicate.not(Items.AIR::equals)).distinct().map(Item::getDefaultInstance).toList();
 	}
 
 	public static boolean fastMatch(BlockPredicate predicate, LycheeContext context) {
