@@ -3,6 +3,7 @@ package snownee.lychee.compat.rei.display;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import com.google.common.collect.Lists;
 
@@ -12,6 +13,8 @@ import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
@@ -41,6 +44,14 @@ public class BaseREIDisplay<T extends LycheeRecipe<?>> implements Display {
 				.flatMap(Set::stream)
 				.distinct()
 				.map($ -> EntryIngredients.of(FluidStack.create($, FluidStack.bucketAmount())))
+				.forEach(ingredients::add);
+		recipe.getBlockInputs().stream()
+				.map(BlockPredicateHelper::getMatchedBlocks)
+				.flatMap(Set::stream)
+				.map(ItemLike::asItem)
+				.filter(Predicate.not(Items.AIR::equals))
+				.distinct()
+				.map(EntryIngredients::of)
 				.forEach(ingredients::add);
 		/* on */
 		return ingredients;

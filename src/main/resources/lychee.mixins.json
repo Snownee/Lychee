@@ -44,7 +44,8 @@
     "TimeCheckAccess",
     "arsnouveau.LightningEntityMixin",
     "forge.ShapedRecipeMixin",
-    "itemphysic.ItemEntityHurtMixin"
+    "itemphysic.ItemEntityHurtMixin",
+    "rei.DefaultCraftingDisplayMixin"
   ],
   "client": [
     "ClientPacketListenerMixin",
