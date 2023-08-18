@@ -10,7 +10,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import snownee.lychee.compat.rei.display.ShapedCraftingDisplay;
 import snownee.lychee.crafting.ShapedCraftingRecipe;
 
-@Mixin(DefaultCraftingDisplay.class)
+@Mixin(value = DefaultCraftingDisplay.class, remap = false)
 public class DefaultCraftingDisplayMixin {
 
 	@Inject(at = @At("HEAD"), method = "of", cancellable = true)
