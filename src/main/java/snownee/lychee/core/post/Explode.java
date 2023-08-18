@@ -64,13 +64,7 @@ public class Explode extends PostAction {
 
 	@Override
 	public Component getDisplayName() {
-		String s = switch (blockInteraction) {
-			case KEEP -> "keep";
-			case DESTROY_WITH_DECAY -> "destroy_with_decay";
-			case DESTROY -> "destroy";
-			default -> throw new IllegalArgumentException("Unexpected value: " + blockInteraction);
-		};
-		return Component.translatable(CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()) + "." + s);
+		return Component.translatable(CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()) + "." + blockInteraction.name().toLowerCase(Locale.ENGLISH));
 	}
 
 	public static class Type extends PostActionType<Explode> {
