@@ -24,6 +24,10 @@ import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.Version;
+import net.fabricmc.loader.api.VersionParsingException;
+import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -348,18 +352,18 @@ public class CommonProxy implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-/*		if (hasKiwi) {
+		if (hasKiwi) {
 			FabricLoader.getInstance().getModContainer("kiwi").map(ModContainer::getMetadata).map(ModMetadata::getVersion).ifPresent(version -> {
 				try {
 					Version minVersion = Version.parse("11.1.1");
 					if (minVersion.compareTo(version) > 0) {
-						throw new RuntimeException("Kiwi version is too low! Please update to at least 11.1.1");
+						throw new RuntimeException("Kiwi version is too low! Please update to at least 11.1.1. You have %s".formatted(version));
 					}
 				} catch (VersionParsingException e) {
 					throw new RuntimeException(e);
 				}
 			});
-		}*/
+		}
 
 		RecipeTypes.init();
 		LycheeTags.init();
