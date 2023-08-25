@@ -1,0 +1,10 @@
+{
+	"replace": false,
+	"values": [
+		"iron_block",
+		{
+			"id": "#forge:storage_blocks/iron",
+			"required": false
+		}
+	]
+}

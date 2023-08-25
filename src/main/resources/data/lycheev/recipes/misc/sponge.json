@@ -16,7 +16,7 @@
 		},
 		{
 			"type": "execute",
-			"command": "playsound minecraft:block.fire.extinguish block @p[distance=..10] ~ ~ ~ 0.3",
+			"command": "playsound minecraft:block.fire.extinguish block @a[distance=..10] ~ ~ ~ 0.3",
 			"hide": true,
 			"repeat": false
 		}
