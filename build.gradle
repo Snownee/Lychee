@@ -247,6 +247,8 @@ processResources {
 jar {
     exclude '/data/lychee/recipes'
     exclude '/data/lychee/predicates'
+    exclude '/data/lycheev'
+    exclude '/data/c'
 
     exclude '/com'
     exclude '/team'

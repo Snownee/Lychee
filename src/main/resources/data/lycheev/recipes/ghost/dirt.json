@@ -1,0 +1,17 @@
+{
+	"type": "lychee:block_interacting",
+	"ghost": true,
+	"post": [
+		{
+			"type": "place",
+			"block": "dirt"
+		},
+		{
+			"type": "damage_item"
+		}
+	],
+	"item_in": {
+		"tag": "c:hoes"
+	},
+	"block_in": "coarse_dirt"
+}

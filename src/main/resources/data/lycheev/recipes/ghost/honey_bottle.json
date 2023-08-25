@@ -1,0 +1,19 @@
+{
+	"type": "lychee:block_interacting",
+	"ghost": true,
+	"post": [
+		{
+			"type": "drop_item",
+			"item": "honey_bottle"
+		}
+	],
+	"item_in": {
+		"item": "glass_bottle"
+	},
+	"block_in": {
+		"tag": "beehives",
+		"state": {
+			"honey_level": 5
+		}
+	}
+}
