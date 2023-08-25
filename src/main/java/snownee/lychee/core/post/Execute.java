@@ -20,15 +20,17 @@ import snownee.lychee.core.recipe.ILycheeRecipe;
 
 public class Execute extends PostAction {
 
-	public static final Execute DUMMY = new Execute("", false);
+	public static final Execute DUMMY = new Execute("", false, false);
 	public static final Component DEFAULT_NAME = Component.literal(Lychee.ID);
 
 	private final String command;
 	private final boolean hide;
+	private final boolean repeat;
 
-	public Execute(String command, boolean hide) {
+	public Execute(String command, boolean hide, boolean repeat) {
 		this.command = command;
 		this.hide = hide;
+		this.repeat = repeat;
 	}
 
 	@Override
@@ -45,6 +47,9 @@ public class Execute extends PostAction {
 	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		if (command.isEmpty()) {
 			return;
+		}
+		if (!repeat) {
+			times = 1;
 		}
 		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
 		if (pos == null) {
@@ -76,7 +81,7 @@ public class Execute extends PostAction {
 
 		@Override
 		public Execute fromJson(JsonObject o) {
-			return new Execute(GsonHelper.getAsString(o, "command"), GsonHelper.getAsBoolean(o, "hide", false));
+			return new Execute(GsonHelper.getAsString(o, "command"), GsonHelper.getAsBoolean(o, "hide", false), GsonHelper.getAsBoolean(o, "repeat", true));
 		}
 
 		@Override
@@ -85,19 +90,22 @@ public class Execute extends PostAction {
 			if (action.hide) {
 				o.addProperty("hide", true);
 			}
+			if (!action.repeat) {
+				o.addProperty("repeat", false);
+			}
 		}
 
 		@Override
 		public Execute fromNetwork(FriendlyByteBuf buf) {
 			if (buf.readBoolean()) {
-				return new Execute("", false);
+				return new Execute("", false, false);
 			}
 			return DUMMY;
 		}
 
 		@Override
 		public void toNetwork(Execute action, FriendlyByteBuf buf) {
-			buf.writeBoolean(action.getConditions().isEmpty());
+			buf.writeBoolean(!action.getConditions().isEmpty());
 		}
 
 	}
