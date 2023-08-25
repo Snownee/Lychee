@@ -1,0 +1,31 @@
+{
+	"type": "lychee:block_interacting",
+	"ghost": true,
+	"post": [
+		{
+			"type": "place",
+			"block": {
+				"blocks": [
+					"campfire"
+				],
+				"state": {
+					"lit": false
+				}
+			}
+		},
+		{
+			"type": "damage_item"
+		}
+	],
+	"item_in": {
+		"tag": "c:shovels"
+	},
+	"block_in": {
+		"blocks": [
+			"campfire"
+		],
+		"state": {
+			"lit": true
+		}
+	}
+}

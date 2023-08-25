@@ -1,0 +1,13 @@
+{
+	"type": "lychee:block_interacting",
+	"ghost": true,
+	"post": {
+		"type": "place",
+		"block": "mud"
+	},
+	"item_in": {
+		"item": "potion",
+		"lychee:tag": "{Potion:'minecraft:water'}"
+	},
+	"block_in": "#convertable_to_mud"
+}

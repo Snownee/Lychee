@@ -1,0 +1,9 @@
+{
+	"type": "lychee:block_crushing",
+	"landing_block": "prismarine",
+	"post": {
+		"type": "drop_item",
+		"item": "prismarine_shard",
+		"count": 4
+	}
+}

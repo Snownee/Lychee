@@ -1,0 +1,13 @@
+{
+	"type": "lychee:block_crushing",
+	"item_in": {
+		"item": "blaze_rod"
+	},
+	"post": [
+		{
+			"type": "drop_item",
+			"item": "blaze_powder",
+			"count": 3
+		}
+	]
+}

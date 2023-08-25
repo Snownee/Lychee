@@ -128,6 +128,8 @@ jar {
     exclude '/data/lychee/recipes'
     exclude '/data/lychee/predicates'
     exclude '/data/lychee/lychee_fragments'
+    exclude '/data/lycheev'
+    exclude '/data/c'
 
     exclude '**/*.bat'
     from("LICENSE") {

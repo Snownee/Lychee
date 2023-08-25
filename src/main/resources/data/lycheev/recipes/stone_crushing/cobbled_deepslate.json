@@ -1,0 +1,8 @@
+{
+	"type": "lychee:block_crushing",
+	"landing_block": "deepslate",
+	"post": {
+		"type": "place",
+		"block": "cobbled_deepslate"
+	}
+}
