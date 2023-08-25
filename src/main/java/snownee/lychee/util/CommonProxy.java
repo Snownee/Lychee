@@ -96,10 +96,14 @@ public class CommonProxy {
 		modEventBus.addListener(CommonProxy::register);
 		modEventBus.addListener(CommonProxy::registerRecipeBookCategories);
 		MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.RightClickBlock.class, event -> {
-			event.setCanceled(InteractionRecipeMod.useItemOn(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec()).consumesAction());
+			InteractionResult result = InteractionRecipeMod.useItemOn(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
+			event.setCanceled(result.consumesAction());
+			event.setCancellationResult(result);
 		});
 		MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.LeftClickBlock.class, event -> {
-			event.setCanceled(InteractionRecipeMod.clickItemOn(event.getEntity(), event.getLevel(), event.getHand(), event.getPos(), event.getFace()).consumesAction());
+			InteractionResult result = InteractionRecipeMod.clickItemOn(event.getEntity(), event.getLevel(), event.getHand(), event.getPos(), event.getFace());
+			event.setCanceled(result.consumesAction());
+			event.setCancellationResult(result);
 		});
 		if (isPhysicalClient()) {
 			ClientProxy.init();
