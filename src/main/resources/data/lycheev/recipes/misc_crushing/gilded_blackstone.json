@@ -1,0 +1,11 @@
+{
+	"type": "lychee:block_crushing",
+	"landing_block": "blackstone",
+	"item_in": {
+		"item": "gold_ingot"
+	},
+	"post": {
+		"type": "place",
+		"block": "gilded_blackstone"
+	}
+}

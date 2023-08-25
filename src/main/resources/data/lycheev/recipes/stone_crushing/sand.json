@@ -1,0 +1,10 @@
+{
+	"type": "lychee:block_crushing",
+	"landing_block": {
+		"tag": "c:yellow_sandstones"
+	},
+	"post": {
+		"type": "place",
+		"block": "sand"
+	}
+}
