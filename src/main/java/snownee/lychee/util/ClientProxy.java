@@ -78,9 +78,9 @@ public class ClientProxy implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_DRIPPING, ParticleFactories.Dripping::new);
-		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_FALLING, ParticleFactories.Falling::new);
-		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_SPLASH, ParticleFactories.Splash::new);
+		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_DRIPPING, $ -> new ParticleFactories.Dripping($));
+		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_FALLING, $ -> new ParticleFactories.Falling($));
+		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_SPLASH, $ -> new ParticleFactories.Splash($));
 
 		PostActionRenderer.register(PostActionTypes.DROP_ITEM, (ItemStackPostActionRenderer<DropItem>) action -> action.stack);
 		PostActionRenderer.register(PostActionTypes.SET_ITEM, (ItemStackPostActionRenderer<SetItem>) action -> action.stack);
