@@ -100,7 +100,6 @@ public class CommonProxy implements ModInitializer {
 	});
 	private static final Random RANDOM = new Random();
 	public static boolean hasKiwi = isModLoaded("kiwi");
-	public static boolean hasIngredientExtAPI = isModLoaded("ingredient-extension-api");
 	public static boolean hasDFLib = isModLoaded("dripstone_fluid_lib");
 	private static RecipeManager recipeManager;
 
