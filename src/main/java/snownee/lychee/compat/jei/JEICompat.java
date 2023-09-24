@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import me.shedaniel.rei.plugincompatibilities.api.REIPluginCompatIgnore;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
@@ -65,6 +66,7 @@ import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.crafting.ShapedCraftingRecipe;
 import snownee.lychee.util.CommonProxy;
 
+@REIPluginCompatIgnore
 @JeiPlugin
 public class JEICompat implements IModPlugin {
 

@@ -236,6 +236,7 @@ dependencies {
 
     implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.3.103")
     implementation fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:9.1.643")
+    compileOnly "me.shedaniel:REIPluginCompatibilities-forge-annotations:9.+"
 }
 
 processResources {
