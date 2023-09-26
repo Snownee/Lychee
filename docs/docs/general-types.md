@@ -79,4 +79,4 @@ A BlockPredicate is a predicate of StateDefinition.
 
 ## LocationPredicate
 
-Predicate applied to location. Please refer to the [Minecraft Wiki](https://minecraft.fandom.com/wiki/Predicate).
+Predicate applied to location. Please refer to the [Minecraft Wiki](https://minecraft.wiki/w/Predicate).
