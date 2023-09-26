@@ -148,7 +148,7 @@ Compares the current game time (the age of the world in game ticks) against give
 
 !!! note "Format"
 
-    See [Minecraft Wiki](https://minecraft.fandom.com/wiki/Predicate). Only supports constant value.
+    See [Minecraft Wiki](https://minecraft.wiki/w/Predicate). Only supports constant value.
 
 ??? example
 
