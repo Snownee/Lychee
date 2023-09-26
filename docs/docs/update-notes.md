@@ -1,5 +1,9 @@
 # Update Notes
 
+## 3.14
+
+ - Added `repeat` option to `execute` action type.
+
 ## 3.13
 
  - Added native REI support for Forge

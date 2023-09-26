@@ -484,7 +484,7 @@ Default behavior: Block drops items from loot table.
 
 *Since: 3.2*
 
-Event when a block is randomly ticked. [(Wiki about random tick)](https://minecraft.fandom.com/wiki/Tick#Random_tick)
+Event when a block is randomly ticked. [(Wiki about random tick)](https://minecraft.wiki/w/Tick#Random_tick)
 
 This recipe type is not [repeatable](concepts.md#repeatability).
 

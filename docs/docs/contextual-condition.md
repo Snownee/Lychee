@@ -167,7 +167,7 @@ Compares the current game time (the age of the world in game ticks) against give
     | value  | the time            | [IntBounds](general-types.md#intbounds) |
     | period | see wiki ^optional^ | int                                     |
 
-    See [Minecraft Wiki](https://minecraft.fandom.com/wiki/Predicate). Only supports constant value.
+    See [Minecraft Wiki](https://minecraft.wiki/w/Predicate). Only supports constant value.
 
 ??? example
 

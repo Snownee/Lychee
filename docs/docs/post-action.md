@@ -97,11 +97,12 @@ Executes a command.
 
 !!! note "Format"
 
-    | Name    | Description                                                      | Type / Literal |
-    | ------- | ---------------------------------------------------------------- | -------------- |
-    | type    | type                                                             | "execute"      |
-    | command | the command to run                                               | string         |
-    | hide    | hide this action in JEI/REI ^optional^{ title="default: false" } | boolean        |
+    | Name    | Description                                                                               | Type / Literal |
+    | ------- | ----------------------------------------------------------------------------------------- | -------------- |
+    | type    | type                                                                                      | "execute"      |
+    | command | the command to run                                                                        | string         |
+    | hide    | hide this action in JEI/REI ^optional^{ title="default: false" }                          | boolean        |
+    | repeat  | execute commands by repetition count^since&nbsp;3.14^ ^optional^{ title="default: true" } | boolean        |
 
 ??? example
 
@@ -115,7 +116,7 @@ Executes a command.
 	}
 	```
 
-	For how to use `particle` command, please read the [wiki](https://minecraft.fandom.com/wiki/Commands/particle).
+	For how to use `particle` command, please read the [wiki](https://minecraft.wiki/w/Commands/particle).
 
 ### Drop Experience
 
