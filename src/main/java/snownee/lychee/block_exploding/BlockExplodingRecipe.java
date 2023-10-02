@@ -1,26 +1,17 @@
 package snownee.lychee.block_exploding;
 
-import java.util.List;
-import java.util.function.Supplier;
-
-import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
-import snownee.lychee.mixin.LootParamsBuilderAccess;
 
 public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> implements BlockKeyRecipe<BlockExplodingRecipe> {
 
@@ -28,24 +19,6 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingContext> im
 
 	public BlockExplodingRecipe(ResourceLocation id) {
 		super(id);
-	}
-
-	public static List<ItemStack> on(Level level, BlockState state, LootParams.Builder lootBuilder, Supplier<List<ItemStack>> defaultDrops) {
-		if (RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
-			return defaultDrops.get();
-		}
-		BlockExplodingContext.Builder builder = new BlockExplodingContext.Builder(level);
-		builder.setParams(((LootParamsBuilderAccess) lootBuilder).getParams());
-		builder.withParameter(LootContextParams.BLOCK_STATE, state);
-//		builder.withRandom(((LootContextBuilderAccess) lootBuilder).getRandom());
-		BlockExplodingContext ctx = builder.create(RecipeTypes.BLOCK_EXPLODING.contextParamSet);
-		RecipeTypes.BLOCK_EXPLODING.process(level, state, () -> ctx);
-		List<ItemStack> drops = Lists.newArrayList();
-		if (ctx.runtime.doDefault) {
-			drops.addAll(defaultDrops.get());
-		}
-		drops.addAll(ctx.itemHolders.tempList);
-		return drops;
 	}
 
 	@Override

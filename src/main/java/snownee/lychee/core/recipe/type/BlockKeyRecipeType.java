@@ -1,7 +1,6 @@
 package snownee.lychee.core.recipe.type;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -93,7 +92,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		}
 		Level level = player.level();
 		BlockState blockstate = level.getBlockState(pos);
-		Collection<T> recipes = recipesByBlock.getOrDefault(blockstate.getBlock(), Collections.EMPTY_LIST);
+		Collection<T> recipes = recipesByBlock.getOrDefault(blockstate.getBlock(), List.of());
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
 			return Optional.empty();
 		}
@@ -135,7 +134,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 
 	@Nullable
 	public Pair<C, T> process(Level level, BlockState state, Supplier<C> ctxSupplier) {
-		Collection<T> recipes = recipesByBlock.getOrDefault(state.getBlock(), Collections.EMPTY_LIST);
+		Collection<T> recipes = recipesByBlock.getOrDefault(state.getBlock(), List.of());
 		Iterable<T> iterable = Iterables.concat(recipes, anyBlockRecipes);
 		C ctx = null;
 		for (T recipe : iterable) {
