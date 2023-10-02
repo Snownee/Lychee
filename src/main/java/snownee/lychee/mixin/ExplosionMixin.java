@@ -68,6 +68,10 @@ public abstract class ExplosionMixin {
 
 	@Inject(method = "method_24024", at = @At("HEAD"), cancellable = true, remap = false)
 	private static void lychee_deferAddingDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> objectArrayList, BlockPos blockPos, ItemStack itemStack, CallbackInfo ci) {
+		if (itemStack.isEmpty()) {
+			ci.cancel();
+			return;
+		}
 		var pair = CONTEXT.get();
 		if (pair.getSecond() != null) {
 			pair.getSecond().add(itemStack);
@@ -90,9 +94,9 @@ public abstract class ExplosionMixin {
 	@Inject(
 			at = @At(
 					"TAIL"
-			), method = "Lnet/minecraft/world/level/Explosion;explode()V", locals = LocalCapture.CAPTURE_FAILHARD
+			), method = "explode()V", locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void lychee_explode(CallbackInfo ci, Set<BlockPos> set, int i, float f2, int k1, int l1, int i2, int i1, int j2, int j1, List<Entity> list) {
+	private void lychee_explode(CallbackInfo ci, Set set, float q, int k, int l, int r, int s, int t, int u, List list, Vec3 vec3, int v) {
 		ItemExplodingRecipe.on(level, x, y, z, list, radius);
 	}
 
