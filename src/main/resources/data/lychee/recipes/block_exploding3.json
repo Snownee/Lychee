@@ -1,0 +1,14 @@
+{
+    "type": "lychee:block_exploding",
+    "block_in": "gold_block",
+    "post": [
+        {
+            "type": "place",
+            "block": "diamond_block"
+        },
+        {
+            "type": "drop_item",
+            "item": "diamond_block"
+        }
+    ]
+}
