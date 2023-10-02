@@ -31,6 +31,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.block_exploding.BlockExplodingContext;
+import snownee.lychee.core.input.ItemHolderCollection;
 import snownee.lychee.item_exploding.ItemExplodingRecipe;
 
 @Mixin(value = Explosion.class, priority = 700)
@@ -118,12 +119,16 @@ public abstract class ExplosionMixin {
 			return;
 		}
 		var pair = CONTEXT.get();
-		BlockExplodingContext.Builder ctxBuilder = pair.getFirst();
-		if (ctxBuilder == null) {
+		BlockExplodingContext.Builder builder = pair.getFirst();
+		if (builder == null) {
 			return;
 		}
 		pair.setFirst(null);
-		var result = RecipeTypes.BLOCK_EXPLODING.process(level, state, () -> ctxBuilder.create(RecipeTypes.BLOCK_EXPLODING.contextParamSet));
+		var result = RecipeTypes.BLOCK_EXPLODING.process(level, state, () -> {
+			BlockExplodingContext ctx = builder.create(RecipeTypes.BLOCK_EXPLODING.contextParamSet);
+			ctx.itemHolders = ItemHolderCollection.InWorld.of();
+			return ctx;
+		});
 		if (result == null) {
 			return;
 		}
