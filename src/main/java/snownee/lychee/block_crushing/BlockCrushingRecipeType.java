@@ -48,15 +48,15 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 			return;
 		}
 		AABB box = entity.getBoundingBox();
-		Level level = entity.level;
+		Level level = entity.level();
 		BlockState landingBlock = level.getBlockState(pos);
 		if (landingBlock.is(LycheeTags.EXTEND_BOX)) {
 			box = box.minmax(new AABB(pos));
 		}
-		List<ItemEntity> itemEntities = entity.level.getEntitiesOfClass(ItemEntity.class, box, $ -> {
+		List<ItemEntity> itemEntities = entity.level().getEntitiesOfClass(ItemEntity.class, box, $ -> {
 			return $.isAlive() && validItems.contains($.getItem());
 		});
-		BlockCrushingContext.Builder ctxBuilder = new BlockCrushingContext.Builder(entity.level, itemEntities, entity);
+		BlockCrushingContext.Builder ctxBuilder = new BlockCrushingContext.Builder(entity.level(), itemEntities, entity);
 		ctxBuilder.withParameter(LootContextParams.ORIGIN, entity.position());
 		ctxBuilder.withParameter(LootContextParams.THIS_ENTITY, entity);
 		ctxBuilder.withParameter(LootContextParams.BLOCK_STATE, landingBlock);

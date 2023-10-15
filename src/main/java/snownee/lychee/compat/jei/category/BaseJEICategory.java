@@ -27,6 +27,7 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.runtime.IRecipesGui;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -153,12 +154,13 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		}
 	}
 
-	public static void drawInfoBadge(ILycheeRecipe<?> recipe, PoseStack matrixStack, double mouseX, double mouseY, Rect2i rect) {
+	public static void drawInfoBadge(ILycheeRecipe<?> recipe, GuiGraphics graphics, double mouseX, double mouseY, Rect2i rect) {
 		if (hasInfoBadge(recipe)) {
+			PoseStack matrixStack = graphics.pose();
 			matrixStack.pushPose();
 			matrixStack.translate(rect.getX(), rect.getY(), 0);
 			matrixStack.scale(.5F, .5F, .5F);
-			AllGuiTextures.INFO.render(matrixStack, 0, 0);
+			AllGuiTextures.INFO.render(graphics, 0, 0);
 			matrixStack.popPose();
 		}
 	}
@@ -235,12 +237,12 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 	}
 
 	@Override
-	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
+	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
+		drawInfoBadge(recipe, graphics, mouseX, mouseY);
 	}
 
-	public void drawInfoBadge(T recipe, PoseStack matrixStack, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, matrixStack, mouseX, mouseY, infoRect);
+	public void drawInfoBadge(T recipe, GuiGraphics graphics, double mouseX, double mouseY) {
+		drawInfoBadge(recipe, graphics, mouseX, mouseY, infoRect);
 	}
 
 	@Override

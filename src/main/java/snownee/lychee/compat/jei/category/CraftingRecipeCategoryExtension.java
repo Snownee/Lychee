@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -29,8 +29,8 @@ public class CraftingRecipeCategoryExtension implements ICraftingCategoryExtensi
 	}
 
 	@Override
-	public void drawInfo(int recipeWidth, int recipeHeight, PoseStack stack, double mouseX, double mouseY) {
-		BaseJEICategory.drawInfoBadge(recipe, stack, mouseX, mouseY, infoRect);
+	public void drawInfo(int recipeWidth, int recipeHeight, GuiGraphics graphics, double mouseX, double mouseY) {
+		BaseJEICategory.drawInfoBadge(recipe, graphics, mouseX, mouseY, infoRect);
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class CraftingRecipeCategoryExtension implements ICraftingCategoryExtensi
 	public void setRecipe(IRecipeLayoutBuilder builder, ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
 		CraftingRecipe craftingRecipe = (CraftingRecipe) recipe;
 		List<List<ItemStack>> inputs = craftingRecipe.getIngredients().stream().map(ingredient -> List.of(ingredient.getItems())).toList();
-		ItemStack resultItem = craftingRecipe.getResultItem();
+		ItemStack resultItem = craftingRecipe.getResultItem(Minecraft.getInstance().level.registryAccess());
 
 		int width = getWidth();
 		int height = getHeight();

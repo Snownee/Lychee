@@ -11,7 +11,7 @@ import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
@@ -54,7 +54,7 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 		BlockCrushingRecipe recipe = display.recipe;
 		List<Widget> widgets = super.setupDisplay(display, bounds);
 		drawInfoBadge(widgets, display, startPoint);
-		widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
+		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 			int x = recipe.getIngredients().isEmpty() ? 41 : 77;
 			boolean anyLandingBlock = recipe.getLandingBlock() == BlockPredicate.ANY;
 			int y = anyLandingBlock ? 45 : 33;
@@ -63,6 +63,7 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 			ticks = Math.min(1, ticks);
 			ticks = ticks * ticks * ticks * ticks;
 
+			PoseStack matrixStack = graphics.pose();
 			matrixStack.pushPose();
 			matrixStack.translate(startPoint.x, startPoint.y, 0);
 
@@ -76,15 +77,15 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 				}
 				matrixStack.scale(shadow, shadow, shadow);
 				matrixStack.translate(-26, -5.5, 0);
-				AllGuiTextures.JEI_SHADOW.render(matrixStack, 0, 0);
+				AllGuiTextures.JEI_SHADOW.render(graphics, 0, 0);
 				matrixStack.popPose();
 			}
 
 			matrixStack.pushPose();
 			matrixStack.translate(x, y - 13, 0);
-			GuiGameElement.of(getFallingBlock(recipe)).scale(15).atLocal(0, ticks * 1.3 - 1.3, 2).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).at(0, 0, 300).render(matrixStack);
+			GuiGameElement.of(getFallingBlock(recipe)).scale(15).atLocal(0, ticks * 1.3 - 1.3, 2).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).at(0, 0, 300).render(graphics);
 			if (!landingBlock.isAir()) {
-				GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 2).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).render(matrixStack);
+				GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 2).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).render(graphics);
 			}
 			matrixStack.popPose();
 			matrixStack.popPose();

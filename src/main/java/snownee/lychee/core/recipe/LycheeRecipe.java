@@ -19,7 +19,8 @@ import com.google.gson.JsonObject;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
-import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -68,12 +69,12 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	}
 
 	@Override
-	public ItemStack assemble(C inv) {
+	public ItemStack assemble(C inv, RegistryAccess registryAccess) {
 		return ItemStack.EMPTY;
 	}
 
 	@Override
-	public ItemStack getResultItem() {
+	public ItemStack getResultItem(RegistryAccess registryAccess) {
 		return ItemStack.EMPTY;
 	}
 
@@ -254,7 +255,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 		public abstract void toNetwork0(FriendlyByteBuf pBuffer, R pRecipe);
 
 		public ResourceLocation getRegistryName() {
-			return Registry.RECIPE_SERIALIZER.getKey(this);
+			return BuiltInRegistries.RECIPE_SERIALIZER.getKey(this);
 		}
 
 	}

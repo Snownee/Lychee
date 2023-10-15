@@ -11,8 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.PacketDistributor.TargetPoint;
+import snownee.kiwi.network.KPacketTarget;
 import snownee.kiwi.network.KiwiPacket;
 import snownee.kiwi.network.KiwiPacket.Direction;
 import snownee.kiwi.network.PacketHandler;
@@ -37,7 +36,7 @@ public class SCustomLevelEventPacket extends PacketHandler {
 	}
 
 	public static void sendItemParticles(ItemStack stack, ServerLevel level, Vec3 pos) {
-		I.send(PacketDistributor.NEAR.with(TargetPoint.p(pos.x, pos.y, pos.z, 16, level.dimension())), buf -> {
+		I.send(KPacketTarget.around(level, pos, 16), buf -> {
 			buf.writeItem(stack);
 			buf.writeFloat((float) pos.x);
 			buf.writeFloat((float) pos.y);

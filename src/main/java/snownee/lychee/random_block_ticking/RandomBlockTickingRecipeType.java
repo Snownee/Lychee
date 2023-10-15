@@ -3,7 +3,7 @@ package snownee.lychee.random_block_ticking;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.Block;
@@ -29,7 +29,7 @@ public class RandomBlockTickingRecipeType extends BlockKeyRecipeType<LycheeConte
 		if (prevEmpty && isEmpty()) {
 			return;
 		}
-		for (Block block : Registry.BLOCK) {
+		for (Block block : BuiltInRegistries.BLOCK) {
 			((RandomlyTickable) block).lychee$setTickable(has(block));
 		}
 		if (CommonProxy.hasKiwi) {

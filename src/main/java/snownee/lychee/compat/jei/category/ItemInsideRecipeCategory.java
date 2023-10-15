@@ -2,10 +2,9 @@ package snownee.lychee.compat.jei.category;
 
 import java.util.List;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.core.ItemShapelessContext;
@@ -23,12 +22,12 @@ public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemShape
 	}
 
 	@Override
-	public void drawExtra(ItemInsideRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY, int centerX) {
-		super.drawExtra(recipe, matrixStack, mouseX, mouseY, centerX);
+	public void drawExtra(ItemInsideRecipe recipe, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
+		super.drawExtra(recipe, graphics, mouseX, mouseY, centerX);
 		if (recipe.getTime() > 0) {
 			Component component = ClientProxy.format("tip.lychee.sec", recipe.getTime());
 			Font font = Minecraft.getInstance().font;
-			font.draw(matrixStack, component, methodRect.getX() + 10 - font.width(component) / 2, methodRect.getY() - 8, 0x666666);
+			graphics.drawCenteredString(font, component, methodRect.getX() + 10, methodRect.getY() - 8, 0x666666);
 		}
 	}
 

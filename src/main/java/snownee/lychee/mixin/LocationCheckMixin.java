@@ -12,7 +12,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 
 import net.minecraft.advancements.critereon.LocationPredicate;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
@@ -33,7 +33,7 @@ public class LocationCheckMixin {
 		object = object.getAsJsonObject("predicate");
 		if (object.has("lychee:biome_tag")) {
 			ResourceLocation id = new ResourceLocation(GsonHelper.getAsString(object, "lychee:biome_tag"));
-			((LocationPredicateHelper) predicate).lychee$setBiomeTag(TagKey.create(Registry.BIOME_REGISTRY, id));
+			((LocationPredicateHelper) predicate).lychee$setBiomeTag(TagKey.create(Registries.BIOME, id));
 		}
 	}
 

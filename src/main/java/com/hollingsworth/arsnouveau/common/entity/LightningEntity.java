@@ -16,7 +16,7 @@ public class LightningEntity extends LightningBolt {
 
 	@Override
 	public void tick() {
-		thunderHit((ServerLevel) level, this);
+		thunderHit((ServerLevel) level(), this);
 	}
 
 }

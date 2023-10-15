@@ -10,15 +10,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import snownee.lychee.Lychee;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.core.post.CycleStatePropertyPostActionRenderer;
 import snownee.lychee.client.core.post.IfPostActionRenderer;
@@ -82,17 +78,10 @@ public interface ClientProxy {
 
 	static void init() {
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-		modEventBus.addListener(EventPriority.NORMAL, false, TextureStitchEvent.Pre.class, event -> {
-			if (event.getAtlas().location().equals(InventoryMenu.BLOCK_ATLAS)) {
-				for (int i = 0; i <= 3; i++) {
-					event.addSprite(new ResourceLocation(Lychee.ID, "particle/splash_" + i));
-				}
-			}
-		});
-		modEventBus.addListener(EventPriority.NORMAL, false, RegisterParticleProvidersEvent.class, event -> {
-			event.register(DripstoneRecipeMod.DRIPSTONE_DRIPPING, ParticleFactories.Dripping::new);
-			event.register(DripstoneRecipeMod.DRIPSTONE_FALLING, ParticleFactories.Falling::new);
-			event.register(DripstoneRecipeMod.DRIPSTONE_SPLASH, ParticleFactories.Splash::new);
+		modEventBus.addListener((RegisterParticleProvidersEvent event) -> {
+			event.registerSpriteSet(DripstoneRecipeMod.DRIPSTONE_DRIPPING, ParticleFactories.Dripping::new);
+			event.registerSpriteSet(DripstoneRecipeMod.DRIPSTONE_FALLING, ParticleFactories.Falling::new);
+			event.registerSpriteSet(DripstoneRecipeMod.DRIPSTONE_SPLASH, ParticleFactories.Splash::new);
 		});
 	}
 

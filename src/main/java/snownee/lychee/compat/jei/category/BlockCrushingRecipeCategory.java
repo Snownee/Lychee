@@ -13,6 +13,7 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Items;
@@ -57,8 +58,8 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void draw(BlockCrushingRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
+	public void draw(BlockCrushingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
+		drawInfoBadge(recipe, graphics, mouseX, mouseY);
 		BlockState fallingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
 		BlockState landingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
 		int x = recipe.getIngredients().isEmpty() ? 41 : 77;
@@ -69,6 +70,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 		ticks = Math.min(1, ticks);
 		ticks = ticks * ticks * ticks * ticks;
 
+		PoseStack matrixStack = graphics.pose();
 		if (landingBlock.getLightEmission() < 5) {
 			matrixStack.pushPose();
 			matrixStack.translate(x + 10.5, y + (anyLandingBlock ? 1 : 16), 0);
@@ -78,15 +80,15 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 			}
 			matrixStack.scale(shadow, shadow, shadow);
 			matrixStack.translate(-26, -5.5, 0);
-			AllGuiTextures.JEI_SHADOW.render(matrixStack, 0, 0);
+			AllGuiTextures.JEI_SHADOW.render(graphics, 0, 0);
 			matrixStack.popPose();
 		}
 
 		matrixStack.pushPose();
 		matrixStack.translate(x, y - 13, 0);
-		GuiGameElement.of(fallingBlock).scale(15).atLocal(0, ticks * 1.3 - 1.3, 0).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).at(0, 0, 300).render(matrixStack);
+		GuiGameElement.of(fallingBlock).scale(15).atLocal(0, ticks * 1.3 - 1.3, 0).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).at(0, 0, 300).render(graphics);
 		if (!landingBlock.isAir()) {
-			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 0).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).render(matrixStack);
+			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 0).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).render(graphics);
 		}
 		matrixStack.popPose();
 	}

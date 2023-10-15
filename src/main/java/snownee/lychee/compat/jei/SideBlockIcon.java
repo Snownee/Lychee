@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
@@ -21,12 +22,13 @@ public class SideBlockIcon extends RenderElement {
 	}
 
 	@Override
-	public void render(PoseStack ms) {
+	public void render(GuiGraphics graphics) {
+		PoseStack ms = graphics.pose();
 		ms.pushPose();
 		ms.translate(x, y, z);
 		//		ms.scale(.75F, .75F, .75F);
 		ms.scale(.625F, .625F, .625F);
-		mainIcon.render(ms, 0, 0);
+		mainIcon.render(graphics, 0, 0);
 		ms.popPose();
 		/* off */
 		GuiGameElement.of(blockProvider.get())
@@ -34,7 +36,7 @@ public class SideBlockIcon extends RenderElement {
 				.scale(7)
 				.rotateBlock(30, 202.5, 0)
 				.at(x + 4, y + 2)
-				.render(ms);
+				.render(graphics);
 		/* on */
 	}
 

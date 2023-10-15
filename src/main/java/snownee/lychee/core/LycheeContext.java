@@ -21,6 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -101,10 +102,10 @@ public class LycheeContext extends EmptyContainer {
 	public LootContext toLootContext() {
 		if (cachedLootContext == null) {
 			lazyGetBlockEntity();
-			LootContext.Builder builder = new LootContext.Builder((ServerLevel) level);
-			builder.withRandom(random);
-			params.forEach((p, o) -> builder.withParameter((LootContextParam) p, o));
-			cachedLootContext = builder.create(LycheeLootContextParamSets.ALL);
+			LootParams.Builder paramsBuilder = new LootParams.Builder((ServerLevel) level);
+			params.forEach((p, o) -> paramsBuilder.withParameter((LootContextParam) p, o));
+			LootContext.Builder builder = new LootContext.Builder(paramsBuilder.create(LycheeLootContextParamSets.ALL));
+			cachedLootContext = builder.create(null);
 		}
 		return cachedLootContext;
 	}
@@ -115,7 +116,7 @@ public class LycheeContext extends EmptyContainer {
 		}
 		BlockPos pos = getParamOrNull(LycheeLootContextParams.BLOCK_POS);
 		if (pos == null) {
-			pos = new BlockPos(getParam(LootContextParams.ORIGIN));
+			pos = BlockPos.containing(getParam(LootContextParams.ORIGIN));
 			setParam(LycheeLootContextParams.BLOCK_POS, pos);
 		}
 		BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -171,7 +172,7 @@ public class LycheeContext extends EmptyContainer {
 	}
 
 	public static LycheeContext load(JsonObject jsonObject, LycheeMarker marker) {
-		var builder = new LycheeContext.Builder<>(marker.getEntity().level);
+		var builder = new LycheeContext.Builder<>(marker.getEntity().level());
 		builder.withParameter(LootContextParams.ORIGIN, marker.getEntity().position());
 		LycheeContext ctx = builder.create(LycheeLootContextParamSets.ALL);
 		ctx.runtime = new ActionRuntime();

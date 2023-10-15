@@ -2,13 +2,11 @@ package snownee.lychee.compat.rei.category;
 
 import java.util.List;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import snownee.lychee.compat.rei.display.BaseREIDisplay;
 import snownee.lychee.core.ItemShapelessContext;
@@ -48,8 +46,11 @@ public abstract class ItemShapelessRecipeCategory<C extends ItemShapelessContext
 
 	public void drawExtra(List<Widget> widgets, D display, Rectangle bounds) {
 		Rectangle iconBounds = new Rectangle(bounds.getCenterX() - 8, bounds.y + 19, 24, 24);
-		widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
-			icon.render(matrixStack, iconBounds, mouseX, mouseY, delta);
+		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
+			graphics.pose().pushPose();
+			graphics.pose().translate(0, 0, 100);
+			icon.render(graphics, iconBounds, mouseX, mouseY, delta);
+			graphics.pose().popPose();
 		}));
 	}
 

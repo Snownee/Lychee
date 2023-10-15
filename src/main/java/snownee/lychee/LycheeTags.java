@@ -1,8 +1,9 @@
 package snownee.lychee;
 
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -23,11 +24,15 @@ public final class LycheeTags {
 	public static final TagKey<Block> EXTEND_BOX = blockTag("extend_box");
 
 	public static TagKey<Item> itemTag(String path) {
-		return ItemTags.create(new ResourceLocation(Lychee.ID, path));
+		return tag(Registries.ITEM, path);
 	}
 
 	public static TagKey<Block> blockTag(String path) {
-		return BlockTags.create(new ResourceLocation(Lychee.ID, path));
+		return tag(Registries.BLOCK, path);
+	}
+
+	public static <T> TagKey<T> tag(ResourceKey<? extends Registry<T>> registryKey, String path) {
+		return TagKey.create(registryKey, new ResourceLocation(Lychee.ID, path));
 	}
 
 }

@@ -22,7 +22,7 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -130,11 +130,12 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 
 	public static void drawInfoBadge(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
 		if (!recipe.getContextualHolder().getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.getComment())) {
-			widgets.add(Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
+			widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
+				PoseStack matrixStack = graphics.pose();
 				matrixStack.pushPose();
 				matrixStack.translate(startPoint.x + rect.getX(), startPoint.y + rect.getY(), 0);
 				matrixStack.scale(.5F, .5F, .5F);
-				AllGuiTextures.INFO.render(matrixStack, 0, 0);
+				AllGuiTextures.INFO.render(graphics, 0, 0);
 				matrixStack.popPose();
 			}));
 			ReactiveWidget reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, rect));

@@ -21,11 +21,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions.Deserializer;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
@@ -52,7 +52,6 @@ import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -71,7 +70,7 @@ import snownee.lychee.PostActionTypes;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.IngredientInfo;
-import snownee.lychee.compat.ingredient_extension.AlwaysTrueIngredient;
+import snownee.lychee.compat.forge.AlwaysTrueIngredient;
 import snownee.lychee.core.contextual.CustomCondition;
 import snownee.lychee.core.post.CustomAction;
 import snownee.lychee.core.recipe.ILycheeRecipe;
@@ -95,12 +94,12 @@ public class CommonProxy {
 		modEventBus.addListener(CommonProxy::newRegistries);
 		modEventBus.addListener(CommonProxy::register);
 		modEventBus.addListener(CommonProxy::registerRecipeBookCategories);
-		MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.RightClickBlock.class, event -> {
+		MinecraftForge.EVENT_BUS.addListener((PlayerInteractEvent.RightClickBlock event) -> {
 			InteractionResult result = InteractionRecipeMod.useItemOn(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
 			event.setCanceled(result.consumesAction());
 			event.setCancellationResult(result);
 		});
-		MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.LeftClickBlock.class, event -> {
+		MinecraftForge.EVENT_BUS.addListener((PlayerInteractEvent.LeftClickBlock event) -> {
 			InteractionResult result = InteractionRecipeMod.clickItemOn(event.getEntity(), event.getLevel(), event.getHand(), event.getPos(), event.getFace());
 			event.setCanceled(result.consumesAction());
 			event.setCancellationResult(result);
@@ -228,11 +227,11 @@ public class CommonProxy {
 		buf.writeRegistryIdUnsafe(registry.registry(), entry);
 	}
 
-	public static <T> T readRegistryId(MappedRegistry<T> registry, FriendlyByteBuf buf) {
+	public static <T> T readRegistryId(Registry<T> registry, FriendlyByteBuf buf) {
 		return buf.readRegistryIdUnsafe(RegistryManager.ACTIVE.getRegistry(registry.key()));
 	}
 
-	public static <T> void writeRegistryId(MappedRegistry<T> registry, T entry, FriendlyByteBuf buf) {
+	public static <T> void writeRegistryId(Registry<T> registry, T entry, FriendlyByteBuf buf) {
 		buf.writeRegistryIdUnsafe(RegistryManager.ACTIVE.getRegistry(registry.key()), entry);
 	}
 
@@ -268,10 +267,10 @@ public class CommonProxy {
 		int j = Mth.floor(entity.getY() - 0.05); // vanilla is 0.2. carpet's height is 0.13
 		int k = Mth.floor(entity.getZ());
 		BlockPos blockpos = new BlockPos(i, j, k);
-		if (entity.level.isEmptyBlock(blockpos)) {
+		if (entity.level().isEmptyBlock(blockpos)) {
 			BlockPos blockpos1 = blockpos.below();
-			BlockState blockstate = entity.level.getBlockState(blockpos1);
-			if (blockstate.collisionExtendsVertically(entity.level, blockpos1, entity)) {
+			BlockState blockstate = entity.level().getBlockState(blockpos1);
+			if (blockstate.collisionExtendsVertically(entity.level(), blockpos1, entity)) {
 				return blockpos1;
 			}
 		}
@@ -323,7 +322,7 @@ public class CommonProxy {
 
 	@SuppressWarnings("deprecation")
 	public static void itemstackToJson(ItemStack stack, JsonObject jsonObject) {
-		jsonObject.addProperty("item", Registry.ITEM.getKey(stack.getItem()).toString());
+		jsonObject.addProperty("item", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
 		if (stack.hasTag()) {
 			jsonObject.addProperty("nbt", stack.getTag().toString());
 		}

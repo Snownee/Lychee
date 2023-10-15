@@ -1,4 +1,4 @@
-package snownee.lychee.compat.ingredient_extension;
+package snownee.lychee.compat.forge;
 
 import java.util.function.Supplier;
 

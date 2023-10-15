@@ -4,10 +4,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 
-@Mixin(CraftingContainer.class)
-public interface CraftingContainerAccess {
+@Mixin(TransientCraftingContainer.class)
+public interface TransientCraftingContainerAccess {
 
 	@Accessor
 	AbstractContainerMenu getMenu();

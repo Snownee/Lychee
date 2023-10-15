@@ -5,7 +5,7 @@ import java.util.Optional;
 import net.minecraft.advancements.critereon.LightPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds.Ints;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -30,15 +30,15 @@ public interface LocationPredicateHelper {
 		}
 		ResourceLocation dim = CommonProxy.readNullableRL(pBuffer);
 		if (dim != null) {
-			builder.setDimension(ResourceKey.create(Registry.DIMENSION_REGISTRY, dim));
+			builder.setDimension(ResourceKey.create(Registries.DIMENSION, dim));
 		}
 		ResourceLocation biome = CommonProxy.readNullableRL(pBuffer);
 		if (biome != null) {
-			builder.setBiome(ResourceKey.create(Registry.BIOME_REGISTRY, biome));
+			builder.setBiome(ResourceKey.create(Registries.BIOME, biome));
 		}
 		ResourceLocation feature = CommonProxy.readNullableRL(pBuffer);
 		if (feature != null) {
-			builder.setStructure(ResourceKey.create(Registry.STRUCTURE_REGISTRY, feature));
+			builder.setStructure(ResourceKey.create(Registries.STRUCTURE, feature));
 		}
 		byte smokey = pBuffer.readByte();
 		if (smokey < 2) {

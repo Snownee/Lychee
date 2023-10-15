@@ -221,10 +221,10 @@ dependencies {
     compileOnly(fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"))
     //// at runtime, use the full JEI jar for Forge
     implementation(fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}"))
-    implementation(fg.deobf("curse.maven:jade-324717:3987060"))
+    implementation(fg.deobf("curse.maven:jade-324717:4768593"))
 //
-    implementation(fg.deobf("curse.maven:kiwi-303657:3974084"))
-    annotationProcessor "curse.maven:kiwi-303657:3974084"
+    implementation(fg.deobf("curse.maven:kiwi-303657:4688568"))
+    annotationProcessor "curse.maven:kiwi-303657:4688568"
 
     // Examples using mod jars from ./libs
     //implementation fg.deobf("libs:Jade-1.17.1:3.1.6")
@@ -234,9 +234,9 @@ dependencies {
     implementation fg.deobf("dev.latvian.mods:rhino-forge:${rhino_version}")
     implementation fg.deobf("dev.architectury:architectury-forge:${architectury_version}")
 
-    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:8.3.103")
-    implementation fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:9.1.643")
-    compileOnly "me.shedaniel:REIPluginCompatibilities-forge-annotations:9.+"
+    implementation fg.deobf("me.shedaniel.cloth:cloth-config-forge:11.1.106")
+    implementation fg.deobf("me.shedaniel:RoughlyEnoughItems-forge:12.0.665")
+    compileOnly "me.shedaniel:REIPluginCompatibilities-forge-annotations:12.+"
 }
 
 processResources {
@@ -256,11 +256,9 @@ jar {
     manifest {
         attributes([
                 "Specification-Title"     : mod_id,
-                "Specification-Vendor"    : mod_authors,
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : mod_version,
-                "Implementation-Vendor"   : mod_authors,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "MixinConfigs"            : "${mod_id}.mixins.json"
         ])
@@ -293,7 +291,7 @@ unifiedPublishing {
         version = project.mod_version // Optional, Inferred from project by default
         changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "" // Optional, in markdown format
         releaseType = project.release_type // Optional, use "release", "beta" or "alpha"
-        gameVersions = ["1.19.2"]
+        gameVersions = ["1.20", "1.20.1"]
         gameLoaders = ["forge"]
 
         mainPublication tasks.jar // Declares the publicated jar

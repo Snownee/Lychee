@@ -12,6 +12,7 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -50,32 +51,33 @@ public class DripstoneRecipeCategory extends BaseJEICategory<DripstoneContext, D
 	}
 
 	@Override
-	public void draw(DripstoneRecipe recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
+	public void draw(DripstoneRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
+		drawInfoBadge(recipe, graphics, mouseX, mouseY);
 		BlockState sourceBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
 		BlockState targetBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
 
+		PoseStack matrixStack = graphics.pose();
 		if (targetBlock.getLightEmission() < 5) {
 			matrixStack.pushPose();
 			matrixStack.translate(31, 56, 0);
 			float shadow = 0.5F;
 			matrixStack.scale(shadow, shadow, shadow);
 			matrixStack.translate(-26, -5.5, 0);
-			AllGuiTextures.JEI_SHADOW.render(matrixStack, 0, 0);
+			AllGuiTextures.JEI_SHADOW.render(graphics, 0, 0);
 			matrixStack.popPose();
 		}
 
 		matrixStack.pushPose();
 		matrixStack.translate(22, 24, 300);
-		drawBlock(sourceBlock, matrixStack, 0, -2, 0);
-		drawBlock(Blocks.DRIPSTONE_BLOCK.defaultBlockState(), matrixStack, 0, -1, 0);
-		drawBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN), matrixStack, 0, 0, 0);
-		drawBlock(targetBlock, matrixStack, 0, 1.5, 0);
+		drawBlock(sourceBlock, graphics, 0, -2, 0);
+		drawBlock(Blocks.DRIPSTONE_BLOCK.defaultBlockState(), graphics, 0, -1, 0);
+		drawBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN), graphics, 0, 0, 0);
+		drawBlock(targetBlock, graphics, 0, 1.5, 0);
 		matrixStack.popPose();
 	}
 
-	private static void drawBlock(BlockState state, PoseStack matrixStack, double localX, double localY, double localZ) {
-		GuiGameElement.of(state).scale(12).lighting(JEIREI.BLOCK_LIGHTING).atLocal(localX, localY, localZ).rotateBlock(12.5, 202.5, 0).render(matrixStack);
+	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {
+		GuiGameElement.of(state).scale(12).lighting(JEIREI.BLOCK_LIGHTING).atLocal(localX, localY, localZ).rotateBlock(12.5, 202.5, 0).render(graphics);
 	}
 
 	@Override

@@ -19,7 +19,7 @@ import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -385,7 +385,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			ResourceLocation biomeTag = CommonProxy.readNullableRL(buf);
 			if (biomeTag != null) {
 				LocationPredicateHelper access = (LocationPredicateHelper) ((LocationCheckAccess) check).getPredicate();
-				access.lychee$setBiomeTag(TagKey.create(Registry.BIOME_REGISTRY, biomeTag));
+				access.lychee$setBiomeTag(TagKey.create(Registries.BIOME, biomeTag));
 			}
 			return new Location(check);
 		}

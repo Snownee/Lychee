@@ -9,7 +9,6 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import me.shedaniel.rei.plugincompatibilities.api.REIPluginCompatIgnore;
 import mezz.jei.api.IModPlugin;
@@ -27,7 +26,8 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Registry;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -177,12 +177,12 @@ public class JEICompat implements IModPlugin {
 		forEachCategories(RecipeTypes.LIGHTNING_CHANNELING, $ -> {
 			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, Items.LIGHTNING_ROD.getDefaultInstance(), $.getRecipeType());
 		});
-		for (Item item : CommonProxy.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
+		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.ITEM_EXPLODING, $ -> {
 				registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), $.getRecipeType());
 			});
 		}
-		for (Item item : CommonProxy.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
+		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.BLOCK_EXPLODING, $ -> {
 				registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), $.getRecipeType());
 			});
@@ -239,8 +239,8 @@ public class JEICompat implements IModPlugin {
 		}
 
 		@Override
-		public void draw(PoseStack poseStack, int x, int y) {
-			element.render(poseStack, x, y);
+		public void draw(GuiGraphics graphics, int x, int y) {
+			element.render(graphics, x, y);
 		}
 
 		@Override

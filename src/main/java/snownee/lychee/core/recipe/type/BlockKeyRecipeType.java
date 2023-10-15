@@ -91,7 +91,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		if (isEmpty()) {
 			return Optional.empty();
 		}
-		Level level = player.level;
+		Level level = player.level();
 		BlockState blockstate = level.getBlockState(pos);
 		Collection<T> recipes = recipesByBlock.getOrDefault(blockstate.getBlock(), Collections.EMPTY_LIST);
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {

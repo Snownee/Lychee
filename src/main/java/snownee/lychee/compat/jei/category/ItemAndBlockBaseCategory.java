@@ -15,6 +15,7 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -84,27 +85,28 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		addBlockIngredients(builder, recipe);
 	}
 
-	public void drawExtra(T recipe, PoseStack matrixStack, double mouseX, double mouseY, int centerX) {
-		AllGuiTextures.JEI_DOWN_ARROW.render(matrixStack, methodRect.getX(), methodRect.getY());
+	public void drawExtra(T recipe, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
+		AllGuiTextures.JEI_DOWN_ARROW.render(graphics, methodRect.getX(), methodRect.getY());
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, PoseStack matrixStack, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, matrixStack, mouseX, mouseY);
+	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
+		drawInfoBadge(recipe, graphics, mouseX, mouseY);
 		int centerX = getWidth() / 2;
-		drawExtra(recipe, matrixStack, mouseX, mouseY, centerX);
+		drawExtra(recipe, graphics, mouseX, mouseY, centerX);
 
 		BlockState state = getRenderingBlock(recipe);
 		if (state.isAir()) {
-			AllGuiTextures.JEI_QUESTION_MARK.render(matrixStack, inputBlockRect.getX() + 4, inputBlockRect.getY() + 2);
+			AllGuiTextures.JEI_QUESTION_MARK.render(graphics, inputBlockRect.getX() + 4, inputBlockRect.getY() + 2);
 			return;
 		}
+		PoseStack matrixStack = graphics.pose();
 		if (state.getLightEmission() < 5) {
 			matrixStack.pushPose();
 			matrixStack.translate(inputBlockRect.getX() + 11, inputBlockRect.getY() + 16, 0);
 			matrixStack.scale(.7F, .7F, .7F);
-			AllGuiTextures.JEI_SHADOW.render(matrixStack, -26, -5);
+			AllGuiTextures.JEI_SHADOW.render(graphics, -26, -5);
 			matrixStack.popPose();
 		}
 
@@ -115,7 +117,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 				.lighting(JEIREI.BLOCK_LIGHTING)
 				.atLocal(0, 0.2, 0)
 				.at(inputBlockRect.getX(), inputBlockRect.getY())
-				.render(matrixStack);
+				.render(graphics);
 		/* on */
 	}
 

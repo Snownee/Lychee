@@ -2,9 +2,9 @@ package snownee.lychee.compat.rei.category;
 
 import java.util.List;
 
+import org.joml.Quaternionf;
+
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.Renderer;
@@ -12,7 +12,7 @@ import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.EntityType;
@@ -35,7 +35,7 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 
 	@Override
 	public void drawExtra(List<Widget> widgets, BaseREIDisplay<ItemExplodingRecipe> display, Rectangle bounds) {
-		Widget widget = Widgets.createDrawableWidget((GuiComponent helper, PoseStack matrixStack, int mouseX, int mouseY, float delta) -> {
+		Widget widget = Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 			Minecraft mc = Minecraft.getInstance();
 			if (tnt == null) {
 				tnt = EntityType.TNT.create(mc.level);
@@ -47,16 +47,18 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 			}
 			tnt.setFuse(fuse);
 
+			PoseStack matrixStack = graphics.pose();
 			matrixStack.pushPose();
 			matrixStack.translate(bounds.x + 89, bounds.y + 38, 20);
 			matrixStack.scale(15, 15, 15);
 
-			Quaternion quaternion = Quaternion.fromXYZDegrees(new Vector3f(200, -20, 0));
+			float toRad = 0.01745329251F;
+			Quaternionf quaternion = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
 			matrixStack.mulPose(quaternion);
 
 			JEIREI.FUSED_TNT_LIGHTING.applyLighting();
 			EntityRenderDispatcher entityrenderermanager = mc.getEntityRenderDispatcher();
-			quaternion.conj();
+			quaternion.conjugate();
 			entityrenderermanager.overrideCameraOrientation(quaternion);
 			entityrenderermanager.setRenderShadow(false);
 			BufferSource irendertypebuffer$impl = mc.renderBuffers().bufferSource();

@@ -10,7 +10,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import dev.architectury.event.EventResult;
 import me.shedaniel.math.Point;
@@ -31,9 +30,10 @@ import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import me.shedaniel.rei.forge.REIPluginClient;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -118,12 +118,12 @@ public class REICompat implements REIClientPlugin {
 		forEachCategories(RecipeTypes.LIGHTNING_CHANNELING, $ -> {
 			registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(Items.LIGHTNING_ROD));
 		});
-		for (Item item : CommonProxy.tagElements(Registry.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
+		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.ITEM_EXPLODING, $ -> {
 				registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(item.getDefaultInstance()));
 			});
 		}
-		for (Item item : CommonProxy.tagElements(Registry.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
+		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.BLOCK_EXPLODING, $ -> {
 				registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(item.getDefaultInstance()));
 			});
@@ -258,8 +258,8 @@ public class REICompat implements REIClientPlugin {
 		}
 
 		@Override
-		public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
-			element.render(poseStack, bounds.x, bounds.y);
+		public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+			element.render(graphics, bounds.x, bounds.y);
 		}
 
 		@Override

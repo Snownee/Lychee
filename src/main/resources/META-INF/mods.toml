@@ -13,16 +13,23 @@ description="Data-driven in-world crafting"
 logoFile="logo.png"
 
 [[dependencies.lychee]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20,1.20.2)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.lychee]]
     modId="kiwi"
     mandatory=false
-    versionRange="[8,9)"
+    versionRange="[11,12)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.lychee]]
     modId="kubejs"
     mandatory=false
-    versionRange="[1902.6.1,)"
+    versionRange="[2001,2002)"
     ordering="NONE"
     side="BOTH"
 

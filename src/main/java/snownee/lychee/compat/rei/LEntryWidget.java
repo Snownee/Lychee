@@ -4,13 +4,12 @@ import java.util.function.UnaryOperator;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.gui.widgets.TooltipContext;
 import me.shedaniel.rei.impl.client.gui.widget.EntryWidget;
+import net.minecraft.client.gui.GuiGraphics;
 import snownee.lychee.client.gui.ScreenElement;
 
 // F. whatever. who cares?
@@ -28,12 +27,12 @@ public class LEntryWidget extends EntryWidget {
 	}
 
 	@Override
-	protected void drawBackground(PoseStack matrices, int mouseX, int mouseY, float delta) {
+	protected void drawBackground(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
 		if (background) {
-			super.drawBackground(matrices, mouseX, mouseY, delta);
+			super.drawBackground(graphics, mouseX, mouseY, delta);
 		} else if (bg != null) {
 			Rectangle rect = getBounds();
-			bg.render(matrices, rect.x, rect.y);
+			bg.render(graphics, rect.x, rect.y);
 		}
 	}
 

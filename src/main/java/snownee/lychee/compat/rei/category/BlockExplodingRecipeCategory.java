@@ -2,8 +2,7 @@ package snownee.lychee.compat.rei.category;
 
 import java.util.List;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import snownee.lychee.block_exploding.BlockExplodingContext;
 import snownee.lychee.block_exploding.BlockExplodingRecipe;
@@ -19,7 +18,7 @@ public class BlockExplodingRecipeCategory extends ItemAndBlockBaseCategory<Block
 	}
 
 	@Override
-	public void drawExtra(BlockExplodingRecipe recipe, PoseStack matrixStack, double mouseX, double mouseY, int centerX) {
+	public void drawExtra(BlockExplodingRecipe recipe, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
 
 	}
 

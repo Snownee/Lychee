@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
@@ -52,10 +53,10 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 	}
 
 	@Override
-	public ItemStack assemble(AnvilContext ctx) {
+	public ItemStack assemble(AnvilContext ctx, RegistryAccess registryAccess) {
 		ctx.levelCost = levelCost;
 		ctx.materialCost = materialCost;
-		ctx.itemHolders.replace(2, getResultItem());
+		ctx.itemHolders.replace(2, getResultItem(registryAccess));
 		ctx.enqueueActions(assembling.stream(), 1, true);
 		ctx.runtime.run(this, ctx);
 		return ctx.getItem(2);
@@ -74,6 +75,10 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 	}
 
 	@Override
+	public ItemStack getResultItem(RegistryAccess registryAccess) {
+		return getResultItem();
+	}
+
 	public ItemStack getResultItem() {
 		return output.copy();
 	}

@@ -26,12 +26,6 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		if ("snownee.lychee.mixin.ItemEntityHurtMixin".equals(mixinClassName)) {
-			return !hasMod("itemphysic");
-		}
-		if ("snownee.lychee.mixin.itemphysic.ItemEntityHurtMixin".equals(mixinClassName)) {
-			return hasMod("itemphysic");
-		}
 		return true;
 	}
 
