@@ -22,7 +22,7 @@ logoFile="logo.png"
 [[dependencies.lychee]]
     modId="kiwi"
     mandatory=false
-    versionRange="[11,12)"
+    versionRange="[11.1.1,12)"
     ordering="NONE"
     side="BOTH"
 

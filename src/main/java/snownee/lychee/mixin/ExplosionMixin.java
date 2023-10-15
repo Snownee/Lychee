@@ -64,7 +64,7 @@ public abstract class ExplosionMixin {
 		throw new AssertionError();
 	}
 
-	@Inject(method = "lambda$finalizeExplosion$0", at = @At("HEAD"), cancellable = true)
+	@Inject(method = {"lambda$finalizeExplosion$0", "m_46071_"}, at = @At("HEAD"), cancellable = true)
 	private static void lychee_deferAddingDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> objectArrayList, BlockPos blockPos, ItemStack itemStack, CallbackInfo ci) {
 		var pair = CONTEXT.get();
 		if (pair.getSecond() != null) {
