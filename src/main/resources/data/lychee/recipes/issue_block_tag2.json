@@ -1,0 +1,19 @@
+{
+  "type": "lychee:block_interacting",
+  "item_in": [
+    { "item": "stick" },
+    { "item": "stick" }
+  ],
+  "block_in": {
+    "tag": "minecraft:logs"
+  },
+  "post": [
+    {
+      "type": "prevent_default"
+    },
+    {
+      "type": "place",
+      "block": "oak_planks"
+    }
+  ]
+}
