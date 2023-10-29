@@ -86,7 +86,7 @@ dependencies {
 
     modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
 
-    //modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
+    modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
 }
 
 loom {

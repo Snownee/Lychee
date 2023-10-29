@@ -1,4 +1,4 @@
-/*package snownee.lychee.compat.kubejs;
+package snownee.lychee.compat.kubejs;
 
 import java.util.Map;
 
@@ -19,4 +19,3 @@ public class CustomConditionEventJS extends EventJS {
 	}
 
 }
-*/

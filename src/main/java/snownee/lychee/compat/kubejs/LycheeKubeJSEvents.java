@@ -1,4 +1,4 @@
-/*package snownee.lychee.compat.kubejs;
+package snownee.lychee.compat.kubejs;
 
 import dev.latvian.mods.kubejs.event.EventGroup;
 import dev.latvian.mods.kubejs.event.EventHandler;
@@ -12,4 +12,3 @@ public interface LycheeKubeJSEvents {
 	EventHandler CUSTOM_ACTION = GROUP.startup("customAction", () -> CustomActionEventJS.class).extra(Extra.STRING).hasResult();
 	EventHandler CUSTOM_CONDITION = GROUP.startup("customCondition", () -> CustomConditionEventJS.class).extra(Extra.STRING).hasResult();
 }
-*/
