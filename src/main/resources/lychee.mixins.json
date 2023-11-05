@@ -22,6 +22,7 @@
     "IntsAccess",
     "ItemEntityAccess",
     "ItemEntityMixin",
+    "ItemEntityHurtMixin",
     "LightningBoltMixin",
     "LightPredicateAccess",
     "LocationCheckAccess",
