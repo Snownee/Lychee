@@ -20,6 +20,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockSource;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
@@ -39,12 +41,15 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
@@ -397,6 +402,18 @@ public class CommonProxy {
 				return BlockParticleOption.codec(this);
 			}
 		};
+	}
+
+	public static ItemStack dispensePlacement(BlockSource pSource, ItemStack pStack, Direction direction) {
+		if (!(pStack.getItem() instanceof BlockItem item)) {
+			return pStack;
+		}
+		BlockPos blockpos = pSource.getPos().relative(direction);
+		BlockState state = pSource.getLevel().getBlockState(blockpos);
+		if (FallingBlock.isFree(state)) {
+			item.place(new DirectionalPlaceContext(pSource.getLevel(), blockpos, direction, pStack, direction));
+		}
+		return pStack;
 	}
 
 	public interface CustomActionListener {
