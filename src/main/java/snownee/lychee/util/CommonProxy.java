@@ -28,6 +28,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockSource;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -47,12 +49,15 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
@@ -349,9 +354,21 @@ public class CommonProxy implements ModInitializer {
 		return FabricParticleTypes.complex(deserializer);
 	}
 
+	public static ItemStack dispensePlacement(BlockSource pSource, ItemStack pStack, Direction direction) {
+		if (!(pStack.getItem() instanceof BlockItem item)) {
+			return pStack;
+		}
+		BlockPos blockpos = pSource.getPos().relative(direction);
+		BlockState state = pSource.getLevel().getBlockState(blockpos);
+		if (FallingBlock.isFree(state)) {
+			item.place(new DirectionalPlaceContext(pSource.getLevel(), blockpos, direction, pStack, direction));
+		}
+		return pStack;
+	}
+
 	@Override
 	public void onInitialize() {
-/*		if (hasKiwi) {
+		/*		if (hasKiwi) {
 			FabricLoader.getInstance().getModContainer("kiwi").map(ModContainer::getMetadata).map(ModMetadata::getVersion).ifPresent(version -> {
 				try {
 					Version minVersion = Version.parse("11.1.1");

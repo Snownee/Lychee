@@ -6,21 +6,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DropperBlock;
 import net.minecraft.world.level.block.Fallable;
-import net.minecraft.world.level.block.FallingBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeTags;
+import snownee.lychee.util.CommonProxy;
 
 @Mixin(DefaultDispenseItemBehavior.class)
 public class DefaultDispenseItemBehaviorMixin {
@@ -31,20 +28,17 @@ public class DefaultDispenseItemBehaviorMixin {
 			), method = "execute", locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true
 	)
 	private void execute(BlockSource pSource, ItemStack pStack, CallbackInfoReturnable<ItemStack> ci, Direction direction, Position position) {
-		Item item = pStack.getItem();
-		if (!(item instanceof BlockItem)) {
+		if (this == DropperBlock.DISPENSE_BEHAVIOUR) {
 			return;
 		}
-		Block block = ((BlockItem) item).getBlock();
+		if (!(pStack.getItem() instanceof BlockItem item)) {
+			return;
+		}
+		Block block = item.getBlock();
 		if (!(pStack.is(LycheeTags.DISPENSER_PLACEMENT) || LycheeConfig.dispenserFallableBlockPlacement && block instanceof Fallable)) {
 			return;
 		}
-		BlockPos blockpos = pSource.getPos().relative(direction);
-		BlockState state = pSource.getLevel().getBlockState(blockpos);
-		if (FallingBlock.isFree(state)) {
-			((BlockItem) item).place(new DirectionalPlaceContext(pSource.getLevel(), blockpos, direction, pStack, direction));
-		}
-		ci.setReturnValue(pStack);
+		ci.setReturnValue(CommonProxy.dispensePlacement(pSource, pStack, direction));
 	}
 
 }

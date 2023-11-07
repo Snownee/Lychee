@@ -10,3 +10,4 @@ accessible class net/minecraft/client/particle/DripParticle$DripHangParticle
 accessible method net/minecraft/client/particle/DripParticle$DripHangParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDLnet/minecraft/world/level/material/Fluid;Lnet/minecraft/core/particles/ParticleOptions;)V
 accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
 accessible method net/minecraft/world/item/crafting/Ingredient$ItemValue <init> (Lnet/minecraft/world/item/ItemStack;)V
+accessible field net/minecraft/world/level/block/DropperBlock DISPENSE_BEHAVIOUR Lnet/minecraft/core/dispenser/DispenseItemBehavior;
