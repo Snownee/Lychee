@@ -3,11 +3,11 @@
   "post": [
     {
       "type": "execute",
-      "command": "execute as @e[type=minecraft:pufferfish,distance=..5] at @s run summon minecraft:guardian"
+      "command": "execute as @e[type=minecraft:zombie,distance=..5,predicate=!lychee:has_blindness] at @s run summon minecraft:guardian ~ ~ ~ {ActiveEffects:[{ShowParticles:0b,Duration:40,Id:15}]}"
     },
     {
       "type": "execute",
-      "command": "execute as @e[type=minecraft:pufferfish,distance=..5] run tp ~ ~-1000 ~"
+      "command": "execute as @e[type=minecraft:zombie,distance=..5,predicate=!lychee:has_blindness] run tp ~ ~-1000 ~"
     }
   ]
 }
