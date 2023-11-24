@@ -1,0 +1,13 @@
+{
+  "type": "lychee:lightning_channeling",
+  "post": [
+    {
+      "type": "execute",
+      "command": "execute as @e[type=minecraft:pufferfish,distance=..5] at @s run summon minecraft:guardian"
+    },
+    {
+      "type": "execute",
+      "command": "execute as @e[type=minecraft:pufferfish,distance=..5] run tp ~ ~-1000 ~"
+    }
+  ]
+}
