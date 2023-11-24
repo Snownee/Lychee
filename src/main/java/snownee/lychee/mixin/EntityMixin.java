@@ -25,7 +25,7 @@ public abstract class EntityMixin {
 	public abstract EntityType<?> getType();
 
 	@Shadow
-	public abstract void setRemainingFireTicks(int i);
+	public abstract void clearFire();
 
 	@Inject(at = @At("HEAD"), method = "tick")
 	private void lychee_tick(CallbackInfo ci) {
@@ -51,7 +51,7 @@ public abstract class EntityMixin {
 		}
 
 		if (getType().is(LycheeTags.LIGHTING_FIRE_IMMUNE)) {
-			setRemainingFireTicks(0);
+			clearFire();
 		}
 	}
 }
