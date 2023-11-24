@@ -83,6 +83,8 @@ dependencies {
 
     modImplementation "curse.maven:kiwi-549404:4688477"
     annotationProcessor "curse.maven:kiwi-549404:4688477"
+    
+    modRuntimeOnly "curse.maven:jade-324717:4792447"
 
     modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
 

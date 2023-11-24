@@ -1,0 +1,13 @@
+{
+  "type": "lychee:lightning_channeling",
+  "post": [
+    {
+      "type": "execute",
+      "command": "execute as @e[type=minecraft:guardian,distance=..5,predicate=!lychee:has_blindness] at @s run summon minecraft:elder_guardian ~ ~ ~ {ActiveEffects:[{ShowParticles:0b,Duration:40,Id:15}]}"
+    },
+    {
+      "type": "execute",
+      "command": "execute as @e[type=minecraft:guardian,distance=..5,predicate=!lychee:has_blindness] run tp ~ ~-1000 ~"
+    }
+  ]
+}
