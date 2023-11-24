@@ -5,6 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
@@ -22,6 +23,15 @@ public final class LycheeTags {
 	public static final TagKey<Item> BLOCK_EXPLODING_CATALYSTS = itemTag("block_exploding_catalysts");
 
 	public static final TagKey<Block> EXTEND_BOX = blockTag("extend_box");
+
+	public static final TagKey<EntityType<?>> LIGHTNING_IMMUNE = entityTag("lightning_immune");
+
+	public static final TagKey<EntityType<?>> LIGHTING_FIRE_IMMUNE = entityTag("lightning_fire_immune");
+
+
+	public static TagKey<EntityType<?>> entityTag(String path) {
+		return tag(Registries.ENTITY_TYPE, path);
+	}
 
 	public static TagKey<Item> itemTag(String path) {
 		return tag(Registries.ITEM, path);
