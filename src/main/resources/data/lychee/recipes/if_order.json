@@ -1,0 +1,38 @@
+{
+  "type": "lychee:block_interacting",
+  "post": [
+    {
+      "type": "if",
+      "contextual": [
+        {
+          "type": "chance",
+          "chance": 0.5
+        }
+      ],
+      "then": [
+        {
+          "type": "place",
+          "block": "red_wool"
+        },
+        {
+          "type": "place",
+          "block": "yellow_wool"
+        }
+      ],
+      "else": [
+        {
+          "type": "place",
+          "block": "green_wool"
+        },
+        {
+          "type": "place",
+          "block": "blue_wool"
+        }
+      ]
+    }
+  ],
+  "item_in": {
+    "item": "minecraft:stone"
+  },
+  "block_in": "grass_block"
+}
