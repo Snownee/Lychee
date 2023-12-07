@@ -17,7 +17,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.PostActionTypes;
-import snownee.lychee.core.Job;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.input.NBTPatch;
 import snownee.lychee.core.recipe.ILycheeRecipe;
@@ -67,16 +66,12 @@ public class If extends PostAction implements CompoundAction {
 
 	@Override
 	public void doApply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		for (PostAction action : successEntries) {
-			ctx.runtime.jobs.push(new Job(action, times));
-		}
+		ctx.enqueueActions(Stream.of(successEntries), times, false);
 	}
 
 	@Override
 	public void onFailure(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		for (PostAction action : failureEntries) {
-			ctx.runtime.jobs.push(new Job(action, times));
-		}
+		ctx.enqueueActions(Stream.of(failureEntries), times, false);
 	}
 
 	@Override
