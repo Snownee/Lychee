@@ -42,6 +42,17 @@ repositories {
             includeGroup "dev.latvian.mods"
         }
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
     flatDir { dir 'libs' }
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
@@ -78,11 +89,8 @@ dependencies {
     modCompileOnlyApi("mezz.jei:jei-${project.minecraft_version}-common-api:${project.jei_version}")
     modCompileOnlyApi("mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}")
     modImplementation("mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}")
-    //modImplementation "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
-    //annotationProcessor "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
 
-    modImplementation "curse.maven:kiwi-549404:4688477"
-    annotationProcessor "curse.maven:kiwi-549404:4688477"
+    modImplementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}-fabric")
 
     modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
 
