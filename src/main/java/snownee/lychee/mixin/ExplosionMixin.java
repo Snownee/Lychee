@@ -96,7 +96,7 @@ public abstract class ExplosionMixin {
 					"TAIL"
 			), method = "explode()V", locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void lychee_explode(CallbackInfo ci, Set set, float q, int k, int l, int r, int s, int t, int u, List list, Vec3 vec3, int v) {
+	private void lychee_explode(CallbackInfo ci, Set set, int i, float q, int k, int l, int r, int s, int t, int u, List list, Vec3 vec3, int v) {
 		ItemExplodingRecipe.on(level, x, y, z, list, radius);
 	}
 
