@@ -38,11 +38,13 @@ public abstract class ExplosionMixin {
 
 	@Unique
 	private static final ThreadLocal<snownee.lychee.util.Pair<BlockExplodingContext.Builder, List<ItemStack>>> CONTEXT = ThreadLocal.withInitial(() -> snownee.lychee.util.Pair.of(null, null));
+	@Final
 	@Shadow
-	public float radius;
+	private float radius;
+	@Final
 	@Shadow
 	@Nullable
-	public Entity source;
+	private Entity source;
 	@Final
 	@Shadow
 	private Level level;
@@ -76,9 +78,8 @@ public abstract class ExplosionMixin {
 		ItemExplodingRecipe.on(level, x, y, z, list, radius);
 	}
 
-	@Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void lychee_removeBlockPre(boolean p_46076_, CallbackInfo ci, boolean flag, ObjectListIterator var3, BlockPos blockPos) {
-		BlockState state = level.getBlockState(blockPos);
+	@Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;onBlockExploded(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void lychee_removeBlockPre(boolean p_46076_, CallbackInfo ci, boolean flag, ObjectArrayList objectarraylist, boolean flag1, ObjectListIterator var5, BlockPos blockPos, BlockState state, Block block, BlockPos blockpos1) {
 		if (RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
 			return;
 		}

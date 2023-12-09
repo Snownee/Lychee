@@ -35,9 +35,7 @@ public class ItemExplodingRecipe extends ItemShapelessRecipe<ItemExplodingRecipe
 		if (level.isClientSide) {
 			return;
 		}
-		Stream<ItemEntity> itemEntities = list1.stream().filter($ -> {
-			return $ instanceof ItemEntity;
-		}).map(ItemEntity.class::cast);
+		Stream<ItemEntity> itemEntities = list1.stream().filter($ -> $ instanceof ItemEntity).map(ItemEntity.class::cast);
 		RecipeTypes.ITEM_EXPLODING.process(level, itemEntities, $ -> {
 			$.withParameter(LootContextParams.ORIGIN, new Vec3(x, y, z));
 			$.withParameter(LootContextParams.EXPLOSION_RADIUS, radius);
