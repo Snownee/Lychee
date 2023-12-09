@@ -72,12 +72,13 @@ public abstract class ExplosionMixin {
 					"TAIL"
 			), method = "explode()V", locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void lychee_explode(CallbackInfo ci, Set set, float q, int k, int l, int r, int s, int t, int u, List list, Vec3 vec3, int v) {
+	private void lychee_explode(CallbackInfo ci, Set set, int i, float f2, int k1, int l1, int i2, int i1, int j2, int j1, List list, Vec3 vec3, int k2) {
 		ItemExplodingRecipe.on(level, x, y, z, list, radius);
 	}
 
-	@Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;I)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void lychee_removeBlockPre(boolean bl, CallbackInfo ci, boolean bl2, ObjectArrayList<Pair<ItemStack, BlockPos>> objectArrayList, boolean bl3, ObjectListIterator<Pair<ItemStack, BlockPos>> var5, BlockPos blockPos, BlockState state, Block block) {
+	@Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;setBlockAndUpdate(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void lychee_removeBlockPre(boolean p_46076_, CallbackInfo ci, boolean flag, ObjectListIterator var3, BlockPos blockPos) {
+		BlockState state = level.getBlockState(blockPos);
 		if (RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
 			return;
 		}
@@ -97,7 +98,7 @@ public abstract class ExplosionMixin {
 		lychee$contexts.put(blockPos, builder);
 	}
 
-	@Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;wasExploded(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;onBlockExploded(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void lychee_removeBlockPost(boolean bl, CallbackInfo ci, boolean bl2, ObjectArrayList<Pair<ItemStack, BlockPos>> objectArrayList, boolean bl3, ObjectListIterator<Pair<ItemStack, BlockPos>> var5, BlockPos blockPos, BlockState state, Block block) {
 		if (lychee$contexts == null) {
 			return;
