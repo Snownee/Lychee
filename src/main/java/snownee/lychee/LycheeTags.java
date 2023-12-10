@@ -29,7 +29,7 @@ public final class LycheeTags {
 
 
 	public static TagKey<EntityType<?>> entityTag(String path) {
-		return tag(Registries.ENTITY_TYPE, path);
+		return tag(Registry.ENTITY_TYPE_REGISTRY, path);
 	}
 
 	public static TagKey<Item> itemTag(String path) {
