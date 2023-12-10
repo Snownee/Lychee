@@ -1,5 +1,6 @@
 package snownee.lychee;
 
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -27,9 +28,8 @@ public final class LycheeTags {
 
 	public static final TagKey<EntityType<?>> LIGHTING_FIRE_IMMUNE = entityTag("lightning_fire_immune");
 
-
 	public static TagKey<EntityType<?>> entityTag(String path) {
-		return tag(Registries.ENTITY_TYPE, path);
+		return TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation(Lychee.ID, path));
 	}
 
 	public static TagKey<Item> itemTag(String path) {
