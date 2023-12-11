@@ -1,8 +1,6 @@
 package snownee.lychee.mixin;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +18,7 @@ import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectListIterator;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
@@ -27,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.RecipeTypes;
@@ -61,12 +61,49 @@ public abstract class ExplosionMixin {
 	@Shadow
 	@Final
 	private Explosion.BlockInteraction blockInteraction;
-	@Unique
-	private Map<BlockPos, BlockExplodingContext.Builder> lychee$contexts;
 
 	@Shadow
 	private static void addBlockDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> objectArrayList, ItemStack itemStack, BlockPos blockPos) {
 		throw new AssertionError();
+	}
+
+	@Inject(method = "lambda$finalizeExplosion$0", at = @At("HEAD"), cancellable = true)
+	private static void lychee_deferAddingDrops(
+			final ObjectArrayList p_46072_,
+			final BlockPos p_46073_,
+			final ItemStack itemStack,
+			final CallbackInfo ci) {
+		var pair = CONTEXT.get();
+		if (pair.getSecond() != null) {
+			pair.getSecond().add(itemStack);
+			ci.cancel();
+		}
+	}
+
+	@Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;getDrops(Lnet/minecraft/world/level/storage/loot/LootContext$Builder;)Ljava/util/List;"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void initDeferring(
+			final boolean p_46076_,
+			final CallbackInfo ci,
+			final boolean flag,
+			final ObjectArrayList objectarraylist,
+			final boolean flag1,
+			final ObjectListIterator var5,
+			final BlockPos blockpos,
+			final BlockState state,
+			final Block block,
+			final BlockPos blockpos1,
+			final Level $$9,
+			final ServerLevel serverlevel,
+			final BlockEntity blockentity,
+			final LootContext.Builder lootcontext$builder) {
+		var pair = CONTEXT.get();
+		if (RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
+			pair.setSecond(null);
+		} else if (pair.getFirst() == null) {
+			pair.setSecond(new ObjectArrayList<>());
+		} else {
+			pair.getSecond().clear();
+		}
 	}
 
 	@Inject(
@@ -80,13 +117,9 @@ public abstract class ExplosionMixin {
 
 	@Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;onBlockExploded(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void lychee_removeBlockPre(boolean p_46076_, CallbackInfo ci, boolean flag, ObjectArrayList objectarraylist, boolean flag1, ObjectListIterator var5, BlockPos blockPos, BlockState state, Block block, BlockPos blockpos1) {
-		if (RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
+		if (level.isClientSide || RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
 			return;
 		}
-		if (lychee$contexts == null) {
-			lychee$contexts = new HashMap<>();
-		}
-		lychee$contexts.clear();
 		BlockExplodingContext.Builder builder = new BlockExplodingContext.Builder(level);
 		builder.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
 		builder.withParameter(LootContextParams.BLOCK_STATE, state);
@@ -96,26 +129,28 @@ public abstract class ExplosionMixin {
 		if (blockInteraction == Explosion.BlockInteraction.DESTROY) {
 			builder.withParameter(LootContextParams.EXPLOSION_RADIUS, radius);
 		}
-		lychee$contexts.put(blockPos, builder);
+		CONTEXT.get().setFirst(builder);
 	}
 
 	@Inject(method = "finalizeExplosion", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;onBlockExploded(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void lychee_removeBlockPost(boolean bl, CallbackInfo ci, boolean bl2, ObjectArrayList<Pair<ItemStack, BlockPos>> objectArrayList, boolean bl3, ObjectListIterator<Pair<ItemStack, BlockPos>> var5, BlockPos blockPos, BlockState state, Block block) {
-		if (lychee$contexts == null) {
+		if (level.isClientSide) {
 			return;
 		}
-		BlockExplodingContext.Builder ctxBuilder = lychee$contexts.remove(blockPos);
+		var pair = CONTEXT.get();
+		BlockExplodingContext.Builder ctxBuilder = pair.getFirst();
 		if (ctxBuilder == null) {
 			return;
 		}
+		pair.setFirst(null);
 		var result = RecipeTypes.BLOCK_EXPLODING.process(level, state, () -> ctxBuilder.create(RecipeTypes.BLOCK_EXPLODING.contextParamSet));
 		if (result == null) {
 			return;
 		}
 		BlockExplodingContext ctx = result.getFirst();
-		if (!ctx.runtime.doDefault) {
-			while (!objectArrayList.isEmpty() && objectArrayList.get(objectArrayList.size() - 1).getSecond().equals(blockPos)) {
-				objectArrayList.remove(objectArrayList.size() - 1);
+		if (ctx.runtime.doDefault && pair.getSecond() != null) {
+			for (ItemStack stack : pair.getSecond()) {
+				addBlockDrops(objectArrayList, stack, blockPos);
 			}
 		}
 		for (ItemStack stack : ctx.itemHolders.tempList) {
