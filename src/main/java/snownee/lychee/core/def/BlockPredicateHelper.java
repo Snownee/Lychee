@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,7 +19,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -41,7 +39,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -49,27 +46,51 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.StatePropertiesPredicateAccess;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.predicates.PropertiesPredicateExtensions;
 
 public class BlockPredicateHelper {
 
 	public static final NbtPredicate NBT_PREDICATE_DUMMY = new NbtPredicate(new CompoundTag());
-	private static final Cache<BlockPredicate, List<BlockState>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
+	private static final Cache<BlockPredicate, List<BlockState>> CACHE = CacheBuilder.newBuilder().expireAfterAccess(
+			10,
+			TimeUnit.MINUTES
+	).build();
 	public static Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet();
 
 	static {
-		ITERABLE_PROPERTIES.addAll(List.of(BlockStateProperties.AGE_1, BlockStateProperties.AGE_2, BlockStateProperties.AGE_3, BlockStateProperties.AGE_5, BlockStateProperties.AGE_7, BlockStateProperties.CANDLES, BlockStateProperties.BITES, BlockStateProperties.POWER, BlockStateProperties.POWERED, BlockStateProperties.LIT, BlockStateProperties.BERRIES, BlockStateProperties.OPEN, BlockStateProperties.DELAY, BlockStateProperties.DISTANCE, BlockStateProperties.LAYERS, BlockStateProperties.PICKLES, BlockStateProperties.LEVEL, BlockStateProperties.LEVEL_HONEY, BlockStateProperties.LEVEL_CAULDRON, BlockStateProperties.DRIPSTONE_THICKNESS));
+		ITERABLE_PROPERTIES.addAll(List.of(
+				BlockStateProperties.AGE_1,
+				BlockStateProperties.AGE_2,
+				BlockStateProperties.AGE_3,
+				BlockStateProperties.AGE_5,
+				BlockStateProperties.AGE_7,
+				BlockStateProperties.CANDLES,
+				BlockStateProperties.BITES,
+				BlockStateProperties.POWER,
+				BlockStateProperties.POWERED,
+				BlockStateProperties.LIT,
+				BlockStateProperties.BERRIES,
+				BlockStateProperties.OPEN,
+				BlockStateProperties.DELAY,
+				BlockStateProperties.DISTANCE,
+				BlockStateProperties.LAYERS,
+				BlockStateProperties.PICKLES,
+				BlockStateProperties.LEVEL,
+				BlockStateProperties.LEVEL_HONEY,
+				BlockStateProperties.LEVEL_CAULDRON,
+				BlockStateProperties.DRIPSTONE_THICKNESS
+		));
 	}
 
 	// handle BlockPredicate.ANY by yourself!
 	public static Set<Block> getMatchedBlocks(BlockPredicate predicate) {
-		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
 		Set<Block> blocks = Sets.newLinkedHashSet();
-		if (access.getBlocks() != null) {
-			blocks.addAll(access.getBlocks());
+		if (predicate.blocks().isPresent()) {
+			blocks.addAll(predicate.blocks().orElseThrow());
 		}
 		if (access.getTag() != null) {
 			blocks.addAll(CommonProxy.tagElements(BuiltInRegistries.BLOCK, access.getTag()));
@@ -80,67 +101,33 @@ public class BlockPredicateHelper {
 	public static Set<Fluid> getMatchedFluids(BlockPredicate predicate) {
 		/* off */
 		return getMatchedBlocks(predicate).stream()
-				.filter(LiquidBlock.class::isInstance)
-				.map(Block::defaultBlockState)
-				.map(BlockState::getFluidState)
-				.filter(Predicate.not(FluidState::isEmpty))
-				.map(FluidState::getType)
-				.collect(Collectors.toSet());
+										  .filter(LiquidBlock.class::isInstance)
+										  .map(Block::defaultBlockState)
+										  .map(BlockState::getFluidState)
+										  .filter(Predicate.not(FluidState::isEmpty))
+										  .map(FluidState::getType)
+										  .collect(Collectors.toSet());
 		/* on */
 	}
 
 	public static List<ItemStack> getMatchedItemStacks(BlockPredicate predicate) {
-		return getMatchedBlocks(predicate).stream().map(Block::asItem).filter(Predicate.not(Items.AIR::equals)).distinct().map(Item::getDefaultInstance).toList();
+		return getMatchedBlocks(predicate).stream()
+										  .map(Block::asItem)
+										  .filter(Predicate.not(Items.AIR::equals))
+										  .distinct()
+										  .map(Item::getDefaultInstance)
+										  .toList();
 	}
 
-	public static boolean fastMatch(BlockPredicate predicate, LycheeContext context) {
-		return fastMatch(predicate, context.getParam(LootContextParams.BLOCK_STATE), () -> context.getParamOrNull(LootContextParams.BLOCK_ENTITY));
-	}
-
-	public static boolean fastMatch(BlockPredicate predicate, BlockState blockstate, Supplier<BlockEntity> beGetter) {
-		if (predicate == BlockPredicate.ANY) {
-			return true;
-		}
-		BlockPredicateAccess access = (BlockPredicateAccess) predicate;
-		if (access.getTag() != null && !blockstate.is(access.getTag())) {
-			return false;
-		} else if (access.getBlocks() != null && !access.getBlocks().contains(blockstate.getBlock())) {
-			return false;
-		} else if (!access.getProperties().matches(blockstate)) {
-			return false;
-		} else {
-			if (access.getNbt() != NbtPredicate.ANY) {
-				BlockEntity blockentity = beGetter.get();
-				if (blockentity == null || !access.getNbt().matches(blockentity.saveWithFullMetadata())) {
-					return false;
-				}
-			}
-
-			return true;
-		}
-	}
-
-	public static BlockPredicate fromJson(JsonElement jsonElement) {
-		if (jsonElement != null && jsonElement.isJsonPrimitive()) {
-			String id = jsonElement.getAsString();
-			if ("*".equals(id)) {
-				return BlockPredicate.ANY;
-			}
-			if (id.startsWith("#")) {
-				TagKey<Block> key = TagKey.create(Registries.BLOCK, new ResourceLocation(id.substring(1)));
-				return new BlockPredicate(key, null, StatePropertiesPredicate.ANY, NbtPredicate.ANY);
-			}
-			Block block = BuiltInRegistries.BLOCK.get(new ResourceLocation(id));
-			return new BlockPredicate(null, Set.of(block), StatePropertiesPredicate.ANY, NbtPredicate.ANY);
-		}
-		return BlockPredicate.fromJson(jsonElement);
-	}
-
-	public static JsonElement toJson(BlockPredicate predicate) {
-		if (predicate == BlockPredicate.ANY) {
-			return new JsonPrimitive("*");
-		}
-		return predicate.serializeToJson();
+	/**
+	 * Optimized without get block state and block entity calls. And needn't pos loaded.
+	 */
+	public static boolean matches(BlockPredicate predicate, LycheeRecipeContext context) {
+		return matches(
+				predicate,
+				context.get(LootContextParams.BLOCK_STATE),
+				() -> context.getOrNull(LootContextParams.BLOCK_ENTITY)
+		);
 	}
 
 	public static BlockPredicate fromNetwork(FriendlyByteBuf pBuffer) {
@@ -160,7 +147,7 @@ public class BlockPredicateHelper {
 		if (tagId != null) {
 			tag = TagKey.create(Registries.BLOCK, tagId);
 		}
-		StatePropertiesPredicate propertiesPredicate = PropertiesPredicateHelper.fromNetwork(pBuffer);
+		StatePropertiesPredicate propertiesPredicate = PropertiesPredicateExtensions.fromNetwork(pBuffer);
 		NbtPredicate nbtPredicate = pBuffer.readBoolean() ? NBT_PREDICATE_DUMMY : NbtPredicate.ANY;
 		return new BlockPredicate(tag, blocks, propertiesPredicate, nbtPredicate);
 	}
@@ -185,7 +172,7 @@ public class BlockPredicateHelper {
 		if (tag != null)
 			tagId = tag.location();
 		CommonProxy.writeNullableRL(tagId, pBuffer);
-		PropertiesPredicateHelper.toNetwork(access.getProperties(), pBuffer);
+		PropertiesPredicateExtensions.toNetwork(access.getProperties(), pBuffer);
 		NbtPredicate nbtPredicate = access.getNbt();
 		pBuffer.writeBoolean(nbtPredicate != NbtPredicate.ANY);
 	}
@@ -203,7 +190,10 @@ public class BlockPredicateHelper {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static List<BlockState> getShowcaseBlockStates(BlockPredicate predicate, Collection<Property<?>> iterableProperties) {
+	public static List<BlockState> getShowcaseBlockStates(
+			BlockPredicate predicate,
+			Collection<Property<?>> iterableProperties
+	) {
 		Set<Block> blocks = getMatchedBlocks(predicate);
 		if (blocks.isEmpty()) {
 			return List.of();
@@ -217,7 +207,7 @@ public class BlockPredicateHelper {
 			Multimap<Property<?>, Comparable> propertyMap = ArrayListMultimap.create();
 			for (Property<? extends Comparable> property : block.getStateDefinition().getProperties()) {
 				String name = property.getName();
-				PropertyMatcher matcher = PropertiesPredicateHelper.findMatcher(propertiesPredicate, name);
+				PropertyMatcher matcher = PropertiesPredicateExtensions.findMatcher(propertiesPredicate, name);
 				if (matcher != null) {
 					for (Comparable object : property.getPossibleValues()) {
 						if (matcher.match(block.getStateDefinition(), state.setValue((Property) property, object))) {
