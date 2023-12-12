@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;

@@ -8,7 +8,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;

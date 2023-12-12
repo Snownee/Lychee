@@ -1,5 +1,6 @@
 package snownee.lychee.util.contextual;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.mojang.serialization.Codec;
@@ -28,6 +29,8 @@ public record ConditionHolder<T extends ContextualCondition<T>>(
 											"description")
 									.forGetter(ConditionHolder::description)
 					).apply(instance, ConditionHolder::new));
+
+	public static final Codec<List<ConditionHolder<?>>> LIST_CODEC = Codec.list(CODEC);
 
 	public ConditionHolder(ContextualCondition<T> condition) {
 		this(condition, false, Optional.empty());

@@ -12,7 +12,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.BoundsExtensions;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;

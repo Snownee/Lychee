@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.contextual.ContextualCondition;

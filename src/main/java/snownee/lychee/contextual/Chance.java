@@ -3,7 +3,6 @@ package snownee.lychee.contextual;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -11,7 +10,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 
 public record Chance(float chance) implements ContextualCondition<Chance> {

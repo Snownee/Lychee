@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -15,8 +16,8 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.TriState;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 /**
  * Contains conditions
@@ -82,16 +83,11 @@ public interface Contextual<C extends Contextual<C>> extends RecipeCondition {
 	Codec<C> codec();
 
 	default void fromNetwork(FriendlyByteBuf buf) {
-		final var size = buf.readVarInt();
-		for (var i = 0; i < size; i++) {
-			addCondition((ConditionHolder<?>) ConditionHolder.fromNetwork(buf));
-		}
+		conditions().clear();
+		conditions().addAll(buf.readWithCodecTrusted(NbtOps.INSTANCE, ConditionHolder.LIST_CODEC));
 	}
 
 	default void toNetwork(FriendlyByteBuf buf) {
-		buf.writeVarInt(conditions().size());
-		for (ConditionHolder<?> condition : conditions()) {
-			condition.toNetwork(buf);
-		}
+		buf.writeWithCodec(NbtOps.INSTANCE, ConditionHolder.LIST_CODEC, conditions());
 	}
 }
