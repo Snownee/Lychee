@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.world.entity.player.Player;
@@ -13,8 +14,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.predicates.TimeCheck;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.def.NumberProviderHelper;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -48,16 +49,24 @@ public record Time(MinMaxBounds.Ints value, Optional<Long> period) implements Co
 
 	public static class Type implements ContextualConditionType<Time> {
 		public static final Codec<Time> CODEC = TimeCheck.CODEC
-				.xmap(it -> new Time(
-							  MinMaxBounds.Ints.between(NumberProviderHelper.toConstant(it.value().min),
-														NumberProviderHelper.toConstant(it.value().max)),
-							  it.period()),
-					  it -> {
-						  final var builder = TimeCheck.time(IntRange.range(it.value().min().orElseThrow(),
-																			it.value().max().orElseThrow()));
-						  it.period.ifPresent(builder::setPeriod);
-						  return builder.build();
-					  });
+				.comapFlatMap(it -> {
+								  if (it.value().min == null || it.value().min.getType() != NumberProviders.CONSTANT) {
+									  return DataResult.error(() -> "`min` not exists or not a constant");
+								  }
+								  if (it.value().max == null || it.value().max.getType() != NumberProviders.CONSTANT) {
+									  return DataResult.error(() -> "`max` not exists or not a constant");
+								  }
+								  return DataResult.success(
+										  new Time(MinMaxBounds.Ints.between(it.value().min.getInt(null),
+																			 it.value().max.getInt(null)),
+												   it.period()));
+							  },
+							  it -> {
+								  final var builder = TimeCheck.time(IntRange.range(it.value().min().orElseThrow(),
+																					it.value().max().orElseThrow()));
+								  it.period.ifPresent(builder::setPeriod);
+								  return builder.build();
+							  });
 
 		@Override
 		public Codec<Time> codec() {
