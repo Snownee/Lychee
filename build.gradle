@@ -180,7 +180,7 @@ unifiedPublishing {
         mainPublication tasks.remapJar // Declares the publicated jar
 
         curseforge {
-            token = System.getenv("CURSE_TOKEN")
+            token = System.getenv("CURSE_TOKEN") ?: ""
             id = "574650" // Required, must be a string, ID of CurseForge project
 
             relations { // Optional, Inferred from the relations above by default
@@ -191,7 +191,7 @@ unifiedPublishing {
         }
 
         modrinth {
-            token = System.getenv("MODRINTH_TOKEN")
+            token = System.getenv("MODRINTH_TOKEN") ?: ""
             id = "TdN6LxjM" // Required, must be a string, ID of Modrinth project
             displayName = project.mod_version
 

@@ -23,8 +23,8 @@ import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeContext;
+import snownee.lychee.core.recipe.ChanceRecipe;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.random_block_ticking.RandomBlockTickingRecipe;
 import snownee.lychee.util.CommonProxy;
 
 public class ContextualHolder {
@@ -144,7 +144,7 @@ public class ContextualHolder {
 		try {
 			boolean first = true;
 			for (ContextualCondition condition : conditions) {
-				if (first && condition.getType() == ContextualConditionTypes.CHANCE && getClass() == RandomBlockTickingRecipe.class) {
+				if (first && condition.getType() == ContextualConditionTypes.CHANCE && this instanceof ChanceRecipe) {
 					continue;
 				}
 				first = false;
