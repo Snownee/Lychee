@@ -9,6 +9,10 @@ import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Streams;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.serialization.JsonOps;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -20,6 +24,9 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
@@ -239,6 +246,22 @@ public class LUtil {
 
 	public static boolean isSimpleIngredient(Ingredient ingredient) {
 		return true;
+	}
+
+	public static JsonObject tagToJson(CompoundTag tag) {
+		return NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, tag).getAsJsonObject();
+	}
+
+	public static CompoundTag jsonToTag(JsonElement json) {
+		if (json.isJsonObject()) {
+			return (CompoundTag) JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json);
+		} else {
+			try {
+				return TagParser.parseTag(json.getAsString());
+			} catch (CommandSyntaxException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
 	}
 
 }

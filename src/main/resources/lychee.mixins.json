@@ -23,12 +23,14 @@
     "EntityMixin",
     "ExplosionMixin",
     "FallingBlockEntityMixin",
+    "IngredientMixin",
     "ItemEntityMixin",
     "LocationCheckMixin",
     "LocationPredicateMixin",
     "LightningBoltMixin",
     "RecipeManagerMixin",
-    "ReloadableServerResourcesMixin"
+    "ReloadableServerResourcesMixin",
+    "fabric.ShapedRecipeMixin"
   ],
   "client": [
     "GameRendererAccess",
