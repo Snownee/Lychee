@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
-import snownee.lychee.lightning_channeling.LightningChannelingRecipe;
+import snownee.lychee.recipes.lightning_channeling.LightningChannelingRecipe;
 
 @Mixin(LightningBolt.class)
 public class LightningBoltMixin {

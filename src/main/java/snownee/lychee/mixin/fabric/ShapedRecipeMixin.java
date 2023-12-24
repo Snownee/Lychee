@@ -18,7 +18,12 @@ import snownee.lychee.util.CommonProxy;
 public class ShapedRecipeMixin {
 
 	@Inject(method = "itemStackFromJson", at = @At("TAIL"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-	private static void lychee$itemStackFromJson(JsonObject jsonObject, CallbackInfoReturnable<ItemStack> cir, Item item, int count) {
+	private static void lychee$itemStackFromJson(
+			JsonObject jsonObject,
+			CallbackInfoReturnable<ItemStack> cir,
+			Item item,
+			int count
+	) {
 		if (!jsonObject.has("lychee:tag")) {
 			return;
 		}

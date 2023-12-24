@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -30,7 +30,7 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
 		return difficulties.contains(ctx.level().getDifficulty()) ? times : 0;
 	}
 

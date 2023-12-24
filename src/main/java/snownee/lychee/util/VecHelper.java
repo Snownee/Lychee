@@ -38,7 +38,7 @@ public class VecHelper {
 	public static Vec3 rotateCentered(Vec3 vec, double deg, Axis axis) {
 		Vec3 shift = getCenterOf(BlockPos.ZERO);
 		return VecHelper.rotate(vec.subtract(shift), deg, axis)
-			.add(shift);
+						.add(shift);
 	}
 
 	public static Vec3 rotate(Vec3 vec, double deg, Axis axis) {
@@ -66,7 +66,7 @@ public class VecHelper {
 	public static Vec3 mirrorCentered(Vec3 vec, Mirror mirror) {
 		Vec3 shift = getCenterOf(BlockPos.ZERO);
 		return VecHelper.mirror(vec.subtract(shift), mirror)
-			.add(shift);
+						.add(shift);
 	}
 
 	public static Vec3 mirror(Vec3 vec, Mirror mirror) {
@@ -93,9 +93,9 @@ public class VecHelper {
 		if (Math.abs(dot) > 1 - 1.0E-3)
 			up = new Vec3(0, 0, dot > 0 ? 1 : -1);
 		Vec3 right = fwd.cross(up)
-			.normalize();
+						.normalize();
 		up = right.cross(fwd)
-			.normalize();
+				  .normalize();
 		double x = vec.x * right.x + vec.y * up.x + vec.z * fwd.x;
 		double y = vec.x * right.y + vec.y * up.y + vec.z * fwd.y;
 		double z = vec.x * right.z + vec.y * up.z + vec.z * fwd.z;
@@ -104,19 +104,20 @@ public class VecHelper {
 
 	public static boolean isVecPointingTowards(Vec3 vec, Direction direction) {
 		return Vec3.atLowerCornerOf(direction.getNormal())
-			.dot(vec.normalize()) > 0.125; // slight tolerance to activate perpendicular movement actors
+				   .dot(vec.normalize()) > 0.125; // slight tolerance to activate perpendicular movement actors
 	}
 
 	public static Vec3 getCenterOf(Vec3i pos) {
 		if (pos.equals(Vec3i.ZERO))
 			return CENTER_OF_ORIGIN;
 		return Vec3.atLowerCornerOf(pos)
-			.add(.5f, .5f, .5f);
+				   .add(.5f, .5f, .5f);
 	}
 
 	public static Vec3 offsetRandomly(Vec3 vec, RandomSource r, float radius) {
 		return new Vec3(vec.x + (r.nextFloat() - .5f) * 2 * radius, vec.y + (r.nextFloat() - .5f) * 2 * radius,
-			vec.z + (r.nextFloat() - .5f) * 2 * radius);
+				vec.z + (r.nextFloat() - .5f) * 2 * radius
+		);
 	}
 
 	public static Vec3 axisAlingedPlaneOf(Vec3 vec) {
@@ -186,24 +187,25 @@ public class VecHelper {
 
 	public static Vec3 clamp(Vec3 vec, float maxLength) {
 		return vec.lengthSqr() > maxLength * maxLength ? vec.normalize()
-			.scale(maxLength) : vec;
+															.scale(maxLength) : vec;
 	}
 
 	public static Vec3 lerp(float p, Vec3 from, Vec3 to) {
 		return from.add(to.subtract(from)
-			.scale(p));
+						  .scale(p));
 	}
 
 	public static Vec3 slerp(float p, Vec3 from, Vec3 to) {
 		double theta = Math.acos(from.dot(to));
 		return from.scale(Mth.sin(1 - p) * theta)
-			.add(to.scale(Mth.sin((float) (theta * p))))
-			.scale(1 / Mth.sin((float) theta));
+				   .add(to.scale(Mth.sin((float) (theta * p))))
+				   .scale(1 / Mth.sin((float) theta));
 	}
 
 	public static Vec3 clampComponentWise(Vec3 vec, float maxLength) {
 		return new Vec3(Mth.clamp(vec.x, -maxLength, maxLength), Mth.clamp(vec.y, -maxLength, maxLength),
-			Mth.clamp(vec.z, -maxLength, maxLength));
+				Mth.clamp(vec.z, -maxLength, maxLength)
+		);
 	}
 
 	public static Vec3 componentMin(Vec3 vec1, Vec3 vec2) {
@@ -250,7 +252,8 @@ public class VecHelper {
 		camera_rotation_conj.conjugate();
 
 		Vector3f result3f = new Vector3f((float) (camera_pos.x - target.x), (float) (camera_pos.y - target.y),
-			(float) (camera_pos.z - target.z));
+				(float) (camera_pos.z - target.z)
+		);
 		result3f.rotate(camera_rotation_conj);
 
 		// ----- compensate for view bobbing (if active) -----
@@ -266,7 +269,8 @@ public class VecHelper {
 				float f1 = -(distwalked_modified + f * partialTicks);
 				float f2 = Mth.lerp(partialTicks, playerentity.oBob, playerentity.bob);
 				Quaternionf q2 =
-					com.mojang.math.Axis.XP.rotationDegrees(Math.abs(Mth.cos(f1 * (float) Math.PI - 0.2F) * f2) * 5.0F);
+						com.mojang.math.Axis.XP.rotationDegrees(
+								Math.abs(Mth.cos(f1 * (float) Math.PI - 0.2F) * f2) * 5.0F);
 				q2.conjugate();
 				result3f.rotate(q2);
 
@@ -275,7 +279,8 @@ public class VecHelper {
 				result3f.rotate(q1);
 
 				Vector3f bob_translation = new Vector3f((Mth.sin(f1 * (float) Math.PI) * f2 * 0.5F),
-					(-Math.abs(Mth.cos(f1 * (float) Math.PI) * f2)), 0.0f);
+						(-Math.abs(Mth.cos(f1 * (float) Math.PI) * f2)), 0.0f
+				);
 				bob_translation.y = -bob_translation.y(); // this is weird but hey, if it works
 				result3f.add(bob_translation);
 			}
@@ -285,7 +290,7 @@ public class VecHelper {
 		float fov = (float) ((GameRendererAccess) mc.gameRenderer).callGetFov(ari, partialTicks, true);
 
 		float half_height = (float) mc.getWindow()
-			.getGuiScaledHeight() / 2;
+									  .getGuiScaledHeight() / 2;
 		float scale_factor = half_height / (result3f.z() * (float) Math.tan(Math.toRadians(fov / 2)));
 		return new Vec3(-result3f.x() * scale_factor, result3f.y() * scale_factor, result3f.z());
 	}
@@ -302,9 +307,9 @@ public class VecHelper {
 
 	public static Vec3 bezierDerivative(Vec3 p1, Vec3 p2, Vec3 q1, Vec3 q2, float t) {
 		return p1.scale(-3 * t * t + 6 * t - 3)
-			.add(q1.scale(9 * t * t - 12 * t + 3))
-			.add(q2.scale(-9 * t * t + 6 * t))
-			.add(p2.scale(3 * t * t));
+				 .add(q1.scale(9 * t * t - 12 * t + 3))
+				 .add(q2.scale(-9 * t * t + 6 * t))
+				 .add(p2.scale(3 * t * t));
 	}
 
 	@Nullable
@@ -345,7 +350,7 @@ public class VecHelper {
 		Vec3 sdivrcs = s.scale(1 / rcs);
 		double t = qminusp.x * sdivrcs.z - qminusp.z * sdivrcs.x;
 		double u = qminusp.x * rdivrcs.z - qminusp.z * rdivrcs.x;
-		return new double[] { t, u };
+		return new double[]{t, u};
 	}
 
 }

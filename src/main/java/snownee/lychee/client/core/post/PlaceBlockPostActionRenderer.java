@@ -5,7 +5,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.post.PlaceBlock;
+import snownee.lychee.action.PlaceBlock;
 
 public class PlaceBlockPostActionRenderer implements PostActionRenderer<PlaceBlock> {
 

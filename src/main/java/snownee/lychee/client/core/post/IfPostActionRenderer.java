@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import net.minecraft.network.chat.Component;
-import snownee.lychee.core.post.If;
+import snownee.lychee.action.If;
 
 public class IfPostActionRenderer implements PostActionRenderer<If> {
 

@@ -74,11 +74,47 @@ public class FluidRenderer {
 	//		ms.popPose();
 	//	}
 
-	public static void renderFluidBox(FluidState fluidState, float xMin, float yMin, float zMin, float xMax, float yMax, float zMax, MultiBufferSource buffer, PoseStack ms, int light, boolean renderBottom) {
-		renderFluidBox(fluidState, xMin, yMin, zMin, xMax, yMax, zMax, getFluidBuilder(buffer), ms, light, renderBottom);
+	public static void renderFluidBox(
+			FluidState fluidState,
+			float xMin,
+			float yMin,
+			float zMin,
+			float xMax,
+			float yMax,
+			float zMax,
+			MultiBufferSource buffer,
+			PoseStack ms,
+			int light,
+			boolean renderBottom
+	) {
+		renderFluidBox(
+				fluidState,
+				xMin,
+				yMin,
+				zMin,
+				xMax,
+				yMax,
+				zMax,
+				getFluidBuilder(buffer),
+				ms,
+				light,
+				renderBottom
+		);
 	}
 
-	public static void renderFluidBox(FluidState fluidState, float xMin, float yMin, float zMin, float xMax, float yMax, float zMax, VertexConsumer builder, PoseStack ms, int light, boolean renderBottom) {
+	public static void renderFluidBox(
+			FluidState fluidState,
+			float xMin,
+			float yMin,
+			float zMin,
+			float xMax,
+			float yMax,
+			float zMax,
+			VertexConsumer builder,
+			PoseStack ms,
+			int light,
+			boolean renderBottom
+	) {
 		FluidRenderHandler renderHandler = FluidRenderHandlerRegistry.INSTANCE.get(fluidState.getType());
 		TextureAtlasSprite fluidTexture = renderHandler.getFluidSprites(null, null, fluidState)[0];
 
@@ -103,27 +139,100 @@ public class FluidRenderer {
 			boolean positive = side.getAxisDirection() == AxisDirection.POSITIVE;
 			if (side.getAxis().isHorizontal()) {
 				if (side.getAxis() == Axis.X) {
-					renderStillTiledFace(side, zMin, yMin, zMax, yMax, positive ? xMax : xMin, builder, ms, light, color, fluidTexture);
+					renderStillTiledFace(
+							side,
+							zMin,
+							yMin,
+							zMax,
+							yMax,
+							positive ? xMax : xMin,
+							builder,
+							ms,
+							light,
+							color,
+							fluidTexture
+					);
 				} else {
-					renderStillTiledFace(side, xMin, yMin, xMax, yMax, positive ? zMax : zMin, builder, ms, light, color, fluidTexture);
+					renderStillTiledFace(
+							side,
+							xMin,
+							yMin,
+							xMax,
+							yMax,
+							positive ? zMax : zMin,
+							builder,
+							ms,
+							light,
+							color,
+							fluidTexture
+					);
 				}
 			} else {
-				renderStillTiledFace(side, xMin, zMin, xMax, zMax, positive ? yMax : yMin, builder, ms, light, color, fluidTexture);
+				renderStillTiledFace(
+						side,
+						xMin,
+						zMin,
+						xMax,
+						zMax,
+						positive ? yMax : yMin,
+						builder,
+						ms,
+						light,
+						color,
+						fluidTexture
+				);
 			}
 		}
 
 		ms.popPose();
 	}
 
-	public static void renderStillTiledFace(Direction dir, float left, float down, float right, float up, float depth, VertexConsumer builder, PoseStack ms, int light, int color, TextureAtlasSprite texture) {
+	public static void renderStillTiledFace(
+			Direction dir,
+			float left,
+			float down,
+			float right,
+			float up,
+			float depth,
+			VertexConsumer builder,
+			PoseStack ms,
+			int light,
+			int color,
+			TextureAtlasSprite texture
+	) {
 		FluidRenderer.renderTiledFace(dir, left, down, right, up, depth, builder, ms, light, color, texture, 1);
 	}
 
-	public static void renderFlowingTiledFace(Direction dir, float left, float down, float right, float up, float depth, VertexConsumer builder, PoseStack ms, int light, int color, TextureAtlasSprite texture) {
+	public static void renderFlowingTiledFace(
+			Direction dir,
+			float left,
+			float down,
+			float right,
+			float up,
+			float depth,
+			VertexConsumer builder,
+			PoseStack ms,
+			int light,
+			int color,
+			TextureAtlasSprite texture
+	) {
 		FluidRenderer.renderTiledFace(dir, left, down, right, up, depth, builder, ms, light, color, texture, 0.5f);
 	}
 
-	public static void renderTiledFace(Direction dir, float left, float down, float right, float up, float depth, VertexConsumer builder, PoseStack ms, int light, int color, TextureAtlasSprite texture, float textureScale) {
+	public static void renderTiledFace(
+			Direction dir,
+			float left,
+			float down,
+			float right,
+			float up,
+			float depth,
+			VertexConsumer builder,
+			PoseStack ms,
+			int light,
+			int color,
+			TextureAtlasSprite texture,
+			float textureScale
+	) {
 		boolean positive = dir.getAxisDirection() == Direction.AxisDirection.POSITIVE;
 		boolean horizontal = dir.getAxis().isHorizontal();
 		boolean x = dir.getAxis() == Axis.X;
@@ -186,7 +295,18 @@ public class FluidRenderer {
 		}
 	}
 
-	private static void putVertex(VertexConsumer builder, PoseStack ms, float x, float y, float z, int color, float u, float v, Direction face, int light) {
+	private static void putVertex(
+			VertexConsumer builder,
+			PoseStack ms,
+			float x,
+			float y,
+			float z,
+			int color,
+			float u,
+			float v,
+			Direction face,
+			int light
+	) {
 
 		Vec3i normal = face.getNormal();
 		Pose peek = ms.last();
@@ -195,7 +315,8 @@ public class FluidRenderer {
 		int g = color >> 8 & 0xff;
 		int b = color & 0xff;
 
-		builder.vertex(peek.pose(), x, y, z).color(r, g, b, a).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(light).normal(peek.normal(), normal.getX(), normal.getY(), normal.getZ()).endVertex();
+		builder.vertex(peek.pose(), x, y, z).color(r, g, b, a).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(
+				light).normal(peek.normal(), normal.getX(), normal.getY(), normal.getZ()).endVertex();
 	}
 
 }

@@ -30,10 +30,23 @@ public class LocationPredicateMixin implements LocationPredicateHelper {
 		return lychee$biomeTag;
 	}
 
-	@Inject(method = "matches", at = @At(
-			value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;isLoaded(Lnet/minecraft/core/BlockPos;)Z", shift = At.Shift.BY, by = 2
-	), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true)
-	private void lychee_matches(ServerLevel level, double d, double e, double f, CallbackInfoReturnable<Boolean> cir, BlockPos blockpos, boolean loaded) {
+	@Inject(
+			method = "matches", at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/server/level/ServerLevel;isLoaded(Lnet/minecraft/core/BlockPos;)Z",
+			shift = At.Shift.BY,
+			by = 2
+	), locals = LocalCapture.CAPTURE_FAILHARD, cancellable = true
+	)
+	private void lychee_matches(
+			ServerLevel level,
+			double d,
+			double e,
+			double f,
+			CallbackInfoReturnable<Boolean> cir,
+			BlockPos blockpos,
+			boolean loaded
+	) {
 		if (lychee$biomeTag != null && !level.getBiome(blockpos).is(lychee$biomeTag)) {
 			cir.setReturnValue(false);
 		}

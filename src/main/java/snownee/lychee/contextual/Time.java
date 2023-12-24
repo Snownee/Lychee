@@ -16,7 +16,7 @@ import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.predicates.TimeCheck;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
@@ -30,7 +30,7 @@ public record Time(MinMaxBounds.Ints value, Optional<Long> period) implements Co
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
 		return test(ctx.level()) ? times : 0;
 	}
 

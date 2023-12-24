@@ -35,7 +35,14 @@ public interface PointedDripstoneBlockAccess {
 	}
 
 	@Invoker
-	static Optional<BlockPos> callFindBlockVertical(LevelAccessor level, BlockPos blockPos2, AxisDirection axisDirection, BiPredicate<BlockPos, BlockState> biPredicate, Predicate<BlockState> predicate, int i) {
+	static Optional<BlockPos> callFindBlockVertical(
+			LevelAccessor level,
+			BlockPos blockPos2,
+			AxisDirection axisDirection,
+			BiPredicate<BlockPos, BlockState> biPredicate,
+			Predicate<BlockState> predicate,
+			int i
+	) {
 		throw new IllegalStateException();
 	}
 

@@ -24,10 +24,19 @@ public class LocationCheckMixin {
 
 	@Inject(
 			at = @At(
-					value = "INVOKE", target = "Lnet/minecraft/advancements/critereon/LocationPredicate;fromJson(Lcom/google/gson/JsonElement;)Lnet/minecraft/advancements/critereon/LocationPredicate;", shift = At.Shift.BY, by = 2
+					value = "INVOKE",
+					target = "Lnet/minecraft/advancements/critereon/LocationPredicate;fromJson" +
+							 "(Lcom/google/gson/JsonElement;)Lnet/minecraft/advancements/critereon/LocationPredicate;",
+					shift = At.Shift.BY,
+					by = 2
 			), method = "deserialize", locals = LocalCapture.CAPTURE_FAILHARD
 	)
-	private void lychee_deserialize(JsonObject object, JsonDeserializationContext context, CallbackInfoReturnable<LocationCheck> ci, LocationPredicate predicate) {
+	private void lychee_deserialize(
+			JsonObject object,
+			JsonDeserializationContext context,
+			CallbackInfoReturnable<LocationCheck> ci,
+			LocationPredicate predicate
+	) {
 		if (predicate == null || predicate == LocationPredicate.ANY)
 			return;
 		object = object.getAsJsonObject("predicate");
@@ -38,11 +47,20 @@ public class LocationCheckMixin {
 	}
 
 	@Inject(at = @At("TAIL"), method = "serialize")
-	private void lychee_serialize(JsonObject object, LocationCheck locationCheck, JsonSerializationContext jsonSerializationContext, CallbackInfo ci) {
+	private void lychee_serialize(
+			JsonObject object,
+			LocationCheck locationCheck,
+			JsonSerializationContext jsonSerializationContext,
+			CallbackInfo ci
+	) {
 		if (!object.get("predicate").isJsonNull()) {
-			LocationPredicateHelper predicate = (LocationPredicateHelper) ((LocationCheckAccess) locationCheck).getPredicate();
+			LocationPredicateHelper predicate =
+					(LocationPredicateHelper) ((LocationCheckAccess) locationCheck).getPredicate();
 			if (predicate.lychee$getBiomeTag() != null) {
-				object.getAsJsonObject("predicate").addProperty("lychee:biome_tag", predicate.lychee$getBiomeTag().location().toString());
+				object.getAsJsonObject("predicate").addProperty(
+						"lychee:biome_tag",
+						predicate.lychee$getBiomeTag().location().toString()
+				);
 			}
 		}
 	}

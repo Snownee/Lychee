@@ -11,7 +11,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.BoundsExtensions;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
@@ -24,7 +24,7 @@ public record FallDistance(Doubles range) implements ContextualCondition<FallDis
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
 		final var entity = ctx.get(LootContextParams.THIS_ENTITY);
 		var distance = entity.fallDistance;
 		if (entity instanceof FallingBlockEntity block) {

@@ -17,7 +17,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.TriState;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 
 /**
  * Contains conditions
@@ -51,10 +51,10 @@ public interface Contextual<C extends Contextual<C>> extends RecipeCondition {
 		for (ConditionHolder<?> condition : conditions()) {
 			if (condition.secret()) {
 				TriState result = condition.condition().testForTooltips(level, player);
-				ClientRecipeCondition.appendToTooltips(tooltips, result, indent, SECRET_COMPONENT.copy());
+				ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, SECRET_COMPONENT.copy());
 			} else if (condition.description().isPresent()) {
 				TriState result = condition.condition().testForTooltips(level, player);
-				ClientRecipeCondition.appendToTooltips(
+				ContextualConditionDisplay.appendToTooltips(
 						tooltips, result, indent, condition.description().get().copy());
 			} else {
 				condition.condition().appendToTooltips(tooltips, level, player, indent, false);
@@ -62,7 +62,7 @@ public interface Contextual<C extends Contextual<C>> extends RecipeCondition {
 		}
 	}
 
-	default int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	default int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
 		for (ConditionHolder<?> condition : conditions()) {
 			try {
 				times = condition.condition().test(recipe, ctx, times);

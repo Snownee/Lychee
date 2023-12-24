@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
@@ -70,7 +70,7 @@ public class DirectionCheck implements ContextualCondition<DirectionCheck> {
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
 		return predicate.test(ctx) ? times : 0;
 	}
 

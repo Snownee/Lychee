@@ -16,9 +16,9 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.core.LycheeContext;
-import snownee.lychee.dripstone_dripping.DripstoneRecipe;
-import snownee.lychee.random_block_ticking.RandomlyTickable;
+import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
+import snownee.lychee.recipes.random_block_ticking.RandomlyTickable;
 import snownee.lychee.util.CommonProxy;
 
 @Mixin(BlockStateBase.class)
@@ -30,8 +30,8 @@ public class BlockStateMixin {
 
 		RandomlyTickable block = (RandomlyTickable) state.getBlock();
 		if (block.lychee$isTickable()) {
-			Supplier<LycheeContext> ctxSupplier = () -> {
-				var builder = new LycheeContext.Builder<>(serverLevel);
+			Supplier<LycheeRecipeContext> ctxSupplier = () -> {
+				var builder = new LycheeRecipeContext.Builder<>(serverLevel);
 				builder.withRandom(randomSource);
 				builder.withParameter(LootContextParams.BLOCK_STATE, state);
 				builder.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));

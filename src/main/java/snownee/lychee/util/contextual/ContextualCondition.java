@@ -17,32 +17,18 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 
-public interface ContextualCondition<T extends ContextualCondition<T>> extends RecipeCondition, ClientRecipeCondition {
+public interface ContextualCondition<T extends ContextualCondition<T>> extends RecipeCondition,
+																			   ContextualConditionDisplay {
 	Codec<ContextualCondition<?>> CODEC = LycheeRegistries.CONTEXTUAL.byNameCodec().dispatch(
 			ContextualCondition::type,
 			ContextualConditionType::codec
 	);
 
-	LoadingCache<ContextualConditionType<?>, String> DESCRIPTION_ID_CACHE =
-			CacheBuilder.newBuilder().build(new CacheLoader<>() {
-				@Override
-				public @NotNull String load(@NotNull ContextualConditionType<?> key) {
-					return CommonProxy.makeDescriptionId("contextual", LycheeRegistries.CONTEXTUAL.getKey(key));
-				}
-			});
-
 	ContextualConditionType<T> type();
 
+	@Override
 	default String getDescriptionId() {
 		return DESCRIPTION_ID_CACHE.getUnchecked(type());
-	}
-
-	default String getDescriptionId(boolean inverted) {
-		return getDescriptionId() + (inverted ? ".not" : "");
-	}
-
-	default MutableComponent getDescription(boolean inverted) {
-		return Component.translatable(getDescriptionId(inverted));
 	}
 
 	@Override
@@ -53,15 +39,11 @@ public interface ContextualCondition<T extends ContextualCondition<T>> extends R
 			int indent,
 			boolean inverted
 	) {
-		ClientRecipeCondition.appendToTooltips(
+		ContextualConditionDisplay.appendToTooltips(
 				tooltips,
 				testForTooltips(level, player),
 				indent,
 				getDescription(inverted)
 		);
-	}
-
-	default int showingCount() {
-		return 1;
 	}
 }

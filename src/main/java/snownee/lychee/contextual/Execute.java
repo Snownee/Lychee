@@ -18,7 +18,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
@@ -34,14 +34,14 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
 		if (command.isEmpty() || ctx.level().isClientSide) {
 			return 0;
 		}
 		final var pos = ctx.get(LootContextParams.ORIGIN);
 		final var entity = ctx.getOrNull(LootContextParams.THIS_ENTITY);
 		var rotation = Vec2.ZERO;
-		var displayName = snownee.lychee.core.post.Execute.DEFAULT_NAME;
+		var displayName = snownee.lychee.action.Execute.DEFAULT_NAME;
 		var name = Lychee.ID;
 		if (entity != null) {
 			rotation = entity.getRotationVector();

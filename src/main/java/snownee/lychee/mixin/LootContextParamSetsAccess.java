@@ -12,7 +12,10 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 public interface LootContextParamSetsAccess {
 
 	@Invoker
-	static LootContextParamSet callRegister(String pRegistryName, Consumer<LootContextParamSet.Builder> pBuilderConsumer) {
+	static LootContextParamSet callRegister(
+			String pRegistryName,
+			Consumer<LootContextParamSet.Builder> pBuilderConsumer
+	) {
 		throw new IllegalStateException();
 	}
 

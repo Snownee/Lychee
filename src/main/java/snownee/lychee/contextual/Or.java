@@ -20,7 +20,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.contextual.ContextualConditionsHolder;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 
 public record Or(ContextualConditionsHolder conditionsHolder) implements ContextualCondition<Or>,
 																		 Contextual<Or>,
@@ -31,7 +31,7 @@ public record Or(ContextualConditionsHolder conditionsHolder) implements Context
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
 		for (ConditionHolder<?> condition : conditions()) {
 			int result = condition.condition().test(recipe, ctx, times);
 			if (result > 0) {

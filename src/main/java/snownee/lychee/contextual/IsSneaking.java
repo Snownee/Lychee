@@ -10,7 +10,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 
 public final class IsSneaking implements ContextualCondition<IsSneaking> {
 	private static final IsSneaking INSTANCE = new IsSneaking();
@@ -21,7 +21,7 @@ public final class IsSneaking implements ContextualCondition<IsSneaking> {
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
 		Entity entity = ctx.get(LootContextParams.THIS_ENTITY);
 		return entity.isCrouching() || entity.isShiftKeyDown() ? times : 0;
 	}

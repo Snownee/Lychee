@@ -17,7 +17,15 @@ import snownee.lychee.util.CommonProxy;
 @Mixin(value = Ingredient.class, priority = 2000)
 public class IngredientMixin {
 
-	@Inject(method = "valueFromJson", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/crafting/ShapedRecipe;itemFromJson(Lcom/google/gson/JsonObject;)Lnet/minecraft/world/item/Item;"), cancellable = true)
+	@Inject(
+			method = "valueFromJson",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/item/crafting/ShapedRecipe;itemFromJson" +
+							 "(Lcom/google/gson/JsonObject;)Lnet/minecraft/world/item/Item;"
+			),
+			cancellable = true
+	)
 	private static void lychee$itemStackFromJson(JsonObject jsonObject, CallbackInfoReturnable<Ingredient.Value> cir) {
 		if (!jsonObject.has("lychee:tag")) {
 			return;

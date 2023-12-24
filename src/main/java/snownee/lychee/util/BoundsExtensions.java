@@ -8,6 +8,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 public class BoundsExtensions {
+	public static final MinMaxBounds.Ints ONE = MinMaxBounds.Ints.exactly(1);
+
 	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("##.##");
 
 	public static MutableComponent getDescription(MinMaxBounds<?> bounds) {

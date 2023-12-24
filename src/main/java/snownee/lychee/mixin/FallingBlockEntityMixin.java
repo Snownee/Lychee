@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.block_crushing.LycheeFallingBlockEntity;
+import snownee.lychee.recipes.block_crushing.LycheeFallingBlockEntity;
 
 @Mixin(FallingBlockEntity.class)
 public abstract class FallingBlockEntityMixin extends Entity implements LycheeFallingBlockEntity {
@@ -35,7 +35,12 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 	}
 
 	@Inject(at = @At("HEAD"), method = "causeFallDamage")
-	private void lychee_causeFallDamage(float pFallDistance, float pMultiplier, DamageSource pSource, CallbackInfoReturnable<Boolean> ci) {
+	private void lychee_causeFallDamage(
+			float pFallDistance,
+			float pMultiplier,
+			DamageSource pSource,
+			CallbackInfoReturnable<Boolean> ci
+	) {
 		FallingBlockEntity entity = (FallingBlockEntity) (Object) this;
 		if (entity.level().isClientSide) {
 			return;

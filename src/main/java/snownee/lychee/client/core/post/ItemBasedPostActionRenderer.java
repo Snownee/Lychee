@@ -3,7 +3,7 @@ package snownee.lychee.client.core.post;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.core.post.PostAction;
+import snownee.lychee.util.action.PostAction;
 
 public interface ItemBasedPostActionRenderer<T extends PostAction> extends PostActionRenderer<T> {
 

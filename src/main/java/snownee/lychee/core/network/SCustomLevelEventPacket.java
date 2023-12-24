@@ -22,15 +22,27 @@ public class SCustomLevelEventPacket extends PacketHandler {
 	public static SCustomLevelEventPacket I;
 
 	@Override
-	public CompletableFuture<FriendlyByteBuf> receive(Function<Runnable, CompletableFuture<FriendlyByteBuf>> executor, FriendlyByteBuf buf, ServerPlayer sender) {
+	public CompletableFuture<FriendlyByteBuf> receive(
+			Function<Runnable, CompletableFuture<FriendlyByteBuf>> executor,
+			FriendlyByteBuf buf,
+			ServerPlayer sender) {
 		ItemStack stack = buf.readItem();
 		float x = buf.readFloat();
 		float y = buf.readFloat();
 		float z = buf.readFloat();
 		return executor.apply(() -> {
 			for (int i = 0; i < 8; ++i) {
-				Vec3 vec3 = new Vec3((Math.random() - 0.5D) * 0.2D, Math.random() * 0.1D + 0.1D, (Math.random() - 0.5D) * 0.2D);
-				Minecraft.getInstance().level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, stack), x, y, z, vec3.x, vec3.y + 0.05D, vec3.z);
+				Vec3 vec3 = new Vec3((Math.random() - 0.5D) * 0.2D,
+									 Math.random() * 0.1D + 0.1D,
+									 (Math.random() - 0.5D) * 0.2D);
+				Minecraft.getInstance().level.addParticle(
+						new ItemParticleOption(ParticleTypes.ITEM, stack),
+						x,
+						y,
+						z,
+						vec3.x,
+						vec3.y + 0.05D,
+						vec3.z);
 			}
 		});
 	}

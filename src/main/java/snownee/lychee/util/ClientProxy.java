@@ -14,33 +14,34 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import snownee.lychee.PostActionTypes;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.client.core.post.CycleStatePropertyPostActionRenderer;
 import snownee.lychee.client.core.post.IfPostActionRenderer;
 import snownee.lychee.client.core.post.ItemBasedPostActionRenderer;
 import snownee.lychee.client.core.post.ItemStackPostActionRenderer;
 import snownee.lychee.client.core.post.PlaceBlockPostActionRenderer;
 import snownee.lychee.client.core.post.PostActionRenderer;
-import snownee.lychee.core.post.DropItem;
-import snownee.lychee.core.post.DropXp;
-import snownee.lychee.core.post.Execute;
-import snownee.lychee.core.post.Explode;
-import snownee.lychee.core.post.Hurt;
-import snownee.lychee.core.post.input.SetItem;
-import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
-import snownee.lychee.dripstone_dripping.client.ParticleFactories;
+import snownee.lychee.action.DropItem;
+import snownee.lychee.action.DropXp;
+import snownee.lychee.action.Execute;
+import snownee.lychee.action.Explode;
+import snownee.lychee.action.Hurt;
+import snownee.lychee.action.input.SetItem;
+import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
+import snownee.lychee.recipes.dripstone_dripping.client.ParticleFactories;
 
 public class ClientProxy implements ClientModInitializer {
 
-	private static final Event<RecipeViewerWidgetClickListener> RECIPE_VIEWER_WIDGET_CLICK_EVENT = EventFactory.createArrayBacked(RecipeViewerWidgetClickListener.class, listeners -> (recipe, button) -> {
-		for (RecipeViewerWidgetClickListener listener : listeners) {
-			if (listener.onClick(recipe, button)) {
-				return true;
-			}
-		}
-		return false;
-	});
+	private static final Event<RecipeViewerWidgetClickListener> RECIPE_VIEWER_WIDGET_CLICK_EVENT =
+			EventFactory.createArrayBacked(RecipeViewerWidgetClickListener.class, listeners -> (recipe, button) -> {
+				for (RecipeViewerWidgetClickListener listener : listeners) {
+					if (listener.onClick(recipe, button)) {
+						return true;
+					}
+				}
+				return false;
+			});
 
 	public static MutableComponent getDimensionDisplayName(ResourceKey<Level> dimension) {
 		String key = Util.makeDescriptionId("dimension", dimension.location());
@@ -72,22 +73,49 @@ public class ClientProxy implements ClientModInitializer {
 		RECIPE_VIEWER_WIDGET_CLICK_EVENT.register(listener);
 	}
 
-	public static boolean postInfoBadgeClickEvent(ILycheeRecipe<?> recipe, int button) {
+	public static boolean postInfoBadgeClickEvent(LycheeRecipe<?> recipe, int button) {
 		return RECIPE_VIEWER_WIDGET_CLICK_EVENT.invoker().onClick(recipe, button);
 	}
 
 	@Override
 	public void onInitializeClient() {
-		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_DRIPPING, $ -> new ParticleFactories.Dripping($));
-		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_FALLING, $ -> new ParticleFactories.Falling($));
-		ParticleFactoryRegistry.getInstance().register(DripstoneRecipeMod.DRIPSTONE_SPLASH, $ -> new ParticleFactories.Splash($));
+		ParticleFactoryRegistry.getInstance().register(
+				DripstoneRecipeMod.DRIPSTONE_DRIPPING,
+				$ -> new ParticleFactories.Dripping($)
+		);
+		ParticleFactoryRegistry.getInstance().register(
+				DripstoneRecipeMod.DRIPSTONE_FALLING,
+				$ -> new ParticleFactories.Falling($)
+		);
+		ParticleFactoryRegistry.getInstance().register(
+				DripstoneRecipeMod.DRIPSTONE_SPLASH,
+				$ -> new ParticleFactories.Splash($)
+		);
 
-		PostActionRenderer.register(PostActionTypes.DROP_ITEM, (ItemStackPostActionRenderer<DropItem>) action -> action.stack);
-		PostActionRenderer.register(PostActionTypes.SET_ITEM, (ItemStackPostActionRenderer<SetItem>) action -> action.stack);
-		PostActionRenderer.register(PostActionTypes.DROP_XP, (ItemBasedPostActionRenderer<DropXp>) action -> Items.EXPERIENCE_BOTTLE.getDefaultInstance());
-		PostActionRenderer.register(PostActionTypes.EXECUTE, (ItemBasedPostActionRenderer<Execute>) action -> Items.COMMAND_BLOCK.getDefaultInstance());
-		PostActionRenderer.register(PostActionTypes.EXPLODE, (ItemBasedPostActionRenderer<Explode>) action -> Items.TNT.getDefaultInstance());
-		PostActionRenderer.register(PostActionTypes.HURT, (ItemBasedPostActionRenderer<Hurt>) action -> Items.IRON_SWORD.getDefaultInstance());
+		PostActionRenderer.register(
+				PostActionTypes.DROP_ITEM,
+				(ItemStackPostActionRenderer<DropItem>) action -> action.stack
+		);
+		PostActionRenderer.register(
+				PostActionTypes.SET_ITEM,
+				(ItemStackPostActionRenderer<SetItem>) action -> action.stack
+		);
+		PostActionRenderer.register(
+				PostActionTypes.DROP_XP,
+				(ItemBasedPostActionRenderer<DropXp>) action -> Items.EXPERIENCE_BOTTLE.getDefaultInstance()
+		);
+		PostActionRenderer.register(
+				PostActionTypes.EXECUTE,
+				(ItemBasedPostActionRenderer<Execute>) action -> Items.COMMAND_BLOCK.getDefaultInstance()
+		);
+		PostActionRenderer.register(
+				PostActionTypes.EXPLODE,
+				(ItemBasedPostActionRenderer<Explode>) action -> Items.TNT.getDefaultInstance()
+		);
+		PostActionRenderer.register(
+				PostActionTypes.HURT,
+				(ItemBasedPostActionRenderer<Hurt>) action -> Items.IRON_SWORD.getDefaultInstance()
+		);
 		PostActionRenderer.register(PostActionTypes.IF, new IfPostActionRenderer());
 		PostActionRenderer.register(PostActionTypes.PLACE, new PlaceBlockPostActionRenderer());
 		PostActionRenderer.register(PostActionTypes.CYCLE_STATE_PROPERTY, new CycleStatePropertyPostActionRenderer());
@@ -95,6 +123,6 @@ public class ClientProxy implements ClientModInitializer {
 
 	@FunctionalInterface
 	public interface RecipeViewerWidgetClickListener {
-		boolean onClick(ILycheeRecipe<?> recipe, int button);
+		boolean onClick(LycheeRecipe<?> recipe, int button);
 	}
 }

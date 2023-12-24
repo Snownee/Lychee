@@ -11,16 +11,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
-import snownee.lychee.core.input.ItemHolderCollection;
+import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.RecipeMatcher;
 
-public class ItemShapelessContext extends LycheeContext {
+public class ItemShapelessContext extends LycheeRecipeContext {
 	public final List<ItemEntity> itemEntities;
 	public List<ItemEntity> filteredItems;
 	private RecipeMatcher<ItemStack> match;
 	public int totalItems;
 
-	protected ItemShapelessContext(RandomSource pRandom, Level level, Map<LootContextParam<?>, Object> pParams, List<ItemEntity> itemEntities) {
+	protected ItemShapelessContext(
+			RandomSource pRandom,
+			Level level,
+			Map<LootContextParam<?>, Object> pParams,
+			List<ItemEntity> itemEntities
+	) {
 		super(pRandom, level, pParams);
 		this.itemEntities = itemEntities;
 		totalItems = itemEntities.stream().map(ItemEntity::getItem).mapToInt(ItemStack::getCount).sum();
@@ -29,7 +34,7 @@ public class ItemShapelessContext extends LycheeContext {
 	public void setMatch(@Nullable RecipeMatcher<ItemStack> match) {
 		this.match = match;
 		if (match == null) {
-			itemHolders = ItemHolderCollection.EMPTY;
+			itemHolders = ItemStackHolderCollection.EMPTY;
 			return;
 		}
 		ItemEntity[] entities = new ItemEntity[match.tests.size()];
@@ -38,7 +43,7 @@ public class ItemShapelessContext extends LycheeContext {
 				entities[match.use[i][j]] = filteredItems.get(i);
 			}
 		}
-		itemHolders = ItemHolderCollection.InWorld.of(entities);
+		itemHolders = ItemStackHolderCollection.InWorld.of(entities);
 	}
 
 	@Nullable
@@ -46,7 +51,7 @@ public class ItemShapelessContext extends LycheeContext {
 		return match;
 	}
 
-	public static class Builder<C extends ItemShapelessContext> extends LycheeContext.Builder<C> {
+	public static class Builder<C extends ItemShapelessContext> extends LycheeRecipeContext.Builder<C> {
 		public final List<ItemEntity> itemEntities;
 
 		public Builder(Level level, List<ItemEntity> itemEntities) {

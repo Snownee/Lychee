@@ -10,14 +10,16 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.item_burning.ItemBurningRecipe;
+import snownee.lychee.recipes.item_burning.ItemBurningRecipe;
 
 @Mixin(ItemEntity.class)
 public class ItemEntityHurtMixin {
 
 	@Inject(
 			at = @At(
-					value = "INVOKE", target = "Lnet/minecraft/world/entity/item/ItemEntity;discard()V", shift = At.Shift.AFTER
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/entity/item/ItemEntity;discard()V",
+					shift = At.Shift.AFTER
 			), method = "hurt"
 	)
 	private void lychee_hurt(DamageSource pSource, float pAmount, CallbackInfoReturnable<Boolean> ci) {

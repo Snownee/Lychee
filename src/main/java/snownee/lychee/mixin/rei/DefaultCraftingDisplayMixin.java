@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import me.shedaniel.rei.plugin.common.displays.crafting.DefaultCraftingDisplay;
 import net.minecraft.world.item.crafting.Recipe;
 import snownee.lychee.compat.rei.display.ShapedCraftingDisplay;
-import snownee.lychee.crafting.ShapedCraftingRecipe;
+import snownee.lychee.recipes.crafting.ShapedCraftingRecipe;
 
 @Mixin(value = DefaultCraftingDisplay.class, remap = false)
 public class DefaultCraftingDisplayMixin {

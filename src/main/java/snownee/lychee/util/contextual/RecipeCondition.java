@@ -2,7 +2,7 @@ package snownee.lychee.util.contextual;
 
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 
 public interface RecipeCondition {
 	/**
@@ -12,5 +12,5 @@ public interface RecipeCondition {
 	 *
 	 * @return Executable time after condition
 	 */
-	int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times);
+	int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times);
 }

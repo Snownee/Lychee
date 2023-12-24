@@ -30,11 +30,11 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.BoundsExtensions;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
-import snownee.lychee.util.contextual.ClientRecipeCondition;
+import snownee.lychee.util.contextual.ContextualConditionDisplay;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
@@ -62,7 +62,7 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
 		if (ctx.level().isClientSide) {
 			return testClient(
 					ctx.level(),
@@ -125,7 +125,7 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 			final var content = Component.translatable(key, offset.getX(), offset.getY(), offset.getZ()).withStyle(
 					ChatFormatting.GRAY);
 			final var result = testForTooltips(level, player);
-			ClientRecipeCondition.appendToTooltips(tooltips, result, indent, content);
+			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, content);
 			++indent;
 		}
 		if (noOffset && player != null) {
@@ -193,7 +193,7 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 				String key,
 				LocationPredicate predicate,
 				TriState result) {
-			ClientRecipeCondition.appendToTooltips(tooltips, result, indent, Component.translatable(
+			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(
 					key + "." + name(),
 					BoundsExtensions.getDescription(boundsGetter.apply(predicate)).withStyle(ChatFormatting.WHITE)));
 		}
@@ -228,7 +228,7 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 			if (blockPredicate.properties().isPresent() || blockPredicate.nbt().isPresent()) {
 				name.append("*");
 			}
-			ClientRecipeCondition.appendToTooltips(
+			ContextualConditionDisplay.appendToTooltips(
 					tooltips,
 					result,
 					indent,
@@ -285,7 +285,7 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 				TriState result) {
 			MutableComponent bounds = BoundsExtensions.getDescription(predicate.light().orElseThrow().composite())
 													  .withStyle(ChatFormatting.WHITE);
-			ClientRecipeCondition.appendToTooltips(
+			ContextualConditionDisplay.appendToTooltips(
 					tooltips,
 					result,
 					indent,
@@ -338,7 +338,7 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 							)
 							.orElseThrow()
 							.withStyle(ChatFormatting.WHITE);
-			ClientRecipeCondition.appendToTooltips(
+			ContextualConditionDisplay.appendToTooltips(
 					tooltips,
 					result,
 					indent,
@@ -392,7 +392,7 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 			}
 
 			final var name = Component.translatable(valueKey).withStyle(ChatFormatting.WHITE);
-			ClientRecipeCondition.appendToTooltips(
+			ContextualConditionDisplay.appendToTooltips(
 					tooltips,
 					result,
 					indent,
@@ -422,7 +422,7 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 			if (!predicate.smokey().orElseThrow()) {
 				key += ".not";
 			}
-			ClientRecipeCondition.appendToTooltips(tooltips, result, indent, Component.translatable(key));
+			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(key));
 		}
 	}
 
@@ -442,7 +442,7 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 				List<Component> tooltips, int indent, String key, LocationPredicate predicate, TriState result) {
 			final var name = ClientProxy.getStructureDisplayName(predicate.structure().orElseThrow().id())
 										.withStyle(ChatFormatting.WHITE);
-			ClientRecipeCondition.appendToTooltips(
+			ContextualConditionDisplay.appendToTooltips(
 					tooltips,
 					result,
 					indent,

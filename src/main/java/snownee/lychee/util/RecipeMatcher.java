@@ -11,7 +11,8 @@ public class RecipeMatcher<T> {
 	public List<? extends Predicate<T>> tests;
 	public int[] inputCapacity;
 	public int[] inputUsed;
-	public int[][] use; // input to tests multimap. map to the indexes of the first N inputs according to the `inputUsed` array
+	public int[][] use;
+			// input to tests multimap. map to the indexes of the first N inputs according to the `inputUsed` array
 	private BitSet data;
 	private BitSet mask;
 
@@ -62,7 +63,11 @@ public class RecipeMatcher<T> {
 		return false;
 	}
 
-	public static <T> Optional<RecipeMatcher<T>> findMatches(List<T> inputs, List<? extends Predicate<T>> tests, int[] amount) {
+	public static <T> Optional<RecipeMatcher<T>> findMatches(
+			List<T> inputs,
+			List<? extends Predicate<T>> tests,
+			int[] amount
+	) {
 		int sum = 0;
 		for (int i = 0; i < amount.length; i++) {
 			sum += amount[i];

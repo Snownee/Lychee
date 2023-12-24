@@ -19,7 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -49,7 +49,7 @@ public class CustomCondition implements ContextualCondition<CustomCondition> {
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
 		if (testFunc != null) {
 			return testFunc.test(recipe, ctx, times);
 		}

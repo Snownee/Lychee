@@ -13,7 +13,6 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 
-import io.github.tropheusj.dripstone_fluid_lib.DripstoneInteractingFluid;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.Event;
@@ -31,7 +30,6 @@ import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -72,46 +70,69 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.LycheeTags;
-import snownee.lychee.PostActionTypes;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.compat.fabric_recipe_api.AlwaysTrueIngredient;
-import snownee.lychee.core.contextual.CustomCondition;
-import snownee.lychee.core.post.CustomAction;
-import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.core.recipe.LycheeRecipe;
-import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
-import snownee.lychee.interaction.InteractionRecipeMod;
+import snownee.lychee.contextual.CustomCondition;
+import snownee.lychee.action.CustomAction;
+import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.OldLycheeRecipe;
 import snownee.lychee.mixin.RecipeManagerAccess;
+import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
+import snownee.lychee.recipes.interaction.InteractionRecipeMod;
 
 @Mod(Lychee.ID)
 public class CommonProxy implements ModInitializer {
-	public static final Event<CustomActionListener> CUSTOM_ACTION_EVENT = EventFactory.createArrayBacked(CustomActionListener.class, listeners -> (id, action, recipe, patchContext) -> {
-		for (CustomActionListener listener : listeners) {
-			if (listener.on(id, action, recipe, patchContext)) {
-				return true;
+	public static final Event<CustomActionListener> CUSTOM_ACTION_EVENT = EventFactory.createArrayBacked(
+			CustomActionListener.class,
+			listeners -> (id, action, recipe, patchContext) -> {
+				for (CustomActionListener listener : listeners) {
+					if (listener.on(id, action, recipe, patchContext)) {
+						return true;
+					}
+				}
+				return false;
 			}
-		}
-		return false;
-	});
-	public static final Event<CustomConditionListener> CUSTOM_CONDITION_EVENT = EventFactory.createArrayBacked(CustomConditionListener.class, listeners -> (id, condition) -> {
-		for (CustomConditionListener listener : listeners) {
-			if (listener.on(id, condition)) {
-				return true;
+	);
+	public static final Event<CustomConditionListener> CUSTOM_CONDITION_EVENT = EventFactory.createArrayBacked(
+			CustomConditionListener.class,
+			listeners -> (id, condition) -> {
+				for (CustomConditionListener listener : listeners) {
+					if (listener.on(id, condition)) {
+						return true;
+					}
+				}
+				return false;
 			}
-		}
-		return false;
-	});
+	);
 	private static final Random RANDOM = new Random();
 	public static boolean hasKiwi = isModLoaded("kiwi");
 	public static boolean hasDFLib = isModLoaded("dripstone_fluid_lib");
 	private static RecipeManager recipeManager;
 
-	public static void dropItemStack(Level pLevel, double pX, double pY, double pZ, ItemStack pStack, @Nullable Consumer<ItemEntity> extraStep) {
+	public static void dropItemStack(
+			Level pLevel,
+			double pX,
+			double pY,
+			double pZ,
+			ItemStack pStack,
+			@Nullable Consumer<ItemEntity> extraStep
+	) {
 		while (!pStack.isEmpty()) {
-			ItemEntity itementity = new ItemEntity(pLevel, pX + RANDOM.nextGaussian() * 0.1 - 0.05, pY, pZ + RANDOM.nextGaussian() * 0.1 - 0.05, pStack.split(Math.min(RANDOM.nextInt(21) + 10, pStack.getMaxStackSize())));
-			itementity.setDeltaMovement(RANDOM.nextGaussian() * 0.05 - 0.025, RANDOM.nextGaussian() * 0.05 + 0.2, RANDOM.nextGaussian() * 0.05 - 0.025);
+			ItemEntity itementity = new ItemEntity(
+					pLevel,
+					pX + RANDOM.nextGaussian() * 0.1 - 0.05,
+					pY,
+					pZ + RANDOM.nextGaussian() * 0.1 - 0.05,
+					pStack.split(Math.min(RANDOM.nextInt(21) + 10, pStack.getMaxStackSize()))
+			);
+			itementity.setDeltaMovement(
+					RANDOM.nextGaussian() * 0.05 - 0.025,
+					RANDOM.nextGaussian() * 0.05 + 0.2,
+					RANDOM.nextGaussian() * 0.05 - 0.025
+			);
 			if (extraStep != null) {
 				extraStep.accept(itementity);
 			}
@@ -120,7 +141,9 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static String makeDescriptionId(String pType, @Nullable ResourceLocation pId) {
-		return pId == null ? pType + ".unregistered_sadface" : pType + "." + wrapNamespace(pId.getNamespace()) + "." + pId.getPath().replace('/', '.');
+		return pId == null
+			   ? pType + ".unregistered_sadface"
+			   : pType + "." + wrapNamespace(pId.getNamespace()) + "." + pId.getPath().replace('/', '.');
 	}
 
 	public static String wrapNamespace(String modid) {
@@ -324,7 +347,12 @@ public class CommonProxy implements ModInitializer {
 		CUSTOM_CONDITION_EVENT.register(listener);
 	}
 
-	public static void postCustomActionEvent(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
+	public static void postCustomActionEvent(
+			String id,
+			CustomAction action,
+			LycheeRecipe<?> recipe,
+			LycheeRecipe.NBTPatchContext patchContext
+	) {
 		CUSTOM_ACTION_EVENT.invoker().on(id, action, recipe, patchContext);
 	}
 
@@ -333,7 +361,7 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static IngredientInfo.Type getIngredientType(Ingredient ingredient) {
-		if (ingredient == LycheeRecipe.Serializer.EMPTY_INGREDIENT) {
+		if (ingredient == OldLycheeRecipe.Serializer.EMPTY_INGREDIENT) {
 			return IngredientInfo.Type.AIR;
 		}
 		CustomIngredient customIngredient = ingredient.getCustomIngredient();
@@ -369,16 +397,22 @@ public class CommonProxy implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		if (hasKiwi) {
-			FabricLoader.getInstance().getModContainer("kiwi").map(ModContainer::getMetadata).map(ModMetadata::getVersion).ifPresent(version -> {
-				try {
-					Version minVersion = Version.parse("11.1.1");
-					if (minVersion.compareTo(version) > 0) {
-						throw new RuntimeException("Kiwi version is too low! Please update to at least 11.1.1. You have %s".formatted(version));
-					}
-				} catch (VersionParsingException e) {
-					throw new RuntimeException(e);
-				}
-			});
+			FabricLoader.getInstance()
+						.getModContainer("kiwi")
+						.map(ModContainer::getMetadata)
+						.map(ModMetadata::getVersion)
+						.ifPresent(version -> {
+							try {
+								Version minVersion = Version.parse("11.1.1");
+								if (minVersion.compareTo(version) > 0) {
+									throw new RuntimeException(
+											"Kiwi version is too low! Please update to at least 11.1.1. You have %s".formatted(
+													version));
+								}
+							} catch (VersionParsingException e) {
+								throw new RuntimeException(e);
+							}
+						});
 		}
 
 		RecipeTypes.init();
@@ -394,13 +428,26 @@ public class CommonProxy implements ModInitializer {
 		AttackBlockCallback.EVENT.register(InteractionRecipeMod::clickItemOn);
 
 		// Dripstone recipes
-		Registry.register(BuiltInRegistries.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_dripping"), DripstoneRecipeMod.DRIPSTONE_DRIPPING);
-		Registry.register(BuiltInRegistries.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_falling"), DripstoneRecipeMod.DRIPSTONE_FALLING);
-		Registry.register(BuiltInRegistries.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_splash"), DripstoneRecipeMod.DRIPSTONE_SPLASH);
+		Registry.register(
+				BuiltInRegistries.PARTICLE_TYPE,
+				new ResourceLocation(Lychee.ID, "dripstone_dripping"),
+				DripstoneRecipeMod.DRIPSTONE_DRIPPING
+		);
+		Registry.register(
+				BuiltInRegistries.PARTICLE_TYPE,
+				new ResourceLocation(Lychee.ID, "dripstone_falling"),
+				DripstoneRecipeMod.DRIPSTONE_FALLING
+		);
+		Registry.register(
+				BuiltInRegistries.PARTICLE_TYPE,
+				new ResourceLocation(Lychee.ID, "dripstone_splash"),
+				DripstoneRecipeMod.DRIPSTONE_SPLASH
+		);
 	}
 
 	public interface CustomActionListener {
-		boolean on(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext);
+		boolean on(String id, CustomAction action, LycheeRecipe<?> recipe,
+				   LycheeRecipe.NBTPatchContext patchContext);
 	}
 
 	public interface CustomConditionListener {

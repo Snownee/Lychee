@@ -5,12 +5,16 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
-import snownee.lychee.core.post.PostAction;
+import snownee.lychee.util.action.PostAction;
 
 public interface ItemStackPostActionRenderer<T extends PostAction> extends ItemBasedPostActionRenderer<T> {
 
 	@Override
 	default List<Component> getBaseTooltips(T action) {
-		return getItem(action).getTooltipLines(null, Minecraft.getInstance().options.advancedItemTooltips ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL);
+		return getItem(action).getTooltipLines(null,
+				Minecraft.getInstance().options.advancedItemTooltips
+				? TooltipFlag.Default.ADVANCED
+				: TooltipFlag.Default.NORMAL
+		);
 	}
 }

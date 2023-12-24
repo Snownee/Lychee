@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.random_block_ticking.RandomlyTickable;
+import snownee.lychee.recipes.random_block_ticking.RandomlyTickable;
 
 @Mixin(Block.class)
 public class BlockMixin implements RandomlyTickable {

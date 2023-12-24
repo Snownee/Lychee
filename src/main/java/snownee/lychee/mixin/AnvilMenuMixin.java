@@ -22,9 +22,9 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.anvil_crafting.AnvilContext;
-import snownee.lychee.anvil_crafting.AnvilCraftingRecipe;
-import snownee.lychee.core.input.ItemHolderCollection;
+import snownee.lychee.util.input.ItemStackHolderCollection;
+import snownee.lychee.recipes.anvil_crafting.AnvilContext;
+import snownee.lychee.recipes.anvil_crafting.AnvilCraftingRecipe;
 
 @Mixin(AnvilMenu.class)
 public abstract class AnvilMenuMixin extends ItemCombinerMenu {
@@ -70,7 +70,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		builder.withParameter(LootContextParams.THIS_ENTITY, player);
 		AnvilContext ctx = builder.create(RecipeTypes.ANVIL_CRAFTING.contextParamSet);
 		// why use copy(): the originals will be modified by vanilla
-		ctx.itemHolders = ItemHolderCollection.Inventory.of(ctx, left.copy(), right.copy(), ItemStack.EMPTY);
+		ctx.itemHolders = ItemStackHolderCollection.Inventory.of(ctx, left.copy(), right.copy(), ItemStack.EMPTY);
 		RecipeTypes.ANVIL_CRAFTING.findFirst(ctx, player.level()).ifPresent($ -> {
 			ItemStack output = $.assemble(ctx, player.level().registryAccess());
 			if (output.isEmpty()) {
@@ -103,14 +103,16 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
 	@Inject(
 			at = @At(
-					value = "INVOKE", target = "Lnet/minecraft/world/inventory/ContainerLevelAccess;execute(Ljava/util/function/BiConsumer;)V"
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/inventory/ContainerLevelAccess;execute" +
+							 "(Ljava/util/function/BiConsumer;)V"
 			), method = "onTake", cancellable = true
 	)
 	private void lychee_preventDefault(Player player, ItemStack stack, CallbackInfo ci) {
 		if (lychee$onTakeCtx != null) {
 			for (int i = 0; i < 2; i++) {
 				if (lychee$onTakeCtx.itemHolders.ignoreConsumptionFlags.get(i)) {
-					inputSlots.setItem(i, lychee$onTakeCtx.itemHolders.get(i).get());
+					inputSlots.setItem(i, lychee$onTakeCtx.itemHolders.get(i).itemstack());
 				}
 			}
 
