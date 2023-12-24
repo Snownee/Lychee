@@ -44,7 +44,7 @@ minecraft {
     //
     // Use non-default mappings at your own risk. They may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: mappings_channel, version: mappings_version
+    mappings channel: mappings_channel, version: minecraft_version
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     // Currently, this location cannot be changed from the default.
@@ -287,35 +287,36 @@ publishing {
 
 unifiedPublishing {
     project {
-        displayName = project.version
+        displayName = "[Forge $project.supported_version] $project.mod_version"
         version = project.mod_version // Optional, Inferred from project by default
         changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "" // Optional, in markdown format
         releaseType = project.release_type // Optional, use "release", "beta" or "alpha"
         gameVersions = ["1.20", "1.20.1"]
-        gameLoaders = ["forge"]
+        gameLoaders = ["forge", "neoforge"]
 
         mainPublication tasks.jar // Declares the publicated jar
 
-        curseforge {
-            token = System.getenv("CURSE_TOKEN") ?: ""
-            id = "567403" // Required, must be a string, ID of CurseForge project
+        if (System.getenv("CURSE_TOKEN") != null) {
+            curseforge {
+                token = System.getenv("CURSE_TOKEN")
+                id = "567403" // Required, must be a string, ID of CurseForge project
 
-            relations { // Optional, Inferred from the relations above by default
-                //depends "fabric-api"
-                optional "kiwi"
-                optional "kubejs"
+                relations { // Optional, Inferred from the relations above by default
+                    optional "kiwi"
+                    optional "kubejs"
+                }
             }
         }
 
-        modrinth {
-            token = System.getenv("MODRINTH_TOKEN") ?: ""
-            id = "TdN6LxjM" // Required, must be a string, ID of Modrinth project
-            displayName = project.mod_version
+        if (System.getenv("MODRINTH_TOKEN") != null) {
+            modrinth {
+                token = System.getenv("MODRINTH_TOKEN")
+                id = "TdN6LxjM" // Required, must be a string, ID of Modrinth project
 
-            relations { // Optional, Inferred from the relations above by default
-                //depends "fabric-api"
-                optional "kiwi"
-                optional "kubejs"
+                relations { // Optional, Inferred from the relations above by default
+                    optional "kiwi"
+                    optional "kubejs"
+                }
             }
         }
     }
