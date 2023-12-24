@@ -83,7 +83,7 @@ dependencies {
 
     modImplementation "curse.maven:kiwi-549404:4688477"
     annotationProcessor "curse.maven:kiwi-549404:4688477"
-    
+
     modRuntimeOnly "curse.maven:jade-324717:4792447"
 
     modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
@@ -170,7 +170,7 @@ publishing {
 
 unifiedPublishing {
     project {
-        displayName = project.version
+        displayName = "[Fabric $project.supported_version] $project.mod_version"
         version = project.mod_version // Optional, Inferred from project by default
         changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "" // Optional, in markdown format
         releaseType = project.release_type // Optional, use "release", "beta" or "alpha"
@@ -179,26 +179,29 @@ unifiedPublishing {
 
         mainPublication tasks.remapJar // Declares the publicated jar
 
-        curseforge {
-            token = System.getenv("CURSE_TOKEN") ?: ""
-            id = "574650" // Required, must be a string, ID of CurseForge project
+        if (System.getenv("CURSE_TOKEN") != null) {
+            curseforge {
+                token = System.getenv("CURSE_TOKEN")
+                id = "574650" // Required, must be a string, ID of CurseForge project
 
-            relations { // Optional, Inferred from the relations above by default
-                //depends "fabric-api"
-                optional "kiwi-fabric"
-                optional "kubejs"
+                relations { // Optional, Inferred from the relations above by default
+                    //depends "fabric-api"
+                    optional "kiwi-fabric"
+                    optional "kubejs"
+                }
             }
         }
 
-        modrinth {
-            token = System.getenv("MODRINTH_TOKEN") ?: ""
-            id = "TdN6LxjM" // Required, must be a string, ID of Modrinth project
-            displayName = project.mod_version
+        if (System.getenv("MODRINTH_TOKEN") != null) {
+            modrinth {
+                token = System.getenv("MODRINTH_TOKEN")
+                id = "TdN6LxjM" // Required, must be a string, ID of Modrinth project
 
-            relations { // Optional, Inferred from the relations above by default
-                //depends "fabric-api"
-                optional "kiwi"
-                optional "kubejs"
+                relations { // Optional, Inferred from the relations above by default
+                    //depends "fabric-api"
+                    optional "kiwi"
+                    optional "kubejs"
+                }
             }
         }
     }
