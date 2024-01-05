@@ -21,10 +21,10 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.CustomLightingSettings;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
-import snownee.lychee.util.recipe.BlockKeyRecipe;
-import snownee.lychee.util.recipe.LycheeRecipe;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.type.LycheeRecipeType;
+import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 

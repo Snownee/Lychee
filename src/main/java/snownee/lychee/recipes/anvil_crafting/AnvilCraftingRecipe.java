@@ -30,9 +30,9 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.recipe.LycheeRecipe;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.type.LycheeRecipeType;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.json.JsonPointer;
 
 public record AnvilCraftingRecipe implements LycheeRecipe<AnvilContext>, Comparable<AnvilCraftingRecipe> {

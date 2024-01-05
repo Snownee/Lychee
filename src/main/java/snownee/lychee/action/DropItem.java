@@ -19,7 +19,7 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
 import snownee.lychee.mixin.ItemEntityAccess;
 import snownee.lychee.recipes.block_crushing.BlockCrushingRecipe;
 import snownee.lychee.recipes.block_exploding.BlockExplodingContext;

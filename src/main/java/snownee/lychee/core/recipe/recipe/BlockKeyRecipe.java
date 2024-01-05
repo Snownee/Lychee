@@ -1,4 +1,4 @@
-package snownee.lychee.util.recipe;
+package snownee.lychee.core.recipe.recipe;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 

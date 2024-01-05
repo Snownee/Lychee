@@ -33,9 +33,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.ItemShapelessContext;
-import snownee.lychee.util.recipe.LycheeCounter;
-import snownee.lychee.util.recipe.type.ItemShapelessRecipeType;
-import snownee.lychee.util.recipe.type.LycheeRecipeType;
+import snownee.lychee.core.recipe.recipe.LycheeCounter;
+import snownee.lychee.core.recipe.recipe.type.ItemShapelessRecipeType;
+import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.CommonProxy;
 
 public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext, ItemInsideRecipe> {

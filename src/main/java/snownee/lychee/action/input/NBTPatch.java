@@ -13,7 +13,7 @@ import snownee.lychee.util.action.ActionRuntime.State;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
 import snownee.lychee.util.json.JsonPatch;
 import snownee.lychee.util.json.JsonPointer;
 

@@ -24,10 +24,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.util.recipe.BlockKeyRecipe;
-import snownee.lychee.util.recipe.ItemShapelessRecipe;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.type.LycheeRecipeType;
+import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
+import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.util.RecipeMatcher;
 

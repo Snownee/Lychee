@@ -1,10 +1,9 @@
-package snownee.lychee.util.recipe;
+package snownee.lychee.core.recipe.recipe;
 
 import java.util.function.Function;
 
 import com.google.gson.JsonObject;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.predicates.BlockPredicate;
 
 public abstract class ItemAndBlockRecipe<C extends LycheeRecipeContext> extends OldLycheeRecipe<C>
 		implements BlockKeyRecipe<ItemAndBlockRecipe<C>> {

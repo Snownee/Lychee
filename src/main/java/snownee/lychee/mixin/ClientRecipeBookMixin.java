@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.client.ClientRecipeBook;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.world.item.crafting.Recipe;
-import snownee.lychee.util.recipe.type.LycheeRecipeType;
+import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
 
 @Mixin(ClientRecipeBook.class)
 public class ClientRecipeBookMixin {

@@ -19,9 +19,9 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
-import snownee.lychee.util.recipe.ItemAndBlockRecipe;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.type.LycheeRecipeType;
+import snownee.lychee.core.recipe.recipe.ItemAndBlockRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
 
 public class BlockInteractingRecipe extends ItemAndBlockRecipe<LycheeRecipeContext> {
 

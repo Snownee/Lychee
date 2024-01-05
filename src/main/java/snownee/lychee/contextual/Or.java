@@ -20,7 +20,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.contextual.ContextualConditionsHolder;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 public record Or(ContextualConditionsHolder conditionsHolder) implements ContextualCondition<Or>,
 																		 Contextual<Or>,

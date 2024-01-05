@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.compat.IngredientInfo;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 public interface PostActionDisplay {
 

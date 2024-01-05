@@ -13,9 +13,9 @@ import org.jetbrains.annotations.NotNull;
 
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.util.recipe.ItemShapelessRecipe;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.type.LycheeRecipeType;
+import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
 
 public class LightningChannelingRecipe extends ItemShapelessRecipe<LightningChannelingRecipe> {
 

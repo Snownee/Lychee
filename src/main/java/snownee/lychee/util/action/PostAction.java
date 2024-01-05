@@ -15,8 +15,8 @@ import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.contextual.ContextualByConditionsHolder;
 import snownee.lychee.util.json.JsonPointer;
-import snownee.lychee.util.recipe.LycheeRecipe;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 public interface PostAction<Action extends PostAction<Action>> extends Contextual<Action>,
 																	   ContextualByConditionsHolder<Action>,

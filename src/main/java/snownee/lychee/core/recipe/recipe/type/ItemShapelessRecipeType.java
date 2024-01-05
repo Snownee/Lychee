@@ -1,4 +1,4 @@
-package snownee.lychee.util.recipe.type;
+package snownee.lychee.core.recipe.recipe.type;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.ItemShapelessContext;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends OldLycheeRecipe<C>>
 		extends LycheeRecipeType<C, T> {

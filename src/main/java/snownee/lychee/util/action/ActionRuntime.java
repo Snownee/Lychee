@@ -11,8 +11,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.CommonProxy;
-import snownee.lychee.util.recipe.LycheeRecipe;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 public class ActionRuntime {
 	public boolean doDefault = true;

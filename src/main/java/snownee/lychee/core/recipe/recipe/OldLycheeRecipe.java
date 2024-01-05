@@ -1,4 +1,4 @@
-package snownee.lychee.util.recipe;
+package snownee.lychee.core.recipe.recipe;
 
 import java.util.List;
 import java.util.Map;
@@ -36,9 +36,9 @@ import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.def.IntBoundsHelper;
+import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.type.LycheeRecipeType;
 import snownee.lychee.fragment.Fragments;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.json.JsonPointer;

@@ -20,27 +20,22 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.Reference;
-import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionByPathHolder;
+import snownee.lychee.util.action.PostActionType;
+import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
 
-public class DamageItem extends PostAction {
-
+public record DamageItem(int damage, Reference target) implements PostAction<DamageItem>, PostActionByPathHolder<DamageItem> {
 	public final int damage;
 	public final Reference target;
 
-	public DamageItem(int damage, Reference target) {
-		this.damage = damage;
-		this.target = target;
-	}
-
 	@Override
-	public PostActionType<?> getType() {
+	public PostActionType<DamageItem> type() {
 		return PostActionTypes.DAMAGE_ITEM;
 	}
 
@@ -113,7 +108,7 @@ public class DamageItem extends PostAction {
 
 	@Override
 	public void validate(LycheeRecipe<?> recipe, LycheeRecipe.NBTPatchContext patchContext) {
-		Preconditions.checkArgument(recipe.getItemIndexes(target).size() > 0, "No target found for %s", target);
+		Preconditions.checkArgument(!recipe.getItemIndexes(target).isEmpty(), "No target found for %s", target);
 	}
 
 	@Override

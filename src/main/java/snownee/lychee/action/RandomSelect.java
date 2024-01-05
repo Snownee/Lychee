@@ -30,7 +30,7 @@ import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.json.JsonPointer;
 

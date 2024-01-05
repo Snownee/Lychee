@@ -27,7 +27,7 @@ import snownee.lychee.action.Execute;
 import snownee.lychee.action.Explode;
 import snownee.lychee.action.Hurt;
 import snownee.lychee.action.input.SetItem;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.recipes.dripstone_dripping.client.ParticleFactories;
 

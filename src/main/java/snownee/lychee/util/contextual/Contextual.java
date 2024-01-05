@@ -17,7 +17,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.TriState;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 /**
  * Contains conditions

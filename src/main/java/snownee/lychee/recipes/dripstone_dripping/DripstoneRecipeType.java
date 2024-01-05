@@ -9,7 +9,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.util.recipe.type.BlockKeyRecipeType;
+import snownee.lychee.core.recipe.recipe.type.BlockKeyRecipeType;
 
 public class DripstoneRecipeType extends BlockKeyRecipeType<DripstoneContext, DripstoneRecipe> {
 

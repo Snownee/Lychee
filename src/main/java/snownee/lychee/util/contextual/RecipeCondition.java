@@ -2,7 +2,7 @@ package snownee.lychee.util.contextual;
 
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 public interface RecipeCondition {
 	/**

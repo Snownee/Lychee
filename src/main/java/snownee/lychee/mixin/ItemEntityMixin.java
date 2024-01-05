@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
 import snownee.lychee.LycheeTags;
-import snownee.lychee.util.recipe.LycheeCounter;
+import snownee.lychee.core.recipe.recipe.LycheeCounter;
 
 @Mixin(ItemEntity.class)
 public class ItemEntityMixin implements LycheeCounter {

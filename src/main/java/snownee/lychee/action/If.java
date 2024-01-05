@@ -22,8 +22,8 @@ import snownee.lychee.util.action.Job;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.json.JsonPointer;
 
 public class If extends PostAction implements CompoundAction {

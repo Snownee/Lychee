@@ -25,7 +25,7 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.util.input.ItemStackHolder;
 import snownee.lychee.core.network.SCustomLevelEventPacket;
-import snownee.lychee.util.recipe.type.BlockKeyRecipeType;
+import snownee.lychee.core.recipe.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.util.CommonProxy;
 
 public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingContext, BlockCrushingRecipe> {

@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.BoundsExtensions;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;

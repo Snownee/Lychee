@@ -36,7 +36,7 @@ import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.NbtPredicateAccess;
 import snownee.lychee.mixin.StatePropertiesPredicateAccess;

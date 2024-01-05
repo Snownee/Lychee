@@ -20,7 +20,7 @@ import snownee.lychee.util.action.ActionMarker;
 import snownee.lychee.fragment.Fragments;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.ActionRuntime.State;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 @Mixin(Marker.class)
 public class MarkerMixin implements ActionMarker {

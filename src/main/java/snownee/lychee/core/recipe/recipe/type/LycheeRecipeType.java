@@ -1,4 +1,4 @@
-package snownee.lychee.util.recipe.type;
+package snownee.lychee.core.recipe.recipe.type;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,10 +23,11 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
+import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 
-public class LycheeRecipeType<C extends LycheeRecipeContext, T extends OldLycheeRecipe<C>> implements RecipeType<T> {
+public class LycheeRecipeType<C extends LycheeRecipeContext, T extends LycheeRecipe<C>> implements RecipeType<T> {
 	public final ResourceLocation id;
 	public ResourceLocation categoryId;
 	public final Class<? extends T> clazz;

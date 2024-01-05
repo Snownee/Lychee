@@ -1,4 +1,4 @@
-package snownee.lychee.util.recipe.type;
+package snownee.lychee.core.recipe.recipe.type;
 
 import java.util.Collection;
 import java.util.List;
@@ -33,10 +33,10 @@ import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.contextual.Chance;
 import snownee.lychee.core.contextual.ContextualCondition;
 import snownee.lychee.core.def.BlockPredicateHelper;
+import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
+import snownee.lychee.core.recipe.recipe.ChanceRecipe;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.input.ItemStackHolderCollection;
-import snownee.lychee.util.recipe.BlockKeyRecipe;
-import snownee.lychee.util.recipe.ChanceRecipe;
-import snownee.lychee.util.recipe.OldLycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 
