@@ -8,6 +8,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import mezz.jei.api.IModPlugin;
@@ -26,7 +27,6 @@ import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -71,10 +71,28 @@ public class JEICompat implements IModPlugin {
 
 	public static final ResourceLocation UID = new ResourceLocation(Lychee.ID, "main");
 	public static final IIngredientType<PostAction> POST_ACTION = () -> PostAction.class;
+	public static final Map<ResourceLocation, Map<ResourceLocation, BaseJEICategory<?, ?>>> CATEGORIES = Maps.newHashMap();
+	public static final List<Consumer<Map<ResourceLocation, Function<CategoryCreationContext, BaseJEICategory<?, ?>>>>> FACTORY_PROVIDERS = Lists.newArrayList();
+	private static final Map<AllGuiTextures, IDrawable> elMap = Maps.newIdentityHashMap();
 	public static IJeiRuntime RUNTIME;
 	public static IJeiHelpers HELPERS;
 	public static IGuiHelper GUI;
-	public static final Map<ResourceLocation, Map<ResourceLocation, BaseJEICategory<?, ?>>> CATEGORIES = Maps.newHashMap();
+
+	public static void addCategoryFactoryProvider(Consumer<Map<ResourceLocation, Function<CategoryCreationContext, BaseJEICategory<?, ?>>>> provider) {
+		FACTORY_PROVIDERS.add(provider);
+	}
+
+	private static <C extends LycheeContext, T extends LycheeRecipe<C>> void forEachCategories(LycheeRecipeType<C, T> recipeType, Consumer<BaseJEICategory<C, T>> consumer) {
+		CATEGORIES.getOrDefault(recipeType.categoryId, Map.of()).values().stream().map($ -> (BaseJEICategory<C, T>) $).forEach(consumer);
+	}
+
+	public static IDrawable slot(SlotType slotType) {
+		return slotType.element;
+	}
+
+	public static IDrawable el(AllGuiTextures element) {
+		return elMap.computeIfAbsent(element, ScreenElementWrapper::new);
+	}
 
 	@Override
 	public ResourceLocation getPluginUid() {
@@ -99,6 +117,7 @@ public class JEICompat implements IModPlugin {
 		factories.put(RecipeTypes.ITEM_EXPLODING.categoryId, $ -> new ItemExplodingRecipeCategory(RecipeTypes.ITEM_EXPLODING));
 		factories.put(RecipeTypes.BLOCK_EXPLODING.categoryId, $ -> new BlockExplodingRecipeCategory(RecipeTypes.BLOCK_EXPLODING, GuiGameElement.of(Items.TNT)));
 		factories.put(RecipeTypes.DRIPSTONE_DRIPPING.categoryId, $ -> new DripstoneRecipeCategory(RecipeTypes.DRIPSTONE_DRIPPING));
+		FACTORY_PROVIDERS.forEach($ -> $.accept(factories));
 
 		CATEGORIES.clear();
 		JEIREI.registerCategories(factories::containsKey, (categoryId, context) -> {
@@ -178,10 +197,6 @@ public class JEICompat implements IModPlugin {
 		});
 	}
 
-	private static <C extends LycheeContext, T extends LycheeRecipe<C>> void forEachCategories(LycheeRecipeType<C, T> recipeType, Consumer<BaseJEICategory<C, T>> consumer) {
-		CATEGORIES.getOrDefault(recipeType.categoryId, Map.of()).values().stream().map($ -> (BaseJEICategory<C, T>) $).forEach(consumer);
-	}
-
 	@Override
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 		RUNTIME = jeiRuntime;
@@ -198,8 +213,6 @@ public class JEICompat implements IModPlugin {
 		});
 	}
 
-	private static final Map<AllGuiTextures, IDrawable> elMap = Maps.newIdentityHashMap();
-
 	public enum SlotType {
 		NORMAL(AllGuiTextures.JEI_SLOT),
 		CHANCE(AllGuiTextures.JEI_CHANCE_SLOT),
@@ -212,19 +225,11 @@ public class JEICompat implements IModPlugin {
 		}
 	}
 
-	public static IDrawable slot(SlotType slotType) {
-		return slotType.element;
-	}
-
-	public static IDrawable el(AllGuiTextures element) {
-		return elMap.computeIfAbsent(element, ScreenElementWrapper::new);
-	}
-
 	public static class ScreenElementWrapper implements IDrawable {
 
+		private final ScreenElement element;
 		private int width = 16;
 		private int height = 16;
-		private final ScreenElement element;
 
 		private ScreenElementWrapper(AllGuiTextures element) {
 			this.element = element;

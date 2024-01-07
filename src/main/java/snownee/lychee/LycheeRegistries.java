@@ -3,9 +3,12 @@ package snownee.lychee;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.core.MappedRegistry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import snownee.kiwi.Kiwi;
 import snownee.lychee.core.contextual.ContextualConditionType;
 import snownee.lychee.core.post.PostActionType;
+import snownee.lychee.util.CommonProxy;
 
 public final class LycheeRegistries {
 
@@ -16,7 +19,11 @@ public final class LycheeRegistries {
 	}
 
 	private static <T> MappedRegistry<T> register(String name, Class<?> clazz) {
-		return FabricRegistryBuilder.createSimple((Class<T>) clazz, new ResourceLocation(Lychee.ID, name)).attribute(RegistryAttribute.SYNCED).buildAndRegister();
+		var registry = FabricRegistryBuilder.<T>createSimple(ResourceKey.createRegistryKey(new ResourceLocation(Lychee.ID, name))).attribute(RegistryAttribute.SYNCED).buildAndRegister();
+		if (CommonProxy.hasKiwi) {
+			Kiwi.registerRegistry(registry, clazz);
+		}
+		return registry;
 	}
 
 }

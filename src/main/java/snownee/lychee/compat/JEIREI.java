@@ -10,7 +10,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -27,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.CustomLightingSettings;
 import snownee.lychee.client.gui.ILightingSettings;
@@ -147,7 +147,10 @@ public class JEIREI {
 			}
 		}
 		recipes.forEach((categoryId, map) -> {
-			Preconditions.checkArgument(categoryIdValidator.test(categoryId), "Category factory %s does not exist", categoryId);
+			if (!categoryIdValidator.test(categoryId)) {
+				Lychee.LOGGER.warn("Category factory %s does not exist".formatted(categoryId));
+				return;
+			}
 			map.forEach((group, groupRecipes) -> {
 				CategoryCreationContext context = new CategoryCreationContext(group, groupRecipes);
 				registrar.accept(categoryId, context);
