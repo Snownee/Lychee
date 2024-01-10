@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import dev.architectury.event.EventResult;
@@ -75,6 +76,16 @@ public class REICompat implements REIClientPlugin {
 	public static final ResourceLocation UID = new ResourceLocation(Lychee.ID, "main");
 	public static final EntryType<PostAction> POST_ACTION = EntryType.deferred(new ResourceLocation(Lychee.ID, "post_action"));
 	public static final Map<ResourceLocation, Map<ResourceLocation, BaseREICategory<?, ?, ?>>> CATEGORIES = Maps.newHashMap();
+	public static final List<Consumer<Map<ResourceLocation, Function<CategoryCreationContext, BaseREICategory<?, ?, ?>>>>> CATEGORY_FACTORY_PROVIDERS = Lists.newArrayList();
+	public static final List<Consumer<Map<ResourceLocation, BiFunction<LycheeRecipe<?>, CategoryIdentifier<?>, BaseREIDisplay<?>>>>> DISPLAY_FACTORY_PROVIDERS = Lists.newArrayList();
+
+	public static void addCategoryFactoryProvider(Consumer<Map<ResourceLocation, Function<CategoryCreationContext, BaseREICategory<?, ?, ?>>>> provider) {
+		CATEGORY_FACTORY_PROVIDERS.add(provider);
+	}
+
+	public static void addDisplayFactoryProvider(Consumer<Map<ResourceLocation, BiFunction<LycheeRecipe<?>, CategoryIdentifier<?>, BaseREIDisplay<?>>>> provider) {
+		DISPLAY_FACTORY_PROVIDERS.add(provider);
+	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -91,6 +102,7 @@ public class REICompat implements REIClientPlugin {
 		factories.put(RecipeTypes.ITEM_EXPLODING.categoryId, $ -> new ItemExplodingRecipeCategory(RecipeTypes.ITEM_EXPLODING));
 		factories.put(RecipeTypes.BLOCK_EXPLODING.categoryId, $ -> new BlockExplodingRecipeCategory(RecipeTypes.BLOCK_EXPLODING, GuiGameElement.of(Items.TNT)));
 		factories.put(RecipeTypes.DRIPSTONE_DRIPPING.categoryId, $ -> new DripstoneRecipeCategory(RecipeTypes.DRIPSTONE_DRIPPING));
+		CATEGORY_FACTORY_PROVIDERS.forEach($ -> $.accept(factories));
 
 		JEIREI.registerCategories(factories::containsKey, (categoryId, context) -> {
 			BaseREICategory<?, ?, ?> category = factories.get(categoryId).apply(context);
@@ -171,14 +183,8 @@ public class REICompat implements REIClientPlugin {
 	@Override
 	public void registerDisplays(DisplayRegistry registration) {
 		Map<ResourceLocation, BiFunction<LycheeRecipe<?>, CategoryIdentifier<?>, BaseREIDisplay<?>>> factories = Maps.newHashMap();
-		registerDisplayFactory(factories, RecipeTypes.ITEM_BURNING.categoryId, BaseREIDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.ITEM_INSIDE.categoryId, BaseREIDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.BLOCK_INTERACTING.categoryId, BaseREIDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.BLOCK_CRUSHING.categoryId, BaseREIDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.LIGHTNING_CHANNELING.categoryId, BaseREIDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.ITEM_EXPLODING.categoryId, BaseREIDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.BLOCK_EXPLODING.categoryId, BaseREIDisplay::new);
-		registerDisplayFactory(factories, RecipeTypes.DRIPSTONE_DRIPPING.categoryId, BaseREIDisplay::new);
+		CATEGORIES.keySet().forEach($ -> registerDisplayFactory(factories, $, BaseREIDisplay::new));
+		DISPLAY_FACTORY_PROVIDERS.forEach($ -> $.accept(factories));
 
 		CATEGORIES.values().forEach($ -> {
 			$.values().forEach($$ -> {
@@ -207,7 +213,7 @@ public class REICompat implements REIClientPlugin {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static <C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> void registerDisplayFactory(Map<ResourceLocation, BiFunction<LycheeRecipe<?>, CategoryIdentifier<?>, BaseREIDisplay<?>>> factories, ResourceLocation id, BiFunction<T, CategoryIdentifier<D>, ? extends D> factory) {
+	public static <C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> void registerDisplayFactory(Map<ResourceLocation, BiFunction<LycheeRecipe<?>, CategoryIdentifier<?>, BaseREIDisplay<?>>> factories, ResourceLocation id, BiFunction<T, CategoryIdentifier<D>, ? extends D> factory) {
 		factories.put(id, (BiFunction) factory);
 	}
 

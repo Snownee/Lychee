@@ -24,6 +24,7 @@ import snownee.lychee.item_exploding.ItemExplodingRecipe;
 
 public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<ItemExplodingRecipe> {
 
+	//FIXME lingering client level
 	private PrimedTnt tnt;
 
 	public ItemExplodingRecipeCategory(LycheeRecipeType<ItemShapelessContext, ItemExplodingRecipe> recipeType) {
