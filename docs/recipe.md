@@ -58,7 +58,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
     | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
     | block_in | the block being used      | [BlockPredicate](general-types.md#blockpredicate)                                        |
 
-    Since 3.9: `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
+    `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
 
 ??? example
 
@@ -112,7 +112,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note
 
-    Since 3.12.1: Use a special ingredient to match any item:
+    You can use a special ingredient to match any item:
 
     === "Forge"
 
@@ -158,7 +158,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
     | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
     | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate)                                        |
 
-    Since 3.9: `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
+    `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
 
 !!! note
 
@@ -166,7 +166,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note
 
-    Since 3.12.1: Use a special ingredient to match any item:
+    You can use a special ingredient to match any item:
 
     === "Forge"
 
@@ -294,14 +294,14 @@ Default behavior: Anvil is damaged.
 
 !!! note "Format"
 
-    | Name                        | Description                                                    | Type / Literal                                                                           |
-    | --------------------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-    | type                        | type                                                           | "lychee:anvil_crafting"                                                                  |
-    | item_in                     | the input items (the second one is optional)                   | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | item_out                    | the result item                                                | ItemStack                                                                                |
-    | level_cost                  | player's xp level                                              | int && >=1                                                                               |
-    | material_cost               | amount of items that will be cost from right input slot        | int                                                                                      |
-    | assembling^since&nbsp;3.11^ | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
+    | Name          | Description                                                    | Type / Literal                                                                           |
+    | ------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+    | type          | type                                                           | "lychee:anvil_crafting"                                                                  |
+    | item_in       | the input items (the second one is optional)                   | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | item_out      | the result item                                                | ItemStack                                                                                |
+    | level_cost    | player's xp level                                              | int && >=1                                                                               |
+    | material_cost | amount of items that will be cost from right input slot        | int                                                                                      |
+    | assembling    | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
 
 ??? example
 
@@ -482,8 +482,6 @@ Default behavior: Block drops items from loot table.
 
 ### Random Block Ticking
 
-*Since: 3.2*
-
 Event when a block is randomly ticked. [(Wiki about random tick)](https://minecraft.wiki/w/Tick#Random_tick)
 
 This recipe type is not [repeatable](concepts.md#repeatability).
@@ -502,8 +500,6 @@ Default behavior: Do the default ticking behavior.
     This recipe type does not have JEI / REI integration.
 
 ### Dripstone Dripping
-
-*Since: 3.2*
 
 Event when a block is randomly ticked.
 
@@ -536,8 +532,6 @@ Default behavior: Do the default ticking behavior.
     ```
 
 ### Advanced Shaped Crafting
-
-*Since: 3.4*
 
 This allows you to add contextual conditions and actions, and control the behaviors of the ingredients and the result.
 

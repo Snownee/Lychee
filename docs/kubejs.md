@@ -1,7 +1,5 @@
 # KubeJS Integration
 
-KubeJS Integration is added in Lychee 3.9.
-
 ## Custom Action
 
 First you need to add a custom action somewhere in your recipe:

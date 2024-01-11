@@ -97,12 +97,12 @@ Executes a command.
 
 !!! note "Format"
 
-    | Name    | Description                                                                               | Type / Literal |
-    | ------- | ----------------------------------------------------------------------------------------- | -------------- |
-    | type    | type                                                                                      | "execute"      |
-    | command | the command to run                                                                        | string         |
-    | hide    | hide this action in JEI/REI ^optional^{ title="default: false" }                          | boolean        |
-    | repeat  | execute commands by repetition count^since&nbsp;3.14^ ^optional^{ title="default: true" } | boolean        |
+    | Name    | Description                                                              | Type / Literal |
+    | ------- | ------------------------------------------------------------------------ | -------------- |
+    | type    | type                                                                     | "execute"      |
+    | command | the command to run                                                       | string         |
+    | hide    | hide this action in JEI/REI ^optional^{ title="default: false" }         | boolean        |
+    | repeat  | execute commands by repetition count ^optional^{ title="default: true" } | boolean        |
 
 ??? example
 
@@ -135,12 +135,12 @@ Randomly selects entries from an action list to apply. Similar to loot table.
 
 !!! note "Format"
 
-    | Name                          | Description                                          | Type / Literal                          |
-    | ----------------------------- | ---------------------------------------------------- | --------------------------------------- |
-    | type                          | type                                                 | "random"                                |
-    | rolls                         | specifies the number of rolls on the pool ^optional^ | [IntBounds](general-types.md#intbounds) |
-    | entries                       | a list of actions that can be applied                | WeightedPostAction[]                    |
-    | empty_weight^since&nbsp;3.12^ | ^optional^{ title="default: 0" }                     | int                                     |
+    | Name         | Description                                          | Type / Literal                          |
+    | ------------ | ---------------------------------------------------- | --------------------------------------- |
+    | type         | type                                                 | "random"                                |
+    | rolls        | specifies the number of rolls on the pool ^optional^ | [IntBounds](general-types.md#intbounds) |
+    | entries      | a list of actions that can be applied                | WeightedPostAction[]                    |
+    | empty_weight | ^optional^{ title="default: 0" }                     | int                                     |
 
     The format of `WeightedPostAction` is just like a normal PostAction, but you can add a `weight` entry to it to decide how often this action is chosen out of all the actions.
 
@@ -177,8 +177,6 @@ Randomly selects entries from an action list to apply. Similar to loot table.
 
 ### If-Else Statement
 
-*Since: 3.10*
-
 Executes a list of actions if the contextual conditions are met or not.
 
 !!! note "Format"
@@ -195,16 +193,16 @@ Creates an explosion at where the interaction occurs.
 
 !!! note "Format"
 
-    | Name              | Description                                                                                   | Type / Literal                 |
-    | ----------------- | --------------------------------------------------------------------------------------------- | ------------------------------ |
-    | type              | type                                                                                          | "explode"                      |
-    | offsetX           | offsets to location ^optional^                                                                | int                            |
-    | offsetY           | offsets to location ^optional^                                                                | int                            |
-    | offsetZ           | offsets to location ^optional^                                                                | int                            |
-    | fire              | set fire. false by default ^optional^                                                         | boolean                        |
-    | block_interaction | whether break blocks or not. "break" by default ^optional^                                    | "none" \| "break" \| "destroy" |
-    | radius            | the base radius of the explosion. 4 by default ^optional^                                     | number                         |
-    | radius_step       | the radius step according to how many times the recipe can be done. 0.5 by default ^optional^ | number                         |
+    | Name              | Description                                                                                   | Type / Literal                              |
+    | ----------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------- |
+    | type              | type                                                                                          | "explode"                                   |
+    | offsetX           | offsets to location ^optional^                                                                | int                                         |
+    | offsetY           | offsets to location ^optional^                                                                | int                                         |
+    | offsetZ           | offsets to location ^optional^                                                                | int                                         |
+    | fire              | set fire. false by default ^optional^                                                         | boolean                                     |
+    | block_interaction | whether break blocks or not. "destroy" by default ^optional^                                  | "keep" \| "destroy" \| "destroy_with_decay" |
+    | radius            | the base radius of the explosion. 4 by default ^optional^                                     | number                                      |
+    | radius_step       | the radius step according to how many times the recipe can be done. 0.5 by default ^optional^ | number                                      |
 
 ### Hurt Entity
 
@@ -218,7 +216,7 @@ Causes damage to the entity.
     | damage | range of damage                                             | [DoubleBounds](general-types.md#doublebounds) |
     | source | damage source type ^optional^{ title='default: "generic"' } | string                                        |
     
-    Allowed values for `source`: generic, magic, out_of_world, anvil, wither, freeze, drown, fall, in_fire, on_fire, lava
+    All the vanilla damage source types can be found [here](https://github.com/misode/mcmeta/tree/data/data/minecraft/damage_type).
 
 ??? example
 
@@ -274,8 +272,6 @@ This action only works for interaction recipes.
 
 ### Move towards Face
 
-*Not implemented for Fabric 1.18.2*
-
 Moves the anchored position in the context towards the direction that being interacted. Only works for interaction recipes.
 
 !!! note "Format"
@@ -286,8 +282,6 @@ Moves the anchored position in the context towards the direction that being inte
     | factor | factor ^optional^{ title="default: 1" } | number              |
 
 ### Delay
-
-*Since: 3.2*
 
 Waits for several seconds, then execute the following actions.
 
@@ -304,8 +298,6 @@ Waits for several seconds, then execute the following actions.
 
 ### Break
 
-*Since: 3.2*
-
 Stops executing the following actions.
 
 !!! note "Format"
@@ -315,8 +307,6 @@ Stops executing the following actions.
     | type | type        | "break"        |
 
 ### Cycle State Property
-
-*Since: 3.2*
 
 Cycles a property's value in a block-state.
 
@@ -353,11 +343,11 @@ This action is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name                   | Description             | Type / Literal                              |
-    | ---------------------- | ----------------------- | ------------------------------------------- |
-    | type                   | type                    | "damage_item"                               |
-    | damage                 | damage ^optional^       | int                                         |
-    | target^since&nbsp;3.4^ | target items ^optional^ | [JsonPointer](general-types.md#jsonpointer) |
+    | Name   | Description             | Type / Literal                              |
+    | ------ | ----------------------- | ------------------------------------------- |
+    | type   | type                    | "damage_item"                               |
+    | damage | damage ^optional^       | int                                         |
+    | target | target items ^optional^ | [JsonPointer](general-types.md#jsonpointer) |
 
 ### Set Item
 

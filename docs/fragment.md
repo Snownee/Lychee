@@ -2,6 +2,10 @@
 
 Fragment is a reusable JSON element that can be attached to your Lychee recipes.
 
+!!! warning
+
+    This feature will be removed in 1.20.2+.
+
 !!! note "Quilt Note"
 
     This feature is NOT available for Quilt Loader.

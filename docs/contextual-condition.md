@@ -258,8 +258,6 @@ Checks if entity is crouching/sneaking.
 
 ### Direction Check
 
-_Not implemented for Fabric 1.18.2_
-
 Checks the direction that being interacted. Only works for interaction recipes.
 
 !!! note "Format"
@@ -272,8 +270,6 @@ Checks the direction that being interacted. Only works for interaction recipes.
     Allowed value for "direction": "up", "down", "north", "south", "east", "west", "side", "forward"
 
 ### Check Parameter
-
-_Since: 3.4_
 
 Checks if a parameter exists in the context.
 
