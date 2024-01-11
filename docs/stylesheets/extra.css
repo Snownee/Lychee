@@ -1,15 +1,31 @@
-[data-md-color-scheme="slate"] {
+[data-md-color-scheme='slate'] {
   --md-typeset-a-color: #4fc3f7;
 }
 
 .md-typeset__table {
-   min-width: 100%;
+  min-width: 100%;
 }
 
 .md-typeset table:not([class]) {
-    display: table;
+  display: table;
 }
 
 sup[title] {
-	font-weight: bold;
+  font-weight: bold;
+}
+
+.rst-other-versions > :not(:first-child),
+.rst-other-versions dt {
+  display: none !important;
+}
+
+.rst-versions .rst-other-versions dd {
+  display: block !important;
+  border-color: transparent;
+  padding: 0;
+  font-weight: 500;
+}
+
+.rst-other-versions {
+  padding: 0 !important;
 }

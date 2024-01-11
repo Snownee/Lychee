@@ -42,9 +42,9 @@ theme:
 extra_css:
     - stylesheets/extra.css
 
-extra:
-    version:
-        provider: mike
+extra_javascript:
+    - path: scripts/extra.js
+      defer: false
 
 markdown_extensions:
     - admonition
