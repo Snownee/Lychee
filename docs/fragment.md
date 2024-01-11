@@ -4,7 +4,7 @@ Fragment is a reusable JSON element that can be attached to your Lychee recipes.
 
 !!! note "Quilt Note"
 
-		This feature is NOT available for Quilt Loader.
+    This feature is NOT available for Quilt Loader.
 
 ## Define
 
@@ -12,13 +12,13 @@ All fragments should be defined in the `lychee_fragments` folder in a data pack,
 
 ```json
 {
-  "value": "Here can be any type of element"
+    "value": "Here can be any type of element"
 }
 ```
 
 !!! note
 
-	Fragments can be nested.
+    Fragments can be nested.
 
 ## Use Fragment
 
@@ -26,16 +26,16 @@ First let's assume we have such a fragment:
 
 ```json title="lychee_fragments/gems.json"
 {
-  "value": [
-    {
-      "type": "drop_item",
-      "item": "diamond"
-    },
-    {
-      "type": "drop_item",
-      "item": "emerald"
-    }
-  ]
+    "value": [
+        {
+            "type": "drop_item",
+            "item": "diamond"
+        },
+        {
+            "type": "drop_item",
+            "item": "emerald"
+        }
+    ]
 }
 ```
 
@@ -45,9 +45,9 @@ First let's assume we have such a fragment:
 
     ```json
     {
-      "post": {
-        "@": "gems"
-      }
+        "post": {
+            "@": "gems"
+        }
     }
     ```
 
@@ -55,16 +55,16 @@ First let's assume we have such a fragment:
 
     ```json
     {
-      "post": [
-        {
-          "type": "drop_item",
-          "item": "diamond"
-        },
-        {
-          "type": "drop_item",
-          "item": "emerald"
-        }
-      ]
+        "post": [
+            {
+                "type": "drop_item",
+                "item": "diamond"
+            },
+            {
+                "type": "drop_item",
+                "item": "emerald"
+            }
+        ]
     }
     ```
 
@@ -74,14 +74,14 @@ First let's assume we have such a fragment:
 
     ```json
     {
-      "post": [
-        {
-          "...@": "gems"
-        },
-        {
-          "type": "prevent_default"
-        }
-      ]
+        "post": [
+            {
+                "...@": "gems"
+            },
+            {
+                "type": "prevent_default"
+            }
+        ]
     }
     ```
 
@@ -89,19 +89,19 @@ First let's assume we have such a fragment:
 
     ```json
     {
-      "post": [
-        {
-          "type": "drop_item",
-          "item": "diamond"
-        },
-        {
-          "type": "drop_item",
-          "item": "emerald"
-        },
-        {
-          "type": "prevent_default"
-        }
-      ]
+        "post": [
+            {
+                "type": "drop_item",
+                "item": "diamond"
+            },
+            {
+                "type": "drop_item",
+                "item": "emerald"
+            },
+            {
+                "type": "prevent_default"
+            }
+        ]
     }
     ```
 
@@ -113,19 +113,19 @@ You can define variables together with the fragment path, and reference it in th
 
     ```json
     {
-      "comment": {
-        "@": "comment",
-        "name": "Fragment"
-      },
-      "post": [
-        {
-          "...@": "gems",
-          "amount": 3
+        "comment": {
+            "@": "comment",
+            "name": "Fragment"
         },
-        {
-          "type": "prevent_default"
-        }
-      ]
+        "post": [
+            {
+                "...@": "gems",
+                "amount": 3
+            },
+            {
+                "type": "prevent_default"
+            }
+        ]
     }
     ```
 
@@ -133,18 +133,18 @@ You can define variables together with the fragment path, and reference it in th
 
     ```json
     {
-      "value": [
-        {
-          "type": "drop_item",
-          "item": "diamond",
-          "count": "$amount"
-        },
-        {
-          "type": "drop_item",
-          "item": "emerald",
-          "count": "$amount"
-        }
-      ]
+        "value": [
+            {
+                "type": "drop_item",
+                "item": "diamond",
+                "count": "$amount"
+            },
+            {
+                "type": "drop_item",
+                "item": "emerald",
+                "count": "$amount"
+            }
+        ]
     }
     ```
 
@@ -152,6 +152,6 @@ You can define variables together with the fragment path, and reference it in th
 
     ```json
     {
-      "value": "An example of ${name}"
+        "value": "An example of ${name}"
     }
     ```

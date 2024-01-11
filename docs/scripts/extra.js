@@ -19,16 +19,17 @@
 })()
 
 function branchToVersion(branch) {
+  branch = branch.replace('-', '/')
   var mapping = {
-    'docs-1.18.2': '1.18.2',
-    'docs-1.19': '1.19.2',
-    'docs-1.20': '1.20.1',
-    'docs-1.21': '1.21',
+    'docs/1.18.2': '1.18.2',
+    'docs/1.19': '1.19.2',
+    'docs/1.20': '1.20.1',
+    'docs/1.21': '1.21',
   }
   if (branch in mapping) {
     return mapping[branch]
   }
-  if (branch.startsWith('docs-')) {
+  if (branch.startsWith('docs/')) {
     return branch.substr(5)
   }
   return branch

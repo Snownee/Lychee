@@ -15,7 +15,7 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 
 !!! note
 
-	If a condition is a secret, it is still visible to players by using some technical approach.
+    If a condition is a secret, it is still visible to players by using some technical approach.
 
 ## Built-in Conditions
 
@@ -65,12 +65,12 @@ Generates a random number between 0.0 and 1.0, and checks if it is less than a s
 
 ??? example
 
-	```json
-	{
-		"type": "chance",
-		"chance": 0.5
-	}
-	```
+    ```json
+    {
+        "type": "chance",
+        "chance": 0.5
+    }
+    ```
 
 ### Location Check
 
@@ -88,39 +88,39 @@ Checks if a `location_check` predicate is passed.
 
 ??? example
 
-	Checks if player is in The End, and X position is between -100 and 100.
+    Checks if player is in The End, and X position is between -100 and 100.
 
-	```json
-	{
-		"type": "location",
-		"predicate": {
-			"dimension": "the_end",
-			"position": {
-				"x": {
-					"min": -100,
-					"max": 100
-				}
-			}
-		}
-	}
-	```
+    ```json
+    {
+        "type": "location",
+        "predicate": {
+            "dimension": "the_end",
+            "position": {
+                "x": {
+                    "min": -100,
+                    "max": 100
+                }
+            }
+        }
+    }
+    ```
 
 Special usage: you can use `lychee:biome_tag` option to specify biome tag.
 
 ??? example
 
-	```json
-	{
-		"type": "location",
-		"predicate": {
-			"lychee:biome_tag": "is_ocean"
-		}
-	}
-	```
+    ```json
+    {
+        "type": "location",
+        "predicate": {
+            "lychee:biome_tag": "is_ocean"
+        }
+    }
+    ```
 
 !!! note
 
-	Fluid state predicate is not supported yet. (because I am lazy)
+    Fluid state predicate is not supported yet. (because I am lazy)
 
 ### Weather Check
 
@@ -146,14 +146,14 @@ Checks if world is in any of the listed difficulties.
 
 ??? example
 
-	Recipe or post action only works when difficulty is peaceful or easy:
+    Recipe or post action only works when difficulty is peaceful or easy:
 
-	```json
-	{
-		"type": "difficulty",
-		"difficulty": ["peaceful", 1]
-	}
-	```
+    ```json
+    {
+        "type": "difficulty",
+        "difficulty": ["peaceful", 1]
+    }
+    ```
 
 ### Time Check
 
@@ -171,18 +171,18 @@ Compares the current game time (the age of the world in game ticks) against give
 
 ??? example
 
-	Recipe works every other second:
+    Recipe works every other second:
 
-	```json
-	{
+    ```json
+    {
         "type": "time",
         "value": {
             "min": 0,
             "max": 20
         },
         "period": 40
-	}
-	```
+    }
+    ```
 
 ### Command Check
 
@@ -220,31 +220,31 @@ Checks if entity's is in a range.
 
 ??? example
 
-	```json
-	{
-		"type": "lychee:block_interacting",
-		"item_in": {
-			"item": "shears"
-		},
-		"block_in": "pumpkin",
-		"contextual": {
-			"type": "entity_health",
-			"range": {
-				"min": 2.1
-			}
-		},
-		"post": [
-			{
-				"type": "prevent_default"
-			},
-			{
-				"type": "hurt",
-				"source": "generic",
-				"damage": 2
-			}
-		]
-	}
-	```
+    ```json
+    {
+        "type": "lychee:block_interacting",
+        "item_in": {
+            "item": "shears"
+        },
+        "block_in": "pumpkin",
+        "contextual": {
+            "type": "entity_health",
+            "range": {
+                "min": 2.1
+            }
+        },
+        "post": [
+            {
+                "type": "prevent_default"
+            },
+            {
+                "type": "hurt",
+                "source": "generic",
+                "damage": 2
+            }
+        ]
+    }
+    ```
 
 ### Requires Entity Crouching
 
@@ -258,7 +258,7 @@ Checks if entity is crouching/sneaking.
 
 ### Direction Check
 
-*Not implemented for Fabric 1.18.2*
+_Not implemented for Fabric 1.18.2_
 
 Checks the direction that being interacted. Only works for interaction recipes.
 
@@ -269,11 +269,11 @@ Checks the direction that being interacted. Only works for interaction recipes.
     | type      | type        | "direction"    |
     | direction | direction   | string         |
 
-	Allowed value for "direction": "up", "down", "north", "south", "east", "west", "side", "forward"
+    Allowed value for "direction": "up", "down", "north", "south", "east", "west", "side", "forward"
 
 ### Check Parameter
 
-*Since: 3.4*
+_Since: 3.4_
 
 Checks if a parameter exists in the context.
 
@@ -286,11 +286,11 @@ Checks if a parameter exists in the context.
 
 ??? example
 
-	Checks if we can know the location in the context.
+    Checks if we can know the location in the context.
 
-	```json
-	{
-		"type": "check_param",
-		"key": "origin"
-	}
-	```
+    ```json
+    {
+        "type": "check_param",
+        "key": "origin"
+    }
+    ```

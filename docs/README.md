@@ -15,7 +15,7 @@ Currently Lychee has support for the following recipe type (with full JEI/REI su
 - Anvil crafting
 - Falling block crushing items or block
 - Lightning channeling
-- Random block ticking
+- Random block ticking (No JEI/REI integration)
 - Dripstone dripping
 - Advanced shaped crafting
 

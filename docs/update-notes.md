@@ -1,5 +1,9 @@
 # Update Notes
 
+## 3.15
+
+ - Added `lychee:lightning_immune` and `lightning_fire_immune` entity type tag.
+
 ## 3.14
 
  - Added `repeat` option to `execute` action type.

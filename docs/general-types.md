@@ -79,10 +79,10 @@ A BlockPredicate is a predicate of StateDefinition.
 
     ```json
     {
-    	"blocks": ["water"],
-    	"state": {
-    		"level": 0
-    	}
+        "blocks": ["water"],
+        "state": {
+            "level": 0
+        }
     }
     ```
 
@@ -120,6 +120,6 @@ Describes a inclusive range for doubles.
 
 JsonPointer is a string syntax for identifying a specific value within a JSON. But the only thing you need to know is you should separate the path to the target with `/`.
 
-``` json
+```json
 "/path/to/the/target"
 ```

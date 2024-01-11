@@ -2,9 +2,9 @@
 
 !!! info
 
-	Try [**Fruitful Generator**](https://fruitful-generator.github.io/) !
-	
-	It's a convenient tool for creating Lychee recipes.
+    Try [**Fruitful Generator**](https://fruitful-generator.github.io/) !
+    
+    It's a convenient tool for creating Lychee recipes.
 
 ## Basic Format
 
@@ -52,95 +52,95 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-	| Name     | Description               | Type / Literal                                                                           |
-	| -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
-	| type     | type                      | "lychee:block_interacting"                                                               |
-	| item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-	| block_in | the block being used      | [BlockPredicate](general-types.md#blockpredicate)                                        |
+    | Name     | Description               | Type / Literal                                                                           |
+    | -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+    | type     | type                      | "lychee:block_interacting"                                                               |
+    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | block_in | the block being used      | [BlockPredicate](general-types.md#blockpredicate)                                        |
 
-	Since 3.9: `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
+    Since 3.9: `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
 
 ??? example
 
-	Prevent player from carving pumpkins. Here the `prevent_default` means do not consume the shears.
+    Prevent player from carving pumpkins. Here the `prevent_default` means do not consume the shears.
 
-	```json
-	{
-		"type": "lychee:block_interacting",
-		"item_in": {
-			"item": "shears"
-		},
-		"block_in": "pumpkin",
-		"post": {
-			"type": "prevent_default"
-		}
-	}
-	```
+    ```json
+    {
+        "type": "lychee:block_interacting",
+        "item_in": {
+            "item": "shears"
+        },
+        "block_in": "pumpkin",
+        "post": {
+            "type": "prevent_default"
+        }
+    }
+    ```
 
-	Stripping an oak log with an iron axe, you will have 50% chance to obtain a diamond:
+    Stripping an oak log with an iron axe, you will have 50% chance to obtain a diamond:
 
-	```json
-	{
-		"type": "lychee:block_interacting",
-		"item_in": {
-			"item": "iron_axe"
-		},
-		"block_in": "oak_log",
-		"post": [
-			{
-				"type": "drop_item",
-				"item": "diamond",
-				"contextual": {
-					"type": "chance",
-					"chance": 0.5
-				}
-			},
-			{
-				"type": "place",
-				"block": "stripped_oak_log"
-			},
-			{
-				"type": "damage_item"
-			}
-		]
-	}
-	```
-
-!!! note
-
-	Use `"item": "air"` to require interaction with empty hand.
+    ```json
+    {
+        "type": "lychee:block_interacting",
+        "item_in": {
+            "item": "iron_axe"
+        },
+        "block_in": "oak_log",
+        "post": [
+            {
+                "type": "drop_item",
+                "item": "diamond",
+                "contextual": {
+                    "type": "chance",
+                    "chance": 0.5
+                }
+            },
+            {
+                "type": "place",
+                "block": "stripped_oak_log"
+            },
+            {
+                "type": "damage_item"
+            }
+        ]
+    }
+    ```
 
 !!! note
 
-	Since 3.12.1: Use a special ingredient to match any item:
+    Use `"item": "air"` to require interaction with empty hand.
 
-	=== "Forge"
+!!! note
 
-		```json
-		{
-			"type": "lychee:block_interacting",
-			"item_in": {
-				"type": "lychee:always_true"
-			},
-			"block_in": "minecraft:stone"
-		}
-		```
+    Since 3.12.1: Use a special ingredient to match any item:
 
-	=== "Fabric"
+    === "Forge"
 
-		```json
-		{
-			"type": "lychee:block_interacting",
-			"item_in": {
-				"fabric:type": "lychee:always_true"
-			},
-			"block_in": "minecraft:stone"
-		}
-		```
+        ```json
+        {
+            "type": "lychee:block_interacting",
+            "item_in": {
+                "type": "lychee:always_true"
+            },
+            "block_in": "minecraft:stone"
+        }
+        ```
+
+    === "Fabric"
+
+        ```json
+        {
+            "type": "lychee:block_interacting",
+            "item_in": {
+                "fabric:type": "lychee:always_true"
+            },
+            "block_in": "minecraft:stone"
+        }
+        ```
 
 !!! warning
 
-	It is not recommended to use recipe contextual conditions in it, because some contextual conditions are not supported to run on the client side.
+    It is not recommended to use recipe contextual conditions in it, because some contextual conditions are not supported to run on the client side.
 
 ### Click on a Block with Item
 
@@ -152,49 +152,49 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-	| Name     | Description               | Type / Literal                                                                           |
-	| -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
-	| type     | type                      | "lychee:block_clicking"                                                                  |
-	| item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-	| block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate)                                        |
+    | Name     | Description               | Type / Literal                                                                           |
+    | -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+    | type     | type                      | "lychee:block_clicking"                                                                  |
+    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate)                                        |
 
-	Since 3.9: `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
-
-!!! note
-
-	Use `"item": "air"` to require interaction with empty hand.
+    Since 3.9: `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
 
 !!! note
 
-	Since 3.12.1: Use a special ingredient to match any item:
+    Use `"item": "air"` to require interaction with empty hand.
 
-	=== "Forge"
+!!! note
 
-		```json
-		{
-			"type": "lychee:block_clicking",
-			"item_in": {
-				"type": "lychee:always_true"
-			},
-			"block_in": "minecraft:stone"
-		}
-		```
+    Since 3.12.1: Use a special ingredient to match any item:
 
-	=== "Fabric"
+    === "Forge"
 
-		```json
-		{
-			"type": "lychee:block_clicking",
-			"item_in": {
-				"fabric:type": "lychee:always_true"
-			},
-			"block_in": "minecraft:stone"
-		}
-		```
+        ```json
+        {
+            "type": "lychee:block_clicking",
+            "item_in": {
+                "type": "lychee:always_true"
+            },
+            "block_in": "minecraft:stone"
+        }
+        ```
+
+    === "Fabric"
+
+        ```json
+        {
+            "type": "lychee:block_clicking",
+            "item_in": {
+                "fabric:type": "lychee:always_true"
+            },
+            "block_in": "minecraft:stone"
+        }
+        ```
 
 !!! warning
 
-	It is not recommended to use recipe contextual conditions in it, because some contextual conditions are not supported to run on the client side.
+    It is not recommended to use recipe contextual conditions in it, because some contextual conditions are not supported to run on the client side.
 
 ### Item Entity Burning
 
@@ -213,26 +213,26 @@ Default behavior: none.
 
 !!! note
 
-	Items such as netherite or nether star can't catch fire.
+    Items such as netherite or nether star can't catch fire.
 
-	If you want to make an item fire-immune as well, you can tag it with `lychee:fire_immune`
+    If you want to make an item fire-immune as well, you can tag it with `lychee:fire_immune`
 
 ??? example
 
-	Burning logs produces charcoal:
+    Burning logs produces charcoal:
 
-	```json
-	{
-		"type": "lychee:item_burning",
-		"item_in": {
-			"tag": "logs_that_burn"
-		},
-		"post": {
-			"type": "drop_item",
-			"item": "charcoal"
-		}
-	}
-	```
+    ```json
+    {
+        "type": "lychee:item_burning",
+        "item_in": {
+            "tag": "logs_that_burn"
+        },
+        "post": {
+            "type": "drop_item",
+            "item": "charcoal"
+        }
+    }
+    ```
 
 ### Item Entity inside a Block
 
@@ -253,36 +253,36 @@ Default behavior: Item is consumed.
 
 ??? example
 
-	Drop a bucket into a full water cauldron, it returns a water bucket and empty the cauldron:
+    Drop a bucket into a full water cauldron, it returns a water bucket and empty the cauldron:
 
-	```json
-	{
-		"type": "lychee:item_inside",
-		"item_in": {
-			"item": "bucket"
-		},
-		"block_in": {
-			"blocks": ["water_cauldron"],
-			"state": {
-				"level": 3
-			}
-		},
-		"post": [
-			{
-				"type": "drop_item",
-				"item": "water_bucket"
-			},
-			{
-				"type": "place",
-				"block": "cauldron"
-			}
-		]
-	}
-	```
+    ```json
+    {
+        "type": "lychee:item_inside",
+        "item_in": {
+            "item": "bucket"
+        },
+        "block_in": {
+            "blocks": ["water_cauldron"],
+            "state": {
+                "level": 3
+            }
+        },
+        "post": [
+            {
+                "type": "drop_item",
+                "item": "water_bucket"
+            },
+            {
+                "type": "place",
+                "block": "cauldron"
+            }
+        ]
+    }
+    ```
 
 !!! note
 
-	If the block is a fluid block, the block id is not always the same as the fluid id. To see the block id, you should use Jade mod and enable the "Registry Name" option in the plugin settings.
+    If the block is a fluid block, the block id is not always the same as the fluid id. To see the block id, you should use Jade mod and enable the "Registry Name" option in the plugin settings.
 
 ### Anvil Crafting
 
@@ -305,29 +305,29 @@ Default behavior: Anvil is damaged.
 
 ??? example
 
-	It costs 1 apple, 8 gold ingots and 1 level to make a golden_apple. Does not damage the anvil:
+    It costs 1 apple, 8 gold ingots and 1 level to make a golden_apple. Does not damage the anvil:
 
-	```json
-	{
-		"type": "lychee:anvil_crafting",
-		"item_in": [
-			{
-				"item": "apple"
-			},
-			{
-				"item": "gold_ingot"
-			}
-		],
-		"item_out": {
-			"item": "golden_apple"
-		},
-		"level_cost": 1,
-		"material_cost": 8,
-		"post": {
-			"type": "prevent_default"
-		}
-	}
-	```
+    ```json
+    {
+        "type": "lychee:anvil_crafting",
+        "item_in": [
+            {
+                "item": "apple"
+            },
+            {
+                "item": "gold_ingot"
+            }
+        ],
+        "item_out": {
+            "item": "golden_apple"
+        },
+        "level_cost": 1,
+        "material_cost": 8,
+        "post": {
+            "type": "prevent_default"
+        }
+    }
+    ```
 
 ### Block Crushing
 
@@ -348,68 +348,68 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
 
 ??? example
 
-	Papers from sugar canes:
+    Papers from sugar canes:
 
-	```json
-	{
-		"type": "lychee:block_crushing",
-		"item_in": [
-			{
-				"item": "sugar_cane"
-			},
-			{
-				"item": "sugar_cane"
-			},
-			{
-				"item": "sugar_cane"
-			}
-		],
-		"post": [
-			{
-				"type": "drop_item",
-				"item": "paper",
-				"count": 3
-			}
-		]
-	}
-	```
+    ```json
+    {
+        "type": "lychee:block_crushing",
+        "item_in": [
+            {
+                "item": "sugar_cane"
+            },
+            {
+                "item": "sugar_cane"
+            },
+            {
+                "item": "sugar_cane"
+            }
+        ],
+        "post": [
+            {
+                "type": "drop_item",
+                "item": "paper",
+                "count": 3
+            }
+        ]
+    }
+    ```
 
-	Making a mossy stone bricks block. It uses a location check to check the block below the current position:
+    Making a mossy stone bricks block. It uses a location check to check the block below the current position:
 
-	```json
-	{
-		"type": "lychee:block_crushing",
-		"landing_block": "moss_carpet",
-		"contextual": {
-			"type": "location",
-			"offsetY": -1,
-			"predicate": {
-				"block": {
-					"blocks": [ "stone_bricks" ]
-				}
-			}
-		},
-		"post": [
-			{
-				"type": "place",
-				"block": "*"
-			},
-			{
-				"type": "place",
-				"offsetY": -1,
-				"block": "mossy_stone_bricks"
-			}
-		]
-	}
-	```
-
-!!! note
-
-	Dispenser can now place fallable blocks and items that tagged with `lychee:dispenser_placement` in front of it. Note the item should not have a special dispense behavior.
+    ```json
+    {
+        "type": "lychee:block_crushing",
+        "landing_block": "moss_carpet",
+        "contextual": {
+            "type": "location",
+            "offsetY": -1,
+            "predicate": {
+                "block": {
+                    "blocks": [ "stone_bricks" ]
+                }
+            }
+        },
+        "post": [
+            {
+                "type": "place",
+                "block": "*"
+            },
+            {
+                "type": "place",
+                "offsetY": -1,
+                "block": "mossy_stone_bricks"
+            }
+        ]
+    }
+    ```
 
 !!! note
 
-	Normally it will process all the items that touches the falling block, but if the landing block is tagged with `lychee:extend_box` (cauldrons by default), it will collect items inside the landing block as well.
+    Dispenser can now place fallable blocks and items that tagged with `lychee:dispenser_placement` in front of it. Note the item should not have a special dispense behavior.
+
+!!! note
+
+    Normally it will process all the items that touches the falling block, but if the landing block is tagged with `lychee:extend_box` (cauldrons by default), it will collect items inside the landing block as well.
 
 ### Lightning Channeling
 
@@ -428,19 +428,19 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 
 ??? example
 
-	Make nearby stone become calcite:
+    Make nearby stone become calcite:
 
-	```json
-	{
-		"type": "lychee:lightning_channeling",
-		"post": [
-			{
-				"type": "execute",
-				"command": "fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite"
-			}
-		]
-	}
-	```
+    ```json
+    {
+        "type": "lychee:lightning_channeling",
+        "post": [
+            {
+                "type": "execute",
+                "command": "fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite"
+            }
+        ]
+    }
+    ```
 
 ### Item Exploding
 
@@ -459,7 +459,7 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 
 !!! note
 
-	You can tag items with `lychee:item_exploding_catalysts` to let them be shown in JEI / REI.
+    You can tag items with `lychee:item_exploding_catalysts` to let them be shown in JEI / REI.
 
 ### Block Exploding
 
@@ -478,7 +478,7 @@ Default behavior: Block drops items from loot table.
 
 !!! note
 
-	You can tag items with `lychee:block_exploding_catalysts` to let them be shown as catalysts in JEI / REI.
+    You can tag items with `lychee:block_exploding_catalysts` to let them be shown as catalysts in JEI / REI.
 
 ### Random Block Ticking
 
@@ -499,7 +499,7 @@ Default behavior: Do the default ticking behavior.
 
 !!! note
 
-	This recipe type does not have JEI / REI integration.
+    This recipe type does not have JEI / REI integration.
 
 ### Dripstone Dripping
 
@@ -521,19 +521,19 @@ Default behavior: Do the default ticking behavior.
 
 ??? example
 
-	```json
-	{
-		"type": "lychee:dripstone_dripping",
-		"source_block": "water",
-		"target_block": "sponge",
-		"post": [
-			{
-				"type": "place",
-				"block": "wet_sponge"
-			}
-		]
-	}
-	```
+    ```json
+    {
+        "type": "lychee:dripstone_dripping",
+        "source_block": "water",
+        "target_block": "sponge",
+        "post": [
+            {
+                "type": "place",
+                "block": "wet_sponge"
+            }
+        ]
+    }
+    ```
 
 ### Advanced Shaped Crafting
 
@@ -558,45 +558,45 @@ Default behavior: none.
 
 ??? example
 
-	With the uses of the [`set_item`](post-action.md#set-item-set_item) action, you can customize the remainders and dynamically change the crafting result.
+    With the uses of the [`set_item`](post-action.md#set-item-set_item) action, you can customize the remainders and dynamically change the crafting result.
 
-	```json
-	{
-		"type": "lychee:crafting",
-		"pattern": [
-			"A",
-			"B"
-		],
-		"key": {
-			"A": {
-				"item": "pufferfish"
-			},
-			"B": {
-				"item": "water_bucket"
-			}
-		},
-		"result": {
-			"item": "apple"
-		},
-		"post": [
-			{
-				"type": "set_item",
-				"target": "/key/B",
-				"item": "air"
-			}
-		],
-		"assembling": [
-			{
-				"type": "set_item",
-				"target": "/result",
-				"item": "pufferfish_bucket"
-			}
-		]
-	}
-	```
+    ```json
+    {
+        "type": "lychee:crafting",
+        "pattern": [
+            "A",
+            "B"
+        ],
+        "key": {
+            "A": {
+                "item": "pufferfish"
+            },
+            "B": {
+                "item": "water_bucket"
+            }
+        },
+        "result": {
+            "item": "apple"
+        },
+        "post": [
+            {
+                "type": "set_item",
+                "target": "/key/B",
+                "item": "air"
+            }
+        ],
+        "assembling": [
+            {
+                "type": "set_item",
+                "target": "/result",
+                "item": "pufferfish_bucket"
+            }
+        ]
+    }
+    ```
 
-	[Here](kubejs.md#example-repairing-tool-with-anvil-and-custom-item) is a more advanced example that uses KubeJS Integration.
+    [Here](kubejs.md#example-repairing-tool-with-anvil-and-custom-item) is a more advanced example that uses KubeJS Integration.
 
 !!! note
 
-	No guarantee that modded crafting machines contains player and location information. You can use [`check_param`](contextual-condition.md#check-parameter-check_param) to require these parameters to be present when crafting.
+    No guarantee that modded crafting machines contains player and location information. You can use [`check_param`](contextual-condition.md#check-parameter-check_param) to require these parameters to be present when crafting.

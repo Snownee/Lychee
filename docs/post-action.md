@@ -29,17 +29,17 @@ Spawns an item entity on the ground.
 
 ??? example
 
-	Drops a water bottle:
+    Drops a water bottle:
 
-	```json
-	{
-		"type": "drop_item",
-		"item": "potion",
-		"nbt": {
-			"Potion": "minecraft:water"
-		}
-	}
-	```
+    ```json
+    {
+        "type": "drop_item",
+        "item": "potion",
+        "nbt": {
+            "Potion": "minecraft:water"
+        }
+    }
+    ```
 
 ### Place Block
 
@@ -59,37 +59,37 @@ This action is not [repeatable](concepts.md#repeatability).
 
 ??? example
 
-	Places a cauldron:
+    Places a cauldron:
 
-	```json
-	{
-		"type": "place",
-		"block": "cauldron"
-	}
-	```
+    ```json
+    {
+        "type": "place",
+        "block": "cauldron"
+    }
+    ```
 
-	Places a waterlogged oak stairs:
+    Places a waterlogged oak stairs:
 
-	```json
-	{
-		"type": "place",
-		"block": {
-			"blocks": ["oak_stairs"],
-			"state": {
-				"waterlogged": "true"
-			}
-		}
-	}
-	```
+    ```json
+    {
+        "type": "place",
+        "block": {
+            "blocks": ["oak_stairs"],
+            "state": {
+                "waterlogged": "true"
+            }
+        }
+    }
+    ```
 
-	Destroys current block (place air):
+    Destroys current block (place air):
 
-	```json
-	{
-		"type": "place",
-		"block": "*"
-	}
-	```
+    ```json
+    {
+        "type": "place",
+        "block": "*"
+    }
+    ```
 
 ### Execute Command
 
@@ -106,17 +106,17 @@ Executes a command.
 
 ??? example
 
-	Spawns particles:
+    Spawns particles:
 
-	```json
-	{
-		"type": "execute",
-		"command": "particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20",
-		"hide": true
-	}
-	```
+    ```json
+    {
+        "type": "execute",
+        "command": "particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20",
+        "hide": true
+    }
+    ```
 
-	For how to use `particle` command, please read the [wiki](https://minecraft.wiki/w/Commands/particle).
+    For how to use `particle` command, please read the [wiki](https://minecraft.wiki/w/Commands/particle).
 
 ### Drop Experience
 
@@ -146,34 +146,34 @@ Randomly selects entries from an action list to apply. Similar to loot table.
 
 ??? example
 
-	```json
-	{
-		"type": "random",
-		"rolls": {
-			"min": 3,
-			"max": 5
-		},
-		"entries": [
-			{
-				"type": "drop_item",
-				"item": "gold_ingot",
-				"contextual": {
-					"type": "weather",
-					"weather": "rain"
-				}
-			},
-			{
-				"type": "drop_item",
-				"item": "ender_pearl"
-			},
-			{
-				"weight": 2,
-				"type": "drop_item",
-				"item": "dirt"
-			}
-		]
-	}
-	```
+    ```json
+    {
+        "type": "random",
+        "rolls": {
+            "min": 3,
+            "max": 5
+        },
+        "entries": [
+            {
+                "type": "drop_item",
+                "item": "gold_ingot",
+                "contextual": {
+                    "type": "weather",
+                    "weather": "rain"
+                }
+            },
+            {
+                "type": "drop_item",
+                "item": "ender_pearl"
+            },
+            {
+                "weight": 2,
+                "type": "drop_item",
+                "item": "dirt"
+            }
+        ]
+    }
+    ```
 
 ### If-Else Statement
 
@@ -183,11 +183,11 @@ Executes a list of actions if the contextual conditions are met or not.
 
 !!! note "Format"
 
-		| Name | Description                                                               | Type / Literal                                                 |
-		| ---- | ------------------------------------------------------------------------- | -------------------------------------------------------------- |
-		| type | type                                                                      | "if"                                                           |
-		| then | a list of actions to be executed if the conditions are met ^optional^     | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
-		| else | a list of actions to be executed if the conditions are not met ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
+    | Name | Description                                                               | Type / Literal                                                 |
+    | ---- | ------------------------------------------------------------------------- | -------------------------------------------------------------- |
+    | type | type                                                                      | "if"                                                           |
+    | then | a list of actions to be executed if the conditions are met ^optional^     | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
+    | else | a list of actions to be executed if the conditions are not met ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
 
 ### Create Explosion
 
@@ -222,31 +222,31 @@ Causes damage to the entity.
 
 ??? example
 
-	```json
-	{
-		"type": "lychee:block_interacting",
-		"item_in": {
-			"item": "shears"
-		},
-		"block_in": "pumpkin",
-		"contextual": {
-			"type": "entity_health",
-			"range": {
-				"min": 2.1
-			}
-		},
-		"post": [
-			{
-				"type": "prevent_default"
-			},
-			{
-				"type": "hurt",
-				"source": "generic",
-				"damage": 2
-			}
-		]
-	}
-	```
+    ```json
+    {
+        "type": "lychee:block_interacting",
+        "item_in": {
+            "item": "shears"
+        },
+        "block_in": "pumpkin",
+        "contextual": {
+            "type": "entity_health",
+            "range": {
+                "min": 2.1
+            }
+        },
+        "post": [
+            {
+                "type": "prevent_default"
+            },
+            {
+                "type": "hurt",
+                "source": "generic",
+                "damage": 2
+            }
+        ]
+    }
+    ```
 
 ### Set Falling Anvil Damage Chance
 
@@ -300,7 +300,7 @@ Waits for several seconds, then execute the following actions.
 
 !!! note
 
-	After the delay, some context will lose. For example, if the player leaves the game while delaying, you can't hurt the player after this delay.
+    After the delay, some context will lose. For example, if the player leaves the game while delaying, you can't hurt the player after this delay.
 
 ### Break
 
@@ -393,61 +393,61 @@ Here, Lychee adds a new operation type called "deep_merge", which does exactly w
 
 !!! note
 
-		This action will be executed before any other action, regardless of its position in all actions.
+    This action will be executed before any other action, regardless of its position in all actions.
 
 ??? example
 
-	```json
-	{
-		"type": "lychee:crafting",
-		"comment": "Test",
-		"pattern": [
-			"AA",
-			"BB"
-		],
-		"key": {
-			"A": {
-				"item": "feather"
-			},
-			"B": {
-				"item": "stone"
-			}
-		},
-		"result": {
-			"item": "pufferfish_bucket"
-		},
-		"post": [
-			{
-				"type": "nbt_patch",
-				"op": "deep_merge",
-				"path": "/post/1",
-				"value": {
-					"tag": {
-						"display": {
-							"Name": "{\"text\":\"Test\"}"
-						}
-					}
-				}
-			},
-			{
-				"type": "set_item",
-				"target": "/key/A",
-				"item": "feather"
-			}
-		],
-		"assembling": [
-			{
-				"type": "nbt_patch",
-				"op": "deep_merge",
-				"path": "/result",
-				"value": {
-					"tag": {
-						"display": {
-							"Name": "{\"text\":\"Test\"}"
-						}
-					}
-				}
-			}
-		]
-	}
-	```
+    ```json
+    {
+        "type": "lychee:crafting",
+        "comment": "Test",
+        "pattern": [
+            "AA",
+            "BB"
+        ],
+        "key": {
+            "A": {
+                "item": "feather"
+            },
+            "B": {
+                "item": "stone"
+            }
+        },
+        "result": {
+            "item": "pufferfish_bucket"
+        },
+        "post": [
+            {
+                "type": "nbt_patch",
+                "op": "deep_merge",
+                "path": "/post/1",
+                "value": {
+                    "tag": {
+                        "display": {
+                            "Name": "{\"text\":\"Test\"}"
+                        }
+                    }
+                }
+            },
+            {
+                "type": "set_item",
+                "target": "/key/A",
+                "item": "feather"
+            }
+        ],
+        "assembling": [
+            {
+                "type": "nbt_patch",
+                "op": "deep_merge",
+                "path": "/result",
+                "value": {
+                    "tag": {
+                        "display": {
+                            "Name": "{\"text\":\"Test\"}"
+                        }
+                    }
+                }
+            }
+        ]
+    }
+    ```
