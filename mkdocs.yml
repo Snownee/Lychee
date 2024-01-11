@@ -40,10 +40,9 @@ theme:
             name: Switch to light mode
 
 extra_css:
-    - stylesheets/extra.css
-
+    - stylesheets/extra.4c42df.css
 extra_javascript:
-    - path: scripts/extra.js
+    - path: scripts/extra.32b0df.js
       defer: false
 
 markdown_extensions:
