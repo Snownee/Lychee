@@ -26,6 +26,10 @@ sup[title] {
   font-weight: 500;
 }
 
+.rst-other-versions dd a {
+  display: block !important;
+}
+
 .rst-other-versions {
   padding: 0 !important;
 }
