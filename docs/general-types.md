@@ -60,6 +60,15 @@ A BlockPredicate is a predicate of an in-world block. It can also be used to rep
 
 You can use `"*"` to represent a BlockPredicate to match all blocks.
 
+!!! example
+
+    ```json
+    {
+        "blocks": ["tconstruct:seared_lantern"],
+        "nbt": "{\"tank\":{\"FluidName\":\"thermal:tree_oil\",\"Amount\":50}}"
+    }
+    ```
+
 ## StatePropertiesPredicate
 
 A BlockPredicate is a predicate of StateDefinition.
