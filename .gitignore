@@ -26,3 +26,4 @@ run/*
 /.factorypath
 /*.log
 /CHANGELOG.md
+/.vscode/settings.json

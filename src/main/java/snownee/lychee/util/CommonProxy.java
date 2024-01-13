@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.Streams;
 import com.google.gson.JsonElement;
@@ -49,6 +48,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -58,6 +58,7 @@ import net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
@@ -83,6 +84,7 @@ import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.interaction.InteractionRecipeMod;
+import snownee.lychee.item_exploding.ItemExplodingRecipe;
 import snownee.lychee.mixin.RecipeManagerAccess;
 
 @Mod(Lychee.ID)
@@ -109,6 +111,10 @@ public class CommonProxy {
 			InteractionResult result = InteractionRecipeMod.clickItemOn(event.getEntity(), event.getLevel(), event.getHand(), event.getPos(), event.getFace());
 			event.setCanceled(result.consumesAction());
 			event.setCancellationResult(result);
+		});
+		MinecraftForge.EVENT_BUS.addListener((ExplosionEvent.Detonate event) -> {
+			Explosion explosion = event.getExplosion();
+			ItemExplodingRecipe.on(event.getLevel(), explosion.x, explosion.y, explosion.z, event.getAffectedEntities(), explosion.radius);
 		});
 		if (isPhysicalClient()) {
 			ClientProxy.init();
@@ -394,7 +400,7 @@ public class CommonProxy {
 		}
 		return IngredientInfo.Type.NORMAL;
 	}
-	
+
 	public static ItemStack dispensePlacement(BlockSource pSource, ItemStack pStack, Direction direction) {
 		if (!(pStack.getItem() instanceof BlockItem item)) {
 			return pStack;
