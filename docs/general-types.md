@@ -20,9 +20,11 @@ An ingredient is a predicate of ItemStack.
 
     If you want to specify a modded item or tag, you need to write down the namespace at start, for example "namespace:name"
 
-    ??? note "Forge-only area"
+    ### Custom Ingredients
 
-        Custom ingredient created by modders:
+    Custom ingredient created by modders:
+
+    === "Forge"
 
         | Name | Description              | Type / Literal |
         | ---- | ------------------------ | -------------- |
@@ -31,15 +33,14 @@ An ingredient is a predicate of ItemStack.
 
         You can use Forge's built-in features to check item nbt or combine several ingredients to one compound ingredient: [Documentation](https://docs.minecraftforge.net/en/1.19.x/resources/server/recipes/ingredients/#forge-types)
 
-        ```
-        {
-            "type": "forge:nbt",
-            "item": "ceramicbucket:ceramic_bucket",
-            "nbt": {
-                "BucketContent": "minecraft:milk"
-            }
-        }
-        ```
+    === "Fabric"
+
+        | Name        | Description              | Type / Literal |
+        | ----------- | ------------------------ | -------------- |
+        | fabric:type | ingredient type          | string         |
+        |             | additional properties... |                |
+
+        You can use Fabric's built-in features to check item nbt or combine several ingredients to one compound ingredient: [Documentation](https://github.com/FabricMC/fabric/blob/1.20.1/fabric-recipe-api-v1/src/main/java/net/fabricmc/fabric/api/recipe/v1/ingredient/DefaultCustomIngredients.java)
 
 ## BlockPredicate
 
