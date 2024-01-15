@@ -46,6 +46,8 @@ Recipes should be placed in `data/<namespace>/recipes/` folder, like normal data
 
 Event when a player uses item on a block.
 
+Currently, interaction with fluid blocks is not supported.
+
 Default behavior: Item is consumed.
 
 This recipe type is not [repeatable](concepts.md#repeatability).
@@ -106,11 +108,11 @@ This recipe type is not [repeatable](concepts.md#repeatability).
     }
     ```
 
-!!! note
+??? note "Note: Matches empty hand"
 
     Use `"item": "air"` to require interaction with empty hand.
 
-!!! note
+??? note "Note: Matches any item"
 
     You can use a special ingredient to match any item:
 
@@ -146,6 +148,8 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 Event when a player click on a block with item.
 
+Currently, interaction with fluid blocks is not supported.
+
 Default behavior: Item is consumed.
 
 This recipe type is not [repeatable](concepts.md#repeatability).
@@ -160,11 +164,11 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
     `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
 
-!!! note
+??? note "Note: Matches empty hand"
 
     Use `"item": "air"` to require interaction with empty hand.
 
-!!! note
+??? note "Note: Matches any item"
 
     You can use a special ingredient to match any item:
 
@@ -275,6 +279,33 @@ Default behavior: Item is consumed.
             {
                 "type": "place",
                 "block": "cauldron"
+            }
+        ]
+    }
+    ```
+
+    Drop a bucket to pick up a water source block:
+
+    ```json
+    {
+        "type": "lychee:item_inside",
+        "item_in": {
+            "item": "bucket"
+        },
+        "block_in": {
+            "blocks": ["water"],
+            "state": {
+                "level": 0
+            }
+        },
+        "post": [
+            {
+                "type": "drop_item",
+                "item": "water_bucket"
+            },
+            {
+                "type": "place",
+                "block": "*"
             }
         ]
     }

@@ -57,7 +57,7 @@ A BlockPredicate is a predicate of an in-world block. It can also be used to rep
 
     As a shortcut you can use a string to represent a simple BlockPredicate.
 
-!!! example
+??? example
 
     ```json
     {
