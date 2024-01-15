@@ -56,11 +56,7 @@ A BlockPredicate is a predicate of an in-world block. It can also be used to rep
 
     As a shortcut you can use a string to represent a simple BlockPredicate.
 
-### Special case
-
-You can use `"*"` to represent a BlockPredicate to match all blocks.
-
-!!! example
+??? example
 
     ```json
     {
@@ -68,6 +64,10 @@ You can use `"*"` to represent a BlockPredicate to match all blocks.
         "nbt": "{\"tank\":{\"FluidName\":\"thermal:tree_oil\",\"Amount\":50}}"
     }
     ```
+
+### Special case
+
+You can use `"*"` to represent a BlockPredicate to match all blocks.
 
 ## StatePropertiesPredicate
 
