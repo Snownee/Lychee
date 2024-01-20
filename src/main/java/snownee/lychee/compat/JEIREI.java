@@ -10,6 +10,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.joml.Quaternionf;
+
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -19,10 +21,13 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -35,6 +40,7 @@ import snownee.lychee.core.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.CachedRenderingEntity;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 
@@ -56,6 +62,8 @@ public class JEIREI {
 			.secondLightRotation(200, 45)
 			.build();
 	/* on */
+
+	public static final CachedRenderingEntity<PrimedTnt> TNT_ENTITY = CachedRenderingEntity.ofFactory(EntityType.TNT::create);
 
 	public static List<IngredientInfo> generateShapelessInputs(LycheeRecipe<?> recipe) {
 		/* off */
@@ -170,6 +178,20 @@ public class JEIREI {
 		Minecraft mc = Minecraft.getInstance();
 		recipe.getContextualHolder().getConditionTooltips(list, 0, mc.level, mc.player);
 		return list;
+	}
+
+	public static void renderTnt(GuiGraphics graphics, float x, float y) {
+		PrimedTnt tnt = TNT_ENTITY.getEntity();
+		int fuse = 80 - tnt.tickCount % 80;
+		if (fuse >= 40) {
+			return;
+		}
+		TNT_ENTITY.earlySetLevel();
+		tnt.setFuse(fuse);
+		float toRad = 0.01745329251F;
+		Quaternionf quaternion = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
+		FUSED_TNT_LIGHTING.applyLighting();
+		TNT_ENTITY.render(graphics.pose(), x, y, 20, quaternion);
 	}
 
 	public record CategoryCreationContext(ResourceLocation group, List<LycheeRecipe<?>> recipes) {
