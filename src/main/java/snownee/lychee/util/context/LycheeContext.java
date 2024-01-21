@@ -1,29 +1,31 @@
 package snownee.lychee.util.context;
 
 import java.util.HashMap;
+import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.DummyContainer;
+import snownee.lychee.util.KeyDispatchedMapCodec;
+import snownee.lychee.util.SerializableType;
 
+@SuppressWarnings("unchecked")
 public class LycheeContext extends HashMap<LycheeContextType<?>, LycheeContextValue<?>> implements DummyContainer {
 	public static final Codec<LycheeContext> CODEC =
-			Codec.simpleMap(
+			new KeyDispatchedMapCodec<LycheeContextType<?>, LycheeContextValue<?>>(
 					LycheeRegistries.CONTEXT.byNameCodec(),
-
-					,
-					LycheeRegistries.CONTEXT.byNameCodec().flatXmap(it -> {
-						final var id = LycheeRegistries.CONTEXT.getId(it);
-						if (it instanceof SerializableContextValue<?> type) {
-							return DataResult.success(type.codec());
-						} else {
-							return DataResult.error(() -> "Context type " + id + " is not serializable");
-						}
-					}),
+					it -> DataResult.success(it.type()),
+					it -> it instanceof SerializableType<?> serializableType
+						  ? DataResult.success((Codec<? extends LycheeContextValue<?>>) serializableType.codec())
+						  : DataResult.error(() -> it + " isn't serializable"),
 					LycheeRegistries.CONTEXT
-			);
+			).codec().xmap(it -> {
+				final var context = new LycheeContext();
+				context.putAll(it);
+				return context;
+			}, Function.identity());
 
 	public <T extends LycheeContextValue<T>> T get(LycheeContextType<T> type) {
 		return (T) super.get(type);
