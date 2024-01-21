@@ -1,6 +1,5 @@
 package snownee.lychee.context;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -8,6 +7,7 @@ import java.util.Optional;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
@@ -32,7 +32,7 @@ public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, 
 			pos = BlockPos.containing(get(LootContextParams.ORIGIN));
 			setParam(LycheeLootContextParams.BLOCK_POS, pos);
 		}
-		var blockEntity = context.level().getBlockEntity(pos);
+		var blockEntity = context.get(LycheeContextTypes.GENERIC).level().getBlockEntity(pos);
 		if (blockEntity != null) setParam(LootContextParams.BLOCK_ENTITY, blockEntity);
 	}
 
@@ -85,7 +85,7 @@ public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, 
 
 	public LootContext asLootContext() {
 		initBlockEntityParam();
-		var paramsBuilder = new LootParams.Builder(context.serverLevel());
+		var paramsBuilder = new LootParams.Builder((ServerLevel) context.get(LycheeContextTypes.GENERIC).level());
 		//noinspection rawtypes,unchecked
 		params.forEach((p, o) -> paramsBuilder.withParameter((LootContextParam) p, o));
 		var builder = new LootContext.Builder(paramsBuilder.create(LycheeLootContextParamSets.ALL));
@@ -98,9 +98,5 @@ public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, 
 	}
 
 	public static final class Type implements LycheeContextType<LootParamsContext> {
-		@Override
-		public LootParamsContext construct(final LycheeContext context) {
-			return new LootParamsContext(context, new HashMap<>());
-		}
 	}
 }

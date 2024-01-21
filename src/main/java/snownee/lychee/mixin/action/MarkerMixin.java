@@ -1,83 +1,61 @@
 package snownee.lychee.mixin.action;
 
-import net.minecraft.world.item.crafting.RecipeHolder;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.google.gson.JsonObject;
-
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.entity.Marker;
-import net.minecraft.world.item.crafting.Recipe;
 import snownee.lychee.Lychee;
-import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.context.ActionContext;
+import snownee.lychee.util.action.ActionData;
 import snownee.lychee.util.action.ActionMarker;
-import snownee.lychee.fragment.Fragments;
-import snownee.lychee.util.CommonProxy;
-import snownee.lychee.util.action.ActionRuntime.State;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.context.LycheeContextTypes;
 
 @Mixin(Marker.class)
 public class MarkerMixin implements ActionMarker {
+	@Unique
+	private ActionData lychee$data;
 
-	@Unique
-	private int lychee$ticks;
-	@Unique
-	private RecipeHolder<OldLycheeRecipe<?>> lychee$recipe;
-	@Unique
-	private LycheeRecipeContext lychee$ctx;
-
-	@Override
-	public void lychee$setContext(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx) {
-		lychee$ctx = ctx;
-		lychee$recipe = recipe;
+	public ActionData lychee$getData() {
+		return lychee$data;
 	}
 
-	@Override
-	public LycheeRecipeContext lychee$getContext() {
-		return lychee$ctx;
-	}
-
-	@Override
-	public void lychee$addDelay(int delay) {
-		lychee$ticks += delay;
+	public void lychee$setData(final ActionData lychee$data) {
+		this.lychee$data = lychee$data;
 	}
 
 	@Inject(at = @At("HEAD"), method = "tick")
 	private void lychee_tick(CallbackInfo ci) {
-		if (lychee$recipe == null || lychee$ctx == null) {
-			return;
-		}
-		if (lychee$ticks-- > 0) {
-			return;
-		}
-		lychee$ctx.runtime.state = State.RUNNING;
-		lychee$ctx.runtime.run(lychee$recipe, lychee$ctx);
-		if (lychee$ctx.runtime.state == State.STOPPED) {
+		if (lychee$data.getRecipe() == null || lychee$data.getContext() == null) return;
+		if (lychee$data.consumeDelayedTicks() > 0) return;
+
+
+		final var actionContext = lychee$data.getContext().get(LycheeContextTypes.ACTION);
+		actionContext.state = ActionContext.State.RUNNING;
+		actionContext.run(lychee$data.getRecipe(), lychee$data.getContext());
+		if (actionContext.state == ActionContext.State.STOPPED) {
 			self().discard();
 		}
 	}
 
 	@Inject(at = @At("HEAD"), method = "readAdditionalSaveData")
 	private void lychee_readAdditionalSaveData(CompoundTag compoundTag, CallbackInfo ci) {
-		if (compoundTag.contains("lychee:ctx")) {
-			lychee$ticks = compoundTag.getInt("lychee:ticks");
-			lychee$ctx = LycheeRecipeContext.load(Fragments.GSON.fromJson(
-					compoundTag.getString("lychee:ctx"),
-					JsonObject.class
-			), this);
-			ResourceLocation recipeId = ResourceLocation.tryParse(compoundTag.getString("lychee:recipe"));
-			Recipe<?> recipe = CommonProxy.recipe(recipeId);
-			if (recipe instanceof OldLycheeRecipe<?> lycheeRecipe) {
-				lychee$recipe = new RecipeHolder<>(recipeId, lycheeRecipe);
-			}
+		if (compoundTag.contains("lychee:action")) {
+			final var tag = compoundTag.getCompound("lychee:action");
+			lychee$data = ActionData.CODEC
+					.parse(NbtOps.INSTANCE, tag)
+					.getOrThrow(false, (err) -> {
+						Lychee.LOGGER.error("Load Lychee action data from marker failed with error:" + err);
+						Lychee.LOGGER.debug("Load Lychee action data from marker failed from tag:" + tag);
+						self().discard();
+					});
 		}
-		if (lychee$recipe == null && self().hasCustomName()
+		if (lychee$data.getRecipe() == null
+			&& self().hasCustomName()
 			&& Lychee.ID.equals(self().getCustomName().getString())) {
 			self().discard();
 		}
@@ -85,11 +63,14 @@ public class MarkerMixin implements ActionMarker {
 
 	@Inject(at = @At("HEAD"), method = "addAdditionalSaveData")
 	private void lychee_addAdditionalSaveData(CompoundTag compoundTag, CallbackInfo ci) {
-		if (lychee$recipe == null || lychee$ctx == null) {
-			return;
-		}
-		compoundTag.putInt("lychee:ticks", lychee$ticks);
-		compoundTag.putString("lychee:ctx", lychee$ctx.save().toString());
-		compoundTag.putString("lychee:recipe", lychee$recipe.id().toString());
+		if (lychee$data.getRecipe() == null || lychee$data.getContext() == null) return;
+
+		compoundTag.put(
+				"lychee:action",
+				ActionData.CODEC.encodeStart(NbtOps.INSTANCE, lychee$data).getOrThrow(false, (err) -> {
+					Lychee.LOGGER.error("Save Lychee action data to marker failed with error:" + err);
+					Lychee.LOGGER.debug("Save Lychee action data to marker failed from data:" + lychee$data);
+				})
+		);
 	}
 }

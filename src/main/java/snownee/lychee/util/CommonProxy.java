@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import net.minecraft.world.item.crafting.RecipeHolder;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Streams;
@@ -237,7 +239,8 @@ public class CommonProxy implements ModInitializer {
 		}
 	}
 
-	public static Recipe<?> recipe(ResourceLocation id) {
+	@Nullable
+	public static RecipeHolder<?> recipe(ResourceLocation id) {
 		return recipeManager().byKey(id).orElse(null);
 	}
 

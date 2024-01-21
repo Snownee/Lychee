@@ -90,7 +90,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 						int times = 1;
 						if (ctx.getMatch() != null && ctx.getMatch().inputUsed.length > 0) {
 							int[] inputUsed = ctx.getMatch().inputUsed;
-							//System.out.println(Arrays.toString(ctx.match));
+							//System.out.println(Arrays.toString(context.match));
 							times = recipe.getRandomRepeats(Integer.MAX_VALUE, ctx);
 							for (int i = 0; i < inputUsed.length; i++) {
 								if (inputUsed[i] > 0) {
