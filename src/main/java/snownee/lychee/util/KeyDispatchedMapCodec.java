@@ -74,7 +74,7 @@ public final class KeyDispatchedMapCodec<K, V> extends MapCodec<Map<K, V>> {
 									(err) -> Lychee.LOGGER.error("Failed get key from {}", pair.getFirst())
 							)).getOrThrow(
 									false,
-									(err) -> Lychee.LOGGER.error("Failed get codec for {}", k.result().get())
+									(err) -> Lychee.LOGGER.error("Failed get codec for {}", k.result().orElseThrow())
 							).parse(ops, pair.getSecond());
 
 					final DataResult<Pair<K, V>> entry = k.apply2stable(Pair::of, v);
