@@ -23,9 +23,11 @@ import snownee.lychee.util.CommonProxy;
 public interface PostActionRenderer<T extends PostAction> {
 
 	Map<PostActionType<?>, PostActionRenderer<?>> RENDERERS = Maps.newHashMap();
+	PostActionRenderer<PostAction> DEFAULT = new PostActionRenderer<>() {
+	};
 
 	static <T extends PostAction> PostActionRenderer<T> of(PostAction action) {
-		return (PostActionRenderer<T>) Objects.requireNonNull(RENDERERS.get(action.getType()));
+		return (PostActionRenderer<T>) RENDERERS.getOrDefault(action.getType(), DEFAULT);
 	}
 
 	static <T extends PostAction> void register(PostActionType<T> type, PostActionRenderer<T> renderer) {
