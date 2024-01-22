@@ -98,10 +98,6 @@ public class PlaceBlock extends PostAction {
 		if (getType() == PostActionTypes.PLACE && nbtPredicate != NbtPredicate.ANY) {
 			BlockEntity blockentity = level.getBlockEntity(pos);
 			if (blockentity != null) {
-				if (blockentity.onlyOpCanSetNbt()) {
-					return;
-				}
-
 				CompoundTag compoundtag1 = blockentity.saveWithoutMetadata();
 				CompoundTag compoundtag2 = compoundtag1.copy();
 				compoundtag1.merge(((NbtPredicateAccess) nbtPredicate).getTag());
