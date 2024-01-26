@@ -34,11 +34,15 @@ import net.minecraft.nbt.TagParser;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
@@ -49,6 +53,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -80,6 +85,7 @@ import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.compat.forge.AlwaysTrueIngredient;
 import snownee.lychee.core.contextual.CustomCondition;
 import snownee.lychee.core.post.CustomAction;
+import snownee.lychee.core.post.Explode;
 import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
@@ -411,6 +417,19 @@ public class CommonProxy {
 			item.place(new DirectionalPlaceContext(pSource.getLevel(), blockpos, direction, pStack, direction));
 		}
 		return pStack;
+	}
+
+	public static void explode(Explode action, ServerLevel level, Vec3 pos, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, float radius) {
+		Explosion explosion = new Explosion(level, entity, damageSource, damageCalculator, pos.x, pos.y, pos.z, radius, action.fire, action.blockInteraction);
+		explosion.explode();
+		explosion.finalizeExplosion(true);
+		if (!explosion.interactsWithBlocks()) {
+			explosion.clearToBlow();
+		}
+		for (ServerPlayer player : level.players()) {
+			if (!(player.distanceToSqr(pos) < 4096.0)) continue;
+			player.connection.send(new ClientboundExplodePacket(pos.x, pos.y, pos.z, radius, explosion.getToBlow(), explosion.getHitPlayers().get(player)));
+		}
 	}
 
 	public static ParticleType<BlockParticleOption> registerParticleType(Deserializer<BlockParticleOption> deserializer) {

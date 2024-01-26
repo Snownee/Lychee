@@ -2,8 +2,6 @@ package snownee.lychee.core.post;
 
 import java.util.Locale;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.google.gson.JsonObject;
 
 import net.minecraft.core.BlockPos;
@@ -11,10 +9,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.PostActionTypes;
@@ -38,12 +33,6 @@ public class Explode extends PostAction {
 		this.step = step;
 	}
 
-	private void explode(Level level, @Nullable Entity entity, double d, double e, double f, float g) {
-		Explosion explosion = new Explosion(level, entity, null, null, d, e, f, g, fire, blockInteraction);
-		explosion.explode();
-		explosion.finalizeExplosion(true);
-	}
-
 	@Override
 	public PostActionType<?> getType() {
 		return PostActionTypes.EXPLODE;
@@ -56,10 +45,10 @@ public class Explode extends PostAction {
 
 	@Override
 	protected void apply(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
+		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
 		pos = pos.add(offset.getX(), offset.getY(), offset.getZ());
 		float r = Math.min(radius + step * (Mth.sqrt(times) - 1), radius * 4);
-		explode(ctx.getLevel(), ctx.getParamOrNull(LootContextParams.THIS_ENTITY), pos.x, pos.y, pos.z, r);
+		CommonProxy.explode(this, ctx.getServerLevel(), pos, ctx.getParamOrNull(LootContextParams.THIS_ENTITY), null, null, r);
 	}
 
 	@Override
