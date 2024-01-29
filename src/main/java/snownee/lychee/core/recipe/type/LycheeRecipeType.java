@@ -22,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import snownee.lychee.Lychee;
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.util.CommonProxy;
@@ -48,6 +49,7 @@ public class LycheeRecipeType<C extends LycheeContext, T extends LycheeRecipe<C>
 		this.clazz = clazz;
 		this.contextParamSet = contextParamSet == null ? LootContextParamSets.get(id) : contextParamSet;
 		Objects.requireNonNull(this.contextParamSet);
+		RecipeTypes.ALL.add(this);
 	}
 
 	@Override

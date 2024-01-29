@@ -65,7 +65,6 @@ public final class RecipeTypes {
 	public static final DripstoneRecipeType DRIPSTONE_DRIPPING = register(new DripstoneRecipeType("dripstone_dripping", DripstoneRecipe.class, LycheeLootContextParamSets.BLOCK_ONLY));
 
 	public static <T extends LycheeRecipeType<?, ?>> T register(T recipeType) {
-		ALL.add(recipeType);
 		ForgeRegistries.RECIPE_TYPES.register(recipeType.id, recipeType);
 		return recipeType;
 	}
