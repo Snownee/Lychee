@@ -3,8 +3,13 @@ package snownee.lychee.compat.kubejs;
 import dev.latvian.mods.kubejs.KubeJSPlugin;
 import dev.latvian.mods.kubejs.script.BindingsEvent;
 import dev.latvian.mods.kubejs.script.ScriptType;
+import dev.latvian.mods.rhino.util.wrap.TypeWrappers;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.Lychee;
+import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.Reference;
 import snownee.lychee.core.contextual.CustomCondition;
 import snownee.lychee.core.post.CustomAction;
@@ -50,7 +55,23 @@ public class LycheeKubeJSPlugin extends KubeJSPlugin {
 	@Override
 	public void registerBindings(BindingsEvent event) {
 		event.add("InteractionResult", InteractionResult.class);
+		event.add("LootContextParams", LootContextParams.class);
+		event.add("LycheeLootContextParams", LycheeLootContextParams.class);
 		event.add("LycheeReference", Reference.class);
 	}
 
+	@Override
+	public void registerTypeWrappers(ScriptType type, TypeWrappers typeWrappers) {
+		if (typeWrappers.getWrapperFactory(LootContextParam.class, null) == null) {
+			typeWrappers.registerSimple(LootContextParam.class, o -> {
+				if (o instanceof LootContextParam<?> param) {
+					return param;
+				}
+				if (o instanceof CharSequence || o instanceof ResourceLocation) {
+					return LycheeLootContextParams.ALL.get(LycheeLootContextParams.trimRL(o.toString()));
+				}
+				return null;
+			});
+		}
+	}
 }
