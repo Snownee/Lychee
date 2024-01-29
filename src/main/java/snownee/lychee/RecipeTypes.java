@@ -66,7 +66,6 @@ public final class RecipeTypes {
 	public static final DripstoneRecipeType DRIPSTONE_DRIPPING = register(new DripstoneRecipeType("dripstone_dripping", DripstoneRecipe.class, LycheeLootContextParamSets.BLOCK_ONLY));
 
 	public static <T extends LycheeRecipeType<?, ?>> T register(T recipeType) {
-		ALL.add(recipeType);
 		return Registry.register(BuiltInRegistries.RECIPE_TYPE, recipeType.id, recipeType);
 	}
 
