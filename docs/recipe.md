@@ -12,33 +12,33 @@ Recipes should be placed in `data/<namespace>/recipes/` folder, like normal data
 
 === "Forge"
 
-    | Name           | Description                                                                 | Type / Literal                                                                                     |
-    | -------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-    | type           | type                                                                        | string                                                                                             |
-    | conditions     | conditions ^optional^                                                       | [ForgeCondition](https://docs.minecraftforge.net/en/1.19.x/resources/server/conditional/)[]        |
-    | contextual     | contextual conditions ^optional^                                            | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
-    | post           | post actions ^optional^                                                     | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
-    | comment        | language key to show in JEI/REI ^optional^                                  | string                                                                                             |
-    | ghost          | only show in JEI/REI but does not take effect ^optional^                    | true \| false                                                                                      |
-    | hide_in_viewer | hide in JEI/REI ^optional^                                                  | true \| false                                                                                      |
-    | group          | show this recipe in a new category in JEI/REI ^optional^                    | string (ResourceLocation)                                                                          |
-    | max_repeats    | max repeats for a processing. not work for a unrepeatable recipe ^optional^ | int                                                                                                |
-    |                | additional properties...                                                    |                                                                                                    |
+    | Name           | Description                                                                        | Type / Literal                                                                                     |
+    | -------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+    | type           | type                                                                               | string                                                                                             |
+    | conditions     | conditions ^optional^                                                              | [ForgeCondition](https://docs.minecraftforge.net/en/1.19.x/resources/server/conditional/)[]        |
+    | contextual     | contextual conditions ^optional^                                                   | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+    | post           | post actions ^optional^                                                            | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
+    | comment        | language key to show in JEI/REI ^optional^                                         | string                                                                                             |
+    | ghost          | only show in JEI/REI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
+    | hide_in_viewer | hide in JEI/REI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
+    | group          | show this recipe in a new category in JEI/REI ^optional^                           | string (ResourceLocation)                                                                          |
+    | max_repeats    | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | int                                                                                                |
+    |                | additional properties...                                                           |                                                                                                    |
 
 === "Fabric"
 
-    | Name                   | Description                                                                 | Type / Literal                                                                                     |
-    | ---------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-    | type                   | type                                                                        | string                                                                                             |
-    | fabric:load_conditions | conditions ^optional^                                                       | [FabricCondition](https://github.com/FabricMC/fabric/pull/1656)[]                                  |
-    | contextual             | contextual conditions ^optional^                                            | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
-    | post                   | post actions ^optional^                                                     | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
-    | comment                | language key to show in JEI/REI ^optional^                                  | string                                                                                             |
-    | ghost                  | only show in JEI/REI but does not take effect ^optional^                    | true \| false                                                                                      |
-    | hide_in_viewer         | hide in JEI/REI ^optional^                                                  | true \| false                                                                                      |
-    | group                  | show this recipe in a new category in JEI/REI ^optional^                    | string (ResourceLocation)                                                                          |
-    | max_repeats            | max repeats for a processing. not work for a unrepeatable recipe ^optional^ | int                                                                                                |
-    |                        | additional properties...                                                    |                                                                                                    |
+    | Name                   | Description                                                                        | Type / Literal                                                                                     |
+    | ---------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+    | type                   | type                                                                               | string                                                                                             |
+    | fabric:load_conditions | conditions ^optional^                                                              | [FabricCondition](https://github.com/FabricMC/fabric/pull/1656)[]                                  |
+    | contextual             | contextual conditions ^optional^                                                   | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+    | post                   | post actions ^optional^                                                            | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
+    | comment                | language key to show in JEI/REI ^optional^                                         | string                                                                                             |
+    | ghost                  | only show in JEI/REI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
+    | hide_in_viewer         | hide in JEI/REI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
+    | group                  | show this recipe in a new category in JEI/REI ^optional^                           | string (ResourceLocation)                                                                          |
+    | max_repeats            | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | int                                                                                                |
+    |                        | additional properties...                                                           |                                                                                                    |
 
 ## Recipe Types
 
@@ -325,14 +325,14 @@ Default behavior: Anvil is damaged.
 
 !!! note "Format"
 
-    | Name          | Description                                                    | Type / Literal                                                                           |
-    | ------------- | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-    | type          | type                                                           | "lychee:anvil_crafting"                                                                  |
-    | item_in       | the input items (the second one is optional)                   | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | item_out      | the result item                                                | ItemStack                                                                                |
-    | level_cost    | player's xp level                                              | int && >=1                                                                               |
-    | material_cost | amount of items that will be cost from right input slot        | int                                                                                      |
-    | assembling    | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
+    | Name          | Description                                                                              | Type / Literal                                                                           |
+    | ------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+    | type          | type                                                                                     | "lychee:anvil_crafting"                                                                  |
+    | item_in       | the input items (the second one is optional)                                             | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | item_out      | the result item                                                                          | ItemStack                                                                                |
+    | level_cost    | player's xp level ^optional^{ title="default: 1" }                                       | int && >=1                                                                               |
+    | material_cost | amount of items that will be cost from right input slot ^optional^{ title="default: 1" } | int                                                                                      |
+    | assembling    | actions that running before the result is displayed ^optional^                           | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
 
 ??? example
 
