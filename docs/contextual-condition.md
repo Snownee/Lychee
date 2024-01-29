@@ -7,7 +7,7 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 ## Basic Format
 
 | Name        | Description                                                         | Type / Literal |
-| ----------- | ------------------------------------------------------------------- | -------------- |
+|-------------|---------------------------------------------------------------------|----------------|
 | type        | type                                                                | string         |
 | secret      | displays as "???" in player's tooltip ^optional^                    | boolean        |
 | description | overrides the default description with a translation key ^optional^ | string         |

@@ -81,7 +81,21 @@ LycheeEvents.customCondition('example_always_true_condition', (event) => {
 })
 ```
 
-## Example: Repairing Tool with Anvil and Custom Item
+## Execute Code When Clicking the Info Badge
+
+You can execute code when clicking the info badge in JEI/REI:
+
+```js
+// client script
+LycheeEvents.clickedInfoBadge('your:recipe_id', (event) => {
+    console.log(event.recipe.id)
+    console.log(event.button == 0) // 0 for left click, 1 for right click
+})
+```
+
+## Examples
+
+### Anvil Crafting Recipe to Repair Tools
 
 === "Recipe"
 
@@ -102,8 +116,6 @@ LycheeEvents.customCondition('example_always_true_condition', (event) => {
         "item_out": {
             "item": "diamond_sword"
         },
-        "level_cost": 1,
-        "material_cost": 1,
         "assembling": [
             {
                 "type": "nbt_patch",
@@ -151,14 +163,150 @@ LycheeEvents.customCondition('example_always_true_condition', (event) => {
     })
     ```
 
-## Execute Code When Clicking the Info Badge
+### Anvil Crafting Recipe to Randomize the Trim on Armor
 
-You can execute code when clicking the info badge in JEI/REI:
+=== "Recipe"
 
-```js
-// client script
-LycheeEvents.clickedInfoBadge('your:recipe_id', (event) => {
-    console.log(event.recipe.id)
-    console.log(event.button == 0) // 0 for left click, 1 for right click
-})
-```
+    ```json
+    {
+        "type": "lychee:anvil_crafting",
+        "item_in": [
+            {
+                "item": "diamond_chestplate",
+                "lychee:tag": {
+                    "Trim": {
+                        "material": "minecraft:copper",
+                        "pattern": "minecraft:eye"
+                    }
+                }
+            },
+            {
+                "item": "emerald"
+            }
+        ],
+        "item_out": {
+            "item": "diamond_chestplate",
+            "lychee:tag": {
+                "Trim": {
+                    "material": "minecraft:copper",
+                    "pattern": "minecraft:eye"
+                }
+            }
+        },
+        "assembling": [
+            {
+                "type": "custom",
+                "id": "apply_random_trim"
+            }
+        ],
+        "post": [
+            {
+                "type": "custom",
+                "id": "update_enchantment_seed"
+            }
+        ],
+        "contextual": {
+            "type": "custom",
+            "id": "is_item_trimmed",
+            "target": "/item_in/0"
+        }
+    }
+    ```
+
+=== "Startup Script"
+
+    ```js
+    let $RandomSource = Java.loadClass('net.minecraft.util.RandomSource')
+    let trimPool = ['coast', 'spire', 'rib', 'snout', 'dune']
+
+    LycheeEvents.customAction('apply_random_trim', (event) => {
+        event.action.applyFunc = (recipe, ctx, times) => {
+            let input = ctx.getItem(0)
+            let output = ctx.getItem(2)
+            let player = ctx.getParam('this_entity')
+            let random = $RandomSource.create()
+            //make sure the crafting result consistent
+            random.setSeed(player.enchantmentSeed)
+            output.setNbt(
+                input.nbt.merge({
+                    Trim: {
+                        pattern: trimPool.armor[random.nextInt(trimPool.armor.length)]
+                    }
+                })
+            )
+        }
+    })
+
+    LycheeEvents.customAction('update_enchantment_seed', (event) => {
+        event.action.applyFunc = (recipe, ctx, times) => {
+            let player = ctx.getParam('this_entity')
+            player.onEnchantmentPerformed(null, 0) // update seed. null == ItemStack.EMPTY
+        }
+    })
+
+    LycheeEvents.customCondition('is_item_trimmed', (event) => {
+        let target = LycheeReference.fromJson(event.data, 'target')
+        event.condition.testFunc = (recipe, ctx, times) => {
+            let indexes = recipe.getItemIndexes(target)
+            let stack = ctx.getItem(indexes.getInt(0))
+            return stack?.nbt?.Trim ? times : 0
+        }
+    })
+    ```
+
+### Transforming Item on Depot
+
+=== "Recipe"
+
+    ```json
+    {
+        "type": "lychee:block_interacting",
+        "item_in": {
+            "item": "create:wrench"
+        },
+        "block_in": "create:depot",
+        "post": [
+            {
+                "type": "drop_item",
+                "item": "minecraft:cobblestone"
+            },
+            {
+                "type": "prevent_default"
+            },
+            {
+                "type": "custom",
+                "id": "consume_item_on_depot"
+            }
+        ],
+        "contextual": {
+            "type": "custom",
+            "id": "has_item_on_depot",
+            "ingredient": {
+                "item": "minecraft:stone"
+            }
+        }
+    }
+    ```
+
+=== "Startup Script"
+
+    ```js
+    let $LevelPlatformHelper = Java.loadClass('dev.latvian.mods.kubejs.platform.LevelPlatformHelper')
+
+    LycheeEvents.customAction('consume_item_on_depot', event => {
+        event.action.applyFunc = (recipe, ctx, times) => {
+            let be = ctx.getParam('block_entity')
+            let inv = $LevelPlatformHelper.get().getInventoryFromBlockEntity(be, 'up')
+            inv.extractItem(0, 1, false)
+        }
+    })
+
+    LycheeEvents.customCondition('has_item_on_depot', event => {
+        let ingredient = Ingredient.of(event.data.ingredient)
+        event.condition.testFunc = (recipe, ctx, times) => {
+            let be = ctx.getParam('block_entity')
+            let inv = $LevelPlatformHelper.get().getInventoryFromBlockEntity(be, 'up')
+            return ingredient.test(inv.getStackInSlot(0)) ? times : 0
+        }
+    })
+    ```

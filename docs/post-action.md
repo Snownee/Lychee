@@ -7,7 +7,7 @@ You can add post actions to a Lychee's recipe, and they will be executed after t
 ## Basic Format
 
 | Name       | Description                      | Type / Literal                                                                                     |
-| ---------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
+|------------|----------------------------------|----------------------------------------------------------------------------------------------------|
 | type       | type                             | string                                                                                             |
 | contextual | contextual conditions ^optional^ | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
 |            | additional properties...         |                                                                                                    |
@@ -248,7 +248,8 @@ Causes damage to the entity.
 
 ### Set Falling Anvil Damage Chance
 
-This action can only be used in the [Block Crushing](recipe.md#block-crushing) recipe. The default damage chance depends on the falling height.
+This action can only be used in the [Block Crushing](recipe.md#block-crushing) recipe. The default damage chance depends
+on the falling height.
 
 !!! note "Format"
 
@@ -272,7 +273,8 @@ This action only works for interaction recipes.
 
 ### Move towards Face
 
-Moves the anchored position in the context towards the direction that being interacted. Only works for interaction recipes.
+Moves the anchored position in the context towards the direction that being interacted. Only works for interaction
+recipes.
 
 !!! note "Format"
 
@@ -323,7 +325,8 @@ Cycles a property's value in a block-state.
 
 ## Special Built-in Actions
 
-These following actions will prevent the default behavior of the recipe (such as consuming input item). The default behaviors are explained on the recipes page.
+These following actions will prevent the default behavior of the recipe (such as consuming input item). The default
+behaviors are explained on the recipes page.
 
 ### Prevent Default Behavior
 
@@ -367,7 +370,9 @@ This action is not [repeatable](concepts.md#repeatability).
 
 ### NBT Patch (Experimental)
 
-NBT patch the inputs or the results. It is mainly used to modify NBT of the results. For rules, please refer to [JSON Patch | jsonpatch.com](https://jsonpatch.com/) and [RFC 7386: JSON Merge Patch](https://www.rfc-editor.org/rfc/rfc7386).
+NBT patch the inputs or the results. It is mainly used to modify NBT of the results. For rules, please refer
+to [JSON Patch | jsonpatch.com](https://jsonpatch.com/)
+and [RFC 7386: JSON Merge Patch](https://www.rfc-editor.org/rfc/rfc7386).
 
 !!! note "Format"
 
