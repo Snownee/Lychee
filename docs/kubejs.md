@@ -230,7 +230,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
             output.setNbt(
                 input.nbt.merge({
                     Trim: {
-                        pattern: trimPool.armor[random.nextInt(trimPool.armor.length)]
+                        pattern: trimPool[random.nextInt(trimPool.length)]
                     }
                 })
             )
