@@ -19,7 +19,7 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.mixin.ItemEntityAccess;
 import snownee.lychee.recipes.block_crushing.BlockCrushingRecipe;
 import snownee.lychee.recipes.block_exploding.BlockExplodingContext;
@@ -40,12 +40,12 @@ public class DropItem extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	public void doApply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
 		if (recipe instanceof BlockCrushingRecipe) {
 			BlockState landingBlock = ctx.getParam(LootContextParams.BLOCK_STATE);
@@ -80,7 +80,7 @@ public class DropItem extends PostAction {
 	}
 
 	@Override
-	public JsonElement provideJsonInfo(LycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
+	public JsonElement provideJsonInfo(LycheeRecipe recipe, JsonPointer pointer, JsonObject recipeObject) {
 		path = pointer.toString();
 		return CommonProxy.tagToJson(stack.save(new CompoundTag()));
 	}

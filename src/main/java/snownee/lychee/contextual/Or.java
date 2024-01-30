@@ -12,7 +12,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.TriState;
+import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ConditionHolder;
 import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.contextual.ContextualByConditionsHolder;
@@ -20,7 +22,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.contextual.ContextualConditionsHolder;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 public record Or(ContextualConditionsHolder conditionsHolder) implements ContextualCondition<Or>,
 																		 Contextual<Or>,
@@ -31,7 +33,7 @@ public record Or(ContextualConditionsHolder conditionsHolder) implements Context
 	}
 
 	@Override
-	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
 		for (ConditionHolder<?> condition : conditions()) {
 			int result = condition.condition().test(recipe, ctx, times);
 			if (result > 0) {
@@ -42,8 +44,8 @@ public record Or(ContextualConditionsHolder conditionsHolder) implements Context
 	}
 
 	@Override
-	public Codec<Or> codec() {
-		return type().codec();
+	public Codec<Or> contextualCodec() {
+		return ContextualConditionsHolder.CODEC.xmap(Or::new, it -> it.conditionsHolder);
 	}
 
 	@Override
@@ -84,9 +86,9 @@ public record Or(ContextualConditionsHolder conditionsHolder) implements Context
 		public static final Codec<Or> CODEC =
 				RecordCodecBuilder.create(instance -> instance
 						.group(ContextualConditionsHolder.CODEC
-									   .fieldOf("contextual")
-									   .orElse(new ContextualConditionsHolder())
-									   .forGetter(Or::conditionsHolder)
+								.fieldOf("contextual")
+								.orElse(new ContextualConditionsHolder())
+								.forGetter(Or::conditionsHolder)
 						).apply(instance, Or::new));
 
 		@Override

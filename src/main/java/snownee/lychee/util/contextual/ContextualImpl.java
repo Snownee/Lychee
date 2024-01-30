@@ -16,7 +16,7 @@ public record ContextualImpl(ContextualConditionsHolder conditionsHolder)
 					.apply(instance, ContextualImpl::new));
 
 	@Override
-	public Codec<ContextualImpl> codec() {
+	public Codec<ContextualImpl> contextualCodec() {
 		return CODEC;
 	}
 }

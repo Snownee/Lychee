@@ -15,9 +15,9 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
-import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.TriState;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 /**
  * Contains conditions
@@ -62,7 +62,7 @@ public interface Contextual<C extends Contextual<C>> extends RecipeCondition {
 		}
 	}
 
-	default int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	default int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
 		for (ConditionHolder<?> condition : conditions()) {
 			try {
 				times = condition.condition().test(recipe, ctx, times);
@@ -80,7 +80,7 @@ public interface Contextual<C extends Contextual<C>> extends RecipeCondition {
 		return times;
 	}
 
-	Codec<C> codec();
+	Codec<C> contextualCodec();
 
 	default void fromNetwork(FriendlyByteBuf buf) {
 		conditions().clear();

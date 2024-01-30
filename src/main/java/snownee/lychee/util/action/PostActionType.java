@@ -20,13 +20,4 @@ public interface PostActionType<T extends PostAction<T>> extends SerializableTyp
 	RecordCodecBuilder<? extends PostAction<?>, Optional<String>> PATH_CODEC =
 			ExtraCodecs.strictOptionalField(Codec.STRING, "path")
 					   .forGetter(PostAction::path);
-
-
-	static <T extends PostAction<T>> RecordCodecBuilder<T, ContextualConditionsHolder> contextualCodec() {
-		return (RecordCodecBuilder<T, ContextualConditionsHolder>) CONTEXTUAL_CODEC;
-	}
-
-	static <T extends PostAction<T>> RecordCodecBuilder<T, Optional<String>> pathCodec() {
-		return (RecordCodecBuilder<T, Optional<String>>) PATH_CODEC;
-	}
 }

@@ -20,9 +20,10 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends OldLycheeRecipe<C>>
-		extends LycheeRecipeType<C, T> {
+    extends LycheeRecipeType<C, T> {
 
 	private ValidItemCache validItems = new ValidItemCache();
 

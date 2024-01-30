@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import net.minecraft.world.item.crafting.RecipeHolder;
-
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Streams;
@@ -50,6 +48,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -58,6 +57,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -72,18 +72,18 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.LycheeTags;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.action.CustomAction;
 import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.compat.fabric_recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.contextual.CustomCondition;
-import snownee.lychee.action.CustomAction;
-import snownee.lychee.core.recipe.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.mixin.RecipeManagerAccess;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.recipes.interaction.InteractionRecipeMod;
+import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 @Mod(Lychee.ID)
 public class CommonProxy implements ModInitializer {
@@ -244,9 +244,8 @@ public class CommonProxy implements ModInitializer {
 		return recipeManager().byKey(id).orElse(null);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public static <T extends Recipe<?>> Collection<T> recipes(RecipeType<T> type) {
-		return ((RecipeManagerAccess) recipeManager()).callByType((RecipeType) type).values();
+	public static <C extends Container, T extends Recipe<C>> Collection<RecipeHolder<T>> recipes(RecipeType<T> type) {
+		return ((RecipeManagerAccess) recipeManager()).callByType(type).values();
 	}
 
 	// see Entity.getOnPos
@@ -449,8 +448,10 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public interface CustomActionListener {
-		boolean on(String id, CustomAction action, LycheeRecipe<?> recipe,
-				   LycheeRecipe.NBTPatchContext patchContext);
+		boolean on(
+				String id, CustomAction action, LycheeRecipe<?> recipe,
+				LycheeRecipe.NBTPatchContext patchContext
+		);
 	}
 
 	public interface CustomConditionListener {

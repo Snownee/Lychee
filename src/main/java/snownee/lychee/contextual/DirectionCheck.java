@@ -16,11 +16,12 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParams;
-import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextTypes;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 public class DirectionCheck implements ContextualCondition<DirectionCheck> {
 	public static final Map<String, DirectionCheck> LOOKUPS = Maps.newHashMap();
@@ -29,13 +30,17 @@ public class DirectionCheck implements ContextualCondition<DirectionCheck> {
 		for (final var direction : Direction.values()) {
 			createLookup(
 					direction.getName().toLowerCase(Locale.ENGLISH),
-					ctx -> ctx.get(LycheeLootContextParams.DIRECTION) == direction
+					ctx -> ctx.get(LycheeContextTypes.LOOT_PARAMS).get(LycheeLootContextParams.DIRECTION) == direction
 			);
 		}
-		createLookup("sides", ctx -> ctx.get(LycheeLootContextParams.DIRECTION).getStepY() == 0);
+		createLookup(
+				"sides",
+				ctx -> ctx.get(LycheeContextTypes.LOOT_PARAMS).get(LycheeLootContextParams.DIRECTION).getStepY() == 0
+		);
 		createLookup("forward", ctx -> {
-			final var direction = ctx.get(LycheeLootContextParams.DIRECTION);
-			final var state = ctx.get(LootContextParams.BLOCK_STATE);
+			final var lootParamsContext = ctx.get(LycheeContextTypes.LOOT_PARAMS);
+			final var direction = lootParamsContext.get(LycheeLootContextParams.DIRECTION);
+			final var state = lootParamsContext.get(LootContextParams.BLOCK_STATE);
 			final var facing = state.getOptionalValue(BlockStateProperties.FACING)
 									.or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING))
 									.or(() -> state.getOptionalValue(BlockStateProperties.VERTICAL_DIRECTION))
@@ -43,8 +48,9 @@ public class DirectionCheck implements ContextualCondition<DirectionCheck> {
 			return direction == facing;
 		});
 		createLookup("axis", ctx -> {
-			final var direction = ctx.get(LycheeLootContextParams.DIRECTION);
-			final var state = ctx.get(LootContextParams.BLOCK_STATE);
+			final var lootParamsContext = ctx.get(LycheeContextTypes.LOOT_PARAMS);
+			final var direction = lootParamsContext.get(LycheeLootContextParams.DIRECTION);
+			final var state = lootParamsContext.get(LootContextParams.BLOCK_STATE);
 			final var axis = state.getOptionalValue(BlockStateProperties.AXIS)
 								  .or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_AXIS))
 								  .orElseThrow();
@@ -52,14 +58,14 @@ public class DirectionCheck implements ContextualCondition<DirectionCheck> {
 		});
 	}
 
-	public static void createLookup(String name, Predicate<LycheeRecipeContext> predicate) {
+	public static void createLookup(String name, Predicate<LycheeContext> predicate) {
 		LOOKUPS.put(name, new DirectionCheck(name, predicate));
 	}
 
 	private final String name;
-	private final Predicate<LycheeRecipeContext> predicate;
+	private final Predicate<LycheeContext> predicate;
 
-	private DirectionCheck(String name, Predicate<LycheeRecipeContext> predicate) {
+	private DirectionCheck(String name, Predicate<LycheeContext> predicate) {
 		this.name = name;
 		this.predicate = predicate;
 	}
@@ -70,7 +76,7 @@ public class DirectionCheck implements ContextualCondition<DirectionCheck> {
 	}
 
 	@Override
-	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
 		return predicate.test(ctx) ? times : 0;
 	}
 

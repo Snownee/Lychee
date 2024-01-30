@@ -11,8 +11,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.TriState;
+import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ConditionHolder;
 import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.contextual.ContextualByConditionsHolder;
@@ -20,7 +20,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.contextual.ContextualConditionsHolder;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 public record And(ContextualConditionsHolder conditionsHolder) implements ContextualCondition<And>,
 																		  Contextual<And>,
@@ -32,13 +32,13 @@ public record And(ContextualConditionsHolder conditionsHolder) implements Contex
 	}
 
 	@Override
-	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
 		return ContextualByConditionsHolder.super.test(recipe, ctx, times);
 	}
 
 	@Override
-	public Codec<And> codec() {
-		return type().codec();
+	public Codec<And> contextualCodec() {
+		return ContextualConditionsHolder.CODEC.xmap(And::new, it -> it.conditionsHolder);
 	}
 
 	@Override
@@ -58,7 +58,8 @@ public record And(ContextualConditionsHolder conditionsHolder) implements Contex
 			Level level,
 			@Nullable Player player,
 			int indent,
-			boolean inverted) {
+			boolean inverted
+	) {
 		ContextualCondition.super.appendToTooltips(tooltips, level, player, indent, inverted);
 		for (ConditionHolder<?> condition : conditions()) {
 			condition.condition().appendToTooltips(tooltips, level, player, indent + 1, false);
@@ -74,9 +75,9 @@ public record And(ContextualConditionsHolder conditionsHolder) implements Contex
 		public static final Codec<And> CODEC =
 				RecordCodecBuilder.create(instance -> instance
 						.group(ContextualConditionsHolder.CODEC
-									   .fieldOf("contextual")
-									   .orElse(new ContextualConditionsHolder())
-									   .forGetter(And::conditionsHolder)
+								.fieldOf("contextual")
+								.orElse(new ContextualConditionsHolder())
+								.forGetter(And::conditionsHolder)
 						).apply(instance, And::new));
 
 		@Override

@@ -27,12 +27,11 @@ import snownee.lychee.action.input.NBTPatch;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.BoundsExtensions;
-import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.core.recipe.recipe.LycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 public class RandomSelect extends PostAction<RandomSelect> implements CompoundAction {
 
@@ -69,7 +68,7 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	public void doApply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		times *= IntBoundsHelper.random(rolls, ctx.getRandom());
 		if (times == 0) {
 			return;
@@ -115,7 +114,7 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 	}
 
 	@Override
@@ -155,7 +154,7 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 	}
 
 	@Override
-	public void validate(LycheeRecipe<?> recipe, LycheeRecipe.NBTPatchContext patchContext) {
+	public void validate(LycheeRecipe recipe, LycheeRecipe.NBTPatchContext patchContext) {
 		for (PostAction action : entries) {
 			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in " +
 																			 "RandomSelect");
@@ -164,14 +163,14 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 	}
 
 	@Override
-	public void getUsedPointers(LycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
+	public void getUsedPointers(LycheeRecipe recipe, Consumer<JsonPointer> consumer) {
 		for (PostAction action : entries) {
 			action.getUsedPointers(recipe, consumer);
 		}
 	}
 
 	@Override
-	public JsonElement provideJsonInfo(LycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
+	public JsonElement provideJsonInfo(LycheeRecipe recipe, JsonPointer pointer, JsonObject recipeObject) {
 		int i = 0;
 		JsonArray array = new JsonArray();
 		for (PostAction action : entries) {

@@ -3,9 +3,12 @@ package snownee.lychee.util.context;
 import java.util.HashMap;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
+import net.minecraft.world.item.ItemStack;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.DummyContainer;
 import snownee.lychee.util.KeyDispatchedMapCodec;
@@ -29,5 +32,20 @@ public class LycheeContext extends HashMap<LycheeContextType<?>, LycheeContextVa
 
 	public <T extends LycheeContextValue<T>> T get(LycheeContextType<T> type) {
 		return (T) super.get(type);
+	}
+
+	@Override
+	public int getContainerSize() {
+		return get(LycheeContextTypes.ITEM).items().size();
+	}
+
+	@Override
+	public @NotNull ItemStack getItem(final int index) {
+		return get(LycheeContextTypes.ITEM).items().get(index).get();
+	}
+
+	@Override
+	public void setItem(final int index, final ItemStack stack) {
+		get(LycheeContextTypes.ITEM).items().replace(index, stack);
 	}
 }

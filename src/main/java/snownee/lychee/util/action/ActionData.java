@@ -20,8 +20,8 @@ public final class ActionData {
 					inst.group(
 							ResourceLocation.CODEC.comapFlatMap(it -> {
 								final var recipe = CommonProxy.recipe(it);
-								if (recipe != null && recipe.value() instanceof LycheeRecipe<?>) {
-									return DataResult.success((RecipeHolder<LycheeRecipe<?>>) recipe);
+								if (recipe != null && recipe.value() instanceof LycheeRecipe) {
+									return DataResult.success((RecipeHolder<LycheeRecipe>) recipe);
 								} else {
 									return DataResult.error(() -> it + " is not a Lychee recipe");
 								}
@@ -29,12 +29,12 @@ public final class ActionData {
 							LycheeContext.CODEC.fieldOf("context").forGetter(ActionData::getContext),
 							Codec.INT.fieldOf("delayedTicks").forGetter(ActionData::getDelayedTicks)
 					).apply(inst, ActionData::new));
-	@Nullable private RecipeHolder<LycheeRecipe<?>> recipe;
+	@Nullable private RecipeHolder<LycheeRecipe> recipe;
 	@Nullable private LycheeContext context;
 	private int delayedTicks;
 
 	public ActionData(
-			@Nullable RecipeHolder<LycheeRecipe<?>> recipe,
+			@Nullable RecipeHolder<LycheeRecipe> recipe,
 			@Nullable LycheeContext context,
 			int delayedTicks
 	) {
@@ -43,11 +43,11 @@ public final class ActionData {
 		this.delayedTicks = delayedTicks;
 	}
 
-	public @Nullable RecipeHolder<LycheeRecipe<?>> getRecipe() {
+	public @Nullable RecipeHolder<LycheeRecipe> getRecipe() {
 		return recipe;
 	}
 
-	public void setRecipe(final @Nullable RecipeHolder<LycheeRecipe<?>> recipe) {
+	public void setRecipe(final @Nullable RecipeHolder<LycheeRecipe> recipe) {
 		this.recipe = recipe;
 	}
 

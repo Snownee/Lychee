@@ -113,7 +113,7 @@ public interface LycheeRecipe<C extends LycheeRecipeContext> extends Recipe<C> {
 			return new JsonPointer(composer.apply(first, last));
 		}
 
-		public int countTargets(LycheeRecipe<?> recipe, Reference reference) {
+		public int countTargets(LycheeRecipe recipe, Reference reference) {
 			JsonPointer pointer = null;
 			if (reference == Reference.DEFAULT) {
 				pointer = recipe.defaultItemPointer();
@@ -126,7 +126,7 @@ public interface LycheeRecipe<C extends LycheeRecipeContext> extends Recipe<C> {
 			return countTargets(recipe, pointer);
 		}
 
-		public int countTargets(LycheeRecipe<?> recipe, JsonPointer pointer) {
+		public int countTargets(LycheeRecipe recipe, JsonPointer pointer) {
 			if (recipe.isActionPath(pointer)) {
 				return 1;
 			}
@@ -144,7 +144,7 @@ public interface LycheeRecipe<C extends LycheeRecipeContext> extends Recipe<C> {
 		return !pointer.isRoot() && "post".equals(pointer.getString(0));
 	}
 
-	static void processActions(LycheeRecipe<?> recipe, JsonObject recipeObject) {
+	static void processActions(LycheeRecipe recipe, JsonObject recipeObject) {
 		MutableObject<NBTPatchContext> patchContext = new MutableObject<>();
 		Set<JsonPointer> usedPointers = Sets.newHashSet();
 		recipe.getAllActions().forEach(action -> action.getUsedPointers(recipe, usedPointers::add));

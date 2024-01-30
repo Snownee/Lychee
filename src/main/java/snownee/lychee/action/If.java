@@ -22,7 +22,7 @@ import snownee.lychee.util.action.Job;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.json.JsonPointer;
 
@@ -68,21 +68,21 @@ public class If extends PostAction implements CompoundAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	public void doApply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		for (PostAction action : successEntries) {
 			ctx.runtime.jobs.push(new Job(action, times));
 		}
 	}
 
 	@Override
-	public void onFailure(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	public void onFailure(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		for (PostAction action : failureEntries) {
 			ctx.runtime.jobs.push(new Job(action, times));
 		}
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 	}
 
 	@Override
@@ -111,7 +111,7 @@ public class If extends PostAction implements CompoundAction {
 	}
 
 	@Override
-	public void validate(LycheeRecipe<?> recipe, LycheeRecipe.NBTPatchContext patchContext) {
+	public void validate(LycheeRecipe recipe, LycheeRecipe.NBTPatchContext patchContext) {
 		Preconditions.checkArgument(
 				!getConditions().isEmpty() || failureEntries.length == 0,
 				"Failure entries must be empty when there is no condition"
@@ -124,14 +124,14 @@ public class If extends PostAction implements CompoundAction {
 	}
 
 	@Override
-	public void getUsedPointers(LycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
+	public void getUsedPointers(LycheeRecipe recipe, Consumer<JsonPointer> consumer) {
 		for (PostAction action : getChildActions().toList()) {
 			action.getUsedPointers(recipe, consumer);
 		}
 	}
 
 	@Override
-	public JsonElement provideJsonInfo(LycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
+	public JsonElement provideJsonInfo(LycheeRecipe recipe, JsonPointer pointer, JsonObject recipeObject) {
 		JsonObject jsonObject = new JsonObject();
 		int i = 0;
 		JsonArray array = new JsonArray();

@@ -16,7 +16,7 @@ import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.recipe.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.core.recipe.recipe.type.ItemShapelessRecipeType;
-import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeType;
 import snownee.lychee.recipes.interaction.BlockClickingRecipe;

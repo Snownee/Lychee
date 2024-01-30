@@ -28,19 +28,20 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
-import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.BoundsExtensions;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
-import snownee.lychee.util.contextual.ContextualConditionDisplay;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextTypes;
 import snownee.lychee.util.contextual.ContextualCondition;
+import snownee.lychee.util.contextual.ContextualConditionDisplay;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.predicates.LocationCheck;
 import snownee.lychee.util.predicates.LocationPredicate;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 public record Location(LocationCheck check) implements ContextualCondition<Location> {
 
@@ -62,14 +63,17 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 	}
 
 	@Override
-	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
-		if (ctx.level().isClientSide) {
+	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+		final var genericContext = ctx.get(LycheeContextTypes.GENERIC);
+		final var lootParamsContext = ctx.get(LycheeContextTypes.LOOT_PARAMS);
+		if (genericContext.level().isClientSide) {
 			return testClient(
-					ctx.level(),
-					ctx.getOrNull(LycheeLootContextParams.BLOCK_POS),
-					ctx.getOrNull(LootContextParams.ORIGIN)).get() ? times : 0;
+					genericContext.level(),
+					lootParamsContext.getOrNull(LycheeLootContextParams.BLOCK_POS),
+					lootParamsContext.getOrNull(LootContextParams.ORIGIN)
+			).get() ? times : 0;
 		} else {
-			return check.test(ctx.asLootContext()) ? times : 0;
+			return check.test(lootParamsContext.asLootContext()) ? times : 0;
 		}
 	}
 
@@ -113,7 +117,8 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 			Level level,
 			@Nullable Player player,
 			int indent,
-			boolean inverted) {
+			boolean inverted
+	) {
 		final var predicate = check.predicate().orElseThrow();
 		var test = false;
 		Vec3 vec = null;
@@ -169,12 +174,15 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 				int indent,
 				String key,
 				LocationPredicate predicate,
-				TriState result);
+				TriState result
+		);
 	}
 
-	private record PosRule(String name,
-						   Function<LocationPredicate, Doubles> boundsGetter,
-						   Function<Vec3, Double> valueGetter) implements Rule {
+	private record PosRule(
+			String name,
+			Function<LocationPredicate, Doubles> boundsGetter,
+			Function<Vec3, Double> valueGetter
+	) implements Rule {
 
 		@Override
 		public boolean shouldSkip(LocationPredicate predicate) {
@@ -192,10 +200,12 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 				int indent,
 				String key,
 				LocationPredicate predicate,
-				TriState result) {
+				TriState result
+		) {
 			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(
 					key + "." + name(),
-					BoundsExtensions.getDescription(boundsGetter.apply(predicate)).withStyle(ChatFormatting.WHITE)));
+					BoundsExtensions.getDescription(boundsGetter.apply(predicate)).withStyle(ChatFormatting.WHITE)
+			));
 		}
 	}
 
@@ -216,13 +226,15 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 				int indent,
 				String key,
 				LocationPredicate predicate,
-				TriState result) {
+				TriState result
+		) {
 			final var block =
 					CommonProxy.getCycledItem(
 							List.copyOf(BlockPredicateExtensions.matchedBlocks(predicate.block()
 																						.orElseThrow())),
 							Blocks.AIR,
-							1000);
+							1000
+					);
 			final var name = block.getName().withStyle(ChatFormatting.WHITE);
 			final var blockPredicate = predicate.block().orElseThrow();
 			if (blockPredicate.properties().isPresent() || blockPredicate.nbt().isPresent()) {
@@ -232,7 +244,8 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 					tooltips,
 					result,
 					indent,
-					Component.translatable(key + "." + name(), name));
+					Component.translatable(key + "." + name(), name)
+			);
 		}
 
 		@Override
@@ -256,7 +269,8 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 
 		@Override
 		public void appendToTooltips(
-				List<Component> tooltips, int indent, String key, LocationPredicate predicate, TriState result) {}
+				List<Component> tooltips, int indent, String key, LocationPredicate predicate, TriState result
+		) {}
 	}
 
 	private static class LightRule implements Rule {
@@ -282,14 +296,16 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 				int indent,
 				String key,
 				LocationPredicate predicate,
-				TriState result) {
+				TriState result
+		) {
 			MutableComponent bounds = BoundsExtensions.getDescription(predicate.light().orElseThrow().composite())
 													  .withStyle(ChatFormatting.WHITE);
 			ContextualConditionDisplay.appendToTooltips(
 					tooltips,
 					result,
 					indent,
-					Component.translatable(key + "." + name(), bounds));
+					Component.translatable(key + "." + name(), bounds)
+			);
 		}
 	}
 
@@ -319,7 +335,8 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 				int indent,
 				String key,
 				LocationPredicate predicate,
-				TriState result) {
+				TriState result
+		) {
 			final var name =
 					predicate
 							.dimension()
@@ -327,8 +344,10 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 									   ?
 									   Component.literal(
 											   TagKey.hashedCodec(Registries.DIMENSION)
-													 .encodeStart(JsonOps.INSTANCE,
-																  TagKey.create(Registries.DIMENSION, it.id()))
+													 .encodeStart(
+															 JsonOps.INSTANCE,
+															 TagKey.create(Registries.DIMENSION, it.id())
+													 )
 													 .get()
 													 .orThrow()
 													 .getAsString())
@@ -342,7 +361,8 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 					tooltips,
 					result,
 					indent,
-					Component.translatable(key + "." + name(), name));
+					Component.translatable(key + "." + name(), name)
+			);
 		}
 	}
 
@@ -381,12 +401,14 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 				int indent,
 				String key,
 				LocationPredicate predicate,
-				TriState result) {
+				TriState result
+		) {
 			String valueKey;
 			if (predicate.biome().orElseThrow().tag()) {
 				valueKey = Util.makeDescriptionId(
 						"biomeTag",
-						predicate.biome().orElseThrow().id());
+						predicate.biome().orElseThrow().id()
+				);
 			} else {
 				valueKey = Util.makeDescriptionId("biome", predicate.biome().orElseThrow().id());
 			}
@@ -396,7 +418,8 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 					tooltips,
 					result,
 					indent,
-					Component.translatable(key + "." + name(), name));
+					Component.translatable(key + "." + name(), name)
+			);
 		}
 	}
 
@@ -417,7 +440,8 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 				int indent,
 				String key,
 				LocationPredicate predicate,
-				TriState result) {
+				TriState result
+		) {
 			key = key + "." + name();
 			if (!predicate.smokey().orElseThrow()) {
 				key += ".not";
@@ -439,25 +463,27 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 
 		@Override
 		public void appendToTooltips(
-				List<Component> tooltips, int indent, String key, LocationPredicate predicate, TriState result) {
+				List<Component> tooltips, int indent, String key, LocationPredicate predicate, TriState result
+		) {
 			final var name = ClientProxy.getStructureDisplayName(predicate.structure().orElseThrow().id())
 										.withStyle(ChatFormatting.WHITE);
 			ContextualConditionDisplay.appendToTooltips(
 					tooltips,
 					result,
 					indent,
-					Component.translatable(key + "." + name(), name));
+					Component.translatable(key + "." + name(), name)
+			);
 		}
 	}
 
 	public static class Type implements ContextualConditionType<Location> {
 		public static final Codec<Location> CODEC =
 				RecordCodecBuilder.create(instance ->
-												  instance.group(
-														  LocationCheck.CODEC
-																  .fieldOf("check")
-																  .forGetter(Location::check)
-												  ).apply(instance, Location::new));
+						instance.group(
+								LocationCheck.CODEC
+										.fieldOf("check")
+										.forGetter(Location::check)
+						).apply(instance, Location::new));
 
 		@Override
 		public Codec<Location> codec() {

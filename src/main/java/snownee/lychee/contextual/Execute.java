@@ -1,5 +1,7 @@
 package snownee.lychee.contextual;
 
+import net.minecraft.world.level.Level;
+
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import com.mojang.brigadier.ParseResults;
@@ -13,15 +15,17 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import snownee.lychee.Lychee;
-import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextTypes;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 public record Execute(String command, MinMaxBounds.Ints bounds) implements ContextualCondition<Execute> {
 
@@ -34,12 +38,15 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 	}
 
 	@Override
-	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
-		if (command.isEmpty() || ctx.level().isClientSide) {
+	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+		final var genericContext = ctx.get(LycheeContextTypes.GENERIC);
+		final var level = genericContext.level();
+		if (command.isEmpty() || level.isClientSide) {
 			return 0;
 		}
-		final var pos = ctx.get(LootContextParams.ORIGIN);
-		final var entity = ctx.getOrNull(LootContextParams.THIS_ENTITY);
+		final var lootParamsContext = ctx.get(LycheeContextTypes.LOOT_PARAMS);
+		final var pos = lootParamsContext.get(LootContextParams.ORIGIN);
+		final var entity = lootParamsContext.getOrNull(LootContextParams.THIS_ENTITY);
 		var rotation = Vec2.ZERO;
 		var displayName = snownee.lychee.action.Execute.DEFAULT_NAME;
 		var name = Lychee.ID;
@@ -48,7 +55,7 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 			displayName = entity.getDisplayName();
 			name = entity.getName().getString();
 		}
-		final var serverLevel = ctx.serverLevel();
+		final var serverLevel = (ServerLevel) level;
 		final var server = serverLevel.getServer();
 		MutableInt returnValue = new MutableInt();
 		final var sourceStack = new CommandSourceStack(
@@ -77,7 +84,8 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 		public static final Codec<Execute> CODEC = RecordCodecBuilder.create(instance -> instance
 				.group(
 						Codec.STRING.fieldOf("command").forGetter(Execute::command),
-						MinMaxBounds.Ints.CODEC.optionalFieldOf("value", DEFAULT_RANGE).forGetter(Execute::bounds))
+						MinMaxBounds.Ints.CODEC.optionalFieldOf("value", DEFAULT_RANGE).forGetter(Execute::bounds)
+				)
 				.apply(instance, Execute::new));
 
 		@Override

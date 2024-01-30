@@ -10,6 +10,7 @@ import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.context.LycheeContextTypes;
 import snownee.lychee.util.context.LycheeContextValue;
 
+// TODO 暂时不涉及
 public record JsonContext(JsonObject json) implements LycheeContextValue<JsonContext> {
 	@Override
 	public LycheeContextType<JsonContext> type() {

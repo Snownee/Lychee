@@ -22,9 +22,9 @@ import snownee.lychee.client.gui.CustomLightingSettings;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
-import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 
@@ -168,7 +168,7 @@ public class JEIREI {
 		});
 	}
 
-	public static List<Component> getRecipeTooltip(LycheeRecipe<?> recipe) {
+	public static List<Component> getRecipeTooltip(LycheeRecipe recipe) {
 		List<Component> list = Lists.newArrayList();
 		if (!Strings.isNullOrEmpty(recipe.getComment())) {
 			String comment = recipe.getComment();

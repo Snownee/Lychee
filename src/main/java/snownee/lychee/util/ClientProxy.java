@@ -27,7 +27,7 @@ import snownee.lychee.action.Execute;
 import snownee.lychee.action.Explode;
 import snownee.lychee.action.Hurt;
 import snownee.lychee.action.input.SetItem;
-import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.recipes.dripstone_dripping.client.ParticleFactories;
 
@@ -73,7 +73,7 @@ public class ClientProxy implements ClientModInitializer {
 		RECIPE_VIEWER_WIDGET_CLICK_EVENT.register(listener);
 	}
 
-	public static boolean postInfoBadgeClickEvent(LycheeRecipe<?> recipe, int button) {
+	public static boolean postInfoBadgeClickEvent(LycheeRecipe recipe, int button) {
 		return RECIPE_VIEWER_WIDGET_CLICK_EVENT.invoker().onClick(recipe, button);
 	}
 
@@ -123,6 +123,6 @@ public class ClientProxy implements ClientModInitializer {
 
 	@FunctionalInterface
 	public interface RecipeViewerWidgetClickListener {
-		boolean onClick(LycheeRecipe<?> recipe, int button);
+		boolean onClick(LycheeRecipe recipe, int button);
 	}
 }

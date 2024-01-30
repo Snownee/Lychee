@@ -1,8 +1,8 @@
 package snownee.lychee.util.contextual;
 
 import net.minecraft.world.item.crafting.RecipeHolder;
-import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 public interface RecipeCondition {
 	/**
@@ -12,5 +12,5 @@ public interface RecipeCondition {
 	 *
 	 * @return Executable time after condition
 	 */
-	int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times);
+	int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times);
 }

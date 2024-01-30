@@ -22,10 +22,12 @@ import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
+import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.contextual.RecipeCondition;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 /**
  * Mainly used by KubeJS script listener with `LycheeEvents.customAction('id', listener`)
@@ -49,7 +51,7 @@ public class CustomCondition implements ContextualCondition<CustomCondition> {
 	}
 
 	@Override
-	public int test(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx, int times) {
+	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
 		if (testFunc != null) {
 			return testFunc.test(recipe, ctx, times);
 		}

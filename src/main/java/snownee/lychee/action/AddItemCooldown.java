@@ -10,7 +10,7 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 public class AddItemCooldown implements PostAction<AddItemCooldown> {
 
@@ -26,12 +26,12 @@ public class AddItemCooldown implements PostAction<AddItemCooldown> {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	public void doApply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		Player player = (Player) ctx.getParam(LootContextParams.THIS_ENTITY);
 		ItemStack stack = ctx.getItem(0);
 		player.getCooldowns().addCooldown(stack.getItem(), (int) (seconds * 20 * times));

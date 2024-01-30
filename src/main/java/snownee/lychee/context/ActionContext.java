@@ -31,6 +31,12 @@ public class ActionContext implements LycheeContextValue<ActionContext> {
 		this.jobs = jobs;
 	}
 
+	public void reset() {
+		avoidDefault = false;
+		state = State.RUNNING;
+		jobs.clear();
+	}
+
 	@Override
 	public LycheeContextType<ActionContext> type() {
 		return LycheeContextTypes.ACTION;
@@ -40,7 +46,7 @@ public class ActionContext implements LycheeContextValue<ActionContext> {
 		RUNNING, PAUSED, STOPPED
 	}
 
-	public void run(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext context) {
+	public void run(RecipeHolder<LycheeRecipe> recipe, LycheeContext context) {
 		while (!jobs.isEmpty()) {
 			final var job = jobs.poll();
 			try {

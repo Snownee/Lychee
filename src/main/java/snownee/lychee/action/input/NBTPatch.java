@@ -13,7 +13,7 @@ import snownee.lychee.util.action.ActionRuntime.State;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.json.JsonPatch;
 import snownee.lychee.util.json.JsonPointer;
 
@@ -31,7 +31,7 @@ public class NBTPatch extends PostAction {
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class NBTPatch extends PostAction {
 	}
 
 	@Override
-	public void getUsedPointers(LycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
+	public void getUsedPointers(LycheeRecipe recipe, Consumer<JsonPointer> consumer) {
 		consumer.accept(patch.path);
 		if (patch.from != null) {
 			consumer.accept(patch.from);
@@ -82,7 +82,7 @@ public class NBTPatch extends PostAction {
 	}
 
 	@Override
-	public void validate(LycheeRecipe<?> recipe, LycheeRecipe.NBTPatchContext patchContext) {
+	public void validate(LycheeRecipe recipe, LycheeRecipe.NBTPatchContext patchContext) {
 		Preconditions.checkArgument(
 				patchContext.countTargets(recipe, patch.path) > 0,
 				"No target found for %s",

@@ -8,7 +8,7 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 
 public class CustomAction extends PostAction {
@@ -27,12 +27,12 @@ public class CustomAction extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	public void doApply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		if (applyFunc != null) {
 			applyFunc.apply(recipe, ctx, times);
 		}
@@ -49,13 +49,13 @@ public class CustomAction extends PostAction {
 	}
 
 	@Override
-	public void validate(LycheeRecipe<?> recipe, LycheeRecipe.NBTPatchContext patchContext) {
+	public void validate(LycheeRecipe recipe, LycheeRecipe.NBTPatchContext patchContext) {
 		CommonProxy.postCustomActionEvent(GsonHelper.getAsString(data, "id"), this, recipe, patchContext);
 	}
 
 	@FunctionalInterface
 	public interface Apply {
-		void apply(LycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times);
+		void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times);
 	}
 
 	public static class Type extends PostActionType<CustomAction> {
