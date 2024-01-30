@@ -26,7 +26,7 @@ Then define the behavior of your custom action in KubeJS:
 
 ```js
 // startup script. will be executed when recipe is loaded
-LycheeEvents.customAction('example_log_action', (event) => {
+LycheeEvents.customAction('example_log_action', event => {
     let msg = event.data.custom_property
 
     // use ProbeJS for more information about the parameters
@@ -63,7 +63,7 @@ Then define the behavior of your custom condition in KubeJS:
 
 ```js
 // startup script. will be executed when recipe is loaded
-LycheeEvents.customCondition('example_always_true_condition', (event) => {
+LycheeEvents.customCondition('example_always_true_condition', event => {
     // use ProbeJS for more information about the parameters
     // here you need to return the repeat times that no greater than the given times, or 0 if the condition is not met
     // in this case, the condition is always met
@@ -87,7 +87,7 @@ You can execute code when clicking the info badge in JEI/REI:
 
 ```js
 // client script
-LycheeEvents.clickedInfoBadge('your:recipe_id', (event) => {
+LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     console.log(event.recipe.id)
     console.log(event.button == 0) // 0 for left click, 1 for right click
 })
@@ -219,7 +219,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', (event) => {
     let $RandomSource = Java.loadClass('net.minecraft.util.RandomSource')
     let trimPool = ['coast', 'spire', 'rib', 'snout', 'dune']
 
-    LycheeEvents.customAction('apply_random_trim', (event) => {
+    LycheeEvents.customAction('apply_random_trim', event => {
         event.action.applyFunc = (recipe, ctx, times) => {
             let input = ctx.getItem(0)
             let output = ctx.getItem(2)
@@ -237,14 +237,14 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', (event) => {
         }
     })
 
-    LycheeEvents.customAction('update_enchantment_seed', (event) => {
+    LycheeEvents.customAction('update_enchantment_seed', event => {
         event.action.applyFunc = (recipe, ctx, times) => {
             let player = ctx.getParam('this_entity')
             player.onEnchantmentPerformed(null, 0) // update seed. null == ItemStack.EMPTY
         }
     })
 
-    LycheeEvents.customCondition('is_item_trimmed', (event) => {
+    LycheeEvents.customCondition('is_item_trimmed', event => {
         let target = LycheeReference.fromJson(event.data, 'target')
         event.condition.testFunc = (recipe, ctx, times) => {
             let indexes = recipe.getItemIndexes(target)
