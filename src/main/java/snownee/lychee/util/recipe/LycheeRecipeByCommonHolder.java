@@ -3,6 +3,7 @@ package snownee.lychee.util.recipe;
 import java.util.List;
 import java.util.Optional;
 
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import snownee.lychee.util.action.PostAction;
 
 public interface LycheeRecipeByCommonHolder<T extends LycheeRecipeByCommonHolder<T>> extends LycheeRecipe<T> {
@@ -31,5 +32,10 @@ public interface LycheeRecipeByCommonHolder<T extends LycheeRecipeByCommonHolder
 	@Override
 	default List<PostAction<?>> postActions() {
 		return recipeCommonHolder().postActions();
+	}
+
+	@Override
+	default MinMaxBounds.Ints maxRepeats() {
+		return recipeCommonHolder().maxRepeats();
 	}
 }

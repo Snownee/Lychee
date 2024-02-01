@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import net.minecraft.advancements.critereon.MinMaxBounds;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,6 +89,8 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 	String group();
 
 	List<PostAction<?>> postActions();
+
+	MinMaxBounds.Ints maxRepeats();
 
 	default List<PostAction<?>> allActions() {
 		return postActions();

@@ -6,17 +6,15 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import snownee.lychee.recipes.anvil_crafting.AnvilContext;
-import snownee.lychee.recipes.anvil_crafting.AnvilCraftingRecipe;
-import snownee.lychee.recipes.block_crushing.BlockCrushingRecipe;
-import snownee.lychee.recipes.block_crushing.BlockCrushingRecipeType;
-import snownee.lychee.recipes.block_exploding.BlockExplodingContext;
-import snownee.lychee.recipes.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.recipe.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.core.recipe.recipe.type.ItemShapelessRecipeType;
-import snownee.lychee.util.recipe.LycheeRecipeType;
+import snownee.lychee.recipes.AnvilCraftingRecipe;
+import snownee.lychee.recipes.block_crushing.BlockCrushingRecipe;
+import snownee.lychee.recipes.block_crushing.BlockCrushingRecipeType;
+import snownee.lychee.recipes.block_exploding.BlockExplodingContext;
+import snownee.lychee.recipes.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeType;
 import snownee.lychee.recipes.interaction.BlockClickingRecipe;
@@ -28,6 +26,7 @@ import snownee.lychee.recipes.item_inside.ItemInsideRecipeType;
 import snownee.lychee.recipes.lightning_channeling.LightningChannelingRecipe;
 import snownee.lychee.recipes.random_block_ticking.RandomBlockTickingRecipe;
 import snownee.lychee.recipes.random_block_ticking.RandomBlockTickingRecipeType;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public final class RecipeTypes {
 
@@ -72,7 +71,7 @@ public final class RecipeTypes {
 					BlockClickingRecipe.class,
 					LycheeLootContextParamSets.BLOCK_INTERACTION
 			));
-	public static final LycheeRecipeType<AnvilContext, AnvilCraftingRecipe> ANVIL_CRAFTING =
+	public static final LycheeRecipeType<AnvilCraftingRecipe> ANVIL_CRAFTING =
 			register(new LycheeRecipeType<>("anvil_crafting", AnvilCraftingRecipe.class, null));
 	public static final BlockCrushingRecipeType BLOCK_CRUSHING = register(new BlockCrushingRecipeType(
 			"block_crushing",

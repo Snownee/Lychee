@@ -4,7 +4,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import snownee.lychee.recipes.anvil_crafting.AnvilCraftingRecipe;
+import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.block_crushing.BlockCrushingRecipe;
 import snownee.lychee.recipes.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
@@ -18,51 +18,52 @@ import snownee.lychee.recipes.item_exploding.ItemExplodingRecipe;
 import snownee.lychee.recipes.item_inside.ItemInsideRecipe;
 import snownee.lychee.recipes.lightning_channeling.LightningChannelingRecipe;
 import snownee.lychee.recipes.random_block_ticking.RandomBlockTickingRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public final class RecipeSerializers {
 
 	public static void init() {
 	}
 
-	public static final OldLycheeRecipe.Serializer<ItemBurningRecipe> ITEM_BURNING = register(
+	public static final LycheeRecipeSerializer<ItemBurningRecipe> ITEM_BURNING = register(
 			"item_burning",
 			new ItemBurningRecipe.Serializer()
 	);
-	public static final OldLycheeRecipe.Serializer<ItemInsideRecipe> ITEM_INSIDE = register(
+	public static final LycheeRecipeSerializer<ItemInsideRecipe> ITEM_INSIDE = register(
 			"item_inside",
 			new ItemInsideRecipe.Serializer()
 	);
-	public static final OldLycheeRecipe.Serializer<BlockInteractingRecipe> BLOCK_INTERACTING =
+	public static final LycheeRecipeSerializer<BlockInteractingRecipe> BLOCK_INTERACTING =
 			register("block_interacting", new BlockInteractingRecipe.Serializer<>($ -> new BlockInteractingRecipe($)));
-	public static final OldLycheeRecipe.Serializer<BlockClickingRecipe> BLOCK_CLICKING = register(
+	public static final LycheeRecipeSerializer<BlockClickingRecipe> BLOCK_CLICKING = register(
 			"block_clicking",
 			new BlockInteractingRecipe.Serializer<>($ -> new BlockClickingRecipe($))
 	);
-	public static final OldLycheeRecipe.Serializer<AnvilCraftingRecipe> ANVIL_CRAFTING = register(
+	public static final LycheeRecipeSerializer<AnvilCraftingRecipe> ANVIL_CRAFTING = register(
 			"anvil_crafting",
 			new AnvilCraftingRecipe.Serializer()
 	);
-	public static final OldLycheeRecipe.Serializer<BlockCrushingRecipe> BLOCK_CRUSHING = register(
+	public static final LycheeRecipeSerializer<BlockCrushingRecipe> BLOCK_CRUSHING = register(
 			"block_crushing",
 			new BlockCrushingRecipe.Serializer()
 	);
-	public static final OldLycheeRecipe.Serializer<LightningChannelingRecipe> LIGHTNING_CHANNELING = register(
+	public static final LycheeRecipeSerializer<LightningChannelingRecipe> LIGHTNING_CHANNELING = register(
 			"lightning_channeling",
 			new ItemShapelessRecipe.Serializer<>($ -> new LightningChannelingRecipe($))
 	);
-	public static final OldLycheeRecipe.Serializer<ItemExplodingRecipe> ITEM_EXPLODING = register(
+	public static final LycheeRecipeSerializer<ItemExplodingRecipe> ITEM_EXPLODING = register(
 			"item_exploding",
 			new ItemShapelessRecipe.Serializer<>($ -> new ItemExplodingRecipe($))
 	);
-	public static final OldLycheeRecipe.Serializer<BlockExplodingRecipe> BLOCK_EXPLODING = register(
+	public static final LycheeRecipeSerializer<BlockExplodingRecipe> BLOCK_EXPLODING = register(
 			"block_exploding",
 			new BlockExplodingRecipe.Serializer()
 	);
-	public static final OldLycheeRecipe.Serializer<RandomBlockTickingRecipe> RANDOM_BLOCK_TICKING = register(
+	public static final LycheeRecipeSerializer<RandomBlockTickingRecipe> RANDOM_BLOCK_TICKING = register(
 			"random_block_ticking",
 			new RandomBlockTickingRecipe.Serializer()
 	);
-	public static final OldLycheeRecipe.Serializer<DripstoneRecipe> DRIPSTONE_DRIPPING = register(
+	public static final LycheeRecipeSerializer<DripstoneRecipe> DRIPSTONE_DRIPPING = register(
 			"dripstone_dripping",
 			new DripstoneRecipe.Serializer()
 	);

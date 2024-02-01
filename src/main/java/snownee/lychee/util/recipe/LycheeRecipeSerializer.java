@@ -1,17 +1,22 @@
 package snownee.lychee.util.recipe;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import snownee.lychee.util.SerializableType;
+import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.contextual.ConditionHolder;
 
 public interface LycheeRecipeSerializer<T extends LycheeRecipe<T>> extends RecipeSerializer<T>, SerializableType<T> {
 	Ingredient EMPTY_INGREDIENT = Ingredient.of(ItemStack.EMPTY);
@@ -27,6 +32,50 @@ public interface LycheeRecipeSerializer<T extends LycheeRecipe<T>> extends Recip
 
 	RecordCodecBuilder<LycheeRecipe<?>, String> GROUP_CODEC =
 			Codec.STRING.fieldOf("group").orElse("default").forGetter(LycheeRecipe::group);
+
+	RecordCodecBuilder<LycheeRecipe<?>, List<ConditionHolder<?>>> CONDITIONS_CODEC =
+			ConditionHolder.LIST_CODEC.fieldOf("contextual")
+									  .orElse(Lists.newArrayList())
+									  .forGetter(LycheeRecipe::conditions);
+
+	RecordCodecBuilder<LycheeRecipe<?>, List<PostAction<?>>> POST_ACTIONS_CODEC =
+			Codec.list(PostAction.CODEC)
+				 .fieldOf("post")
+				 .orElse(Lists.newArrayList())
+				 .forGetter(LycheeRecipe::postActions);
+
+	RecordCodecBuilder<LycheeRecipe<?>, MinMaxBounds.Ints> MAX_REPEATS_CODEC =
+			MinMaxBounds.Ints.CODEC.fieldOf("max_repeats")
+								   .orElse(MinMaxBounds.Ints.ANY)
+								   .forGetter(LycheeRecipe::maxRepeats);
+
+	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, Boolean> hideInRecipeViewerCodec() {
+		return (RecordCodecBuilder<T, Boolean>) HIDE_IN_VIEWER_CODEC;
+	}
+
+	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, Boolean> ghostCodec() {
+		return (RecordCodecBuilder<T, Boolean>) GHOST_CODEC;
+	}
+
+	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, Optional<String>> commentCodec() {
+		return (RecordCodecBuilder<T, Optional<String>>) COMMENT_CODEC;
+	}
+
+	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, String> groupCodec() {
+		return (RecordCodecBuilder<T, String>) GROUP_CODEC;
+	}
+
+	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, List<ConditionHolder<?>>> conditionsCodec() {
+		return (RecordCodecBuilder<T, List<ConditionHolder<?>>>) CONDITIONS_CODEC;
+	}
+
+	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, List<PostAction<?>>> postActionsCodec() {
+		return (RecordCodecBuilder<T, List<PostAction<?>>>) POST_ACTIONS_CODEC;
+	}
+
+	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, MinMaxBounds.Ints> maxRepeatsCodec() {
+		return (RecordCodecBuilder<T, MinMaxBounds.Ints>) MAX_REPEATS_CODEC;
+	}
 
 	@Override
 	@NotNull
