@@ -13,7 +13,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class BlockExplodingRecipe extends OldLycheeRecipe<BlockExplodingContext>
 		implements BlockKeyRecipe<BlockExplodingRecipe> {

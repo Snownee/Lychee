@@ -35,7 +35,7 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.recipe.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.recipe.type.ItemShapelessRecipeType;
-import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.util.CommonProxy;
 
 public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext, ItemInsideRecipe> {
@@ -49,10 +49,10 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 	}
 
 	@Override
-	public void buildCache() {
+	public void refreshCache() {
 		specialRecipes.clear();
 		recipesByItem.clear();
-		super.buildCache();
+		super.refreshCache();
 		Object2FloatMap<Item> itemCount = new Object2FloatOpenHashMap<>();
 		List<Cache> caches = recipes.stream()
 									.map($ -> $.buildCache(itemCount, specialRecipes))

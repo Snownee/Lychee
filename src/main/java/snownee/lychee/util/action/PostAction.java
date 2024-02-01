@@ -13,19 +13,19 @@ import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.Contextual;
-import snownee.lychee.util.contextual.ContextualByConditionsHolder;
+import snownee.lychee.util.contextual.ContextualByCommonHolder;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
 public interface PostAction<Action extends PostAction<Action>> extends Contextual<Action>,
-																	   ContextualByConditionsHolder<Action>,
+																	   ContextualByCommonHolder<Action>,
 																	   PostActionDisplay {
 	Codec<PostAction<?>> CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatch(
 			PostAction::type,
 			PostActionType::codec
 	);
 
-	Optional<String> path();
+	Optional<String> getPath();
 
 	void setPath(String path);
 
@@ -36,9 +36,9 @@ public interface PostAction<Action extends PostAction<Action>> extends Contextua
 		return type().codec();
 	}
 
-	default void validate(RecipeHolder<LycheeRecipe> recipe, LycheeRecipe.NBTPatchContext patchContext) {}
+	default void validate(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipe.NBTPatchContext patchContext) {}
 
-	void apply(RecipeHolder<LycheeRecipe> recipe, LycheeContext ctx, int times);
+	void apply(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times);
 
 	@Override
 	default Component getDisplayName() {
@@ -52,9 +52,9 @@ public interface PostAction<Action extends PostAction<Action>> extends Contextua
 		return true;
 	}
 
-	default void getUsedPointers(RecipeHolder<LycheeRecipe> recipe, Consumer<JsonPointer> consumer) {}
+	default void getUsedPointers(RecipeHolder<LycheeRecipe<?>> recipe, Consumer<JsonPointer> consumer) {}
 
-	default void onFailure(RecipeHolder<LycheeRecipe> recipe, LycheeContext ctx, int times) {}
+	default void onFailure(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {}
 
 	@Override
 	default String toJsonString() {

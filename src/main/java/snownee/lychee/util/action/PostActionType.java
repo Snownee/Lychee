@@ -7,17 +7,17 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.util.SerializableType;
-import snownee.lychee.util.contextual.ContextualByConditionsHolder;
-import snownee.lychee.util.contextual.ContextualConditionsHolder;
+import snownee.lychee.util.contextual.ContextualByCommonHolder;
+import snownee.lychee.util.contextual.ContextualCommonHolder;
 
 public interface PostActionType<T extends PostAction<T>> extends SerializableType<T> {
-	RecordCodecBuilder<? extends PostAction<?>, ContextualConditionsHolder> CONTEXTUAL_CODEC =
-			ContextualConditionsHolder.CODEC
+	RecordCodecBuilder<? extends PostAction<?>, ContextualCommonHolder> CONTEXTUAL_CODEC =
+			ContextualCommonHolder.CODEC
 					.fieldOf("contextual")
-					.orElse(new ContextualConditionsHolder())
-					.forGetter(ContextualByConditionsHolder::conditionsHolder);
+					.orElse(new ContextualCommonHolder())
+					.forGetter(ContextualByCommonHolder::contextualCommonHolder);
 
 	RecordCodecBuilder<? extends PostAction<?>, Optional<String>> PATH_CODEC =
 			ExtraCodecs.strictOptionalField(Codec.STRING, "path")
-					   .forGetter(PostAction::path);
+					   .forGetter(PostAction::getPath);
 }

@@ -30,7 +30,7 @@ import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.recipes.item_inside.ItemInsideRecipeType.Cache;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.RecipeMatcher;

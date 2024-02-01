@@ -106,7 +106,7 @@ public final class RecipeTypes {
 	}
 
 	public static void buildCache() {
-		ALL.forEach(LycheeRecipeType::buildCache);
+		ALL.forEach(LycheeRecipeType::refreshCache);
 		ALL.forEach(LycheeRecipeType::updateEmptyState);
 	}
 

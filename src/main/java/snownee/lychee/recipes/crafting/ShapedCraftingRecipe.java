@@ -48,7 +48,7 @@ import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.action.input.SetItem;
-import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.fragment.Fragments;
 import snownee.lychee.mixin.CraftingMenuAccess;
@@ -254,7 +254,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements LycheeRecipe<C
 
 	@Override
 	public JsonPointer defaultItemPointer() {
-		return RESULT;
+		return RESULT_POINTER;
 	}
 
 	@Override
@@ -305,7 +305,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements LycheeRecipe<C
 		Objects.requireNonNull(action);
 		if (action instanceof SetItem setItem) {
 			if (getItemIndexes(setItem.target).contains(getIngredients().size())) {
-				throw new JsonSyntaxException("Can't set item to the result in \"post\", use \"assembling\".");
+				throw new JsonSyntaxException("Can't set item to the result in \"post\", use \"assemblingActions\".");
 			}
 		}
 		if (actions.isEmpty()) {
@@ -319,7 +319,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements LycheeRecipe<C
 		if (action instanceof SetItem setItem) {
 			IntList intList = getItemIndexes(setItem.target);
 			if (!intList.isEmpty() && !intList.contains(getIngredients().size())) {
-				throw new JsonSyntaxException("Can't set item to the ingredients in \"assembling\", use \"post\".");
+				throw new JsonSyntaxException("Can't set item to the ingredients in \"assemblingActions\", use \"post\".");
 			}
 		}
 		if (assembling.isEmpty()) {
@@ -348,12 +348,12 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements LycheeRecipe<C
 		if (pointer.isRoot())
 			return false;
 		String token = pointer.getString(0);
-		return "assembling".equals(token) || "post".equals(token);
+		return "assemblingActions".equals(token) || "post".equals(token);
 	}
 
 	@Override
 	public Map<JsonPointer, List<PostAction>> getActionGroups() {
-		return Map.of(POST, actions, new JsonPointer("/assembling"), assembling);
+		return Map.of(POST_POINTER, actions, new JsonPointer("/assemblingActions"), assembling);
 	}
 
 	public static class Serializer implements RecipeSerializer<ShapedCraftingRecipe> {
@@ -386,7 +386,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements LycheeRecipe<C
 			recipe.pattern = sb.toString();
 			recipe.conditions.parseConditions(jsonObject.get("contextual"));
 			PostAction.parseActions(jsonObject.get("post"), recipe::addPostAction);
-			PostAction.parseActions(jsonObject.get("assembling"), recipe::addAssemblingAction);
+			PostAction.parseActions(jsonObject.get("assemblingActions"), recipe::addAssemblingAction);
 			LycheeRecipe.processActions(recipe, jsonObject);
 			return recipe;
 		}

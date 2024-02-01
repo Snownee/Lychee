@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class BlockClickingRecipe extends BlockInteractingRecipe {
 

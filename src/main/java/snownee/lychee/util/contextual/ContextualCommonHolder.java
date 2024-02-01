@@ -13,11 +13,11 @@ import com.mojang.serialization.Codec;
  *
  * @param conditions
  */
-public record ContextualConditionsHolder(List<ConditionHolder<?>> conditions) {
-	public static final Codec<ContextualConditionsHolder> CODEC =
-			ConditionHolder.LIST_CODEC.xmap(ContextualConditionsHolder::new, it -> it.conditions);
+public record ContextualCommonHolder(List<ConditionHolder<?>> conditions) {
+	public static final Codec<ContextualCommonHolder> CODEC =
+			ConditionHolder.LIST_CODEC.xmap(ContextualCommonHolder::new, it -> it.conditions);
 
-	public ContextualConditionsHolder() {
+	public ContextualCommonHolder() {
 		this(Lists.newArrayList());
 	}
 

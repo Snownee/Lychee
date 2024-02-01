@@ -11,22 +11,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ConditionHolder;
 import snownee.lychee.util.contextual.Contextual;
-import snownee.lychee.util.contextual.ContextualByConditionsHolder;
+import snownee.lychee.util.contextual.ContextualByCommonHolder;
+import snownee.lychee.util.contextual.ContextualCommonHolder;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
-import snownee.lychee.util.contextual.ContextualConditionsHolder;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
-public record Or(ContextualConditionsHolder conditionsHolder) implements ContextualCondition<Or>,
-																		 Contextual<Or>,
-																		 ContextualByConditionsHolder<Or> {
+public record Or(ContextualCommonHolder commonHolder) implements ContextualCondition<Or>,
+																 Contextual<Or>,
+																 ContextualByCommonHolder<Or> {
 	@Override
 	public ContextualConditionType<Or> type() {
 		return ContextualConditionTypes.OR;
@@ -45,7 +43,7 @@ public record Or(ContextualConditionsHolder conditionsHolder) implements Context
 
 	@Override
 	public Codec<Or> contextualCodec() {
-		return ContextualConditionsHolder.CODEC.xmap(Or::new, it -> it.conditionsHolder);
+		return ContextualCommonHolder.CODEC.xmap(Or::new, Or::contextualCommonHolder);
 	}
 
 	@Override
@@ -79,16 +77,16 @@ public record Or(ContextualConditionsHolder conditionsHolder) implements Context
 
 	@Override
 	public int showingCount() {
-		return ContextualByConditionsHolder.super.showingCount();
+		return ContextualByCommonHolder.super.showingCount();
 	}
 
 	public static class Type implements ContextualConditionType<Or> {
 		public static final Codec<Or> CODEC =
 				RecordCodecBuilder.create(instance -> instance
-						.group(ContextualConditionsHolder.CODEC
+						.group(ContextualCommonHolder.CODEC
 								.fieldOf("contextual")
-								.orElse(new ContextualConditionsHolder())
-								.forGetter(Or::conditionsHolder)
+								.orElse(new ContextualCommonHolder())
+								.forGetter(Or::contextualCommonHolder)
 						).apply(instance, Or::new));
 
 		@Override

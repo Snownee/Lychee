@@ -27,6 +27,7 @@ import snownee.lychee.util.input.ItemStackHolder;
 import snownee.lychee.core.network.SCustomLevelEventPacket;
 import snownee.lychee.core.recipe.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.recipe.ValidItemCache;
 
 public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingContext, BlockCrushingRecipe> {
 
@@ -148,9 +149,9 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 	}
 
 	@Override
-	public void buildCache() {
-		super.buildCache();
-		validItems.buildCache(recipes);
+	public void refreshCache() {
+		super.refreshCache();
+		validItems.refreshCache(recipes);
 	}
 
 }

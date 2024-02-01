@@ -27,9 +27,9 @@ public class RandomBlockTickingRecipeType extends BlockKeyRecipeType<LycheeRecip
 	}
 
 	@Override
-	public void buildCache() {
+	public void refreshCache() {
 		boolean prevEmpty = isEmpty();
-		super.buildCache();
+		super.refreshCache();
 		if (prevEmpty && isEmpty()) {
 			return;
 		}

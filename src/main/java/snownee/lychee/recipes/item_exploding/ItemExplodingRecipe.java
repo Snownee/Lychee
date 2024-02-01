@@ -15,7 +15,7 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemExplodingRecipe extends ItemShapelessRecipe<ItemExplodingRecipe> {
 

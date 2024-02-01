@@ -5,10 +5,10 @@ import java.util.Optional;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
-public class PostActionPathHolder {
+public class PostActionCommonHolder {
 	private Optional<String> path;
 
-	public Optional<String> path() {
+	public Optional<String> getPath() {
 		return path;
 	}
 
@@ -20,7 +20,7 @@ public class PostActionPathHolder {
 	public boolean equals(final Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		final PostActionPathHolder that = (PostActionPathHolder) o;
+		final PostActionCommonHolder that = (PostActionCommonHolder) o;
 		return Objects.equal(path, that.path);
 	}
 

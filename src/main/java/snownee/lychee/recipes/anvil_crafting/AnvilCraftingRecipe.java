@@ -30,9 +30,9 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.core.recipe.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.util.json.JsonPointer;
 
 public record AnvilCraftingRecipe implements LycheeRecipe<AnvilContext>, Comparable<AnvilCraftingRecipe> {
@@ -122,7 +122,7 @@ public record AnvilCraftingRecipe implements LycheeRecipe<AnvilContext>, Compara
 
 	@Override
 	public JsonPointer defaultItemPointer() {
-		return ITEM_OUT;
+		return ITEM_OUT_POINTER;
 	}
 
 	@Override
@@ -158,12 +158,12 @@ public record AnvilCraftingRecipe implements LycheeRecipe<AnvilContext>, Compara
 		if (pointer.isRoot())
 			return false;
 		String token = pointer.getString(0);
-		return "assembling".equals(token) || "post".equals(token);
+		return "assemblingActions".equals(token) || "post".equals(token);
 	}
 
 	@Override
 	public Map<JsonPointer, List<PostAction<?>>> getActionGroups() {
-		return Map.of(POST, actions, new JsonPointer("/assembling"), assembling);
+		return Map.of(POST_POINTER, actions, new JsonPointer("/assemblingActions"), assembling);
 	}
 
 	public static class Serializer extends OldLycheeRecipe.Serializer<AnvilCraftingRecipe> {
@@ -184,7 +184,7 @@ public record AnvilCraftingRecipe implements LycheeRecipe<AnvilContext>, Compara
 			} else {
 				pRecipe.left = Ingredient.fromJson(itemIn);
 			}
-			PostAction.parseActions(pSerializedRecipe.get("assembling"), pRecipe::addAssemblingAction);
+			PostAction.parseActions(pSerializedRecipe.get("assemblingActions"), pRecipe::addAssemblingAction);
 			pRecipe.output = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(
 					pSerializedRecipe,
 					("item_out")

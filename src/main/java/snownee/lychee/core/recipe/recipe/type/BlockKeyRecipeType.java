@@ -53,10 +53,10 @@ public class BlockKeyRecipeType<C extends LycheeRecipeContext, T extends OldLych
 	}
 
 	@Override
-	public void buildCache() {
+	public void refreshCache() {
 		recipesByBlock.clear();
 		anyBlockRecipes.clear();
-		super.buildCache();
+		super.refreshCache();
 		Multimap<Block, T> multimap = HashMultimap.create();
 		for (T recipe : recipes) {
 			if (!recipe.getConditions().isEmpty()) {

@@ -21,6 +21,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
+import snownee.lychee.util.recipe.ValidItemCache;
 
 public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends OldLycheeRecipe<C>>
     extends LycheeRecipeType<C, T> {
@@ -33,9 +34,9 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends O
 	}
 
 	@Override
-	public void buildCache() {
-		super.buildCache();
-		validItems.buildCache(recipes);
+	public void refreshCache() {
+		super.refreshCache();
+		validItems.refreshCache(recipes);
 	}
 
 	public void process(

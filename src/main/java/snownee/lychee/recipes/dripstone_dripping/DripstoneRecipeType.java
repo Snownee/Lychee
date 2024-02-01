@@ -20,8 +20,8 @@ public class DripstoneRecipeType extends BlockKeyRecipeType<DripstoneContext, Dr
 	}
 
 	@Override
-	public void buildCache() {
-		super.buildCache();
+	public void refreshCache() {
+		super.refreshCache();
 		allSources.clear();
 		for (DripstoneRecipe recipe : recipes) {
 			for (Block block : BlockPredicateHelper.getMatchedBlocks(recipe.getSourceBlock())) {

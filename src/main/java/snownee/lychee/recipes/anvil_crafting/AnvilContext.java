@@ -18,7 +18,7 @@ public class AnvilContext extends LycheeRecipeContext {
 	 * The right side of the input
 	 */
 	public final ItemStack right;
-	public final String name; // The name to set the item, if the user specified one.
+	public final String name; // The name to set the item if the user specified one.
 	public int levelCost; // The base cost, set this to change it if output != null
 	public int materialCost = 1;
 	// The number of items from the right slot to be consumed during the repair. Leave as 0 to consume the

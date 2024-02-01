@@ -38,7 +38,7 @@ import snownee.lychee.action.Delay;
 import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.recipe.ChanceRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.core.recipe.recipe.type.LycheeRecipeType;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.mixin.PointedDripstoneBlockAccess;
 
 public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>

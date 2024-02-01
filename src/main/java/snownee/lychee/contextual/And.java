@@ -15,16 +15,16 @@ import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ConditionHolder;
 import snownee.lychee.util.contextual.Contextual;
-import snownee.lychee.util.contextual.ContextualByConditionsHolder;
+import snownee.lychee.util.contextual.ContextualByCommonHolder;
+import snownee.lychee.util.contextual.ContextualCommonHolder;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualConditionTypes;
-import snownee.lychee.util.contextual.ContextualConditionsHolder;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
-public record And(ContextualConditionsHolder conditionsHolder) implements ContextualCondition<And>,
-																		  Contextual<And>,
-																		  ContextualByConditionsHolder<And> {
+public record And(ContextualCommonHolder commonHolder) implements ContextualCondition<And>,
+																  Contextual<And>,
+																  ContextualByCommonHolder<And> {
 
 	@Override
 	public ContextualConditionType<And> type() {
@@ -33,12 +33,12 @@ public record And(ContextualConditionsHolder conditionsHolder) implements Contex
 
 	@Override
 	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
-		return ContextualByConditionsHolder.super.test(recipe, ctx, times);
+		return ContextualByCommonHolder.super.test(recipe, ctx, times);
 	}
 
 	@Override
 	public Codec<And> contextualCodec() {
-		return ContextualConditionsHolder.CODEC.xmap(And::new, it -> it.conditionsHolder);
+		return ContextualCommonHolder.CODEC.xmap(And::new, And::contextualCommonHolder);
 	}
 
 	@Override
@@ -68,16 +68,16 @@ public record And(ContextualConditionsHolder conditionsHolder) implements Contex
 
 	@Override
 	public int showingCount() {
-		return ContextualByConditionsHolder.super.showingCount();
+		return ContextualByCommonHolder.super.showingCount();
 	}
 
 	public static class Type implements ContextualConditionType<And> {
 		public static final Codec<And> CODEC =
 				RecordCodecBuilder.create(instance -> instance
-						.group(ContextualConditionsHolder.CODEC
+						.group(ContextualCommonHolder.CODEC
 								.fieldOf("contextual")
-								.orElse(new ContextualConditionsHolder())
-								.forGetter(And::conditionsHolder)
+								.orElse(new ContextualCommonHolder())
+								.forGetter(And::contextualCommonHolder)
 						).apply(instance, And::new));
 
 		@Override
