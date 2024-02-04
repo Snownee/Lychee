@@ -37,7 +37,7 @@ public class ActionContext implements LycheeContextValue<ActionContext> {
 	}
 
 	@Override
-	public LycheeContextType type() {
+	public LycheeContextType<ActionContext> type() {
 		return LycheeContextType.ACTION;
 	}
 
@@ -66,7 +66,7 @@ public class ActionContext implements LycheeContextValue<ActionContext> {
 	}
 
 
-	public static final class Type implements LycheeContextType,
+	public static final class Type implements LycheeContextType<ActionContext>,
 											  SerializableType<ActionContext> {
 		public static final Codec<ActionContext> CODEC = RecordCodecBuilder.create(instance ->
 				instance.group(

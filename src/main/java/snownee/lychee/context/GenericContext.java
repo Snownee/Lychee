@@ -12,7 +12,7 @@ public record GenericContext(Level level, RandomSource random) implements Lychee
 	}
 
 	@Override
-	public LycheeContextType type() {
+	public LycheeContextType<GenericContext> type() {
 		return LycheeContextType.GENERIC;
 	}
 }

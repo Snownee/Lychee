@@ -12,11 +12,11 @@ import snownee.lychee.util.context.LycheeContextValue;
 // TODO 暂时不涉及
 public record JsonContext(JsonObject json) implements LycheeContextValue<JsonContext> {
 	@Override
-	public LycheeContextType type() {
+	public LycheeContextType<JsonContext> type() {
 		return LycheeContextType.JSON;
 	}
 
-	public static final class Type implements LycheeContextType, SerializableType<JsonContext> {
+	public static final class Type implements LycheeContextType<JsonContext>, SerializableType<JsonContext> {
 		public static final Codec<JsonContext> CODEC = ExtraCodecs.JSON.comapFlatMap(
 				it -> {
 					try {

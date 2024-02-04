@@ -92,7 +92,7 @@ public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, 
 	}
 
 	@Override
-	public LycheeContextType type() {
+	public LycheeContextType<LootParamsContext> type() {
 		return LycheeContextType.LOOT_PARAMS;
 	}
 }
