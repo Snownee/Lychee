@@ -17,10 +17,9 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextTypes;
+import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
 public class DirectionCheck implements ContextualCondition<DirectionCheck> {
@@ -30,15 +29,15 @@ public class DirectionCheck implements ContextualCondition<DirectionCheck> {
 		for (final var direction : Direction.values()) {
 			createLookup(
 					direction.getName().toLowerCase(Locale.ENGLISH),
-					ctx -> ctx.get(LycheeContextTypes.LOOT_PARAMS).get(LycheeLootContextParams.DIRECTION) == direction
+					ctx -> ctx.get(LycheeContextType.LOOT_PARAMS).get(LycheeLootContextParams.DIRECTION) == direction
 			);
 		}
 		createLookup(
 				"sides",
-				ctx -> ctx.get(LycheeContextTypes.LOOT_PARAMS).get(LycheeLootContextParams.DIRECTION).getStepY() == 0
+				ctx -> ctx.get(LycheeContextType.LOOT_PARAMS).get(LycheeLootContextParams.DIRECTION).getStepY() == 0
 		);
 		createLookup("forward", ctx -> {
-			final var lootParamsContext = ctx.get(LycheeContextTypes.LOOT_PARAMS);
+			final var lootParamsContext = ctx.get(LycheeContextType.LOOT_PARAMS);
 			final var direction = lootParamsContext.get(LycheeLootContextParams.DIRECTION);
 			final var state = lootParamsContext.get(LootContextParams.BLOCK_STATE);
 			final var facing = state.getOptionalValue(BlockStateProperties.FACING)
@@ -48,7 +47,7 @@ public class DirectionCheck implements ContextualCondition<DirectionCheck> {
 			return direction == facing;
 		});
 		createLookup("axis", ctx -> {
-			final var lootParamsContext = ctx.get(LycheeContextTypes.LOOT_PARAMS);
+			final var lootParamsContext = ctx.get(LycheeContextType.LOOT_PARAMS);
 			final var direction = lootParamsContext.get(LycheeLootContextParams.DIRECTION);
 			final var state = lootParamsContext.get(LootContextParams.BLOCK_STATE);
 			final var axis = state.getOptionalValue(BlockStateProperties.AXIS)
@@ -72,7 +71,7 @@ public class DirectionCheck implements ContextualCondition<DirectionCheck> {
 
 	@Override
 	public ContextualConditionType<DirectionCheck> type() {
-		return ContextualConditionTypes.DIRECTION;
+		return ContextualConditionType.DIRECTION;
 	}
 
 	@Override

@@ -19,26 +19,20 @@ import snownee.lychee.util.contextual.ContextualByCommonHolder;
 import snownee.lychee.util.contextual.ContextualCommonHolder;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
-public record And(ContextualCommonHolder commonHolder) implements ContextualCondition<And>,
-																  Contextual<And>,
-																  ContextualByCommonHolder<And> {
+public record And(ContextualCommonHolder contextualCommonHolder) implements ContextualCondition<And>,
+																			Contextual<And>,
+																			ContextualByCommonHolder<And> {
 
 	@Override
 	public ContextualConditionType<And> type() {
-		return ContextualConditionTypes.AND;
+		return ContextualConditionType.AND;
 	}
 
 	@Override
 	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
 		return ContextualByCommonHolder.super.test(recipe, ctx, times);
-	}
-
-	@Override
-	public Codec<And> contextualCodec() {
-		return ContextualCommonHolder.CODEC.xmap(And::new, And::contextualCommonHolder);
 	}
 
 	@Override

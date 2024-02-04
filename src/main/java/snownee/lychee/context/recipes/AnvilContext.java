@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.util.context.LycheeContextType;
-import snownee.lychee.util.context.LycheeContextTypes;
 import snownee.lychee.util.context.LycheeContextValue;
 
 public class AnvilContext implements LycheeContextValue<AnvilContext> {
@@ -57,9 +56,6 @@ public class AnvilContext implements LycheeContextValue<AnvilContext> {
 
 	@Override
 	public LycheeContextType<AnvilContext> type() {
-		return LycheeContextTypes.ANVIL;
-	}
-
-	public static final class Type implements LycheeContextType<AnvilContext> {
+		return LycheeContextType.ANVIL;
 	}
 }

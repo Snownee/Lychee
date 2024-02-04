@@ -18,14 +18,11 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.contextual.RecipeCondition;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
@@ -47,7 +44,7 @@ public class CustomCondition implements ContextualCondition<CustomCondition> {
 
 	@Override
 	public ContextualConditionType<CustomCondition> type() {
-		return ContextualConditionTypes.CUSTOM;
+		return ContextualConditionType.CUSTOM;
 	}
 
 	@Override

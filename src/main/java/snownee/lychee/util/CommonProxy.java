@@ -67,7 +67,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.Mod;
-import snownee.lychee.ContextualConditionTypes;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeRegistries;
@@ -420,7 +419,7 @@ public class CommonProxy implements ModInitializer {
 		RecipeTypes.init();
 		LycheeTags.init();
 		LycheeRegistries.init();
-		ContextualConditionTypes.init();
+		ContextualConditionType.init();
 		PostActionTypes.init();
 		RecipeSerializers.init();
 		CustomIngredientSerializer.register(AlwaysTrueIngredient.SERIALIZER);

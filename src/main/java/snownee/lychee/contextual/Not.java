@@ -9,20 +9,17 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
 public record Not(ContextualCondition<?> condition) implements ContextualCondition<Not> {
 
 	@Override
 	public ContextualConditionType<Not> type() {
-		return ContextualConditionTypes.NOT;
+		return ContextualConditionType.NOT;
 	}
 
 	@Override

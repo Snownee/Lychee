@@ -3,7 +3,7 @@ package snownee.lychee.util.contextual;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-public record ContextualImpl(ContextualCommonHolder conditionsHolder)
+public record ContextualImpl(ContextualCommonHolder contextualCommonHolder)
 		implements Contextual<ContextualImpl>,
 				   ContextualByCommonHolder<ContextualImpl> {
 
@@ -14,9 +14,4 @@ public record ContextualImpl(ContextualCommonHolder conditionsHolder)
 							.orElse(new ContextualCommonHolder())
 							.forGetter(ContextualImpl::contextualCommonHolder))
 					.apply(instance, ContextualImpl::new));
-
-	@Override
-	public Codec<ContextualImpl> contextualCodec() {
-		return CODEC;
-	}
 }

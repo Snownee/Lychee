@@ -1,7 +1,5 @@
 package snownee.lychee.contextual;
 
-import net.minecraft.world.level.Level;
-
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import com.mojang.brigadier.ParseResults;
@@ -21,10 +19,9 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import snownee.lychee.Lychee;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextTypes;
+import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
 public record Execute(String command, MinMaxBounds.Ints bounds) implements ContextualCondition<Execute> {
@@ -34,17 +31,17 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 
 	@Override
 	public ContextualConditionType<Execute> type() {
-		return ContextualConditionTypes.EXECUTE;
+		return ContextualConditionType.EXECUTE;
 	}
 
 	@Override
 	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
-		final var genericContext = ctx.get(LycheeContextTypes.GENERIC);
+		final var genericContext = ctx.get(LycheeContextType.GENERIC);
 		final var level = genericContext.level();
 		if (command.isEmpty() || level.isClientSide) {
 			return 0;
 		}
-		final var lootParamsContext = ctx.get(LycheeContextTypes.LOOT_PARAMS);
+		final var lootParamsContext = ctx.get(LycheeContextType.LOOT_PARAMS);
 		final var pos = lootParamsContext.get(LootContextParams.ORIGIN);
 		final var entity = lootParamsContext.getOrNull(LootContextParams.THIS_ENTITY);
 		var rotation = Vec2.ZERO;

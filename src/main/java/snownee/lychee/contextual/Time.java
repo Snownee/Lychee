@@ -17,22 +17,21 @@ import net.minecraft.world.level.storage.loot.predicates.TimeCheck;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextTypes;
+import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
 public record Time(MinMaxBounds.Ints value, Optional<Long> period) implements ContextualCondition<Time> {
 
 	@Override
 	public ContextualConditionType<Time> type() {
-		return ContextualConditionTypes.TIME;
+		return ContextualConditionType.TIME;
 	}
 
 	@Override
 	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
-		return test(ctx.get(LycheeContextTypes.GENERIC).level()) ? times : 0;
+		return test(ctx.get(LycheeContextType.GENERIC).level()) ? times : 0;
 	}
 
 	@Override

@@ -17,22 +17,21 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextTypes;
+import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
 public record IsDifficulty(List<Difficulty> difficulties) implements ContextualCondition<IsDifficulty> {
 
 	@Override
 	public ContextualConditionType<IsDifficulty> type() {
-		return ContextualConditionTypes.DIFFICULTY;
+		return ContextualConditionType.DIFFICULTY;
 	}
 
 	@Override
 	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
-		return difficulties.contains(ctx.get(LycheeContextTypes.GENERIC).level().getDifficulty()) ? times : 0;
+		return difficulties.contains(ctx.get(LycheeContextType.GENERIC).level().getDifficulty()) ? times : 0;
 	}
 
 	@Override

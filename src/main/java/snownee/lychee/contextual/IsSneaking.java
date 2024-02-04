@@ -7,10 +7,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextTypes;
+import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
 public final class IsSneaking implements ContextualCondition<IsSneaking> {
@@ -18,12 +17,12 @@ public final class IsSneaking implements ContextualCondition<IsSneaking> {
 
 	@Override
 	public ContextualConditionType<IsSneaking> type() {
-		return ContextualConditionTypes.IS_SNEAKING;
+		return ContextualConditionType.IS_SNEAKING;
 	}
 
 	@Override
 	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
-		Entity entity = ctx.get(LycheeContextTypes.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
+		Entity entity = ctx.get(LycheeContextType.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
 		return entity.isCrouching() || entity.isShiftKeyDown() ? times : 0;
 	}
 

@@ -28,8 +28,9 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextTypes;
+import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.contextual.ConditionHolder;
+import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.contextual.ContextualByCommonHolder;
 import snownee.lychee.util.contextual.ContextualCommonHolder;
 import snownee.lychee.util.json.JsonPointer;
@@ -47,8 +48,9 @@ public record AnvilCraftingRecipe(
 		ItemStack output,
 		List<PostAction<?>> assemblingActions
 ) implements LycheeRecipe<AnvilCraftingRecipe>,
-			 ContextualByCommonHolder<AnvilCraftingRecipe>,
-			 LycheeRecipeByCommonHolder<AnvilCraftingRecipe> {
+			 LycheeRecipeByCommonHolder<AnvilCraftingRecipe>,
+			 Contextual<AnvilCraftingRecipe>,
+			 ContextualByCommonHolder<AnvilCraftingRecipe> {
 	@Override
 	public IntList getItemIndexes(final JsonPointer pointer) {
 		if (pointer.size() == 1) {
@@ -73,7 +75,7 @@ public record AnvilCraftingRecipe(
 
 	@Override
 	public boolean matches(final LycheeContext context, final Level level) {
-		final var anvilContext = context.get(LycheeContextTypes.ANVIL);
+		final var anvilContext = context.get(LycheeContextType.ANVIL);
 		if (anvilContext == null) return false;
 		if (!input.getSecond().isEmpty() && anvilContext.input().getSecond().getCount() < materialCost) return false;
 		return input.getFirst().test(anvilContext.input().getFirst())
@@ -82,11 +84,11 @@ public record AnvilCraftingRecipe(
 
 	@Override
 	public @NotNull ItemStack assemble(final LycheeContext context, final RegistryAccess registryAccess) {
-		final var anvilContext = context.get(LycheeContextTypes.ANVIL);
+		final var anvilContext = context.get(LycheeContextType.ANVIL);
 		anvilContext.setLevelCost(levelCost);
 		anvilContext.setMaterialCost(materialCost);
-		context.get(LycheeContextTypes.ITEM).items().replace(2, getResultItem(registryAccess));
-		final var actionContext = context.get(LycheeContextTypes.ACTION);
+		context.get(LycheeContextType.ITEM).items().replace(2, getResultItem(registryAccess));
+		final var actionContext = context.get(LycheeContextType.ACTION);
 		actionContext.reset();
 		actionContext.jobs.addAll(assemblingActions.stream().map(it -> new Job(it, 1)).toList());
 		actionContext.run(new RecipeHolder<>(id(), this), context);
@@ -99,7 +101,7 @@ public record AnvilCraftingRecipe(
 	}
 
 	@Override
-	public NonNullList<Ingredient> getIngredients() {
+	public @NotNull NonNullList<Ingredient> getIngredients() {
 		if (input.getSecond().isEmpty()) {
 			return NonNullList.of(Ingredient.EMPTY, input.getFirst());
 		}
@@ -107,18 +109,13 @@ public record AnvilCraftingRecipe(
 	}
 
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public @NotNull RecipeSerializer<?> getSerializer() {
 		return RecipeSerializers.ANVIL_CRAFTING;
 	}
 
 	@Override
 	public @NotNull RecipeType<AnvilCraftingRecipe> getType() {
 		return RecipeTypes.ANVIL_CRAFTING;
-	}
-
-	@Override
-	public Codec<AnvilCraftingRecipe> contextualCodec() {
-		return null;
 	}
 
 	@Override
@@ -142,8 +139,8 @@ public record AnvilCraftingRecipe(
 								 if (it.right().isPresent()) {
 									 return Pair.of(it.right().get(), EMPTY_INGREDIENT);
 								 }
-								 return it.left().get();
-							 }, it -> Either.left(it))
+								 return it.left().orElseThrow();
+							 }, Either::left)
 							 .forGetter(AnvilCraftingRecipe::input),
 						Codec.list(PostAction.CODEC)
 							 .fieldOf("assembling")

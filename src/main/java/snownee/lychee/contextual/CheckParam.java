@@ -9,16 +9,15 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextTypes;
+import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
 public record CheckParam(String key) implements ContextualCondition<CheckParam> {
 	@Override
 	public ContextualConditionType<CheckParam> type() {
-		return ContextualConditionTypes.CHECK_PARAM;
+		return ContextualConditionType.CHECK_PARAM;
 	}
 
 	@Override
@@ -29,7 +28,7 @@ public record CheckParam(String key) implements ContextualCondition<CheckParam> 
 
 	@Override
 	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
-		final var lootParamsContext = ctx.get(LycheeContextTypes.LOOT_PARAMS);
+		final var lootParamsContext = ctx.get(LycheeContextType.LOOT_PARAMS);
 		lootParamsContext.initBlockEntityParam();
 		for (LootContextParam<?> param : lootParamsContext.params().keySet()) {
 			if (key.equals(param.getName().getPath()) || key.equals(param.getName().toString())) {

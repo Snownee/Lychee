@@ -36,16 +36,16 @@ public class LycheeContext extends HashMap<LycheeContextType<?>, LycheeContextVa
 
 	@Override
 	public int getContainerSize() {
-		return get(LycheeContextTypes.ITEM).items().size();
+		return get(LycheeContextType.ITEM).items().size();
 	}
 
 	@Override
 	public @NotNull ItemStack getItem(final int index) {
-		return get(LycheeContextTypes.ITEM).items().get(index).get();
+		return get(LycheeContextType.ITEM).items().get(index).get();
 	}
 
 	@Override
 	public void setItem(final int index, final ItemStack stack) {
-		get(LycheeContextTypes.ITEM).items().replace(index, stack);
+		get(LycheeContextType.ITEM).items().replace(index, stack);
 	}
 }

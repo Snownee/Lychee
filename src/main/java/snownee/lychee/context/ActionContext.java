@@ -13,7 +13,6 @@ import snownee.lychee.util.SerializableType;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextType;
-import snownee.lychee.util.context.LycheeContextTypes;
 import snownee.lychee.util.context.LycheeContextValue;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
@@ -38,15 +37,15 @@ public class ActionContext implements LycheeContextValue<ActionContext> {
 	}
 
 	@Override
-	public LycheeContextType<ActionContext> type() {
-		return LycheeContextTypes.ACTION;
+	public LycheeContextType type() {
+		return LycheeContextType.ACTION;
 	}
 
 	public enum State {
 		RUNNING, PAUSED, STOPPED
 	}
 
-	public void run(RecipeHolder<LycheeRecipe> recipe, LycheeContext context) {
+	public void run(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext context) {
 		while (!jobs.isEmpty()) {
 			final var job = jobs.poll();
 			try {
@@ -67,7 +66,7 @@ public class ActionContext implements LycheeContextValue<ActionContext> {
 	}
 
 
-	public static final class Type implements LycheeContextType<ActionContext>,
+	public static final class Type implements LycheeContextType,
 											  SerializableType<ActionContext> {
 		public static final Codec<ActionContext> CODEC = RecordCodecBuilder.create(instance ->
 				instance.group(

@@ -4,13 +4,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
-
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -19,12 +17,11 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.lychee.core.Reference;
-import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextTypes;
+import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.json.JsonPointer;
 
@@ -97,8 +94,8 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 	}
 
 	default void applyPostActions(LycheeContext context, int times) {
-		if (!context.get(LycheeContextTypes.GENERIC).level().isClientSide) {
-			final var actionContext = context.get(LycheeContextTypes.ACTION);
+		if (!context.get(LycheeContextType.GENERIC).level().isClientSide) {
+			final var actionContext = context.get(LycheeContextType.ACTION);
 			actionContext.reset();
 			actionContext.jobs.addAll(postActions().stream().map(it -> new Job(it, times)).toList());
 			actionContext.run(new RecipeHolder<>(id(), this), context);
@@ -106,8 +103,8 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 	}
 
 	default List<BlockPredicate> getBlockInputs() {
-		if (this instanceof BlockKeyRecipe<?> blockKeyRecipe) {
-			return List.of(blockKeyRecipe.getBlock());
+		if (this instanceof WithBlockPredicate<?> blockPredicateRecipe) {
+			return List.of(blockPredicateRecipe.blockPredicate());
 		}
 		return List.of();
 	}

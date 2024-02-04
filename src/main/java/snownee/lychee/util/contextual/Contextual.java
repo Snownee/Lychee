@@ -4,11 +4,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.serialization.Codec;
-
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -78,16 +74,5 @@ public interface Contextual<C extends Contextual<C>> extends RecipeCondition {
 			}
 		}
 		return times;
-	}
-
-	Codec<C> contextualCodec();
-
-	default void fromNetwork(FriendlyByteBuf buf) {
-		conditions().clear();
-		conditions().addAll(buf.readWithCodecTrusted(NbtOps.INSTANCE, ConditionHolder.LIST_CODEC));
-	}
-
-	default void toNetwork(FriendlyByteBuf buf) {
-		buf.writeWithCodec(NbtOps.INSTANCE, ConditionHolder.LIST_CODEC, conditions());
 	}
 }

@@ -19,15 +19,14 @@ import snownee.lychee.util.contextual.ContextualByCommonHolder;
 import snownee.lychee.util.contextual.ContextualCommonHolder;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualConditionTypes;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
-public record Or(ContextualCommonHolder commonHolder) implements ContextualCondition<Or>,
-																 Contextual<Or>,
-																 ContextualByCommonHolder<Or> {
+public record Or(ContextualCommonHolder contextualCommonHolder) implements ContextualCondition<Or>,
+																		   Contextual<Or>,
+																		   ContextualByCommonHolder<Or> {
 	@Override
 	public ContextualConditionType<Or> type() {
-		return ContextualConditionTypes.OR;
+		return ContextualConditionType.OR;
 	}
 
 	@Override
@@ -39,11 +38,6 @@ public record Or(ContextualCommonHolder commonHolder) implements ContextualCondi
 			}
 		}
 		return 0;
-	}
-
-	@Override
-	public Codec<Or> contextualCodec() {
-		return ContextualCommonHolder.CODEC.xmap(Or::new, Or::contextualCommonHolder);
 	}
 
 	@Override
