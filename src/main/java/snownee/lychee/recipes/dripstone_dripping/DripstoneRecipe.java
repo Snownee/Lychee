@@ -28,21 +28,21 @@ import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.util.action.Job;
+import snownee.lychee.action.Break;
+import snownee.lychee.action.Delay;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.contextual.Location;
 import snownee.lychee.core.contextual.Not;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.action.Break;
-import snownee.lychee.action.Delay;
-import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.recipe.ChanceRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.mixin.PointedDripstoneBlockAccess;
+import snownee.lychee.util.action.Job;
+import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>
-		implements BlockKeyRecipe<DripstoneRecipe>, ChanceRecipe {
+    implements BlockInputLycheeRecipe<DripstoneRecipe>, ChanceRecipe {
 
 	private float chance = 1;
 	protected BlockPredicate sourceBlock;
@@ -97,7 +97,7 @@ public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>
 	}
 
 	@Override
-	public BlockPredicate getBlock() {
+	public BlockPredicate blockPredicate() {
 		return targetBlock;
 	}
 

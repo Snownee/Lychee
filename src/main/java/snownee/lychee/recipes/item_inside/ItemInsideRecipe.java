@@ -26,17 +26,17 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.recipes.item_inside.ItemInsideRecipeType.Cache;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.RecipeMatcher;
+import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe>
-		implements BlockKeyRecipe<ItemInsideRecipe> {
+    implements BlockInputLycheeRecipe<ItemInsideRecipe> {
 
 	private int time;
 	protected BlockPredicate block;
@@ -94,7 +94,7 @@ public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe>
 	}
 
 	@Override
-	public BlockPredicate getBlock() {
+	public BlockPredicate blockPredicate() {
 		return block;
 	}
 

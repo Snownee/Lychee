@@ -1,5 +1,15 @@
 package snownee.lychee.compat;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -20,18 +30,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.CustomLightingSettings;
 import snownee.lychee.client.gui.ILightingSettings;
-import snownee.lychee.util.predicates.BlockPredicateExtensions;
-import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
-import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
-
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import snownee.lychee.util.predicates.BlockPredicateExtensions;
+import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class JEIREI {
 
@@ -117,13 +122,13 @@ public class JEIREI {
 		Object2IntMap<Block> blockStateCount = new Object2IntOpenHashMap<>();
 		Map<Block, BlockPredicate> blockPredicateMap = Maps.newHashMap();
 		for (T object : recipes) {
-			BlockKeyRecipe<?> recipe = (BlockKeyRecipe<?>) object;
-			for (Block block : BlockPredicateExtensions.matchedBlocks(recipe.getBlock())) {
+			BlockInputLycheeRecipe<?> recipe = (BlockInputLycheeRecipe<?>) object;
+			for (Block block : BlockPredicateExtensions.matchedBlocks(recipe.blockPredicate())) {
 				if (block.defaultBlockState().isAir()) {
 					continue;
 				}
 				blockStateCount.mergeInt(block, 1, Integer::sum);
-				blockPredicateMap.putIfAbsent(block, recipe.getBlock());
+				blockPredicateMap.putIfAbsent(block, recipe.blockPredicate());
 			}
 		}
 		if (blockStateCount.isEmpty()) {

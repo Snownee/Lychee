@@ -11,12 +11,12 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class BlockExplodingRecipe extends OldLycheeRecipe<BlockExplodingContext>
-		implements BlockKeyRecipe<BlockExplodingRecipe> {
+    implements BlockInputLycheeRecipe<BlockExplodingRecipe> {
 
 	private BlockPredicate block;
 
@@ -30,7 +30,7 @@ public class BlockExplodingRecipe extends OldLycheeRecipe<BlockExplodingContext>
 	}
 
 	@Override
-	public BlockPredicate getBlock() {
+	public BlockPredicate blockPredicate() {
 		return block;
 	}
 

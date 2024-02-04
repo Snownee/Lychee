@@ -8,7 +8,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import snownee.lychee.core.ItemShapelessContext;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.core.recipe.recipe.type.ItemShapelessRecipeType;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.block_crushing.BlockCrushingRecipe;
@@ -26,6 +25,7 @@ import snownee.lychee.recipes.item_inside.ItemInsideRecipeType;
 import snownee.lychee.recipes.lightning_channeling.LightningChannelingRecipe;
 import snownee.lychee.recipes.random_block_ticking.RandomBlockTickingRecipe;
 import snownee.lychee.recipes.random_block_ticking.RandomBlockTickingRecipeType;
+import snownee.lychee.util.recipe.BlockInputLycheeRecipeType;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public final class RecipeTypes {
@@ -59,14 +59,15 @@ public final class RecipeTypes {
 			ItemInsideRecipe.class,
 			null
 	));
-	public static final BlockKeyRecipeType<LycheeRecipeContext, BlockInteractingRecipe> BLOCK_INTERACTING =
-			register(new BlockKeyRecipeType<>(
+	public static final BlockInputLycheeRecipeType<LycheeRecipeContext, BlockInteractingRecipe>
+			BLOCK_INTERACTING =
+			register(new BlockInputLycheeRecipeType<>(
 					"block_interacting",
 					BlockInteractingRecipe.class,
 					LycheeLootContextParamSets.BLOCK_INTERACTION
 			));
-	public static final BlockKeyRecipeType<LycheeRecipeContext, BlockClickingRecipe> BLOCK_CLICKING =
-			register(new BlockKeyRecipeType<>(
+	public static final BlockInputLycheeRecipeType<LycheeRecipeContext, BlockClickingRecipe> BLOCK_CLICKING =
+			register(new BlockInputLycheeRecipeType<>(
 					"block_clicking",
 					BlockClickingRecipe.class,
 					LycheeLootContextParamSets.BLOCK_INTERACTION
@@ -82,8 +83,8 @@ public final class RecipeTypes {
 			register(new ItemShapelessRecipeType<>("lightning_channeling", LightningChannelingRecipe.class, null));
 	public static final ItemShapelessRecipeType<ItemShapelessContext, ItemExplodingRecipe> ITEM_EXPLODING =
 			register(new ItemShapelessRecipeType<>("item_exploding", ItemExplodingRecipe.class, null));
-	public static final BlockKeyRecipeType<BlockExplodingContext, BlockExplodingRecipe> BLOCK_EXPLODING =
-			register(new BlockKeyRecipeType<>(
+	public static final BlockInputLycheeRecipeType<BlockExplodingContext, BlockExplodingRecipe> BLOCK_EXPLODING =
+			register(new BlockInputLycheeRecipeType<>(
 					"block_exploding",
 					BlockExplodingRecipe.class,
 					LycheeLootContextParamSets.BLOCK_ONLY

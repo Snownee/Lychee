@@ -1,5 +1,7 @@
 package snownee.lychee.recipes.random_block_ticking;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 
@@ -7,20 +9,17 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-
-import org.jetbrains.annotations.NotNull;
-
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.recipe.ChanceRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class RandomBlockTickingRecipe extends OldLycheeRecipe<LycheeRecipeContext>
-		implements BlockKeyRecipe<RandomBlockTickingRecipe>, ChanceRecipe {
+    implements BlockInputLycheeRecipe<RandomBlockTickingRecipe>, ChanceRecipe {
 
 	protected float chance = 1;
 	protected BlockPredicate block;
@@ -44,7 +43,7 @@ public class RandomBlockTickingRecipe extends OldLycheeRecipe<LycheeRecipeContex
 	}
 
 	@Override
-	public BlockPredicate getBlock() {
+	public BlockPredicate blockPredicate() {
 		return block;
 	}
 

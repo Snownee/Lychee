@@ -7,8 +7,6 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import net.minecraft.world.item.crafting.Recipe;
-
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +25,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.Recipe;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.Reference;
@@ -34,6 +33,7 @@ import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.json.JsonPatch;
 import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
 
 public interface LycheeRecipe<C extends LycheeRecipeContext> extends Recipe<C> {
 	JsonPointer ITEM_IN = new JsonPointer("/item_in");
@@ -91,8 +91,8 @@ public interface LycheeRecipe<C extends LycheeRecipeContext> extends Recipe<C> {
 	}
 
 	default List<BlockPredicate> getBlockInputs() {
-		if (this instanceof BlockKeyRecipe<?> blockKeyRecipe) {
-			return List.of(blockKeyRecipe.getBlock());
+		if (this instanceof BlockInputLycheeRecipe<?> blockPredicateRecipe) {
+			return List.of(blockPredicateRecipe.blockPredicate());
 		}
 		return List.of();
 	}

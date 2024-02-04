@@ -24,15 +24,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.recipe.recipe.BlockKeyRecipe;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.util.RecipeMatcher;
+import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class BlockCrushingRecipe extends OldLycheeRecipe<BlockCrushingContext>
-		implements BlockKeyRecipe<BlockCrushingRecipe> {
+		implements BlockInputLycheeRecipe<BlockCrushingRecipe> {
 
 	public static final BlockPredicate ANVIL = BlockPredicate.Builder.block().of(BlockTags.ANVIL).build();
 
@@ -105,7 +105,7 @@ public class BlockCrushingRecipe extends OldLycheeRecipe<BlockCrushingContext>
 	}
 
 	@Override
-	public BlockPredicate getBlock() {
+	public BlockPredicate blockPredicate() {
 		return fallingBlock;
 	}
 

@@ -12,11 +12,12 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.kiwi.loader.Platform;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.recipe.type.BlockKeyRecipeType;
 import snownee.lychee.mixin.ChunkMapAccess;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.recipe.BlockInputLycheeRecipeType;
 
-public class RandomBlockTickingRecipeType extends BlockKeyRecipeType<LycheeRecipeContext, RandomBlockTickingRecipe> {
+public class RandomBlockTickingRecipeType extends
+										  BlockInputLycheeRecipeType<LycheeRecipeContext, RandomBlockTickingRecipe> {
 
 	public RandomBlockTickingRecipeType(
 			String name,
