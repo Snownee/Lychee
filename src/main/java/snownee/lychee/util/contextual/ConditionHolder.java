@@ -16,18 +16,12 @@ public record ConditionHolder<T extends ContextualCondition<T>>(
 		ContextualCondition<T> condition, boolean secret, Optional<Component> description
 ) {
 	public static final Codec<ConditionHolder<?>> CODEC =
-			RecordCodecBuilder.create(instance -> instance
-					.group(
-							ContextualCondition.CODEC
-									.fieldOf("condition")
-									.forGetter(ConditionHolder::condition),
-							Codec.BOOL.fieldOf("secret")
-									  .orElse(false)
-									  .forGetter(ConditionHolder::secret),
-							ComponentSerialization.CODEC
-									.optionalFieldOf(
-											"description")
-									.forGetter(ConditionHolder::description)
+			RecordCodecBuilder.create(instance ->
+					instance.group(
+							ContextualCondition.CODEC.fieldOf("condition").forGetter(ConditionHolder::condition),
+							Codec.BOOL.fieldOf("secret").orElse(false).forGetter(ConditionHolder::secret),
+							ComponentSerialization.CODEC.optionalFieldOf("description")
+														.forGetter(ConditionHolder::description)
 					).apply(instance, ConditionHolder::new));
 
 	public static final Codec<List<ConditionHolder<?>>> LIST_CODEC = Codec.list(CODEC);

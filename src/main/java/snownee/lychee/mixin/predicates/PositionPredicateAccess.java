@@ -9,7 +9,7 @@ import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 
 @Mixin(LocationPredicate.PositionPredicate.class)
-public interface LocationPredicate$PositionPredicateAccessor {
+public interface PositionPredicateAccess {
 	@Invoker("of")
 	static Optional<LocationPredicate.PositionPredicate> of(
 			MinMaxBounds.Doubles x,

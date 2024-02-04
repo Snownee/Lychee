@@ -31,11 +31,6 @@ public interface PostAction<Action extends PostAction<Action>> extends Contextua
 
 	PostActionType<Action> type();
 
-	@Override
-	default Codec<Action> contextualCodec() {
-		return type().codec();
-	}
-
 	default void validate(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipe.NBTPatchContext patchContext) {}
 
 	void apply(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times);
@@ -58,9 +53,10 @@ public interface PostAction<Action extends PostAction<Action>> extends Contextua
 
 	@Override
 	default String toJsonString() {
-		return GsonHelper.toStableString(contextualCodec().encodeStart(JsonOps.INSTANCE, (Action) this)
-														  .get()
-														  .left()
-														  .orElseThrow());
+		return GsonHelper.toStableString(type().codec()
+											   .encodeStart(JsonOps.INSTANCE, (Action) this)
+											   .get()
+											   .left()
+											   .orElseThrow());
 	}
 }

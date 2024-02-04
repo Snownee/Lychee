@@ -43,8 +43,8 @@
         "action.MarkerMixin",
         "fabric.ResourceManagerHelperImplMixin",
         "fabric.ShapedRecipeMixin",
-        "predicates.LocationCheckAccessor",
-        "predicates.LocationPredicate$PositionPredicateAccessor",
+        "predicates.LocationCheckAccess",
+      "predicates.PositionPredicateAccess",
         "rei.DefaultCraftingDisplayMixin"
     ],
     "client": [

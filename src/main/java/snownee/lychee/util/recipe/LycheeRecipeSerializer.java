@@ -2,10 +2,12 @@ package snownee.lychee.util.recipe;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.NotNull;
 
+import com.google.common.collect.Lists;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -35,13 +37,17 @@ public interface LycheeRecipeSerializer<T extends LycheeRecipe<T>> extends Recip
 
 	RecordCodecBuilder<LycheeRecipe<?>, List<ConditionHolder<?>>> CONDITIONS_CODEC =
 			ConditionHolder.LIST_CODEC.fieldOf("contextual")
-									  .orElse(Lists.newArrayList())
+									  .orElseGet(Lists::newArrayList)
 									  .forGetter(LycheeRecipe::conditions);
 
-	RecordCodecBuilder<LycheeRecipe<?>, List<PostAction<?>>> POST_ACTIONS_CODEC =
-			Codec.list(PostAction.CODEC)
+	RecordCodecBuilder<LycheeRecipe<?>, List<? extends PostAction<?>>> POST_ACTIONS_CODEC =
+			Codec.either(Codec.list(PostAction.CODEC), PostAction.CODEC)
+				 .xmap(
+						 it -> it.map(Function.identity(), Lists::newArrayList),
+						 it -> Either.left((List<PostAction<?>>) it)
+				 )
 				 .fieldOf("post")
-				 .orElse(Lists.newArrayList())
+				 .orElseGet(Lists::newArrayList)
 				 .forGetter(LycheeRecipe::postActions);
 
 	RecordCodecBuilder<LycheeRecipe<?>, MinMaxBounds.Ints> MAX_REPEATS_CODEC =
@@ -69,8 +75,8 @@ public interface LycheeRecipeSerializer<T extends LycheeRecipe<T>> extends Recip
 		return (RecordCodecBuilder<T, List<ConditionHolder<?>>>) CONDITIONS_CODEC;
 	}
 
-	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, List<PostAction<?>>> postActionsCodec() {
-		return (RecordCodecBuilder<T, List<PostAction<?>>>) POST_ACTIONS_CODEC;
+	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, List<? extends PostAction<?>>> postActionsCodec() {
+		return (RecordCodecBuilder<T, List<? extends PostAction<?>>>) POST_ACTIONS_CODEC;
 	}
 
 	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, MinMaxBounds.Ints> maxRepeatsCodec() {

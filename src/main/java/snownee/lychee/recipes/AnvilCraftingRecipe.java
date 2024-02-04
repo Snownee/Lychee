@@ -2,10 +2,11 @@ package snownee.lychee.recipes;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.NotNull;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
@@ -17,6 +18,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -46,7 +48,7 @@ public record AnvilCraftingRecipe(
 		int levelCost,
 		int materialCost,
 		ItemStack output,
-		List<PostAction<?>> assemblingActions
+		List<? extends PostAction<?>> assemblingActions
 ) implements LycheeRecipe<AnvilCraftingRecipe>,
 			 LycheeRecipeByCommonHolder<AnvilCraftingRecipe>,
 			 Contextual<AnvilCraftingRecipe>,
@@ -142,17 +144,16 @@ public record AnvilCraftingRecipe(
 								 return it.left().orElseThrow();
 							 }, Either::left)
 							 .forGetter(AnvilCraftingRecipe::input),
-						Codec.list(PostAction.CODEC)
+						Codec.either(Codec.list(PostAction.CODEC), PostAction.CODEC)
+							 .xmap(
+									 it -> it.map(Function.identity(), Lists::newArrayList),
+									 it -> Either.left((List<PostAction<?>>) it)
+							 )
 							 .fieldOf("assembling")
-							 .orElse(Lists.newArrayList())
+							 .orElseGet(Lists::newArrayList)
 							 .forGetter(AnvilCraftingRecipe::assemblingActions),
 						ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
-						Codec.INT.fieldOf("level_cost").flatXmap(it -> {
-							if (it <= 0) {
-								return DataResult.error(() -> "level_cost must be greater than 0");
-							}
-							return DataResult.success(it);
-						}, it -> {
+						ExtraCodecs.validate(Codec.INT.fieldOf("level_cost"), it -> {
 							if (it <= 0) {
 								return DataResult.error(() -> "level_cost must be greater than 0");
 							}
@@ -175,10 +176,10 @@ public record AnvilCraftingRecipe(
 			Optional<String> comment,
 			String group,
 			List<ConditionHolder<?>> conditions,
-			List<PostAction<?>> postActions,
+			List<? extends PostAction<?>> postActions,
 			MinMaxBounds.Ints maxRepeats,
 			Pair<Ingredient, Ingredient> input,
-			List<PostAction<?>> assembling,
+			List<? extends PostAction<?>> assembling,
 			ItemStack output,
 			int levelCost,
 			int materialCost

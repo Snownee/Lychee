@@ -11,6 +11,6 @@ public record LycheeRecipeCommonHolder(
 		boolean ghost,
 		Optional<String> comment,
 		String group,
-		List<PostAction<?>> postActions,
+		List<? extends PostAction<?>> postActions,
 		MinMaxBounds.Ints maxRepeats
 ) {}

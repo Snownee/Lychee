@@ -14,7 +14,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
-import snownee.lychee.mixin.predicates.LocationCheckAccessor;
+import snownee.lychee.mixin.predicates.LocationCheckAccess;
 
 /**
  * LootItemCondition that checks the {@link LootContextParams.ORIGIN} position against a {@link LocationPredicate}
@@ -23,7 +23,7 @@ import snownee.lychee.mixin.predicates.LocationCheckAccessor;
 public record LocationCheck(Optional<LocationPredicate> predicate, BlockPos offset) implements LootItemCondition {
 	public static final Codec<LocationCheck> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			ExtraCodecs.strictOptionalField(LocationPredicate.CODEC, "predicate").forGetter(LocationCheck::predicate),
-			LocationCheckAccessor.getOffsetCodec().forGetter(LocationCheck::offset)
+			LocationCheckAccess.getOffsetCodec().forGetter(LocationCheck::offset)
 	).apply(instance, LocationCheck::new));
 
 	@Override

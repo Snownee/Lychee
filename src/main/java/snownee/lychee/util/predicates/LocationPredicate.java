@@ -21,7 +21,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import snownee.lychee.mixin.predicates.LocationPredicate$PositionPredicateAccessor;
+import snownee.lychee.mixin.predicates.PositionPredicateAccess;
 import snownee.lychee.util.TagOrElementHolder;
 
 public record LocationPredicate(
@@ -238,7 +238,7 @@ public record LocationPredicate(
 
 		public LocationPredicate build() {
 			return new LocationPredicate(
-					LocationPredicate$PositionPredicateAccessor.of(x, y, z),
+					PositionPredicateAccess.of(x, y, z),
 					biome,
 					structure,
 					dimension,

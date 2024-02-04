@@ -24,6 +24,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+/**
+ * This is mainly for the faster {@link BlockPredicate#unsafeMatches} and more codecs.
+ * @param tag
+ * @param blocks
+ * @param properties
+ * @param nbt
+ */
 public record BlockPredicate(
 		Optional<TagKey<Block>> tag,
 		Optional<HolderSet<Block>> blocks,

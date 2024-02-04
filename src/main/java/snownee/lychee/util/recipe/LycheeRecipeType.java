@@ -3,11 +3,8 @@ package snownee.lychee.util.recipe;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
-
-import com.google.common.base.Suppliers;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -36,7 +33,7 @@ public class LycheeRecipeType<T extends LycheeRecipe<T>> implements RecipeType<T
 	public boolean canPreventConsumeInputs;
 	public boolean hasStandaloneCategory = true;
 
-	private Supplier<Boolean> isEmpty = Suppliers.memoize(() -> recipes.isEmpty());
+	private boolean isEmpty = true;
 
 	public static final Component DEFAULT_PREVENT_TIP =
 			Component.translatable("tip.lychee.preventDefault.default").withStyle(ChatFormatting.YELLOW);
@@ -75,11 +72,11 @@ public class LycheeRecipeType<T extends LycheeRecipe<T>> implements RecipeType<T
 	}
 
 	public void updateEmptyState() {
-		isEmpty = Suppliers.memoize(() -> recipes.isEmpty());
+		isEmpty = recipes.isEmpty();
 	}
 
 	public boolean isEmpty() {
-		return isEmpty.get();
+		return isEmpty;
 	}
 
 	public void refreshCache() {

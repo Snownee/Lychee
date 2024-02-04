@@ -2,16 +2,11 @@ package snownee.lychee.util.contextual;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.LycheeRegistries;
@@ -28,7 +23,7 @@ public interface ContextualCondition<T extends ContextualCondition<T>> extends R
 
 	@Override
 	default String getDescriptionId() {
-		return DESCRIPTION_ID_CACHE.getUnchecked(type());
+		return CommonProxy.makeDescriptionId("contextual", LycheeRegistries.CONTEXTUAL.getKey(type()));
 	}
 
 	@Override

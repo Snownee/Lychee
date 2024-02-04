@@ -11,7 +11,7 @@ public record ContextualImpl(ContextualCommonHolder contextualCommonHolder)
 			RecordCodecBuilder.create(instance -> instance
 					.group(ContextualCommonHolder.CODEC
 							.fieldOf("conditions")
-							.orElse(new ContextualCommonHolder())
+							.orElseGet(ContextualCommonHolder::new)
 							.forGetter(ContextualImpl::contextualCommonHolder))
 					.apply(instance, ContextualImpl::new));
 }

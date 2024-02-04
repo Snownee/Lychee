@@ -1,7 +1,7 @@
 package snownee.lychee.util.context;
 
-import java.util.HashMap;
-import java.util.function.Function;
+import java.util.IdentityHashMap;
+import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,8 @@ import snownee.lychee.util.KeyDispatchedMapCodec;
 import snownee.lychee.util.SerializableType;
 
 @SuppressWarnings("unchecked")
-public class LycheeContext extends HashMap<LycheeContextType<?>, LycheeContextValue<?>> implements DummyContainer {
+public class LycheeContext implements DummyContainer {
+	private final IdentityHashMap<LycheeContextType<?>, LycheeContextValue<?>> context = new IdentityHashMap<>();
 	public static final Codec<LycheeContext> CODEC =
 			new KeyDispatchedMapCodec<LycheeContextType<?>, LycheeContextValue<?>>(
 					LycheeRegistries.CONTEXT.byNameCodec(),
@@ -28,10 +29,22 @@ public class LycheeContext extends HashMap<LycheeContextType<?>, LycheeContextVa
 				final var context = new LycheeContext();
 				context.putAll(it);
 				return context;
-			}, Function.identity());
+			}, LycheeContext::asMap);
 
 	public <T extends LycheeContextValue<T>> T get(LycheeContextType<T> type) {
-		return (T) super.get(type);
+		return (T) context.get(type);
+	}
+
+	public <T extends LycheeContextValue<T>> T put(LycheeContextType<T> key, T value) {
+		return (T) context.put(key, value);
+	}
+
+	public void putAll(Map<? extends LycheeContextType<?>, ? extends LycheeContextValue<?>> type) {
+		context.putAll(type);
+	}
+
+	public Map<LycheeContextType<?>, LycheeContextValue<?>> asMap() {
+		return Map.copyOf(context);
 	}
 
 	@Override

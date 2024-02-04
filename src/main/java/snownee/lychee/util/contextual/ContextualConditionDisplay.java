@@ -3,12 +3,7 @@ package snownee.lychee.util.contextual;
 import java.util.List;
 import java.util.Locale;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
@@ -16,19 +11,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import snownee.lychee.LycheeRegistries;
-import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
 
 public interface ContextualConditionDisplay {
-	LoadingCache<ContextualConditionType<?>, String> DESCRIPTION_ID_CACHE =
-			CacheBuilder.newBuilder().build(new CacheLoader<>() {
-				@Override
-				public @NotNull String load(@NotNull ContextualConditionType<?> key) {
-					return CommonProxy.makeDescriptionId("contextual", LycheeRegistries.CONTEXTUAL.getKey(key));
-				}
-			});
-
 	static void appendToTooltips(
 			List<Component> tooltips,
 			TriState result,

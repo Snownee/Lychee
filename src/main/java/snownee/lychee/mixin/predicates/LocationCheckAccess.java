@@ -9,7 +9,7 @@ import net.minecraft.core.BlockPos;
 import snownee.lychee.util.predicates.LocationCheck;
 
 @Mixin(LocationCheck.class)
-public interface LocationCheckAccessor {
+public interface LocationCheckAccess {
 	@Accessor
 	static MapCodec<BlockPos> getOffsetCodec() {
 		throw new IllegalStateException();
