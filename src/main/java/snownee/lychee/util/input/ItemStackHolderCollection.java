@@ -10,8 +10,9 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextType;
 
 public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemStackHolder> {
 
@@ -91,14 +92,14 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 
 	public static class Inventory extends ItemStackHolderCollection {
 
-		private final LycheeRecipeContext context;
+		private final LycheeContext context;
 
-		public Inventory(LycheeRecipeContext context, ItemStackHolder.Direct... holders) {
+		public Inventory(LycheeContext context, ItemStackHolder.Direct... holders) {
 			super(holders);
 			this.context = context;
 		}
 
-		public static ItemStackHolderCollection of(LycheeRecipeContext ctx, ItemStack... items) {
+		public static ItemStackHolderCollection of(LycheeContext ctx, ItemStack... items) {
 			return new Inventory(
 					ctx,
 					Stream.of(items).map(ItemStackHolder.Direct::new).toArray(ItemStackHolder.Direct[]::new)
@@ -107,16 +108,19 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 
 		@Override
 		public int postApply(boolean consumeInputs, int times) {
-			final var entity = context.getOrNull(LootContextParams.THIS_ENTITY);
+			final var lootParamsContext = context.get(LycheeContextType.LOOT_PARAMS);
+			final var genericContext = context.get(LycheeContextType.GENERIC);
+			final var entity = lootParamsContext.getOrNull(LootContextParams.THIS_ENTITY);
 			Player player = null;
 			if (entity instanceof Player playerEntity) player = playerEntity;
-			final var pos = context.getOrNull(LootContextParams.ORIGIN);
+			final var pos = lootParamsContext.getOrNull(LootContextParams.ORIGIN);
+
 			for (ItemStack stack : stacksNeedHandle) {
 				if (player != null) {
 					if (!player.addItem(stack))
 						player.drop(stack, false);
 				} else if (pos != null) {
-					CommonProxy.dropItemStack(context.level(), pos.x, pos.y, pos.z, stack, null);
+					CommonProxy.dropItemStack(genericContext.level(), pos.x, pos.y, pos.z, stack, null);
 				}
 			}
 			return consumeInputs ? consumeInputs(times) : 0;

@@ -1,6 +1,5 @@
 package snownee.lychee.util.recipe;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -29,11 +28,13 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.context.ItemContext;
 import snownee.lychee.contextual.Chance;
 import snownee.lychee.core.recipe.recipe.ChanceRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
@@ -91,41 +92,49 @@ public class BlockInputLycheeRecipeType<T extends BlockInputLycheeRecipe<T>> ext
 			InteractionHand hand,
 			BlockPos pos,
 			Vec3 origin,
-			LycheeRecipeContext.Builder<C> ctxBuilder
+			LycheeContext context
 	) {
 		if (isEmpty()) {
 			return Optional.empty();
 		}
-		Level level = player.level();
-		BlockState blockstate = level.getBlockState(pos);
-		Collection<T> recipes = recipesByBlock.getOrDefault(blockstate.getBlock(), List.of());
+		final var level = player.level();
+		final var blockstate = level.getBlockState(pos);
+		final var recipes = recipesByBlock.getOrDefault(blockstate.getBlock(), List.of());
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
 			return Optional.empty();
 		}
-		ctxBuilder.withParameter(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
-		ctxBuilder.withParameter(LootContextParams.THIS_ENTITY, player);
-		ctxBuilder.withParameter(LootContextParams.BLOCK_STATE, blockstate);
-		ctxBuilder.withParameter(LycheeLootContextParams.BLOCK_POS, pos);
-		C ctx = ctxBuilder.create(contextParamSet);
-		ItemStack stack = player.getItemInHand(hand);
-		ItemStack otherStack = player.getItemInHand(
+		final var lootParamsContext = context.get(LycheeContextType.LOOT_PARAMS);
+		lootParamsContext.params().put(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
+		lootParamsContext.params().put(LootContextParams.THIS_ENTITY, player);
+		lootParamsContext.params().put(LootContextParams.BLOCK_STATE, blockstate);
+		lootParamsContext.params().put(LycheeLootContextParams.BLOCK_POS, pos);
+		lootParamsContext.validate(contextParamSet);
+		final var stack = player.getItemInHand(hand);
+		final var otherStack = player.getItemInHand(
 				hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
-		ctx.itemHolders = ItemStackHolderCollection.Inventory.of(ctx, stack, otherStack);
-		Iterable<T> iterable = Iterables.concat(recipes, anyBlockRecipes);
-		for (T recipe : iterable) {
-			if (tryMatch(recipe, level, ctx).isPresent()) {
-				if (!level.isClientSide && recipe.tickOrApply(ctx)) {
-					int times = Math.min(ctx.getItem(0).getCount(), ctx.getItem(1).getCount());
-					times = recipe.getRandomRepeats(Math.max(1, times), ctx);
-					if (recipe.getIngredients().size() == 1) {
-						ctx.itemHolders.ignoreConsumptionFlags.set(1);
+
+		context.put(
+				LycheeContextType.ITEM,
+				new ItemContext(ItemStackHolderCollection.Inventory.of(context, stack, otherStack))
+		);
+		final var itemContext = context.get(LycheeContextType.ITEM);
+		final var actionContext = context.get(LycheeContextType.ACTION);
+
+		final var iterable = Iterables.concat(recipes, anyBlockRecipes);
+		for (final var recipe : iterable) {
+			if (tryMatch(recipe, level, context).isPresent()) {
+				if (!level.isClientSide && recipe.value().tickOrApply(context)) {
+					int times = Math.min(context.getItem(0).getCount(), context.getItem(1).getCount());
+					times = recipe.value().getRandomRepeats(Math.max(1, times), context);
+					if (recipe.value().getIngredients().size() == 1) {
+						itemContext.items().get(1).setIgnoreConsumption(true);
 					}
-					recipe.applyPostActions(ctx, times);
-					ctx.itemHolders.postApply(ctx.runtime.doDefault, times);
-					player.setItemInHand(hand, ctx.getItem(0));
+					recipe.value().applyPostActions(context, times);
+					itemContext.items().postApply(!actionContext.avoidDefault, times);
+					player.setItemInHand(hand, context.getItem(0));
 					player.setItemInHand(
 							hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND,
-							ctx.getItem(1)
+							context.getItem(1)
 					);
 				}
 				return Optional.of(recipe);

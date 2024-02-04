@@ -6,11 +6,14 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.collect.Sets;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
@@ -20,6 +23,11 @@ import snownee.lychee.util.context.LycheeContextValue;
 
 public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, Object> params)
 		implements LycheeContextValue<LootParamsContext> {
+	@Override
+	public LycheeContextType<LootParamsContext> type() {
+		return LycheeContextType.LOOT_PARAMS;
+	}
+
 	/**
 	 * Init {@link LootContextParams.BLOCK_ENTITY} from current {@link LycheeLootContextParams.BLOCK_POS} and
 	 * {@link LootContextParams.ORIGIN}
@@ -91,8 +99,10 @@ public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, 
 		return builder.create(Optional.empty());
 	}
 
-	@Override
-	public LycheeContextType<LootParamsContext> type() {
-		return LycheeContextType.LOOT_PARAMS;
+	public void validate(LootContextParamSet paramSet) {
+		final var difference = Sets.difference(paramSet.getRequired(), params.keySet());
+		if (!difference.isEmpty()) {
+			throw new IllegalArgumentException("Missing required parameters: " + set1);
+		}
 	}
 }

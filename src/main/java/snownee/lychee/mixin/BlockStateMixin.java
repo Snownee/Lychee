@@ -1,11 +1,11 @@
 package snownee.lychee.mixin;
 
-import java.util.function.Supplier;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.google.common.base.Supplier;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -20,6 +20,7 @@ import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.recipes.random_block_ticking.RandomlyTickable;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.context.LycheeContext;
 
 @Mixin(BlockStateBase.class)
 public class BlockStateMixin {
@@ -30,7 +31,7 @@ public class BlockStateMixin {
 
 		RandomlyTickable block = (RandomlyTickable) state.getBlock();
 		if (block.lychee$isTickable()) {
-			Supplier<LycheeRecipeContext> ctxSupplier = () -> {
+			final Supplier<LycheeContext> ctxSupplier = () -> {
 				var builder = new LycheeRecipeContext.Builder<>(serverLevel);
 				builder.withRandom(randomSource);
 				builder.withParameter(LootContextParams.BLOCK_STATE, state);
@@ -38,7 +39,7 @@ public class BlockStateMixin {
 				builder.withParameter(LycheeLootContextParams.BLOCK_POS, blockPos);
 				return builder.create(RecipeTypes.RANDOM_BLOCK_TICKING.contextParamSet);
 			};
-			var result = RecipeTypes.RANDOM_BLOCK_TICKING.process(serverLevel, state, ctxSupplier);
+			final var result = RecipeTypes.RANDOM_BLOCK_TICKING.process(serverLevel, state, ctxSupplier);
 			if (result != null && !result.getFirst().runtime.doDefault) {
 				ci.cancel();
 			}
