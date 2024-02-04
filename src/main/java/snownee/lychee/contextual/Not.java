@@ -7,7 +7,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
@@ -23,7 +22,7 @@ public record Not(ContextualCondition<?> condition) implements ContextualConditi
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return times - condition.test(recipe, ctx, times);
 	}
 

@@ -2,12 +2,13 @@ package snownee.lychee.context;
 
 import java.util.Queue;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.Queues;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.Lychee;
 import snownee.lychee.util.SerializableType;
 import snownee.lychee.util.action.Job;
@@ -45,7 +46,7 @@ public class ActionContext implements LycheeContextValue<ActionContext> {
 		RUNNING, PAUSED, STOPPED
 	}
 
-	public void run(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext context) {
+	public void run(@Nullable LycheeRecipe<?> recipe, LycheeContext context) {
 		while (!jobs.isEmpty()) {
 			final var job = jobs.poll();
 			try {

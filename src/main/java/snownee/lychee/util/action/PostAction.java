@@ -3,12 +3,13 @@ package snownee.lychee.util.action;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
@@ -31,9 +32,9 @@ public interface PostAction<Action extends PostAction<Action>> extends Contextua
 
 	PostActionType<Action> type();
 
-	default void validate(RecipeHolder<LycheeRecipe<?>> recipe, LycheeRecipe.NBTPatchContext patchContext) {}
+	default void validate(@Nullable LycheeRecipe<?> recipe, LycheeRecipe.NBTPatchContext patchContext) {}
 
-	void apply(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times);
+	void apply(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times);
 
 	@Override
 	default Component getDisplayName() {
@@ -47,9 +48,9 @@ public interface PostAction<Action extends PostAction<Action>> extends Contextua
 		return true;
 	}
 
-	default void getUsedPointers(RecipeHolder<LycheeRecipe<?>> recipe, Consumer<JsonPointer> consumer) {}
+	default void getUsedPointers(@Nullable LycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {}
 
-	default void onFailure(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {}
+	default void onFailure(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {}
 
 	@Override
 	default String toJsonString() {

@@ -12,7 +12,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
@@ -30,7 +29,7 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return difficulties.contains(ctx.get(LycheeContextType.GENERIC).level().getDifficulty()) ? times : 0;
 	}
 

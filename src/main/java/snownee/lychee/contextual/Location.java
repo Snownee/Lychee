@@ -22,7 +22,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -62,7 +61,7 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		final var genericContext = ctx.get(LycheeContextType.GENERIC);
 		final var lootParamsContext = ctx.get(LycheeContextType.LOOT_PARAMS);
 		if (genericContext.level().isClientSide) {

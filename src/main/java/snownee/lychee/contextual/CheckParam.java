@@ -1,11 +1,12 @@
 package snownee.lychee.contextual;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
@@ -27,7 +28,7 @@ public record CheckParam(String key) implements ContextualCondition<CheckParam> 
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		final var lootParamsContext = ctx.get(LycheeContextType.LOOT_PARAMS);
 		lootParamsContext.initBlockEntityParam();
 		for (LootContextParam<?> param : lootParamsContext.params().keySet()) {

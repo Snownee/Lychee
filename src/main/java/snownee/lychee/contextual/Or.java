@@ -9,7 +9,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
@@ -30,7 +29,7 @@ public record Or(ContextualCommonHolder contextualCommonHolder) implements Conte
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		for (ConditionHolder<?> condition : conditions()) {
 			int result = condition.condition().test(recipe, ctx, times);
 			if (result > 0) {

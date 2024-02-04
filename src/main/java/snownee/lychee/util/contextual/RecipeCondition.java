@@ -1,6 +1,7 @@
 package snownee.lychee.util.contextual;
 
-import net.minecraft.world.item.crafting.RecipeHolder;
+import org.jetbrains.annotations.Nullable;
+
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
@@ -12,5 +13,5 @@ public interface RecipeCondition {
 	 *
 	 * @return Executable time after condition
 	 */
-	int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times);
+	int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times);
 }

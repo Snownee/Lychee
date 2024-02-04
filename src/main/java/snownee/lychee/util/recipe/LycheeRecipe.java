@@ -1,7 +1,6 @@
 package snownee.lychee.util.recipe;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
@@ -14,11 +13,10 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import snownee.kiwi.util.Util;
 import snownee.lychee.core.Reference;
-import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
@@ -36,11 +34,10 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 	JsonPointer POST_POINTER = new JsonPointer("/post");
 
 	default ResourceLocation id() {
-		//noinspection SimplifyStreamApiCallChains
-		return CommonProxy.recipes(getType())
+		return Util.getRecipes(getType())
 						  .stream()
 						  .filter(it -> it.value().equals(this))
-						  .collect(Collectors.reducing((a, b) -> null))
+						  .findFirst()
 						  .orElseThrow()
 						  .id();
 	}
@@ -99,7 +96,7 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 			final var actionContext = context.get(LycheeContextType.ACTION);
 			actionContext.reset();
 			actionContext.jobs.addAll(postActions().stream().map(it -> new Job(it, times)).toList());
-			actionContext.run(new RecipeHolder<>(id(), this), context);
+			actionContext.run(this, context);
 		}
 	}
 

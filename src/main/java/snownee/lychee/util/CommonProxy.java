@@ -1,6 +1,5 @@
 package snownee.lychee.util;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -13,16 +12,13 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 
-import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -42,18 +38,14 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
-import net.minecraft.world.Container;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
@@ -63,8 +55,8 @@ import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.Mod;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.KEvent;
+import snownee.kiwi.util.Util;
 import snownee.lychee.Lychee;
-import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeSerializers;
@@ -74,7 +66,6 @@ import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.compat.fabric_recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.mixin.RecipeManagerAccess;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.recipes.interaction.InteractionRecipeMod;
 import snownee.lychee.util.action.PostActionTypes;
@@ -106,7 +97,6 @@ public class CommonProxy implements ModInitializer {
 	);
 	private static final Random RANDOM = new Random();
 	public static boolean hasDFLib = Platform.isModLoaded("dripstone_fluid_lib");
-	private static RecipeManager recipeManager;
 
 	public static void dropItemStack(
 			Level pLevel,
@@ -209,30 +199,13 @@ public class CommonProxy implements ModInitializer {
 		buf.writeVarInt(registry.getId(entry));
 	}
 
-	public static RecipeManager recipeManager() {
-		if (recipeManager == null && FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-			if (LycheeConfig.debug) {
-				Lychee.LOGGER.trace("Early loading recipes..");
-			}
-			recipeManager = Minecraft.getInstance().getConnection().getRecipeManager();
-		}
-		return recipeManager;
-	}
-
-	public static void setRecipeManager(RecipeManager recipeManager) {
-		CommonProxy.recipeManager = recipeManager;
-		if (LycheeConfig.debug) {
-			Lychee.LOGGER.trace("Setting recipe manager..");
-		}
-	}
-
 	@Nullable
 	public static RecipeHolder<?> recipe(ResourceLocation id) {
-		return recipeManager().byKey(id).orElse(null);
-	}
-
-	public static <C extends Container, T extends Recipe<C>> Collection<RecipeHolder<T>> recipes(RecipeType<T> type) {
-		return ((RecipeManagerAccess) recipeManager()).callByType(type).values();
+		RecipeManager manager = Util.getRecipeManager();
+		if (manager == null) {
+			return null;
+		}
+		return manager.byKey(id).orElse(null);
 	}
 
 	// see Entity.getOnPos

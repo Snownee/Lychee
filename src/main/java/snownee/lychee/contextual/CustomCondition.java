@@ -16,7 +16,6 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
@@ -48,7 +47,7 @@ public class CustomCondition implements ContextualCondition<CustomCondition> {
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		if (testFunc != null) {
 			return testFunc.test(recipe, ctx, times);
 		}

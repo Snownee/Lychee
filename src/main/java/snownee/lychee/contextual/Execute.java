@@ -1,6 +1,7 @@
 package snownee.lychee.contextual;
 
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.jetbrains.annotations.Nullable;
 
 import com.mojang.brigadier.ParseResults;
 import com.mojang.serialization.Codec;
@@ -14,7 +15,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import snownee.lychee.Lychee;
@@ -35,7 +35,7 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		final var genericContext = ctx.get(LycheeContextType.GENERIC);
 		final var level = genericContext.level();
 		if (command.isEmpty() || level.isClientSide) {

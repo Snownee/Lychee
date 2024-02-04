@@ -9,7 +9,6 @@ import com.mojang.serialization.DataResult;
 
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.loot.IntRange;
@@ -30,7 +29,7 @@ public record Time(MinMaxBounds.Ints value, Optional<Long> period) implements Co
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return test(ctx.get(LycheeContextType.GENERIC).level()) ? times : 0;
 	}
 

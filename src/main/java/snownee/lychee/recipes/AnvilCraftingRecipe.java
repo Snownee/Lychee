@@ -20,7 +20,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -93,7 +92,7 @@ public record AnvilCraftingRecipe(
 		final var actionContext = context.get(LycheeContextType.ACTION);
 		actionContext.reset();
 		actionContext.jobs.addAll(assemblingActions.stream().map(it -> new Job(it, 1)).toList());
-		actionContext.run(new RecipeHolder<>(id(), this), context);
+		actionContext.run(this, context);
 		return context.getItem(2);
 	}
 

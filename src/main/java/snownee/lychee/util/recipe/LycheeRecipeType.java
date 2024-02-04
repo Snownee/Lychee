@@ -15,8 +15,8 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import snownee.kiwi.util.Util;
 import snownee.lychee.Lychee;
-import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 
 public class LycheeRecipeType<T extends LycheeRecipe<T>> implements RecipeType<T> {
@@ -68,7 +68,7 @@ public class LycheeRecipeType<T extends LycheeRecipe<T>> implements RecipeType<T
 	}
 
 	public List<RecipeHolder<T>> inViewerRecipes() {
-		return CommonProxy.recipes(this).stream().filter(it -> !it.value().hideInRecipeViewer()).toList();
+		return Util.getRecipes(this).stream().filter(it -> !it.value().hideInRecipeViewer()).toList();
 	}
 
 	public void updateEmptyState() {
@@ -80,7 +80,7 @@ public class LycheeRecipeType<T extends LycheeRecipe<T>> implements RecipeType<T
 	}
 
 	public void refreshCache() {
-		var stream = CommonProxy.recipes(this).stream().filter(it -> !it.value().ghost());
+		var stream = Util.getRecipes(this).stream().filter(it -> !it.value().ghost());
 		if (clazz.isAssignableFrom(Comparable.class)) {
 			stream = stream.sorted();
 		}

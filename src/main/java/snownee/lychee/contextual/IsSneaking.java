@@ -1,10 +1,11 @@
 package snownee.lychee.contextual;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.mojang.serialization.Codec;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextType;
@@ -21,7 +22,7 @@ public final class IsSneaking implements ContextualCondition<IsSneaking> {
 	}
 
 	@Override
-	public int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Entity entity = ctx.get(LycheeContextType.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
 		return entity.isCrouching() || entity.isShiftKeyDown() ? times : 0;
 	}

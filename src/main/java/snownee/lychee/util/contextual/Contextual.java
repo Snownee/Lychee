@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
@@ -58,7 +57,7 @@ public interface Contextual<C extends Contextual<C>> extends RecipeCondition {
 		}
 	}
 
-	default int test(RecipeHolder<LycheeRecipe<?>> recipe, LycheeContext ctx, int times) {
+	default int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		for (ConditionHolder<?> condition : conditions()) {
 			try {
 				times = condition.condition().test(recipe, ctx, times);
@@ -67,7 +66,7 @@ public interface Contextual<C extends Contextual<C>> extends RecipeCondition {
 				Lychee.LOGGER.error(
 						"Failed to check condition {} of recipe {}",
 						LycheeRegistries.CONTEXTUAL.getKey(condition.condition().type()),
-						recipe.id(),
+						ctx.getMatchedRecipeId(),
 						e
 				);
 				return 0;

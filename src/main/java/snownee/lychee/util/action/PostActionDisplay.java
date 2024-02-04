@@ -2,12 +2,13 @@ package snownee.lychee.util.action;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.compat.IngredientInfo;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 public interface PostActionDisplay {
 
@@ -28,7 +29,7 @@ public interface PostActionDisplay {
 		return false;
 	}
 
-	default void loadCatalystsInfo(RecipeHolder<OldLycheeRecipe<?>> recipe, List<IngredientInfo> ingredients) {}
+	default void loadCatalystsInfo(@Nullable LycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {}
 
 	String toJsonString();
 }

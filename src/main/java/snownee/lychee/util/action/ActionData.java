@@ -5,10 +5,10 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
@@ -18,23 +18,17 @@ public final class ActionData {
 	public static final Codec<ActionData> CODEC =
 			RecordCodecBuilder.create(inst ->
 					inst.group(
-							ResourceLocation.CODEC.comapFlatMap(it -> {
-								final var recipe = CommonProxy.recipe(it);
-								if (recipe != null && recipe.value() instanceof LycheeRecipe) {
-									return DataResult.success((RecipeHolder<LycheeRecipe<?>>) recipe);
-								} else {
-									return DataResult.error(() -> it + " is not a Lychee recipe");
-								}
-							}, RecipeHolder::id).fieldOf("recipe").forGetter(ActionData::getRecipe),
 							LycheeContext.CODEC.fieldOf("context").forGetter(ActionData::getContext),
 							Codec.INT.fieldOf("delayedTicks").forGetter(ActionData::getDelayedTicks)
-					).apply(inst, ActionData::new));
-	@Nullable private RecipeHolder<LycheeRecipe<?>> recipe;
-	@Nullable private LycheeContext context;
+					).apply(inst, ActionData::of));
+	@Nullable
+	private LycheeRecipe<?> recipe;
+	@Nullable
+	private LycheeContext context;
 	private int delayedTicks;
 
-	public ActionData(
-			@Nullable RecipeHolder<LycheeRecipe<?>> recipe,
+	private ActionData(
+			@Nullable LycheeRecipe<?> recipe,
 			@Nullable LycheeContext context,
 			int delayedTicks
 	) {
@@ -43,11 +37,23 @@ public final class ActionData {
 		this.delayedTicks = delayedTicks;
 	}
 
-	public @Nullable RecipeHolder<LycheeRecipe<?>> getRecipe() {
+	public static ActionData of(@Nullable LycheeContext context, int delayedTicks) {
+		ResourceLocation recipeId = context.getMatchedRecipeId(); //TODO
+		LycheeRecipe<?> recipe = null;
+		if (recipeId != null) {
+			RecipeHolder<Recipe<?>> holder = (RecipeHolder<Recipe<?>>) CommonProxy.recipe(recipeId);
+			if (holder != null && holder.value() instanceof LycheeRecipe) {
+				recipe = (LycheeRecipe<?>) holder.value();
+			}
+		}
+		return new ActionData(recipe, context, delayedTicks);
+	}
+
+	public @Nullable LycheeRecipe<?> getRecipe() {
 		return recipe;
 	}
 
-	public void setRecipe(final @Nullable RecipeHolder<LycheeRecipe<?>> recipe) {
+	public void setRecipe(final @Nullable LycheeRecipe<?> recipe) {
 		this.recipe = recipe;
 	}
 
@@ -81,7 +87,7 @@ public final class ActionData {
 		if (o == null || getClass() != o.getClass()) return false;
 		final ActionData that = (ActionData) o;
 		return delayedTicks == that.delayedTicks && Objects.equal(recipe, that.recipe) &&
-			   Objects.equal(context, that.context);
+				Objects.equal(context, that.context);
 	}
 
 	@Override
@@ -92,9 +98,9 @@ public final class ActionData {
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
-						  .add("recipe", recipe)
-						  .add("context", context)
-						  .add("delayedTicks", delayedTicks)
-						  .toString();
+				.add("recipe", recipe)
+				.add("context", context)
+				.add("delayedTicks", delayedTicks)
+				.toString();
 	}
 }
