@@ -4,8 +4,6 @@ import java.text.MessageFormat;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.Util;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -14,27 +12,28 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import snownee.lychee.util.action.PostActionTypes;
-import snownee.lychee.client.core.post.CycleStatePropertyPostActionRenderer;
-import snownee.lychee.client.core.post.IfPostActionRenderer;
-import snownee.lychee.client.core.post.ItemBasedPostActionRenderer;
-import snownee.lychee.client.core.post.ItemStackPostActionRenderer;
-import snownee.lychee.client.core.post.PlaceBlockPostActionRenderer;
-import snownee.lychee.client.core.post.PostActionRenderer;
+import snownee.kiwi.util.KEvent;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.DropXp;
 import snownee.lychee.action.Execute;
 import snownee.lychee.action.Explode;
 import snownee.lychee.action.Hurt;
 import snownee.lychee.action.input.SetItem;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.client.core.post.CycleStatePropertyPostActionRenderer;
+import snownee.lychee.client.core.post.IfPostActionRenderer;
+import snownee.lychee.client.core.post.ItemBasedPostActionRenderer;
+import snownee.lychee.client.core.post.ItemStackPostActionRenderer;
+import snownee.lychee.client.core.post.PlaceBlockPostActionRenderer;
+import snownee.lychee.client.core.post.PostActionRenderer;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.recipes.dripstone_dripping.client.ParticleFactories;
+import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.recipe.LycheeRecipe;
 
 public class ClientProxy implements ClientModInitializer {
 
-	private static final Event<RecipeViewerWidgetClickListener> RECIPE_VIEWER_WIDGET_CLICK_EVENT =
-			EventFactory.createArrayBacked(RecipeViewerWidgetClickListener.class, listeners -> (recipe, button) -> {
+	private static final KEvent<RecipeViewerWidgetClickListener> RECIPE_VIEWER_WIDGET_CLICK_EVENT =
+			KEvent.createArrayBacked(RecipeViewerWidgetClickListener.class, listeners -> (recipe, button) -> {
 				for (RecipeViewerWidgetClickListener listener : listeners) {
 					if (listener.onClick(recipe, button)) {
 						return true;

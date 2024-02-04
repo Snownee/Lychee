@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.4.+'
+    id 'fabric-loom' version '1.5.+'
     id 'maven-publish'
     id "me.shedaniel.unified-publishing" version "0.1.+"
 }
@@ -110,6 +110,20 @@ loom {
     }
 
     accessWidenerPath = file("src/main/resources/${project.mod_id}.accesswidener")
+    enableTransitiveAccessWideners = false
+
+    runs {
+        // This adds a new gradle task that runs the datagen API: "gradlew runDatagen"
+        datagen {
+            inherit server
+            name "Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
+            vmArg "-Dfabric-api.datagen.modid=${project.mod_id}"
+
+            runDir "build/datagen"
+        }
+    }
 }
 
 processResources {
@@ -183,35 +197,36 @@ publishing {
 
 unifiedPublishing {
     project {
-        displayName = project.version
+        displayName = "[Fabric $project.supported_version] $project.mod_version"
         version = project.mod_version // Optional, Inferred from project by default
         changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "" // Optional, in markdown format
         releaseType = project.release_type // Optional, use "release", "beta" or "alpha"
-        gameVersions = ["1.20", "1.20.1"]
+        gameVersions = ["1.20.4"]
         gameLoaders = ["fabric", "quilt"]
 
         mainPublication tasks.remapJar // Declares the publicated jar
 
-        curseforge {
-            token = System.getenv("CURSE_TOKEN") ?: ""
-            id = "574650" // Required, must be a string, ID of CurseForge project
+        if (System.getenv("CURSE_TOKEN") != null) {
+            curseforge {
+                token = System.getenv("CURSE_TOKEN")
+                id = "574650" // Required, must be a string, ID of CurseForge project
 
-            relations { // Optional, Inferred from the relations above by default
-                //depends "fabric-api"
-                optional "kiwi-fabric"
-                optional "kubejs"
+                relations { // Optional, Inferred from the relations above by default
+                    depends "kiwi-fabric"
+                    optional "kubejs"
+                }
             }
         }
 
-        modrinth {
-            token = System.getenv("MODRINTH_TOKEN") ?: ""
-            id = "TdN6LxjM" // Required, must be a string, ID of Modrinth project
-            displayName = project.mod_version
+        if (System.getenv("MODRINTH_TOKEN") != null) {
+            modrinth {
+                token = System.getenv("MODRINTH_TOKEN")
+                id = "TdN6LxjM" // Required, must be a string, ID of Modrinth project
 
-            relations { // Optional, Inferred from the relations above by default
-                //depends "fabric-api"
-                optional "kiwi"
-                optional "kubejs"
+                relations { // Optional, Inferred from the relations above by default
+                    depends "kiwi"
+                    optional "kubejs"
+                }
             }
         }
     }

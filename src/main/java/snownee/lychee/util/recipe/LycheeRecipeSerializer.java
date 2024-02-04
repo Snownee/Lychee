@@ -24,7 +24,7 @@ public interface LycheeRecipeSerializer<T extends LycheeRecipe<T>> extends Recip
 	Ingredient EMPTY_INGREDIENT = Ingredient.of(ItemStack.EMPTY);
 
 	RecordCodecBuilder<LycheeRecipe<?>, Boolean> HIDE_IN_VIEWER_CODEC =
-			Codec.BOOL.fieldOf("hide_in_viewer").orElse(false).forGetter(LycheeRecipe::hideInRecipeViewer);
+			Codec.BOOL.optionalFieldOf("hide_in_viewer", false).forGetter(LycheeRecipe::hideInRecipeViewer);
 
 	RecordCodecBuilder<LycheeRecipe<?>, Boolean> GHOST_CODEC =
 			Codec.BOOL.fieldOf("ghost").orElse(false).forGetter(LycheeRecipe::ghost);

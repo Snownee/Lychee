@@ -15,18 +15,12 @@ import com.mojang.serialization.JsonOps;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-import net.fabricmc.loader.api.Version;
-import net.fabricmc.loader.api.VersionParsingException;
-import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -67,6 +61,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.Mod;
+import snownee.kiwi.loader.Platform;
+import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeRegistries;
@@ -86,7 +82,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 
 @Mod(Lychee.ID)
 public class CommonProxy implements ModInitializer {
-	public static final Event<CustomActionListener> CUSTOM_ACTION_EVENT = EventFactory.createArrayBacked(
+	public static final KEvent<CustomActionListener> CUSTOM_ACTION_EVENT = KEvent.createArrayBacked(
 			CustomActionListener.class,
 			listeners -> (id, action, recipe, patchContext) -> {
 				for (CustomActionListener listener : listeners) {
@@ -97,7 +93,7 @@ public class CommonProxy implements ModInitializer {
 				return false;
 			}
 	);
-	public static final Event<CustomConditionListener> CUSTOM_CONDITION_EVENT = EventFactory.createArrayBacked(
+	public static final KEvent<CustomConditionListener> CUSTOM_CONDITION_EVENT = KEvent.createArrayBacked(
 			CustomConditionListener.class,
 			listeners -> (id, condition) -> {
 				for (CustomConditionListener listener : listeners) {
@@ -109,8 +105,7 @@ public class CommonProxy implements ModInitializer {
 			}
 	);
 	private static final Random RANDOM = new Random();
-	public static boolean hasKiwi = isModLoaded("kiwi");
-	public static boolean hasDFLib = isModLoaded("dripstone_fluid_lib");
+	public static boolean hasDFLib = Platform.isModLoaded("dripstone_fluid_lib");
 	private static RecipeManager recipeManager;
 
 	public static void dropItemStack(
@@ -206,13 +201,6 @@ public class CommonProxy implements ModInitializer {
 		}
 	}
 
-	public static InteractionResult interactionResult(Boolean bool) {
-		if (bool == null) {
-			return InteractionResult.PASS;
-		}
-		return bool ? InteractionResult.SUCCESS : InteractionResult.FAIL;
-	}
-
 	public static <T> T readRegistryId(Registry<T> registry, FriendlyByteBuf buf) {
 		return registry.byId(buf.readVarInt());
 	}
@@ -306,10 +294,6 @@ public class CommonProxy implements ModInitializer {
 		return offset;
 	}
 
-	public static boolean isPhysicalClient() {
-		return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
-	}
-
 	public static void itemstackToJson(ItemStack stack, JsonObject jsonObject) {
 		jsonObject.addProperty("item", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
 		if (stack.hasTag()) {
@@ -318,10 +302,6 @@ public class CommonProxy implements ModInitializer {
 		if (stack.getCount() > 1) {
 			jsonObject.addProperty("count", stack.getCount());
 		}
-	}
-
-	public static boolean isModLoaded(String modid) {
-		return FabricLoader.getInstance().isModLoaded(modid);
 	}
 
 	public static JsonObject tagToJson(CompoundTag tag) {
@@ -397,25 +377,6 @@ public class CommonProxy implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		if (hasKiwi) {
-			FabricLoader.getInstance()
-						.getModContainer("kiwi")
-						.map(ModContainer::getMetadata)
-						.map(ModMetadata::getVersion)
-						.ifPresent(version -> {
-							try {
-								Version minVersion = Version.parse("11.1.1");
-								if (minVersion.compareTo(version) > 0) {
-									throw new RuntimeException(
-											"Kiwi version is too low! Please update to at least 11.1.1. You have %s".formatted(
-													version));
-								}
-							} catch (VersionParsingException e) {
-								throw new RuntimeException(e);
-							}
-						});
-		}
-
 		RecipeTypes.init();
 		LycheeTags.init();
 		LycheeRegistries.init();

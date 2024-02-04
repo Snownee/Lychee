@@ -25,16 +25,16 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.kiwi.recipe.EmptyContainer;
 import snownee.lychee.LycheeLootContextParamSets;
-import snownee.lychee.util.input.ItemStackHolderCollection;
-import snownee.lychee.util.action.ActionMarker;
-import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.DummyContainer;
 import snownee.lychee.util.LycheeContext;
+import snownee.lychee.util.action.ActionMarker;
 import snownee.lychee.util.action.ActionRuntime;
 import snownee.lychee.util.action.Job;
+import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.input.ItemStackHolderCollection;
 
-public class LycheeRecipeContext implements DummyContainer, LycheeContext {
+public class LycheeRecipeContext extends EmptyContainer implements LycheeContext {
 	private final RandomSource random;
 	private final Level level;
 	private final Map<LootContextParam<?>, Object> params;

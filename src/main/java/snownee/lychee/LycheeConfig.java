@@ -7,8 +7,6 @@ public final class LycheeConfig {
 
 	@KiwiConfig.Path("debug.enable")
 	public static boolean debug;
-	@KiwiConfig.Path("fragment.enable")
-	public static boolean enableFragment = true;
 	public static boolean dispenserFallableBlockPlacement = true;
 
 }

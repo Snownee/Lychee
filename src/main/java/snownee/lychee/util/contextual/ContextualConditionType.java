@@ -50,7 +50,7 @@ public interface ContextualConditionType<T extends ContextualCondition<T>> exten
 
 
 	static <T extends ContextualConditionType<?>> T register(String name, T object) {
-		return register(Lychee.resourceLocation(name), object);
+		return register(Lychee.id(name), object);
 	}
 
 	static <T extends ContextualConditionType<?>> T register(ResourceLocation location, T object) {

@@ -105,20 +105,18 @@ public class BlockCrushingRecipeType extends
 						if (!ctx.runtime.doDefault) {
 							((LycheeFallingBlockEntity) entity).lychee$cancelDrop();
 						}
-						if (CommonProxy.hasKiwi) {
-							Set<ItemStackHolder> alreadySentParticles = Sets.newHashSet();
-							for (int i = 0; i < ctx.itemHolders.size(); i++) {
-								ItemStackHolder holder = ctx.itemHolders.get(i);
-								if (!ctx.itemHolders.ignoreConsumptionFlags.get(i) && !holder.get().isEmpty()) {
-									if (holder instanceof ItemStackHolder.Entity &&
+						Set<ItemStackHolder> alreadySentParticles = Sets.newHashSet();
+						for (int i = 0; i < ctx.itemHolders.size(); i++) {
+							ItemStackHolder holder = ctx.itemHolders.get(i);
+							if (!ctx.itemHolders.ignoreConsumptionFlags.get(i) && !holder.get().isEmpty()) {
+								if (holder instanceof ItemStackHolder.Entity &&
 										!alreadySentParticles.contains(holder)) {
-										alreadySentParticles.add(holder);
-										SCustomLevelEventPacket.sendItemParticles(
-												holder.get(),
-												ctx.serverLevel(),
-												((ItemStackHolder.Entity) holder).getEntity().position()
-										);
-									}
+									alreadySentParticles.add(holder);
+									SCustomLevelEventPacket.sendItemParticles(
+											holder.get(),
+											ctx.serverLevel(),
+											((ItemStackHolder.Entity) holder).getEntity().position()
+									);
 								}
 							}
 						}

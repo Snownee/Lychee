@@ -9,13 +9,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
 import net.minecraft.world.item.ItemStack;
+import snownee.kiwi.recipe.EmptyContainer;
 import snownee.lychee.LycheeRegistries;
-import snownee.lychee.util.DummyContainer;
 import snownee.lychee.util.KeyDispatchedMapCodec;
 import snownee.lychee.util.SerializableType;
 
 @SuppressWarnings("unchecked")
-public class LycheeContext implements DummyContainer {
+public class LycheeContext extends EmptyContainer {
 	private final IdentityHashMap<LycheeContextType<?>, LycheeContextValue<?>> context = new IdentityHashMap<>();
 	public static final Codec<LycheeContext> CODEC =
 			new KeyDispatchedMapCodec<LycheeContextType<?>, LycheeContextValue<?>>(

@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
+import snownee.kiwi.loader.Platform;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.CommonProxy;
@@ -57,7 +58,7 @@ public class DripstoneRecipeMod {
 		Block block = sourceBlock.getBlock();
 		try {
 			return particleHandlers.get(block, () -> {
-				if (!CommonProxy.isPhysicalClient()) {
+				if (!Platform.isPhysicalClient()) {
 					return DripParticleHandler.SIMPLE_DUMMY;
 				}
 				BlockState defaultState = block.defaultBlockState();

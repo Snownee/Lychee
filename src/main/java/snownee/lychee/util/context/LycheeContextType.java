@@ -25,7 +25,7 @@ public interface LycheeContextType<T extends LycheeContextValue<?>> {
 	LycheeContextType<AnvilContext> ANVIL = register("anvil");
 
 	static <T extends LycheeContextType<?>> T register(String name, T object) {
-		return register(Lychee.resourceLocation(name), object);
+		return register(Lychee.id(name), object);
 	}
 
 	static <T extends LycheeContextType<?>> T register(ResourceLocation location, T object) {
@@ -34,7 +34,7 @@ public interface LycheeContextType<T extends LycheeContextValue<?>> {
 	}
 
 	static <T extends LycheeContextValue<T>> LycheeContextType<T> register(String name) {
-		return register(Lychee.resourceLocation(name));
+		return register(Lychee.id(name));
 	}
 
 	static <T extends LycheeContextValue<T>> LycheeContextType<T> register(ResourceLocation location) {
