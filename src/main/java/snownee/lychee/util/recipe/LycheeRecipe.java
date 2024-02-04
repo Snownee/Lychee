@@ -1,7 +1,6 @@
 package snownee.lychee.util.recipe;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
@@ -104,7 +103,7 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 	}
 
 	default List<BlockPredicate> getBlockInputs() {
-		if (this instanceof BlockInputLycheeRecipe<?> blockPredicateRecipe) {
+		if (this instanceof BlockKeyableRecipe<?> blockPredicateRecipe) {
 			return List.of(blockPredicateRecipe.blockPredicate());
 		}
 		return List.of();

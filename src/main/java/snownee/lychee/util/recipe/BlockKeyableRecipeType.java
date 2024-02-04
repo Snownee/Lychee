@@ -38,13 +38,13 @@ import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-public class BlockInputLycheeRecipeType<T extends BlockInputLycheeRecipe<T>> extends LycheeRecipeType<T> {
+public class BlockKeyableRecipeType<T extends BlockKeyableRecipe<T>> extends LycheeRecipeType<T> {
 
 	protected final Map<Block, List<RecipeHolder<T>>> recipesByBlock = Maps.newHashMap();
 	protected final List<RecipeHolder<T>> anyBlockRecipes = Lists.newLinkedList();
 	public boolean extractChance;
 
-	public BlockInputLycheeRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet paramSet) {
+	public BlockKeyableRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet paramSet) {
 		super(name, clazz, paramSet);
 	}
 

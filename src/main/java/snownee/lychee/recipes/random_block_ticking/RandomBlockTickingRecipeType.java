@@ -10,10 +10,10 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.kiwi.loader.Platform;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.mixin.ChunkMapAccess;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipeType;
+import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 
 public class RandomBlockTickingRecipeType extends
-										  BlockInputLycheeRecipeType<LycheeRecipeContext, RandomBlockTickingRecipe> {
+		BlockKeyableRecipeType<LycheeRecipeContext, RandomBlockTickingRecipe> {
 
 	public RandomBlockTickingRecipeType(
 			String name,

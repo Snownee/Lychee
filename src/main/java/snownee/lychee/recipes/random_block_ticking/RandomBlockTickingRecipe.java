@@ -15,11 +15,11 @@ import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.recipe.ChanceRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class RandomBlockTickingRecipe extends OldLycheeRecipe<LycheeRecipeContext>
-    implements BlockInputLycheeRecipe<RandomBlockTickingRecipe>, ChanceRecipe {
+    implements BlockKeyableRecipe<RandomBlockTickingRecipe>, ChanceRecipe {
 
 	protected float chance = 1;
 	protected BlockPredicate block;

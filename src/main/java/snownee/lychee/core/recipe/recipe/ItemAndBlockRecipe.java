@@ -17,10 +17,10 @@ import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicate;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.BlockKeyableRecipe;
 
 public abstract class ItemAndBlockRecipe<C extends LycheeRecipeContext> extends OldLycheeRecipe<C>
-		implements BlockInputLycheeRecipe<ItemAndBlockRecipe<C>> {
+		implements BlockKeyableRecipe<ItemAndBlockRecipe<C>> {
 
 	protected Ingredient input;
 	protected BlockPredicate block;

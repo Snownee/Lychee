@@ -12,11 +12,11 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class BlockExplodingRecipe extends OldLycheeRecipe<BlockExplodingContext>
-    implements BlockInputLycheeRecipe<BlockExplodingRecipe> {
+    implements BlockKeyableRecipe<BlockExplodingRecipe> {
 
 	private BlockPredicate block;
 

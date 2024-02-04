@@ -9,9 +9,9 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipeType;
+import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 
-public class DripstoneRecipeType extends BlockInputLycheeRecipeType<DripstoneContext, DripstoneRecipe> {
+public class DripstoneRecipeType extends BlockKeyableRecipeType<DripstoneContext, DripstoneRecipe> {
 
 	private final Set<Block> allSources = Sets.newHashSet();
 

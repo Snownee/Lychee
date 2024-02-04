@@ -33,7 +33,7 @@ import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.json.JsonPatch;
 import snownee.lychee.util.json.JsonPointer;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.BlockKeyableRecipe;
 
 public interface LycheeRecipe<C extends LycheeRecipeContext> extends Recipe<C> {
 	JsonPointer ITEM_IN = new JsonPointer("/item_in");
@@ -91,7 +91,7 @@ public interface LycheeRecipe<C extends LycheeRecipeContext> extends Recipe<C> {
 	}
 
 	default List<BlockPredicate> getBlockInputs() {
-		if (this instanceof BlockInputLycheeRecipe<?> blockPredicateRecipe) {
+		if (this instanceof BlockKeyableRecipe<?> blockPredicateRecipe) {
 			return List.of(blockPredicateRecipe.blockPredicate());
 		}
 		return List.of();

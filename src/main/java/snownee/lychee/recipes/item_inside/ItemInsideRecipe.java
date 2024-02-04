@@ -32,11 +32,11 @@ import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.recipes.item_inside.ItemInsideRecipeType.Cache;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.RecipeMatcher;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe>
-    implements BlockInputLycheeRecipe<ItemInsideRecipe> {
+    implements BlockKeyableRecipe<ItemInsideRecipe> {
 
 	private int time;
 	protected BlockPredicate block;

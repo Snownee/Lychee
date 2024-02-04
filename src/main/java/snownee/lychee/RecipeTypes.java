@@ -25,7 +25,7 @@ import snownee.lychee.recipes.item_inside.ItemInsideRecipeType;
 import snownee.lychee.recipes.lightning_channeling.LightningChannelingRecipe;
 import snownee.lychee.recipes.random_block_ticking.RandomBlockTickingRecipe;
 import snownee.lychee.recipes.random_block_ticking.RandomBlockTickingRecipeType;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipeType;
+import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public final class RecipeTypes {
@@ -59,15 +59,15 @@ public final class RecipeTypes {
 			ItemInsideRecipe.class,
 			null
 	));
-	public static final BlockInputLycheeRecipeType<LycheeRecipeContext, BlockInteractingRecipe>
+	public static final BlockKeyableRecipeType<LycheeRecipeContext, BlockInteractingRecipe>
 			BLOCK_INTERACTING =
-			register(new BlockInputLycheeRecipeType<>(
+			register(new BlockKeyableRecipeType<>(
 					"block_interacting",
 					BlockInteractingRecipe.class,
 					LycheeLootContextParamSets.BLOCK_INTERACTION
 			));
-	public static final BlockInputLycheeRecipeType<LycheeRecipeContext, BlockClickingRecipe> BLOCK_CLICKING =
-			register(new BlockInputLycheeRecipeType<>(
+	public static final BlockKeyableRecipeType<LycheeRecipeContext, BlockClickingRecipe> BLOCK_CLICKING =
+			register(new BlockKeyableRecipeType<>(
 					"block_clicking",
 					BlockClickingRecipe.class,
 					LycheeLootContextParamSets.BLOCK_INTERACTION
@@ -83,8 +83,8 @@ public final class RecipeTypes {
 			register(new ItemShapelessRecipeType<>("lightning_channeling", LightningChannelingRecipe.class, null));
 	public static final ItemShapelessRecipeType<ItemShapelessContext, ItemExplodingRecipe> ITEM_EXPLODING =
 			register(new ItemShapelessRecipeType<>("item_exploding", ItemExplodingRecipe.class, null));
-	public static final BlockInputLycheeRecipeType<BlockExplodingContext, BlockExplodingRecipe> BLOCK_EXPLODING =
-			register(new BlockInputLycheeRecipeType<>(
+	public static final BlockKeyableRecipeType<BlockExplodingContext, BlockExplodingRecipe> BLOCK_EXPLODING =
+			register(new BlockKeyableRecipeType<>(
 					"block_exploding",
 					BlockExplodingRecipe.class,
 					LycheeLootContextParamSets.BLOCK_ONLY

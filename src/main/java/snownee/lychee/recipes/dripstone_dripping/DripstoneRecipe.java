@@ -38,11 +38,11 @@ import snownee.lychee.core.recipe.recipe.ChanceRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.mixin.PointedDripstoneBlockAccess;
 import snownee.lychee.util.action.Job;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>
-    implements BlockInputLycheeRecipe<DripstoneRecipe>, ChanceRecipe {
+    implements BlockKeyableRecipe<DripstoneRecipe>, ChanceRecipe {
 
 	private float chance = 1;
 	protected BlockPredicate sourceBlock;

@@ -28,11 +28,11 @@ import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.util.RecipeMatcher;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class BlockCrushingRecipe extends OldLycheeRecipe<BlockCrushingContext>
-		implements BlockInputLycheeRecipe<BlockCrushingRecipe> {
+		implements BlockKeyableRecipe<BlockCrushingRecipe> {
 
 	public static final BlockPredicate ANVIL = BlockPredicate.Builder.block().of(BlockTags.ANVIL).build();
 

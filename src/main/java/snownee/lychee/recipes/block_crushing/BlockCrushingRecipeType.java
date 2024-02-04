@@ -26,11 +26,11 @@ import snownee.lychee.LycheeTags;
 import snownee.lychee.core.network.SCustomLevelEventPacket;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.input.ItemStackHolder;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipeType;
+import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.ValidItemCache;
 
 public class BlockCrushingRecipeType extends
-									 BlockInputLycheeRecipeType<BlockCrushingContext, BlockCrushingRecipe> {
+		BlockKeyableRecipeType<BlockCrushingContext, BlockCrushingRecipe> {
 
 	private ValidItemCache validItems = new ValidItemCache();
 

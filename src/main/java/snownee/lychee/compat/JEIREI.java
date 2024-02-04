@@ -34,7 +34,7 @@ import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
-import snownee.lychee.util.recipe.BlockInputLycheeRecipe;
+import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
@@ -122,7 +122,7 @@ public class JEIREI {
 		Object2IntMap<Block> blockStateCount = new Object2IntOpenHashMap<>();
 		Map<Block, BlockPredicate> blockPredicateMap = Maps.newHashMap();
 		for (T object : recipes) {
-			BlockInputLycheeRecipe<?> recipe = (BlockInputLycheeRecipe<?>) object;
+			BlockKeyableRecipe<?> recipe = (BlockKeyableRecipe<?>) object;
 			for (Block block : BlockPredicateExtensions.matchedBlocks(recipe.blockPredicate())) {
 				if (block.defaultBlockState().isAir()) {
 					continue;
