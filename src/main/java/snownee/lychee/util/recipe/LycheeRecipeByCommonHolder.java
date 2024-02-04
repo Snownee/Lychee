@@ -1,7 +1,8 @@
 package snownee.lychee.util.recipe;
 
 import java.util.List;
-import java.util.Optional;
+
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import snownee.lychee.util.action.PostAction;
@@ -20,7 +21,7 @@ public interface LycheeRecipeByCommonHolder<T extends LycheeRecipeByCommonHolder
 	}
 
 	@Override
-	default Optional<String> comment() {
+	default @Nullable String comment() {
 		return recipeCommonHolder().comment();
 	}
 

@@ -1,10 +1,10 @@
 package snownee.lychee.recipes;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
@@ -173,7 +173,7 @@ public record AnvilCraftingRecipe(
 	private static AnvilCraftingRecipe of(
 			Boolean hideInRecipeViewer,
 			Boolean ghost,
-			Optional<String> comment,
+			@Nullable String comment,
 			String group,
 			List<ConditionHolder<?>> conditions,
 			List<? extends PostAction<?>> postActions,

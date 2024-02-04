@@ -1,10 +1,10 @@
 package snownee.lychee.util.recipe;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Either;
@@ -29,8 +29,8 @@ public interface LycheeRecipeSerializer<T extends LycheeRecipe<T>> extends Recip
 	RecordCodecBuilder<LycheeRecipe<?>, Boolean> GHOST_CODEC =
 			Codec.BOOL.fieldOf("ghost").orElse(false).forGetter(LycheeRecipe::ghost);
 
-	RecordCodecBuilder<LycheeRecipe<?>, Optional<String>> COMMENT_CODEC =
-			Codec.STRING.optionalFieldOf("comment").forGetter(LycheeRecipe::comment);
+	RecordCodecBuilder<LycheeRecipe<?>, @Nullable String> COMMENT_CODEC =
+			Codec.STRING.optionalFieldOf("comment", null).forGetter(LycheeRecipe::comment);
 
 	RecordCodecBuilder<LycheeRecipe<?>, String> GROUP_CODEC =
 			Codec.STRING.fieldOf("group").orElse("default").forGetter(LycheeRecipe::group);
@@ -63,8 +63,8 @@ public interface LycheeRecipeSerializer<T extends LycheeRecipe<T>> extends Recip
 		return (RecordCodecBuilder<T, Boolean>) GHOST_CODEC;
 	}
 
-	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, Optional<String>> commentCodec() {
-		return (RecordCodecBuilder<T, Optional<String>>) COMMENT_CODEC;
+	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, @Nullable String> commentCodec() {
+		return (RecordCodecBuilder<T, @Nullable String>) COMMENT_CODEC;
 	}
 
 	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, String> groupCodec() {

@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -81,7 +82,7 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 
 	boolean ghost();
 
-	Optional<String> comment();
+	@Nullable String comment();
 
 	String group();
 
