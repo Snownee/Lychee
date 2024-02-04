@@ -19,7 +19,7 @@ public record ConditionHolder<T extends ContextualCondition<T>>(
 			RecordCodecBuilder.create(instance ->
 					instance.group(
 							ContextualCondition.CODEC.fieldOf("condition").forGetter(ConditionHolder::condition),
-							Codec.BOOL.fieldOf("secret").orElse(false).forGetter(ConditionHolder::secret),
+							Codec.BOOL.optionalFieldOf("secret", false).forGetter(ConditionHolder::secret),
 							ComponentSerialization.CODEC.optionalFieldOf("description")
 														.forGetter(ConditionHolder::description)
 					).apply(instance, ConditionHolder::new));

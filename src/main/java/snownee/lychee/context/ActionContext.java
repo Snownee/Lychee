@@ -70,7 +70,7 @@ public class ActionContext implements LycheeContextValue<ActionContext> {
 											  SerializableType<ActionContext> {
 		public static final Codec<ActionContext> CODEC = RecordCodecBuilder.create(instance ->
 				instance.group(
-						Codec.BOOL.fieldOf("avoid_default").orElse(false).forGetter(it -> it.avoidDefault),
+						Codec.BOOL.optionalFieldOf("avoid_default", false).forGetter(it -> it.avoidDefault),
 						Codec.INT.fieldOf("state")
 								 .flatXmap(it -> {
 									 try {

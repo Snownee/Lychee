@@ -6,7 +6,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,20 +18,30 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -37,6 +49,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.mixin.predicates.BlockPredicateAccess;
 import snownee.lychee.util.Pair;
 
 public class BlockPredicateExtensions {
@@ -45,6 +58,59 @@ public class BlockPredicateExtensions {
 						.expireAfterAccess(10, TimeUnit.MINUTES)
 						.build();
 	public static Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet();
+
+	private static final String NOT_PLAIN = "The block predicate not an id or tag. Can't transform to a plain string";
+
+	private static final Codec<BlockPredicate> STRING_CODEC = ExtraCodecs.TAG_OR_ELEMENT_ID.flatComapMap(
+			it -> {
+				if (it.tag()) {
+					return BlockPredicate.Builder.block().of(TagKey.create(Registries.BLOCK, it.id())).build();
+				} else {
+					return BlockPredicate.Builder.block().of(BuiltInRegistries.BLOCK.get(it.id())).build();
+				}
+			},
+			it -> {
+				if (it.properties().isPresent() || it.nbt().isPresent())
+					return DataResult.error(() -> NOT_PLAIN);
+				if (it.tag().isPresent())
+					return DataResult.success(new ExtraCodecs.TagOrElementLocation(it.tag().get().location(), true));
+
+				if (it.blocks().isPresent() && it.blocks().get().size() == 1)
+					return DataResult.success(
+							new ExtraCodecs.TagOrElementLocation(
+									it.blocks().get().get(0).value().builtInRegistryHolder().key().location(),
+									false
+							)
+					);
+
+				return DataResult.error(() -> NOT_PLAIN);
+			}
+	);
+	private static final Codec<BlockPredicate> RECORD_CODEC = RecordCodecBuilder.create(
+			instance ->
+					instance.group(
+							ExtraCodecs.strictOptionalField(TagKey.codec(Registries.BLOCK), "tag")
+									   .forGetter(BlockPredicate::tag),
+							ExtraCodecs.strictOptionalField(BlockPredicateAccess.blocksCodec(), "blocks")
+									   .forGetter(BlockPredicate::blocks),
+							ExtraCodecs.strictOptionalField(StatePropertiesPredicate.CODEC, "state")
+									   .forGetter(BlockPredicate::properties),
+							ExtraCodecs.strictOptionalField(NbtPredicate.CODEC, "nbt")
+									   .forGetter(BlockPredicate::nbt)
+					).apply(instance, BlockPredicate::new)
+	);
+	public static final Codec<BlockPredicate> CODEC = Codec.either(STRING_CODEC, RECORD_CODEC).xmap(
+			it -> it.map(Function.identity(), Function.identity()),
+			it -> {
+				if (it.tag().isPresent()) {
+					return Either.left(it);
+				}
+				if (it.blocks().isPresent() && it.blocks().get().size() == 1) {
+					return Either.left(it);
+				}
+				return Either.right(it);
+			}
+	);
 
 	static {
 		ITERABLE_PROPERTIES.addAll(List.of(
@@ -106,10 +172,34 @@ public class BlockPredicateExtensions {
 	 * Optimized without get block state and block entity calls. And needn't pos loaded.
 	 */
 	public static boolean matches(BlockPredicate predicate, LycheeRecipeContext context) {
-		return predicate.unsafeMatches(
+		return unsafeMatches(
+				predicate,
 				context.get(LootContextParams.BLOCK_STATE),
 				() -> context.getOrNull(LootContextParams.BLOCK_ENTITY)
 		);
+	}
+
+	public static boolean unsafeMatches(
+			BlockPredicate predicate,
+			BlockState state,
+			Supplier<BlockEntity> blockEntitySupplier
+	) {
+		if (predicate.tag().isPresent() && !state.is(predicate.tag().get())) {
+			return false;
+		}
+		if (predicate.blocks().isPresent() && !state.is(predicate.blocks().get())) {
+			return false;
+		}
+		if (predicate.properties().isPresent() && !predicate.properties().get().matches(state)) {
+			return false;
+		}
+
+		if (predicate.nbt().isPresent()) {
+			final var blockEntity = blockEntitySupplier.get();
+			return blockEntity != null && predicate.nbt().get().matches(blockEntity.saveWithFullMetadata());
+		}
+
+		return true;
 	}
 
 	public static Optional<BlockPredicate> fromNetwork(FriendlyByteBuf buf) {

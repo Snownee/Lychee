@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.FluidPredicate;
 import net.minecraft.advancements.critereon.LightPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -24,6 +25,9 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import snownee.lychee.mixin.predicates.PositionPredicateAccess;
 import snownee.lychee.util.TagOrElementHolder;
 
+/**
+ * This class using {@link TagOrElementHolder} for fields
+ */
 public record LocationPredicate(
 		Optional<net.minecraft.advancements.critereon.LocationPredicate.PositionPredicate> position,
 		Optional<TagOrElementHolder<Biome>> biome,
@@ -48,7 +52,7 @@ public record LocationPredicate(
 					   .forGetter(LocationPredicate::dimension),
 			ExtraCodecs.strictOptionalField(Codec.BOOL, "smokey").forGetter(LocationPredicate::smokey),
 			ExtraCodecs.strictOptionalField(LightPredicate.CODEC, "light").forGetter(LocationPredicate::light),
-			ExtraCodecs.strictOptionalField(BlockPredicate.CODEC, "block").forGetter(LocationPredicate::block),
+			ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, "block").forGetter(LocationPredicate::block),
 			ExtraCodecs.strictOptionalField(FluidPredicate.CODEC, "fluid").forGetter(LocationPredicate::fluid)
 	).apply(instance, LocationPredicate::new));
 
@@ -88,29 +92,27 @@ public record LocationPredicate(
 		BlockPos blockPos = BlockPos.containing(x, y, z);
 		boolean posLoaded = level.isLoaded(blockPos);
 		if (posLoaded) {
-			if (
-					biome.isPresent() &&
-					!biome.get()
-						  .get(level.registryAccess().registryOrThrow(Registries.BIOME))
-						  .contains(level.getBiome(blockPos))
+			if (biome.isPresent() &&
+				!biome.get()
+					  .get(level.registryAccess().registryOrThrow(Registries.BIOME))
+					  .contains(level.getBiome(blockPos))
 			) return false;
 
 
-			if (
-					structure.isPresent() &&
-					structure.map(it -> {
-						if (it.tag()) {
-							return !level.structureManager().getStructureWithPieceAt(
-									blockPos,
-									TagKey.create(Registries.STRUCTURE, it.id())
-							).isValid();
-						} else {
-							return !level.structureManager().getStructureWithPieceAt(
-									blockPos,
-									ResourceKey.create(Registries.STRUCTURE, it.id())
-							).isValid();
-						}
-					}).get()
+			if (structure.isPresent() &&
+				structure.map(it -> {
+					if (it.tag()) {
+						return !level.structureManager().getStructureWithPieceAt(
+								blockPos,
+								TagKey.create(Registries.STRUCTURE, it.id())
+						).isValid();
+					} else {
+						return !level.structureManager().getStructureWithPieceAt(
+								blockPos,
+								ResourceKey.create(Registries.STRUCTURE, it.id())
+						).isValid();
+					}
+				}).get()
 			) return false;
 
 			if (smokey.isPresent() && smokey.get() != CampfireBlock.isSmokeyPos(level, blockPos)) return false;

@@ -27,13 +27,13 @@ public interface LycheeRecipeSerializer<T extends LycheeRecipe<T>> extends Recip
 			Codec.BOOL.optionalFieldOf("hide_in_viewer", false).forGetter(LycheeRecipe::hideInRecipeViewer);
 
 	RecordCodecBuilder<LycheeRecipe<?>, Boolean> GHOST_CODEC =
-			Codec.BOOL.fieldOf("ghost").orElse(false).forGetter(LycheeRecipe::ghost);
+			Codec.BOOL.optionalFieldOf("ghost", false).forGetter(LycheeRecipe::ghost);
 
 	RecordCodecBuilder<LycheeRecipe<?>, @Nullable String> COMMENT_CODEC =
 			Codec.STRING.optionalFieldOf("comment", null).forGetter(LycheeRecipe::comment);
 
 	RecordCodecBuilder<LycheeRecipe<?>, String> GROUP_CODEC =
-			Codec.STRING.fieldOf("group").orElse("default").forGetter(LycheeRecipe::group);
+			Codec.STRING.optionalFieldOf("group", "default").forGetter(LycheeRecipe::group);
 
 	RecordCodecBuilder<LycheeRecipe<?>, List<ConditionHolder<?>>> CONDITIONS_CODEC =
 			ConditionHolder.LIST_CODEC.fieldOf("contextual")
@@ -51,8 +51,7 @@ public interface LycheeRecipeSerializer<T extends LycheeRecipe<T>> extends Recip
 				 .forGetter(LycheeRecipe::postActions);
 
 	RecordCodecBuilder<LycheeRecipe<?>, MinMaxBounds.Ints> MAX_REPEATS_CODEC =
-			MinMaxBounds.Ints.CODEC.fieldOf("max_repeats")
-								   .orElse(MinMaxBounds.Ints.ANY)
+			MinMaxBounds.Ints.CODEC.optionalFieldOf("max_repeats", MinMaxBounds.Ints.ANY)
 								   .forGetter(LycheeRecipe::maxRepeats);
 
 	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, Boolean> hideInRecipeViewerCodec() {
