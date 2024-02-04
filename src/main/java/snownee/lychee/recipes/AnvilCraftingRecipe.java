@@ -1,7 +1,6 @@
 package snownee.lychee.recipes;
 
 import java.util.List;
-import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +28,7 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextType;
 import snownee.lychee.util.contextual.ConditionHolder;
@@ -48,7 +48,7 @@ public record AnvilCraftingRecipe(
 		int levelCost,
 		int materialCost,
 		ItemStack output,
-		List<? extends PostAction<?>> assemblingActions
+		List<PostAction<?>> assemblingActions
 ) implements LycheeRecipe<AnvilCraftingRecipe>,
 			 LycheeRecipeByCommonHolder<AnvilCraftingRecipe>,
 			 Contextual<AnvilCraftingRecipe>,
@@ -144,23 +144,17 @@ public record AnvilCraftingRecipe(
 								 return it.left().orElseThrow();
 							 }, Either::left)
 							 .forGetter(AnvilCraftingRecipe::input),
-						Codec.either(Codec.list(PostAction.CODEC), PostAction.CODEC)
-							 .xmap(
-									 it -> it.map(Function.identity(), Lists::newArrayList),
-									 it -> Either.left((List<PostAction<?>>) it)
-							 )
-							 .fieldOf("assembling")
-							 .orElseGet(Lists::newArrayList)
+						PostActionType.LIST_CODEC
+							 .optionalFieldOf("assembling", List.of())
 							 .forGetter(AnvilCraftingRecipe::assemblingActions),
 						ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
-						ExtraCodecs.validate(Codec.INT.fieldOf("level_cost"), it -> {
+						ExtraCodecs.validate(Codec.INT.optionalFieldOf("level_cost", 1), it -> {
 							if (it <= 0) {
 								return DataResult.error(() -> "level_cost must be greater than 0");
 							}
 							return DataResult.success(it);
-						}).orElse(1).forGetter(AnvilCraftingRecipe::levelCost),
-						Codec.INT.fieldOf("material_cost")
-								 .orElse(1)
+						}).forGetter(AnvilCraftingRecipe::levelCost),
+						Codec.INT.optionalFieldOf("material_cost", 1)
 								 .forGetter(AnvilCraftingRecipe::materialCost)
 				).apply(instance, AnvilCraftingRecipe::of));
 
@@ -176,10 +170,10 @@ public record AnvilCraftingRecipe(
 			@Nullable String comment,
 			String group,
 			List<ConditionHolder<?>> conditions,
-			List<? extends PostAction<?>> postActions,
+			List<PostAction<?>> postActions,
 			MinMaxBounds.Ints maxRepeats,
 			Pair<Ingredient, Ingredient> input,
-			List<? extends PostAction<?>> assembling,
+			List<PostAction<?>> assembling,
 			ItemStack output,
 			int levelCost,
 			int materialCost
