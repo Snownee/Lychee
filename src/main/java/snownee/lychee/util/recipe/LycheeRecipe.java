@@ -2,6 +2,7 @@ package snownee.lychee.util.recipe;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,8 +90,8 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 
 	MinMaxBounds.Ints maxRepeats();
 
-	default List<PostAction<?>> allActions() {
-		return postActions();
+	default Stream<PostAction<?>> allActions() {
+		return postActions().stream();
 	}
 
 	default void applyPostActions(LycheeContext context, int times) {
@@ -110,7 +111,7 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 	}
 
 	default List<BlockPredicate> getBlockOutputs() {
-		return allActions().stream()
+		return allActions()
 						   .filter(it -> !it.hidden())
 						   .map(PostAction::getOutputBlocks)
 						   .flatMap(List::stream)

@@ -1,11 +1,11 @@
 package snownee.lychee.recipes;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
@@ -121,8 +121,8 @@ public record AnvilCraftingRecipe(
 	}
 
 	@Override
-	public List<PostAction<?>> allActions() {
-		return Streams.concat(postActions().stream(), assemblingActions().stream()).toList();
+	public Stream<PostAction<?>> allActions() {
+		return Streams.concat(postActions().stream(), assemblingActions().stream());
 	}
 
 	public static class Serializer implements LycheeRecipeSerializer<AnvilCraftingRecipe> {
