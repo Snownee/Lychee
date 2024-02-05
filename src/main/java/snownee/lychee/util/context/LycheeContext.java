@@ -11,7 +11,7 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.world.item.ItemStack;
 import snownee.kiwi.recipe.EmptyContainer;
 import snownee.lychee.LycheeRegistries;
-import snownee.lychee.util.KeyDispatchedMapCodec;
+import snownee.lychee.util.codec.KeyDispatchedMapCodec;
 
 @SuppressWarnings("unchecked")
 public class LycheeContext extends EmptyContainer {

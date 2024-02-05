@@ -5,6 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.datafixers.Products;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -46,6 +47,27 @@ public interface LycheeRecipeSerializer<T extends LycheeRecipe<T>> extends Recip
 	RecordCodecBuilder<LycheeRecipe<?>, MinMaxBounds.Ints> MAX_REPEATS_CODEC =
 			MinMaxBounds.Ints.CODEC.optionalFieldOf("max_repeats", MinMaxBounds.Ints.ANY)
 								   .forGetter(LycheeRecipe::maxRepeats);
+
+	static <R extends LycheeRecipe<R>> Products.P7<
+			RecordCodecBuilder.Mu<R>,
+			Boolean,
+			Boolean,
+			@Nullable String,
+			String,
+			List<ConditionHolder<?>>,
+			List<PostAction<?>>,
+			MinMaxBounds.Ints>
+	applyCommonCodecs(RecordCodecBuilder.Instance<R> instance) {
+		return instance.group(
+				LycheeRecipeSerializer.hideInRecipeViewerCodec(),
+				LycheeRecipeSerializer.ghostCodec(),
+				LycheeRecipeSerializer.commentCodec(),
+				LycheeRecipeSerializer.groupCodec(),
+				LycheeRecipeSerializer.conditionsCodec(),
+				LycheeRecipeSerializer.postActionsCodec(),
+				LycheeRecipeSerializer.maxRepeatsCodec()
+		);
+	}
 
 	static <T extends LycheeRecipe<T>> RecordCodecBuilder<T, Boolean> hideInRecipeViewerCodec() {
 		return (RecordCodecBuilder<T, Boolean>) HIDE_IN_VIEWER_CODEC;

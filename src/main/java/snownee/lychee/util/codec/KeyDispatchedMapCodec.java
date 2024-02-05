@@ -1,4 +1,4 @@
-package snownee.lychee.util;
+package snownee.lychee.util.codec;
 
 import java.util.Map;
 import java.util.function.Function;

@@ -30,6 +30,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
+import snownee.lychee.util.codec.ProductExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ConditionHolder;
@@ -146,36 +147,31 @@ public final class AnvilCraftingRecipe implements LycheeRecipe<AnvilCraftingReci
 
 	public static class Serializer implements LycheeRecipeSerializer<AnvilCraftingRecipe> {
 		public static final Codec<AnvilCraftingRecipe> CODEC =
-				RecordCodecBuilder.create(instance -> instance.group(
-						LycheeRecipeSerializer.hideInRecipeViewerCodec(),
-						LycheeRecipeSerializer.ghostCodec(),
-						LycheeRecipeSerializer.commentCodec(),
-						LycheeRecipeSerializer.groupCodec(),
-						LycheeRecipeSerializer.conditionsCodec(),
-						LycheeRecipeSerializer.postActionsCodec(),
-						LycheeRecipeSerializer.maxRepeatsCodec(),
-						Codec.either(Codec.pair(Ingredient.CODEC, Ingredient.CODEC), Ingredient.CODEC)
-							 .fieldOf(ITEM_IN)
-							 .xmap(it -> {
-								 if (it.right().isPresent()) {
-									 return Pair.of(it.right().get(), EMPTY_INGREDIENT);
-								 }
-								 return it.left().orElseThrow();
-							 }, Either::left)
-							 .forGetter(AnvilCraftingRecipe::input),
-						PostActionType.LIST_CODEC
-								.optionalFieldOf("assembling", List.of())
-								.forGetter(AnvilCraftingRecipe::assemblingActions),
-						ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
-						ExtraCodecs.validate(Codec.INT.optionalFieldOf("level_cost", 1), it -> {
-							if (it <= 0) {
-								return DataResult.error(() -> "level_cost must be greater than 0");
-							}
-							return DataResult.success(it);
-						}).forGetter(AnvilCraftingRecipe::levelCost),
-						Codec.INT.optionalFieldOf("material_cost", 1)
-								 .forGetter(AnvilCraftingRecipe::materialCost)
-				).apply(instance, AnvilCraftingRecipe::of));
+				RecordCodecBuilder.create(instance ->
+						ProductExtensions.and(
+								LycheeRecipeSerializer.applyCommonCodecs(instance),
+								Codec.either(Codec.pair(Ingredient.CODEC, Ingredient.CODEC), Ingredient.CODEC)
+									 .fieldOf(ITEM_IN)
+									 .xmap(it -> {
+										 if (it.right().isPresent()) {
+											 return Pair.of(it.right().get(), EMPTY_INGREDIENT);
+										 }
+										 return it.left().orElseThrow();
+									 }, Either::left)
+									 .forGetter(AnvilCraftingRecipe::input),
+								PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
+														 .forGetter(AnvilCraftingRecipe::assemblingActions),
+								ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf(ITEM_OUT)
+															   .forGetter(AnvilCraftingRecipe::output),
+								ExtraCodecs.validate(Codec.INT.optionalFieldOf("level_cost", 1), it -> {
+									if (it <= 0) {
+										return DataResult.error(() -> "level_cost must be greater than 0");
+									}
+									return DataResult.success(it);
+								}).forGetter(AnvilCraftingRecipe::levelCost),
+								Codec.INT.optionalFieldOf("material_cost", 1)
+										 .forGetter(AnvilCraftingRecipe::materialCost)
+						).apply(instance, AnvilCraftingRecipe::of));
 
 		@Override
 		public @NotNull Codec<AnvilCraftingRecipe> codec() {
