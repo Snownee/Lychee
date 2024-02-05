@@ -10,16 +10,18 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.lychee.core.Reference;
+import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.contextual.ContextualContainer;
+import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.contextual.ContextualPredicate;
 import snownee.lychee.util.json.JsonPointer;
 
@@ -67,7 +69,7 @@ public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<Lychee
 
 	LycheeRecipeCommonProperties commonProperties();
 
-	default ContextualContainer conditions() {
+	default ContextualHolder conditions() {
 		return commonProperties().conditions();
 	}
 
@@ -98,6 +100,14 @@ public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<Lychee
 
 	default MinMaxBounds.Ints maxRepeats() {
 		return commonProperties().maxRepeats();
+	}
+
+	default int getRandomRepeats(int max, LycheeContext ctx) {
+		int times = Integer.MAX_VALUE;
+		if (!maxRepeats().isAny()) {
+			times = BoundsExtensions.random(maxRepeats(), ctx.get(LycheeContextKey.RANDOM));
+		}
+		return Mth.clamp(times, 1, max);
 	}
 
 	default Stream<PostAction<?>> allActions() {

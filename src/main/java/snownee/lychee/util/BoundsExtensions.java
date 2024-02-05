@@ -6,6 +6,8 @@ import java.util.Objects;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 
 public class BoundsExtensions {
 	public static final MinMaxBounds.Ints ONE = MinMaxBounds.Ints.exactly(1);
@@ -26,5 +28,14 @@ public class BoundsExtensions {
 			return Component.literal(DECIMAL_FORMAT.format(bounds.min()));
 		}
 		return Component.literal(DECIMAL_FORMAT.format(bounds.min()) + "~" + DECIMAL_FORMAT.format(bounds.max()));
+	}
+
+	public static int random(MinMaxBounds.Ints ints, RandomSource random) {
+		int min = ints.min().orElse(Integer.MIN_VALUE);
+		int max = ints.max().orElse(Integer.MAX_VALUE);
+		if (min == max) {
+			return min;
+		}
+		return Mth.randomBetweenInclusive(random, min, max);
 	}
 }

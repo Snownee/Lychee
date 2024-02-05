@@ -45,10 +45,10 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilCraftingRecipe> {
 	public AnvilCraftingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			Pair<Ingredient, Ingredient> input,
-			int levelCost,
-			int materialCost,
 			ItemStack output,
-			List<PostAction<?>> assemblingActions
+			List<PostAction<?>> assemblingActions,
+			int levelCost,
+			int materialCost
 	) {
 		super(commonProperties);
 		this.input = input;
@@ -175,10 +175,10 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilCraftingRecipe> {
 									return it.left().orElseThrow();
 								}, Either::left)
 								.forGetter(AnvilCraftingRecipe::input),
-						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
-								.forGetter(AnvilCraftingRecipe::assemblingActions),
 						ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf(ITEM_OUT)
 								.forGetter(AnvilCraftingRecipe::output),
+						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
+								.forGetter(AnvilCraftingRecipe::assemblingActions),
 						ExtraCodecs.validate(Codec.INT.optionalFieldOf("level_cost", 1), it -> {
 							if (it <= 0) {
 								return DataResult.error(() -> "level_cost must be greater than 0");
@@ -187,22 +187,11 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilCraftingRecipe> {
 						}).forGetter(AnvilCraftingRecipe::levelCost),
 						Codec.INT.optionalFieldOf("material_cost", 1)
 								.forGetter(AnvilCraftingRecipe::materialCost)
-				).apply(instance, Serializer::construct));
+				).apply(instance, AnvilCraftingRecipe::new));
 
 		@Override
 		public @NotNull Codec<AnvilCraftingRecipe> codec() {
 			return CODEC;
-		}
-
-		private static AnvilCraftingRecipe construct(
-				LycheeRecipeCommonProperties commonProperties,
-				Pair<Ingredient, Ingredient> input,
-				List<PostAction<?>> assembling,
-				ItemStack output,
-				int levelCost,
-				int materialCost
-		) {
-			return new AnvilCraftingRecipe(commonProperties, input, levelCost, materialCost, output, assembling);
 		}
 	}
 }

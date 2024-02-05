@@ -12,13 +12,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.contextual.ConditionHolder;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualContainer;
+import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record And(ContextualContainer conditions) implements ContextualCondition<And> {
+public record And(ContextualHolder conditions) implements ContextualCondition<And> {
 
 	@Override
 	public ContextualConditionType<And> type() {
@@ -33,8 +32,8 @@ public record And(ContextualContainer conditions) implements ContextualCondition
 	@Override
 	public TriState testForTooltips(Level level, @Nullable Player player) {
 		var finalResult = TriState.TRUE;
-		for (ConditionHolder<?> condition : conditions) {
-			final var result = condition.condition().testForTooltips(level, player);
+		for (ContextualCondition<?> condition : conditions) {
+			final var result = condition.testForTooltips(level, player);
 			if (result == TriState.FALSE) return result;
 			if (!result.get()) finalResult = TriState.DEFAULT;
 		}
@@ -50,8 +49,8 @@ public record And(ContextualContainer conditions) implements ContextualCondition
 			boolean inverted
 	) {
 		ContextualCondition.super.appendToTooltips(tooltips, level, player, indent, inverted);
-		for (ConditionHolder<?> condition : conditions) {
-			condition.condition().appendToTooltips(tooltips, level, player, indent + 1, false);
+		for (ContextualCondition<?> condition : conditions) {
+			condition.appendToTooltips(tooltips, level, player, indent + 1, false);
 		}
 	}
 
@@ -63,7 +62,7 @@ public record And(ContextualContainer conditions) implements ContextualCondition
 	public static class Type implements ContextualConditionType<And> {
 		public static final Codec<And> CODEC =
 				RecordCodecBuilder.create(instance -> instance
-						.group(ContextualContainer.CODEC
+						.group(ContextualHolder.CODEC
 								.fieldOf("contextual")
 								.forGetter(And::conditions)
 						).apply(instance, And::new));

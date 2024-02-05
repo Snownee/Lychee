@@ -12,13 +12,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.contextual.ConditionHolder;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.ContextualContainer;
+import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record Or(ContextualContainer conditions) implements ContextualCondition<Or> {
+public record Or(ContextualHolder conditions) implements ContextualCondition<Or> {
 	@Override
 	public ContextualConditionType<Or> type() {
 		return ContextualConditionType.OR;
@@ -26,8 +25,8 @@ public record Or(ContextualContainer conditions) implements ContextualCondition<
 
 	@Override
 	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		for (ConditionHolder<?> condition : conditions) {
-			int result = condition.condition().test(recipe, ctx, times);
+		for (ContextualCondition<?> condition : conditions) {
+			int result = condition.test(recipe, ctx, times);
 			if (result > 0) {
 				return result;
 			}
@@ -38,8 +37,8 @@ public record Or(ContextualContainer conditions) implements ContextualCondition<
 	@Override
 	public TriState testForTooltips(Level level, @Nullable Player player) {
 		boolean allFailed = true;
-		for (ConditionHolder<?> condition : conditions) {
-			TriState result = condition.condition().testForTooltips(level, player);
+		for (ContextualCondition<?> condition : conditions) {
+			TriState result = condition.testForTooltips(level, player);
 			if (result == TriState.TRUE) {
 				return result;
 			}
@@ -59,8 +58,8 @@ public record Or(ContextualContainer conditions) implements ContextualCondition<
 			boolean inverted
 	) {
 		ContextualCondition.super.appendToTooltips(tooltips, level, player, indent, inverted);
-		for (ConditionHolder<?> condition : conditions) {
-			condition.condition().appendToTooltips(tooltips, level, player, indent + 1, false);
+		for (ContextualCondition<?> condition : conditions) {
+			condition.appendToTooltips(tooltips, level, player, indent + 1, false);
 		}
 	}
 
@@ -72,7 +71,7 @@ public record Or(ContextualContainer conditions) implements ContextualCondition<
 	public static class Type implements ContextualConditionType<Or> {
 		public static final Codec<Or> CODEC =
 				RecordCodecBuilder.create(instance -> instance
-						.group(ContextualContainer.CODEC
+						.group(ContextualHolder.CODEC
 								.fieldOf("contextual")
 								.forGetter(Or::conditions)
 						).apply(instance, Or::new));

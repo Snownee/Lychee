@@ -1,6 +1,7 @@
 package snownee.lychee.util.recipe;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -35,7 +36,7 @@ import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.contextual.ConditionHolder;
+import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
@@ -56,10 +57,10 @@ public class BlockKeyableRecipeType<T extends BlockKeyableRecipe<T>> extends Lyc
 		super.refreshCache();
 		final var multimap = HashMultimap.<Block, RecipeHolder<T>>create();
 		for (final var recipe : recipes) {
-			List<ConditionHolder<?>> conditions = recipe.value().conditions().conditions();
-			if (!conditions.isEmpty()) {
-				final var condition = conditions.get(0);
-				if (condition.condition() instanceof Chance chance) {
+			Iterator<ContextualCondition<?>> iterator = recipe.value().conditions().iterator();
+			if (iterator.hasNext()) {
+				final var condition = iterator.next();
+				if (condition instanceof Chance chance) {
 					((ChanceRecipe) recipe.value()).setChance(chance.chance());
 				}
 			}
