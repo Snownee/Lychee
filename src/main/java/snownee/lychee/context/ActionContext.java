@@ -10,10 +10,10 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import snownee.lychee.Lychee;
-import snownee.lychee.util.SerializableType;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextType;
+import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.context.LycheeContextSerializer;
 import snownee.lychee.util.context.LycheeContextValue;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
@@ -38,8 +38,8 @@ public class ActionContext implements LycheeContextValue<ActionContext> {
 	}
 
 	@Override
-	public LycheeContextType<ActionContext> type() {
-		return LycheeContextType.ACTION;
+	public LycheeContextKey<ActionContext> key() {
+		return LycheeContextKey.ACTION;
 	}
 
 	public enum State {
@@ -67,8 +67,7 @@ public class ActionContext implements LycheeContextValue<ActionContext> {
 	}
 
 
-	public static final class Type implements LycheeContextType<ActionContext>,
-											  SerializableType<ActionContext> {
+	public static final class Serializer implements LycheeContextSerializer<ActionContext> {
 		public static final Codec<ActionContext> CODEC = RecordCodecBuilder.create(instance ->
 				instance.group(
 						Codec.BOOL.optionalFieldOf("avoid_default", false).forGetter(it -> it.avoidDefault),

@@ -13,7 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextType;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.LycheeRecipe;
@@ -27,7 +27,7 @@ public record EntityHealth(Doubles range) implements ContextualCondition<EntityH
 
 	@Override
 	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		Entity entity = ctx.get(LycheeContextType.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
+		Entity entity = ctx.get(LycheeContextKey.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
 		double health = 0;
 		if (entity instanceof LivingEntity living) {
 			health = living.getHealth();

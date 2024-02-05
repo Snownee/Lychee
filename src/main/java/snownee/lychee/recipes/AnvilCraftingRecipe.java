@@ -29,7 +29,7 @@ import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextType;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ConditionHolder;
 import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.contextual.ContextualByCommonHolder;
@@ -76,7 +76,7 @@ public record AnvilCraftingRecipe(
 
 	@Override
 	public boolean matches(final LycheeContext context, final Level level) {
-		final var anvilContext = context.get(LycheeContextType.ANVIL);
+		final var anvilContext = context.get(LycheeContextKey.ANVIL);
 		if (anvilContext == null) return false;
 		if (!input.getSecond().isEmpty() && anvilContext.input().getSecond().getCount() < materialCost) return false;
 		return input.getFirst().test(anvilContext.input().getFirst())
@@ -85,11 +85,11 @@ public record AnvilCraftingRecipe(
 
 	@Override
 	public @NotNull ItemStack assemble(final LycheeContext context, final RegistryAccess registryAccess) {
-		final var anvilContext = context.get(LycheeContextType.ANVIL);
+		final var anvilContext = context.get(LycheeContextKey.ANVIL);
 		anvilContext.setLevelCost(levelCost);
 		anvilContext.setMaterialCost(materialCost);
-		context.get(LycheeContextType.ITEM).items().replace(2, getResultItem(registryAccess));
-		final var actionContext = context.get(LycheeContextType.ACTION);
+		context.get(LycheeContextKey.ITEM).replace(2, getResultItem(registryAccess));
+		final var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.reset();
 		actionContext.jobs.addAll(assemblingActions.stream().map(it -> new Job(it, 1)).toList());
 		actionContext.run(this, context);

@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextType;
+import snownee.lychee.util.context.LycheeContextKey;
 
 public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemStackHolder> {
 
@@ -28,7 +28,7 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 
 	public ItemStackHolder split(int index, int amount) {
 		final var holder = get(index);
-		final var original = holder.split(amount);
+		final var original = holder.shrink(amount);
 		if (!original.isEmpty()) stacksNeedHandle.add(original);
 		set(index, holder);
 		return holder;
@@ -48,7 +48,7 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 		for (final var holder : this) {
 			if (holder.getIgnoreConsumption() || holder.get().isEmpty()) continue;
 			final var count = holder.get().getCount();
-			holder.split(times);
+			holder.shrink(times);
 			// TODO 这里逻辑从原来的直接加 times 变成了加实际消耗的数量，不知道有什么影响
 			result += count - holder.get().getCount();
 		}
@@ -108,8 +108,8 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 
 		@Override
 		public int postApply(boolean consumeInputs, int times) {
-			final var lootParamsContext = context.get(LycheeContextType.LOOT_PARAMS);
-			final var genericContext = context.get(LycheeContextType.GENERIC);
+			final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+			final var level = context.get(LycheeContextKey.LEVEL);
 			final var entity = lootParamsContext.getOrNull(LootContextParams.THIS_ENTITY);
 			Player player = null;
 			if (entity instanceof Player playerEntity) player = playerEntity;
@@ -120,7 +120,7 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 					if (!player.addItem(stack))
 						player.drop(stack, false);
 				} else if (pos != null) {
-					CommonProxy.dropItemStack(genericContext.level(), pos.x, pos.y, pos.z, stack, null);
+					CommonProxy.dropItemStack(level, pos.x, pos.y, pos.z, stack, null);
 				}
 			}
 			return consumeInputs ? consumeInputs(times) : 0;

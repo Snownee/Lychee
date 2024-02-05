@@ -13,7 +13,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.action.ActionData;
 import snownee.lychee.util.action.ActionMarker;
-import snownee.lychee.util.context.LycheeContextType;
+import snownee.lychee.util.context.LycheeContextKey;
 
 @Mixin(Marker.class)
 public class MarkerMixin implements ActionMarker {
@@ -33,7 +33,7 @@ public class MarkerMixin implements ActionMarker {
 		if (lychee$data.getContext() == null) return;
 		if (lychee$data.consumeDelayedTicks() > 0) return;
 
-		final var actionContext = lychee$data.getContext().get(LycheeContextType.ACTION);
+		final var actionContext = lychee$data.getContext().get(LycheeContextKey.ACTION);
 		actionContext.state = ActionContext.State.RUNNING;
 		actionContext.run(lychee$data.getRecipe(), lychee$data.getContext());
 		if (actionContext.state == ActionContext.State.STOPPED) {

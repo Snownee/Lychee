@@ -20,14 +20,14 @@ import snownee.lychee.core.Reference;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextType;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.json.JsonPointer;
 
 public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeContext>, Contextual<T> {
 	String DEFAULT_GROUP = "default";
 	String ITEM_IN = "item_in";
-	String ITEM_OUT ="item_out";
+	String ITEM_OUT = "item_out";
 	JsonPointer ITEM_IN_POINTER = new JsonPointer("/item_in");
 	JsonPointer ITEM_OUT_POINTER = new JsonPointer("/item_out");
 	JsonPointer RESULT_POINTER = new JsonPointer("/result");
@@ -35,11 +35,11 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 
 	default ResourceLocation id() {
 		return Util.getRecipes(getType())
-						  .stream()
-						  .filter(it -> it.value().equals(this))
-						  .findFirst()
-						  .orElseThrow()
-						  .id();
+				   .stream()
+				   .filter(it -> it.value().equals(this))
+				   .findFirst()
+				   .orElseThrow()
+				   .id();
 	}
 
 	default IntList getItemIndexes(Reference reference) {
@@ -92,8 +92,8 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 	}
 
 	default void applyPostActions(LycheeContext context, int times) {
-		if (!context.get(LycheeContextType.GENERIC).level().isClientSide) {
-			final var actionContext = context.get(LycheeContextType.ACTION);
+		if (!context.get(LycheeContextKey.LEVEL).isClientSide) {
+			final var actionContext = context.get(LycheeContextKey.ACTION);
 			actionContext.reset();
 			actionContext.jobs.addAll(postActions().stream().map(it -> new Job(it, times)).toList());
 			actionContext.run(this, context);
@@ -101,17 +101,18 @@ public interface LycheeRecipe<T extends LycheeRecipe<T>> extends Recipe<LycheeCo
 	}
 
 	default List<BlockPredicate> getBlockInputs() {
-		if (this instanceof BlockKeyableRecipe<?> blockPredicateRecipe) {
-			return List.of(blockPredicateRecipe.blockPredicate());
+		if (this instanceof BlockKeyableRecipe<?> blockPredicateRecipe &&
+			blockPredicateRecipe.blockPredicate().isPresent()) {
+			return List.of(blockPredicateRecipe.blockPredicate().get());
 		}
 		return List.of();
 	}
 
 	default List<BlockPredicate> getBlockOutputs() {
 		return allActions()
-						   .filter(it -> !it.hidden())
-						   .map(PostAction::getOutputBlocks)
-						   .flatMap(List::stream)
-						   .toList();
+				.filter(it -> !it.hidden())
+				.map(PostAction::getOutputBlocks)
+				.flatMap(List::stream)
+				.toList();
 	}
 }

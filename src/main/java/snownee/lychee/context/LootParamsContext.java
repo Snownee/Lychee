@@ -18,14 +18,14 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextType;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.context.LycheeContextValue;
 
 public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, Object> params)
 		implements LycheeContextValue<LootParamsContext> {
 	@Override
-	public LycheeContextType<LootParamsContext> type() {
-		return LycheeContextType.LOOT_PARAMS;
+	public LycheeContextKey<LootParamsContext> key() {
+		return LycheeContextKey.LOOT_PARAMS;
 	}
 
 	/**
@@ -39,7 +39,7 @@ public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, 
 			pos = BlockPos.containing(get(LootContextParams.ORIGIN));
 			setParam(LycheeLootContextParams.BLOCK_POS, pos);
 		}
-		var blockEntity = context.get(LycheeContextType.GENERIC).level().getBlockEntity(pos);
+		var blockEntity = context.get(LycheeContextKey.LEVEL).getBlockEntity(pos);
 		if (blockEntity != null) setParam(LootContextParams.BLOCK_ENTITY, blockEntity);
 	}
 
@@ -92,7 +92,7 @@ public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, 
 
 	public LootContext asLootContext() {
 		initBlockEntityParam();
-		var paramsBuilder = new LootParams.Builder((ServerLevel) context.get(LycheeContextType.GENERIC).level());
+		var paramsBuilder = new LootParams.Builder((ServerLevel) context.get(LycheeContextKey.LEVEL));
 		//noinspection rawtypes,unchecked
 		params.forEach((p, o) -> paramsBuilder.withParameter((LootContextParam) p, o));
 		var builder = new LootContext.Builder(paramsBuilder.create(LycheeLootContextParamSets.ALL));
@@ -102,7 +102,7 @@ public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, 
 	public void validate(LootContextParamSet paramSet) {
 		final var difference = Sets.difference(paramSet.getRequired(), params.keySet());
 		if (!difference.isEmpty()) {
-			throw new IllegalArgumentException("Missing required parameters: " + set1);
+			throw new IllegalArgumentException("Missing required parameters: " + difference);
 		}
 	}
 }

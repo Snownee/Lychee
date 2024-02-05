@@ -32,7 +32,7 @@ import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextType;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionDisplay;
 import snownee.lychee.util.contextual.ContextualConditionType;
@@ -62,11 +62,11 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 
 	@Override
 	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		final var genericContext = ctx.get(LycheeContextType.GENERIC);
-		final var lootParamsContext = ctx.get(LycheeContextType.LOOT_PARAMS);
-		if (genericContext.level().isClientSide) {
+		final var level = ctx.get(LycheeContextKey.LEVEL);
+		final var lootParamsContext = ctx.get(LycheeContextKey.LOOT_PARAMS);
+		if (level.isClientSide) {
 			return testClient(
-					genericContext.level(),
+					level,
 					lootParamsContext.getOrNull(LycheeLootContextParams.BLOCK_POS),
 					lootParamsContext.getOrNull(LootContextParams.ORIGIN)
 			).get() ? times : 0;
@@ -248,9 +248,12 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 
 		@Override
 		public TriState testClient(LocationPredicate predicate, Level level, BlockPos pos, Vec3 vec) {
-			return TriState.of(predicate.block()
-										.orElseThrow()
-										.unsafeMatches(level.getBlockState(pos), () -> level.getBlockEntity(pos)));
+			return TriState.of(
+					BlockPredicateExtensions.unsafeMatches(
+							predicate.block().orElseThrow(),
+							level.getBlockState(pos),
+							() -> level.getBlockEntity(pos)
+					));
 		}
 	}
 

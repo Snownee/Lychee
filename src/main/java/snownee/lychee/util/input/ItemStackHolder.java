@@ -25,7 +25,7 @@ public interface ItemStackHolder extends Supplier<ItemStack> {
 	 *
 	 * @return The original item stack that counts is original count minus amount but always greater-equals 0
 	 */
-	default ItemStack split(int amount) {
+	default ItemStack shrink(int amount) {
 		final var original = get();
 		ItemStack stack = original.split(amount);
 		set(stack);

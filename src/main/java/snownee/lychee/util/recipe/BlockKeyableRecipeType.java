@@ -34,7 +34,7 @@ import snownee.lychee.core.recipe.recipe.ChanceRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextType;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
@@ -103,7 +103,7 @@ public class BlockKeyableRecipeType<T extends BlockKeyableRecipe<T>> extends Lyc
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
 			return Optional.empty();
 		}
-		final var lootParamsContext = context.get(LycheeContextType.LOOT_PARAMS);
+		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 		lootParamsContext.params().put(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
 		lootParamsContext.params().put(LootContextParams.THIS_ENTITY, player);
 		lootParamsContext.params().put(LootContextParams.BLOCK_STATE, blockstate);
@@ -114,11 +114,11 @@ public class BlockKeyableRecipeType<T extends BlockKeyableRecipe<T>> extends Lyc
 				hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
 
 		context.put(
-				LycheeContextType.ITEM,
+				LycheeContextKey.ITEM,
 				new ItemContext(ItemStackHolderCollection.Inventory.of(context, stack, otherStack))
 		);
-		final var itemContext = context.get(LycheeContextType.ITEM);
-		final var actionContext = context.get(LycheeContextType.ACTION);
+		final var itemContext = context.get(LycheeContextKey.ITEM);
+		final var actionContext = context.get(LycheeContextKey.ACTION);
 
 		final var iterable = Iterables.concat(recipes, anyBlockRecipes);
 		for (final var recipe : iterable) {

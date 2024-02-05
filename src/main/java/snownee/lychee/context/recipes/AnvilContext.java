@@ -3,7 +3,7 @@ package snownee.lychee.context.recipes;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.world.item.ItemStack;
-import snownee.lychee.util.context.LycheeContextType;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.context.LycheeContextValue;
 
 public class AnvilContext implements LycheeContextValue<AnvilContext> {
@@ -55,7 +55,7 @@ public class AnvilContext implements LycheeContextValue<AnvilContext> {
 	}
 
 	@Override
-	public LycheeContextType<AnvilContext> type() {
-		return LycheeContextType.ANVIL;
+	public LycheeContextKey<AnvilContext> key() {
+		return LycheeContextKey.ANVIL;
 	}
 }
