@@ -16,7 +16,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record EntityHealth(Doubles range) implements ContextualCondition<EntityHealth> {
 
@@ -26,7 +26,7 @@ public record EntityHealth(Doubles range) implements ContextualCondition<EntityH
 	}
 
 	@Override
-	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		Entity entity = ctx.get(LycheeContextKey.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
 		double health = 0;
 		if (entity instanceof LivingEntity living) {

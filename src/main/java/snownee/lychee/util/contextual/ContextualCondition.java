@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 
-public interface ContextualCondition<T extends ContextualCondition<T>> extends RecipeCondition,
+public interface ContextualCondition<T extends ContextualCondition<T>> extends ContextualPredicate,
 																			   ContextualConditionDisplay {
 	Codec<ContextualCondition<?>> CODEC = LycheeRegistries.CONTEXTUAL.byNameCodec().dispatch(
 			ContextualCondition::type,

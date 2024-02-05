@@ -19,7 +19,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record IsDifficulty(List<Difficulty> difficulties) implements ContextualCondition<IsDifficulty> {
 
@@ -29,7 +29,7 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 	}
 
 	@Override
-	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return difficulties.contains(ctx.get(LycheeContextKey.LEVEL).getDifficulty()) ? times : 0;
 	}
 

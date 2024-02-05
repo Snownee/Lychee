@@ -10,7 +10,7 @@ import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 public class PreventDefault extends PostAction {
@@ -23,12 +23,12 @@ public class PreventDefault extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		ctx.runtime.doDefault = false;
 	}
 
 	@Override
-	protected void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class PreventDefault extends PostAction {
 	}
 
 	@Override
-	public void loadCatalystsInfo(LycheeRecipe recipe, List<IngredientInfo> ingredients) {
+	public void loadCatalystsInfo(ILycheeRecipe recipe, List<IngredientInfo> ingredients) {
 		if (recipe instanceof OldLycheeRecipe<?> lycheeRecipe && lycheeRecipe.getType().canPreventConsumeInputs) {
 			for (var ingredient : ingredients) {
 				if (ingredient.tooltips.isEmpty()) {

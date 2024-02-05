@@ -13,14 +13,11 @@ import net.minecraft.util.GsonHelper;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.contextual.Contextual;
-import snownee.lychee.util.contextual.ContextualByCommonHolder;
+import snownee.lychee.util.contextual.ContextualPredicate;
 import snownee.lychee.util.json.JsonPointer;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public interface PostAction<Action extends PostAction<Action>> extends Contextual<Action>,
-																	   ContextualByCommonHolder<Action>,
-																	   PostActionDisplay {
+public interface PostAction<Action extends PostAction<Action>> extends PostActionDisplay, ContextualPredicate {
 	Codec<PostAction<?>> CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatch(
 			PostAction::type,
 			PostActionType::codec
@@ -32,9 +29,9 @@ public interface PostAction<Action extends PostAction<Action>> extends Contextua
 
 	PostActionType<Action> type();
 
-	default void validate(@Nullable LycheeRecipe<?> recipe, LycheeRecipe.NBTPatchContext patchContext) {}
+	default void validate(@Nullable ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {}
 
-	void apply(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times);
+	void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times);
 
 	@Override
 	default Component getDisplayName() {
@@ -48,9 +45,9 @@ public interface PostAction<Action extends PostAction<Action>> extends Contextua
 		return true;
 	}
 
-	default void getUsedPointers(@Nullable LycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {}
+	default void getUsedPointers(@Nullable ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {}
 
-	default void onFailure(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {}
+	default void onFailure(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {}
 
 	@Override
 	default String toJsonString() {

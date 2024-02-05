@@ -22,7 +22,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Execute(String command, MinMaxBounds.Ints bounds) implements ContextualCondition<Execute> {
 
@@ -35,7 +35,7 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 	}
 
 	@Override
-	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		final var level = ctx.get(LycheeContextKey.LEVEL);
 		if (command.isEmpty() || level.isClientSide) {
 			return 0;

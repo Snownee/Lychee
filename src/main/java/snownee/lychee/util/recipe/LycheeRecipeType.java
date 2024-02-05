@@ -19,7 +19,7 @@ import snownee.kiwi.util.Util;
 import snownee.lychee.Lychee;
 import snownee.lychee.util.context.LycheeContext;
 
-public class LycheeRecipeType<T extends LycheeRecipe<T>> implements RecipeType<T> {
+public class LycheeRecipeType<T extends ILycheeRecipe<T>> implements RecipeType<T> {
 	public final ResourceLocation id;
 	public ResourceLocation categoryId;
 	public final Class<? extends T> clazz;
@@ -39,7 +39,7 @@ public class LycheeRecipeType<T extends LycheeRecipe<T>> implements RecipeType<T
 			Component.translatable("tip.lychee.preventDefault.default").withStyle(ChatFormatting.YELLOW);
 
 	public LycheeRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet contextParamSet) {
-		id = categoryId = name.contains(":") ? new ResourceLocation(name) : new ResourceLocation(Lychee.ID, name);
+		id = categoryId = Lychee.id(name);
 		this.clazz = clazz;
 		this.contextParamSet = contextParamSet == null
 							   ? LootContextParamSets.CODEC.parse(JavaOps.INSTANCE, id).result().orElseThrow()
@@ -49,17 +49,17 @@ public class LycheeRecipeType<T extends LycheeRecipe<T>> implements RecipeType<T
 
 	@Override
 	public String toString() {
-		return id.toString();
+		return "LycheeRecipeType[" + id + "]";
 	}
 
-	public Optional<T> tryMatch(RecipeHolder<T> recipeHolder, Level level, LycheeContext context) {
+	public Optional<RecipeHolder<T>> tryMatch(RecipeHolder<T> recipeHolder, Level level, LycheeContext context) {
 		T lycheeRecipe = recipeHolder.value();
 		return lycheeRecipe.matches(context, level) && lycheeRecipe.test(
-				(RecipeHolder<LycheeRecipe<?>>) recipeHolder,
+				recipeHolder.value(),
 				context,
 				1
 		) > 0
-			   ? Optional.of(lycheeRecipe)
+			   ? Optional.of(recipeHolder)
 			   : Optional.empty();
 	}
 
@@ -87,7 +87,7 @@ public class LycheeRecipeType<T extends LycheeRecipe<T>> implements RecipeType<T
 		recipes = stream.toList();
 	}
 
-	public Optional<T> findFirst(LycheeContext ctx, Level level) {
+	public Optional<RecipeHolder<T>> findFirst(LycheeContext ctx, Level level) {
 		return recipes.stream().flatMap(it -> tryMatch(it, level, ctx).stream()).findFirst();
 	}
 

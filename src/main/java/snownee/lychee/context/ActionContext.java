@@ -15,7 +15,7 @@ import snownee.lychee.util.context.KeyedContextValue;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.context.LycheeContextSerializer;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ActionContext implements KeyedContextValue<ActionContext> {
 	public boolean avoidDefault = false;
@@ -46,7 +46,7 @@ public class ActionContext implements KeyedContextValue<ActionContext> {
 		RUNNING, PAUSED, STOPPED
 	}
 
-	public void run(@Nullable LycheeRecipe<?> recipe, LycheeContext context) {
+	public void run(@Nullable ILycheeRecipe<?> recipe, LycheeContext context) {
 		while (!jobs.isEmpty()) {
 			final var job = jobs.poll();
 			try {

@@ -48,7 +48,7 @@ import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.action.input.SetItem;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.fragment.Fragments;
 import snownee.lychee.mixin.CraftingMenuAccess;
@@ -58,7 +58,7 @@ import snownee.lychee.mixin.TransientCraftingContainerAccess;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.json.JsonPointer;
 
-public class ShapedCraftingRecipe extends ShapedRecipe implements LycheeRecipe<CraftingContext> {
+public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<CraftingContext> {
 
 	public static final Cache<Class<?>, Function<CraftingContainer, Pair<Vec3, Player>>> CONTAINER_WORLD_LOCATOR =
 			CacheBuilder.newBuilder().build();
@@ -387,7 +387,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements LycheeRecipe<C
 			recipe.conditions.parseConditions(jsonObject.get("contextual"));
 			PostAction.parseActions(jsonObject.get("post"), recipe::addPostAction);
 			PostAction.parseActions(jsonObject.get("assemblingActions"), recipe::addAssemblingAction);
-			LycheeRecipe.processActions(recipe, jsonObject);
+			ILycheeRecipe.processActions(recipe, jsonObject);
 			return recipe;
 		}
 

@@ -19,7 +19,7 @@ import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.Reference;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.json.JsonPointer;
 
@@ -39,12 +39,12 @@ public class SetItem extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		IntList indexes = recipe.getItemIndexes(target);
 		for (var index : indexes) {
 			CompoundTag tag = ctx.getItem(index).getTag();
@@ -78,12 +78,12 @@ public class SetItem extends PostAction {
 	}
 
 	@Override
-	public void validate(LycheeRecipe recipe, LycheeRecipe.NBTPatchContext patchContext) {
+	public void validate(ILycheeRecipe recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 		Preconditions.checkArgument(recipe.getItemIndexes(target).size() > 0, "No target found for %s", target);
 	}
 
 	@Override
-	public JsonElement provideJsonInfo(LycheeRecipe recipe, JsonPointer pointer, JsonObject recipeObject) {
+	public JsonElement provideJsonInfo(ILycheeRecipe recipe, JsonPointer pointer, JsonObject recipeObject) {
 		path = pointer.toString();
 		return CommonProxy.tagToJson(stack.save(new CompoundTag()));
 	}

@@ -1,6 +1,5 @@
 package snownee.lychee.util.contextual;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.mojang.serialization.Codec;
@@ -11,7 +10,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
-import snownee.lychee.util.codec.CompactListCodec;
 
 public record ConditionHolder<T extends ContextualCondition<T>>(
 		ContextualCondition<T> condition, boolean secret, Optional<Component> description
@@ -24,8 +22,6 @@ public record ConditionHolder<T extends ContextualCondition<T>>(
 							ComponentSerialization.CODEC.optionalFieldOf("description")
 														.forGetter(ConditionHolder::description)
 					).apply(instance, ConditionHolder::new));
-
-	public static final Codec<List<ConditionHolder<?>>> LIST_CODEC = new CompactListCodec<>(CODEC);
 
 	public ConditionHolder(ContextualCondition<T> condition) {
 		this(condition, false, Optional.empty());

@@ -12,7 +12,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public final class ActionData {
 	public static final Codec<ActionData> CODEC =
@@ -22,13 +22,13 @@ public final class ActionData {
 							Codec.INT.fieldOf("delayedTicks").forGetter(ActionData::getDelayedTicks)
 					).apply(inst, ActionData::of));
 	@Nullable
-	private LycheeRecipe<?> recipe;
+	private ILycheeRecipe<?> recipe;
 	@Nullable
 	private LycheeContext context;
 	private int delayedTicks;
 
 	private ActionData(
-			@Nullable LycheeRecipe<?> recipe,
+			@Nullable ILycheeRecipe<?> recipe,
 			@Nullable LycheeContext context,
 			int delayedTicks
 	) {
@@ -39,21 +39,21 @@ public final class ActionData {
 
 	public static ActionData of(@Nullable LycheeContext context, int delayedTicks) {
 		ResourceLocation recipeId = context.getMatchedRecipeId(); //TODO
-		LycheeRecipe<?> recipe = null;
+		ILycheeRecipe<?> recipe = null;
 		if (recipeId != null) {
 			RecipeHolder<Recipe<?>> holder = (RecipeHolder<Recipe<?>>) CommonProxy.recipe(recipeId);
-			if (holder != null && holder.value() instanceof LycheeRecipe) {
-				recipe = (LycheeRecipe<?>) holder.value();
+			if (holder != null && holder.value() instanceof ILycheeRecipe) {
+				recipe = (ILycheeRecipe<?>) holder.value();
 			}
 		}
 		return new ActionData(recipe, context, delayedTicks);
 	}
 
-	public @Nullable LycheeRecipe<?> getRecipe() {
+	public @Nullable ILycheeRecipe<?> getRecipe() {
 		return recipe;
 	}
 
-	public void setRecipe(final @Nullable LycheeRecipe<?> recipe) {
+	public void setRecipe(final @Nullable ILycheeRecipe<?> recipe) {
 		this.recipe = recipe;
 	}
 

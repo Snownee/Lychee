@@ -17,7 +17,7 @@ import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.core.def.DoubleBoundsHelper;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 
 public class Hurt extends PostAction {
@@ -36,12 +36,12 @@ public class Hurt extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		Entity entity = ctx.getParam(LootContextParams.THIS_ENTITY);
 		entity.invulnerableTime = 0;
 		try {

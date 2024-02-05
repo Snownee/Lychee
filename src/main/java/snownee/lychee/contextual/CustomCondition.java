@@ -22,8 +22,8 @@ import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.contextual.RecipeCondition;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.contextual.ContextualPredicate;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 /**
  * Mainly used by KubeJS script listener with `LycheeEvents.customAction('id', listener`)
@@ -31,7 +31,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 public class CustomCondition implements ContextualCondition<CustomCondition> {
 	public final JsonObject data;
 	private final String id;
-	public RecipeCondition testFunc = null;
+	public ContextualPredicate testFunc = null;
 	public BiFunction<Level, @Nullable Player, InteractionResult> testInTooltipsFunc =
 			(level, player) -> InteractionResult.PASS;
 
@@ -47,7 +47,7 @@ public class CustomCondition implements ContextualCondition<CustomCondition> {
 	}
 
 	@Override
-	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		if (testFunc != null) {
 			return testFunc.test(recipe, ctx, times);
 		}

@@ -39,7 +39,7 @@ import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.predicates.LocationCheck;
 import snownee.lychee.util.predicates.LocationPredicate;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Location(LocationCheck check) implements ContextualCondition<Location> {
 
@@ -61,7 +61,7 @@ public record Location(LocationCheck check) implements ContextualCondition<Locat
 	}
 
 	@Override
-	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		final var level = ctx.get(LycheeContextKey.LEVEL);
 		final var lootParamsContext = ctx.get(LycheeContextKey.LOOT_PARAMS);
 		if (level.isClientSide) {

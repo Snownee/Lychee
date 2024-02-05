@@ -21,7 +21,7 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 
 public class Explode extends PostAction {
@@ -52,12 +52,12 @@ public class Explode extends PostAction {
 	}
 
 	@Override
-	public void doApply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
 		pos = pos.add(offset.getX(), offset.getY(), offset.getZ());
 		float r = Math.min(radius + step * (Mth.sqrt(times) - 1), radius * 4);

@@ -8,7 +8,7 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.compat.IngredientInfo;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostActionDisplay {
 
@@ -29,7 +29,7 @@ public interface PostActionDisplay {
 		return false;
 	}
 
-	default void loadCatalystsInfo(@Nullable LycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {}
+	default void loadCatalystsInfo(@Nullable ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {}
 
 	String toJsonString();
 }

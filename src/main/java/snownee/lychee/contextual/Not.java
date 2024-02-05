@@ -12,7 +12,7 @@ import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Not(ContextualCondition<?> condition) implements ContextualCondition<Not> {
 
@@ -22,7 +22,7 @@ public record Not(ContextualCondition<?> condition) implements ContextualConditi
 	}
 
 	@Override
-	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return times - condition.test(recipe, ctx, times);
 	}
 

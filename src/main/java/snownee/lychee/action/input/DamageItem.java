@@ -28,7 +28,7 @@ import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionByCommonHolder;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record DamageItem(int damage, Reference target) implements PostAction<DamageItem>,
 																  PostActionByCommonHolder<DamageItem> {
@@ -41,12 +41,12 @@ public record DamageItem(int damage, Reference target) implements PostAction<Dam
 	}
 
 	@Override
-	public void doApply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		apply(recipe, ctx, times);
 	}
 
 	@Override
-	protected void apply(LycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
 		IntList indexes = recipe.getItemIndexes(target);
 		Entity thisEntity = ctx.getParam(LootContextParams.THIS_ENTITY);
 		for (var index : indexes) {
@@ -108,12 +108,12 @@ public record DamageItem(int damage, Reference target) implements PostAction<Dam
 	}
 
 	@Override
-	public void validate(LycheeRecipe recipe, LycheeRecipe.NBTPatchContext patchContext) {
+	public void validate(ILycheeRecipe recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 		Preconditions.checkArgument(!recipe.getItemIndexes(target).isEmpty(), "No target found for %s", target);
 	}
 
 	@Override
-	public void loadCatalystsInfo(LycheeRecipe recipe, List<IngredientInfo> ingredients) {
+	public void loadCatalystsInfo(ILycheeRecipe recipe, List<IngredientInfo> ingredients) {
 		String key = CommonProxy.makeDescriptionId("postAction", getType().getRegistryName());
 		Component component = Component.translatable(key, damage).withStyle(ChatFormatting.YELLOW);
 		recipe.getItemIndexes(target).forEach(i -> {

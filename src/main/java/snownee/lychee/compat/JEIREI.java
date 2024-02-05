@@ -35,7 +35,7 @@ import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class JEIREI {
@@ -173,7 +173,7 @@ public class JEIREI {
 		});
 	}
 
-	public static List<Component> getRecipeTooltip(LycheeRecipe recipe) {
+	public static List<Component> getRecipeTooltip(ILycheeRecipe recipe) {
 		List<Component> list = Lists.newArrayList();
 		if (!Strings.isNullOrEmpty(recipe.getComment())) {
 			String comment = recipe.getComment();

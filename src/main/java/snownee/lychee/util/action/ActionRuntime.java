@@ -11,7 +11,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.CommonProxy;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 public class ActionRuntime {
@@ -31,7 +31,7 @@ public class ActionRuntime {
 	}
 
 	public void run(RecipeHolder<OldLycheeRecipe<?>> recipe, LycheeRecipeContext ctx) {
-		LycheeRecipe.NBTPatchContext patchContext = LycheeRecipe.patchContexts.get(recipe.id());
+		ILycheeRecipe.NBTPatchContext patchContext = ILycheeRecipe.patchContexts.get(recipe.id());
 		if (patchContext != null && ctx.json == null) {
 			ctx.json = patchContext.template().deepCopy();
 			for (Integer index : patchContext.usedIndexes()) {

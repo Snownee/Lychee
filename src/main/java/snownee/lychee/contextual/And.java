@@ -13,16 +13,12 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ConditionHolder;
-import snownee.lychee.util.contextual.Contextual;
-import snownee.lychee.util.contextual.ContextualByCommonHolder;
-import snownee.lychee.util.contextual.ContextualCommonHolder;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.contextual.ContextualContainer;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record And(ContextualCommonHolder contextualCommonHolder) implements ContextualCondition<And>,
-																			Contextual<And>,
-																			ContextualByCommonHolder<And> {
+public record And(ContextualContainer conditions) implements ContextualCondition<And> {
 
 	@Override
 	public ContextualConditionType<And> type() {
@@ -30,14 +26,14 @@ public record And(ContextualCommonHolder contextualCommonHolder) implements Cont
 	}
 
 	@Override
-	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		return ContextualByCommonHolder.super.test(recipe, ctx, times);
+	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+		return conditions.test(recipe, ctx, times);
 	}
 
 	@Override
 	public TriState testForTooltips(Level level, @Nullable Player player) {
 		var finalResult = TriState.TRUE;
-		for (ConditionHolder<?> condition : conditions()) {
+		for (ConditionHolder<?> condition : conditions) {
 			final var result = condition.condition().testForTooltips(level, player);
 			if (result == TriState.FALSE) return result;
 			if (!result.get()) finalResult = TriState.DEFAULT;
@@ -54,23 +50,22 @@ public record And(ContextualCommonHolder contextualCommonHolder) implements Cont
 			boolean inverted
 	) {
 		ContextualCondition.super.appendToTooltips(tooltips, level, player, indent, inverted);
-		for (ConditionHolder<?> condition : conditions()) {
+		for (ConditionHolder<?> condition : conditions) {
 			condition.condition().appendToTooltips(tooltips, level, player, indent + 1, false);
 		}
 	}
 
 	@Override
 	public int showingCount() {
-		return ContextualByCommonHolder.super.showingCount();
+		return conditions.showingCount();
 	}
 
 	public static class Type implements ContextualConditionType<And> {
 		public static final Codec<And> CODEC =
 				RecordCodecBuilder.create(instance -> instance
-						.group(ContextualCommonHolder.CODEC
+						.group(ContextualContainer.CODEC
 								.fieldOf("contextual")
-								.orElse(new ContextualCommonHolder())
-								.forGetter(And::contextualCommonHolder)
+								.forGetter(And::conditions)
 						).apply(instance, And::new));
 
 		@Override

@@ -69,7 +69,7 @@ import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.recipes.interaction.InteractionRecipeMod;
 import snownee.lychee.util.action.PostActionTypes;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 @Mod(Lychee.ID)
 public class CommonProxy implements ModInitializer {
@@ -304,8 +304,8 @@ public class CommonProxy implements ModInitializer {
 	public static void postCustomActionEvent(
 			String id,
 			CustomAction action,
-			LycheeRecipe<?> recipe,
-			LycheeRecipe.NBTPatchContext patchContext
+			ILycheeRecipe<?> recipe,
+			ILycheeRecipe.NBTPatchContext patchContext
 	) {
 		CUSTOM_ACTION_EVENT.invoker().on(id, action, recipe, patchContext);
 	}
@@ -382,8 +382,8 @@ public class CommonProxy implements ModInitializer {
 
 	public interface CustomActionListener {
 		boolean on(
-				String id, CustomAction action, LycheeRecipe<?> recipe,
-				LycheeRecipe.NBTPatchContext patchContext
+				String id, CustomAction action, ILycheeRecipe<?> recipe,
+				ILycheeRecipe.NBTPatchContext patchContext
 		);
 	}
 

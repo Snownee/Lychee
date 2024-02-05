@@ -21,7 +21,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class DirectionCheck implements ContextualCondition<DirectionCheck> {
 	public static final Map<String, DirectionCheck> LOOKUPS = Maps.newHashMap();
@@ -76,7 +76,7 @@ public class DirectionCheck implements ContextualCondition<DirectionCheck> {
 	}
 
 	@Override
-	public int test(@Nullable LycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return predicate.test(ctx) ? times : 0;
 	}
 

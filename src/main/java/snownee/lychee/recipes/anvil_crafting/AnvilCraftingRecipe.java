@@ -30,12 +30,12 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.util.json.JsonPointer;
 
-public record AnvilCraftingRecipe implements LycheeRecipe<AnvilContext>, Comparable<AnvilCraftingRecipe> {
+public record AnvilCraftingRecipe implements ILycheeRecipe<AnvilContext>, Comparable<AnvilCraftingRecipe> {
 	private static final MinMaxBounds.Ints ONE = MinMaxBounds.Ints.exactly(1);
 
 
