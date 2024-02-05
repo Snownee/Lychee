@@ -6,12 +6,12 @@ import com.mojang.serialization.DataResult;
 
 import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.util.SerializableType;
+import snownee.lychee.util.context.KeyedContextValue;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.context.LycheeContextSerializer;
-import snownee.lychee.util.context.LycheeContextValue;
 
 // TODO 暂时不涉及
-public record JsonContext(JsonObject json) implements LycheeContextValue<JsonContext> {
+public record JsonContext(JsonObject json) implements KeyedContextValue<JsonContext> {
 	@Override
 	public LycheeContextKey<JsonContext> key() {
 		return LycheeContextKey.JSON;

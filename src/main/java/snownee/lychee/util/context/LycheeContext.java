@@ -19,7 +19,7 @@ public class LycheeContext extends EmptyContainer {
 	public static final Codec<LycheeContext> CODEC =
 			new KeyDispatchedMapCodec<LycheeContextKey<?>, Object>(
 					LycheeRegistries.CONTEXT.byNameCodec(),
-					it -> it instanceof LycheeContextValue<?> value
+					it -> it instanceof KeyedContextValue<?> value
 						  ? DataResult.success(value.key())
 						  : DataResult.error(() -> "Can't determine key of " + it + "that isn't LycheeContextValue"),
 					it -> {

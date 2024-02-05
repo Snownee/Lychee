@@ -7,9 +7,9 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.context.ActionContext;
+import snownee.lychee.context.AnvilContext;
 import snownee.lychee.context.JsonContext;
 import snownee.lychee.context.LootParamsContext;
-import snownee.lychee.context.recipes.AnvilContext;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 
 public interface LycheeContextKey<T> {

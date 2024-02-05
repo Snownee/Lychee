@@ -11,13 +11,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import snownee.lychee.Lychee;
 import snownee.lychee.util.action.Job;
+import snownee.lychee.util.context.KeyedContextValue;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.context.LycheeContextSerializer;
-import snownee.lychee.util.context.LycheeContextValue;
 import snownee.lychee.util.recipe.LycheeRecipe;
 
-public class ActionContext implements LycheeContextValue<ActionContext> {
+public class ActionContext implements KeyedContextValue<ActionContext> {
 	public boolean avoidDefault = false;
 	public State state = State.RUNNING;
 	public Queue<Job> jobs = Queues.newLinkedBlockingQueue();

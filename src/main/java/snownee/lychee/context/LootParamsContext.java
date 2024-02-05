@@ -17,12 +17,12 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.util.context.KeyedContextValue;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.context.LycheeContextValue;
 
 public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, Object> params)
-		implements LycheeContextValue<LootParamsContext> {
+		implements KeyedContextValue<LootParamsContext> {
 	@Override
 	public LycheeContextKey<LootParamsContext> key() {
 		return LycheeContextKey.LOOT_PARAMS;

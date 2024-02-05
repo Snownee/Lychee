@@ -1,12 +1,10 @@
-package snownee.lychee.context.recipes;
+package snownee.lychee.context;
 
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.world.item.ItemStack;
-import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.context.LycheeContextValue;
 
-public class AnvilContext implements LycheeContextValue<AnvilContext> {
+public class AnvilContext {
 	/**
 	 * Both inputs in anvil
 	 */
@@ -52,10 +50,5 @@ public class AnvilContext implements LycheeContextValue<AnvilContext> {
 
 	public void setMaterialCost(final int materialCost) {
 		this.materialCost = materialCost;
-	}
-
-	@Override
-	public LycheeContextKey<AnvilContext> key() {
-		return LycheeContextKey.ANVIL;
 	}
 }
