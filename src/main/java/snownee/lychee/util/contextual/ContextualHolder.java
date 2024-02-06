@@ -26,7 +26,8 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ContextualHolder implements ContextualPredicate, Iterable<ContextualCondition> {
-	public static final Component SECRET_COMPONENT = Component.translatable("contextual.lychee.secret").withStyle(ChatFormatting.GRAY);
+	public static final Component SECRET_COMPONENT = Component.translatable("contextual.lychee.secret").withStyle(
+			ChatFormatting.GRAY);
 	public static final Codec<ContextualHolder> CODEC = new CompactListCodec<>(ContextualConditionData.CODEC)
 			.xmap(ContextualHolder::pack, ContextualHolder::unpack);
 
@@ -38,7 +39,11 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 	@Nullable
 	private final Component[] overrideDesc;
 
-	public ContextualHolder(List<ContextualCondition> conditions, @Nullable BitSet secretFlags, @Nullable Component[] overrideDesc) {
+	public ContextualHolder(
+			List<ContextualCondition> conditions,
+			@Nullable BitSet secretFlags,
+			@Nullable Component[] overrideDesc
+	) {
 		this.conditions = Collections.unmodifiableList(conditions);
 		this.secretFlags = secretFlags;
 		this.overrideDesc = overrideDesc;
@@ -60,11 +65,11 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 					}
 					secretFlags.set(i);
 				}
-				if (holder.description().isPresent()) {
+				if (holder.description() != null) {
 					if (overrideDesc == null) {
 						overrideDesc = new Component[holders.size()];
 					}
-					overrideDesc[i] = holder.description().get();
+					overrideDesc[i] = holder.description();
 				}
 			}
 			return new ContextualHolder(conditions, secretFlags, overrideDesc);
@@ -76,8 +81,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		for (int i = 0; i < conditions.size(); i++) {
 			ContextualCondition condition = conditions.get(i);
 			boolean secret = isSecretCondition(i);
-			Optional<Component> description = Optional.ofNullable(getOverridenDesc(i));
-			list.add(new ContextualConditionData<>(condition, secret, description));
+			list.add(new ContextualConditionData<>(condition, secret, getOverridenDesc(i)));
 		}
 		return list;
 	}
@@ -90,7 +94,9 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		return conditions().stream().mapToInt(ContextualConditionDisplay::showingCount).sum();
 	}
 
-	public void appendToTooltips(List<Component> tooltips, @Nullable Level level, @Nullable Player player, int indent) {
+	public void appendToTooltips(
+			List<Component> tooltips, @Nullable Level level, @Nullable Player player, int indent
+	) {
 		if (level == null) {
 			//TODO notify player that the condition is not available
 			return;
@@ -119,7 +125,12 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 				times = condition.test(recipe, ctx, times);
 				if (times == 0) break;
 			} catch (Throwable e) {
-				Lychee.LOGGER.error("Failed to check condition {} of recipe {}", LycheeRegistries.CONTEXTUAL.getKey(condition.type()), ctx.getMatchedRecipeId(), e);
+				Lychee.LOGGER.error(
+						"Failed to check condition {} of recipe {}",
+						LycheeRegistries.CONTEXTUAL.getKey(condition.type()),
+						ctx.getMatchedRecipeId(),
+						e
+				);
 				return 0;
 			}
 		}

@@ -1,6 +1,5 @@
 package snownee.lychee.util.context;
 
-import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.NotNull;
@@ -8,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.world.item.ItemStack;
 import snownee.kiwi.recipe.EmptyContainer;
 import snownee.lychee.LycheeRegistries;
@@ -15,7 +15,7 @@ import snownee.lychee.util.codec.KeyDispatchedMapCodec;
 
 @SuppressWarnings("unchecked")
 public class LycheeContext extends EmptyContainer {
-	private final IdentityHashMap<LycheeContextKey<?>, Object> context = new IdentityHashMap<>();
+	private final Map<LycheeContextKey<?>, Object> context = new Object2ObjectOpenHashMap<>(LycheeRegistries.CONTEXTUAL.size());
 	public static final Codec<LycheeContext> CODEC =
 			new KeyDispatchedMapCodec<LycheeContextKey<?>, Object>(
 					LycheeRegistries.CONTEXT.byNameCodec(),
