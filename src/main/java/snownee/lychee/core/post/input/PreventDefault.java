@@ -40,10 +40,13 @@ public class PreventDefault extends PostAction {
 	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
 		if (recipe instanceof LycheeRecipe<?> lycheeRecipe && lycheeRecipe.getType().canPreventConsumeInputs) {
 			for (var ingredient : ingredients) {
-				if (ingredient.tooltips.isEmpty()) {
-					ingredient.addTooltip(lycheeRecipe.getType().getPreventDefaultDescription(lycheeRecipe));
-					ingredient.isCatalyst = true;
+				if (!ingredient.tooltips.isEmpty()) {
+					continue;
 				}
+				if (getConditions().isEmpty()) {
+					ingredient.addTooltip(lycheeRecipe.getType().getPreventDefaultDescription(lycheeRecipe));
+				}
+				ingredient.isCatalyst = true;
 			}
 		}
 	}
