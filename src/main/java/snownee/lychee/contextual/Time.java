@@ -21,7 +21,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record Time(MinMaxBounds.Ints value, Optional<Long> period) implements ContextualCondition<Time> {
+public record Time(MinMaxBounds.Ints value, Optional<Long> period) implements ContextualCondition {
 
 	@Override
 	public ContextualConditionType<Time> type() {

@@ -18,7 +18,7 @@ import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record Or(ContextualHolder conditions) implements ContextualCondition<Or>, Contextual {
+public record Or(ContextualHolder conditions) implements ContextualCondition, Contextual {
 	@Override
 	public ContextualConditionType<Or> type() {
 		return ContextualConditionType.OR;
@@ -26,7 +26,7 @@ public record Or(ContextualHolder conditions) implements ContextualCondition<Or>
 
 	@Override
 	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		for (ContextualCondition<?> condition : conditions) {
+		for (ContextualCondition condition : conditions) {
 			int result = condition.test(recipe, ctx, times);
 			if (result > 0) {
 				return result;
@@ -38,7 +38,7 @@ public record Or(ContextualHolder conditions) implements ContextualCondition<Or>
 	@Override
 	public TriState testForTooltips(Level level, @Nullable Player player) {
 		boolean allFailed = true;
-		for (ContextualCondition<?> condition : conditions) {
+		for (ContextualCondition condition : conditions) {
 			TriState result = condition.testForTooltips(level, player);
 			if (result == TriState.TRUE) {
 				return result;
@@ -59,7 +59,7 @@ public record Or(ContextualHolder conditions) implements ContextualCondition<Or>
 			boolean inverted
 	) {
 		ContextualCondition.super.appendToTooltips(tooltips, level, player, indent, inverted);
-		for (ContextualCondition<?> condition : conditions) {
+		for (ContextualCondition condition : conditions) {
 			condition.appendToTooltips(tooltips, level, player, indent + 1, false);
 		}
 	}

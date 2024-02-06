@@ -41,7 +41,7 @@ import snownee.lychee.util.predicates.LocationCheck;
 import snownee.lychee.util.predicates.LocationPredicate;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record Location(LocationCheck check) implements ContextualCondition<Location> {
+public record Location(LocationCheck check) implements ContextualCondition {
 
 	private static final Rule X = new PosRule("x", it -> it.position().orElseThrow().x(), Vec3::x);
 	private static final Rule Y = new PosRule("y", it -> it.position().orElseThrow().y(), Vec3::y);

@@ -21,7 +21,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record IsDifficulty(List<Difficulty> difficulties) implements ContextualCondition<IsDifficulty> {
+public record IsDifficulty(List<Difficulty> difficulties) implements ContextualCondition {
 
 	@Override
 	public ContextualConditionType<IsDifficulty> type() {

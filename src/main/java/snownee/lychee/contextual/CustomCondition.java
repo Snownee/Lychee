@@ -28,7 +28,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 /**
  * Mainly used by KubeJS script listener with `LycheeEvents.customAction('id', listener`)
  */
-public class CustomCondition implements ContextualCondition<CustomCondition> {
+public class CustomCondition implements ContextualCondition {
 	public final JsonObject data;
 	private final String id;
 	public ContextualPredicate testFunc = null;

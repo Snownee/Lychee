@@ -23,7 +23,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class DirectionCheck implements ContextualCondition<DirectionCheck> {
+public class DirectionCheck implements ContextualCondition {
 	public static final Map<String, DirectionCheck> LOOKUPS = Maps.newHashMap();
 
 	static {

@@ -18,7 +18,7 @@ import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record And(ContextualHolder conditions) implements ContextualCondition<And>, Contextual {
+public record And(ContextualHolder conditions) implements ContextualCondition, Contextual {
 
 	@Override
 	public ContextualConditionType<And> type() {
@@ -33,7 +33,7 @@ public record And(ContextualHolder conditions) implements ContextualCondition<An
 	@Override
 	public TriState testForTooltips(Level level, @Nullable Player player) {
 		var finalResult = TriState.TRUE;
-		for (ContextualCondition<?> condition : conditions) {
+		for (ContextualCondition condition : conditions) {
 			final var result = condition.testForTooltips(level, player);
 			if (result == TriState.FALSE) return result;
 			if (!result.get()) finalResult = TriState.DEFAULT;
@@ -50,7 +50,7 @@ public record And(ContextualHolder conditions) implements ContextualCondition<An
 			boolean inverted
 	) {
 		ContextualCondition.super.appendToTooltips(tooltips, level, player, indent, inverted);
-		for (ContextualCondition<?> condition : conditions) {
+		for (ContextualCondition condition : conditions) {
 			condition.appendToTooltips(tooltips, level, player, indent + 1, false);
 		}
 	}

@@ -15,7 +15,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record CheckParam(String key) implements ContextualCondition<CheckParam> {
+public record CheckParam(String key) implements ContextualCondition {
 	@Override
 	public ContextualConditionType<CheckParam> type() {
 		return ContextualConditionType.CHECK_PARAM;

@@ -12,14 +12,13 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 
-public interface ContextualCondition<T extends ContextualCondition<T>> extends ContextualPredicate,
-																			   ContextualConditionDisplay {
-	Codec<ContextualCondition<?>> CODEC = LycheeRegistries.CONTEXTUAL.byNameCodec().dispatch(
+public interface ContextualCondition extends ContextualPredicate, ContextualConditionDisplay {
+	Codec<ContextualCondition> CODEC = LycheeRegistries.CONTEXTUAL.byNameCodec().dispatch(
 			ContextualCondition::type,
 			ContextualConditionType::codec
 	);
 
-	ContextualConditionType<T> type();
+	ContextualConditionType<?> type();
 
 	@Override
 	default String getDescriptionId() {

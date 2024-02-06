@@ -13,7 +13,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public final class IsSneaking implements ContextualCondition<IsSneaking> {
+public final class IsSneaking implements ContextualCondition {
 	private static final IsSneaking INSTANCE = new IsSneaking();
 
 	@Override

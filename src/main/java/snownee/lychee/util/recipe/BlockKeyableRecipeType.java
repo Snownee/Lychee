@@ -29,7 +29,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
-import snownee.lychee.context.ItemContext;
 import snownee.lychee.contextual.Chance;
 import snownee.lychee.core.recipe.recipe.ChanceRecipe;
 import snownee.lychee.util.CommonProxy;
@@ -57,7 +56,7 @@ public class BlockKeyableRecipeType<T extends BlockKeyableRecipe<T>> extends Lyc
 		super.refreshCache();
 		final var multimap = HashMultimap.<Block, RecipeHolder<T>>create();
 		for (final var recipe : recipes) {
-			Iterator<ContextualCondition<?>> iterator = recipe.value().conditions().iterator();
+			Iterator<ContextualCondition> iterator = recipe.value().conditions().iterator();
 			if (iterator.hasNext()) {
 				final var condition = iterator.next();
 				if (condition instanceof Chance chance) {
@@ -118,7 +117,7 @@ public class BlockKeyableRecipeType<T extends BlockKeyableRecipe<T>> extends Lyc
 
 		context.put(
 				LycheeContextKey.ITEM,
-				new ItemContext(ItemStackHolderCollection.Inventory.of(context, stack, otherStack))
+				ItemStackHolderCollection.Inventory.of(context, stack, otherStack)
 		);
 		final var itemContext = context.get(LycheeContextKey.ITEM);
 		final var actionContext = context.get(LycheeContextKey.ACTION);
@@ -130,17 +129,17 @@ public class BlockKeyableRecipeType<T extends BlockKeyableRecipe<T>> extends Lyc
 					int times = Math.min(context.getItem(0).getCount(), context.getItem(1).getCount());
 					times = recipe.value().getRandomRepeats(Math.max(1, times), context);
 					if (recipe.value().getIngredients().size() == 1) {
-						itemContext.items().get(1).setIgnoreConsumption(true);
+						itemContext.get(1).setIgnoreConsumption(true);
 					}
 					recipe.value().applyPostActions(context, times);
-					itemContext.items().postApply(!actionContext.avoidDefault, times);
+					itemContext.postApply(!actionContext.avoidDefault, times);
 					player.setItemInHand(hand, context.getItem(0));
 					player.setItemInHand(
 							hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND,
 							context.getItem(1)
 					);
 				}
-				return Optional.of(recipe);
+				return Optional.of(recipe.value());
 			}
 		}
 		return Optional.empty();

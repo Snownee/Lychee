@@ -21,7 +21,7 @@ import snownee.lychee.contextual.Or;
 import snownee.lychee.contextual.Time;
 import snownee.lychee.util.SerializableType;
 
-public interface ContextualConditionType<T extends ContextualCondition<T>> extends SerializableType<T> {
+public interface ContextualConditionType<T extends ContextualCondition> extends SerializableType<T> {
 	ContextualConditionType<And> AND = register("and", new And.Type());
 	ContextualConditionType<Or> OR = register("or", new Or.Type());
 	ContextualConditionType<Not> NOT = register("not", new Not.Type());

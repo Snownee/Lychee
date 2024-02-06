@@ -21,7 +21,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record IsWeather(String id, Predicate<Level> predicate) implements ContextualCondition<IsWeather> {
+public record IsWeather(String id, Predicate<Level> predicate) implements ContextualCondition {
 
 	public static final Map<String, IsWeather> REGISTRY = Maps.newConcurrentMap();
 

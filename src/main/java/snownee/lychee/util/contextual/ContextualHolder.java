@@ -25,20 +25,20 @@ import snownee.lychee.util.codec.CompactListCodec;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class ContextualHolder implements ContextualPredicate, Iterable<ContextualCondition<?>> {
+public class ContextualHolder implements ContextualPredicate, Iterable<ContextualCondition> {
 	public static final Component SECRET_COMPONENT = Component.translatable("contextual.lychee.secret").withStyle(ChatFormatting.GRAY);
 	public static final Codec<ContextualHolder> CODEC = new CompactListCodec<>(ContextualConditionData.CODEC)
 			.xmap(ContextualHolder::pack, ContextualHolder::unpack);
 
 	public static final ContextualHolder EMPTY = new ContextualHolder(List.of(), null, null);
 
-	private final List<ContextualCondition<?>> conditions;
+	private final List<ContextualCondition> conditions;
 	@Nullable
 	private final BitSet secretFlags;
 	@Nullable
 	private final Component[] overrideDesc;
 
-	public ContextualHolder(List<ContextualCondition<?>> conditions, @Nullable BitSet secretFlags, @Nullable Component[] overrideDesc) {
+	public ContextualHolder(List<ContextualCondition> conditions, @Nullable BitSet secretFlags, @Nullable Component[] overrideDesc) {
 		this.conditions = Collections.unmodifiableList(conditions);
 		this.secretFlags = secretFlags;
 		this.overrideDesc = overrideDesc;
@@ -48,7 +48,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		if (holders.isEmpty()) {
 			return EMPTY;
 		} else {
-			List<ContextualCondition<?>> conditions = Lists.newArrayListWithExpectedSize(holders.size());
+			List<ContextualCondition> conditions = Lists.newArrayListWithExpectedSize(holders.size());
 			BitSet secretFlags = null;
 			Component[] overrideDesc = null;
 			for (int i = 0; i < holders.size(); i++) {
@@ -74,7 +74,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 	private List<ContextualConditionData<?>> unpack() {
 		List<ContextualConditionData<?>> list = Lists.newArrayListWithExpectedSize(conditions.size());
 		for (int i = 0; i < conditions.size(); i++) {
-			ContextualCondition<?> condition = conditions.get(i);
+			ContextualCondition condition = conditions.get(i);
 			boolean secret = isSecretCondition(i);
 			Optional<Component> description = Optional.ofNullable(getOverridenDesc(i));
 			list.add(new ContextualConditionData<>(condition, secret, description));
@@ -82,7 +82,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		return list;
 	}
 
-	public List<ContextualCondition<?>> conditions() {
+	public List<ContextualCondition> conditions() {
 		return conditions;
 	}
 
@@ -96,7 +96,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 			return;
 		}
 		int i = -1;
-		for (ContextualCondition<?> condition : conditions) {
+		for (ContextualCondition condition : conditions) {
 			++i;
 			if (isSecretCondition(i)) {
 				TriState result = condition.testForTooltips(level, player);
@@ -114,7 +114,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 	}
 
 	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		for (ContextualCondition<?> condition : conditions) {
+		for (ContextualCondition condition : conditions) {
 			try {
 				times = condition.test(recipe, ctx, times);
 				if (times == 0) break;
@@ -128,7 +128,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 
 	@NotNull
 	@Override
-	public Iterator<ContextualCondition<?>> iterator() {
+	public Iterator<ContextualCondition> iterator() {
 		return conditions.iterator();
 	}
 
@@ -148,7 +148,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 
 	public static ContextualHolder conditionsFromNetwork(FriendlyByteBuf buf) {
 		int size = buf.readVarInt();
-		List<ContextualCondition<?>> conditions = Lists.newArrayListWithCapacity(size);
+		List<ContextualCondition> conditions = Lists.newArrayListWithCapacity(size);
 		for (int i = 0; i < size; i++) {
 			ContextualConditionType<?> type = CommonProxy.readRegistryId(LycheeRegistries.CONTEXTUAL, buf);
 			conditions.add(type.fromNetwork(buf));

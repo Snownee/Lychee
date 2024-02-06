@@ -14,7 +14,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record Not(ContextualCondition<?> condition) implements ContextualCondition<Not> {
+public record Not(ContextualCondition condition) implements ContextualCondition {
 
 	@Override
 	public ContextualConditionType<Not> type() {

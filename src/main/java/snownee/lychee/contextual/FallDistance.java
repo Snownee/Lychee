@@ -17,7 +17,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record FallDistance(Doubles range) implements ContextualCondition<FallDistance> {
+public record FallDistance(Doubles range) implements ContextualCondition {
 
 	@Override
 	public ContextualConditionType<FallDistance> type() {

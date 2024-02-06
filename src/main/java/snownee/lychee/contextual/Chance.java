@@ -13,7 +13,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record Chance(float chance) implements ContextualCondition<Chance> {
+public record Chance(float chance) implements ContextualCondition {
 	@Override
 	public ContextualConditionType<Chance> type() {
 		return ContextualConditionType.CHANCE;

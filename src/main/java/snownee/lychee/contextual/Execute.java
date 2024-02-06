@@ -24,7 +24,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record Execute(String command, MinMaxBounds.Ints bounds) implements ContextualCondition<Execute> {
+public record Execute(String command, MinMaxBounds.Ints bounds) implements ContextualCondition {
 
 	public static final MinMaxBounds.Ints DEFAULT_RANGE = MinMaxBounds.Ints.atLeast(1);
 	public static final Execute DUMMY = new Execute("", DEFAULT_RANGE);
