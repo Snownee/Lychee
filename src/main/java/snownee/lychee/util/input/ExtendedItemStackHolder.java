@@ -24,6 +24,10 @@ public class ExtendedItemStackHolder implements ItemStackHolder {
 	@Override
 	public ItemStack get() {return holder.get();}
 
+	public ItemStackHolder holder() {
+		return holder;
+	}
+
 	public boolean getIgnoreConsumption() {return ignoreConsumption;}
 
 	public void setIgnoreConsumption(final boolean ignoreConsumption) {this.ignoreConsumption = ignoreConsumption;}

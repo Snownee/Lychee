@@ -24,7 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.core.ItemShapelessContext;
+import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.core.recipe.recipe.LycheeCounter;
@@ -89,7 +89,7 @@ public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe>
 			return false;
 		}
 		ctx.filteredItems = itemEntities;
-		ctx.setMatch(match.get());
+		ctx.setMatcher(match.get());
 		return true;
 	}
 

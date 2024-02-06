@@ -1,4 +1,4 @@
-package snownee.lychee.recipes.block_crushing;
+package snownee.lychee.util;
 
 public interface LycheeFallingBlockEntity {
 

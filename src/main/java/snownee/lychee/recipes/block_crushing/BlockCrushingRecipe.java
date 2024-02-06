@@ -69,7 +69,7 @@ public class BlockCrushingRecipe extends OldLycheeRecipe<BlockCrushingContext>
 			return false;
 		}
 		ctx.filteredItems = itemEntities;
-		ctx.setMatch(match.get());
+		ctx.setMatcher(match.get());
 		return true;
 	}
 

@@ -30,6 +30,7 @@
         "LootContextParamSetsAccess",
         "LootParamsBuilderAccess",
         "NbtPredicateAccess",
+        "NonNullListAccess",
         "PointedDripstoneBlockAccess",
         "PointedDripstoneBlockMixin",
         "ReloadableServerResourcesMixin",

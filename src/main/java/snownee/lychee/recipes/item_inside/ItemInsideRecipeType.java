@@ -32,11 +32,11 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
-import snownee.lychee.core.ItemShapelessContext;
+import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.core.recipe.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.recipe.type.ItemShapelessRecipeType;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext, ItemInsideRecipe> {
 

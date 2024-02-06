@@ -15,7 +15,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import snownee.lychee.core.ItemShapelessContext;
+import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.util.RecipeMatcher;
 
 public abstract class ItemShapelessRecipe<T extends ItemShapelessRecipe<T>> extends OldLycheeRecipe<ItemShapelessContext>
@@ -47,7 +47,7 @@ public abstract class ItemShapelessRecipe<T extends ItemShapelessRecipe<T>> exte
 			return false;
 		}
 		ctx.filteredItems = itemEntities;
-		ctx.setMatch(match.get());
+		ctx.setMatcher(match.get());
 		return true;
 	}
 

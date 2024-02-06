@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.recipes.block_crushing.LycheeFallingBlockEntity;
+import snownee.lychee.util.LycheeFallingBlockEntity;
 
 @Mixin(FallingBlockEntity.class)
 public abstract class FallingBlockEntityMixin extends Entity implements LycheeFallingBlockEntity {

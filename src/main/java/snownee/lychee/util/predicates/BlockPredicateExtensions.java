@@ -48,9 +48,10 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.mixin.predicates.BlockPredicateAccess;
 import snownee.lychee.util.Pair;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 
 public class BlockPredicateExtensions {
 	private static final Cache<BlockPredicate, List<BlockState>> CACHE =
@@ -171,11 +172,12 @@ public class BlockPredicateExtensions {
 	/**
 	 * Optimized without get block state and block entity calls. And needn't pos loaded.
 	 */
-	public static boolean matches(BlockPredicate predicate, LycheeRecipeContext context) {
+	public static boolean matches(BlockPredicate predicate, LycheeContext context) {
+		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 		return unsafeMatches(
 				predicate,
-				context.get(LootContextParams.BLOCK_STATE),
-				() -> context.getOrNull(LootContextParams.BLOCK_ENTITY)
+				lootParamsContext.get(LootContextParams.BLOCK_STATE),
+				() -> lootParamsContext.getOrNull(LootContextParams.BLOCK_ENTITY)
 		);
 	}
 

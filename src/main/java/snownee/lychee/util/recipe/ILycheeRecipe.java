@@ -1,6 +1,7 @@
 package snownee.lychee.util.recipe;
 
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +51,24 @@ public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<Lychee
 		return IntList.of();
 	}
 
-	IntList getItemIndexes(JsonPointer pointer);
+	default IntList getItemIndexes(JsonPointer pointer) {
+		int size = getIngredients().size();
+		if (pointer.size() == 1 && pointer.getString(0).equals("item_in")) {
+			return IntList.of(IntStream.range(0, size).toArray());
+		}
+		if (pointer.size() == 2 && pointer.getString(0).equals("item_in")) {
+			try {
+				return IntList.of(pointer.getInt(1));
+			} catch (NumberFormatException ignored) {
+			}
+		}
+		return IntList.of();
+	}
+
+	@Override
+	default @NotNull ItemStack assemble(LycheeContext inv, RegistryAccess registryAccess) {
+		return ItemStack.EMPTY;
+	}
 
 	default JsonPointer defaultItemPointer() {
 		return ITEM_IN_POINTER;
@@ -60,12 +78,13 @@ public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<Lychee
 	boolean matches(LycheeContext context, Level level);
 
 	@Override
-	@NotNull
-	ItemStack assemble(LycheeContext context, RegistryAccess registryAccess);
-
-	@Override
 	default boolean canCraftInDimensions(int width, int height) {
 		return true;
+	}
+
+	@Override
+	default @NotNull ItemStack getResultItem(RegistryAccess registryAccess) {
+		return ItemStack.EMPTY;
 	}
 
 	@NotNull RecipeType<? extends ILycheeRecipe<T>> getType();

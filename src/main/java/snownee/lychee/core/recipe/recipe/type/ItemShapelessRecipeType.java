@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.Lychee;
-import snownee.lychee.core.ItemShapelessContext;
+import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.util.recipe.ValidItemCache;
@@ -83,8 +83,8 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends O
 						}
 						matchedAny = matched = true;
 						int times = 1;
-						if (ctx.getMatch() != null && ctx.getMatch().inputUsed.length > 0) {
-							int[] inputUsed = ctx.getMatch().inputUsed;
+						if (ctx.getMatcher() != null && ctx.getMatcher().inputUsed.length > 0) {
+							int[] inputUsed = ctx.getMatcher().inputUsed;
 							times = recipe.getRandomRepeats(Integer.MAX_VALUE, ctx);
 							for (int i = 0; i < inputUsed.length; i++) {
 								if (inputUsed[i] > 0) {
@@ -94,14 +94,14 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends O
 							}
 						}
 						match.get().applyPostActions(ctx, times);
-						if (ctx.getMatch() != null) {
+						if (ctx.getMatcher() != null) {
 							ctx.totalItems -= ctx.itemHolders.postApply(ctx.runtime.doDefault, times);
 						}
 						if (!recipe.getMaxRepeats().isAny()) {
 							break major;
 						}
 						ctx.filteredItems = null;
-						ctx.setMatch(null);
+						ctx.setMatcher(null);
 						ctx.itemEntities.removeIf($ -> $.getItem().isEmpty());
 					}
 				} catch (Exception e) {

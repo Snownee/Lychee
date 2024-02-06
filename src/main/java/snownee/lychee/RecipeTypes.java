@@ -6,12 +6,12 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import snownee.lychee.core.ItemShapelessContext;
+import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.recipe.recipe.type.ItemShapelessRecipeType;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
+import snownee.lychee.recipes.BlockCrushingRecipeType;
 import snownee.lychee.recipes.block_crushing.BlockCrushingRecipe;
-import snownee.lychee.recipes.block_crushing.BlockCrushingRecipeType;
 import snownee.lychee.recipes.block_exploding.BlockExplodingContext;
 import snownee.lychee.recipes.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
