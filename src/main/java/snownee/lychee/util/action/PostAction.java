@@ -23,9 +23,15 @@ public interface PostAction<Action extends PostAction<Action>> extends PostActio
 			PostActionType::codec
 	);
 
-	Optional<String> getPath();
+	PostActionCommonProperties commonProperties();
 
-	void setPath(String path);
+	default Optional<String> getPath() {
+		return commonProperties().getPath();
+	}
+
+	default void setPath(String path) {
+		commonProperties().setPath(path);
+	}
 
 	PostActionType<Action> type();
 

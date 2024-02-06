@@ -164,7 +164,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 				overrideDesc[i] = buf.readOptional(FriendlyByteBuf::readComponent).orElse(null);
 			}
 		}
-		new ContextualHolder(conditions, secretFlags, overrideDesc);
+		return new ContextualHolder(conditions, secretFlags, overrideDesc);
 	}
 
 	@SuppressWarnings("rawtypes")

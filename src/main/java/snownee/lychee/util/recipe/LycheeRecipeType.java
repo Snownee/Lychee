@@ -33,7 +33,7 @@ public class LycheeRecipeType<T extends ILycheeRecipe<T>> implements RecipeType<
 	public boolean canPreventConsumeInputs;
 	public boolean hasStandaloneCategory = true;
 
-	private boolean isEmpty = true;
+	private boolean empty = true;
 
 	public static final Component DEFAULT_PREVENT_TIP =
 			Component.translatable("tip.lychee.preventDefault.default").withStyle(ChatFormatting.YELLOW);
@@ -72,11 +72,11 @@ public class LycheeRecipeType<T extends ILycheeRecipe<T>> implements RecipeType<
 	}
 
 	public void updateEmptyState() {
-		isEmpty = recipes.isEmpty();
+		empty = recipes.isEmpty();
 	}
 
 	public boolean isEmpty() {
-		return isEmpty;
+		return empty;
 	}
 
 	public void refreshCache() {

@@ -12,12 +12,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record And(ContextualHolder conditions) implements ContextualCondition<And> {
+public record And(ContextualHolder conditions) implements ContextualCondition<And>, Contextual {
 
 	@Override
 	public ContextualConditionType<And> type() {

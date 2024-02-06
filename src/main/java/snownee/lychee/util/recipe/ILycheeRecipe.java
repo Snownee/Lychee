@@ -21,11 +21,14 @@ import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.contextual.ContextualPredicate;
 import snownee.lychee.util.json.JsonPointer;
 
-public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<LycheeContext>, ContextualPredicate {
+public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<LycheeContext>,
+																   ContextualPredicate,
+																   Contextual {
 	String DEFAULT_GROUP = "default";
 	String ITEM_IN = "item_in";
 	String ITEM_OUT = "item_out";
@@ -69,6 +72,7 @@ public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<Lychee
 
 	LycheeRecipeCommonProperties commonProperties();
 
+	@Override
 	default ContextualHolder conditions() {
 		return commonProperties().conditions();
 	}
@@ -124,8 +128,8 @@ public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<Lychee
 	}
 
 	default List<BlockPredicate> getBlockInputs() {
-		if (this instanceof BlockKeyableRecipe<?> blockPredicateRecipe &&
-				blockPredicateRecipe.blockPredicate().isPresent()) {
+		if (this instanceof BlockKeyableRecipe<?> blockPredicateRecipe
+			&& blockPredicateRecipe.blockPredicate().isPresent()) {
 			return List.of(blockPredicateRecipe.blockPredicate().get());
 		}
 		return List.of();

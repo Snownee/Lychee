@@ -25,13 +25,13 @@ import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.Reference;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionByCommonHolder;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record DamageItem(int damage, Reference target) implements PostAction<DamageItem>,
-																  PostActionByCommonHolder<DamageItem> {
+public record DamageItem(PostActionCommonProperties commonProperties, int damage, Reference target)
+		implements PostAction<DamageItem> {
 	public final int damage;
 	public final Reference target;
 
