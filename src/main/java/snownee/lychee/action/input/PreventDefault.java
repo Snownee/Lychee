@@ -53,10 +53,14 @@ public final class PreventDefault implements PostAction {
 				recipe.getType() instanceof LycheeRecipeType<?, ?> lycheeRecipeType &&
 				lycheeRecipeType.canPreventConsumeInputs) {
 			for (var ingredient : ingredients) {
-				if (ingredient.tooltips.isEmpty()) {
-					ingredient.addTooltip(((LycheeRecipeType<?, T>) lycheeRecipeType).getPreventDefaultDescription(recipe));
-					ingredient.isCatalyst = true;
+				if (!ingredient.tooltips.isEmpty()) {
+					continue;
 				}
+				if (!commonProperties().conditions().conditions().isEmpty()) {
+					continue;
+				}
+				ingredient.addTooltip(((LycheeRecipeType<?, T>) lycheeRecipeType).getPreventDefaultDescription(recipe));
+				ingredient.isCatalyst = true;
 			}
 		}
 	}
