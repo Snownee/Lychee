@@ -7,6 +7,7 @@ import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -74,6 +75,10 @@ public class ClientProxy implements ClientModInitializer {
 
 	public static boolean postInfoBadgeClickEvent(ILycheeRecipe<?> recipe, int button) {
 		return RECIPE_VIEWER_WIDGET_CLICK_EVENT.invoker().onClick(recipe, button);
+	}
+
+	public static boolean isSinglePlayer() {
+		return Minecraft.getInstance().getSingleplayerServer() != null;
 	}
 
 	@Override
