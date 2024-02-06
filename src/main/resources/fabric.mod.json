@@ -41,6 +41,9 @@
   "breaks": {
     "kubejs": "<1902.6.1-"
   },
+  "recommends": {
+    "kiwi": "*"
+  },
 
   "custom": {
     "modmenu": {
