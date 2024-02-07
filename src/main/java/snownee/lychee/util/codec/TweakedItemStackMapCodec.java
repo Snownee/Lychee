@@ -1,5 +1,7 @@
 package snownee.lychee.util.codec;
 
+import static snownee.lychee.util.codec.TweakedItemStackCodec.LYCHEE_NBT_KEY;
+
 import java.util.stream.Stream;
 
 import com.mojang.datafixers.util.Pair;
@@ -13,11 +15,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.world.item.ItemStack;
 
-public class TweakedItemStackResultCodec extends MapCodec<ItemStack> {
-	public static final String LYCHEE_NBT_KEY = "lychee:nbt";
+public class TweakedItemStackMapCodec extends MapCodec<ItemStack> {
 	private final MapCodec<ItemStack> original;
 
-	public TweakedItemStackResultCodec(MapCodec<ItemStack> original) {
+	public TweakedItemStackMapCodec(MapCodec<ItemStack> original) {
 		this.original = original;
 	}
 
@@ -34,11 +35,11 @@ public class TweakedItemStackResultCodec extends MapCodec<ItemStack> {
 			return itemResult;
 		}
 		DataResult<Pair<CompoundTag, T>> nbtResult = TagParser.AS_CODEC.decode(ops, t);
-		ItemStack stack = itemResult.result().get().copy();
+		ItemStack stack = itemResult.result().get();
 		if (nbtResult.result().isEmpty()) {
 			return nbtResult.map($ -> stack);
 		}
-		stack.setTag(nbtResult.result().get().getFirst());
+		stack.getOrCreateTag().merge(nbtResult.result().get().getFirst());
 		return DataResult.success(stack);
 	}
 
@@ -53,6 +54,6 @@ public class TweakedItemStackResultCodec extends MapCodec<ItemStack> {
 
 	@Override
 	public String toString() {
-		return "TweakedItemStackResultCodec[" + original + "]";
+		return "TweakedItemStackMapCodec[" + original + "]";
 	}
 }
