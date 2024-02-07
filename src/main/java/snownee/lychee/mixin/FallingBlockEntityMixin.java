@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -61,7 +60,7 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 		return original.call(state);
 	}
 
-	@Inject(method = "causeFallDamage", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/tags/TagKey;)Z", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "causeFallDamage", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/tags/TagKey;)Z", shift = At.Shift.AFTER))
 	private void lychee_customDamageAnvilChance(float fallDistance, float multiplier, DamageSource source, CallbackInfoReturnable<Boolean> cir, @Local LocalBooleanRef bl) {
 		if (bl.get() && anvilDamageChance >= 0) {
 			if (random.nextFloat() < anvilDamageChance) {
