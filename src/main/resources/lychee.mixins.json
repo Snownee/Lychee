@@ -33,6 +33,7 @@
     "NonNullListAccess",
     "PointedDripstoneBlockAccess",
     "PointedDripstoneBlockMixin",
+    "RecipeManagerMixin",
     "ReloadableServerResourcesMixin",
     "ShapedRecipeAccess",
     "StatePropertiesPredicateAccess",
