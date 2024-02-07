@@ -7,6 +7,8 @@ import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -44,5 +46,15 @@ public record TagOrElementHolder<T>(ResourceLocation id, boolean tag) {
 
 	private String decoratedId() {
 		return this.tag ? "#" + this.id : this.id.toString();
+	}
+
+	public String languageKey() {
+		return (tag ? "#" : "") + id.toLanguageKey().replace('/', '.');
+	}
+
+	public MutableComponent displayName(ResourceKey<? extends Registry<?>> registryKey) {
+		String key = registryKey.location().toShortLanguageKey() + "." + languageKey();
+		// cache it?
+		return Component.translatableWithFallback(key, CommonProxy.capitaliseAllWords(id().getPath()));
 	}
 }

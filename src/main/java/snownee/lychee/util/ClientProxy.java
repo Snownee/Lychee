@@ -4,14 +4,10 @@ import java.text.MessageFormat;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.minecraft.Util;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.DropXp;
@@ -41,24 +37,6 @@ public class ClientProxy implements ClientModInitializer {
 				}
 				return false;
 			});
-
-	public static MutableComponent getDimensionDisplayName(ResourceKey<Level> dimension) {
-		String key = Util.makeDescriptionId("dimension", dimension.location());
-		if (I18n.exists(key)) {
-			return Component.translatable(key);
-		} else {
-			return Component.literal(CommonProxy.capitaliseAllWords(dimension.location().getPath()));
-		}
-	}
-
-	public static MutableComponent getStructureDisplayName(ResourceLocation rawName) {
-		String key = Util.makeDescriptionId("structure", rawName);
-		if (I18n.exists(key)) {
-			return Component.translatable(key);
-		} else {
-			return Component.literal(CommonProxy.capitaliseAllWords(rawName.getPath()));
-		}
-	}
 
 	public static MutableComponent format(String s, Object... objects) {
 		try {
