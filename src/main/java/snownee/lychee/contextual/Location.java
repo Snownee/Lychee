@@ -19,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -76,7 +77,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 					lootParamsContext.getOrNull(LootContextParams.ORIGIN)
 			).get() ? times : 0;
 		} else {
-			return check.test(lootParamsContext.asLootContext()) ? times : 0;
+			return check.test((ServerLevel) level, lootParamsContext) ? times : 0;
 		}
 	}
 
@@ -98,8 +99,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		if (!BlockPos.ZERO.equals(offset)) {
 			pos = pos.offset(offset.getX(), offset.getY(), offset.getZ());
 		}
-		if (check.predicate().isEmpty()) return TriState.DEFAULT;
-		final var predicate = check.predicate().orElseThrow();
+		LocationPredicate predicate = check.predicate();
 		var finalResult = TriState.TRUE;
 		for (Rule<?> rule : RULES) {
 			if (rule.isEmpty(predicate)) continue;
@@ -116,7 +116,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 	@Override
 	public void appendToTooltips(List<Component> tooltips, Level level, @Nullable Player player, int indent, boolean inverted) {
-		final var predicate = check.predicate().orElseThrow();
+		final var predicate = check.predicate();
 		var test = false;
 		Vec3 vec = null;
 		BlockPos pos = null;
@@ -147,7 +147,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	@Override
 	public int showingCount() {
 		var c = 0;
-		final var predicate = check.predicate().orElseThrow();
+		final var predicate = check.predicate();
 		for (Rule<?> rule : RULES) {
 			if (!rule.isEmpty(predicate)) {
 				++c;
@@ -285,20 +285,9 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 
 		@Override
-		public void appendToTooltips(
-				List<Component> tooltips,
-				int indent,
-				String key,
-				TagOrElementHolder<Biome> value,
-				TriState result
-		) {
+		public void appendToTooltips(List<Component> tooltips, int indent, String key, TagOrElementHolder<Biome> value, TriState result) {
 			final var displayName = value.displayName(Registries.BIOME).withStyle(ChatFormatting.WHITE);
-			ContextualConditionDisplay.appendToTooltips(
-					tooltips,
-					result,
-					indent,
-					Component.translatable(key + "." + name, displayName)
-			);
+			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(key + "." + name, displayName));
 		}
 	}
 

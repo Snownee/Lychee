@@ -6,11 +6,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditions;
+import net.minecraft.world.phys.Vec3;
+import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.mixin.predicates.LocationCheckAccess;
 
 /**
@@ -28,6 +31,17 @@ public record LocationCheck(LocationPredicate predicate, BlockPos offset) implem
 		return LootItemConditions.LOCATION_CHECK; //FIXME
 	}
 
+	public boolean test(ServerLevel level, LootParamsContext lootParamsContext) {
+		Vec3 vec3 = lootParamsContext.get(LootContextParams.ORIGIN);
+		return this.predicate.matches(
+				level,
+				vec3.x() + this.offset.getX(),
+				vec3.y() + this.offset.getY(),
+				vec3.z() + this.offset.getZ()
+		);
+	}
+
+	//what is the point of this?
 	public boolean test(LootContext context) {
 		final var vec3 = context.getParamOrNull(LootContextParams.ORIGIN);
 		return vec3 != null && this.predicate.matches(
