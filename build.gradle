@@ -159,6 +159,7 @@ jar {
     exclude '/data/lychee/lychee_fragments'
     exclude '/data/lycheev'
     exclude '/data/c'
+    exclude "/assets/${project.mod_id}/lang/en_us.existing.json"
 
     exclude '**/*.bat'
     from("LICENSE") {
