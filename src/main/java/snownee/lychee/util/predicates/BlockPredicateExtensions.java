@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -18,23 +17,16 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -48,70 +40,18 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.mixin.predicates.BlockPredicateAccess;
 import snownee.lychee.util.Pair;
+import snownee.lychee.util.codec.BlockPredicateCodec;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 
 public class BlockPredicateExtensions {
 	private static final Cache<BlockPredicate, List<BlockState>> CACHE =
 			CacheBuilder.newBuilder()
-						.expireAfterAccess(10, TimeUnit.MINUTES)
-						.build();
+					.expireAfterAccess(10, TimeUnit.MINUTES)
+					.build();
 	public static final Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet();
-
-	private static final String NOT_PLAIN = "The block predicate not an id or tag. Can't transform to a plain string";
-
-	private static final Codec<BlockPredicate> STRING_CODEC = ExtraCodecs.TAG_OR_ELEMENT_ID.flatComapMap(
-			it -> {
-				if (it.tag()) {
-					return BlockPredicate.Builder.block().of(TagKey.create(Registries.BLOCK, it.id())).build();
-				} else {
-					return BlockPredicate.Builder.block().of(BuiltInRegistries.BLOCK.get(it.id())).build();
-				}
-			},
-			it -> {
-				if (it.properties().isPresent() || it.nbt().isPresent())
-					return DataResult.error(() -> NOT_PLAIN);
-				if (it.tag().isPresent())
-					return DataResult.success(new ExtraCodecs.TagOrElementLocation(it.tag().get().location(), true));
-
-				if (it.blocks().isPresent() && it.blocks().get().size() == 1)
-					return DataResult.success(
-							new ExtraCodecs.TagOrElementLocation(
-									it.blocks().get().get(0).value().builtInRegistryHolder().key().location(),
-									false
-							)
-					);
-
-				return DataResult.error(() -> NOT_PLAIN);
-			}
-	);
-	private static final Codec<BlockPredicate> RECORD_CODEC = RecordCodecBuilder.create(
-			instance ->
-					instance.group(
-							ExtraCodecs.strictOptionalField(TagKey.codec(Registries.BLOCK), "tag")
-									   .forGetter(BlockPredicate::tag),
-							ExtraCodecs.strictOptionalField(BlockPredicateAccess.blocksCodec(), "blocks")
-									   .forGetter(BlockPredicate::blocks),
-							ExtraCodecs.strictOptionalField(StatePropertiesPredicate.CODEC, "state")
-									   .forGetter(BlockPredicate::properties),
-							ExtraCodecs.strictOptionalField(NbtPredicate.CODEC, "nbt")
-									   .forGetter(BlockPredicate::nbt)
-					).apply(instance, BlockPredicate::new)
-	);
-	public static final Codec<BlockPredicate> CODEC = Codec.either(STRING_CODEC, RECORD_CODEC).xmap(
-			it -> it.map(Function.identity(), Function.identity()),
-			it -> {
-				if (it.tag().isPresent()) {
-					return Either.left(it);
-				}
-				if (it.blocks().isPresent() && it.blocks().get().size() == 1) {
-					return Either.left(it);
-				}
-				return Either.right(it);
-			}
-	);
+	public static final Codec<BlockPredicate> CODEC = new BlockPredicateCodec();
 
 	static {
 		ITERABLE_PROPERTIES.addAll(List.of(
@@ -152,21 +92,21 @@ public class BlockPredicateExtensions {
 	public static Set<Fluid> matchedFluids(BlockPredicate predicate) {
 		/* off */
 		return matchedBlocks(predicate).stream()
-									   .filter(LiquidBlock.class::isInstance)
-									   .map(it -> it.defaultBlockState().getFluidState())
-									   .filter(Predicate.not(FluidState::isEmpty))
-									   .map(FluidState::getType)
-									   .collect(Collectors.toSet());
+				.filter(LiquidBlock.class::isInstance)
+				.map(it -> it.defaultBlockState().getFluidState())
+				.filter(Predicate.not(FluidState::isEmpty))
+				.map(FluidState::getType)
+				.collect(Collectors.toSet());
 		/* on */
 	}
 
 	public static List<ItemStack> matchedItemStacks(BlockPredicate predicate) {
 		return matchedBlocks(predicate).stream()
-									   .map(Block::asItem)
-									   .filter(Predicate.not(Items.AIR::equals))
-									   .distinct()
-									   .map(Item::getDefaultInstance)
-									   .toList();
+				.map(Block::asItem)
+				.filter(Predicate.not(Items.AIR::equals))
+				.distinct()
+				.map(Item::getDefaultInstance)
+				.toList();
 	}
 
 	/**
@@ -257,8 +197,8 @@ public class BlockPredicateExtensions {
 			for (final var e : propertyMap.asMap().entrySet()) {
 				stream = stream.flatMap(
 						$ -> e.getValue()
-							  .stream()
-							  .map(v -> $.setValue((Property<?>) e.getKey(), (Comparable) v))
+								.stream()
+								.map(v -> $.setValue((Property<?>) e.getKey(), (Comparable) v))
 				);
 			}
 
@@ -280,9 +220,9 @@ public class BlockPredicateExtensions {
 				final Property property = definition.getProperty(matcher.name());
 				final var rangePair = Suppliers.memoize(() -> {
 					final var sorted = property.getPossibleValues()
-											   .stream()
-											   .sorted()
-											   .toList();
+							.stream()
+							.sorted()
+							.toList();
 					return Pair.of(sorted.get(0), sorted.get(sorted.size() - 1));
 				});
 				name.append(Component.literal(rangedMatcher.minValue().orElseGet(
