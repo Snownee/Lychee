@@ -171,10 +171,9 @@ public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingRecipe> imple
 		public static final Codec<BlockCrushingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(BlockCrushingRecipe::commonProperties),
-						BlockPredicate.CODEC.optionalFieldOf("falling_block", null).forGetter(it -> it.fallingBlock),
-						BlockPredicate.CODEC.optionalFieldOf("landing_block", null).forGetter(it -> it.landingBlock),
-						new CompactListCodec<>(Ingredient.CODEC).optionalFieldOf(ITEM_IN, NonNullList.create())
-																.forGetter(it -> it.ingredients)
+						BlockPredicateExtensions.CODEC.optionalFieldOf("falling_block", null).forGetter(it -> it.fallingBlock),
+						BlockPredicateExtensions.CODEC.optionalFieldOf("landing_block", null).forGetter(it -> it.landingBlock),
+						new CompactListCodec<>(Ingredient.CODEC_NONEMPTY).optionalFieldOf(ITEM_IN, List.of()).forGetter(it -> it.ingredients)
 				).apply(instance, BlockCrushingRecipe::new));
 
 		@Override

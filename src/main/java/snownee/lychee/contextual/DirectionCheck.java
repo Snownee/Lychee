@@ -8,12 +8,14 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParams;
@@ -42,9 +44,9 @@ public class DirectionCheck implements ContextualCondition {
 			final var direction = lootParamsContext.get(LycheeLootContextParams.DIRECTION);
 			final var state = lootParamsContext.get(LootContextParams.BLOCK_STATE);
 			final var facing = state.getOptionalValue(BlockStateProperties.FACING)
-									.or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING))
-									.or(() -> state.getOptionalValue(BlockStateProperties.VERTICAL_DIRECTION))
-									.orElseThrow();
+					.or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING))
+					.or(() -> state.getOptionalValue(BlockStateProperties.VERTICAL_DIRECTION))
+					.orElseThrow();
 			return direction == facing;
 		});
 		createLookup("axis", ctx -> {
@@ -52,8 +54,8 @@ public class DirectionCheck implements ContextualCondition {
 			final var direction = lootParamsContext.get(LycheeLootContextParams.DIRECTION);
 			final var state = lootParamsContext.get(LootContextParams.BLOCK_STATE);
 			final var axis = state.getOptionalValue(BlockStateProperties.AXIS)
-								  .or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_AXIS))
-								  .orElseThrow();
+					.or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_AXIS))
+					.orElseThrow();
 			return axis.test(direction);
 		});
 	}
@@ -88,7 +90,12 @@ public class DirectionCheck implements ContextualCondition {
 
 	public static class Type implements ContextualConditionType<DirectionCheck> {
 		public static final Codec<DirectionCheck> CODEC = RecordCodecBuilder.create(instance -> instance
-				.group(Codec.STRING.fieldOf("direction").forGetter(it -> it.name))
+				.group(ExtraCodecs.validate(Codec.STRING, s -> {
+					if (!LOOKUPS.containsKey(s)) {
+						return DataResult.error(() -> "Unknown direction: " + s);
+					}
+					return DataResult.success(s);
+				}).fieldOf("direction").forGetter(it -> it.name))
 				.apply(instance, LOOKUPS::get));
 
 		@Override

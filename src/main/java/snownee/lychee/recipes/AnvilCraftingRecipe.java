@@ -10,7 +10,6 @@ import com.google.common.collect.Streams;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -175,18 +174,10 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilCraftingRecipe> {
 									return it.left().orElseThrow();
 								}, Either::left)
 								.forGetter(AnvilCraftingRecipe::input),
-						ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf(ITEM_OUT)
-								.forGetter(AnvilCraftingRecipe::output),
-						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
-								.forGetter(AnvilCraftingRecipe::assemblingActions),
-						ExtraCodecs.validate(Codec.INT.optionalFieldOf("level_cost", 1), it -> {
-							if (it <= 0) {
-								return DataResult.error(() -> "level_cost must be greater than 0");
-							}
-							return DataResult.success(it);
-						}).forGetter(AnvilCraftingRecipe::levelCost),
-						Codec.INT.optionalFieldOf("material_cost", 1)
-								.forGetter(AnvilCraftingRecipe::materialCost)
+						ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
+						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
+						ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),
+						ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1).forGetter(AnvilCraftingRecipe::materialCost)
 				).apply(instance, AnvilCraftingRecipe::new));
 
 		@Override

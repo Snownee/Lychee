@@ -4,17 +4,18 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
+import snownee.lychee.util.codec.CompactListCodec;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -54,9 +55,9 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 					CommonProxy.white(String.join(
 							", ",
 							difficulties.stream()
-										.limit(size - 1)
-										.map(Difficulty::getKey)
-										.toList()
+									.limit(size - 1)
+									.map(Difficulty::getKey)
+									.toList()
 					)),
 					CommonProxy.white(difficulties.get(size - 1).getKey())
 			);
@@ -64,16 +65,13 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 	}
 
 	public static class Type implements ContextualConditionType<IsDifficulty> {
-		public static final Codec<IsDifficulty> CODEC =
-				RecordCodecBuilder.create(instance -> instance
-						.group(Codec.either(Difficulty.CODEC, Codec.list(Difficulty.CODEC))
-									.xmap(
-											it -> it.mapLeft(List::of).left().orElse(it.right().orElseThrow()),
-											Either::right
-									)
-									.fieldOf("difficulty")
-									.forGetter(IsDifficulty::difficulties))
-						.apply(instance, IsDifficulty::new));
+		public static final Codec<Difficulty> DIFFICULTY_CODEC = ExtraCodecs.withAlternative(
+				Difficulty.CODEC,
+				ExtraCodecs.NON_NEGATIVE_INT.xmap(Difficulty::byId, Difficulty::getId));
+
+		public static final Codec<IsDifficulty> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				new CompactListCodec<>(DIFFICULTY_CODEC, true).fieldOf("difficulty").forGetter(IsDifficulty::difficulties)
+		).apply(instance, IsDifficulty::new));
 
 		@Override
 		public Codec<IsDifficulty> codec() {

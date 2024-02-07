@@ -77,12 +77,10 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 	}
 
 	public static class Type implements ContextualConditionType<Execute> {
-		public static final Codec<Execute> CODEC = RecordCodecBuilder.create(instance -> instance
-				.group(
-						Codec.STRING.fieldOf("command").forGetter(Execute::command),
-						MinMaxBounds.Ints.CODEC.optionalFieldOf("value", DEFAULT_RANGE).forGetter(Execute::bounds)
-				)
-				.apply(instance, Execute::new));
+		public static final Codec<Execute> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.STRING.fieldOf("command").forGetter(Execute::command),
+				MinMaxBounds.Ints.CODEC.optionalFieldOf("value", DEFAULT_RANGE).forGetter(Execute::bounds)
+		).apply(instance, Execute::new));
 
 		@Override
 		public Codec<Execute> codec() {
@@ -95,6 +93,7 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 		}
 
 		@Override
-		public void toNetwork(FriendlyByteBuf buf, Execute condition) {}
+		public void toNetwork(FriendlyByteBuf buf, Execute condition) {
+		}
 	}
 }

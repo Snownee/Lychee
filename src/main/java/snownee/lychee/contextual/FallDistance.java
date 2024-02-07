@@ -40,9 +40,9 @@ public record FallDistance(Doubles range) implements ContextualCondition {
 	}
 
 	public static class Type implements ContextualConditionType<FallDistance> {
-		public static final Codec<FallDistance> CODEC = RecordCodecBuilder.create(instance -> instance
-				.group(Doubles.CODEC.fieldOf("range").forGetter(FallDistance::range))
-				.apply(instance, FallDistance::new));
+		public static final Codec<FallDistance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Doubles.CODEC.fieldOf("range").forGetter(FallDistance::range)
+		).apply(instance, FallDistance::new));
 
 		@Override
 		public Codec<FallDistance> codec() {

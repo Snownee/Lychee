@@ -7,13 +7,19 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 
+import net.minecraft.util.ExtraCodecs;
+
 public final class CompactListCodec<E> implements Codec<List<E>> {
 	private final Codec<E> singleCodec;
 	private final Codec<List<E>> listCodec;
 
 	public CompactListCodec(Codec<E> singleCodec) {
+		this(singleCodec, false);
+	}
+
+	public CompactListCodec(Codec<E> singleCodec, boolean nonEmpty) {
 		this.singleCodec = singleCodec;
-		this.listCodec = Codec.list(singleCodec);
+		this.listCodec = nonEmpty ? ExtraCodecs.nonEmptyList(singleCodec.listOf()) : singleCodec.listOf();
 	}
 
 	@Override

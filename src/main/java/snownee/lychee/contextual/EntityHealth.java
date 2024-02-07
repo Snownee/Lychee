@@ -41,9 +41,9 @@ public record EntityHealth(Doubles range) implements ContextualCondition {
 	}
 
 	public static class Type implements ContextualConditionType<EntityHealth> {
-		public static final Codec<EntityHealth> CODEC = RecordCodecBuilder.create(instance -> instance
-				.group(Doubles.CODEC.fieldOf("range").forGetter(EntityHealth::range))
-				.apply(instance, EntityHealth::new));
+		public static final Codec<EntityHealth> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Doubles.CODEC.fieldOf("range").forGetter(EntityHealth::range)
+		).apply(instance, EntityHealth::new));
 
 		@Override
 		public Codec<EntityHealth> codec() {

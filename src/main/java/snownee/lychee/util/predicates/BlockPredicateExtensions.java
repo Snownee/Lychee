@@ -58,7 +58,7 @@ public class BlockPredicateExtensions {
 			CacheBuilder.newBuilder()
 						.expireAfterAccess(10, TimeUnit.MINUTES)
 						.build();
-	public static Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet();
+	public static final Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet();
 
 	private static final String NOT_PLAIN = "The block predicate not an id or tag. Can't transform to a plain string";
 

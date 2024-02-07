@@ -3,10 +3,12 @@ package snownee.lychee.contextual;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -37,9 +39,14 @@ public record Chance(float chance) implements ContextualCondition {
 	}
 
 	public static class Type implements ContextualConditionType<Chance> {
-		public static final Codec<Chance> CODEC = RecordCodecBuilder.create(
-				instance -> instance.group(Codec.FLOAT.fieldOf("chance").forGetter(Chance::chance))
-									.apply(instance, Chance::new));
+		public static final Codec<Chance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				ExtraCodecs.validate(Codec.FLOAT, f -> {
+					if (f <= 0 || f >= 1) {
+						return DataResult.error(() -> "Chance must be between 0 and 1, exclusive");
+					}
+					return DataResult.success(f);
+				}).fieldOf("chance").forGetter(Chance::chance)
+		).apply(instance, Chance::new));
 
 		@Override
 		public Codec<Chance> codec() {
