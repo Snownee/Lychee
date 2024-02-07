@@ -11,7 +11,7 @@ import com.google.common.base.Supplier;
 
 public class Couple<T> extends Pair<T, T> implements Iterable<T> {
 
-	private static Couple<Boolean> TRUE_AND_FALSE = Couple.create(true, false);
+	private static final Couple<Boolean> TRUE_AND_FALSE = Couple.create(true, false);
 
 	protected Couple(T first, T second) {
 		super(first, second);

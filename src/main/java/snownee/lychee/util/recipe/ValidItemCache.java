@@ -14,9 +14,9 @@ public class ValidItemCache {
 
 	public void refreshCache(List<? extends RecipeHolder<?>> recipes) {
 		validItems = new IntAVLTreeSet(recipes.stream()
-											  .flatMap($ -> $.value().getIngredients().stream())
-											  .flatMapToInt($ -> $.getStackingIds().intStream())
-											  .toArray());
+				.flatMap($ -> $.value().getIngredients().stream())
+				.flatMapToInt($ -> $.getStackingIds().intStream())
+				.toArray());
 	}
 
 	public boolean contains(ItemStack stack) {

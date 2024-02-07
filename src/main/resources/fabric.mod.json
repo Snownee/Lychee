@@ -42,9 +42,6 @@
     "kiwi": ">=13.5",
     "java": ">=17"
   },
-  "breaks": {
-    "kubejs": "<1902.6.1-"
-  },
 
   "custom": {
     "modmenu": {

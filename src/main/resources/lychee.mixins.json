@@ -36,11 +36,8 @@
     "ReloadableServerResourcesMixin",
     "ShapedRecipeAccess",
     "StatePropertiesPredicateAccess",
-    "TimeCheckAccess",
     "TransientCraftingContainerAccess",
     "action.MarkerMixin",
-    "fabric.ResourceManagerHelperImplMixin",
-    "predicates.BlockPredicateAccess",
     "predicates.LocationCheckAccess",
     "predicates.PositionPredicateAccess",
     "rei.DefaultCraftingDisplayMixin"

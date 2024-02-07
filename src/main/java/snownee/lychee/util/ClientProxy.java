@@ -72,7 +72,7 @@ public class ClientProxy implements ClientModInitializer {
 		RECIPE_VIEWER_WIDGET_CLICK_EVENT.register(listener);
 	}
 
-	public static boolean postInfoBadgeClickEvent(ILycheeRecipe recipe, int button) {
+	public static boolean postInfoBadgeClickEvent(ILycheeRecipe<?> recipe, int button) {
 		return RECIPE_VIEWER_WIDGET_CLICK_EVENT.invoker().onClick(recipe, button);
 	}
 
@@ -80,15 +80,15 @@ public class ClientProxy implements ClientModInitializer {
 	public void onInitializeClient() {
 		ParticleFactoryRegistry.getInstance().register(
 				DripstoneRecipeMod.DRIPSTONE_DRIPPING,
-				$ -> new ParticleFactories.Dripping($)
+				ParticleFactories.Dripping::new
 		);
 		ParticleFactoryRegistry.getInstance().register(
 				DripstoneRecipeMod.DRIPSTONE_FALLING,
-				$ -> new ParticleFactories.Falling($)
+				ParticleFactories.Falling::new
 		);
 		ParticleFactoryRegistry.getInstance().register(
 				DripstoneRecipeMod.DRIPSTONE_SPLASH,
-				$ -> new ParticleFactories.Splash($)
+				ParticleFactories.Splash::new
 		);
 
 		PostActionRenderer.register(
@@ -122,6 +122,6 @@ public class ClientProxy implements ClientModInitializer {
 
 	@FunctionalInterface
 	public interface RecipeViewerWidgetClickListener {
-		boolean onClick(ILycheeRecipe recipe, int button);
+		boolean onClick(ILycheeRecipe<?> recipe, int button);
 	}
 }

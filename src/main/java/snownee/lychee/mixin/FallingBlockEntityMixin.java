@@ -5,8 +5,13 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -22,9 +27,9 @@ import snownee.lychee.util.LycheeFallingBlockEntity;
 public abstract class FallingBlockEntityMixin extends Entity implements LycheeFallingBlockEntity {
 
 	@Unique
-	private boolean lychee$matched;
+	private boolean matched;
 	@Unique
-	private float lychee$anvilDamageChance = -1;
+	private float anvilDamageChance = -1;
 	@Shadow
 	private boolean cancelDrop;
 	@Shadow
@@ -35,7 +40,7 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 	}
 
 	@Inject(at = @At("HEAD"), method = "causeFallDamage")
-	private void lychee_causeFallDamage(
+	private void lychee_onLand(
 			float pFallDistance,
 			float pMultiplier,
 			DamageSource pSource,
@@ -48,18 +53,18 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 		RecipeTypes.BLOCK_CRUSHING.process(entity);
 	}
 
-	@ModifyVariable(at = @At("STORE"), method = "tick", index = 9)
-	private boolean lychee_modifyFlag3(boolean original) {
-		if (lychee$matched) {
+	@WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/FallingBlock;isFree(Lnet/minecraft/world/level/block/state/BlockState;)Z"))
+	private boolean lychee_stopItHere(BlockState state, Operation<Boolean> original) {
+		if (matched) {
 			return false;
 		}
-		return original;
+		return original.call(state);
 	}
 
-	@ModifyVariable(at = @At("STORE"), method = "causeFallDamage", index = 8)
-	private boolean lychee_overrideDamageAnvil(boolean original) {
-		if (original && lychee$anvilDamageChance >= 0) {
-			if (random.nextFloat() < lychee$anvilDamageChance) {
+	@Inject(method = "causeFallDamage", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/tags/TagKey;)Z", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+	private void lychee_customDamageAnvilChance(float fallDistance, float multiplier, DamageSource source, CallbackInfoReturnable<Boolean> cir, @Local LocalBooleanRef bl) {
+		if (bl.get() && anvilDamageChance >= 0) {
+			if (random.nextFloat() < anvilDamageChance) {
 				BlockState blockstate = AnvilBlock.damage(blockState);
 				if (blockstate == null) {
 					cancelDrop = true;
@@ -67,9 +72,8 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 					blockState = blockstate;
 				}
 			}
-			return false;
+			bl.set(false);
 		}
-		return original;
 	}
 
 	@Override
@@ -79,12 +83,12 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 
 	@Override
 	public void lychee$matched() {
-		lychee$matched = true;
+		matched = true;
 	}
 
 	@Override
 	public void lychee$anvilDamageChance(float chance) {
-		lychee$anvilDamageChance = Math.max(chance, lychee$anvilDamageChance);
+		anvilDamageChance = Math.max(chance, anvilDamageChance);
 	}
 
 }

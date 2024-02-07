@@ -40,11 +40,13 @@ public abstract class ExplosionMixin {
 	@Unique
 	private static final ThreadLocal<snownee.lychee.util.Pair<BlockExplodingContext.Builder, List<ItemStack>>> CONTEXT =
 			ThreadLocal.withInitial(() -> snownee.lychee.util.Pair.of(null, null));
+	@Final
 	@Shadow
-	public float radius;
+	private float radius;
+	@Final
 	@Shadow
 	@Nullable
-	public Entity source;
+	private Entity source;
 	@Final
 	@Shadow
 	private Level level;

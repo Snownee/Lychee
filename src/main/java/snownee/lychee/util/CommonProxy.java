@@ -23,6 +23,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
@@ -340,10 +341,10 @@ public class CommonProxy implements ModInitializer {
 		if (!(pStack.getItem() instanceof BlockItem item)) {
 			return pStack;
 		}
-		BlockPos blockpos = pSource.getPos().relative(direction);
-		BlockState state = pSource.getLevel().getBlockState(blockpos);
+		BlockPos blockpos = pSource.pos().relative(direction);
+		BlockState state = pSource.level().getBlockState(blockpos);
 		if (FallingBlock.isFree(state)) {
-			item.place(new DirectionalPlaceContext(pSource.getLevel(), blockpos, direction, pStack, direction));
+			item.place(new DirectionalPlaceContext(pSource.level(), blockpos, direction, pStack, direction));
 		}
 		return pStack;
 	}
