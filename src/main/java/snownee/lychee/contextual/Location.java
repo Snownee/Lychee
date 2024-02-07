@@ -13,9 +13,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.advancements.critereon.MinMaxBounds.Doubles;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -323,11 +320,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public TriState testClient(LocationPredicate predicate, Level level, BlockPos pos, Vec3 vec) {
-			return TriState.of(predicate.dimension()
-										.orElseThrow()
-										.get(((Registry<Registry<Level>>) BuiltInRegistries.REGISTRY).getOrThrow(
-												Registries.DIMENSION))
-										.contains(Holder.direct(level)));
+			return TriState.of(predicate.dimension().orElseThrow().matches(level.registryAccess().registryOrThrow(Registries.DIMENSION), level));
 		}
 
 		@Override
@@ -380,20 +373,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public TriState testClient(LocationPredicate predicate, Level level, BlockPos pos, Vec3 vec) {
-			final var biome = level.getBiome(pos);
-			final var biomeTagOrElementHolder = predicate.biome().orElseThrow();
-
-			final var nonTagAndEquals = !biomeTagOrElementHolder.tag() && biome.is(biomeTagOrElementHolder.id());
-			if (nonTagAndEquals) {
-				return TriState.TRUE;
-			}
-
-			final var isTagAndIn = biomeTagOrElementHolder.tag()
-								   && biome.is(TagKey.create(Registries.BIOME, biomeTagOrElementHolder.id()));
-			if (isTagAndIn) {
-				return TriState.TRUE;
-			}
-			return TriState.FALSE;
+			return TriState.of(predicate.biome().orElseThrow().matches(level.registryAccess().registryOrThrow(Registries.BIOME), level.getBiome(pos)));
 		}
 
 		@Override

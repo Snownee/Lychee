@@ -10,9 +10,6 @@ import net.minecraft.advancements.critereon.FluidPredicate;
 import net.minecraft.advancements.critereon.LightPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -45,11 +42,11 @@ public record LocationPredicate(
 					"position"
 			).forGetter(LocationPredicate::position),
 			ExtraCodecs.strictOptionalField(TagOrElementHolder.<Biome>codec(), "biome")
-					   .forGetter(LocationPredicate::biome),
+					.forGetter(LocationPredicate::biome),
 			ExtraCodecs.strictOptionalField(TagOrElementHolder.<Structure>codec(), "structure")
-					   .forGetter(LocationPredicate::structure),
+					.forGetter(LocationPredicate::structure),
 			ExtraCodecs.strictOptionalField(TagOrElementHolder.<Level>codec(), "dimension")
-					   .forGetter(LocationPredicate::dimension),
+					.forGetter(LocationPredicate::dimension),
 			ExtraCodecs.strictOptionalField(Codec.BOOL, "smokey").forGetter(LocationPredicate::smokey),
 			ExtraCodecs.strictOptionalField(LightPredicate.CODEC, "light").forGetter(LocationPredicate::light),
 			ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, "block").forGetter(LocationPredicate::block),
@@ -68,62 +65,55 @@ public record LocationPredicate(
 			Optional<FluidPredicate> fluid
 	) {
 		return position.isEmpty() && biome.isEmpty() && structure.isEmpty() && dimension.isEmpty() &&
-			   smokey.isEmpty() && light.isEmpty() && block.isEmpty() && fluid.isEmpty()
-			   ? Optional.empty()
-			   : Optional.of(new LocationPredicate(
-					   position,
-					   biome,
-					   structure,
-					   dimension,
-					   smokey,
-					   light,
-					   block,
-					   fluid
-			   ));
+				smokey.isEmpty() && light.isEmpty() && block.isEmpty() && fluid.isEmpty()
+				? Optional.empty()
+				: Optional.of(new LocationPredicate(
+				position,
+				biome,
+				structure,
+				dimension,
+				smokey,
+				light,
+				block,
+				fluid
+		));
 	}
 
 	public boolean matches(ServerLevel level, double x, double y, double z) {
-		if (position.isPresent() && !position.get().matches(x, y, z)) return false;
-		if (dimension.isPresent() &&
-			!dimension.get()
-					  .get(((Registry<Registry<Level>>) BuiltInRegistries.REGISTRY).getOrThrow(Registries.DIMENSION))
-					  .contains(Holder.direct(level)))
+		if (position.isPresent() && !position.get().matches(x, y, z)) {
 			return false;
+		}
+		if (dimension.isPresent() && !dimension.get().matches(level.registryAccess().registryOrThrow(Registries.DIMENSION), level)) {
+			return false;
+		}
 		BlockPos blockPos = BlockPos.containing(x, y, z);
 		boolean posLoaded = level.isLoaded(blockPos);
 		if (posLoaded) {
-			if (biome.isPresent() &&
-				!biome.get()
-					  .get(level.registryAccess().registryOrThrow(Registries.BIOME))
-					  .contains(level.getBiome(blockPos))
-			) return false;
-
-
-			if (structure.isPresent() &&
-				structure.map(it -> {
-					if (it.tag()) {
-						return !level.structureManager().getStructureWithPieceAt(
-								blockPos,
-								TagKey.create(Registries.STRUCTURE, it.id())
-						).isValid();
-					} else {
-						return !level.structureManager().getStructureWithPieceAt(
-								blockPos,
-								ResourceKey.create(Registries.STRUCTURE, it.id())
-						).isValid();
-					}
-				}).get()
-			) return false;
-
-			if (smokey.isPresent() && smokey.get() != CampfireBlock.isSmokeyPos(level, blockPos)) return false;
+			if (biome.isPresent() && !biome.get().matches(level.registryAccess().registryOrThrow(Registries.BIOME), level.getBiome(blockPos))) {
+				return false;
+			}
+			if (structure.isPresent() && structure.map(it -> {
+				if (it.tag()) {
+					return !level.structureManager().getStructureWithPieceAt(blockPos, TagKey.create(Registries.STRUCTURE, it.id())).isValid();
+				} else {
+					return !level.structureManager().getStructureWithPieceAt(blockPos, ResourceKey.create(Registries.STRUCTURE, it.id())).isValid();
+				}
+			}).get()) {
+				return false;
+			}
+			if (smokey.isPresent() && smokey.get() != CampfireBlock.isSmokeyPos(level, blockPos)) {
+				return false;
+			}
 		}
-
-		if (light.isPresent() && !light.get().matches(level, blockPos)) return false;
-
-		if (block.isPresent() && !block.get().matches(level, blockPos)) return false;
-
-		if (fluid.isPresent() && !fluid.get().matches(level, blockPos)) return false;
-
+		if (light.isPresent() && !light.get().matches(level, blockPos)) {
+			return false;
+		}
+		if (block.isPresent() && !block.get().matches(level, blockPos)) {
+			return false;
+		}
+		if (fluid.isPresent() && !fluid.get().matches(level, blockPos)) {
+			return false;
+		}
 		return true;
 	}
 
