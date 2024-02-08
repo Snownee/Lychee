@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.context.LycheeContextSerializer;
@@ -18,10 +17,9 @@ public final class LycheeRegistries {
 
 	public static void init() {}
 
-	private static <T> MappedRegistry<T> register(String name) {
-		return FabricRegistryBuilder.createSimple(ResourceKey.<T>createRegistryKey(new ResourceLocation(
-				Lychee.ID,
-				name
-		))).attribute(RegistryAttribute.SYNCED).buildAndRegister();
+	private static <T> MappedRegistry<T> register(String id) {
+		return FabricRegistryBuilder.createSimple(ResourceKey.<T>createRegistryKey(Lychee.id(id)))
+				.attribute(RegistryAttribute.SYNCED)
+				.buildAndRegister();
 	}
 }

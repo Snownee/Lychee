@@ -18,8 +18,8 @@ public final class LycheeLootContextParams {
 	public static final LootContextParam<BlockPos> BLOCK_POS = create("block_pos");
 	public static final LootContextParam<Direction> DIRECTION = create("direction");
 
-	private static <T> LootContextParam<T> create(String pId) {
-		LootContextParam<T> param = new LootContextParam<>(new ResourceLocation(Lychee.ID, pId));
+	private static <T> LootContextParam<T> create(String id) {
+		LootContextParam<T> param = new LootContextParam<>(Lychee.id(id));
 		ALL.add(param);
 		return param;
 	}

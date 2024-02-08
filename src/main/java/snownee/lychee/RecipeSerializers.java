@@ -2,7 +2,6 @@ package snownee.lychee;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
@@ -71,8 +70,8 @@ public final class RecipeSerializers {
 			new ShapedCraftingRecipe.Serializer()
 	);
 
-	public static <T extends RecipeSerializer<?>> T register(String name, T t) {
-		Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, new ResourceLocation(Lychee.ID, name), t);
+	public static <T extends RecipeSerializer<?>> T register(String id, T t) {
+		Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Lychee.id(id), t);
 		return t;
 	}
 
