@@ -76,6 +76,5 @@ public class BlockExplodingRecipe extends OldLycheeRecipe<BlockExplodingContext>
 		public void toNetwork0(FriendlyByteBuf pBuffer, BlockExplodingRecipe pRecipe) {
 			BlockPredicateHelper.toNetwork(pRecipe.block, pBuffer);
 		}
-
 	}
 }

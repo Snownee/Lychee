@@ -6,7 +6,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
-import snownee.lychee.recipes.block_exploding.BlockExplodingRecipe;
+import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.crafting.ShapedCraftingRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.recipes.interaction.BlockClickingRecipe;

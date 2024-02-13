@@ -11,9 +11,8 @@ import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.recipe.recipe.type.ItemShapelessRecipeType;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipeType;
+import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.block_crushing.BlockCrushingRecipe;
-import snownee.lychee.recipes.block_exploding.BlockExplodingContext;
-import snownee.lychee.recipes.block_exploding.BlockExplodingRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeType;
 import snownee.lychee.recipes.interaction.BlockClickingRecipe;
@@ -83,7 +82,7 @@ public final class RecipeTypes {
 			register(new ItemShapelessRecipeType<>("lightning_channeling", LightningChannelingRecipe.class, null));
 	public static final ItemShapelessRecipeType<ItemShapelessContext, ItemExplodingRecipe> ITEM_EXPLODING =
 			register(new ItemShapelessRecipeType<>("item_exploding", ItemExplodingRecipe.class, null));
-	public static final BlockKeyableRecipeType<BlockExplodingContext, BlockExplodingRecipe> BLOCK_EXPLODING =
+	public static final BlockKeyableRecipeType<BlockExplodingRecipe> BLOCK_EXPLODING =
 			register(new BlockKeyableRecipeType<>(
 					"block_exploding",
 					BlockExplodingRecipe.class,

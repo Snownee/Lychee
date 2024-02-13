@@ -33,6 +33,7 @@ public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<Lychee
 	String DEFAULT_GROUP = "default";
 	String ITEM_IN = "item_in";
 	String ITEM_OUT = "item_out";
+	String BLOCK_IN = "block_in";
 	JsonPointer ITEM_IN_POINTER = new JsonPointer("/item_in");
 	JsonPointer ITEM_OUT_POINTER = new JsonPointer("/item_out");
 	JsonPointer RESULT_POINTER = new JsonPointer("/result");
