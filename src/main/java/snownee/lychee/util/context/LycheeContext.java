@@ -15,7 +15,8 @@ import snownee.lychee.util.codec.KeyDispatchedMapCodec;
 
 @SuppressWarnings("unchecked")
 public class LycheeContext extends EmptyContainer {
-	private final Map<LycheeContextKey<?>, Object> context = new Object2ObjectOpenHashMap<>(LycheeRegistries.CONTEXTUAL.size());
+	private final Map<LycheeContextKey<?>, Object> context =
+			new Object2ObjectOpenHashMap<>(LycheeRegistries.CONTEXTUAL.size());
 	public static final Codec<LycheeContext> CODEC =
 			new KeyDispatchedMapCodec<LycheeContextKey<?>, Object>(
 					LycheeRegistries.CONTEXT.byNameCodec(),
@@ -36,6 +37,9 @@ public class LycheeContext extends EmptyContainer {
 			}, LycheeContext::asMap);
 
 	public <T> T get(LycheeContextKey<T> type) {
+		if (LycheeContextRequired.CONSTRUCTORS.containsKey(type)) {
+			return (T) context.putIfAbsent(type, LycheeContextRequired.CONSTRUCTORS.get(type).apply(this));
+		}
 		return (T) context.get(type);
 	}
 

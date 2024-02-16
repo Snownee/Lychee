@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Sets;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -18,9 +17,7 @@ import net.minecraft.world.phys.AABB;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.LycheeTags;
-import snownee.lychee.context.ActionContext;
 import snownee.lychee.context.ItemShapelessContext;
-import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.core.network.SCustomLevelEventPacket;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.LycheeFallingBlockEntity;
@@ -28,7 +25,6 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ExtendedItemStackHolder;
 import snownee.lychee.util.input.ItemStackHolder;
-import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.ValidItemCache;
 
@@ -74,13 +70,8 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		final var itemShapelessContext = new ItemShapelessContext(itemEntities, context);
 		context.put(LycheeContextKey.ITEM_SHAPELESS, itemShapelessContext);
 		context.put(LycheeContextKey.FALLING_BLOCK_ENTITY, entity);
-		final var actionContext = new ActionContext();
-		context.put(LycheeContextKey.ACTION, actionContext);
 
-		context.put(LycheeContextKey.ITEM, ItemStackHolderCollection.EMPTY);
-
-		final var lootParamsContext = new LootParamsContext(context, new Object2ObjectOpenHashMap<>());
-		context.put(LycheeContextKey.LOOT_PARAMS, lootParamsContext);
+		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 		lootParamsContext.setParam(LootContextParams.ORIGIN, entity.position());
 		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, entity);
 		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, landingBlock);

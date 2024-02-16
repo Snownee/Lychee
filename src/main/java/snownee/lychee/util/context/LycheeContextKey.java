@@ -4,6 +4,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
@@ -28,6 +29,7 @@ public interface LycheeContextKey<T> {
 	LycheeContextKey<ItemShapelessContext> ITEM_SHAPELESS = register("item_shapeless");
 	LycheeContextKey<FallingBlockEntity> FALLING_BLOCK_ENTITY = register("falling_block_entity");
 
+	LycheeContextKey<CraftingContainer> CRAFTING = register("crafting_container");
 
 	static <T extends LycheeContextKey<?>> T register(ResourceLocation location, T object) {
 		Registry.register(LycheeRegistries.CONTEXT, location, object);
