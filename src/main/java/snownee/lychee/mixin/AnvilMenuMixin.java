@@ -22,9 +22,9 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.recipes.anvil_crafting.AnvilContext;
 import snownee.lychee.recipes.anvil_crafting.AnvilCraftingRecipe;
+import snownee.lychee.util.input.ItemStackHolderCollection;
 
 @Mixin(AnvilMenu.class)
 public abstract class AnvilMenuMixin extends ItemCombinerMenu {
@@ -60,6 +60,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 			return;
 		}
 		ItemStack right = inputSlots.getItem(1);
+		// TODO 迁移到新的配方
 		AnvilContext.Builder builder = new AnvilContext.Builder(player.level(), left, right, itemName);
 		BlockPos pos = access.evaluate((level, pos0) -> pos0).orElseGet(player::blockPosition);
 		builder.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));

@@ -44,19 +44,19 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.RecipeSerializers;
-import snownee.lychee.core.contextual.ContextualHolder;
-import snownee.lychee.util.input.ItemStackHolderCollection;
-import snownee.lychee.util.action.PostAction;
 import snownee.lychee.action.input.SetItem;
-import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.fragment.Fragments;
 import snownee.lychee.mixin.CraftingMenuAccess;
 import snownee.lychee.mixin.InventoryMenuAccess;
-import snownee.lychee.mixin.ShapedRecipeAccess;
-import snownee.lychee.mixin.TransientCraftingContainerAccess;
+import snownee.lychee.mixin.recipes.ShapedRecipeAccess;
+import snownee.lychee.mixin.recipes.TransientCraftingContainerAccess;
 import snownee.lychee.util.Pair;
+import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<CraftingContext> {
 

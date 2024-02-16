@@ -29,11 +29,12 @@
     "PointedDripstoneBlockMixin",
     "RecipeManagerMixin",
     "ReloadableServerResourcesMixin",
-    "ShapedRecipeAccess",
-    "TransientCraftingContainerAccess",
     "action.MarkerMixin",
     "predicates.LocationCheckAccess",
     "predicates.PositionPredicateAccess",
+    "recipes.ShapedRecipeAccess",
+    "recipes.ShapedRecipePatternAccess",
+    "recipes.TransientCraftingContainerAccess",
     "rei.DefaultCraftingDisplayMixin"
   ],
   "client": [
