@@ -5,7 +5,6 @@
   "compatibilityLevel": "JAVA_16",
   "refmap": "lychee.refmap.json",
   "mixins": [
-    "AnvilMenuMixin",
     "BlockMixin",
     "BlockStateMixin",
     "ChunkMapAccess",
@@ -35,6 +34,7 @@
     "recipes.ShapedRecipeAccess",
     "recipes.ShapedRecipePatternAccess",
     "recipes.TransientCraftingContainerAccess",
+    "recipes.anvilcrafting.AnvilMenuMixin",
     "rei.DefaultCraftingDisplayMixin"
   ],
   "client": [

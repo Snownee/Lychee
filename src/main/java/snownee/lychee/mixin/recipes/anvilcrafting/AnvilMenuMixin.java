@@ -1,5 +1,6 @@
-package snownee.lychee.mixin;
+package snownee.lychee.mixin.recipes.anvilcrafting;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -7,6 +8,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,10 +25,13 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.recipes.anvil_crafting.AnvilContext;
-import snownee.lychee.recipes.anvil_crafting.AnvilCraftingRecipe;
+import snownee.lychee.context.AnvilContext;
+import snownee.lychee.recipes.AnvilCraftingRecipe;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 
+// TODO Need confirm it working with new recipes
 @Mixin(AnvilMenu.class)
 public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
@@ -40,13 +46,19 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	@Unique
 	private AnvilCraftingRecipe recipe;
 	@Unique
-	private AnvilContext ctx;
+	private LycheeContext ctx;
 	@Unique
-	private AnvilContext onTakeCtx;
+	private LycheeContext onTakeCtx;
 
-	public AnvilMenuMixin(MenuType<?> p_39773_, int p_39774_, Inventory p_39775_, ContainerLevelAccess p_39776_) {
-		super(p_39773_, p_39774_, p_39775_, p_39776_);
+	private AnvilMenuMixin(
+			@Nullable final MenuType<?> type,
+			final int containerId,
+			final Inventory playerInventory,
+			final ContainerLevelAccess access
+	) {
+		super(type, containerId, playerInventory, access);
 	}
+
 
 	@Inject(at = @At("HEAD"), method = "createResult", cancellable = true)
 	private void lychee_createResult(CallbackInfo ci) {
@@ -55,39 +67,46 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		if (RecipeTypes.ANVIL_CRAFTING.isEmpty()) {
 			return;
 		}
-		ItemStack left = inputSlots.getItem(0);
+		final var left = inputSlots.getItem(0);
 		if (left.isEmpty()) {
 			return;
 		}
-		ItemStack right = inputSlots.getItem(1);
+		final var right = inputSlots.getItem(1);
 		// TODO 迁移到新的配方
-		AnvilContext.Builder builder = new AnvilContext.Builder(player.level(), left, right, itemName);
+		ctx = new LycheeContext();
+		ctx.put(LycheeContextKey.LEVEL, player.level());
+		final var anvilContext = new AnvilContext(Pair.of(left, right), itemName);
+		ctx.put(LycheeContextKey.ANVIL, anvilContext);
+		final var lootParamsContext = ctx.get(LycheeContextKey.LOOT_PARAMS);
 		BlockPos pos = access.evaluate((level, pos0) -> pos0).orElseGet(player::blockPosition);
-		builder.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
+		lootParamsContext.setParam(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
 		if (access != ContainerLevelAccess.NULL) {
-			builder.withOptionalParameter(LycheeLootContextParams.BLOCK_POS, pos);
-			builder.withOptionalParameter(LootContextParams.BLOCK_STATE, player.level().getBlockState(pos));
+			lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, pos);
+			lootParamsContext.setParam(LootContextParams.BLOCK_STATE, player.level().getBlockState(pos));
 		}
-		builder.withParameter(LootContextParams.THIS_ENTITY, player);
-		AnvilContext ctx = builder.create(RecipeTypes.ANVIL_CRAFTING.contextParamSet);
-		// why use copy(): the originals will be modified by vanilla
-		ctx.itemHolders = ItemStackHolderCollection.Inventory.of(ctx, left.copy(), right.copy(), ItemStack.EMPTY);
-		RecipeTypes.ANVIL_CRAFTING.findFirst(ctx, player.level()).ifPresent($ -> {
-			ItemStack output = $.assemble(ctx, player.level().registryAccess());
+		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, player);
+		lootParamsContext.validate(RecipeTypes.ANVIL_CRAFTING.contextParamSet);
+		// why use copy(): vanilla will modify the originals
+		ctx.put(
+				LycheeContextKey.ITEM,
+				ItemStackHolderCollection.Inventory.of(ctx, left.copy(), right.copy(), ItemStack.EMPTY)
+		);
+		RecipeTypes.ANVIL_CRAFTING.findFirst(ctx, player.level()).ifPresent(it -> {
+			final var output = it.value().assemble(ctx, player.level().registryAccess());
 			if (output.isEmpty()) {
 				resultSlots.setItem(0, ItemStack.EMPTY);
 				cost.set(0);
+				ctx = null;
 			} else {
-				recipe = $;
-				this.ctx = ctx;
+				recipe = it.value();
 				resultSlots.setItem(0, output);
 				if (player.isCreative() || left.getCount() == 1) {
-					cost.set(ctx.levelCost);
+					cost.set(anvilContext.getLevelCost());
 				} else { // Anvil will swallow all items on the left
 					// Make it too expensive so player knows the recipe is working
 					cost.set(Integer.MAX_VALUE);
 				}
-				repairItemCountCost = ctx.materialCost;
+				repairItemCountCost = anvilContext.getMaterialCost();
 			}
 			broadcastChanges();
 			ci.cancel();
@@ -96,7 +115,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
 	@Inject(at = @At("HEAD"), method = "onTake")
 	private void lychee_onTake(Player player, ItemStack stack, CallbackInfo ci) {
-		if (recipe != null && ctx != null && !ctx.getLevel().isClientSide) {
+		if (recipe != null && ctx != null && !ctx.get(LycheeContextKey.LEVEL).isClientSide) {
 			onTakeCtx = ctx;
 			recipe.applyPostActions(ctx, 1);
 		}
@@ -112,18 +131,17 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	private void lychee_preventDefault(Player player, ItemStack stack, CallbackInfo ci) {
 		if (onTakeCtx != null) {
 			for (int i = 0; i < 2; i++) {
-				if (onTakeCtx.itemHolders.ignoreConsumptionFlags.get(i)) {
-					inputSlots.setItem(i, onTakeCtx.itemHolders.get(i).itemstack());
+				if (onTakeCtx.get(LycheeContextKey.ITEM).get(i).getIgnoreConsumption()) {
+					inputSlots.setItem(i, onTakeCtx.get(LycheeContextKey.ITEM).get(i).get());
 				}
 			}
 
-			boolean prevent = !onTakeCtx.runtime.doDefault;
+			boolean avoidDefault = onTakeCtx.get(LycheeContextKey.ACTION).avoidDefault;
 			onTakeCtx = null;
-			if (prevent) {
+			if (avoidDefault) {
 				access.execute((level, pos) -> level.levelEvent(LevelEvent.SOUND_ANVIL_USED, pos, 0));
 				ci.cancel();
 			}
 		}
 	}
-
 }
