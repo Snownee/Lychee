@@ -21,7 +21,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.mixin.CraftingMenuAccess;
 import snownee.lychee.mixin.InventoryMenuAccess;
-import snownee.lychee.mixin.recipes.TransientCraftingContainerAccess;
+import snownee.lychee.mixin.recipes.crafting.TransientCraftingContainerAccess;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;

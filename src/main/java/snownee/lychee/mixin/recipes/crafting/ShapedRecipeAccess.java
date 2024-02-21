@@ -1,4 +1,4 @@
-package snownee.lychee.mixin.recipes;
+package snownee.lychee.mixin.recipes.crafting;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
