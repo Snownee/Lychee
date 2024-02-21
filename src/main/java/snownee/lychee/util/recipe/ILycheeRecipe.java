@@ -88,7 +88,7 @@ public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<Lychee
 		return ItemStack.EMPTY;
 	}
 
-	@NotNull RecipeType<? extends ILycheeRecipe<T>> getType();
+	@NotNull RecipeType<? extends Recipe<?>> getType();
 
 	LycheeRecipeCommonProperties commonProperties();
 
