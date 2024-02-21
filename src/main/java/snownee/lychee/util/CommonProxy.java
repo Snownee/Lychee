@@ -129,8 +129,8 @@ public class CommonProxy implements ModInitializer {
 
 	public static String makeDescriptionId(String pType, @Nullable ResourceLocation pId) {
 		return pId == null
-			   ? pType + ".unregistered_sadface"
-			   : pType + "." + wrapNamespace(pId.getNamespace()) + "." + pId.getPath().replace('/', '.');
+				? pType + ".unregistered_sadface"
+				: pType + "." + wrapNamespace(pId.getNamespace()) + "." + pId.getPath().replace('/', '.');
 	}
 
 	public static String wrapNamespace(String modid) {

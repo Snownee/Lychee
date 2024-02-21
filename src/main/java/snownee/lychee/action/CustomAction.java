@@ -4,12 +4,12 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.CommonProxy;
 
 public class CustomAction extends PostAction {
 

@@ -42,8 +42,9 @@ public class DefaultDispenseItemBehaviorMixin {
 			return;
 		}
 		Block block = item.getBlock();
-		if (!(pStack.is(LycheeTags.DISPENSER_PLACEMENT) ||
-			  LycheeConfig.dispenserFallableBlockPlacement && block instanceof Fallable)) {
+		if (!(
+				pStack.is(LycheeTags.DISPENSER_PLACEMENT) ||
+						LycheeConfig.dispenserFallableBlockPlacement && block instanceof Fallable)) {
 			return;
 		}
 		ci.setReturnValue(CommonProxy.dispensePlacement(pSource, pStack, direction));

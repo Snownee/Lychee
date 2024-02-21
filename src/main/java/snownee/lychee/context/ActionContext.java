@@ -72,14 +72,14 @@ public class ActionContext implements KeyedContextValue<ActionContext> {
 				instance.group(
 						Codec.BOOL.optionalFieldOf("avoid_default", false).forGetter(it -> it.avoidDefault),
 						Codec.INT.fieldOf("state")
-								 .flatXmap(it -> {
-									 try {
-										 return DataResult.success(State.values()[it]);
-									 } catch (Throwable t) {
-										 return DataResult.error(t::getMessage);
-									 }
-								 }, it -> DataResult.success(it.ordinal()))
-								 .forGetter(it -> it.state),
+								.flatXmap(it -> {
+									try {
+										return DataResult.success(State.values()[it]);
+									} catch (Throwable t) {
+										return DataResult.error(t::getMessage);
+									}
+								}, it -> DataResult.success(it.ordinal()))
+								.forGetter(it -> it.state),
 						Codec.list(Job.CODEC).fieldOf("jobs").<Queue<Job>>xmap(
 								Queues::newLinkedBlockingQueue,
 								it -> it.stream().toList()

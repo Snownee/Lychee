@@ -6,10 +6,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class AddItemCooldown implements PostAction<AddItemCooldown> {

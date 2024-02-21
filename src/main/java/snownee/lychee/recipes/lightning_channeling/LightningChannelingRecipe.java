@@ -3,14 +3,13 @@ package snownee.lychee.recipes.lightning_channeling;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-
-import org.jetbrains.annotations.NotNull;
-
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;

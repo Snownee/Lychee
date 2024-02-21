@@ -6,9 +6,9 @@ import java.util.Set;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.action.CycleStateProperty;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.action.CycleStateProperty;
 import snownee.lychee.util.CommonProxy;
 
 public class CycleStatePropertyPostActionRenderer implements PostActionRenderer<CycleStateProperty> {

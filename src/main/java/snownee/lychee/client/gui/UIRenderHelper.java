@@ -36,8 +36,9 @@ public class UIRenderHelper {
 	}
 
 	public static void updateWindowSize(Window mainWindow) {
-		if (framebuffer != null)
+		if (framebuffer != null) {
 			framebuffer.resize(mainWindow.getWidth(), mainWindow.getHeight(), Minecraft.ON_OSX);
+		}
 	}
 
 	public static void drawFramebuffer(float alpha) {
@@ -110,8 +111,9 @@ public class UIRenderHelper {
 		);
 	}
 
-	public static void drawStretched(GuiGraphics graphics, int left, int top, int w, int h, int z,
-									 AllGuiTextures tex) {
+	public static void drawStretched(
+			GuiGraphics graphics, int left, int top, int w, int h, int z,
+			AllGuiTextures tex) {
 		tex.bind();
 		drawTexturedQuad(
 				graphics.pose().last().pose(),

@@ -26,17 +26,23 @@ public record TagOrElementHolder<T>(ResourceLocation id, boolean tag) {
 
 	public HolderSet<T> get(Registry<T> registry) {
 		final var registryKey = registry.key();
-		if (tag) return registry.getOrCreateTag(TagKey.create(registryKey, id));
+		if (tag) {
+			return registry.getOrCreateTag(TagKey.create(registryKey, id));
+		}
 		return HolderSet.direct(registry::getHolderOrThrow, ResourceKey.create(registryKey, id));
 	}
 
 	public boolean matches(Registry<T> registry, T element) {
-		if (tag) return registry.wrapAsHolder(element).is(TagKey.create(registry.key(), id));
+		if (tag) {
+			return registry.wrapAsHolder(element).is(TagKey.create(registry.key(), id));
+		}
 		return Objects.equals(registry.get(id), element);
 	}
 
 	public boolean matches(Registry<T> registry, Holder<T> holder) {
-		if (tag) return holder.is(TagKey.create(registry.key(), id));
+		if (tag) {
+			return holder.is(TagKey.create(registry.key(), id));
+		}
 		return holder.is(id);
 	}
 

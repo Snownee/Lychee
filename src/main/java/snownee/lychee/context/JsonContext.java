@@ -18,7 +18,7 @@ public record JsonContext(JsonObject json) implements KeyedContextValue<JsonCont
 	}
 
 	public static final class Serializer implements LycheeContextSerializer<JsonContext>,
-													SerializableType<JsonContext> {
+			SerializableType<JsonContext> {
 		public static final Codec<JsonContext> CODEC = ExtraCodecs.JSON.comapFlatMap(
 				it -> {
 					try {

@@ -82,8 +82,12 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilCraftingRecipe> {
 	@Override
 	public boolean matches(final LycheeContext context, final Level level) {
 		final var anvilContext = context.get(LycheeContextKey.ANVIL);
-		if (anvilContext == null) return false;
-		if (!input.getSecond().isEmpty() && anvilContext.input().getSecond().getCount() < materialCost) return false;
+		if (anvilContext == null) {
+			return false;
+		}
+		if (!input.getSecond().isEmpty() && anvilContext.input().getSecond().getCount() < materialCost) {
+			return false;
+		}
 		return input.getFirst().test(anvilContext.input().getFirst())
 				&& input.getSecond().test(anvilContext.input().getSecond());
 	}
@@ -175,7 +179,8 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilCraftingRecipe> {
 								}, Either::left)
 								.forGetter(AnvilCraftingRecipe::input),
 						ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
-						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
+						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
+								.forGetter(AnvilCraftingRecipe::assemblingActions),
 						ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),
 						ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1).forGetter(AnvilCraftingRecipe::materialCost)
 				).apply(instance, AnvilCraftingRecipe::new));

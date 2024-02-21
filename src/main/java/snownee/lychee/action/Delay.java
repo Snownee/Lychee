@@ -9,12 +9,12 @@ import net.minecraft.world.entity.Marker;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.Lychee;
-import snownee.lychee.util.action.PostActionTypes;
-import snownee.lychee.util.action.ActionRuntime.State;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.ActionMarker;
+import snownee.lychee.util.action.ActionRuntime.State;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class Delay extends PostAction {
@@ -47,8 +47,9 @@ public class Delay extends PostAction {
 	public static void makeMarker(ILycheeRecipe recipe, LycheeRecipeContext ctx) {
 		Marker marker = EntityType.MARKER.create(ctx.getLevel());
 		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
-		if (pos != null)
+		if (pos != null) {
 			marker.moveTo(pos);
+		}
 		marker.setCustomName(Component.literal(Lychee.ID));
 		ctx.getLevel().addFreshEntity(marker);
 		ActionMarker actionMarker = (ActionMarker) marker;

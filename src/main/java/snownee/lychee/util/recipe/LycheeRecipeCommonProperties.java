@@ -35,8 +35,10 @@ public record LycheeRecipeCommonProperties(
 				}
 				return DataResult.success(s);
 			}).optionalFieldOf("group", ILycheeRecipe.DEFAULT_GROUP).forGetter(LycheeRecipeCommonProperties::group),
-			ContextualHolder.CODEC.optionalFieldOf("contextual", ContextualHolder.EMPTY).forGetter(LycheeRecipeCommonProperties::conditions),
+			ContextualHolder.CODEC.optionalFieldOf("contextual", ContextualHolder.EMPTY)
+					.forGetter(LycheeRecipeCommonProperties::conditions),
 			PostActionType.LIST_CODEC.optionalFieldOf("post", List.of()).forGetter(LycheeRecipeCommonProperties::postActions),
-			MinMaxBounds.Ints.CODEC.optionalFieldOf("max_repeats", MinMaxBounds.Ints.ANY).forGetter(LycheeRecipeCommonProperties::maxRepeats)
+			MinMaxBounds.Ints.CODEC.optionalFieldOf("max_repeats", MinMaxBounds.Ints.ANY)
+					.forGetter(LycheeRecipeCommonProperties::maxRepeats)
 	).apply(instance, LycheeRecipeCommonProperties::new));
 }

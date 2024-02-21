@@ -60,8 +60,8 @@ public class GuiGameElement {
 
 	public static GuiRenderBuilder of(Fluid fluid) {
 		return new GuiBlockStateRenderBuilder(fluid.defaultFluidState()
-												   .createLegacyBlock()
-												   .setValue(LiquidBlock.LEVEL, 0));
+				.createLegacyBlock()
+				.setValue(LiquidBlock.LEVEL, 0));
 	}
 
 	public static abstract class GuiRenderBuilder extends RenderElement {
@@ -170,8 +170,8 @@ public class GuiGameElement {
 			BlockRenderDispatcher blockRenderer = mc.getBlockRenderer();
 			MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
 			RenderType renderType = blockState.getBlock() == Blocks.AIR
-									? Sheets.translucentCullBlockSheet()
-									: ItemBlockRenderTypes.getRenderType(blockState, true);
+					? Sheets.translucentCullBlockSheet()
+					: ItemBlockRenderTypes.getRenderType(blockState, true);
 			VertexConsumer vb = buffer.getBuffer(renderType);
 
 			transformMatrix(matrixStack);
@@ -243,8 +243,9 @@ public class GuiGameElement {
 
 			super.renderModel(blockRenderer, buffer, renderType, vb, ms);
 
-			if (blockState.getFluidState().isEmpty())
+			if (blockState.getFluidState().isEmpty()) {
 				return;
+			}
 
 			float min = 0.001F, max = 0.999F;
 			// LiquidBlockRenderer.MAX_FLUID_HEIGHT

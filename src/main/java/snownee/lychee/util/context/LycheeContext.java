@@ -21,12 +21,14 @@ public class LycheeContext extends EmptyContainer {
 			new KeyDispatchedMapCodec<LycheeContextKey<?>, Object>(
 					LycheeRegistries.CONTEXT.byNameCodec(),
 					it -> it instanceof KeyedContextValue<?> value
-						  ? DataResult.success(value.key())
-						  : DataResult.error(() -> "Can't determine key of " + it + "that isn't LycheeContextValue"),
+							? DataResult.success(value.key())
+							: DataResult.error(() -> "Can't determine key of " + it + "that isn't LycheeContextValue"),
 					it -> {
 						final var key = LycheeRegistries.CONTEXT.getKey(it);
 						final var serializer = LycheeRegistries.CONTEXT_SERIALIZER.get(key);
-						if (serializer != null) return DataResult.success(serializer.codec());
+						if (serializer != null) {
+							return DataResult.success(serializer.codec());
+						}
 						return DataResult.error(() -> it + " isn't serializable");
 					},
 					LycheeRegistries.CONTEXT_SERIALIZER

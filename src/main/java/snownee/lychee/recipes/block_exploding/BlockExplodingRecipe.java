@@ -16,7 +16,7 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class BlockExplodingRecipe extends OldLycheeRecipe<BlockExplodingContext>
-    implements BlockKeyableRecipe<BlockExplodingRecipe> {
+		implements BlockKeyableRecipe<BlockExplodingRecipe> {
 
 	private BlockPredicate block;
 
@@ -48,11 +48,13 @@ public class BlockExplodingRecipe extends OldLycheeRecipe<BlockExplodingContext>
 	public int compareTo(BlockExplodingRecipe that) {
 		int i;
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = Integer.compare(block == BlockPredicate.ANY ? 1 : 0, that.block == BlockPredicate.ANY ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		return getId().compareTo(that.getId());
 	}
 

@@ -13,9 +13,9 @@ public class PropertiesPredicateExtensions {
 			String name
 	) {
 		return predicate.properties()
-						.stream()
-						.filter($ -> $.name().equals(name))
-						.findAny();
+				.stream()
+				.filter($ -> $.name().equals(name))
+				.findAny();
 	}
 
 	public static Optional<StatePropertiesPredicate> fromNetwork(FriendlyByteBuf buf) {

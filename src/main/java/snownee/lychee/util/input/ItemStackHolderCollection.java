@@ -29,7 +29,9 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 	public ItemStackHolder split(int index, int amount) {
 		final var holder = get(index);
 		final var original = holder.shrink(amount);
-		if (!original.isEmpty()) stacksNeedHandle.add(original);
+		if (!original.isEmpty()) {
+			stacksNeedHandle.add(original);
+		}
 		set(index, holder);
 		return holder;
 	}
@@ -37,7 +39,9 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 	public ItemStackHolder replace(int index, ItemStack item) {
 		final var holder = get(index);
 		final var original = holder.replace(item);
-		if (!original.isEmpty()) stacksNeedHandle.add(original);
+		if (!original.isEmpty()) {
+			stacksNeedHandle.add(original);
+		}
 		set(index, holder);
 		return holder;
 	}
@@ -46,7 +50,9 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 		var result = 0;
 
 		for (final var holder : this) {
-			if (holder.getIgnoreConsumption() || holder.get().isEmpty()) continue;
+			if (holder.getIgnoreConsumption() || holder.get().isEmpty()) {
+				continue;
+			}
 			final var count = holder.get().getCount();
 			holder.shrink(times);
 			// TODO 这里逻辑从原来的直接加 times 变成了加实际消耗的数量，不知道有什么影响
@@ -71,8 +77,8 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 
 		public static ItemStackHolderCollection of(ItemEntity... entities) {
 			return new InWorld(Stream.of(entities)
-									 .map(ItemStackHolder.Entity::new)
-									 .toArray(ItemStackHolder.Entity[]::new));
+					.map(ItemStackHolder.Entity::new)
+					.toArray(ItemStackHolder.Entity[]::new));
 		}
 
 		@Override
@@ -112,13 +118,16 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 			final var level = context.get(LycheeContextKey.LEVEL);
 			final var entity = lootParamsContext.getOrNull(LootContextParams.THIS_ENTITY);
 			Player player = null;
-			if (entity instanceof Player playerEntity) player = playerEntity;
+			if (entity instanceof Player playerEntity) {
+				player = playerEntity;
+			}
 			final var pos = lootParamsContext.getOrNull(LootContextParams.ORIGIN);
 
 			for (ItemStack stack : stacksNeedHandle) {
 				if (player != null) {
-					if (!player.addItem(stack))
+					if (!player.addItem(stack)) {
 						player.drop(stack, false);
+					}
 				} else if (pos != null) {
 					CommonProxy.dropItemStack(level, pos.x, pos.y, pos.z, stack, null);
 				}

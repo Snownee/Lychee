@@ -22,14 +22,14 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.LycheeRegistries;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.action.input.NBTPatch;
-import snownee.lychee.util.action.Job;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.BoundsExtensions;
+import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -131,8 +131,8 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 	public Component getDisplayName() {
 		if (entries.length == 1 && emptyWeight == 0) {
 			return Component.literal("%s × %s".formatted(
-                entries[0].getDisplayName().getString(),
-                BoundsExtensions.getDescription(rolls).getString()
+					entries[0].getDisplayName().getString(),
+					BoundsExtensions.getDescription(rolls).getString()
 			));
 		}
 		return CommonProxy.getCycledItem(List.of(entries), entries[0], 1000).getDisplayName();
@@ -157,7 +157,7 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 	public void validate(ILycheeRecipe recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 		for (PostAction action : entries) {
 			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in " +
-																			 "RandomSelect");
+					"RandomSelect");
 			action.validate(recipe, patchContext);
 		}
 	}
@@ -258,8 +258,9 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 			buf.writeVarInt((int) Stream.of(action.entries).filter(Predicate.not(PostAction::preventSync)).count());
 			for (int i = 0; i < action.entries.length; i++) {
 				PostAction entry = action.entries[i];
-				if (entry.preventSync())
+				if (entry.preventSync()) {
 					continue;
+				}
 				buf.writeVarInt(action.weights[i]);
 				PostActionType type = entry.getType();
 				CommonProxy.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);

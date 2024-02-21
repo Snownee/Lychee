@@ -91,7 +91,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			CraftingMenuAccess access = (CraftingMenuAccess) menu;
 			return Pair.of(
 					access.getAccess()
-						  .evaluate((level, pos) -> Vec3.atCenterOf(pos), access.getPlayer().position()),
+							.evaluate((level, pos) -> Vec3.atCenterOf(pos), access.getPlayer().position()),
 					access.getPlayer()
 			);
 		});
@@ -345,8 +345,9 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 
 	@Override
 	public boolean isActionPath(JsonPointer pointer) {
-		if (pointer.isRoot())
+		if (pointer.isRoot()) {
 			return false;
+		}
 		String token = pointer.getString(0);
 		return "assemblingActions".equals(token) || "post".equals(token);
 	}
@@ -380,8 +381,8 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			StringBuilder sb = new StringBuilder();
 			/* off */
 			StreamSupport.stream(jsonObject.getAsJsonArray("pattern").spliterator(), false)
-						 .map(JsonElement::getAsString)
-						 .forEach(sb::append);
+					.map(JsonElement::getAsString)
+					.forEach(sb::append);
 			/* on */
 			recipe.pattern = sb.toString();
 			recipe.conditions.parseConditions(jsonObject.get("contextual"));
@@ -393,8 +394,9 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 
 		@Override
 		public ShapedCraftingRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
-			if (LycheeConfig.debug)
+			if (LycheeConfig.debug) {
 				Lychee.LOGGER.debug("Read recipe: {}", id);
+			}
 			ShapedCraftingRecipe recipe = fromNormal(RecipeSerializer.SHAPED_RECIPE.fromNetwork(id, buf));
 			recipe.hideInRecipeViewer = buf.readBoolean();
 			if (recipe.hideInRecipeViewer) {
@@ -410,8 +412,9 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 		@SuppressWarnings("rawtypes")
 		@Override
 		public void toNetwork(FriendlyByteBuf buf, ShapedCraftingRecipe recipe) {
-			if (LycheeConfig.debug)
+			if (LycheeConfig.debug) {
 				Lychee.LOGGER.debug("Write recipe: {}", recipe.getId());
+			}
 			RecipeSerializer.SHAPED_RECIPE.toNetwork(buf, recipe);
 			buf.writeBoolean(recipe.hideInRecipeViewer);
 			if (recipe.hideInRecipeViewer) {

@@ -10,9 +10,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.Lychee;
 import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 public class ActionRuntime {
 	public boolean doDefault = true;

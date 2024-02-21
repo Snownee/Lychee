@@ -23,7 +23,7 @@ import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingRecipe> implements
-																			 BlockKeyableRecipe<BlockExplodingRecipe> {
+		BlockKeyableRecipe<BlockExplodingRecipe> {
 	protected final @Nullable BlockPredicate blockPredicate;
 
 	public BlockExplodingRecipe(
@@ -58,8 +58,9 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingRecipe> imp
 	public int compareTo(@NotNull final BlockExplodingRecipe that) {
 		int i;
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = Integer.compare(blockPredicate().isEmpty() ? 1 : 0, that.blockPredicate().isEmpty() ? 1 : 0);
 		return i;
 	}
@@ -69,7 +70,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingRecipe> imp
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(BlockExplodingRecipe::commonProperties),
 						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, null)
-													  .forGetter(it -> it.blockPredicate)
+								.forGetter(it -> it.blockPredicate)
 				).apply(instance, BlockExplodingRecipe::new));
 
 		@Override

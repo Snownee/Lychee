@@ -21,8 +21,8 @@ public class PointedDripstoneBlockMixin {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/PointedDripstoneBlock;getFluidAboveStalactite" +
-							 "(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;" +
-							 "Lnet/minecraft/world/level/block/state/BlockState;)Ljava/util/Optional;"
+							"(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;" +
+							"Lnet/minecraft/world/level/block/state/BlockState;)Ljava/util/Optional;"
 			), method = "maybeTransferFluid", cancellable = true
 	)
 	private static void lychee_maybeTransferFluid(
@@ -32,8 +32,9 @@ public class PointedDripstoneBlockMixin {
 			float f,
 			CallbackInfo ci
 	) {
-		if (DripstoneRecipe.on(blockState, serverLevel, blockPos))
+		if (DripstoneRecipe.on(blockState, serverLevel, blockPos)) {
 			ci.cancel();
+		}
 	}
 
 	@Inject(
@@ -41,7 +42,7 @@ public class PointedDripstoneBlockMixin {
 					"HEAD"
 			),
 			method = "spawnDripParticle(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;" +
-					 "Lnet/minecraft/world/level/block/state/BlockState;)V",
+					"Lnet/minecraft/world/level/block/state/BlockState;)V",
 			cancellable = true
 	)
 	private static void lychee_spawnDripParticle(
@@ -50,16 +51,17 @@ public class PointedDripstoneBlockMixin {
 			BlockState blockState,
 			CallbackInfo ci
 	) {
-		if (DripstoneRecipeMod.spawnDripParticle(level, blockPos, blockState))
+		if (DripstoneRecipeMod.spawnDripParticle(level, blockPos, blockState)) {
 			ci.cancel();
+		}
 	}
 
 	@Inject(
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/PointedDripstoneBlock;getFluidAboveStalactite" +
-							 "(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;" +
-							 "Lnet/minecraft/world/level/block/state/BlockState;)Ljava/util/Optional;"
+							"(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;" +
+							"Lnet/minecraft/world/level/block/state/BlockState;)Ljava/util/Optional;"
 			), method = "animateTick", cancellable = true
 	)
 	private void animateTick(
@@ -69,7 +71,8 @@ public class PointedDripstoneBlockMixin {
 			RandomSource randomSource,
 			CallbackInfo ci
 	) {
-		if (DripstoneRecipeMod.spawnDripParticle(level, blockPos, blockState))
+		if (DripstoneRecipeMod.spawnDripParticle(level, blockPos, blockState)) {
 			ci.cancel();
+		}
 	}
 }

@@ -39,7 +39,8 @@ public class BlockPredicateCodec implements Codec<BlockPredicate> {
 	@Override
 	public <T> DataResult<Pair<BlockPredicate, T>> decode(DynamicOps<T> ops, T input) {
 		Optional<String> stringValue = ops.getStringValue(input).result();
-		return stringValue.map(s -> DataResult.success(Pair.of(fromString(s), ops.empty()))).orElseGet(() -> BlockPredicate.CODEC.decode(ops, input));
+		return stringValue.map(s -> DataResult.success(Pair.of(fromString(s), ops.empty())))
+				.orElseGet(() -> BlockPredicate.CODEC.decode(ops, input));
 	}
 
 	@Override

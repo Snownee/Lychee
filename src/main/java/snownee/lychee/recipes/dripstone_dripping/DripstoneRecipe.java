@@ -42,7 +42,7 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>
-    implements BlockKeyableRecipe<DripstoneRecipe>, ChanceRecipe {
+		implements BlockKeyableRecipe<DripstoneRecipe>, ChanceRecipe {
 
 	private float chance = 1;
 	protected BlockPredicate sourceBlock;
@@ -88,11 +88,13 @@ public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>
 	public int compareTo(DripstoneRecipe that) {
 		int i;
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = Integer.compare(targetBlock == BlockPredicate.ANY ? 1 : 0, that.targetBlock == BlockPredicate.ANY ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		return getId().compareTo(that.getId());
 	}
 

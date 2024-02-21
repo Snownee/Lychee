@@ -34,10 +34,11 @@ public class Couple<T> extends Pair<T, T> implements Iterable<T> {
 	}
 
 	public void set(boolean first, T value) {
-		if (first)
+		if (first) {
 			setFirst(value);
-		else
+		} else {
 			setSecond(value);
+		}
 	}
 
 	@Override
@@ -127,10 +128,12 @@ public class Couple<T> extends Pair<T, T> implements Iterable<T> {
 		@Override
 		public T next() {
 			state++;
-			if (state == 1)
+			if (state == 1) {
 				return couple.first;
-			if (state == 2)
+			}
+			if (state == 2) {
 				return couple.second;
+			}
 			return null;
 		}
 

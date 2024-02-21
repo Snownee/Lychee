@@ -19,7 +19,7 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class RandomBlockTickingRecipe extends OldLycheeRecipe<LycheeRecipeContext>
-    implements BlockKeyableRecipe<RandomBlockTickingRecipe>, ChanceRecipe {
+		implements BlockKeyableRecipe<RandomBlockTickingRecipe>, ChanceRecipe {
 
 	protected float chance = 1;
 	protected BlockPredicate block;
@@ -32,8 +32,9 @@ public class RandomBlockTickingRecipe extends OldLycheeRecipe<LycheeRecipeContex
 	public int compareTo(RandomBlockTickingRecipe that) {
 		int i;
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		return getId().compareTo(that.getId());
 	}
 

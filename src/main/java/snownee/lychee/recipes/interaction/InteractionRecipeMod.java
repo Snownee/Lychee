@@ -27,12 +27,13 @@ public class InteractionRecipeMod {
 			return InteractionResult.PASS;
 		}
 		if (hand == InteractionHand.OFF_HAND && player.getMainHandItem().isEmpty() &&
-			player.getOffhandItem().isEmpty()) {
+				player.getOffhandItem().isEmpty()) {
 			return InteractionResult.PASS;
 		}
 		ItemStack stack = player.getItemInHand(hand);
-		if (player.getCooldowns().isOnCooldown(stack.getItem()))
+		if (player.getCooldowns().isOnCooldown(stack.getItem())) {
 			return InteractionResult.PASS;
+		}
 		LycheeRecipeContext.Builder<LycheeRecipeContext> builder = new LycheeRecipeContext.Builder<>(world);
 		builder.withParameter(LycheeLootContextParams.DIRECTION, hitResult.getDirection());
 		Optional<BlockInteractingRecipe> result = RecipeTypes.BLOCK_INTERACTING.process(
@@ -59,8 +60,9 @@ public class InteractionRecipeMod {
 			return InteractionResult.PASS;
 		}
 		ItemStack stack = player.getItemInHand(hand);
-		if (player.getCooldowns().isOnCooldown(stack.getItem()))
+		if (player.getCooldowns().isOnCooldown(stack.getItem())) {
 			return InteractionResult.PASS;
+		}
 		Vec3 vec = Vec3.atCenterOf(pos);
 		LycheeRecipeContext.Builder<LycheeRecipeContext> builder = new LycheeRecipeContext.Builder<>(world);
 		builder.withParameter(LycheeLootContextParams.DIRECTION, direction);

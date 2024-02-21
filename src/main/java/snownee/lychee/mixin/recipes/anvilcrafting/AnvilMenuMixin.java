@@ -125,7 +125,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/inventory/ContainerLevelAccess;execute" +
-							 "(Ljava/util/function/BiConsumer;)V"
+							"(Ljava/util/function/BiConsumer;)V"
 			), method = "onTake", cancellable = true
 	)
 	private void lychee_preventDefault(Player player, ItemStack stack, CallbackInfo ci) {

@@ -95,7 +95,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 						var times = 1;
 						final var matcher = itemShapelessContext.getMatcher();
 						if (matcher != null
-							&& matcher.inputUsed.length > 0) {
+								&& matcher.inputUsed.length > 0) {
 							int[] inputUsed = matcher.inputUsed;
 							//System.out.println(Arrays.toString(context.match));
 							times = recipe.getRandomRepeats(Integer.MAX_VALUE, context);
@@ -115,7 +115,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 						for (final ExtendedItemStackHolder holder : itemContext) {
 							if (!holder.getIgnoreConsumption() && !holder.get().isEmpty()) {
 								if (holder.holder() instanceof ItemStackHolder.Entity entityHolder &&
-									!alreadySentParticles.contains(holder)) {
+										!alreadySentParticles.contains(holder)) {
 									alreadySentParticles.add(holder);
 									SCustomLevelEventPacket.sendItemParticles(
 											holder.get(),

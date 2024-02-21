@@ -31,17 +31,17 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParams;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.mixin.BlockPredicateAccess;
 import snownee.lychee.mixin.NbtPredicateAccess;
 import snownee.lychee.mixin.StatePropertiesPredicateAccess;
 import snownee.lychee.recipes.block_crushing.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionType;
+import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class PlaceBlock extends PostAction {
 
@@ -82,17 +82,18 @@ public class PlaceBlock extends PostAction {
 		BlockPredicateAccess access = (BlockPredicateAccess) block;
 		if (getType() == PostActionTypes.PLACE) {
 			Set<String> properties = ((StatePropertiesPredicateAccess) access.getProperties()).getProperties()
-																							  .stream()
-																							  .map($ -> $.getName())
-																							  .collect(Collectors.toSet());
+					.stream()
+					.map($ -> $.getName())
+					.collect(Collectors.toSet());
 			for (Map.Entry<Property<?>, Comparable<?>> entry : oldState.getValues().entrySet()) {
 				Property property = entry.getKey();
-				if (properties.contains(property.getName()) || !state.hasProperty(property))
+				if (properties.contains(property.getName()) || !state.hasProperty(property)) {
 					continue;
+				}
 				state = state.setValue(property, (Comparable) entry.getValue());
 			}
 			if (state.hasProperty(BlockStateProperties.WATERLOGGED) &&
-				oldState.getFluidState().isSourceOfType(Fluids.WATER)) {
+					oldState.getFluidState().isSourceOfType(Fluids.WATER)) {
 				state = state.setValue(BlockStateProperties.WATERLOGGED, true);
 			}
 		}

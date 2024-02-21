@@ -49,7 +49,9 @@ public class JsonFragmentManager {
 	public JsonElement getOrLoad(ResourceLocation id) {
 		return fragments.computeIfAbsent(id, k -> {
 			try {
-				JsonObject fragment = GSON.fromJson(resourceManager.getResourceOrThrow(idConverter.idToFile(id)).openAsReader(), JsonObject.class);
+				JsonObject fragment = GSON.fromJson(
+						resourceManager.getResourceOrThrow(idConverter.idToFile(id)).openAsReader(),
+						JsonObject.class);
 				return GsonHelper.getAsJsonObject(fragment, "value");
 			} catch (Exception e) {
 				Lychee.LOGGER.error("Failed to load fragment " + id, e);

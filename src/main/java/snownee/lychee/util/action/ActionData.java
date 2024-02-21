@@ -83,8 +83,12 @@ public final class ActionData {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
 		final ActionData that = (ActionData) o;
 		return delayedTicks == that.delayedTicks && Objects.equal(recipe, that.recipe) &&
 				Objects.equal(context, that.context);

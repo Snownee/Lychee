@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.inventory.CraftingContainer;
@@ -19,16 +22,28 @@ import snownee.lychee.mixin.recipes.crafting.ShapedRecipeAccess;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipePatternAccess;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
+import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class ShapedCraftingRecipe extends LycheeRecipe<ShapedCraftingRecipe> {
 	protected final ShapedRecipe shaped;
 	protected final List<PostAction<?>> assemblingActions;
+
+	public ShapedCraftingRecipe(
+			final LycheeRecipeCommonProperties commonProperties,
+			final ShapedRecipe shaped,
+			final List<PostAction<?>> assemblingActions
+	) {
+		super(commonProperties);
+		this.assemblingActions = assemblingActions;
+		this.shaped = shaped;
+	}
 
 	public ShapedCraftingRecipe(
 			final LycheeRecipeCommonProperties commonProperties,
@@ -170,4 +185,21 @@ public class ShapedCraftingRecipe extends LycheeRecipe<ShapedCraftingRecipe> {
 
 	@Override
 	public @NotNull ItemStack getToastSymbol() {return shaped.getToastSymbol();}
+
+	public static class Serializer implements LycheeRecipeSerializer<ShapedCraftingRecipe> {
+		public static final Codec<ShapedCraftingRecipe> CODEC =
+				RecordCodecBuilder.create(instance -> instance.group(
+						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
+						RecipeSerializer.SHAPED_RECIPE.codec()
+								.dispatchMap(it -> it, it -> it.getSerializer().codec())
+								.forGetter(it -> it.shaped),
+						PostActionType.LIST_CODEC.optionalFieldOf("assemblingActions", List.of())
+								.forGetter(AnvilCraftingRecipe::assemblingActions)
+				).apply(instance, ShapedCraftingRecipe::new));
+
+		@Override
+		public @NotNull Codec<ShapedCraftingRecipe> codec() {
+			return CODEC;
+		}
+	}
 }

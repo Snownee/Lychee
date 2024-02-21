@@ -25,8 +25,9 @@ public class LightningBoltMixin {
 			), method = "tick", locals = LocalCapture.CAPTURE_FAILHARD
 	)
 	private void lychee_tick(CallbackInfo ci, List<Entity> list1) {
-		if (!list1.isEmpty() || life == 0)
+		if (!list1.isEmpty() || life == 0) {
 			LightningChannelingRecipe.on((LightningBolt) (Object) this, list1);
+		}
 	}
 
 }

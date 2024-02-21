@@ -133,8 +133,9 @@ public class FluidRenderer {
 		//		RenderSystem.setShaderColor(1, 1, 1, 1);
 		//		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		for (Direction side : Direction.values()) {
-			if (side == Direction.DOWN && !renderBottom)
+			if (side == Direction.DOWN && !renderBottom) {
 				continue;
+			}
 
 			boolean positive = side.getAxisDirection() == AxisDirection.POSITIVE;
 			if (side.getAxis().isHorizontal()) {

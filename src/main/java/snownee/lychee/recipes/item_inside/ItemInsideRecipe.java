@@ -36,7 +36,7 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe>
-    implements BlockKeyableRecipe<ItemInsideRecipe> {
+		implements BlockKeyableRecipe<ItemInsideRecipe> {
 
 	private int time;
 	protected BlockPredicate block;
@@ -107,17 +107,17 @@ public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe>
 		}
 		/* off */
 		var mappedIngredients = getIngredients().stream()
-												.map(Ingredient::getItems)
-												.map($ -> {
-													Set<Item> items = Sets.newHashSet();
-													float weight = 1F / $.length;
-													for (ItemStack stack : $) {
-														items.add(stack.getItem());
-														itemWeights.merge(stack.getItem(), weight, Float::sum);
-													}
-													return items;
-												})
-												.toList();
+				.map(Ingredient::getItems)
+				.map($ -> {
+					Set<Item> items = Sets.newHashSet();
+					float weight = 1F / $.length;
+					for (ItemStack stack : $) {
+						items.add(stack.getItem());
+						itemWeights.merge(stack.getItem(), weight, Float::sum);
+					}
+					return items;
+				})
+				.toList();
 		/* on */
 		return new Cache(this, mappedIngredients);
 	}

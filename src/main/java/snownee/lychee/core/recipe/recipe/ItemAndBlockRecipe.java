@@ -59,20 +59,24 @@ public abstract class ItemAndBlockRecipe<C extends LycheeRecipeContext> extends 
 	public int compareTo(ItemAndBlockRecipe<C> that) {
 		int i;
 		i = Integer.compare(getMaxRepeats().isAny() ? 1 : 0, that.getMaxRepeats().isAny() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = Integer.compare(block == BlockPredicate.ANY ? 1 : 0, that.block == BlockPredicate.ANY ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = Integer.compare(
 				CommonProxy.isSimpleIngredient(input) ? 1 : 0,
 				CommonProxy.isSimpleIngredient(that.input) ? 1 : 0
 		);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		return getId().compareTo(that.getId());
 	}
 

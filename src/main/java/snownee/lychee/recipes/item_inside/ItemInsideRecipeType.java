@@ -55,9 +55,9 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 		super.refreshCache();
 		Object2FloatMap<Item> itemCount = new Object2FloatOpenHashMap<>();
 		List<Cache> caches = recipes.stream()
-									.map($ -> $.buildCache(itemCount, specialRecipes))
-									.filter(Objects::nonNull)
-									.collect(Collectors.toCollection(ArrayList::new));
+				.map($ -> $.buildCache(itemCount, specialRecipes))
+				.filter(Objects::nonNull)
+				.collect(Collectors.toCollection(ArrayList::new));
 		List<Item> sorted = itemCount.object2FloatEntrySet().stream().sorted((a, b) -> Float.compare(
 				b.getFloatValue(),
 				a.getFloatValue()

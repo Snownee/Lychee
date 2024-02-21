@@ -26,23 +26,28 @@ public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, 
 	 * {@link LootContextParams.ORIGIN}
 	 */
 	public void initBlockEntityParam() {
-		if (params.containsKey(LootContextParams.BLOCK_ENTITY)) return;
+		if (params.containsKey(LootContextParams.BLOCK_ENTITY)) {
+			return;
+		}
 		var pos = getOrNull(LycheeLootContextParams.BLOCK_POS);
 		if (pos == null) {
 			pos = BlockPos.containing(get(LootContextParams.ORIGIN));
 			setParam(LycheeLootContextParams.BLOCK_POS, pos);
 		}
 		var blockEntity = context.get(LycheeContextKey.LEVEL).getBlockEntity(pos);
-		if (blockEntity != null) setParam(LootContextParams.BLOCK_ENTITY, blockEntity);
+		if (blockEntity != null) {
+			setParam(LootContextParams.BLOCK_ENTITY, blockEntity);
+		}
 	}
 
 	private void initBlockEntityParam(LootContextParam<?> param) {
-		if (param == LootContextParams.BLOCK_ENTITY) initBlockEntityParam();
+		if (param == LootContextParams.BLOCK_ENTITY) {
+			initBlockEntityParam();
+		}
 	}
 
 	/**
 	 * @param param The parameter to check
-	 *
 	 * @return Check whether the given parameter is present in this context.
 	 */
 	public boolean contains(LootContextParam<?> param) {
@@ -52,7 +57,6 @@ public record LootParamsContext(LycheeContext context, Map<LootContextParam<?>, 
 
 	/**
 	 * @return The value of the given parameter.
-	 *
 	 * @throws NoSuchElementException if the parameter is not present in this context
 	 */
 	public <T> T get(LootContextParam<T> param) {

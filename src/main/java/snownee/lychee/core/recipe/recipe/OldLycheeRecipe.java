@@ -36,12 +36,12 @@ import snownee.lychee.LycheeRegistries;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.def.IntBoundsHelper;
-import snownee.lychee.util.recipe.LycheeRecipeType;
-import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.fragment.Fragments;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public abstract class OldLycheeRecipe<C extends LycheeRecipeContext> extends ContextualHolder
 		implements LycheeRecipe<C>, Recipe<C> {
@@ -55,8 +55,9 @@ public abstract class OldLycheeRecipe<C extends LycheeRecipeContext> extends Con
 	protected List<PostAction<?>> actions = List.of();
 
 	public OldLycheeRecipe(ResourceLocation id) {
-		if (LycheeConfig.debug)
+		if (LycheeConfig.debug) {
 			Lychee.LOGGER.debug("Construct recipe: {}", id);
+		}
 	}
 
 	public OldLycheeRecipe(
@@ -177,8 +178,8 @@ public abstract class OldLycheeRecipe<C extends LycheeRecipeContext> extends Con
 					Codec.BOOL.fieldOf("hide_in_viewer").orElse(false).forGetter(it -> it.hideInRecipeViewer),
 					Codec.BOOL.fieldOf("ghost").orElse(false).forGetter(it -> it.ghost),
 					Codec.STRING.optionalFieldOf("comment")
-								.orElse(Optional.empty())
-								.forGetter(it -> Optional.ofNullable(it.comment)),
+							.orElse(Optional.empty())
+							.forGetter(it -> Optional.ofNullable(it.comment)),
 					Codec.STRING.fieldOf("group").orElse("default").forGetter(it -> it.group)
 			).apply());
 		}
@@ -248,8 +249,9 @@ public abstract class OldLycheeRecipe<C extends LycheeRecipeContext> extends Con
 		public final R fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
 			try {
 				R recipe = factory.apply(id);
-				if (LycheeConfig.debug)
+				if (LycheeConfig.debug) {
 					Lychee.LOGGER.debug("Read recipe: {}", id);
+				}
 				recipe.hideInRecipeViewer = buf.readBoolean();
 				if (recipe.hideInRecipeViewer && !recipe.getType().requiresClient) {
 					return recipe;
@@ -271,8 +273,9 @@ public abstract class OldLycheeRecipe<C extends LycheeRecipeContext> extends Con
 		@SuppressWarnings("rawtypes")
 		@Override
 		public final void toNetwork(FriendlyByteBuf buf, R recipe) {
-			if (LycheeConfig.debug)
+			if (LycheeConfig.debug) {
 				Lychee.LOGGER.debug("Write recipe: {}", recipe.getId());
+			}
 			buf.writeBoolean(recipe.hideInRecipeViewer);
 			if (recipe.hideInRecipeViewer && !recipe.getType().requiresClient) {
 				return;

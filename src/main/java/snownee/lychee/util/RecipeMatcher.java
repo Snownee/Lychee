@@ -12,7 +12,7 @@ public class RecipeMatcher<T> {
 	public int[] inputCapacity;
 	public int[] inputUsed;
 	public int[][] use;
-			// input to tests multimap. map to the indexes of the first N inputs according to the `inputUsed` array
+	// input to tests multimap. map to the indexes of the first N inputs according to the `inputUsed` array
 	private BitSet data;
 	private BitSet mask;
 
@@ -73,8 +73,9 @@ public class RecipeMatcher<T> {
 			sum += amount[i];
 		}
 		int testSize = tests.size();
-		if (sum < testSize)
+		if (sum < testSize) {
 			return Optional.empty();
+		}
 
 		RecipeMatcher<T> matcher = new RecipeMatcher<>(inputs, tests, amount);
 		return matcher.inputUsed == null ? Optional.empty() : Optional.of(matcher);

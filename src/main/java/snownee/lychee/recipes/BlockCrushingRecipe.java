@@ -34,7 +34,7 @@ import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingRecipe> implements
-																		   BlockKeyableRecipe<BlockCrushingRecipe> {
+		BlockKeyableRecipe<BlockCrushingRecipe> {
 	public static final BlockPredicate ANVIL = BlockPredicate.Builder.block().of(BlockTags.ANVIL).build();
 
 	protected BlockPredicate fallingBlock = ANVIL;
@@ -152,17 +152,20 @@ public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingRecipe> imple
 	public int compareTo(@NotNull final BlockCrushingRecipe that) {
 		int i;
 		i = Integer.compare(maxRepeats().isAny() ? 1 : 0, that.maxRepeats().isAny() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = Integer.compare(
 				landingBlock == null ? 1 : 0,
 				that.landingBlock == null ? 1 : 0
 		);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = -Integer.compare(ingredients.size(), that.ingredients.size());
 		return i;
 	}
@@ -173,7 +176,8 @@ public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingRecipe> imple
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(BlockCrushingRecipe::commonProperties),
 						BlockPredicateExtensions.CODEC.optionalFieldOf("falling_block", null).forGetter(it -> it.fallingBlock),
 						BlockPredicateExtensions.CODEC.optionalFieldOf("landing_block", null).forGetter(it -> it.landingBlock),
-						new CompactListCodec<>(Ingredient.CODEC_NONEMPTY).optionalFieldOf(ITEM_IN, List.of()).forGetter(it -> it.ingredients)
+						new CompactListCodec<>(Ingredient.CODEC_NONEMPTY).optionalFieldOf(ITEM_IN, List.of())
+								.forGetter(it -> it.ingredients)
 				).apply(instance, BlockCrushingRecipe::new));
 
 		@Override

@@ -46,7 +46,6 @@ public enum TriState {
 	 * Gets the corresponding tri-state from a boolean value.
 	 *
 	 * @param bool the boolean value
-	 *
 	 * @return {@link TriState#TRUE} or {@link TriState#FALSE} depending on the value of the boolean.
 	 */
 	public static TriState of(boolean bool) {
@@ -57,7 +56,6 @@ public enum TriState {
 	 * Gets a tri-state from a nullable boxed boolean.
 	 *
 	 * @param bool the boolean value
-	 *
 	 * @return {@link TriState#DEFAULT} if {@code null}.
 	 * Otherwise {@link TriState#TRUE} or {@link TriState#FALSE} depending on the value of the boolean.
 	 */
@@ -91,7 +89,6 @@ public enum TriState {
 	 * If the value is {@link TriState#DEFAULT} then use the supplied value.
 	 *
 	 * @param value the value to fall back to
-	 *
 	 * @return the value of the tri-state or the supplied value if {@link TriState#DEFAULT}.
 	 */
 	public boolean orElse(boolean value) {
@@ -103,7 +100,6 @@ public enum TriState {
 	 * If the value is {@link TriState#DEFAULT} then use the supplied value.
 	 *
 	 * @param supplier the supplier used to get the value to fall back to
-	 *
 	 * @return the value of the tri-state or the value of the supplier if the tri-state is {@link TriState#DEFAULT}.
 	 */
 	public boolean orElseGet(BooleanSupplier supplier) {
@@ -115,7 +111,6 @@ public enum TriState {
 	 *
 	 * @param mapper the mapper to use
 	 * @param <T>    the type of object being supplier by the mapper
-	 *
 	 * @return an optional containing the mapped value; {@link Optional#empty()} if the tri-state is
 	 * {@link TriState#DEFAULT} or the value provided by the mapper is {@code null}.
 	 */
@@ -134,9 +129,7 @@ public enum TriState {
 	 *
 	 * @param exceptionSupplier the supplying function that produces an exception to be thrown
 	 * @param <X>               Type of the exception to be thrown
-	 *
 	 * @return the value
-	 *
 	 * @throws X if the value is {@link TriState#DEFAULT}
 	 */
 	public <X extends Throwable> boolean orElseThrow(Supplier<X> exceptionSupplier) throws X {

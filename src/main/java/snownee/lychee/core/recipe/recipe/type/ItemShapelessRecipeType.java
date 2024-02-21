@@ -24,7 +24,7 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.util.recipe.ValidItemCache;
 
 public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends OldLycheeRecipe<C>>
-    extends LycheeRecipeType<C, T> {
+		extends LycheeRecipeType<C, T> {
 
 	private ValidItemCache validItems = new ValidItemCache();
 
@@ -48,7 +48,7 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends O
 			return;
 		}
 		List<ItemEntity> list = itemEntities.filter($ -> validItems.contains($.getItem()))
-											.collect(Collectors.toCollection(LinkedList::new));
+				.collect(Collectors.toCollection(LinkedList::new));
 		ItemShapelessContext.Builder<C> ctxBuilder = new ItemShapelessContext.Builder<>(level, list);
 		ctxBuilderConsumer.accept(ctxBuilder);
 		process(this, recipes, ctxBuilder.create(contextParamSet), null);

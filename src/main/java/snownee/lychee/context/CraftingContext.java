@@ -93,7 +93,7 @@ public record CraftingContext(
 			final var access = (CraftingMenuAccess) menu;
 			return Pair.of(
 					access.getAccess()
-						  .evaluate((level, pos) -> Vec3.atCenterOf(pos), access.getPlayer().position()),
+							.evaluate((level, pos) -> Vec3.atCenterOf(pos), access.getPlayer().position()),
 					access.getPlayer()
 			);
 		});

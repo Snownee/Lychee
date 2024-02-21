@@ -10,19 +10,19 @@ public interface ItemStackHolder extends Supplier<ItemStack> {
 
 	/**
 	 * @param item The item to replace the original item. Will shrink the original item.
-	 *
 	 * @return The original {@link ItemStack} that is shrunk.
 	 */
 	default ItemStack replace(ItemStack item) {
 		final var original = get();
-		if (!original.isEmpty()) original.shrink(item.getCount());
+		if (!original.isEmpty()) {
+			original.shrink(item.getCount());
+		}
 		set(item);
 		return original;
 	}
 
 	/**
 	 * @param amount Split the item stack to
-	 *
 	 * @return The original item stack that counts is original count minus amount but always greater-equals 0
 	 */
 	default ItemStack shrink(int amount) {

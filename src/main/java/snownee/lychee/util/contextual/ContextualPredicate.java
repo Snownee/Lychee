@@ -10,7 +10,6 @@ public interface ContextualPredicate {
 	 * @param recipe Current recipe
 	 * @param ctx    Context
 	 * @param times  Time of request to execute
-	 *
 	 * @return Executable time after condition
 	 */
 	int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times);

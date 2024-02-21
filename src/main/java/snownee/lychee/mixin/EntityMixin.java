@@ -30,7 +30,7 @@ public abstract class EntityMixin {
 		}
 		Entity entity = (Entity) (Object) this;
 		if (entity.isAlive() && entity.getType() == EntityType.ITEM && !entity.level().isClientSide &&
-			entity.tickCount % 20 == 10) {
+				entity.tickCount % 20 == 10) {
 			RecipeTypes.ITEM_INSIDE.process(
 					entity,
 					((ItemEntity) entity).getItem(),
@@ -44,7 +44,7 @@ public abstract class EntityMixin {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;" +
-							 "F)Z",
+							"F)Z",
 					shift = At.Shift.BEFORE
 			), method = "thunderHit", cancellable = true
 	)

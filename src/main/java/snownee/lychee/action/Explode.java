@@ -17,12 +17,12 @@ import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.CommonProxy;
 
 public class Explode extends PostAction {
 
@@ -67,7 +67,7 @@ public class Explode extends PostAction {
 	@Override
 	public Component getDisplayName() {
 		return Component.translatable(CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()) + "." +
-									  blockInteraction.name().toLowerCase(Locale.ENGLISH));
+				blockInteraction.name().toLowerCase(Locale.ENGLISH));
 	}
 
 	public static class Type extends PostActionType<Explode> {
@@ -91,20 +91,27 @@ public class Explode extends PostAction {
 		@Override
 		public void toJson(Explode action, JsonObject o) {
 			BlockPos offset = action.offset;
-			if (offset.getX() != 0)
+			if (offset.getX() != 0) {
 				o.addProperty("offsetX", offset.getX());
-			if (offset.getY() != 0)
+			}
+			if (offset.getY() != 0) {
 				o.addProperty("offsetY", offset.getY());
-			if (offset.getZ() != 0)
+			}
+			if (offset.getZ() != 0) {
 				o.addProperty("offsetZ", offset.getX());
-			if (action.fire)
+			}
+			if (action.fire) {
 				o.addProperty("fire", true);
-			if (action.blockInteraction != BlockInteraction.DESTROY)
+			}
+			if (action.blockInteraction != BlockInteraction.DESTROY) {
 				o.addProperty("block_interaction", action.blockInteraction.name().toLowerCase(Locale.ENGLISH));
-			if (action.radius != 4)
+			}
+			if (action.radius != 4) {
 				o.addProperty("radius", action.radius);
-			if (action.step != 0.5F)
+			}
+			if (action.step != 0.5F) {
 				o.addProperty("radius_step", action.step);
+			}
 		}
 
 		@Override

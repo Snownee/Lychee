@@ -12,13 +12,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import snownee.lychee.util.BoundsExtensions;
-import snownee.lychee.core.def.IntBoundsHelper;
-import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.action.RandomSelect;
+import snownee.lychee.core.def.IntBoundsHelper;
+import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionType;
 
 public interface PostActionRenderer<T extends PostAction> {
 
@@ -45,12 +45,12 @@ public interface PostActionRenderer<T extends PostAction> {
 			String chance = CommonProxy.chance(randomSelect.weights[index] / (float) randomSelect.totalWeight);
 			if (randomSelect.rolls == IntBoundsHelper.ONE) {
 				list.add(Component.translatable("tip.lychee.randomChance.one", chance)
-								  .withStyle(ChatFormatting.YELLOW));
+						.withStyle(ChatFormatting.YELLOW));
 			} else {
 				list.add(Component.translatable(
-                    "tip.lychee.randomChance",
-                    chance,
-                    BoundsExtensions.getDescription(randomSelect.rolls)
+						"tip.lychee.randomChance",
+						chance,
+						BoundsExtensions.getDescription(randomSelect.rolls)
 				).withStyle(ChatFormatting.YELLOW));
 			}
 		}

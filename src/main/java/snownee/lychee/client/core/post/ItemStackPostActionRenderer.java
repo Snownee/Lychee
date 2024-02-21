@@ -11,10 +11,11 @@ public interface ItemStackPostActionRenderer<T extends PostAction> extends ItemB
 
 	@Override
 	default List<Component> getBaseTooltips(T action) {
-		return getItem(action).getTooltipLines(null,
+		return getItem(action).getTooltipLines(
+				null,
 				Minecraft.getInstance().options.advancedItemTooltips
-				? TooltipFlag.Default.ADVANCED
-				: TooltipFlag.Default.NORMAL
+						? TooltipFlag.Default.ADVANCED
+						: TooltipFlag.Default.NORMAL
 		);
 	}
 }

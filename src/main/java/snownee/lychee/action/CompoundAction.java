@@ -1,8 +1,8 @@
 package snownee.lychee.action;
 
-import snownee.lychee.util.action.PostAction;
-
 import java.util.stream.Stream;
+
+import snownee.lychee.util.action.PostAction;
 
 public interface CompoundAction {
 	Stream<PostAction> getChildActions();

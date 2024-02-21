@@ -30,9 +30,9 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.recipes.block_exploding.BlockExplodingContext;
 import snownee.lychee.recipes.item_exploding.ItemExplodingRecipe;
+import snownee.lychee.util.input.ItemStackHolderCollection;
 
 @Mixin(value = Explosion.class, priority = 700)
 public abstract class ExplosionMixin {
@@ -96,7 +96,7 @@ public abstract class ExplosionMixin {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/state/BlockState;getDrops" +
-							 "(Lnet/minecraft/world/level/storage/loot/LootParams$Builder;)Ljava/util/List;"
+							"(Lnet/minecraft/world/level/storage/loot/LootParams$Builder;)Ljava/util/List;"
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
@@ -153,7 +153,7 @@ public abstract class ExplosionMixin {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/Level;setBlock(Lnet/minecraft/core/BlockPos;" +
-							 "Lnet/minecraft/world/level/block/state/BlockState;I)Z"
+							"Lnet/minecraft/world/level/block/state/BlockState;I)Z"
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD
 	)
@@ -188,7 +188,7 @@ public abstract class ExplosionMixin {
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/block/Block;wasExploded(Lnet/minecraft/world/level/Level;" +
-							 "Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;)V",
+							"Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;)V",
 					shift = At.Shift.AFTER
 			),
 			locals = LocalCapture.CAPTURE_FAILHARD

@@ -58,9 +58,9 @@ public interface PostAction<Action extends PostAction<Action>> extends PostActio
 	@Override
 	default String toJsonString() {
 		return GsonHelper.toStableString(type().codec()
-											   .encodeStart(JsonOps.INSTANCE, (Action) this)
-											   .get()
-											   .left()
-											   .orElseThrow());
+				.encodeStart(JsonOps.INSTANCE, (Action) this)
+				.get()
+				.left()
+				.orElseThrow());
 	}
 }

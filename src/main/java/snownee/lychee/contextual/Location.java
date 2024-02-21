@@ -102,7 +102,9 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		LocationPredicate predicate = check.predicate();
 		var finalResult = TriState.TRUE;
 		for (Rule<?> rule : RULES) {
-			if (rule.isEmpty(predicate)) continue;
+			if (rule.isEmpty(predicate)) {
+				continue;
+			}
 			final var result = rule.testClient(rule.cast(predicate), level, pos, vec);
 			if (result == TriState.FALSE) {
 				return result;
@@ -135,7 +137,9 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			pos = player.blockPosition();
 		}
 		for (Rule<?> rule : Location.RULES) {
-			if (rule.isEmpty(predicate)) continue;
+			if (rule.isEmpty(predicate)) {
+				continue;
+			}
 			var result = TriState.DEFAULT;
 			if (test) {
 				result = rule.testClient(rule.cast(predicate), level, pos, vec);
@@ -312,7 +316,12 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 
 		@Override
-		public void appendToTooltips(List<Component> tooltips, int indent, String key, TagOrElementHolder<Structure> value, TriState result) {
+		public void appendToTooltips(
+				List<Component> tooltips,
+				int indent,
+				String key,
+				TagOrElementHolder<Structure> value,
+				TriState result) {
 			final var displayName = value.displayName(Registries.STRUCTURE).withStyle(ChatFormatting.WHITE);
 			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(key + "." + name, displayName));
 		}

@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
-
 import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.Preconditions;
@@ -17,6 +15,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
@@ -28,12 +27,11 @@ import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.core.def.IntBoundsHelper;
-import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
+import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public record AnvilCraftingRecipe implements ILycheeRecipe<AnvilContext>, Comparable<AnvilCraftingRecipe> {
 	private static final MinMaxBounds.Ints ONE = MinMaxBounds.Ints.exactly(1);
@@ -155,8 +153,9 @@ public record AnvilCraftingRecipe implements ILycheeRecipe<AnvilContext>, Compar
 
 	@Override
 	public boolean isActionPath(JsonPointer pointer) {
-		if (pointer.isRoot())
+		if (pointer.isRoot()) {
 			return false;
+		}
 		String token = pointer.getString(0);
 		return "assemblingActions".equals(token) || "post".equals(token);
 	}

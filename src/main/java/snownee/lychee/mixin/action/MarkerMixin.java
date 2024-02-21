@@ -30,8 +30,12 @@ public class MarkerMixin implements ActionMarker {
 
 	@Inject(at = @At("HEAD"), method = "tick")
 	private void lychee_tick(CallbackInfo ci) {
-		if (lychee$data.getContext() == null) return;
-		if (lychee$data.consumeDelayedTicks() > 0) return;
+		if (lychee$data.getContext() == null) {
+			return;
+		}
+		if (lychee$data.consumeDelayedTicks() > 0) {
+			return;
+		}
 
 		final var actionContext = lychee$data.getContext().get(LycheeContextKey.ACTION);
 		actionContext.state = ActionContext.State.RUNNING;
@@ -54,15 +58,17 @@ public class MarkerMixin implements ActionMarker {
 					});
 		}
 		if (lychee$data.getContext() == null
-			&& self().hasCustomName()
-			&& Lychee.ID.equals(self().getCustomName().getString())) {
+				&& self().hasCustomName()
+				&& Lychee.ID.equals(self().getCustomName().getString())) {
 			self().discard();
 		}
 	}
 
 	@Inject(at = @At("HEAD"), method = "addAdditionalSaveData")
 	private void lychee_addAdditionalSaveData(CompoundTag compoundTag, CallbackInfo ci) {
-		if (lychee$data.getContext() == null) return;
+		if (lychee$data.getContext() == null) {
+			return;
+		}
 
 		compoundTag.put(
 				"lychee:action",

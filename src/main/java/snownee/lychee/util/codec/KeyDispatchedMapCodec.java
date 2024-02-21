@@ -100,8 +100,8 @@ public final class KeyDispatchedMapCodec<K, V> extends MapCodec<Map<K, V>> {
 			prefix.add(
 					keyCodec.encodeStart(ops, entry.getKey()),
 					encoder.apply(entry.getValue())
-						   .getOrThrow(false, (err) -> Lychee.LOGGER.error("Failed get codec for {}", entry.getKey()))
-						   .encodeStart(ops, entry.getValue())
+							.getOrThrow(false, (err) -> Lychee.LOGGER.error("Failed get codec for {}", entry.getKey()))
+							.encodeStart(ops, entry.getValue())
 			);
 		}
 		return prefix;
@@ -114,8 +114,8 @@ public final class KeyDispatchedMapCodec<K, V> extends MapCodec<Map<K, V>> {
 			final V input
 	) {
 		return type.apply(input)
-				   .<Encoder<? extends V>>flatMap(k -> encoder.apply(k).map(Function.identity()))
-				   .map(c -> ((Encoder<V>) c));
+				.<Encoder<? extends V>>flatMap(k -> encoder.apply(k).map(Function.identity()))
+				.map(c -> ((Encoder<V>) c));
 	}
 
 	@Override

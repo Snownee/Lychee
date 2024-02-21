@@ -52,7 +52,11 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 		RecipeTypes.BLOCK_CRUSHING.process(entity);
 	}
 
-	@WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/FallingBlock;isFree(Lnet/minecraft/world/level/block/state/BlockState;)Z"))
+	@WrapOperation(
+			method = "tick",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/FallingBlock;isFree(Lnet/minecraft/world/level/block/state/BlockState;)Z"))
 	private boolean lychee_stopItHere(BlockState state, Operation<Boolean> original) {
 		if (matched) {
 			return false;
@@ -60,8 +64,18 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 		return original.call(state);
 	}
 
-	@Inject(method = "causeFallDamage", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/tags/TagKey;)Z", shift = At.Shift.AFTER))
-	private void lychee_customDamageAnvilChance(float fallDistance, float multiplier, DamageSource source, CallbackInfoReturnable<Boolean> cir, @Local LocalBooleanRef bl) {
+	@Inject(
+			method = "causeFallDamage",
+			at = @At(
+					value = "INVOKE_ASSIGN",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/tags/TagKey;)Z",
+					shift = At.Shift.AFTER))
+	private void lychee_customDamageAnvilChance(
+			float fallDistance,
+			float multiplier,
+			DamageSource source,
+			CallbackInfoReturnable<Boolean> cir,
+			@Local LocalBooleanRef bl) {
 		if (bl.get() && anvilDamageChance >= 0) {
 			if (random.nextFloat() < anvilDamageChance) {
 				BlockState blockstate = AnvilBlock.damage(blockState);

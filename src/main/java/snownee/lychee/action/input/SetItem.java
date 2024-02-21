@@ -14,14 +14,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.ShapedRecipe;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.Reference;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class SetItem extends PostAction {
 

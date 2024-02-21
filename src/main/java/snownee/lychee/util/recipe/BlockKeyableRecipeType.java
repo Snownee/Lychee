@@ -81,12 +81,12 @@ public class BlockKeyableRecipeType<T extends BlockKeyableRecipe<T>> extends Lyc
 
 	public List<ItemStack> blockKeysToItems() {
 		return recipesByBlock.keySet()
-							 .stream()
-							 .map(Block::asItem)
-							 .filter($ -> $ != Items.AIR)
-							 .sorted(Comparator.comparingInt(Item::getId))
-							 .map(Item::getDefaultInstance)
-							 .toList();
+				.stream()
+				.map(Block::asItem)
+				.filter($ -> $ != Items.AIR)
+				.sorted(Comparator.comparingInt(Item::getId))
+				.map(Item::getDefaultInstance)
+				.toList();
 	}
 
 	public Optional<T> process(

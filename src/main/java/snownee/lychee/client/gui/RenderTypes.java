@@ -18,12 +18,12 @@ public class RenderTypes extends RenderStateShard {
 			true,
 			true,
 			RenderType.CompositeState.builder()
-									 .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
-									 .setTextureState(BLOCK_SHEET_MIPPED)
-									 .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-									 .setLightmapState(LIGHTMAP)
-									 .setOverlayState(OVERLAY)
-									 .createCompositeState(true)
+					.setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
+					.setTextureState(BLOCK_SHEET_MIPPED)
+					.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+					.setLightmapState(LIGHTMAP)
+					.setOverlayState(OVERLAY)
+					.createCompositeState(true)
 	);
 
 	public static RenderType getFluid() {

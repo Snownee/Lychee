@@ -10,10 +10,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostActionType;
+import snownee.lychee.util.action.PostActionTypes;
 
 public class CycleStateProperty extends PlaceBlock {
 

@@ -35,8 +35,12 @@ public record And(ContextualHolder conditions) implements ContextualCondition, C
 		var finalResult = TriState.TRUE;
 		for (ContextualCondition condition : conditions) {
 			final var result = condition.testForTooltips(level, player);
-			if (result == TriState.FALSE) return result;
-			if (!result.get()) finalResult = TriState.DEFAULT;
+			if (result == TriState.FALSE) {
+				return result;
+			}
+			if (!result.get()) {
+				finalResult = TriState.DEFAULT;
+			}
 		}
 		return finalResult;
 	}

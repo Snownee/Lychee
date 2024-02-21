@@ -8,14 +8,14 @@ import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeConfig;
-import snownee.lychee.util.action.PostActionTypes;
-import snownee.lychee.util.action.ActionRuntime.State;
 import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.util.action.ActionRuntime.State;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.json.JsonPatch;
 import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class NBTPatch extends PostAction {
 
@@ -58,8 +58,9 @@ public class NBTPatch extends PostAction {
 				))) {
 					patchClone.path = patchContext.convertPath(patch.path, (first, second) -> "/" + index + second);
 					patchClone.apply(ctx.json);
-					if (LycheeConfig.debug)
+					if (LycheeConfig.debug) {
 						Lychee.LOGGER.info(ctx.json.toString());
+					}
 				}
 			}
 		} catch (Exception e) {

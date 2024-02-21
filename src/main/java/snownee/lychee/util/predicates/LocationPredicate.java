@@ -89,14 +89,20 @@ public record LocationPredicate(
 		BlockPos blockPos = BlockPos.containing(x, y, z);
 		boolean posLoaded = level.isLoaded(blockPos);
 		if (posLoaded) {
-			if (biome.isPresent() && !biome.get().matches(level.registryAccess().registryOrThrow(Registries.BIOME), level.getBiome(blockPos))) {
+			if (biome.isPresent() && !biome.get().matches(
+					level.registryAccess().registryOrThrow(Registries.BIOME),
+					level.getBiome(blockPos))) {
 				return false;
 			}
 			if (structure.isPresent() && structure.map(it -> {
 				if (it.tag()) {
-					return !level.structureManager().getStructureWithPieceAt(blockPos, TagKey.create(Registries.STRUCTURE, it.id())).isValid();
+					return !level.structureManager()
+							.getStructureWithPieceAt(blockPos, TagKey.create(Registries.STRUCTURE, it.id()))
+							.isValid();
 				} else {
-					return !level.structureManager().getStructureWithPieceAt(blockPos, ResourceKey.create(Registries.STRUCTURE, it.id())).isValid();
+					return !level.structureManager()
+							.getStructureWithPieceAt(blockPos, ResourceKey.create(Registries.STRUCTURE, it.id()))
+							.isValid();
 				}
 			}).get()) {
 				return false;

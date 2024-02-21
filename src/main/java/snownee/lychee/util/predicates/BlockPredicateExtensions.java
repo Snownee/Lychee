@@ -169,7 +169,9 @@ public class BlockPredicateExtensions {
 			Collection<Property<?>> iterableProperties
 	) {
 		final var blocks = matchedBlocks(predicate);
-		if (blocks.isEmpty()) return List.of();
+		if (blocks.isEmpty()) {
+			return List.of();
+		}
 
 		final var states = Lists.<BlockState>newArrayList();
 		final var propertiesPredicate = predicate.properties().orElseThrow();

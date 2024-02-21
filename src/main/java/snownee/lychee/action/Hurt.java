@@ -11,14 +11,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.Lychee;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.core.def.DoubleBoundsHelper;
+import snownee.lychee.util.BoundsExtensions;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.CommonProxy;
 
 public class Hurt extends PostAction {
 
@@ -57,8 +57,8 @@ public class Hurt extends PostAction {
 	@Override
 	public Component getDisplayName() {
 		return Component.translatable(
-            CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()),
-            BoundsExtensions.getDescription(damage)
+				CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()),
+				BoundsExtensions.getDescription(damage)
 		);
 	}
 

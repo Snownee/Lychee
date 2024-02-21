@@ -38,8 +38,9 @@ public class Pair<F, S> {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (obj == this)
+		if (obj == this) {
 			return true;
+		}
 		if (obj instanceof Pair) {
 			final Pair<?, ?> other = (Pair<?, ?>) obj;
 			return Objects.equals(first, other.first) && Objects.equals(second, other.second);

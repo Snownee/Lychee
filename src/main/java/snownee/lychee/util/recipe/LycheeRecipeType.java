@@ -42,8 +42,8 @@ public class LycheeRecipeType<T extends ILycheeRecipe<T>> implements RecipeType<
 		id = categoryId = Lychee.id(name);
 		this.clazz = clazz;
 		this.contextParamSet = contextParamSet == null
-							   ? LootContextParamSets.CODEC.parse(JavaOps.INSTANCE, id).result().orElseThrow()
-							   : contextParamSet;
+				? LootContextParamSets.CODEC.parse(JavaOps.INSTANCE, id).result().orElseThrow()
+				: contextParamSet;
 		Objects.requireNonNull(this.contextParamSet);
 	}
 
@@ -59,8 +59,8 @@ public class LycheeRecipeType<T extends ILycheeRecipe<T>> implements RecipeType<
 				context,
 				1
 		) > 0
-			   ? Optional.of(recipeHolder)
-			   : Optional.empty();
+				? Optional.of(recipeHolder)
+				: Optional.empty();
 	}
 
 	public List<RecipeHolder<T>> recipes() {

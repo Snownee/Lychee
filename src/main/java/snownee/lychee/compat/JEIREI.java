@@ -42,27 +42,27 @@ public class JEIREI {
 
 	/* off */
 	public static ILightingSettings BLOCK_LIGHTING = CustomLightingSettings.builder()
-																		   .firstLightRotation(-30, 45)
-																		   .secondLightRotation(0, 65)
-																		   .build();
+			.firstLightRotation(-30, 45)
+			.secondLightRotation(0, 65)
+			.build();
 
 	public static ILightingSettings SIDE_ICON_LIGHTING = CustomLightingSettings.builder()
-																			   .firstLightRotation(135, 35)
-																			   .secondLightRotation(-20, 50)
-																			   .build();
+			.firstLightRotation(135, 35)
+			.secondLightRotation(-20, 50)
+			.build();
 
 	public static ILightingSettings FUSED_TNT_LIGHTING = CustomLightingSettings.builder()
-																			   .firstLightRotation(-120, 20)
-																			   .secondLightRotation(200, 45)
-																			   .build();
+			.firstLightRotation(-120, 20)
+			.secondLightRotation(200, 45)
+			.build();
 	/* on */
 
 	public static List<IngredientInfo> generateShapelessInputs(OldLycheeRecipe<?> recipe) {
 		/* off */
 		List<IngredientInfo> ingredients = recipe.getIngredients()
-												 .stream()
-												 .map(IngredientInfo::new)
-												 .collect(Collectors.toCollection(ArrayList::new));
+				.stream()
+				.map(IngredientInfo::new)
+				.collect(Collectors.toCollection(ArrayList::new));
 		/* on */
 		recipe.getPostActions().forEach(action -> action.loadCatalystsInfo(recipe, ingredients));
 		if (!recipe.getType().compactInputs) {
@@ -76,7 +76,7 @@ public class JEIREI {
 				for (var toCompare : newIngredients) {
 					if (Objects.equals(toCompare.tooltips, ingredient.tooltips) && CommonProxy.isSimpleIngredient(
 							toCompare.ingredient) &&
-						toCompare.ingredient.getStackingIds().equals(ingredient.ingredient.getStackingIds())) {
+							toCompare.ingredient.getStackingIds().equals(ingredient.ingredient.getStackingIds())) {
 						match = toCompare;
 						break;
 					}
@@ -136,12 +136,12 @@ public class JEIREI {
 		}
 		/* off */
 		return blockStateCount.object2IntEntrySet().stream()
-							  .max(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
-							  .map($ -> Pair.of(
-									  BlockPredicateHelper.anyBlockState(blockPredicateMap.get($.getKey())),
-									  $.getIntValue()
-							  ))
-							  .orElseGet(() -> Pair.of(Blocks.AIR.defaultBlockState(), 0));
+				.max(Comparator.comparingInt(Object2IntMap.Entry::getIntValue))
+				.map($ -> Pair.of(
+						BlockPredicateHelper.anyBlockState(blockPredicateMap.get($.getKey())),
+						$.getIntValue()
+				))
+				.orElseGet(() -> Pair.of(Blocks.AIR.defaultBlockState(), 0));
 		/* on */
 	}
 
@@ -156,8 +156,8 @@ public class JEIREI {
 			}
 			for (OldLycheeRecipe<?> recipe : recipeType.inViewerRecipes()) {
 				recipes.computeIfAbsent(recipeType.categoryId, $ -> Maps.newHashMap())
-					   .computeIfAbsent(new ResourceLocation(recipe.group), $ -> Lists.newArrayList())
-					   .add(recipe);
+						.computeIfAbsent(new ResourceLocation(recipe.group), $ -> Lists.newArrayList())
+						.add(recipe);
 			}
 		}
 		recipes.forEach((categoryId, map) -> {

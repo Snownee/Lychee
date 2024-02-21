@@ -5,13 +5,13 @@ import java.util.List;
 import com.google.gson.JsonObject;
 
 import net.minecraft.network.FriendlyByteBuf;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 
 public class PreventDefault extends PostAction {
 

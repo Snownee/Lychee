@@ -25,8 +25,14 @@ public class RecipeManagerMixin {
 	@Unique
 	private static final ThreadLocal<JsonFragmentManager> fragmentManagerProvider = new ThreadLocal<>();
 
-	@Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("HEAD"))
-	private void lychee_beginApply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
+	@Inject(
+			method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V",
+			at = @At("HEAD"))
+	private void lychee_beginApply(
+			Map<ResourceLocation, JsonElement> object,
+			ResourceManager resourceManager,
+			ProfilerFiller profiler,
+			CallbackInfo ci) {
 		if (LycheeConfig.enableFragment) {
 			JsonFragmentManager fragmentManager = new JsonFragmentManager(resourceManager);
 			fragmentManagerProvider.set(fragmentManager);
@@ -34,8 +40,14 @@ public class RecipeManagerMixin {
 		}
 	}
 
-	@Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("RETURN"))
-	private void lychee_endApply(Map<ResourceLocation, JsonElement> object, ResourceManager resourceManager, ProfilerFiller profiler, CallbackInfo ci) {
+	@Inject(
+			method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V",
+			at = @At("RETURN"))
+	private void lychee_endApply(
+			Map<ResourceLocation, JsonElement> object,
+			ResourceManager resourceManager,
+			ProfilerFiller profiler,
+			CallbackInfo ci) {
 		if (LycheeConfig.enableFragment) {
 			fragmentManagerProvider.remove();
 		}

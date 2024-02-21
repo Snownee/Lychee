@@ -28,8 +28,8 @@ import snownee.lychee.util.contextual.ContextualPredicate;
 import snownee.lychee.util.json.JsonPointer;
 
 public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<LycheeContext>,
-																   ContextualPredicate,
-																   Contextual {
+		ContextualPredicate,
+		Contextual {
 	String DEFAULT_GROUP = "default";
 	String ITEM_IN = "item_in";
 	String ITEM_OUT = "item_out";
@@ -149,7 +149,7 @@ public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<Lychee
 
 	default List<BlockPredicate> getBlockInputs() {
 		if (this instanceof BlockKeyableRecipe<?> blockPredicateRecipe
-			&& blockPredicateRecipe.blockPredicate().isPresent()) {
+				&& blockPredicateRecipe.blockPredicate().isPresent()) {
 			return List.of(blockPredicateRecipe.blockPredicate().get());
 		}
 		return List.of();

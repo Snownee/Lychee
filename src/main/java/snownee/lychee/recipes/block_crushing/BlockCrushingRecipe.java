@@ -127,20 +127,24 @@ public class BlockCrushingRecipe extends OldLycheeRecipe<BlockCrushingContext>
 	public int compareTo(BlockCrushingRecipe that) {
 		int i;
 		i = Integer.compare(getMaxRepeats().isAny() ? 1 : 0, that.getMaxRepeats().isAny() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = Integer.compare(
 				landingBlock == BlockPredicate.ANY ? 1 : 0,
 				that.landingBlock == BlockPredicate.ANY ? 1 : 0
 		);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = -Integer.compare(ingredients.size(), that.ingredients.size());
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		return getId().compareTo(that.getId());
 	}
 
@@ -152,10 +156,12 @@ public class BlockCrushingRecipe extends OldLycheeRecipe<BlockCrushingContext>
 
 		@Override
 		public void fromJson(BlockCrushingRecipe pRecipe, JsonObject pSerializedRecipe) {
-			if (pSerializedRecipe.has("falling_block"))
+			if (pSerializedRecipe.has("falling_block")) {
 				pRecipe.fallingBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.get("falling_block"));
-			if (pSerializedRecipe.has("landing_block"))
+			}
+			if (pSerializedRecipe.has("landing_block")) {
 				pRecipe.landingBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.get("landing_block"));
+			}
 			if (pSerializedRecipe.has("item_in")) {
 				JsonElement itemIn = pSerializedRecipe.get("item_in");
 				if (itemIn.isJsonArray()) {

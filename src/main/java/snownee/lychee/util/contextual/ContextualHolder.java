@@ -123,7 +123,9 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		for (ContextualCondition condition : conditions) {
 			try {
 				times = condition.test(recipe, ctx, times);
-				if (times == 0) break;
+				if (times == 0) {
+					break;
+				}
 			} catch (Throwable e) {
 				Lychee.LOGGER.error(
 						"Failed to check condition {} of recipe {}",

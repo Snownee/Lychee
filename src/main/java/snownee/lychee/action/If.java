@@ -16,15 +16,15 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.action.input.NBTPatch;
-import snownee.lychee.util.action.Job;
 import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class If extends PostAction implements CompoundAction {
 
@@ -118,7 +118,7 @@ public class If extends PostAction implements CompoundAction {
 		);
 		for (PostAction action : getChildActions().toList()) {
 			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in " +
-																			 "RandomSelect");
+					"RandomSelect");
 			action.validate(recipe, patchContext);
 		}
 	}

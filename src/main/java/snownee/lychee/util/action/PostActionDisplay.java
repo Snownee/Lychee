@@ -17,6 +17,7 @@ public interface PostActionDisplay {
 	default List<BlockPredicate> getOutputBlocks() {
 		return List.of();
 	}
+
 	default List<ItemStack> getOutputItems() {
 		return List.of();
 	}
