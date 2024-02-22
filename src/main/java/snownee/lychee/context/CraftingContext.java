@@ -1,12 +1,10 @@
 package snownee.lychee.context;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -17,14 +15,12 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.TransientCraftingContainer;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.mixin.CraftingMenuAccess;
 import snownee.lychee.mixin.InventoryMenuAccess;
 import snownee.lychee.mixin.recipes.crafting.TransientCraftingContainerAccess;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
 
 public record CraftingContext(
 		LycheeContext context,
@@ -66,8 +62,6 @@ public record CraftingContext(
 					return (ignored) -> null;
 				}
 			});
-	public static final Cache<CraftingContainer, CraftingContext> CONTEXT_CACHE =
-			CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.SECONDS).build();
 
 	static {
 		CONTAINER_WORLD_LOCATOR.put(TransientCraftingContainer.class, container -> {
@@ -101,27 +95,5 @@ public record CraftingContext(
 			final var access = (InventoryMenuAccess) menu;
 			return Pair.of(access.getOwner().position(), access.getOwner());
 		});
-	}
-
-	public static CraftingContext make(
-			CraftingContainer container,
-			LycheeContext context,
-			int matchX,
-			int matchY,
-			boolean mirror
-	) {
-		Pair<Vec3, Player> pair = null;
-		try {
-			pair = CONTAINER_WORLD_LOCATOR.get(container.getClass()).apply(container);
-		} catch (ExecutionException ignored) {
-		}
-		final var craftingContext = new CraftingContext(context, container, matchX, matchY, mirror);
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		if (pair != null) {
-			lootParamsContext.setParam(LootContextParams.ORIGIN, pair.getFirst());
-			lootParamsContext.setParam(LootContextParams.THIS_ENTITY, pair.getSecond());
-		}
-		CONTEXT_CACHE.put(container, craftingContext);
-		return craftingContext;
 	}
 }

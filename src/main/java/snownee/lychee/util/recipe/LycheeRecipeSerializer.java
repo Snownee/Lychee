@@ -10,7 +10,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import snownee.lychee.util.SerializableType;
 
-public interface LycheeRecipeSerializer<T extends ILycheeRecipe<T>> extends RecipeSerializer<T>, SerializableType<T> {
+public interface LycheeRecipeSerializer<T extends ILycheeRecipe> extends RecipeSerializer<T>, SerializableType<T> {
 	Ingredient EMPTY_INGREDIENT = Ingredient.of(ItemStack.EMPTY);
 
 	@Override

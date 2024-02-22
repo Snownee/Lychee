@@ -28,12 +28,13 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.LycheeContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public record AnvilCraftingRecipe implements ILycheeRecipe<AnvilContext>, Comparable<AnvilCraftingRecipe> {
+public record AnvilCraftingRecipe implements ILycheeRecipe<LycheeContext>, Comparable<AnvilCraftingRecipe> {
 	private static final MinMaxBounds.Ints ONE = MinMaxBounds.Ints.exactly(1);
 
 

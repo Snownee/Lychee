@@ -1,6 +1,8 @@
 package snownee.lychee.util.recipe;
 
-public abstract class LycheeRecipe<T extends LycheeRecipe<T>> implements ILycheeRecipe<T> {
+import net.minecraft.world.Container;
+
+public abstract class LycheeRecipe<C extends Container> implements ILycheeRecipe<C> {
 	protected final LycheeRecipeCommonProperties commonProperties;
 
 	protected LycheeRecipe(LycheeRecipeCommonProperties commonProperties) {

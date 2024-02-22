@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Strings;
@@ -58,7 +59,7 @@ import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<CraftingContext> {
+public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe {
 
 	public static final Cache<Class<?>, Function<CraftingContainer, Pair<Vec3, Player>>> CONTAINER_WORLD_LOCATOR =
 			CacheBuilder.newBuilder().build();
@@ -334,7 +335,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	}
 
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public @NotNull RecipeSerializer<ShapedCraftingRecipe> getSerializer() {
 		return RecipeSerializers.CRAFTING;
 	}
 

@@ -12,6 +12,7 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -27,9 +28,7 @@ import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.contextual.ContextualPredicate;
 import snownee.lychee.util.json.JsonPointer;
 
-public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<LycheeContext>,
-		ContextualPredicate,
-		Contextual {
+public interface ILycheeRecipe<C extends Container> extends Recipe<C>, ContextualPredicate, Contextual {
 	String DEFAULT_GROUP = "default";
 	String ITEM_IN = "item_in";
 	String ITEM_OUT = "item_out";
@@ -67,7 +66,7 @@ public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<Lychee
 	}
 
 	@Override
-	default @NotNull ItemStack assemble(LycheeContext inv, RegistryAccess registryAccess) {
+	default @NotNull ItemStack assemble(C inv, RegistryAccess registryAccess) {
 		return ItemStack.EMPTY;
 	}
 
@@ -76,7 +75,7 @@ public interface ILycheeRecipe<T extends ILycheeRecipe<T>> extends Recipe<Lychee
 	}
 
 	@Override
-	boolean matches(LycheeContext context, Level level);
+	boolean matches(C context, Level level);
 
 	@Override
 	default boolean canCraftInDimensions(int width, int height) {

@@ -31,7 +31,7 @@ public class NBTPatch extends PostAction {
 	}
 
 	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	protected void apply(ILycheeRecipe<?> recipe, LycheeRecipeContext ctx, int times) {
 	}
 
 	@Override

@@ -305,7 +305,7 @@ public class CommonProxy implements ModInitializer {
 	public static void postCustomActionEvent(
 			String id,
 			CustomAction action,
-			ILycheeRecipe<?> recipe,
+			ILycheeRecipe recipe,
 			ILycheeRecipe.NBTPatchContext patchContext
 	) {
 		CUSTOM_ACTION_EVENT.invoker().on(id, action, recipe, patchContext);
@@ -383,7 +383,7 @@ public class CommonProxy implements ModInitializer {
 
 	public interface CustomActionListener {
 		boolean on(
-				String id, CustomAction action, ILycheeRecipe<?> recipe,
+				String id, CustomAction action, ILycheeRecipe recipe,
 				ILycheeRecipe.NBTPatchContext patchContext
 		);
 	}

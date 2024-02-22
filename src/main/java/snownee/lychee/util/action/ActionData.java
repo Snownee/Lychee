@@ -22,7 +22,7 @@ public final class ActionData {
 							Codec.INT.fieldOf("delayedTicks").forGetter(ActionData::getDelayedTicks)
 					).apply(inst, ActionData::of));
 	@Nullable
-	private ILycheeRecipe<?> recipe;
+	private ILycheeRecipe recipe;
 	@Nullable
 	private LycheeContext context;
 	private int delayedTicks;
@@ -39,11 +39,11 @@ public final class ActionData {
 
 	public static ActionData of(@Nullable LycheeContext context, int delayedTicks) {
 		ResourceLocation recipeId = context.getMatchedRecipeId(); //TODO
-		ILycheeRecipe<?> recipe = null;
+		ILycheeRecipe recipe = null;
 		if (recipeId != null) {
 			RecipeHolder<Recipe<?>> holder = (RecipeHolder<Recipe<?>>) CommonProxy.recipe(recipeId);
 			if (holder != null && holder.value() instanceof ILycheeRecipe) {
-				recipe = (ILycheeRecipe<?>) holder.value();
+				recipe = (ILycheeRecipe) holder.value();
 			}
 		}
 		return new ActionData(recipe, context, delayedTicks);

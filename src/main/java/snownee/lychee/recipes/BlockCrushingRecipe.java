@@ -20,6 +20,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.RecipeSerializers;
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.RecipeMatcher;
@@ -28,13 +30,11 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingRecipe> implements
-		BlockKeyableRecipe<BlockCrushingRecipe> {
+public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockCrushingRecipe, LycheeContext> {
 	public static final BlockPredicate ANVIL = BlockPredicate.Builder.block().of(BlockTags.ANVIL).build();
 
 	protected BlockPredicate fallingBlock = ANVIL;
@@ -129,7 +129,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingRecipe> imple
 	}
 
 	@Override
-	public NonNullList<Ingredient> getIngredients() {
+	public @NotNull NonNullList<Ingredient> getIngredients() {
 		return ingredients;
 	}
 
@@ -139,13 +139,13 @@ public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingRecipe> imple
 	}
 
 	@Override
-	public RecipeSerializer<?> getSerializer() {
-		return null;
+	public @NotNull RecipeSerializer<BlockCrushingRecipe> getSerializer() {
+		return RecipeSerializers.BLOCK_CRUSHING;
 	}
 
 	@Override
-	public @NotNull RecipeType<? extends ILycheeRecipe<BlockCrushingRecipe>> getType() {
-		return null;
+	public @NotNull RecipeType<BlockCrushingRecipe> getType() {
+		return RecipeTypes.BLOCK_CRUSHING;
 	}
 
 	@Override

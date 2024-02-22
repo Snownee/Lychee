@@ -19,7 +19,7 @@ import snownee.kiwi.util.Util;
 import snownee.lychee.Lychee;
 import snownee.lychee.util.context.LycheeContext;
 
-public class LycheeRecipeType<T extends ILycheeRecipe<T>> implements RecipeType<T> {
+public class LycheeRecipeType<T extends ILycheeRecipe> implements RecipeType<T> {
 	public final ResourceLocation id;
 	public ResourceLocation categoryId;
 	public final Class<? extends T> clazz;

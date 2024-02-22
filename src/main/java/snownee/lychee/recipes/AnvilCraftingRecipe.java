@@ -34,7 +34,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-public class AnvilCraftingRecipe extends LycheeRecipe<AnvilCraftingRecipe> {
+public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	protected final Pair<Ingredient, Ingredient> input;
 	protected final int levelCost;
 	protected final int materialCost;
@@ -119,7 +119,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilCraftingRecipe> {
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<?> getSerializer() {
+	public @NotNull RecipeSerializer<AnvilCraftingRecipe> getSerializer() {
 		return RecipeSerializers.ANVIL_CRAFTING;
 	}
 

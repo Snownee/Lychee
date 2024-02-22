@@ -17,13 +17,11 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingRecipe> implements
-		BlockKeyableRecipe<BlockExplodingRecipe> {
+public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockExplodingRecipe, LycheeContext> {
 	protected final @Nullable BlockPredicate blockPredicate;
 
 	public BlockExplodingRecipe(
@@ -45,12 +43,12 @@ public class BlockExplodingRecipe extends LycheeRecipe<BlockExplodingRecipe> imp
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<?> getSerializer() {
+	public @NotNull RecipeSerializer<BlockExplodingRecipe> getSerializer() {
 		return RecipeSerializers.BLOCK_EXPLODING;
 	}
 
 	@Override
-	public @NotNull RecipeType<? extends ILycheeRecipe<BlockExplodingRecipe>> getType() {
+	public @NotNull RecipeType<BlockExplodingRecipe> getType() {
 		return RecipeTypes.BLOCK_EXPLODING;
 	}
 

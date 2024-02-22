@@ -7,7 +7,7 @@ import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
-import snownee.lychee.recipes.crafting.ShapedCraftingRecipe;
+import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.recipes.interaction.BlockClickingRecipe;
 import snownee.lychee.recipes.interaction.BlockInteractingRecipe;

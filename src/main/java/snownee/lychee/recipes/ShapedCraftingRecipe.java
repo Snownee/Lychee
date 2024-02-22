@@ -1,18 +1,24 @@
 package snownee.lychee.recipes;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -20,20 +26,28 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
 import snownee.lychee.RecipeSerializers;
+import snownee.lychee.context.CraftingContext;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipeAccess;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipePatternAccess;
+import snownee.lychee.util.Pair;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-public class ShapedCraftingRecipe extends LycheeRecipe<ShapedCraftingRecipe> {
+public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implements CraftingRecipe {
+	private static final Cache<CraftingContainer, LycheeContext> CONTEXT_CACHE =
+			CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.SECONDS).build();
+
 	protected final ShapedRecipe shaped;
 	protected final List<PostAction<?>> assemblingActions;
 
@@ -51,42 +65,36 @@ public class ShapedCraftingRecipe extends LycheeRecipe<ShapedCraftingRecipe> {
 			final ShapedRecipePattern pattern,
 			final ItemStack result,
 			final boolean showNotification,
-			final List<PostAction<?>> assemblingActions) {
+			final List<PostAction<?>> assemblingActions
+	) {
 		super(commonProperties);
 		this.assemblingActions = assemblingActions;
 		this.shaped = new ShapedRecipe(group, category, pattern, result, showNotification);
 	}
 
 	@Override
-	public boolean matches(final LycheeContext context, final Level level) {
+	public boolean matches(CraftingContainer container, Level level) {
 		if (ghost()) {
 			return false;
 		}
-		/* TODO 需要在 mixin 里初始化这个上下文
-		 * final var craftingContext = context.put(
-		 * 		LycheeContextKey.CRAFTING,
-		 * 		CraftingContext.make(container, context, i, j, mirror)
-		 * );
-		 */
-		final var craftingContext = context.get(LycheeContextKey.CRAFTING);
-		final var container = craftingContext.container();
 		if (level.isClientSide) {
 			return shaped.matches(container, level);
 		}
-		final var shapedRecipeAccess = (ShapedRecipeAccess) shaped;
-		final var pattern = (ShapedRecipePatternAccess) (Object) shapedRecipeAccess.getPattern();
-		var i = 0;
-		var j = 0;
+		final var context = new LycheeContext();
+		var matchX = 0;
+		var matchY = 0;
 		var mirror = false;
 		var matched = false;
+		final var shapedRecipeAccess = (ShapedRecipeAccess) shaped;
+		final var pattern = (ShapedRecipePatternAccess) (Object) shapedRecipeAccess.getPattern();
 		outer:
-		for (i = 0; i <= container.getWidth() - getWidth(); ++i) {
-			for (j = 0; j <= container.getHeight() - getHeight(); ++j) {
-				if (pattern.callMatches(container, i, j, true)) {
+		for (matchX = 0; matchX <= container.getWidth() - getWidth(); ++matchX) {
+			for (matchY = 0; matchY <= container.getHeight() - getHeight(); ++matchY) {
+				if (pattern.callMatches(container, matchX, matchY, true)) {
 					matched = true;
 					break outer;
 				}
-				if (getWidth() > 1 && pattern.callMatches(container, i, j, false)) {
+				if (getWidth() > 1 && pattern.callMatches(container, matchX, matchY, false)) {
 					matched = true;
 					mirror = true;
 					break outer;
@@ -96,16 +104,32 @@ public class ShapedCraftingRecipe extends LycheeRecipe<ShapedCraftingRecipe> {
 		if (!matched) {
 			return false;
 		}
+		var craftingContext = new CraftingContext(context, container, matchX, matchY, mirror);
+		context.put(LycheeContextKey.CRAFTING, craftingContext);
 
-		matched = conditions().test(this, context, 1) > 0;
-		if (matched) {
+		final var passed = conditions().test(this, context, 1) > 0;
+
+		Pair<Vec3, Player> pair = null;
+		try {
+			pair = CraftingContext.CONTAINER_WORLD_LOCATOR.get(container.getClass()).apply(container);
+		} catch (ExecutionException ignored) {
+		}
+		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		if (pair != null) {
+			lootParamsContext.setParam(LootContextParams.ORIGIN, pair.getFirst());
+			lootParamsContext.setParam(LootContextParams.THIS_ENTITY, pair.getSecond());
+		}
+
+		CONTEXT_CACHE.put(container, context);
+
+		if (passed) {
 			final var result = getResultItem(level.registryAccess()).copy();
 			final var ingredients = getIngredients();
 			final var items = new ItemStack[ingredients.size() + 1];
 			final var startIndex = container.getWidth() * craftingContext.matchY() + craftingContext.matchX();
 			var k = 0;
-			for (i = 0; i < getHeight(); i++) {
-				for (j = 0; j < getWidth(); j++) {
+			for (var i = 0; i < getHeight(); i++) {
+				for (var j = 0; j < getWidth(); j++) {
 					items[k] = container.getItem(startIndex + container.getWidth() * k + (craftingContext.mirror() ? getWidth() - j : j));
 					if (!items[k].isEmpty()) {
 						items[k] = items[k].copy();
@@ -117,11 +141,15 @@ public class ShapedCraftingRecipe extends LycheeRecipe<ShapedCraftingRecipe> {
 			items[ingredients.size()] = result;
 			context.put(LycheeContextKey.ITEM, ItemStackHolderCollection.Inventory.of(context, items));
 		}
-		return matched;
+		return passed;
 	}
 
 	@Override
-	public @NotNull ItemStack assemble(final LycheeContext context, final RegistryAccess registryAccess) {
+	public @NotNull ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
+		var context = CONTEXT_CACHE.getIfPresent(container);
+		if (context == null) {
+			return ItemStack.EMPTY;
+		}
 		final var craftingContext = context.get(LycheeContextKey.CRAFTING);
 		if (craftingContext == null) {
 			return ItemStack.EMPTY;
@@ -134,13 +162,18 @@ public class ShapedCraftingRecipe extends LycheeRecipe<ShapedCraftingRecipe> {
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<?> getSerializer() {
+	public @NotNull RecipeSerializer<ShapedCraftingRecipe> getSerializer() {
 		return RecipeSerializers.CRAFTING;
 	}
 
 	@Override
 	public @NotNull RecipeType<? extends Recipe<?>> getType() {
 		return RecipeType.CRAFTING;
+	}
+
+	@Override
+	public @NotNull CraftingBookCategory category() {
+		return shaped.category();
 	}
 
 	@Override
@@ -168,7 +201,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<ShapedCraftingRecipe> {
 	@Override
 	public boolean isIncomplete() {return shaped.isIncomplete();}
 
-	public NonNullList<ItemStack> getRemainingItems(final CraftingContainer container) {
+	public @NotNull NonNullList<ItemStack> getRemainingItems(final CraftingContainer container) {
 		return shaped.getRemainingItems(container);
 	}
 
@@ -189,10 +222,10 @@ public class ShapedCraftingRecipe extends LycheeRecipe<ShapedCraftingRecipe> {
 	public static class Serializer implements LycheeRecipeSerializer<ShapedCraftingRecipe> {
 		public static final Codec<ShapedCraftingRecipe> CODEC = RecordCodecBuilder.create(instance ->
 				instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
+						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
 						((MapCodec.MapCodecCodec<ShapedRecipe>) RecipeSerializer.SHAPED_RECIPE.codec()).codec()
 								.forGetter(ShapedCraftingRecipe::shaped),
-						PostActionType.LIST_CODEC.optionalFieldOf("assemblingActions", List.of())
+						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
 								.forGetter(ShapedCraftingRecipe::assemblingActions)
 				).apply(instance, ShapedCraftingRecipe::new));
 
