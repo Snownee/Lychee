@@ -19,8 +19,8 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
-import snownee.lychee.core.recipe.recipe.ItemAndBlockRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.recipe.ItemAndBlockRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class BlockInteractingRecipe extends ItemAndBlockRecipe<LycheeRecipeContext> {
@@ -41,7 +41,7 @@ public class BlockInteractingRecipe extends ItemAndBlockRecipe<LycheeRecipeConte
 	}
 
 	@Override
-	public NonNullList<Ingredient> getIngredients() {
+	public @NotNull NonNullList<Ingredient> getIngredients() {
 		if (otherInput.isEmpty()) {
 			return super.getIngredients();
 		}

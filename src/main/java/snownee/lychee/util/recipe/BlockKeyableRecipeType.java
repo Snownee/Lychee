@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -39,7 +40,8 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-public class BlockKeyableRecipeType<T extends BlockKeyableRecipe<T>> extends LycheeRecipeType<T> {
+public class BlockKeyableRecipeType<C extends Container, T extends BlockKeyableRecipe<T, C>>
+		extends LycheeRecipeType<C, T> {
 
 	protected final Map<Block, List<RecipeHolder<T>>> recipesByBlock = Maps.newHashMap();
 	protected final List<RecipeHolder<T>> anyBlockRecipes = Lists.newLinkedList();

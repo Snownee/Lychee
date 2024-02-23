@@ -10,6 +10,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.JavaOps;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -19,7 +20,7 @@ import snownee.kiwi.util.Util;
 import snownee.lychee.Lychee;
 import snownee.lychee.util.context.LycheeContext;
 
-public class LycheeRecipeType<T extends ILycheeRecipe> implements RecipeType<T> {
+public class LycheeRecipeType<C extends Container, T extends ILycheeRecipe<C>> implements RecipeType<T> {
 	public final ResourceLocation id;
 	public ResourceLocation categoryId;
 	public final Class<? extends T> clazz;

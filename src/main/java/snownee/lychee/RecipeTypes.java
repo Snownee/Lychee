@@ -13,10 +13,10 @@ import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipeType;
 import snownee.lychee.recipes.BlockExplodingRecipe;
+import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeType;
 import snownee.lychee.recipes.interaction.BlockClickingRecipe;
-import snownee.lychee.recipes.interaction.BlockInteractingRecipe;
 import snownee.lychee.recipes.item_burning.ItemBurningRecipe;
 import snownee.lychee.recipes.item_exploding.ItemExplodingRecipe;
 import snownee.lychee.recipes.item_inside.ItemInsideRecipe;
@@ -24,6 +24,7 @@ import snownee.lychee.recipes.item_inside.ItemInsideRecipeType;
 import snownee.lychee.recipes.lightning_channeling.LightningChannelingRecipe;
 import snownee.lychee.recipes.random_block_ticking.RandomBlockTickingRecipe;
 import snownee.lychee.recipes.random_block_ticking.RandomBlockTickingRecipeType;
+import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
@@ -58,7 +59,7 @@ public final class RecipeTypes {
 			ItemInsideRecipe.class,
 			null
 	));
-	public static final BlockKeyableRecipeType<LycheeRecipeContext, BlockInteractingRecipe>
+	public static final BlockKeyableRecipeType<LycheeContext, BlockInteractingRecipe>
 			BLOCK_INTERACTING =
 			register(new BlockKeyableRecipeType<>(
 					"block_interacting",
@@ -71,7 +72,7 @@ public final class RecipeTypes {
 					BlockClickingRecipe.class,
 					LycheeLootContextParamSets.BLOCK_INTERACTION
 			));
-	public static final LycheeRecipeType<AnvilCraftingRecipe> ANVIL_CRAFTING =
+	public static final LycheeRecipeType<LycheeContext, AnvilCraftingRecipe> ANVIL_CRAFTING =
 			register(new LycheeRecipeType<>("anvil_crafting", AnvilCraftingRecipe.class, null));
 	public static final BlockCrushingRecipeType BLOCK_CRUSHING = register(new BlockCrushingRecipeType(
 			"block_crushing",
@@ -82,7 +83,7 @@ public final class RecipeTypes {
 			register(new ItemShapelessRecipeType<>("lightning_channeling", LightningChannelingRecipe.class, null));
 	public static final ItemShapelessRecipeType<ItemShapelessContext, ItemExplodingRecipe> ITEM_EXPLODING =
 			register(new ItemShapelessRecipeType<>("item_exploding", ItemExplodingRecipe.class, null));
-	public static final BlockKeyableRecipeType<BlockExplodingRecipe> BLOCK_EXPLODING =
+	public static final BlockKeyableRecipeType<LycheeContext, BlockExplodingRecipe> BLOCK_EXPLODING =
 			register(new BlockKeyableRecipeType<>(
 					"block_exploding",
 					BlockExplodingRecipe.class,

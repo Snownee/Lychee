@@ -25,20 +25,30 @@ public record LycheeRecipeCommonProperties(
 		List<PostAction<?>> postActions,
 		MinMaxBounds.Ints maxRepeats
 ) {
+
+	public static final MapCodec<Boolean> HIDE_IN_VIEWER_CODEC = Codec.BOOL.optionalFieldOf("hide_in_viewer", false);
+	public static final MapCodec<Boolean> GHOST_CODEC = Codec.BOOL.optionalFieldOf("ghost", false);
+	public static final MapCodec<String> COMMENT_CODEC = Codec.STRING.optionalFieldOf("comment", null);
+	public static final MapCodec<String> GROUP_CODEC = ExtraCodecs.validate(Codec.STRING, s -> {
+		if (!ResourceLocation.isValidResourceLocation(s)) {
+			return DataResult.error(() -> "Invalid group: " + s + " (must be a valid resource location)");
+		}
+		return DataResult.success(s);
+	}).optionalFieldOf("group", ILycheeRecipe.DEFAULT_GROUP);
+	public static final MapCodec<ContextualHolder> CONTEXTUAL_CODEC = ContextualHolder.CODEC.optionalFieldOf(
+			"contextual",
+			ContextualHolder.EMPTY);
+	public static final MapCodec<List<PostAction<?>>> POST_ACTION_CODEC = PostActionType.LIST_CODEC.optionalFieldOf("post", List.of());
+	public static final MapCodec<MinMaxBounds.Ints> MAX_REPEATS_CODEC = MinMaxBounds.Ints.CODEC.optionalFieldOf(
+			"max_repeats",
+			MinMaxBounds.Ints.ANY);
 	public static final MapCodec<LycheeRecipeCommonProperties> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-			Codec.BOOL.optionalFieldOf("hide_in_viewer", false).forGetter(LycheeRecipeCommonProperties::hideInRecipeViewer),
-			Codec.BOOL.optionalFieldOf("ghost", false).forGetter(LycheeRecipeCommonProperties::ghost),
-			Codec.STRING.optionalFieldOf("comment", null).forGetter(LycheeRecipeCommonProperties::comment),
-			ExtraCodecs.validate(Codec.STRING, s -> {
-				if (!ResourceLocation.isValidResourceLocation(s)) {
-					return DataResult.error(() -> "Invalid group: " + s + " (must be a valid resource location)");
-				}
-				return DataResult.success(s);
-			}).optionalFieldOf("group", ILycheeRecipe.DEFAULT_GROUP).forGetter(LycheeRecipeCommonProperties::group),
-			ContextualHolder.CODEC.optionalFieldOf("contextual", ContextualHolder.EMPTY)
-					.forGetter(LycheeRecipeCommonProperties::conditions),
-			PostActionType.LIST_CODEC.optionalFieldOf("post", List.of()).forGetter(LycheeRecipeCommonProperties::postActions),
-			MinMaxBounds.Ints.CODEC.optionalFieldOf("max_repeats", MinMaxBounds.Ints.ANY)
-					.forGetter(LycheeRecipeCommonProperties::maxRepeats)
+			HIDE_IN_VIEWER_CODEC.forGetter(LycheeRecipeCommonProperties::hideInRecipeViewer),
+			GHOST_CODEC.forGetter(LycheeRecipeCommonProperties::ghost),
+			COMMENT_CODEC.forGetter(LycheeRecipeCommonProperties::comment),
+			GROUP_CODEC.forGetter(LycheeRecipeCommonProperties::group),
+			CONTEXTUAL_CODEC.forGetter(LycheeRecipeCommonProperties::conditions),
+			POST_ACTION_CODEC.forGetter(LycheeRecipeCommonProperties::postActions),
+			MAX_REPEATS_CODEC.forGetter(LycheeRecipeCommonProperties::maxRepeats)
 	).apply(instance, LycheeRecipeCommonProperties::new));
 }

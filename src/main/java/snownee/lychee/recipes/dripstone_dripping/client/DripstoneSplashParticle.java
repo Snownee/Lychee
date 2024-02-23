@@ -18,9 +18,9 @@ public class DripstoneSplashParticle extends DripParticle {
 			Fluid fluid
 	) {
 		super(clientWorld, d, e, f, fluid);
-		this.xd *= (double) 0.3f;
+		this.xd *= 0.3f;
 		this.yd = Math.random() * (double) 0.2f + (double) 0.1f;
-		this.zd *= (double) 0.3f;
+		this.zd *= 0.3f;
 		this.gravity = 0.04f;
 		if (h == 0.0 && (g != 0.0 || i != 0.0)) {
 			this.xd = g;
