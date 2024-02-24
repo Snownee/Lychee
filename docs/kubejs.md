@@ -310,3 +310,61 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
         }
     })
     ```
+
+### Item Inside Recipe with Dynamic Time
+
+=== "Recipe"
+
+    ```json
+    {
+        "type": "lychee:item_inside",
+        "time": 5,
+        "block_in": "*",
+        "item_in": [
+            {
+                "item": "yellow_dye"
+            }
+        ],
+        "post": [
+            {
+                "type": "drop_item",
+                "item": "red_dye"
+            }
+        ],
+        "contextual": [
+            {
+                "type": "custom",
+                "id": "neighbor_block_boost",
+                "booster_block": "minecraft:red_wool"
+            }
+        ]
+    }
+    ```
+
+=== "Startup Script"
+
+    ```js
+    let $DirectionPlane = Java.loadClass('net.minecraft.core.Direction$Plane')
+
+    LycheeEvents.customCondition('neighbor_block_boost', event => {
+        let booster_block = event.data.booster_block
+
+        event.condition.testFunc = (recipe, ctx, times) => {
+            let item = ctx.getParam('this_entity')
+            let count = item.lychee$getCount()
+            if (count != 0) {
+                return times
+            }
+            let pos = ctx.getParam('lychee:block_pos')
+            for (const direction of $DirectionPlane.HORIZONTAL) {
+                let neighbor = ctx.level.getBlock(pos.relative(direction))
+                if (neighbor == booster_block) {
+                    count += 1
+                }
+            }
+            item.lychee$setCount(count)
+            console.info('Neighbor block boost: ' + count)
+            return times
+        }
+    })
+    ```
