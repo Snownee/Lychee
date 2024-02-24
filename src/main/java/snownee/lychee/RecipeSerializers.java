@@ -5,12 +5,12 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
+import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
+import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
-import snownee.lychee.recipes.interaction.BlockClickingRecipe;
-import snownee.lychee.recipes.interaction.BlockInteractingRecipe;
 import snownee.lychee.recipes.item_burning.ItemBurningRecipe;
 import snownee.lychee.recipes.item_exploding.ItemExplodingRecipe;
 import snownee.lychee.recipes.item_inside.ItemInsideRecipe;
@@ -32,10 +32,10 @@ public final class RecipeSerializers {
 			new ItemInsideRecipe.Serializer()
 	);
 	public static final LycheeRecipeSerializer<BlockInteractingRecipe> BLOCK_INTERACTING =
-			register("block_interacting", new BlockInteractingRecipe.Serializer<>($ -> new BlockInteractingRecipe($)));
+			register("block_interacting", new BlockInteractingRecipe.Serializer());
 	public static final LycheeRecipeSerializer<BlockClickingRecipe> BLOCK_CLICKING = register(
 			"block_clicking",
-			new BlockInteractingRecipe.Serializer<>($ -> new BlockClickingRecipe($))
+			new BlockClickingRecipe.Serializer()
 	);
 	public static final LycheeRecipeSerializer<AnvilCraftingRecipe> ANVIL_CRAFTING = register(
 			"anvil_crafting",

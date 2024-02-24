@@ -67,10 +67,11 @@ import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.compat.fabric_recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
-import snownee.lychee.recipes.interaction.InteractionRecipeMod;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 @Mod(Lychee.ID)
@@ -362,7 +363,7 @@ public class CommonProxy implements ModInitializer {
 
 		// Interaction recipes
 		UseBlockCallback.EVENT.register(BlockInteractingRecipe::invoke);
-		AttackBlockCallback.EVENT.register(InteractionRecipeMod::clickItemOn);
+		AttackBlockCallback.EVENT.register(BlockClickingRecipe::invoke);
 
 		// Dripstone recipes
 		Registry.register(
