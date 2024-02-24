@@ -15,9 +15,9 @@ import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipeType;
 import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
+import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeType;
-import snownee.lychee.recipes.item_burning.ItemBurningRecipe;
 import snownee.lychee.recipes.item_exploding.ItemExplodingRecipe;
 import snownee.lychee.recipes.item_inside.ItemInsideRecipe;
 import snownee.lychee.recipes.item_inside.ItemInsideRecipeType;
@@ -52,7 +52,7 @@ public final class RecipeTypes {
 	}
 
 	public static final Set<LycheeRecipeType<?, ?>> ALL = Sets.newLinkedHashSet();
-	public static final LycheeRecipeType<LycheeRecipeContext, ItemBurningRecipe> ITEM_BURNING =
+	public static final LycheeRecipeType<LycheeContext, ItemBurningRecipe> ITEM_BURNING =
 			register(new LycheeRecipeType<>("item_burning", ItemBurningRecipe.class, null));
 	public static final ItemInsideRecipeType ITEM_INSIDE = register(new ItemInsideRecipeType(
 			"item_inside",

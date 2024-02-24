@@ -1,4 +1,4 @@
-package snownee.lychee.mixin;
+package snownee.lychee.mixin.recipes.itemburing;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -10,7 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.recipes.item_burning.ItemBurningRecipe;
+import snownee.lychee.recipes.ItemBurningRecipe;
 
 @Mixin(ItemEntity.class)
 public class ItemEntityHurtMixin {
@@ -28,7 +28,7 @@ public class ItemEntityHurtMixin {
 		}
 		Entity entity = (Entity) (Object) this;
 		if (!entity.isAlive() && entity.getType() == EntityType.ITEM && entity.isOnFire()) {
-			ItemBurningRecipe.on((ItemEntity) entity);
+			ItemBurningRecipe.invoke((ItemEntity) entity);
 		}
 	}
 
