@@ -26,7 +26,7 @@ import snownee.lychee.util.recipe.ValidItemCache;
 public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends OldLycheeRecipe<C>>
 		extends LycheeRecipeType<C, T> {
 
-	private ValidItemCache validItems = new ValidItemCache();
+	private final ValidItemCache validItems = new ValidItemCache();
 
 	public ItemShapelessRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet contextParamSet) {
 		super(name, clazz, contextParamSet);

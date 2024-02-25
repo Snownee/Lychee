@@ -1,0 +1,44 @@
+package snownee.lychee.mixin.recipes.itemexploding;
+
+import java.util.List;
+
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import com.llamalad7.mixinextras.sugar.Local;
+
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import snownee.lychee.recipes.item_exploding.ItemExplodingRecipe;
+
+@Mixin(value = Explosion.class, priority = 700)
+public abstract class ExplosionMixin {
+	@Shadow
+	@Final
+	private Level level;
+
+	@Shadow
+	@Final
+	private double x;
+
+	@Shadow
+	@Final
+	private double y;
+
+	@Shadow
+	@Final
+	private double z;
+
+	@Shadow
+	public abstract float radius();
+
+	@Inject(at = @At("TAIL"), method = "explode()V")
+	private void lychee_explode(final CallbackInfo ci, @Local final List<Entity> list) {
+		ItemExplodingRecipe.on(level, x, y, z, list, radius());
+	}
+}

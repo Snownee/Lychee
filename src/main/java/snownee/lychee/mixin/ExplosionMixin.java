@@ -1,7 +1,6 @@
 package snownee.lychee.mixin;
 
 import java.util.List;
-import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -31,15 +30,14 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.recipes.block_exploding.BlockExplodingContext;
-import snownee.lychee.recipes.item_exploding.ItemExplodingRecipe;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 
 @Mixin(value = Explosion.class, priority = 700)
 public abstract class ExplosionMixin {
 
 	@Unique
-	private static final ThreadLocal<snownee.lychee.util.Pair<BlockExplodingContext.Builder, List<ItemStack>>> CONTEXT =
-			ThreadLocal.withInitial(() -> snownee.lychee.util.Pair.of(null, null));
+	private static final ThreadLocal<Pair<BlockExplodingContext.Builder, List<ItemStack>>> CONTEXT =
+			ThreadLocal.withInitial(() -> Pair.of(null, null));
 	@Final
 	@Shadow
 	private float radius;
@@ -123,29 +121,6 @@ public abstract class ExplosionMixin {
 		} else {
 			pair.getSecond().clear();
 		}
-	}
-
-	@Inject(
-			at = @At(
-					"TAIL"
-			), method = "explode()V", locals = LocalCapture.CAPTURE_FAILHARD
-	)
-	private void lychee_explode(
-			CallbackInfo ci,
-			Set<BlockPos> set,
-			int i,
-			float q,
-			int k,
-			int l,
-			int r,
-			int s,
-			int t,
-			int u,
-			List<Entity> list,
-			Vec3 vec3,
-			int v
-	) {
-		ItemExplodingRecipe.on(level, x, y, z, list, radius);
 	}
 
 	@Inject(

@@ -1,6 +1,7 @@
 package snownee.lychee.context;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -39,8 +40,7 @@ public class ItemShapelessContext {
 		context.put(LycheeContextKey.ITEM, ItemStackHolderCollection.InWorld.of(entities));
 	}
 
-	@Nullable
-	public RecipeMatcher<ItemStack> getMatcher() {
-		return matcher;
+	public Optional<RecipeMatcher<ItemStack>> getMatcher() {
+		return Optional.ofNullable(matcher);
 	}
 }

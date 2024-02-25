@@ -70,6 +70,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		final var itemShapelessContext = new ItemShapelessContext(itemEntities, context);
 		context.put(LycheeContextKey.ITEM_SHAPELESS, itemShapelessContext);
 		context.put(LycheeContextKey.FALLING_BLOCK_ENTITY, entity);
+		final var matcher = itemShapelessContext.getMatcher();
 
 		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 		lootParamsContext.setParam(LootContextParams.ORIGIN, entity.position());
@@ -77,6 +78,8 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, landingBlock);
 		lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, pos);
 		lootParamsContext.validate(contextParamSet);
+
+		final var actionContext = context.get(LycheeContextKey.ACTION);
 
 		boolean matchedAny = false;
 		var loop = 0;
@@ -93,12 +96,10 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 					if (match.isPresent()) {
 						matchedAny = matched = true;
 						var times = 1;
-						final var matcher = itemShapelessContext.getMatcher();
-						if (matcher != null
-								&& matcher.inputUsed.length > 0) {
-							int[] inputUsed = matcher.inputUsed;
+						if (matcher.map(it -> it.inputUsed.length > 0).orElse(false)) {
+							final var inputUsed = matcher.get().inputUsed;
 							//System.out.println(Arrays.toString(context.match));
-							times = recipe.getRandomRepeats(Integer.MAX_VALUE, context);
+							times = recipe.value().getRandomRepeats(Integer.MAX_VALUE, context);
 							for (int i = 0; i < inputUsed.length; i++) {
 								if (inputUsed[i] > 0) {
 									ItemStack stack = itemShapelessContext.filteredItems.get(i).getItem();

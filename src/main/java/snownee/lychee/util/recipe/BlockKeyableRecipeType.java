@@ -16,7 +16,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -40,14 +39,14 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-public class BlockKeyableRecipeType<C extends Container, T extends BlockKeyableRecipe<T, C>>
-		extends LycheeRecipeType<C, T> {
+public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<R, LycheeContext>>
+		extends LycheeRecipeType<LycheeContext, R> {
 
-	protected final Map<Block, List<RecipeHolder<T>>> recipesByBlock = Maps.newHashMap();
-	protected final List<RecipeHolder<T>> anyBlockRecipes = Lists.newLinkedList();
+	protected final Map<Block, List<RecipeHolder<R>>> recipesByBlock = Maps.newHashMap();
+	protected final List<RecipeHolder<R>> anyBlockRecipes = Lists.newLinkedList();
 	public boolean extractChance;
 
-	public BlockKeyableRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet paramSet) {
+	public BlockKeyableRecipeType(String name, Class<R> clazz, @Nullable LootContextParamSet paramSet) {
 		super(name, clazz, paramSet);
 	}
 
@@ -56,7 +55,7 @@ public class BlockKeyableRecipeType<C extends Container, T extends BlockKeyableR
 		recipesByBlock.clear();
 		anyBlockRecipes.clear();
 		super.refreshCache();
-		final var multimap = HashMultimap.<Block, RecipeHolder<T>>create();
+		final var multimap = HashMultimap.<Block, RecipeHolder<R>>create();
 		for (final var recipe : recipes) {
 			Iterator<ContextualCondition> iterator = recipe.value().conditions().iterator();
 			if (iterator.hasNext()) {
@@ -91,7 +90,7 @@ public class BlockKeyableRecipeType<C extends Container, T extends BlockKeyableR
 				.toList();
 	}
 
-	public Optional<T> process(
+	public Optional<R> process(
 			Player player,
 			InteractionHand hand,
 			BlockPos pos,
@@ -101,7 +100,7 @@ public class BlockKeyableRecipeType<C extends Container, T extends BlockKeyableR
 		if (isEmpty()) {
 			return Optional.empty();
 		}
-		final var level = player.level();
+        final var level = player.level();
 		final var blockstate = level.getBlockState(pos);
 		final var recipes = recipesByBlock.getOrDefault(blockstate.getBlock(), List.of());
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
@@ -156,14 +155,14 @@ public class BlockKeyableRecipeType<C extends Container, T extends BlockKeyableR
 	}
 
 	@Nullable
-	public Pair<LycheeContext, RecipeHolder<T>> process(
+	public Pair<LycheeContext, RecipeHolder<R>> process(
 			Level level,
 			BlockState state,
 			Supplier<LycheeContext> ctxSupplier
 	) {
 		final var recipes = recipesByBlock.getOrDefault(state.getBlock(), List.of());
 		final var iterable = Iterables.concat(recipes, anyBlockRecipes);
-		final var ctx = Suppliers.memoize(ctxSupplier);
+		final var context = Suppliers.memoize(ctxSupplier);
 		for (final var recipe : iterable) {
 			if (extractChance) {
 				ChanceRecipe $ = (ChanceRecipe) recipe.value();
@@ -171,9 +170,9 @@ public class BlockKeyableRecipeType<C extends Container, T extends BlockKeyableR
 					continue;
 				}
 			}
-			if (tryMatch(recipe, level, ctx.get()).isPresent()) {
-				recipe.value().applyPostActions(ctx.get(), 1);
-				return Pair.of(ctx.get(), recipe);
+			if (tryMatch(recipe, level, context.get()).isPresent()) {
+				recipe.value().applyPostActions(context.get(), 1);
+				return Pair.of(context.get(), recipe);
 			}
 		}
 		return null;

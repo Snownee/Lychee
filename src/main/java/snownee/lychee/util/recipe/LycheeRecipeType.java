@@ -53,13 +53,14 @@ public class LycheeRecipeType<C extends Container, T extends ILycheeRecipe<C>> i
 		return "LycheeRecipeType[" + id + "]";
 	}
 
-	public Optional<RecipeHolder<T>> tryMatch(RecipeHolder<T> recipeHolder, Level level, LycheeContext context) {
-		T lycheeRecipe = recipeHolder.value();
-		return lycheeRecipe.matches(context, level) && lycheeRecipe.test(
-				recipeHolder.value(),
-				context,
-				1
-		) > 0
+	public Optional<RecipeHolder<T>> tryMatch(RecipeHolder<T> recipeHolder, Level level, C container) {
+		if (!(container instanceof LycheeContext context)) {
+			// Always return empty if the container is not a LycheeContext
+			return Optional.empty();
+		}
+		final var lycheeRecipe = recipeHolder.value();
+		return lycheeRecipe.matches(container, level) &&
+				lycheeRecipe.test(recipeHolder.value(), context, 1) > 0
 				? Optional.of(recipeHolder)
 				: Optional.empty();
 	}
@@ -88,8 +89,8 @@ public class LycheeRecipeType<C extends Container, T extends ILycheeRecipe<C>> i
 		recipes = stream.toList();
 	}
 
-	public Optional<RecipeHolder<T>> findFirst(LycheeContext ctx, Level level) {
-		return recipes.stream().flatMap(it -> tryMatch(it, level, ctx).stream()).findFirst();
+	public Optional<RecipeHolder<T>> findFirst(C container, Level level) {
+		return recipes.stream().flatMap(it -> tryMatch(it, level, container).stream()).findFirst();
 	}
 
 	public Component getPreventDefaultDescription(T recipe) {
