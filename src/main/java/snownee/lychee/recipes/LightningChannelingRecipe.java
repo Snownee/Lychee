@@ -8,15 +8,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.NonNullList;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.Vec3;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.mixin.NonNullListAccess;
@@ -28,26 +27,25 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements Comparable<ItemExplodingRecipe> {
-	public static void invoke(final ServerLevel level, double x, double y, double z, List<Entity> entityList, float radius) {
-		final var itemEntities = entityList.stream()
-				.filter(it -> it instanceof ItemEntity)
-				.map(ItemEntity.class::cast);
-		final var context = new LycheeContext();
-		context.put(LycheeContextKey.LEVEL, level);
+public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
+	public static void invoke(final LightningBolt lightningBolt, final List<Entity> entities) {
+		var itemEntities = entities.stream().filter(it -> it instanceof ItemEntity).map(ItemEntity.class::cast);
+		var context = new LycheeContext();
+		context.put(LycheeContextKey.LEVEL, lightningBolt.level());
 		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, new Vec3(x, y, z));
-		lootParamsContext.setParam(LootContextParams.EXPLOSION_RADIUS, radius);
-		RecipeTypes.ITEM_EXPLODING.process(itemEntities, context);
+		lootParamsContext.setParam(LootContextParams.ORIGIN, lightningBolt.position());
+		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, lightningBolt);
+		RecipeTypes.LIGHTNING_CHANNELING.process(itemEntities, context);
 	}
+
 
 	protected NonNullList<Ingredient> ingredients = NonNullList.create();
 
-	public ItemExplodingRecipe(LycheeRecipeCommonProperties commonProperties) {
+	public LightningChannelingRecipe(LycheeRecipeCommonProperties commonProperties) {
 		super(commonProperties);
 	}
 
-	public ItemExplodingRecipe(
+	public LightningChannelingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			final List<Ingredient> ingredients
 	) {
@@ -61,40 +59,25 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<ItemExplodingRecipe> getSerializer() {
-		return RecipeSerializers.ITEM_EXPLODING;
+	public @NotNull RecipeSerializer<LightningChannelingRecipe> getSerializer() {
+		return RecipeSerializers.LIGHTNING_CHANNELING;
 	}
 
 	@Override
-	public @NotNull RecipeType<ItemExplodingRecipe> getType() {
-		return RecipeTypes.ITEM_EXPLODING;
+	public @NotNull RecipeType<LightningChannelingRecipe> getType() {
+		return RecipeTypes.LIGHTNING_CHANNELING;
 	}
 
-	@Override
-	public int compareTo(@NotNull ItemExplodingRecipe that) {
-		int i;
-		i = Integer.compare(maxRepeats().isAny() ? 1 : 0, that.maxRepeats().isAny() ? 1 : 0);
-		if (i != 0) {
-			return i;
-		}
-		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
-		if (i != 0) {
-			return i;
-		}
-		i = -Integer.compare(ingredients.size(), that.ingredients.size());
-		return i;
-	}
-
-	public static class Serializer implements LycheeRecipeSerializer<ItemExplodingRecipe> {
-		public static final Codec<ItemExplodingRecipe> CODEC =
+	public static class Serializer implements LycheeRecipeSerializer<LightningChannelingRecipe> {
+		public static final Codec<LightningChannelingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
 						new CompactListCodec<>(Ingredient.CODEC_NONEMPTY).optionalFieldOf(ITEM_IN, List.of())
 								.forGetter(it -> it.ingredients)
-				).apply(instance, ItemExplodingRecipe::new));
+				).apply(instance, LightningChannelingRecipe::new));
 
 		@Override
-		public @NotNull Codec<ItemExplodingRecipe> codec() {
+		public @NotNull Codec<LightningChannelingRecipe> codec() {
 			return CODEC;
 		}
 	}

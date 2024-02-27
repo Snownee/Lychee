@@ -12,7 +12,6 @@ import com.google.common.collect.Sets;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.Lychee;
 import snownee.lychee.context.ItemShapelessContext;
@@ -38,7 +37,6 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 	}
 
 	public void process(
-			final Level level,
 			final Stream<ItemEntity> itemEntities,
 			final LycheeContext context
 	) {

@@ -12,9 +12,9 @@ import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.ItemInsideRecipe;
+import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
-import snownee.lychee.recipes.lightning_channeling.LightningChannelingRecipe;
 import snownee.lychee.recipes.random_block_ticking.RandomBlockTickingRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
@@ -47,7 +47,7 @@ public final class RecipeSerializers {
 	);
 	public static final LycheeRecipeSerializer<LightningChannelingRecipe> LIGHTNING_CHANNELING = register(
 			"lightning_channeling",
-			new ItemShapelessRecipe.Serializer<>($ -> new LightningChannelingRecipe($))
+			new LightningChannelingRecipe.Serializer()
 	);
 	public static final LycheeRecipeSerializer<ItemExplodingRecipe> ITEM_EXPLODING = register(
 			"item_exploding",
