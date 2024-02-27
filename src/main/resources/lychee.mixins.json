@@ -1,11 +1,10 @@
 {
-    "required": true,
-    "package": "snownee.lychee.mixin",
-    "plugin": "snownee.lychee.mixin.MixinPlugin",
-    "compatibilityLevel": "JAVA_16",
-    "refmap": "lychee.refmap.json",
-    "mixins": [
-		"BlockMixin",
+	"required": true,
+	"package": "snownee.lychee.mixin",
+	"plugin": "snownee.lychee.mixin.MixinPlugin",
+	"compatibilityLevel": "JAVA_16",
+	"refmap": "lychee.refmap.json",
+	"mixins": [
 		"BlockStateMixin",
 		"ChunkMapAccess",
 		"CraftingMenuAccess",
@@ -37,16 +36,18 @@
 		"recipes.itemburing.ItemEntityHurtMixin",
 		"recipes.itemexploding.ExplosionMixin",
 		"recipes.iteminside.EntityMixin",
+		"recipes.randomblockticking.BlockBehaviourMixin",
+		"recipes.randomblockticking.BlockStateMixin",
 		"rei.DefaultCraftingDisplayMixin"
 	],
-    "client": [
-        "ClientPacketListenerMixin",
-        "ClientRecipeBookMixin",
-        "GameRendererAccess"
-    ],
-    "injectors": {
-        "defaultRequire": 1,
-        "maxShiftBy": 2
-    },
-    "minVersion": "0.8"
+	"client": [
+		"ClientPacketListenerMixin",
+		"ClientRecipeBookMixin",
+		"GameRendererAccess"
+	],
+	"injectors": {
+		"defaultRequire": 1,
+		"maxShiftBy": 2
+	},
+	"minVersion": "0.8"
 }

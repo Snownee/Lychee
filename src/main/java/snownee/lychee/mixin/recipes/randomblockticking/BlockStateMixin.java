@@ -1,4 +1,4 @@
-package snownee.lychee.mixin;
+package snownee.lychee.mixin.recipes.randomblockticking;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,38 +16,33 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
-import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.RandomlyTickable;
 import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 
 @Mixin(BlockStateBase.class)
 public class BlockStateMixin {
 
 	@Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
 	private void randomTick(ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource, CallbackInfo ci) {
-		BlockState state = (BlockState) (Object) this;
+		@SuppressWarnings("DataFlowIssue") var state = (BlockState) (Object) this;
 
-		RandomlyTickable block = (RandomlyTickable) state.getBlock();
+		var block = (RandomlyTickable) state.getBlock();
 		if (block.lychee$isTickable()) {
 			final Supplier<LycheeContext> ctxSupplier = () -> {
-				var builder = new LycheeRecipeContext.Builder<>(serverLevel);
-				builder.withRandom(randomSource);
-				builder.withParameter(LootContextParams.BLOCK_STATE, state);
-				builder.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
-				builder.withParameter(LycheeLootContextParams.BLOCK_POS, blockPos);
-				return builder.create(RecipeTypes.RANDOM_BLOCK_TICKING.contextParamSet);
+				var context = new LycheeContext();
+				context.put(LycheeContextKey.LEVEL, serverLevel);
+				context.put(LycheeContextKey.RANDOM, randomSource);
+				var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+				lootParamsContext.setParam(LootContextParams.BLOCK_STATE, state);
+				lootParamsContext.setParam(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
+				lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, blockPos);
+				return context;
 			};
 			final var result = RecipeTypes.RANDOM_BLOCK_TICKING.process(serverLevel, state, ctxSupplier);
-			if (result != null && !result.getFirst().runtime.doDefault) {
+			if (result != null && result.getFirst().get(LycheeContextKey.ACTION).avoidDefault) {
 				ci.cancel();
 			}
 		}
-
-		if (CommonProxy.hasDFLib && DripstoneRecipe.safeTick(state, serverLevel, blockPos, randomSource)) {
-			ci.cancel();
-		}
 	}
-
 }

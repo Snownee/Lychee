@@ -1,4 +1,4 @@
-package snownee.lychee.mixin;
+package snownee.lychee.mixin.recipes.randomblockticking;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -6,12 +6,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.recipes.random_block_ticking.RandomlyTickable;
+import snownee.lychee.util.RandomlyTickable;
 
-@Mixin(Block.class)
-public class BlockMixin implements RandomlyTickable {
+@Mixin(BlockBehaviour.class)
+public class BlockBehaviourMixin implements RandomlyTickable {
 
 	@Unique
 	private boolean lychee$randomlyTickable;

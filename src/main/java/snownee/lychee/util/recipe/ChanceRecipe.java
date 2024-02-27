@@ -1,4 +1,4 @@
-package snownee.lychee.core.recipe.recipe;
+package snownee.lychee.util.recipe;
 
 public interface ChanceRecipe {
 

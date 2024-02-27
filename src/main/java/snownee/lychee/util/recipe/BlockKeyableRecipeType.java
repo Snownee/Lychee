@@ -30,7 +30,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.contextual.Chance;
-import snownee.lychee.core.recipe.recipe.ChanceRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Pair;
 import snownee.lychee.util.context.LycheeContext;
@@ -99,7 +98,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 		if (isEmpty()) {
 			return Optional.empty();
 		}
-        final var level = player.level();
+		final var level = player.level();
 		final var blockstate = level.getBlockState(pos);
 		final var recipes = recipesByBlock.getOrDefault(blockstate.getBlock(), List.of());
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
@@ -164,8 +163,8 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 		final var context = Suppliers.memoize(ctxSupplier);
 		for (final var recipe : iterable) {
 			if (extractChance) {
-				ChanceRecipe $ = (ChanceRecipe) recipe.value();
-				if ($.getChance() != 1 && $.getChance() <= level.random.nextFloat()) {
+				var chance = (ChanceRecipe) recipe.value();
+				if (chance.getChance() != 1 && chance.getChance() <= context.get().get(LycheeContextKey.RANDOM).nextFloat()) {
 					continue;
 				}
 			}

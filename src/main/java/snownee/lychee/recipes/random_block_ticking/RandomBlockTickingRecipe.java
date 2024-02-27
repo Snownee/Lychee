@@ -13,9 +13,9 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.recipe.recipe.ChanceRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
+import snownee.lychee.util.recipe.ChanceRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class RandomBlockTickingRecipe extends OldLycheeRecipe<LycheeRecipeContext>

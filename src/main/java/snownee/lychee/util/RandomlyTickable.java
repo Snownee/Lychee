@@ -1,4 +1,4 @@
-package snownee.lychee.recipes.random_block_ticking;
+package snownee.lychee.util;
 
 public interface RandomlyTickable {
 

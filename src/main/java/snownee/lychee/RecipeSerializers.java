@@ -13,9 +13,9 @@ import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.recipes.LightningChannelingRecipe;
+import snownee.lychee.recipes.RandomBlockTickingRecipe;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
-import snownee.lychee.recipes.random_block_ticking.RandomBlockTickingRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public final class RecipeSerializers {

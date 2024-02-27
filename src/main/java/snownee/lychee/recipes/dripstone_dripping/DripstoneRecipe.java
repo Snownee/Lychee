@@ -34,11 +34,11 @@ import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.contextual.Location;
 import snownee.lychee.core.contextual.Not;
 import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.recipe.recipe.ChanceRecipe;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.mixin.PointedDripstoneBlockAccess;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
+import snownee.lychee.util.recipe.ChanceRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>
