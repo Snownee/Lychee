@@ -39,8 +39,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<R, LycheeContext>>
-		extends LycheeRecipeType<LycheeContext, R> {
+public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends LycheeRecipeType<LycheeContext, R> {
 
 	protected final Map<Block, List<RecipeHolder<R>>> recipesByBlock = Maps.newHashMap();
 	protected final List<RecipeHolder<R>> anyBlockRecipes = Lists.newLinkedList();

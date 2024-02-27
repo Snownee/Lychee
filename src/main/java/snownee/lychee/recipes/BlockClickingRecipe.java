@@ -1,7 +1,5 @@
 package snownee.lychee.recipes;
 
-import java.util.Optional;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,7 +15,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -27,35 +24,35 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.BoundsExtensions;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class BlockClickingRecipe extends BlockInteractingRecipe {
 
 	public static InteractionResult invoke(
-			Player player,
-			Level world,
-			InteractionHand hand,
-			BlockPos pos,
-			Direction direction
+			final Player player,
+			final Level level,
+			final InteractionHand hand,
+			final BlockPos pos,
+			final Direction direction
 	) {
 		if (player.isSpectator()) {
 			return InteractionResult.PASS;
 		}
-		ItemStack stack = player.getItemInHand(hand);
+		final var stack = player.getItemInHand(hand);
 		if (player.getCooldowns().isOnCooldown(stack.getItem())) {
 			return InteractionResult.PASS;
 		}
-		Vec3 vec = Vec3.atCenterOf(pos);
-		LycheeRecipeContext.Builder<LycheeRecipeContext> builder = new LycheeRecipeContext.Builder<>(world);
-		builder.withParameter(LycheeLootContextParams.DIRECTION, direction);
-		Optional<snownee.lychee.recipes.interaction.BlockClickingRecipe> result = RecipeTypes.BLOCK_CLICKING.process(player, hand, pos, vec, builder);
-		if (result.isPresent()) {
-			return InteractionResult.SUCCESS;
-		}
-		return InteractionResult.PASS;
+		final var vec = Vec3.atCenterOf(pos);
+		final var context = new LycheeContext();
+		context.put(LycheeContextKey.LEVEL, level);
+		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		lootParamsContext.setParam(LycheeLootContextParams.DIRECTION, direction);
+		final var result = RecipeTypes.BLOCK_CLICKING.process(player, hand, pos, vec, context);
+		return result.map(it -> InteractionResult.SUCCESS).orElse(InteractionResult.PASS);
 	}
 
 
