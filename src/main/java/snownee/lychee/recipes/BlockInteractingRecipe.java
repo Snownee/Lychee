@@ -37,8 +37,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-public class BlockInteractingRecipe
-		extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockInteractingRecipe, LycheeContext> {
+public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockInteractingRecipe> {
 
 	public static InteractionResult invoke(
 			final Player player,
