@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -16,11 +19,14 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.mixin.NonNullListAccess;
+import snownee.lychee.util.codec.CompactListCodec;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
+import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements Comparable<ItemExplodingRecipe> {
 	public static void invoke(final ServerLevel level, double x, double y, double z, List<Entity> entityList, float radius) {
@@ -34,7 +40,6 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 		RecipeTypes.ITEM_EXPLODING.process(level, itemEntities, context);
 	}
 
-
 	protected NonNullList<Ingredient> ingredients = NonNullList.create();
 
 	public ItemExplodingRecipe(LycheeRecipeCommonProperties commonProperties) {
@@ -43,10 +48,10 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	public ItemExplodingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			NonNullList<Ingredient> ingredients
+			final List<Ingredient> ingredients
 	) {
 		super(commonProperties);
-		this.ingredients = ingredients;
+		this.ingredients = NonNullListAccess.construct(ingredients, null);
 	}
 
 	@Override
@@ -77,5 +82,19 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 		}
 		i = -Integer.compare(ingredients.size(), that.ingredients.size());
 		return i;
+	}
+
+	public static class Serializer implements LycheeRecipeSerializer<ItemExplodingRecipe> {
+		public static final Codec<ItemExplodingRecipe> CODEC =
+				RecordCodecBuilder.create(instance -> instance.group(
+						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
+						new CompactListCodec<>(Ingredient.CODEC_NONEMPTY).optionalFieldOf(ITEM_IN, List.of())
+								.forGetter(it -> it.ingredients)
+				).apply(instance, ItemExplodingRecipe::new));
+
+		@Override
+		public @NotNull Codec<ItemExplodingRecipe> codec() {
+			return CODEC;
+		}
 	}
 }
