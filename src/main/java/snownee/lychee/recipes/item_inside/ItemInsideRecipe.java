@@ -27,10 +27,10 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.core.def.BlockPredicateHelper;
 import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
-import snownee.lychee.core.recipe.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.recipes.item_inside.ItemInsideRecipeType.Cache;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.LycheeCounter;
 import snownee.lychee.util.RecipeMatcher;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
@@ -100,7 +100,7 @@ public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe>
 
 	@Nullable
 	public Cache buildCache(Object2FloatMap<Item> itemWeights, List<ItemInsideRecipe> specialRecipes) {
-		special = !getIngredients().stream().anyMatch(CommonProxy::isSimpleIngredient);
+		special = getIngredients().stream().noneMatch(CommonProxy::isSimpleIngredient);
 		if (special) {
 			specialRecipes.add(this);
 			return null;

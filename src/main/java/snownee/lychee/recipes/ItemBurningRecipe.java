@@ -30,7 +30,8 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		lootParamsContext.validate(RecipeTypes.ITEM_BURNING.contextParamSet);
 		RecipeTypes.ITEM_BURNING.findFirst(context, entity.level()).ifPresent(it -> {
 			int times = it.value().getRandomRepeats(entity.getItem().getCount(), context);
-			var itemStackHolders = context.put(LycheeContextKey.ITEM, ItemStackHolderCollection.InWorld.of(entity));
+			var itemStackHolders = ItemStackHolderCollection.InWorld.of(entity);
+			context.put(LycheeContextKey.ITEM, itemStackHolders);
 			it.value().applyPostActions(context, times);
 			itemStackHolders.postApply(true, times);
 		});

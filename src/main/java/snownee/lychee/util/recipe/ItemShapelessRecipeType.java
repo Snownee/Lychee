@@ -55,7 +55,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 			final LycheeRecipeType<LycheeContext, T> recipeType,
 			final Iterable<RecipeHolder<T>> recipes,
 			final LycheeContext context,
-			final Predicate<T> predicate
+			final Predicate<RecipeHolder<T>> predicate
 	) {
 		var matchedAny = false;
 		var loop = 0;
@@ -79,7 +79,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 				try {
 					final var match = recipeType.tryMatch(recipe, level, context);
 					if (match.isPresent()) {
-						if (predicate != null && !predicate.test(recipe.value())) {
+						if (predicate != null && !predicate.test(recipe)) {
 							excluded.add(recipe);
 							continue;
 						}

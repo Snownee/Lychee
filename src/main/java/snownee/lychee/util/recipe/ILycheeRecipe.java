@@ -74,6 +74,10 @@ public interface ILycheeRecipe<C extends Container> extends Recipe<C>, Contextua
 		return ITEM_IN_POINTER;
 	}
 
+	default boolean tickOrApply(LycheeContext context) {
+		return true;
+	}
+
 	@Override
 	boolean matches(C context, Level level);
 

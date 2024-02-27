@@ -13,8 +13,8 @@ public class RecipeMatcher<T> {
 	public int[] inputUsed;
 	public int[][] use;
 	// input to tests multimap. map to the indexes of the first N inputs according to the `inputUsed` array
-	private BitSet data;
-	private BitSet mask;
+	private final BitSet data;
+	private final BitSet mask;
 
 	public RecipeMatcher(List<T> inputs, List<? extends Predicate<T>> tests, int[] inputCapacity) {
 		this.inputs = inputs;

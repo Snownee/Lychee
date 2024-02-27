@@ -1,4 +1,4 @@
-package snownee.lychee.core.recipe.recipe;
+package snownee.lychee.util;
 
 import java.util.Objects;
 
@@ -6,6 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 public interface LycheeCounter {
 
@@ -18,13 +19,12 @@ public interface LycheeCounter {
 
 	int lychee$getCount();
 
-	default void lychee$update(@Nullable ResourceLocation prevRecipeId, Recipe<?> recipe) {
-		lychee$setRecipeId(recipe.getId());
-		if (Objects.equals(prevRecipeId, recipe.getId())) {
+	default <T extends Recipe<?>> void lychee$update(@Nullable ResourceLocation prevId, RecipeHolder<T> recipe) {
+		lychee$setRecipeId(recipe.id());
+		if (Objects.equals(prevId, recipe.id())) {
 			lychee$setCount(lychee$getCount() + 1);
 		} else {
 			lychee$setCount(0);
 		}
 	}
-
 }

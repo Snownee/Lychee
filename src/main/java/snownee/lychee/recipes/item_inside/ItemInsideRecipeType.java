@@ -33,9 +33,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.context.ItemShapelessContext;
-import snownee.lychee.core.recipe.recipe.LycheeCounter;
 import snownee.lychee.core.recipe.recipe.type.ItemShapelessRecipeType;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.LycheeCounter;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext, ItemInsideRecipe> {
@@ -55,7 +55,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 		super.refreshCache();
 		Object2FloatMap<Item> itemCount = new Object2FloatOpenHashMap<>();
 		List<Cache> caches = recipes.stream()
-				.map($ -> $.buildCache(itemCount, specialRecipes))
+				.map($ -> $.value().buildCache(itemCount, specialRecipes))
 				.filter(Objects::nonNull)
 				.collect(Collectors.toCollection(ArrayList::new));
 		List<Item> sorted = itemCount.object2FloatEntrySet().stream().sorted((a, b) -> Float.compare(
@@ -120,7 +120,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemShapelessContext,
 		});
 	}
 
-	static record Cache(ItemInsideRecipe recipe, List<Set<Item>> ingredients) {
+	public record Cache(ItemInsideRecipe recipe, List<Set<Item>> ingredients) {
 	}
 
 }

@@ -36,6 +36,7 @@
         "recipes.crafting.TransientCraftingContainerAccess",
         "recipes.itemburing.ItemEntityHurtMixin",
         "recipes.itemexploding.ExplosionMixin",
+        "recipes.iteminside.EntityMixin",
         "rei.DefaultCraftingDisplayMixin"
     ],
     "client": [
