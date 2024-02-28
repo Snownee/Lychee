@@ -219,8 +219,8 @@ public record LocationPredicate(
 			return this;
 		}
 
-		public LocationPredicate.Builder setBlock(BlockPredicate.Builder block) {
-			this.block = Optional.of(block.build());
+		public LocationPredicate.Builder setBlock(BlockPredicate block) {
+			this.block = Optional.of(block);
 			return this;
 		}
 

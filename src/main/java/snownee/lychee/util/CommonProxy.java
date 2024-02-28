@@ -15,7 +15,6 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.minecraft.ChatFormatting;
@@ -24,9 +23,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.dispenser.BlockSource;
-import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -51,7 +47,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.Mod;
 import snownee.kiwi.loader.Platform;
@@ -69,9 +64,9 @@ import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
-import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.contextual.ContextualConditionType;
+import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 @Mod(Lychee.ID)
@@ -328,17 +323,6 @@ public class CommonProxy implements ModInitializer {
 		return IngredientInfo.Type.NORMAL;
 	}
 
-	public static boolean hasModdedDripParticle(FluidState fluid) {
-		if (hasDFLib && fluid.getType() instanceof DripstoneInteractingFluid) {
-			return true;
-		}
-		return false;
-	}
-
-	public static ParticleType<BlockParticleOption> registerParticleType(ParticleOptions.Deserializer<BlockParticleOption> deserializer) {
-		return FabricParticleTypes.complex(deserializer);
-	}
-
 	public static ItemStack dispensePlacement(BlockSource pSource, ItemStack pStack, Direction direction) {
 		if (!(pStack.getItem() instanceof BlockItem item)) {
 			return pStack;
@@ -369,17 +353,17 @@ public class CommonProxy implements ModInitializer {
 		Registry.register(
 				BuiltInRegistries.PARTICLE_TYPE,
 				new ResourceLocation(Lychee.ID, "dripstone_dripping"),
-				DripstoneRecipeMod.DRIPSTONE_DRIPPING
+				DripstoneParticleService.DRIPSTONE_DRIPPING
 		);
 		Registry.register(
 				BuiltInRegistries.PARTICLE_TYPE,
 				new ResourceLocation(Lychee.ID, "dripstone_falling"),
-				DripstoneRecipeMod.DRIPSTONE_FALLING
+				DripstoneParticleService.DRIPSTONE_FALLING
 		);
 		Registry.register(
 				BuiltInRegistries.PARTICLE_TYPE,
 				new ResourceLocation(Lychee.ID, "dripstone_splash"),
-				DripstoneRecipeMod.DRIPSTONE_SPLASH
+				DripstoneParticleService.DRIPSTONE_SPLASH
 		);
 	}
 

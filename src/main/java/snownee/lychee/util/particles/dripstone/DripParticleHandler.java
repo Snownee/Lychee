@@ -1,4 +1,4 @@
-package snownee.lychee.recipes.dripstone_dripping;
+package snownee.lychee.util.particles.dripstone;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
@@ -15,7 +15,7 @@ public interface DripParticleHandler {
 		@Override
 		public void addParticle(Level level, BlockPos blockPos, BlockState blockState, double x, double y, double z) {
 			level.addParticle(
-					new BlockParticleOption(DripstoneRecipeMod.DRIPSTONE_DRIPPING, blockState),
+					new BlockParticleOption(DripstoneParticleService.DRIPSTONE_DRIPPING, blockState),
 					x,
 					y,
 					z,

@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.context.ActionContext;
@@ -30,6 +31,8 @@ public interface LycheeContextKey<T> {
 	LycheeContextKey<FallingBlockEntity> FALLING_BLOCK_ENTITY = register("falling_block_entity");
 
 	LycheeContextKey<CraftingContext> CRAFTING = register("crafting");
+
+	LycheeContextKey<BlockState> DRIPSTONE_ROOT = register("dripstone_root");
 
 	static <T extends LycheeContextKey<?>> T register(ResourceLocation location, T object) {
 		Registry.register(LycheeRegistries.CONTEXT, location, object);

@@ -84,7 +84,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		if (itemShapelessContext.totalItems < ingredients.size()) {
 			return false;
 		}
-		if (!BlockPredicateExtensions.matches(landingBlock, context)) {
+		if (!BlockPredicateExtensions.matches(level, landingBlock, context)) {
 			return false;
 		}
 		final var fallingBlockEntityContext = context.get(LycheeContextKey.FALLING_BLOCK_ENTITY);

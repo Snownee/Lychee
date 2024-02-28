@@ -1,4 +1,4 @@
-package snownee.lychee.mixin;
+package snownee.lychee.mixin.particles;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,7 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
-import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
+import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 
 @Mixin(value = PointedDripstoneBlock.class, priority = 1100)
 public class PointedDripstoneBlockMixin {
@@ -32,7 +32,7 @@ public class PointedDripstoneBlockMixin {
 			float f,
 			CallbackInfo ci
 	) {
-		if (DripstoneRecipe.on(blockState, serverLevel, blockPos)) {
+		if (DripstoneRecipe.invoke(blockState, serverLevel, blockPos)) {
 			ci.cancel();
 		}
 	}
@@ -51,7 +51,7 @@ public class PointedDripstoneBlockMixin {
 			BlockState blockState,
 			CallbackInfo ci
 	) {
-		if (DripstoneRecipeMod.spawnDripParticle(level, blockPos, blockState)) {
+		if (DripstoneParticleService.spawnDripParticle(level, blockPos, blockState)) {
 			ci.cancel();
 		}
 	}
@@ -71,7 +71,7 @@ public class PointedDripstoneBlockMixin {
 			RandomSource randomSource,
 			CallbackInfo ci
 	) {
-		if (DripstoneRecipeMod.spawnDripParticle(level, blockPos, blockState)) {
+		if (DripstoneParticleService.spawnDripParticle(level, blockPos, blockState)) {
 			ci.cancel();
 		}
 	}

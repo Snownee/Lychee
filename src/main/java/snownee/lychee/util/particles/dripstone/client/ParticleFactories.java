@@ -1,4 +1,4 @@
-package snownee.lychee.recipes.dripstone_dripping.client;
+package snownee.lychee.util.particles.dripstone.client;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.DripParticle;
@@ -8,8 +8,9 @@ import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import snownee.lychee.recipes.dripstone_dripping.DripParticleHandler;
-import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
+import snownee.lychee.util.particles.dripstone.DripParticleHandler;
+import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
+import snownee.lychee.util.particles.dripstone.DripstoneSplashParticle;
 
 //Modified from Dripstone Fluid Lib
 public class ParticleFactories {
@@ -24,7 +25,7 @@ public class ParticleFactories {
 			double velocityY,
 			double velocityZ
 	) {
-		DripParticleHandler handler = DripstoneRecipeMod.getParticleHandler(level, blockState);
+		DripParticleHandler handler = DripstoneParticleService.getParticleHandler(level, blockState);
 		if (handler == null) {
 			return;
 		}
@@ -55,7 +56,7 @@ public class ParticleFactories {
 				double velocityZ
 		) {
 			BlockParticleOption fallOption = new BlockParticleOption(
-					DripstoneRecipeMod.DRIPSTONE_FALLING,
+					DripstoneParticleService.DRIPSTONE_FALLING,
 					defaultParticleType.getState()
 			);
 			DripParticle particle = new DripParticle.DripHangParticle(level, x, y, z, Fluids.WATER, fallOption);
@@ -84,7 +85,7 @@ public class ParticleFactories {
 				double velocityZ
 		) {
 			BlockParticleOption fallOption = new BlockParticleOption(
-					DripstoneRecipeMod.DRIPSTONE_SPLASH,
+					DripstoneParticleService.DRIPSTONE_SPLASH,
 					defaultParticleType.getState()
 			);
 			DripParticle particle = new DripParticle.DripstoneFallAndLandParticle(

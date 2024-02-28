@@ -21,9 +21,9 @@ import snownee.lychee.client.core.post.ItemBasedPostActionRenderer;
 import snownee.lychee.client.core.post.ItemStackPostActionRenderer;
 import snownee.lychee.client.core.post.PlaceBlockPostActionRenderer;
 import snownee.lychee.client.core.post.PostActionRenderer;
-import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipeMod;
-import snownee.lychee.recipes.dripstone_dripping.client.ParticleFactories;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
+import snownee.lychee.util.particles.dripstone.client.ParticleFactories;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ClientProxy implements ClientModInitializer {
@@ -57,15 +57,15 @@ public class ClientProxy implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ParticleFactoryRegistry.getInstance().register(
-				DripstoneRecipeMod.DRIPSTONE_DRIPPING,
+				DripstoneParticleService.DRIPSTONE_DRIPPING,
 				ParticleFactories.Dripping::new
 		);
 		ParticleFactoryRegistry.getInstance().register(
-				DripstoneRecipeMod.DRIPSTONE_FALLING,
+				DripstoneParticleService.DRIPSTONE_FALLING,
 				ParticleFactories.Falling::new
 		);
 		ParticleFactoryRegistry.getInstance().register(
-				DripstoneRecipeMod.DRIPSTONE_SPLASH,
+				DripstoneParticleService.DRIPSTONE_SPLASH,
 				ParticleFactories.Splash::new
 		);
 

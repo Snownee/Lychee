@@ -17,8 +17,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-public abstract class ItemAndBlockRecipe<C extends LycheeContext>
-		extends LycheeRecipe<C> implements BlockKeyableRecipe<ItemAndBlockRecipe<C>, C> {
+public abstract class ItemAndBlockRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<ItemAndBlockRecipe> {
 	public static MapCodec<Ingredient> INPUT_CODEC = Ingredient.CODEC.fieldOf(ITEM_IN);
 	public static MapCodec<BlockPredicate> BLOCK_CODEC = BlockPredicate.CODEC.fieldOf(BLOCK_IN);
 
@@ -44,14 +43,14 @@ public abstract class ItemAndBlockRecipe<C extends LycheeContext>
 	}
 
 	@Override
-	public boolean matches(LycheeContext context, Level pLevel) {
+	public boolean matches(LycheeContext context, Level level) {
 		final var thisEntity = context.get(LycheeContextKey.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
 		final var stack = thisEntity instanceof ItemEntity itemEntity ? itemEntity.getItem() : context.getItem(0);
-		return input.test(stack) && BlockPredicateExtensions.matches(block, context);
+		return input.test(stack) && BlockPredicateExtensions.matches(level, block, context);
 	}
 
 	@Override
-	public int compareTo(ItemAndBlockRecipe<C> that) {
+	public int compareTo(ItemAndBlockRecipe that) {
 		int i;
 		i = Integer.compare(maxRepeats().isAny() ? 1 : 0, that.maxRepeats().isAny() ? 1 : 0);
 		if (i != 0) {

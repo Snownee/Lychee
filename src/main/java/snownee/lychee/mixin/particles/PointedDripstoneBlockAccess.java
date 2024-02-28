@@ -1,4 +1,4 @@
-package snownee.lychee.mixin;
+package snownee.lychee.mixin.particles;
 
 import java.util.Optional;
 import java.util.function.BiPredicate;
@@ -25,7 +25,7 @@ public interface PointedDripstoneBlockAccess {
 	}
 
 	@Invoker
-	static BlockPos callFindTip(BlockState blockState, LevelAccessor level, BlockPos blockPos, int i, boolean b) {
+	static BlockPos callFindTip(BlockState state, LevelAccessor level, BlockPos pos, int maxIterations, boolean isTipMerge) {
 		throw new IllegalStateException();
 	}
 
@@ -47,7 +47,7 @@ public interface PointedDripstoneBlockAccess {
 	}
 
 	@Invoker
-	static Optional<BlockPos> callFindRootBlock(Level level, BlockPos blockPos2, BlockState blockState, int i) {
+	static Optional<BlockPos> callFindRootBlock(Level level, BlockPos pos, BlockState state, int maxIterations) {
 		throw new IllegalStateException();
 	}
 

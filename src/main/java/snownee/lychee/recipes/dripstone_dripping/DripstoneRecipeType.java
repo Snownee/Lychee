@@ -8,10 +8,10 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
-import snownee.lychee.core.def.BlockPredicateHelper;
+import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 
-public class DripstoneRecipeType extends BlockKeyableRecipeType<DripstoneContext, DripstoneRecipe> {
+public class DripstoneRecipeType extends BlockKeyableRecipeType<DripstoneRecipe> {
 
 	private final Set<Block> allSources = Sets.newHashSet();
 
@@ -23,10 +23,8 @@ public class DripstoneRecipeType extends BlockKeyableRecipeType<DripstoneContext
 	public void refreshCache() {
 		super.refreshCache();
 		allSources.clear();
-		for (DripstoneRecipe recipe : recipes) {
-			for (Block block : BlockPredicateHelper.getMatchedBlocks(recipe.getSourceBlock())) {
-				allSources.add(block);
-			}
+		for (var recipe : recipes) {
+			allSources.addAll(BlockPredicateExtensions.matchedBlocks(recipe.value().sourceBlock));
 		}
 	}
 

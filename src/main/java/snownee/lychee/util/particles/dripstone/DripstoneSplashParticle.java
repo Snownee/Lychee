@@ -1,4 +1,4 @@
-package snownee.lychee.recipes.dripstone_dripping.client;
+package snownee.lychee.util.particles.dripstone;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.DripParticle;

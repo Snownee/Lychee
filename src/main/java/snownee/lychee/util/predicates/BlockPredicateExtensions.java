@@ -30,6 +30,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -112,9 +113,10 @@ public class BlockPredicateExtensions {
 	/**
 	 * Optimized without get block state and block entity calls. And needn't pos loaded.
 	 */
-	public static boolean matches(BlockPredicate predicate, LycheeContext context) {
+	public static boolean matches(Level level, BlockPredicate predicate, LycheeContext context) {
 		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 		return unsafeMatches(
+				level,
 				predicate,
 				lootParamsContext.get(LootContextParams.BLOCK_STATE),
 				() -> lootParamsContext.getOrNull(LootContextParams.BLOCK_ENTITY)
@@ -122,6 +124,7 @@ public class BlockPredicateExtensions {
 	}
 
 	public static boolean unsafeMatches(
+			Level level,
 			BlockPredicate predicate,
 			BlockState state,
 			Supplier<BlockEntity> blockEntitySupplier
@@ -138,7 +141,7 @@ public class BlockPredicateExtensions {
 
 		if (predicate.nbt().isPresent()) {
 			final var blockEntity = blockEntitySupplier.get();
-			return blockEntity != null && predicate.nbt().get().matches(blockEntity.saveWithFullMetadata());
+			return blockEntity != null && predicate.nbt().get().matches(blockEntity.saveWithFullMetadata(level.registryAccess()));
 		}
 
 		return true;

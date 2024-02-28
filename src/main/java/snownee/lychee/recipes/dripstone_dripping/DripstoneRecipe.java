@@ -1,28 +1,27 @@
 package snownee.lychee.recipes.dripstone_dripping;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonObject;
+import com.google.common.collect.Lists;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
@@ -30,38 +29,99 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.action.Break;
 import snownee.lychee.action.Delay;
-import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.contextual.Location;
-import snownee.lychee.core.contextual.Not;
-import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
-import snownee.lychee.mixin.PointedDripstoneBlockAccess;
+import snownee.lychee.contextual.Location;
+import snownee.lychee.contextual.Not;
+import snownee.lychee.mixin.particles.PointedDripstoneBlockAccess;
 import snownee.lychee.util.action.Job;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
+import snownee.lychee.util.predicates.BlockPredicateExtensions;
+import snownee.lychee.util.predicates.LocationCheck;
+import snownee.lychee.util.predicates.LocationPredicate;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ChanceRecipe;
+import snownee.lychee.util.recipe.LycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
+import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>
-		implements BlockKeyableRecipe<DripstoneRecipe>, ChanceRecipe {
+public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<DripstoneRecipe>, ChanceRecipe {
+	public static boolean invoke(BlockState blockState, ServerLevel level, BlockPos blockPos) {
+		if (RecipeTypes.DRIPSTONE_DRIPPING.isEmpty()) {
+			return false;
+		}
+		var tipPos = PointedDripstoneBlockAccess.callFindTip(blockState, level, blockPos, 11, false);
+		if (tipPos == null) {
+			return false;
+		}
+		var targetPos = findTargetBelowStalactiteTip(level, tipPos);
+		if (targetPos == null) {
+			return false;
+		}
+		var sourceBlock = DripstoneParticleService.findBlockAboveStalactite(level, blockPos, blockState);
+		if (sourceBlock == null) {
+			return false;
+		}
+		var targetBlock = level.getBlockState(targetPos);
+		var result = RecipeTypes.DRIPSTONE_DRIPPING.process(level, targetBlock, () -> {
+			var context = new LycheeContext();
+			var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+			lootParamsContext.setParam(LootContextParams.BLOCK_STATE, targetBlock);
+			var origin = new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.99, targetPos.getZ() + 0.5);
+			lootParamsContext.setParam(LootContextParams.ORIGIN, origin);
+			lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, targetPos);
+			lootParamsContext.validate(LycheeLootContextParamSets.BLOCK_ONLY);
+			return context;
+		});
+		if (result == null) {
+			return false;
+		}
+		var context = result.getFirst();
+		var recipe = result.getSecond();
+		level.levelEvent(LevelEvent.DRIPSTONE_DRIP, tipPos, 0);
+		var i = tipPos.getY() - targetPos.getY();
+		var j = 50 + i;
+		var breakAction = new Break();
+		var builder = new LocationPredicate.Builder().setBlock(recipe.value().targetBlock);
+		var check = (LocationCheck) LocationCheck.checkLocation(builder).build();
+		breakAction.withCondition(new Not(new Location(check)));
+		var actionContext = context.get(LycheeContextKey.ACTION);
+		actionContext.jobs.offer(new Job(breakAction, 1));
+		actionContext.jobs.offer(new Job(new Delay(j / 20F), 1));
+		actionContext.run(recipe.value(), context);
+		return true;
+	}
 
 	private float chance = 1;
-	protected BlockPredicate sourceBlock;
-	protected BlockPredicate targetBlock;
+	protected final @Nullable BlockPredicate sourceBlock;
+	protected final @Nullable BlockPredicate targetBlock;
 
-	public DripstoneRecipe(ResourceLocation id) {
-		super(id);
+	protected DripstoneRecipe(
+			LycheeRecipeCommonProperties commonProperties,
+			@Nullable BlockPredicate sourceBlock,
+			@Nullable BlockPredicate targetBlock
+	) {
+		super(commonProperties);
+		this.sourceBlock = sourceBlock;
+		this.targetBlock = targetBlock;
 	}
 
 	@Override
-	public boolean matches(DripstoneContext ctx, Level level) {
-		if (!BlockPredicateHelper.matches(targetBlock, ctx)) {
+	public boolean matches(LycheeContext context, Level level) {
+		if (targetBlock != null && !BlockPredicateExtensions.matches(level, targetBlock, context)) {
 			return false;
 		}
-		return BlockPredicateHelper.matches(
-				sourceBlock,
-				ctx.source,
-				() -> level.getBlockEntity(ctx.getParam(LycheeLootContextParams.BLOCK_POS))
-		);
+
+		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+
+		return sourceBlock != null &&
+				BlockPredicateExtensions.unsafeMatches(
+						level,
+						sourceBlock,
+						context.get(LycheeContextKey.DRIPSTONE_ROOT),
+						() -> level.getBlockEntity(lootParamsContext.get(LycheeLootContextParams.BLOCK_POS))
+				);
 	}
 
 	@Override
@@ -75,12 +135,12 @@ public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>
 	}
 
 	@Override
-	public OldLycheeRecipe.@NotNull Serializer<?> getSerializer() {
+	public @NotNull RecipeSerializer<DripstoneRecipe> getSerializer() {
 		return RecipeSerializers.DRIPSTONE_DRIPPING;
 	}
 
 	@Override
-	public @NotNull LycheeRecipeType<?, ?> getType() {
+	public @NotNull LycheeRecipeType<LycheeContext, DripstoneRecipe> getType() {
 		return RecipeTypes.DRIPSTONE_DRIPPING;
 	}
 
@@ -91,32 +151,34 @@ public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>
 		if (i != 0) {
 			return i;
 		}
-		i = Integer.compare(targetBlock == BlockPredicate.ANY ? 1 : 0, that.targetBlock == BlockPredicate.ANY ? 1 : 0);
+		i = Integer.compare(targetBlock == null ? 1 : 0, that.targetBlock == null ? 1 : 0);
 		if (i != 0) {
 			return i;
 		}
-		return getId().compareTo(that.getId());
+		i = Integer.compare(sourceBlock == null ? 1 : 0, that.sourceBlock == null ? 1 : 0);
+		return i;
 	}
 
 	@Override
-	public BlockPredicate blockPredicate() {
-		return targetBlock;
+	public Optional<BlockPredicate> blockPredicate() {
+		return Optional.ofNullable(targetBlock);
 	}
 
-	public BlockPredicate getSourceBlock() {
-		return sourceBlock;
+	public Optional<BlockPredicate> sourceBlock() {
+		return Optional.ofNullable(sourceBlock);
 	}
 
 	@Override
 	public List<BlockPredicate> getBlockInputs() {
-		return List.of(sourceBlock, targetBlock);
-	}
-
-	@Override
-	public void applyPostActions(LycheeRecipeContext ctx, int times) {
-		if (!ctx.getLevel().isClientSide) {
-			ctx.enqueueActions(getPostActions(), times, true);
+		var list = Lists.<BlockPredicate>newArrayList();
+		if (sourceBlock != null) {
+			list.add(sourceBlock);
 		}
+
+		if (targetBlock != null) {
+			list.add(targetBlock);
+		}
+		return list;
 	}
 
 	public static boolean safeTick(
@@ -128,61 +190,17 @@ public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>
 		if (!PointedDripstoneBlockAccess.callIsStalactiteStartPos(state, serverLevel, blockPos)) {
 			return false;
 		}
-		float f = randomSource.nextFloat();
+		var f = randomSource.nextFloat();
 		if (f > 0.17578125f && f > 0.05859375f) {
 			return false;
 		}
-		return on(state, serverLevel, blockPos);
-	}
-
-	public static boolean on(BlockState blockState, ServerLevel level, BlockPos blockPos) {
-		if (RecipeTypes.DRIPSTONE_DRIPPING.isEmpty()) {
-			return false;
-		}
-		BlockPos tipPos = PointedDripstoneBlockAccess.callFindTip(blockState, level, blockPos, 11, false);
-		if (tipPos == null) {
-			return false;
-		}
-		BlockPos targetPos = findTargetBelowStalactiteTip(level, tipPos);
-		if (targetPos == null) {
-			return false;
-		}
-		BlockState sourceBlock = getBlockAboveStalactite(level, blockPos, blockState);
-		if (sourceBlock == null) {
-			return false;
-		}
-		BlockState targetBlock = level.getBlockState(targetPos);
-		var result = RecipeTypes.DRIPSTONE_DRIPPING.process(level, targetBlock, () -> {
-			var builder = new DripstoneContext.Builder(level, sourceBlock);
-			builder.withParameter(LootContextParams.BLOCK_STATE, targetBlock);
-			Vec3 origin = new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.99, targetPos.getZ() + 0.5);
-			builder.withParameter(LootContextParams.ORIGIN, origin);
-			builder.withParameter(LycheeLootContextParams.BLOCK_POS, targetPos);
-			return builder.create(LycheeLootContextParamSets.BLOCK_ONLY);
-		});
-		if (result == null) {
-			return false;
-		}
-		DripstoneContext ctx = result.getFirst();
-		DripstoneRecipe recipe = result.getSecond();
-		level.levelEvent(LevelEvent.DRIPSTONE_DRIP, tipPos, 0);
-		int i = tipPos.getY() - targetPos.getY();
-		int j = 50 + i;
-		Break breakAction = new Break();
-		var builder = new LocationPredicate.Builder().setBlock(recipe.targetBlock);
-		LocationCheck check = (LocationCheck) LocationCheck.checkLocation(builder).build();
-		breakAction.withCondition(new Not(new Location(check)));
-		ctx.runtime.jobs.push(new Job(breakAction, 1));
-		ctx.runtime.jobs.push(new Job(new Delay(j / 20F), 1));
-		ctx.runtime.run(recipe, ctx);
-		return true;
+		return invoke(state, serverLevel, blockPos);
 	}
 
 	// PointedDripstoneBlock
 	@Nullable
 	private static BlockPos findTargetBelowStalactiteTip(Level level, BlockPos blockPos2) {
-		Predicate<BlockState> predicate = blockState -> !blockState.isAir() && RecipeTypes.DRIPSTONE_DRIPPING.has(
-				blockState);
+		Predicate<BlockState> predicate = blockState -> !blockState.isAir() && RecipeTypes.DRIPSTONE_DRIPPING.has(blockState);
 		BiPredicate<BlockPos, BlockState> biPredicate =
 				(blockPos, blockState) -> PointedDripstoneBlockAccess.callCanDripThrough(level, blockPos, blockState);
 		return PointedDripstoneBlockAccess.callFindBlockVertical(
@@ -191,45 +209,20 @@ public class DripstoneRecipe extends OldLycheeRecipe<DripstoneContext>
 				Direction.DOWN.getAxisDirection(),
 				biPredicate,
 				predicate,
-				11
-		).orElse(null);
+				11).orElse(null);
 	}
 
-	public static BlockState getBlockAboveStalactite(Level level, BlockPos blockPos2, BlockState blockState) {
-		//		if (!PointedDripstoneBlock.isStalactite(blockState)) {
-		//			return Optional.empty();
-		//		}
-		return PointedDripstoneBlockAccess.callFindRootBlock(level, blockPos2, blockState, 11).map(blockPos -> {
-			return level.getBlockState(blockPos.above());
-		}).orElse(null);
+	public static class Serializer implements LycheeRecipeSerializer<DripstoneRecipe> {
+		public static final Codec<DripstoneRecipe> CODEC =
+				RecordCodecBuilder.create(instance -> instance.group(
+						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(DripstoneRecipe::commonProperties),
+						BlockPredicateExtensions.CODEC.fieldOf("source_block").forGetter(it -> it.sourceBlock),
+						BlockPredicateExtensions.CODEC.fieldOf("target_block").forGetter(it -> it.targetBlock)
+				).apply(instance, DripstoneRecipe::new));
+
+		@Override
+		public @NotNull Codec<DripstoneRecipe> codec() {
+			return CODEC;
+		}
 	}
-
-	public static class Serializer extends OldLycheeRecipe.Serializer<DripstoneRecipe> {
-
-		public Serializer() {
-			super(DripstoneRecipe::new);
-		}
-
-		@Override
-		public void fromJson(DripstoneRecipe pRecipe, JsonObject pSerializedRecipe) {
-			pRecipe.sourceBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.get("source_block"));
-			pRecipe.targetBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.get("target_block"));
-			Preconditions.checkArgument(pRecipe.sourceBlock != BlockPredicate.ANY, "source_block can't be wildcard");
-			Preconditions.checkArgument(pRecipe.targetBlock != BlockPredicate.ANY, "target_block can't be wildcard");
-		}
-
-		@Override
-		public void fromNetwork(DripstoneRecipe pRecipe, FriendlyByteBuf pBuffer) {
-			pRecipe.sourceBlock = BlockPredicateHelper.fromNetwork(pBuffer);
-			pRecipe.targetBlock = BlockPredicateHelper.fromNetwork(pBuffer);
-		}
-
-		@Override
-		public void toNetwork0(FriendlyByteBuf pBuffer, DripstoneRecipe pRecipe) {
-			BlockPredicateHelper.toNetwork(pRecipe.sourceBlock, pBuffer);
-			BlockPredicateHelper.toNetwork(pRecipe.targetBlock, pBuffer);
-		}
-
-	}
-
 }

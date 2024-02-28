@@ -3,7 +3,6 @@ package snownee.lychee;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
@@ -51,7 +50,7 @@ public final class RecipeSerializers {
 	);
 	public static final LycheeRecipeSerializer<ItemExplodingRecipe> ITEM_EXPLODING = register(
 			"item_exploding",
-			new ItemShapelessRecipe.Serializer<>($ -> new ItemExplodingRecipe($))
+			new ItemExplodingRecipe.Serializer()
 	);
 	public static final LycheeRecipeSerializer<BlockExplodingRecipe> BLOCK_EXPLODING = register(
 			"block_exploding",
