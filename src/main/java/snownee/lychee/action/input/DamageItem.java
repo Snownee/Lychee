@@ -3,6 +3,8 @@ package snownee.lychee.action.input;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 
@@ -28,6 +30,7 @@ import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record DamageItem(PostActionCommonProperties commonProperties, int damage, Reference target)
@@ -38,6 +41,11 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	@Override
 	public PostActionType<DamageItem> type() {
 		return PostActionTypes.DAMAGE_ITEM;
+	}
+
+	@Override
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+
 	}
 
 	@Override
@@ -121,6 +129,11 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 			info.addTooltip(component);
 			info.isCatalyst = true;
 		});
+	}
+
+	@Override
+	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+		return 0;
 	}
 
 	public static class Type extends PostActionType<DamageItem> {

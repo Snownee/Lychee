@@ -1,4 +1,4 @@
-package snownee.lychee.recipes.dripstone_dripping;
+package snownee.lychee.recipes;
 
 import java.util.List;
 import java.util.Optional;

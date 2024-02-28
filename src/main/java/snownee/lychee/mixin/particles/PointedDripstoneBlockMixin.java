@@ -11,7 +11,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
+import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 
 @Mixin(value = PointedDripstoneBlock.class, priority = 1100)

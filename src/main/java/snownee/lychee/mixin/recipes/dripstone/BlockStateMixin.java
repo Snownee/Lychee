@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.recipes.dripstone_dripping.DripstoneRecipe;
+import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.util.CommonProxy;
 
 /**
