@@ -23,6 +23,7 @@ import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	public static void invoke(ItemEntity entity) {
 		final var context = new LycheeContext();
+		context.put(LycheeContextKey.LEVEL, entity.level());
 		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 
 		lootParamsContext.setParam(LootContextParams.ORIGIN, entity.position());

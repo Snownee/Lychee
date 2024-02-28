@@ -46,7 +46,7 @@ public abstract class ItemAndBlockRecipe extends LycheeRecipe<LycheeContext> imp
 	public boolean matches(LycheeContext context, Level level) {
 		final var thisEntity = context.get(LycheeContextKey.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
 		final var stack = thisEntity instanceof ItemEntity itemEntity ? itemEntity.getItem() : context.getItem(0);
-		return input.test(stack) && BlockPredicateExtensions.matches(level, block, context);
+		return input.test(stack) && BlockPredicateExtensions.matches(block, context);
 	}
 
 	@Override

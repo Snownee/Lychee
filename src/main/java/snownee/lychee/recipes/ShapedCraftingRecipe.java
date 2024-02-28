@@ -81,6 +81,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 			return shaped.matches(container, level);
 		}
 		final var context = new LycheeContext();
+		context.put(LycheeContextKey.LEVEL, level);
 		var matchX = 0;
 		var matchY = 0;
 		var mirror = false;

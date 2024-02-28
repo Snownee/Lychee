@@ -109,7 +109,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 
 	@Override
 	public boolean matches(LycheeContext context, Level level) {
-		if (targetBlock != null && !BlockPredicateExtensions.matches(level, targetBlock, context)) {
+		if (targetBlock != null && !BlockPredicateExtensions.matches(targetBlock, context)) {
 			return false;
 		}
 
