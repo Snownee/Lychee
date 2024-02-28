@@ -66,6 +66,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		var targetBlock = level.getBlockState(targetPos);
 		var result = RecipeTypes.DRIPSTONE_DRIPPING.process(level, targetBlock, () -> {
 			var context = new LycheeContext();
+			context.put(LycheeContextKey.LEVEL, level);
 			var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 			lootParamsContext.setParam(LootContextParams.BLOCK_STATE, targetBlock);
 			var origin = new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.99, targetPos.getZ() + 0.5);
