@@ -1,29 +1,26 @@
 package snownee.lychee.action.input;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.LycheeRegistries;
 import snownee.lychee.compat.IngredientInfo;
-import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.Reference;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
@@ -31,12 +28,10 @@ import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record DamageItem(PostActionCommonProperties commonProperties, int damage, Reference target)
-		implements PostAction<DamageItem> {
-	public final int damage;
-	public final Reference target;
+public record DamageItem(PostActionCommonProperties commonProperties, int damage, Reference target) implements PostAction<DamageItem> {
 
 	@Override
 	public PostActionType<DamageItem> type() {
@@ -44,64 +39,46 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-
-	}
-
-	@Override
-	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		apply(recipe, ctx, times);
-	}
-
-	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		IntList indexes = recipe.getItemIndexes(target);
-		Entity thisEntity = ctx.getParam(LootContextParams.THIS_ENTITY);
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+		var indexes = recipe.getItemIndexes(target);
+		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		var thisEntity = lootParamsContext.get(LootContextParams.THIS_ENTITY);
+		var itemStackHolders = context.get(LycheeContextKey.ITEM);
 		for (var index : indexes) {
-			ItemStack stack = ctx.getItem(index);
-			if (!stack.isDamageableItem()) {
+			var stackHolder = itemStackHolders.get(index);
+			if (!stackHolder.get().isDamageableItem()) {
 				return;
 			}
-			ctx.itemHolders.ignoreConsumptionFlags.set(index);
-			stack = ctx.itemHolders.split(index, 1).itemstack();
-			int damage = this.damage;
-			LivingEntity living = null;
-			InteractionHand hand = null;
-			if (thisEntity instanceof LivingEntity) {
-				living = (LivingEntity) thisEntity;
-				if (living.getMainHandItem() == stack) {
-					hand = InteractionHand.MAIN_HAND;
-				} else if (living.getOffhandItem() == stack) {
-					hand = InteractionHand.OFF_HAND;
-				}
-			}
-			Consumer<LivingEntity> onBroken;
-			if (hand == null) {
-				onBroken = $ -> {
-				};
-			} else {
-				InteractionHand hand2 = hand;
-				onBroken = $ -> $.broadcastBreakEvent(hand2);
-			}
+			stackHolder.setIgnoreConsumption(true);
+			var itemStack = itemStackHolders.split(index, 1).get();
+
 			// Forge hook
 			//		if (thisEntity instanceof LivingEntity) {
 			//			damage = stack.getItem().damageItem(stack, damage, (LivingEntity) thisEntity, onBroken);
 			//		}
-			if (stack.hurt(
+
+			itemStack.hurtAndBreak(
 					damage,
-					ctx.getRandom(),
-					thisEntity instanceof ServerPlayer ? (ServerPlayer) thisEntity : null
-			)) {
-				if (thisEntity instanceof LivingEntity) {
-					onBroken.accept((LivingEntity) thisEntity);
-				}
-				Item item = stack.getItem();
-				stack.shrink(1);
-				if (thisEntity instanceof Player) {
-					((Player) thisEntity).awardStat(Stats.ITEM_BROKEN.get(item));
-				}
-				stack.setDamageValue(0);
-			}
+					context.get(LycheeContextKey.RANDOM),
+					thisEntity instanceof ServerPlayer player ? player : null, () -> {
+						if (thisEntity instanceof LivingEntity livingEntity) {
+							EquipmentSlot hand = null;
+							if (livingEntity.getMainHandItem() == itemStack) {
+								hand = EquipmentSlot.MAINHAND;
+							} else if (livingEntity.getOffhandItem() == itemStack) {
+								hand = EquipmentSlot.OFFHAND;
+							}
+							if (hand != null) {
+								livingEntity.broadcastBreakEvent(hand);
+							}
+						}
+						var item = itemStack.getItem();
+						itemStack.shrink(1);
+						if (thisEntity instanceof Player player) {
+							player.awardStat(Stats.ITEM_BROKEN.get(item));
+						}
+						itemStack.setDamageValue(0);
+					});
 		}
 	}
 
@@ -116,16 +93,16 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	}
 
 	@Override
-	public void validate(ILycheeRecipe recipe, ILycheeRecipe.NBTPatchContext patchContext) {
+	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 		Preconditions.checkArgument(!recipe.getItemIndexes(target).isEmpty(), "No target found for %s", target);
 	}
 
 	@Override
-	public void loadCatalystsInfo(ILycheeRecipe recipe, List<IngredientInfo> ingredients) {
-		String key = CommonProxy.makeDescriptionId("postAction", getType().getRegistryName());
-		Component component = Component.translatable(key, damage).withStyle(ChatFormatting.YELLOW);
+	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
+		var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(type()));
+		var component = Component.translatable(key, damage).withStyle(ChatFormatting.YELLOW);
 		recipe.getItemIndexes(target).forEach(i -> {
-			IngredientInfo info = ingredients.get(i);
+			var info = ingredients.get(i);
 			info.addTooltip(component);
 			info.isCatalyst = true;
 		});
@@ -136,7 +113,13 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 		return 0;
 	}
 
-	public static class Type extends PostActionType<DamageItem> {
+	public static class Type implements PostActionType<DamageItem> {
+		public static final Codec<DamageItem> CODEC = RecordCodecBuilder.create(instance ->
+				instance.group(
+						PostActionCommonProperties.MAP_CODEC.forGetter(DamageItem::commonProperties),
+						Codec.INT.fieldOf("damage").forGetter(DamageItem::damage),
+						UNKNOWN_CLASS_CODEC.fieldOf("target").forGetter(DamageItem::target)
+				).apply(instance, DamageItem::new));
 
 		@Override
 		public DamageItem fromJson(JsonObject o) {
@@ -162,6 +145,10 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 			Reference.toNetwork(action.target, buf);
 		}
 
+		@Override
+		public Codec<DamageItem> codec() {
+			return null;
+		}
 	}
 
 }

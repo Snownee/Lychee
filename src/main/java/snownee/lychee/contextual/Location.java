@@ -14,23 +14,25 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.FluidPredicate;
 import net.minecraft.advancements.critereon.LightPredicate;
+import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds.Doubles;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
-import snownee.lychee.util.TagOrElementHolder;
+import snownee.lychee.util.RegistryEntryDisplay;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -38,19 +40,16 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionDisplay;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
-import snownee.lychee.util.predicates.LocationCheck;
-import snownee.lychee.util.predicates.LocationPredicate;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Location(LocationCheck check) implements ContextualCondition {
 	public static final ImmutableList<Rule<?>> RULES = bootstrapRules();
 
-	@SuppressWarnings("Convert2MethodRef")
 	private static ImmutableList<Rule<?>> bootstrapRules() {
 		ImmutableList.Builder<Rule<?>> builder = ImmutableList.builder();
-		builder.add(new PosRule("x", it -> it.position().map($ -> $.x()), Vec3::x));
-		builder.add(new PosRule("y", it -> it.position().map($ -> $.y()), Vec3::y));
-		builder.add(new PosRule("z", it -> it.position().map($ -> $.z()), Vec3::z));
+		builder.add(new PosRule("x", it -> it.position().map(LocationPredicate.PositionPredicate::x), Vec3::x));
+		builder.add(new PosRule("y", it -> it.position().map(LocationPredicate.PositionPredicate::y), Vec3::y));
+		builder.add(new PosRule("z", it -> it.position().map(LocationPredicate.PositionPredicate::z), Vec3::z));
 		builder.add(new DimensionRule());
 		builder.add(new FeatureRule());
 		builder.add(new BiomeRule());
@@ -77,7 +76,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 					lootParamsContext.getOrNull(LootContextParams.ORIGIN)
 			).get() ? times : 0;
 		} else {
-			return check.test((ServerLevel) level, lootParamsContext) ? times : 0;
+			return check.test(lootParamsContext.asLootContext()) ? times : 0;
 		}
 	}
 
@@ -95,13 +94,16 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	}
 
 	public TriState testClient(Level level, BlockPos pos, Vec3 vec) {
+		if (check.predicate().isEmpty()) {
+			return TriState.TRUE;
+		}
 		final var offset = check.offset();
 		if (!BlockPos.ZERO.equals(offset)) {
 			pos = pos.offset(offset.getX(), offset.getY(), offset.getZ());
 		}
-		LocationPredicate predicate = check.predicate();
+		var predicate = check.predicate().get();
 		var finalResult = TriState.TRUE;
-		for (Rule<?> rule : RULES) {
+		for (var rule : RULES) {
 			if (rule.isEmpty(predicate)) {
 				continue;
 			}
@@ -118,12 +120,15 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 	@Override
 	public void appendToTooltips(List<Component> tooltips, Level level, @Nullable Player player, int indent, boolean inverted) {
-		final var predicate = check.predicate();
+		if (check.predicate().isEmpty()) {
+			return;
+		}
+		final var predicate = check.predicate().get();
 		var test = false;
 		Vec3 vec = null;
 		BlockPos pos = null;
 		final var key = getDescriptionId(inverted);
-		boolean noOffset = BlockPos.ZERO.equals(check.offset());
+		var noOffset = BlockPos.ZERO.equals(check.offset());
 		if (!noOffset) {
 			final var offset = check.offset();
 			final var content = Component.translatable(key, offset.getX(), offset.getY(), offset.getZ()).withStyle(ChatFormatting.GRAY);
@@ -136,7 +141,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 			vec = player.position();
 			pos = player.blockPosition();
 		}
-		for (Rule<?> rule : Location.RULES) {
+		for (var rule : Location.RULES) {
 			if (rule.isEmpty(predicate)) {
 				continue;
 			}
@@ -151,8 +156,9 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	@Override
 	public int showingCount() {
 		var c = 0;
-		final var predicate = check.predicate();
-		for (Rule<?> rule : RULES) {
+		if (check.predicate().isEmpty()) return c;
+		final var predicate = check.predicate().get();
+		for (var rule : RULES) {
 			if (!rule.isEmpty(predicate)) {
 				++c;
 			}
@@ -229,7 +235,11 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public TriState testClient(BlockPredicate value, Level level, BlockPos pos, Vec3 vec) {
-			return TriState.of(BlockPredicateExtensions.unsafeMatches(value, level.getBlockState(pos), () -> level.getBlockEntity(pos)));
+			return TriState.of(BlockPredicateExtensions.unsafeMatches(
+					level,
+					value,
+					level.getBlockState(pos),
+					() -> level.getBlockEntity(pos)));
 		}
 	}
 
@@ -250,47 +260,47 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public TriState testClient(LightPredicate value, Level level, BlockPos pos, Vec3 vec) {
-			int brightness = level.getMaxLocalRawBrightness(pos);
+			var brightness = level.getMaxLocalRawBrightness(pos);
 			return TriState.of(value.composite().matches(brightness));
 		}
 
 		@Override
 		public void appendToTooltips(List<Component> tooltips, int indent, String key, LightPredicate value, TriState result) {
-			MutableComponent displayName = BoundsExtensions.getDescription(value.composite()).withStyle(ChatFormatting.WHITE);
+			var displayName = BoundsExtensions.getDescription(value.composite()).withStyle(ChatFormatting.WHITE);
 			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(key + "." + name, displayName));
 		}
 	}
 
-	private static class DimensionRule extends Rule<TagOrElementHolder<Level>> {
+	private static class DimensionRule extends Rule<ResourceKey<Level>> {
 		private DimensionRule() {
 			super("dimension", LocationPredicate::dimension);
 		}
 
 		@Override
-		public TriState testClient(TagOrElementHolder<Level> value, Level level, BlockPos pos, Vec3 vec) {
-			return TriState.of(value.matches(level.registryAccess().registryOrThrow(Registries.DIMENSION), level));
+		public TriState testClient(ResourceKey<Level> value, Level level, BlockPos pos, Vec3 vec) {
+			return TriState.of(value != level.dimension());
 		}
 
 		@Override
-		public void appendToTooltips(List<Component> tooltips, int indent, String key, TagOrElementHolder<Level> value, TriState result) {
-			final var displayName = value.displayName(Registries.DIMENSION).withStyle(ChatFormatting.WHITE);
+		public void appendToTooltips(List<Component> tooltips, int indent, String key, ResourceKey<Level> value, TriState result) {
+			final var displayName = RegistryEntryDisplay.of(value, Registries.DIMENSION).withStyle(ChatFormatting.WHITE);
 			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(key + "." + name, displayName));
 		}
 	}
 
-	private static class BiomeRule extends Rule<TagOrElementHolder<Biome>> {
+	private static class BiomeRule extends Rule<HolderSet<Biome>> {
 		private BiomeRule() {
-			super("biome", LocationPredicate::biome);
+			super("biome", LocationPredicate::biomes);
 		}
 
 		@Override
-		public TriState testClient(TagOrElementHolder<Biome> value, Level level, BlockPos pos, Vec3 vec) {
-			return TriState.of(value.matches(level.registryAccess().registryOrThrow(Registries.BIOME), level.getBiome(pos)));
+		public TriState testClient(HolderSet<Biome> value, Level level, BlockPos pos, Vec3 vec) {
+			return TriState.of(value.contains(level.getBiome(pos)));
 		}
 
 		@Override
-		public void appendToTooltips(List<Component> tooltips, int indent, String key, TagOrElementHolder<Biome> value, TriState result) {
-			final var displayName = value.displayName(Registries.BIOME).withStyle(ChatFormatting.WHITE);
+		public void appendToTooltips(List<Component> tooltips, int indent, String key, HolderSet<Biome> value, TriState result) {
+			var displayName = RegistryEntryDisplay.of(value, Registries.BIOME).withStyle(ChatFormatting.WHITE);
 			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(key + "." + name, displayName));
 		}
 	}
@@ -310,9 +320,9 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		}
 	}
 
-	private static class FeatureRule extends Rule<TagOrElementHolder<Structure>> {
+	private static class FeatureRule extends Rule<HolderSet<Structure>> {
 		private FeatureRule() {
-			super("feature", LocationPredicate::structure);
+			super("feature", LocationPredicate::structures);
 		}
 
 		@Override
@@ -320,9 +330,9 @@ public record Location(LocationCheck check) implements ContextualCondition {
 				List<Component> tooltips,
 				int indent,
 				String key,
-				TagOrElementHolder<Structure> value,
+				HolderSet<Structure> value,
 				TriState result) {
-			final var displayName = value.displayName(Registries.STRUCTURE).withStyle(ChatFormatting.WHITE);
+			var displayName = RegistryEntryDisplay.of(value, Registries.STRUCTURE).withStyle(ChatFormatting.WHITE);
 			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(key + "." + name, displayName));
 		}
 	}
