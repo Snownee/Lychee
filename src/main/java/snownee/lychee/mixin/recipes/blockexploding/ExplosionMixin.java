@@ -1,4 +1,4 @@
-package snownee.lychee.mixin;
+package snownee.lychee.mixin.recipes.blockexploding;
 
 import java.util.List;
 
@@ -30,14 +30,15 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.recipes.block_exploding.BlockExplodingContext;
+import snownee.lychee.util.LycheeContext;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 
+// TODO Need rewrite
 @Mixin(value = Explosion.class, priority = 700)
 public abstract class ExplosionMixin {
 
 	@Unique
-	private static final ThreadLocal<Pair<BlockExplodingContext.Builder, List<ItemStack>>> CONTEXT =
-			ThreadLocal.withInitial(() -> Pair.of(null, null));
+	private static final ThreadLocal<Pair<LycheeContext, List<ItemStack>>> CONTEXT = ThreadLocal.withInitial(() -> Pair.of(null, null));
 	@Final
 	@Shadow
 	private float radius;
@@ -62,22 +63,12 @@ public abstract class ExplosionMixin {
 	@Final
 	private Explosion.BlockInteraction blockInteraction;
 
-	@Shadow
-	private static void addBlockDrops(
-			ObjectArrayList<Pair<ItemStack, BlockPos>> objectArrayList,
-			ItemStack itemStack,
-			BlockPos blockPos
-	) {
-		throw new AssertionError();
-	}
-
-	@Inject(method = "method_24024", at = @At("HEAD"), cancellable = true, remap = false)
+	@Inject(method = "addOrAppendStack", at = @At("HEAD"), cancellable = true)
 	private static void lychee_deferAddingDrops(
-			ObjectArrayList<Pair<ItemStack, BlockPos>> objectArrayList,
-			BlockPos blockPos,
-			ItemStack itemStack,
-			CallbackInfo ci
-	) {
+			final List<Pair<ItemStack, BlockPos>> list,
+			final ItemStack itemStack,
+			final BlockPos blockPos,
+			final CallbackInfo ci) {
 		if (itemStack.isEmpty()) {
 			ci.cancel();
 			return;
