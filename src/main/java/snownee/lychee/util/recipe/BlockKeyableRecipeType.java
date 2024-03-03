@@ -8,8 +8,6 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -31,7 +29,6 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.contextual.Chance;
 import snownee.lychee.util.CommonProxy;
-import snownee.lychee.util.Pair;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -153,24 +150,23 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 	}
 
 	@Nullable
-	public Pair<LycheeContext, RecipeHolder<R>> process(
+	public RecipeHolder<R> process(
 			Level level,
 			BlockState state,
-			Supplier<LycheeContext> ctxSupplier
+			LycheeContext context
 	) {
 		final var recipes = recipesByBlock.getOrDefault(state.getBlock(), List.of());
 		final var iterable = Iterables.concat(recipes, anyBlockRecipes);
-		final var context = Suppliers.memoize(ctxSupplier);
 		for (final var recipe : iterable) {
 			if (extractChance) {
 				var chance = (ChanceRecipe) recipe.value();
-				if (chance.getChance() != 1 && chance.getChance() <= context.get().get(LycheeContextKey.RANDOM).nextFloat()) {
+				if (chance.getChance() != 1 && chance.getChance() <= context.get(LycheeContextKey.RANDOM).nextFloat()) {
 					continue;
 				}
 			}
-			if (tryMatch(recipe, level, context.get()).isPresent()) {
-				recipe.value().applyPostActions(context.get(), 1);
-				return Pair.of(context.get(), recipe);
+			if (tryMatch(recipe, level, context).isPresent()) {
+				recipe.value().applyPostActions(context, 1);
+				return recipe;
 			}
 		}
 		return null;
