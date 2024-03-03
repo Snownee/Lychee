@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.injector.ModifyReceiver;
@@ -32,7 +33,6 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 
-// TODO Need rewrite
 @Mixin(value = Explosion.class, priority = 700)
 public abstract class ExplosionMixin {
 
@@ -46,16 +46,6 @@ public abstract class ExplosionMixin {
 	@Final
 	@Shadow
 	private Level level;
-	// the field "position" is added by forge
-	@Final
-	@Shadow
-	private double x;
-	@Final
-	@Shadow
-	private double y;
-	@Final
-	@Shadow
-	private double z;
 	@Shadow
 	@Final
 	private Explosion.BlockInteraction blockInteraction;
@@ -65,24 +55,9 @@ public abstract class ExplosionMixin {
 	}
 
 	/**
-	 * @param allDropsRef The drops are added in {@link BlockBehaviour.BlockStateBase#onExplosionHit}.
-	 *                    We need to avoid the default drops conditional after {@link BlockBehaviour.BlockStateBase#onExplosionHit}.
-	 *                    But the operation adding stacks into the drop list is in lambda that is another method that we can't use {@link Share}.
-	 *                    A field is required. So, I changed the logic here.
-	 *                    The original drops list is acting as `currentDrops` for every iterating.
-	 *                    The `allDrops` is acting as the original one.
-	 *                    But this changed the original logic that may affect the other mixins. Not quite sure.
+	 * The drops are added in {@link BlockBehaviour.BlockStateBase#onExplosionHit}.
+	 * We need to avoid the default drops conditional after {@link BlockBehaviour.BlockStateBase#onExplosionHit}.
 	 */
-	@Inject(
-			method = "finalizeExplosion",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/Util;shuffle(Ljava/util/List;Lnet/minecraft/util/RandomSource;)V"))
-	private void lychee_initAllDrops(
-			final boolean spawnParticles,
-			final CallbackInfo ci,
-			@Share("allDrops") LocalRef<List<Pair<ItemStack, BlockPos>>> allDropsRef) {
-		allDropsRef.set(Lists.newArrayList());
-	}
-
 	@ModifyReceiver(
 			method = "finalizeExplosion",
 			at = @At(
@@ -97,7 +72,8 @@ public abstract class ExplosionMixin {
 			final Explosion explosion,
 			final BiConsumer<ItemStack, BlockPos> biConsumer,
 			@Share("state") LocalRef<BlockState> stateRef,
-			@Share("context") LocalRef<LycheeContext> contextRef) {
+			@Share("context") LocalRef<LycheeContext> contextRef,
+			@Share("currentDrops") LocalRef<List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
 		if (level.isClientSide || RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
 			contextRef.set(null);
 			return state;
@@ -113,7 +89,20 @@ public abstract class ExplosionMixin {
 			lootParamsContext.setParam(LootContextParams.EXPLOSION_RADIUS, radius);
 		}
 		stateRef.set(state);
+		currentDropsRef.set(Lists.newArrayList());
 		return state;
+	}
+
+	@ModifyArg(
+			method = "finalizeExplosion",
+			index = 3,
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;onExplosionHit(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;Ljava/util/function/BiConsumer;)V"))
+	private BiConsumer<ItemStack, BlockPos> lychee_redirectDrops(
+			BiConsumer<ItemStack, BlockPos> original,
+			@Share("currentDrops") LocalRef<List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
+		return (itemStack, blockPos) -> addOrAppendStack(currentDropsRef.get(), itemStack, blockPos);
 	}
 
 	@Inject(
@@ -128,10 +117,10 @@ public abstract class ExplosionMixin {
 			final boolean spawnParticles,
 			final CallbackInfo ci,
 			@Local BlockPos blockPos,
-			@Local List<Pair<ItemStack, BlockPos>> currentDrops,
+			@Local List<Pair<ItemStack, BlockPos>> allDrops,
 			@Share("state") LocalRef<BlockState> stateRef,
 			@Share("context") LocalRef<LycheeContext> contextRef,
-			@Share("allDrops") LocalRef<List<Pair<ItemStack, BlockPos>>> allDropsRef) {
+			@Share("currentDrops") LocalRef<List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
 		if (level.isClientSide) {
 			return;
 		}
@@ -146,13 +135,12 @@ public abstract class ExplosionMixin {
 		var state = stateRef.get();
 		var recipe = RecipeTypes.BLOCK_EXPLODING.process(level, state, context);
 		var actionContext = context.get(LycheeContextKey.ACTION);
-		if (!actionContext.avoidDefault && recipe != null) {
-			// Add all the drops in this iterate
-			allDropsRef.get().addAll(currentDrops);
+		if (!actionContext.avoidDefault && recipe != null && currentDropsRef.get() != null) {
+			allDrops.addAll(currentDropsRef.get());
 		}
-		currentDrops.clear();
+		currentDropsRef.set(null);
 		for (var stack : itemHolders.stacksNeedHandle) {
-			addOrAppendStack(allDropsRef.get(), stack, blockPos);
+			addOrAppendStack(allDrops, stack, blockPos);
 		}
 	}
 }
