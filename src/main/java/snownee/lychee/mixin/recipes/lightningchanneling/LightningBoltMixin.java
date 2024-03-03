@@ -1,4 +1,4 @@
-package snownee.lychee.mixin.lightningchanneling;
+package snownee.lychee.mixin.recipes.lightningchanneling;
 
 import java.util.Collection;
 import java.util.List;
