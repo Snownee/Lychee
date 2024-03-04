@@ -2,33 +2,40 @@ package snownee.lychee.action.input;
 
 import java.util.List;
 
-import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import snownee.lychee.compat.IngredientInfo;
-import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public class PreventDefault extends PostAction {
+public record PreventDefault(PostActionCommonProperties commonProperties, ContextualHolder conditions) implements PostAction {
 
 	public static final PreventDefault CLIENT_DUMMY = new PreventDefault();
 
+	public PreventDefault() {
+		this(new PostActionCommonProperties(), new ContextualHolder(List.of(), null, null));
+	}
+
 	@Override
-	public PostActionType<?> getType() {
+	public PostActionType<?> type() {
 		return PostActionTypes.PREVENT_DEFAULT;
 	}
 
 	@Override
-	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		ctx.runtime.doDefault = false;
-	}
-
-	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+		context.get(LycheeContextKey.ACTION).avoidDefault = true;
 	}
 
 	@Override
@@ -37,37 +44,31 @@ public class PreventDefault extends PostAction {
 	}
 
 	@Override
-	public void loadCatalystsInfo(ILycheeRecipe recipe, List<IngredientInfo> ingredients) {
-		if (recipe instanceof OldLycheeRecipe<?> lycheeRecipe && lycheeRecipe.getType().canPreventConsumeInputs) {
+	public <T extends ILycheeRecipe<?>> void loadCatalystsInfo(@Nullable T recipe, List<IngredientInfo> ingredients) {
+		if (recipe != null && recipe.getType().canPreventConsumeInputs) {
 			for (var ingredient : ingredients) {
 				if (ingredient.tooltips.isEmpty()) {
-					ingredient.addTooltip(lycheeRecipe.getType().getPreventDefaultDescription(lycheeRecipe));
+					ingredient.addTooltip(((LycheeRecipeType<?, T>) recipe.getType()).getPreventDefaultDescription(recipe));
 					ingredient.isCatalyst = true;
 				}
 			}
 		}
 	}
 
-	public static class Type extends PostActionType<PreventDefault> {
+	public static class Type implements PostActionType<PreventDefault> {
+		public static final Codec<PreventDefault> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				PostActionCommonProperties.MAP_CODEC.forGetter(PreventDefault::commonProperties),
+				ContextualHolder.CODEC.fieldOf("contextual").forGetter(PreventDefault::conditions)
+		).apply(instance, PreventDefault::new));
 
 		@Override
-		public PreventDefault fromJson(JsonObject o) {
-			return new PreventDefault();
+		public Codec<PreventDefault> codec() {
+			return CODEC;
 		}
 
 		@Override
-		public void toJson(PreventDefault action, JsonObject o) {
+		public StreamCodec<? extends ByteBuf, PreventDefault> streamCodec() {
+			return StreamCodec.of((buf, value) -> {}, (buf) -> CLIENT_DUMMY);
 		}
-
-		@Override
-		public PreventDefault fromNetwork(FriendlyByteBuf buf) {
-			return CLIENT_DUMMY;
-		}
-
-		@Override
-		public void toNetwork(PreventDefault action, FriendlyByteBuf buf) {
-		}
-
 	}
-
 }

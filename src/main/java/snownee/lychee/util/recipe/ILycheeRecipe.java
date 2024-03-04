@@ -15,7 +15,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.lychee.core.Reference;
 import snownee.lychee.util.BoundsExtensions;
@@ -91,7 +90,7 @@ public interface ILycheeRecipe<C extends Container> extends Recipe<C>, Contextua
 		return ItemStack.EMPTY;
 	}
 
-	@NotNull RecipeType<? extends Recipe<?>> getType();
+	@NotNull LycheeRecipeType<? extends Container, ? extends ILycheeRecipe<?>> getType();
 
 	LycheeRecipeCommonProperties commonProperties();
 
@@ -121,7 +120,7 @@ public interface ILycheeRecipe<C extends Container> extends Recipe<C>, Contextua
 		return commonProperties().group();
 	}
 
-	default List<PostAction<?>> postActions() {
+	default List<PostAction> postActions() {
 		return commonProperties().postActions();
 	}
 
@@ -137,7 +136,7 @@ public interface ILycheeRecipe<C extends Container> extends Recipe<C>, Contextua
 		return Mth.clamp(times, 1, max);
 	}
 
-	default Stream<PostAction<?>> allActions() {
+	default Stream<PostAction> allActions() {
 		return postActions().stream();
 	}
 

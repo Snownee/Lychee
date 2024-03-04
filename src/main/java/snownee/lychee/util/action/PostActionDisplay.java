@@ -30,7 +30,7 @@ public interface PostActionDisplay {
 		return false;
 	}
 
-	default void loadCatalystsInfo(@Nullable ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {}
+	default <T extends ILycheeRecipe<?>> void loadCatalystsInfo(@Nullable T recipe, List<IngredientInfo> ingredients) {}
 
 	String toJsonString();
 }

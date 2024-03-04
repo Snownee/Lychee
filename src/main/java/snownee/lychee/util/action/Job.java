@@ -8,7 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record Job(PostAction<?> action, int times) {
+public record Job(PostAction action, int times) {
 	public static final Codec<Job> CODEC =
 			RecordCodecBuilder.create(instance -> instance.group(
 					PostAction.CODEC.fieldOf("action").forGetter(Job::action),

@@ -49,10 +49,10 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 			CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.SECONDS).build();
 
 	protected final ShapedRecipe shaped;
-	protected final List<PostAction<?>> assemblingActions;
+	protected final List<PostAction> assemblingActions;
 
 	public ShapedCraftingRecipe(
-			final LycheeRecipeCommonProperties commonProperties, final ShapedRecipe shaped, final List<PostAction<?>> assemblingActions) {
+			final LycheeRecipeCommonProperties commonProperties, final ShapedRecipe shaped, final List<PostAction> assemblingActions) {
 		super(commonProperties);
 		this.assemblingActions = assemblingActions;
 		this.shaped = shaped;
@@ -65,7 +65,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 			final ShapedRecipePattern pattern,
 			final ItemStack result,
 			final boolean showNotification,
-			final List<PostAction<?>> assemblingActions
+			final List<PostAction> assemblingActions
 	) {
 		super(commonProperties);
 		this.assemblingActions = assemblingActions;
@@ -212,7 +212,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 	@Override
 	public @NotNull ItemStack getToastSymbol() {return shaped.getToastSymbol();}
 
-	public List<PostAction<?>> assemblingActions() {
+	public List<PostAction> assemblingActions() {
 		return assemblingActions;
 	}
 

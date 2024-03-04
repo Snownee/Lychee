@@ -52,7 +52,7 @@ public abstract class OldLycheeRecipe<C extends LycheeRecipeContext> extends Con
 	public String comment;
 	public String group = "default";
 	protected Ints maxRepeats = Ints.ANY;
-	protected List<PostAction<?>> actions = List.of();
+	protected List<PostAction> actions = List.of();
 
 	public OldLycheeRecipe(ResourceLocation id) {
 		if (LycheeConfig.debug) {
@@ -66,7 +66,7 @@ public abstract class OldLycheeRecipe<C extends LycheeRecipeContext> extends Con
 			@Nullable String comment,
 			String group,
 			Ints maxRepeats,
-			List<PostAction<?>> actions
+			List<PostAction> actions
 	) {
 		this.ghost = ghost;
 		this.hideInRecipeViewer = hideInRecipeViewer;
@@ -95,7 +95,7 @@ public abstract class OldLycheeRecipe<C extends LycheeRecipeContext> extends Con
 		return ItemStack.EMPTY;
 	}
 
-	public void addPostAction(PostAction<?> action) {
+	public void addPostAction(PostAction action) {
 		Objects.requireNonNull(action);
 		if (actions.isEmpty()) {
 			actions = Lists.newArrayList();
@@ -107,7 +107,7 @@ public abstract class OldLycheeRecipe<C extends LycheeRecipeContext> extends Con
 	}
 
 	@Override
-	public Stream<PostAction<?>> getPostActions() {
+	public Stream<PostAction> getPostActions() {
 		return actions.stream();
 	}
 
@@ -159,7 +159,7 @@ public abstract class OldLycheeRecipe<C extends LycheeRecipeContext> extends Con
 	}
 
 	@Override
-	public Map<JsonPointer, List<PostAction<?>>> getActionGroups() {
+	public Map<JsonPointer, List<PostAction>> getActionGroups() {
 		return Map.of(POST, actions);
 	}
 

@@ -24,7 +24,7 @@ public class ActionRuntime {
 		RUNNING, PAUSED, STOPPED
 	}
 
-	public void enqueue(Collection<PostAction<?>> actions, int times) {
+	public void enqueue(Collection<PostAction> actions, int times) {
 		for (final var action : actions) {
 			jobs.offer(new Job(action, times));
 		}

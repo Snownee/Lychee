@@ -20,7 +20,6 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
-import snownee.lychee.util.TriState;
 import snownee.lychee.util.codec.CompactListCodec;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -56,8 +55,8 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 			List<ContextualCondition> conditions = Lists.newArrayListWithExpectedSize(holders.size());
 			BitSet secretFlags = null;
 			Component[] overrideDesc = null;
-			for (int i = 0; i < holders.size(); i++) {
-				ContextualConditionData<?> holder = holders.get(i);
+			for (var i = 0; i < holders.size(); i++) {
+				var holder = holders.get(i);
 				conditions.add(holder.condition());
 				if (holder.secret()) {
 					if (secretFlags == null) {
@@ -76,14 +75,25 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		}
 	}
 
-	private List<ContextualConditionData<?>> unpack() {
-		List<ContextualConditionData<?>> list = Lists.newArrayListWithExpectedSize(conditions.size());
-		for (int i = 0; i < conditions.size(); i++) {
-			ContextualCondition condition = conditions.get(i);
-			boolean secret = isSecretCondition(i);
-			list.add(new ContextualConditionData<>(condition, secret, getOverridenDesc(i)));
+	public static ContextualHolder conditionsFromNetwork(FriendlyByteBuf buf) {
+		var size = buf.readVarInt();
+		var conditions = Lists.<ContextualCondition>newArrayListWithCapacity(size);
+		for (var i = 0; i < size; i++) {
+			var type = CommonProxy.readRegistryId(LycheeRegistries.CONTEXTUAL, buf);
+			conditions.add(type.streamCodec().decode(buf));
 		}
-		return list;
+		BitSet secretFlags = null;
+		if (buf.readBoolean()) {
+			secretFlags = buf.readBitSet();
+		}
+		Component[] overrideDesc = null;
+		if (buf.readBoolean()) {
+			overrideDesc = new Component[size];
+			for (var i = 0; i < size; i++) {
+				overrideDesc[i] = buf.readOptional(FriendlyByteBuf::readComponent).orElse(null);
+			}
+		}
+		return new ContextualHolder(conditions, secretFlags, overrideDesc);
 	}
 
 	public List<ContextualCondition> conditions() {
@@ -94,6 +104,16 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		return conditions().stream().mapToInt(ContextualConditionDisplay::showingCount).sum();
 	}
 
+	private List<ContextualConditionData<?>> unpack() {
+		List<ContextualConditionData<?>> list = Lists.newArrayListWithExpectedSize(conditions.size());
+		for (var i = 0; i < conditions.size(); i++) {
+			var condition = conditions.get(i);
+			var secret = isSecretCondition(i);
+			list.add(new ContextualConditionData<>(condition, secret, getOverridenDesc(i)));
+		}
+		return list;
+	}
+
 	public void appendToTooltips(
 			List<Component> tooltips, @Nullable Level level, @Nullable Player player, int indent
 	) {
@@ -101,42 +121,22 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 			//TODO notify player that the condition is not available
 			return;
 		}
-		int i = -1;
-		for (ContextualCondition condition : conditions) {
+		var i = -1;
+		for (var condition : conditions) {
 			++i;
 			if (isSecretCondition(i)) {
-				TriState result = condition.testForTooltips(level, player);
+				var result = condition.testForTooltips(level, player);
 				ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, SECRET_COMPONENT.copy());
 				continue;
 			}
-			Component overridenDesc = getOverridenDesc(i);
+			var overridenDesc = getOverridenDesc(i);
 			if (overridenDesc != null) {
-				TriState result = condition.testForTooltips(level, player);
+				var result = condition.testForTooltips(level, player);
 				ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, overridenDesc.copy());
 				continue;
 			}
 			condition.appendToTooltips(tooltips, level, player, indent, false);
 		}
-	}
-
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		for (ContextualCondition condition : conditions) {
-			try {
-				times = condition.test(recipe, ctx, times);
-				if (times == 0) {
-					break;
-				}
-			} catch (Throwable e) {
-				Lychee.LOGGER.error(
-						"Failed to check condition {} of recipe {}",
-						LycheeRegistries.CONTEXTUAL.getKey(condition.type()),
-						ctx.getMatchedRecipeId(),
-						e
-				);
-				return 0;
-			}
-		}
-		return times;
 	}
 
 	@NotNull
@@ -159,31 +159,30 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		return false;
 	}
 
-	public static ContextualHolder conditionsFromNetwork(FriendlyByteBuf buf) {
-		int size = buf.readVarInt();
-		List<ContextualCondition> conditions = Lists.newArrayListWithCapacity(size);
-		for (int i = 0; i < size; i++) {
-			ContextualConditionType<?> type = CommonProxy.readRegistryId(LycheeRegistries.CONTEXTUAL, buf);
-			conditions.add(type.fromNetwork(buf));
-		}
-		BitSet secretFlags = null;
-		if (buf.readBoolean()) {
-			secretFlags = buf.readBitSet();
-		}
-		Component[] overrideDesc = null;
-		if (buf.readBoolean()) {
-			overrideDesc = new Component[size];
-			for (int i = 0; i < size; i++) {
-				overrideDesc[i] = buf.readOptional(FriendlyByteBuf::readComponent).orElse(null);
+	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+		for (var condition : conditions) {
+			try {
+				times = condition.test(recipe, ctx, times);
+				if (times == 0) {
+					break;
+				}
+			} catch (Throwable e) {
+				Lychee.LOGGER.error(
+						"Failed to check condition {} of recipe {}",
+						LycheeRegistries.CONTEXTUAL.getKey(condition.type()),
+						ctx.getMatchedRecipeId(),
+						e
+				);
+				return 0;
 			}
 		}
-		return new ContextualHolder(conditions, secretFlags, overrideDesc);
+		return times;
 	}
 
 	@SuppressWarnings("rawtypes")
 	public void conditionsToNetwork(FriendlyByteBuf buf) {
 		buf.writeVarInt(conditions.size());
-		for (ContextualCondition condition : conditions) {
+		for (var condition : conditions) {
 			ContextualConditionType type = condition.type();
 			CommonProxy.writeRegistryId(LycheeRegistries.CONTEXTUAL, type, buf);
 			type.toNetwork(buf, condition);
@@ -196,7 +195,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		}
 		buf.writeBoolean(overrideDesc != null);
 		if (overrideDesc != null) {
-			for (Component component : overrideDesc) {
+			for (var component : overrideDesc) {
 				buf.writeOptional(Optional.ofNullable(component), FriendlyByteBuf::writeComponent);
 			}
 		}

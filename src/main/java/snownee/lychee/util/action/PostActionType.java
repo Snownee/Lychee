@@ -11,15 +11,15 @@ import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.SerializableType;
 import snownee.lychee.util.codec.CompactListCodec;
 
-public interface PostActionType<T extends PostAction<T>> extends SerializableType<T> {
-	Codec<PostAction<?>> CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatch(
+public interface PostActionType<T extends PostAction> extends SerializableType<T> {
+	Codec<PostAction> CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatch(
 			PostAction::type,
 			PostActionType::codec
 	);
 
-	Codec<List<PostAction<?>>> LIST_CODEC = new CompactListCodec<>(CODEC);
+	Codec<List<PostAction>> LIST_CODEC = new CompactListCodec<>(CODEC);
 
-	RecordCodecBuilder<? extends PostAction<?>, Optional<String>> PATH_CODEC =
+	RecordCodecBuilder<? extends PostAction, Optional<String>> PATH_CODEC =
 			ExtraCodecs.strictOptionalField(Codec.STRING, "path")
 					.forGetter(PostAction::getPath);
 }

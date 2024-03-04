@@ -60,17 +60,88 @@ public interface LycheeRecipe<C extends LycheeRecipeContext> extends Recipe<C> {
 		return ITEM_IN;
 	}
 
-	Stream<PostAction<?>> getPostActions();
-
-	default Stream<PostAction<?>> getAllActions() {
-		return getPostActions();
-	}
-
-	Map<JsonPointer, List<PostAction<?>>> getActionGroups();
-
-	static Stream<PostAction<?>> filterHidden(Stream<PostAction<?>> stream) {
+	static Stream<PostAction> filterHidden(Stream<PostAction> stream) {
 		return stream.filter(Predicate.not(PostAction::hidden));
 	}
+
+	static void processActions(LycheeRecipe recipe, JsonObject recipeObject) {
+		MutableObject<NBTPatchContext> patchContext = new MutableObject<>();
+		Set<JsonPointer> usedPointers = Sets.newHashSet();
+		recipe.getAllActions().forEach(action -> action.getUsedPointers(recipe, usedPointers::add));
+		if (!usedPointers.isEmpty()) {
+			IntSet usedIndexes = new IntArraySet();
+			Object2IntMap<JsonPointer> splits = new Object2IntArrayMap<>();
+			usedPointers.forEach(pointer -> {
+				if (recipe.isActionPath(pointer)) {
+					return;
+				}
+				List<String> tokens = Lists.newArrayList(pointer.tokens);
+				while (!tokens.isEmpty()) {
+					JsonPointer current = new JsonPointer(tokens);
+					if (current.find(recipeObject) != null) {
+						IntList indexes = recipe.getItemIndexes(current);
+						if (!indexes.isEmpty()) {
+							usedIndexes.addAll(indexes);
+							splits.put(pointer, current.toString().length());
+							break;
+						}
+					}
+					tokens.remove(tokens.size() - 1);
+				}
+			});
+			JsonObject jsonObject = new JsonObject();
+			for (Map.Entry<JsonPointer, List<PostAction>> entry : recipe.getActionGroups().entrySet()) {
+				JsonPointer pointer = entry.getKey();
+				List<PostAction> actions = entry.getValue();
+				JsonElement element = processActionGroup(recipe, pointer, actions, recipeObject);
+				if (element != null) {
+					JsonPatch.add(jsonObject, pointer, element);
+				}
+			}
+			patchContext.setValue(new NBTPatchContext(jsonObject, usedIndexes, splits));
+			patchContexts.put(recipe.lychee$getId(), patchContext.getValue());
+		} else { // here we remove data from the last reload
+			patchContexts.remove(recipe.lychee$getId());
+		}
+		recipe.getAllActions().forEach(action -> {
+			try {
+				action.validate(recipe, patchContext.getValue());
+			} catch (Exception e) {
+				Lychee.LOGGER.error("Error while validating action " + action, e);
+			}
+		});
+	}
+
+	static JsonElement processActionGroup(
+			LycheeRecipe<?> recipe,
+			JsonPointer pointer,
+			List<PostAction> actions,
+			JsonObject recipeObject
+	) {
+		if (actions.isEmpty()) {
+			return null;
+		}
+		JsonElement element = pointer.find(recipeObject);
+		if (element == null) {
+			return null;
+		}
+		if (element.isJsonObject()) {
+			element = actions.get(0).provideJsonInfo(recipe, pointer, recipeObject);
+			if (element.isJsonNull()) {
+				return null;
+			}
+			return element;
+		} else { // is array
+			JsonArray array = new JsonArray();
+			int size = element.getAsJsonArray().size();
+			for (int i = 0; i < size; i++) {
+				array.add(actions.get(i).provideJsonInfo(recipe, pointer.append(Integer.toString(i)), recipeObject));
+			}
+			return array;
+		}
+	}
+
+	Stream<PostAction> getPostActions();
 
 	default int showingActionsCount() {
 		return (int) LycheeRecipe.filterHidden(getPostActions()).count();
@@ -144,80 +215,9 @@ public interface LycheeRecipe<C extends LycheeRecipeContext> extends Recipe<C> {
 		return !pointer.isRoot() && "post".equals(pointer.getString(0));
 	}
 
-	static void processActions(LycheeRecipe recipe, JsonObject recipeObject) {
-		MutableObject<NBTPatchContext> patchContext = new MutableObject<>();
-		Set<JsonPointer> usedPointers = Sets.newHashSet();
-		recipe.getAllActions().forEach(action -> action.getUsedPointers(recipe, usedPointers::add));
-		if (!usedPointers.isEmpty()) {
-			IntSet usedIndexes = new IntArraySet();
-			Object2IntMap<JsonPointer> splits = new Object2IntArrayMap<>();
-			usedPointers.forEach(pointer -> {
-				if (recipe.isActionPath(pointer)) {
-					return;
-				}
-				List<String> tokens = Lists.newArrayList(pointer.tokens);
-				while (!tokens.isEmpty()) {
-					JsonPointer current = new JsonPointer(tokens);
-					if (current.find(recipeObject) != null) {
-						IntList indexes = recipe.getItemIndexes(current);
-						if (!indexes.isEmpty()) {
-							usedIndexes.addAll(indexes);
-							splits.put(pointer, current.toString().length());
-							break;
-						}
-					}
-					tokens.remove(tokens.size() - 1);
-				}
-			});
-			JsonObject jsonObject = new JsonObject();
-			for (Map.Entry<JsonPointer, List<PostAction<?>>> entry : recipe.getActionGroups().entrySet()) {
-				JsonPointer pointer = entry.getKey();
-				List<PostAction<?>> actions = entry.getValue();
-				JsonElement element = processActionGroup(recipe, pointer, actions, recipeObject);
-				if (element != null) {
-					JsonPatch.add(jsonObject, pointer, element);
-				}
-			}
-			patchContext.setValue(new NBTPatchContext(jsonObject, usedIndexes, splits));
-			patchContexts.put(recipe.lychee$getId(), patchContext.getValue());
-		} else { // here we remove data from the last reload
-			patchContexts.remove(recipe.lychee$getId());
-		}
-		recipe.getAllActions().forEach(action -> {
-			try {
-				action.validate(recipe, patchContext.getValue());
-			} catch (Exception e) {
-				Lychee.LOGGER.error("Error while validating action " + action, e);
-			}
-		});
+	default Stream<PostAction> getAllActions() {
+		return getPostActions();
 	}
 
-	static JsonElement processActionGroup(
-			LycheeRecipe<?> recipe,
-			JsonPointer pointer,
-			List<PostAction<?>> actions,
-			JsonObject recipeObject
-	) {
-		if (actions.isEmpty()) {
-			return null;
-		}
-		JsonElement element = pointer.find(recipeObject);
-		if (element == null) {
-			return null;
-		}
-		if (element.isJsonObject()) {
-			element = actions.get(0).provideJsonInfo(recipe, pointer, recipeObject);
-			if (element.isJsonNull()) {
-				return null;
-			}
-			return element;
-		} else { // is array
-			JsonArray array = new JsonArray();
-			int size = element.getAsJsonArray().size();
-			for (int i = 0; i < size; i++) {
-				array.add(actions.get(i).provideJsonInfo(recipe, pointer.append(Integer.toString(i)), recipeObject));
-			}
-			return array;
-		}
-	}
+	Map<JsonPointer, List<PostAction>> getActionGroups();
 }

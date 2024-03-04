@@ -39,13 +39,13 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	protected final int levelCost;
 	protected final int materialCost;
 	protected final ItemStack output;
-	protected final List<PostAction<?>> assemblingActions;
+	protected final List<PostAction> assemblingActions;
 
 	public AnvilCraftingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			Pair<Ingredient, Ingredient> input,
 			ItemStack output,
-			List<PostAction<?>> assemblingActions,
+			List<PostAction> assemblingActions,
 			int levelCost,
 			int materialCost
 	) {
@@ -129,7 +129,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public Stream<PostAction<?>> allActions() {
+	public Stream<PostAction> allActions() {
 		return Streams.concat(postActions().stream(), assemblingActions().stream());
 	}
 
@@ -149,7 +149,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		return output;
 	}
 
-	public List<PostAction<?>> assemblingActions() {
+	public List<PostAction> assemblingActions() {
 		return assemblingActions;
 	}
 

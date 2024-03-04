@@ -12,12 +12,16 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public class PostActionCommonProperties {
 	public static final MapCodec<PostActionCommonProperties> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-			Codec.STRING.optionalFieldOf("path", null).forGetter(it -> it.path)
+			Codec.STRING.optionalFieldOf("@path", null).forGetter(it -> it.path)
 	).apply(instance, PostActionCommonProperties::new));
 	private @Nullable String path;
 
 	public PostActionCommonProperties(@Nullable String path) {
 		this.path = path;
+	}
+
+	public PostActionCommonProperties() {
+		this.path = null;
 	}
 
 	public Optional<String> getPath() {

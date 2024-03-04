@@ -22,7 +22,7 @@ public record LycheeRecipeCommonProperties(
 		@Nullable String comment,
 		String group,
 		ContextualHolder conditions,
-		List<PostAction<?>> postActions,
+		List<PostAction> postActions,
 		MinMaxBounds.Ints maxRepeats
 ) {
 
@@ -38,7 +38,7 @@ public record LycheeRecipeCommonProperties(
 	public static final MapCodec<ContextualHolder> CONTEXTUAL_CODEC = ContextualHolder.CODEC.optionalFieldOf(
 			"contextual",
 			ContextualHolder.EMPTY);
-	public static final MapCodec<List<PostAction<?>>> POST_ACTION_CODEC = PostActionType.LIST_CODEC.optionalFieldOf("post", List.of());
+	public static final MapCodec<List<PostAction>> POST_ACTION_CODEC = PostActionType.LIST_CODEC.optionalFieldOf("post", List.of());
 	public static final MapCodec<MinMaxBounds.Ints> MAX_REPEATS_CODEC = MinMaxBounds.Ints.CODEC.optionalFieldOf(
 			"max_repeats",
 			MinMaxBounds.Ints.ANY);

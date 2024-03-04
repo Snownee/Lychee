@@ -35,7 +35,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class RandomSelect extends PostAction<RandomSelect> implements CompoundAction {
 
-	public final PostAction<?>[] entries;
+	public final PostAction[] entries;
 	public final int[] weights;
 	public final MinMaxBounds.Ints rolls;
 	public final boolean canRepeat;
@@ -45,7 +45,7 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 	public final int emptyWeight;
 
 	public RandomSelect(
-			PostAction<?>[] entries,
+		PostAction[] entries,
 			int[] weights,
 			int totalWeight,
 			int emptyWeight,
@@ -73,11 +73,11 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 		if (times == 0) {
 			return;
 		}
-		List<PostAction<?>> validActions = Lists.newArrayList();
+		List<PostAction> validActions = Lists.newArrayList();
 		int[] validWeights = new int[entries.length];
 		int totalWeights = 0;
 		for (int i = 0; i < entries.length; i++) {
-			PostAction<?> entry = entries[i];
+			PostAction entry = entries[i];
 			if (entry.checkConditions(recipe, ctx, 1) == 1) {
 				validWeights[validActions.size()] = weights[i];
 				validActions.add(entry);

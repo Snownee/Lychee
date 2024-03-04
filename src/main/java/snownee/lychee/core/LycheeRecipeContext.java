@@ -96,7 +96,7 @@ public class LycheeRecipeContext extends EmptyContainer implements LycheeContext
 		itemHolders.replace(index, stack);
 	}
 
-	public void enqueueActions(Collection<PostAction<?>> actions, int times, boolean startNew) {
+	public void enqueueActions(Collection<PostAction> actions, int times, boolean startNew) {
 		if (runtime == null || startNew) {
 			runtime = new ActionRuntime();
 		}
