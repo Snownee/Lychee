@@ -1,5 +1,7 @@
 package snownee.lychee.action;
 
+import java.util.Objects;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -16,9 +18,12 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record Break(PostActionCommonProperties commonProperties) implements PostAction {
+public final class Break implements PostAction {
 
 	public static final Break CLIENT_DUMMY = new Break();
+	private final PostActionCommonProperties commonProperties;
+
+	public Break(PostActionCommonProperties commonProperties) {this.commonProperties = commonProperties;}
 
 	public Break() {
 		this(new PostActionCommonProperties());
@@ -38,6 +43,33 @@ public record Break(PostActionCommonProperties commonProperties) implements Post
 	public boolean hidden() {
 		return true;
 	}
+
+	@Override
+	public PostActionCommonProperties commonProperties() {return commonProperties;}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
+		}
+		var that = (Break) obj;
+		return Objects.equals(this.commonProperties, that.commonProperties);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(commonProperties);
+	}
+
+	@Override
+	public String toString() {
+		return "Break[" +
+				"commonProperties=" + commonProperties + ']';
+	}
+
 
 	public static class Type implements PostActionType<Break> {
 		public static final Codec<Break> CODEC = RecordCodecBuilder.create(instance -> instance.group(

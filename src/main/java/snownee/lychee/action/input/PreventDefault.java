@@ -1,6 +1,7 @@
 package snownee.lychee.action.input;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -19,9 +20,12 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public record PreventDefault(PostActionCommonProperties commonProperties) implements PostAction {
+public final class PreventDefault implements PostAction {
 
 	public static final PreventDefault CLIENT_DUMMY = new PreventDefault();
+	private final PostActionCommonProperties commonProperties;
+
+	public PreventDefault(PostActionCommonProperties commonProperties) {this.commonProperties = commonProperties;}
 
 	public PreventDefault() {
 		this(new PostActionCommonProperties());
@@ -47,12 +51,40 @@ public record PreventDefault(PostActionCommonProperties commonProperties) implem
 		if (recipe != null && recipe.getType().canPreventConsumeInputs) {
 			for (var ingredient : ingredients) {
 				if (ingredient.tooltips.isEmpty()) {
-					ingredient.addTooltip(((LycheeRecipeType<?, T>) recipe.getType()).getPreventDefaultDescription(recipe));
+					ingredient.addTooltip(((LycheeRecipeType<?, T>) recipe.getType()).getPreventDefaultDescription(
+							recipe));
 					ingredient.isCatalyst = true;
 				}
 			}
 		}
 	}
+
+	@Override
+	public PostActionCommonProperties commonProperties() {return commonProperties;}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
+		}
+		var that = (PreventDefault) obj;
+		return Objects.equals(this.commonProperties, that.commonProperties);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(commonProperties);
+	}
+
+	@Override
+	public String toString() {
+		return "PreventDefault[" +
+				"commonProperties=" + commonProperties + ']';
+	}
+
 
 	public static class Type implements PostActionType<PreventDefault> {
 		public static final Codec<PreventDefault> CODEC = RecordCodecBuilder.create(instance -> instance.group(

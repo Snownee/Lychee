@@ -1,6 +1,7 @@
 package snownee.lychee.action.input;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -23,11 +24,23 @@ import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record SetItem(
-		PostActionCommonProperties commonProperties,
-		ContextualHolder conditions,
-		ItemStack stack,
-		Reference target) implements PostAction {
+public final class SetItem implements PostAction {
+	private final PostActionCommonProperties commonProperties;
+	private final ContextualHolder conditions;
+	private final ItemStack stack;
+	private final Reference target;
+
+	public SetItem(
+			PostActionCommonProperties commonProperties,
+			ContextualHolder conditions,
+			ItemStack stack,
+			Reference target
+	) {
+		this.commonProperties = commonProperties;
+		this.conditions = conditions;
+		this.stack = stack;
+		this.target = target;
+	}
 
 	@Override
 	public PostActionType<SetItem> type() {
@@ -46,7 +59,9 @@ public record SetItem(
 			} else {
 				stack = ItemStack.parseOptional(
 						registryAccess,
-						CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON).json())));
+						CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON)
+								.json()))
+				);
 
 			}
 			context.setItem(index, stack);
@@ -77,11 +92,51 @@ public record SetItem(
 		Preconditions.checkArgument(!recipe.getItemIndexes(target).isEmpty(), "No target found for %s", target);
 	}
 
-//	@Override
-//	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
-//		setPath(pointer.toString());
-//		return CommonProxy.tagToJson(stack.save(new CompoundTag()));
-//	}
+	@Override
+	public PostActionCommonProperties commonProperties() {return commonProperties;}
+
+	@Override
+	public ContextualHolder conditions() {return conditions;}
+
+	public ItemStack stack() {return stack;}
+
+	public Reference target() {return target;}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
+		}
+		var that = (SetItem) obj;
+		return Objects.equals(this.commonProperties, that.commonProperties) &&
+				Objects.equals(this.conditions, that.conditions) &&
+				Objects.equals(this.stack, that.stack) &&
+				Objects.equals(this.target, that.target);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(commonProperties, conditions, stack, target);
+	}
+
+	@Override
+	public String toString() {
+		return "SetItem[" +
+				"commonProperties=" + commonProperties + ", " +
+				"conditions=" + conditions + ", " +
+				"stack=" + stack + ", " +
+				"target=" + target + ']';
+	}
+
+
+	//	@Override
+	//	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
+	//		setPath(pointer.toString());
+	//		return CommonProxy.tagToJson(stack.save(new CompoundTag()));
+	//	}
 
 	public static class Type implements PostActionType<SetItem> {
 		public static final Codec<SetItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(

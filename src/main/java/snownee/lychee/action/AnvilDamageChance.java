@@ -1,5 +1,7 @@
 package snownee.lychee.action;
 
+import java.util.Objects;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -15,7 +17,14 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record AnvilDamageChance(PostActionCommonProperties commonProperties, float chance) implements PostAction {
+public final class AnvilDamageChance implements PostAction {
+	private final PostActionCommonProperties commonProperties;
+	private final float chance;
+
+	public AnvilDamageChance(PostActionCommonProperties commonProperties, float chance) {
+		this.commonProperties = commonProperties;
+		this.chance = chance;
+	}
 
 	@Override
 	public PostActionType<AnvilDamageChance> type() {
@@ -35,6 +44,37 @@ public record AnvilDamageChance(PostActionCommonProperties commonProperties, flo
 	public boolean hidden() {
 		return true;
 	}
+
+	@Override
+	public PostActionCommonProperties commonProperties() {return commonProperties;}
+
+	public float chance() {return chance;}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
+		}
+		var that = (AnvilDamageChance) obj;
+		return Objects.equals(this.commonProperties, that.commonProperties) &&
+				Float.floatToIntBits(this.chance) == Float.floatToIntBits(that.chance);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(commonProperties, chance);
+	}
+
+	@Override
+	public String toString() {
+		return "AnvilDamageChance[" +
+				"commonProperties=" + commonProperties + ", " +
+				"chance=" + chance + ']';
+	}
+
 
 	public static class Type implements PostActionType<AnvilDamageChance> {
 		public static final Codec<AnvilDamageChance> CODEC = RecordCodecBuilder.create(instance ->

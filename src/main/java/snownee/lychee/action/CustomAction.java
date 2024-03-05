@@ -1,5 +1,6 @@
 package snownee.lychee.action;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
@@ -21,11 +22,24 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record CustomAction(
-		PostActionCommonProperties commonProperties,
-		Data data,
-		boolean canRepeat,
-		Apply applyFunc) implements PostAction {
+public final class CustomAction implements PostAction {
+	private final PostActionCommonProperties commonProperties;
+	private final Data data;
+	private final boolean canRepeat;
+	private final Apply applyFunc;
+
+	public CustomAction(
+			PostActionCommonProperties commonProperties,
+			Data data,
+			boolean canRepeat,
+			Apply applyFunc
+	) {
+		this.commonProperties = commonProperties;
+		this.data = data;
+		this.canRepeat = canRepeat;
+		this.applyFunc = applyFunc;
+	}
+
 	public CustomAction(PostActionCommonProperties commonProperties, Data data, boolean canRepeat) {
 		this(commonProperties, data, canRepeat, null);
 	}
@@ -56,6 +70,45 @@ public record CustomAction(
 	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 		CommonProxy.postCustomActionEvent(data.id, this, recipe, patchContext);
 	}
+
+	@Override
+	public PostActionCommonProperties commonProperties() {return commonProperties;}
+
+	public Data data() {return data;}
+
+	public boolean canRepeat() {return canRepeat;}
+
+	public Apply applyFunc() {return applyFunc;}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
+		}
+		var that = (CustomAction) obj;
+		return Objects.equals(this.commonProperties, that.commonProperties) &&
+				Objects.equals(this.data, that.data) &&
+				this.canRepeat == that.canRepeat &&
+				Objects.equals(this.applyFunc, that.applyFunc);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(commonProperties, data, canRepeat, applyFunc);
+	}
+
+	@Override
+	public String toString() {
+		return "CustomAction[" +
+				"commonProperties=" + commonProperties + ", " +
+				"data=" + data + ", " +
+				"canRepeat=" + canRepeat + ", " +
+				"applyFunc=" + applyFunc + ']';
+	}
+
 
 	@FunctionalInterface
 	public interface Apply {
