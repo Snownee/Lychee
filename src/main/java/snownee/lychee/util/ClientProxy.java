@@ -15,7 +15,7 @@ import snownee.lychee.action.Execute;
 import snownee.lychee.action.Explode;
 import snownee.lychee.action.Hurt;
 import snownee.lychee.action.input.SetItem;
-import snownee.lychee.client.core.post.CycleStatePropertyPostActionRenderer;
+import snownee.lychee.client.action.CycleStatePropertyPostActionRenderer;
 import snownee.lychee.client.core.post.IfPostActionRenderer;
 import snownee.lychee.client.core.post.ItemBasedPostActionRenderer;
 import snownee.lychee.client.core.post.ItemStackPostActionRenderer;

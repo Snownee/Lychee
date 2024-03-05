@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -84,7 +86,7 @@ public class PlaceBlock implements PostAction {
 	}
 
 	@Override
-	public PostActionType<PlaceBlock> type() {
+	public PostActionType<? extends PlaceBlock> type() {
 		return PostActionTypes.PLACE;
 	}
 
@@ -180,6 +182,36 @@ public class PlaceBlock implements PostAction {
 	@Override
 	public boolean repeatable() {
 		return false;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		final PlaceBlock that = (PlaceBlock) o;
+		return Objects.equal(commonProperties, that.commonProperties) &&
+				Objects.equal(block, that.block) && Objects.equal(
+				offset,
+				that.offset
+		);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(commonProperties, block, offset);
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("commonProperties", commonProperties)
+				.add("block", block)
+				.add("offset", offset)
+				.toString();
 	}
 
 	public static class Type implements PostActionType<PlaceBlock> {

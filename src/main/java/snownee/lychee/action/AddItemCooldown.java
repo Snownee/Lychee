@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.MoreObjects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -72,11 +73,11 @@ public final class AddItemCooldown implements PostAction {
 
 	@Override
 	public String toString() {
-		return "AddItemCooldown[" +
-				"commonProperties=" + commonProperties + ", " +
-				"seconds=" + seconds + ']';
+		return MoreObjects.toStringHelper(this)
+				.add("commonProperties", commonProperties)
+				.add("seconds", seconds)
+				.toString();
 	}
-
 
 	public static class Type implements PostActionType<AddItemCooldown> {
 		public static final Codec<AddItemCooldown> CODEC = RecordCodecBuilder.create(instance ->

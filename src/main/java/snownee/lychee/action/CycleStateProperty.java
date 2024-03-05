@@ -2,44 +2,33 @@ package snownee.lychee.action;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.gson.JsonObject;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-public class CycleStateProperty extends PlaceBlock {
+public final class CycleStateProperty extends PlaceBlock {
+	public final String property;
+	private final Supplier<Property<?>> propertySupplier;
 
-	public final Property<?> property;
-
-	public CycleStateProperty(BlockPredicate block, BlockPos offset, Property<?> property) {
-		super(block, offset);
+	public CycleStateProperty(PostActionCommonProperties commonProperties, BlockPredicate block, BlockPos offset, String property) {
+		super(commonProperties, block, offset);
 		this.property = property;
-	}
-
-	@Override
-	public PostActionType<?> getType() {
-		return PostActionTypes.CYCLE_STATE_PROPERTY;
-	}
-
-	@Override
-	protected @Nullable BlockState getNewState(BlockState oldState) {
-		try {
-			return oldState.cycle(property);
-		} catch (Throwable e) {
-			return null;
-		}
+		this.propertySupplier = Suppliers.memoize(() -> findProperty(block, property));
 	}
 
 	public static Property<?> findProperty(BlockPredicate blockPredicate, String name) {
-		BlockState block = BlockPredicateHelper.anyBlockState(blockPredicate);
+		var block = BlockPredicateExtensions.anyBlockState(blockPredicate);
 		for (var property : block.getProperties()) {
 			if (name.equals(property.getName())) {
 				return property;
@@ -48,33 +37,38 @@ public class CycleStateProperty extends PlaceBlock {
 		throw new IllegalArgumentException("Unknown property name: " + name);
 	}
 
-	public static class Type extends PostActionType<CycleStateProperty> {
+	@Override
+	public PostActionType<CycleStateProperty> type() {
+		return PostActionTypes.CYCLE_STATE_PROPERTY;
+	}
+
+	@Override
+	protected @Nullable BlockState getNewState(BlockState oldState) {
+		try {
+			return oldState.cycle(propertySupplier.get());
+		} catch (Throwable e) {
+			return null;
+		}
+	}
+
+	public Property<?> property() {return propertySupplier.get();}
+
+	public static class Type implements PostActionType<CycleStateProperty> {
+		public static final Codec<CycleStateProperty> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				PostActionCommonProperties.MAP_CODEC.forGetter(CycleStateProperty::commonProperties),
+				BlockPredicate.CODEC.fieldOf("block").forGetter(it -> it.block),
+				RecordCodecBuilder.<BlockPos>mapCodec(posInstance -> posInstance.group(
+						Codec.INT.fieldOf("offsetX").forGetter(Vec3i::getX),
+						Codec.INT.fieldOf("offsetY").forGetter(Vec3i::getY),
+						Codec.INT.fieldOf("offsetZ").forGetter(Vec3i::getZ)
+				).apply(posInstance, BlockPos::new)).forGetter(it -> it.offset),
+				Codec.STRING.fieldOf("property").forGetter(it -> it.property)
+		).apply(instance, CycleStateProperty::new));
 
 		@Override
-		public CycleStateProperty fromJson(JsonObject o) {
-			BlockPos offset = CommonProxy.parseOffset(o);
-			BlockPredicate block = BlockPredicateHelper.fromJson(o.get("block"));
-			return new CycleStateProperty(block, offset, findProperty(block, GsonHelper.getAsString(o, "property")));
+		public Codec<CycleStateProperty> codec() {
+			return null;
 		}
-
-		@Override
-		public void toJson(CycleStateProperty action, JsonObject o) {
-			PostActionTypes.PLACE.toJson(action, o);
-			o.addProperty("property", action.property.getName());
-		}
-
-		@Override
-		public CycleStateProperty fromNetwork(FriendlyByteBuf buf) {
-			BlockPredicate block = BlockPredicateHelper.fromNetwork(buf);
-			return new CycleStateProperty(block, buf.readBlockPos(), findProperty(block, buf.readUtf()));
-		}
-
-		@Override
-		public void toNetwork(CycleStateProperty action, FriendlyByteBuf buf) {
-			PostActionTypes.PLACE.toNetwork(action, buf);
-			buf.writeUtf(action.property.getName());
-		}
-
 	}
 
 }

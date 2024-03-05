@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.MoreObjects;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -102,13 +103,13 @@ public final class CustomAction implements PostAction {
 
 	@Override
 	public String toString() {
-		return "CustomAction[" +
-				"commonProperties=" + commonProperties + ", " +
-				"data=" + data + ", " +
-				"canRepeat=" + canRepeat + ", " +
-				"applyFunc=" + applyFunc + ']';
+		return MoreObjects.toStringHelper(this)
+				.add("commonProperties", commonProperties)
+				.add("data", data)
+				.add("canRepeat", canRepeat)
+				.add("applyFunc", applyFunc)
+				.toString();
 	}
-
 
 	@FunctionalInterface
 	public interface Apply {

@@ -70,7 +70,6 @@ public final class Break implements PostAction {
 				"commonProperties=" + commonProperties + ']';
 	}
 
-
 	public static class Type implements PostActionType<Break> {
 		public static final Codec<Break> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(Break::commonProperties)

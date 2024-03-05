@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.MoreObjects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -70,11 +71,11 @@ public final class AnvilDamageChance implements PostAction {
 
 	@Override
 	public String toString() {
-		return "AnvilDamageChance[" +
-				"commonProperties=" + commonProperties + ", " +
-				"chance=" + chance + ']';
+		return MoreObjects.toStringHelper(this)
+				.add("commonProperties", commonProperties)
+				.add("chance", chance)
+				.toString();
 	}
-
 
 	public static class Type implements PostActionType<AnvilDamageChance> {
 		public static final Codec<AnvilDamageChance> CODEC = RecordCodecBuilder.create(instance ->
