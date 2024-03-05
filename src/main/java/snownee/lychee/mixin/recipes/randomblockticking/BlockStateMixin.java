@@ -5,8 +5,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.google.common.base.Supplier;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -29,18 +27,15 @@ public class BlockStateMixin {
 
 		var block = (RandomlyTickable) state.getBlock();
 		if (block.lychee$isTickable()) {
-			final Supplier<LycheeContext> ctxSupplier = () -> {
-				var context = new LycheeContext();
-				context.put(LycheeContextKey.LEVEL, serverLevel);
-				context.put(LycheeContextKey.RANDOM, randomSource);
-				var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-				lootParamsContext.setParam(LootContextParams.BLOCK_STATE, state);
-				lootParamsContext.setParam(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
-				lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, blockPos);
-				return context;
-			};
-			final var result = RecipeTypes.RANDOM_BLOCK_TICKING.process(serverLevel, state, ctxSupplier);
-			if (result != null && result.getFirst().get(LycheeContextKey.ACTION).avoidDefault) {
+			var context = new LycheeContext();
+			context.put(LycheeContextKey.LEVEL, serverLevel);
+			context.put(LycheeContextKey.RANDOM, randomSource);
+			var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+			lootParamsContext.setParam(LootContextParams.BLOCK_STATE, state);
+			lootParamsContext.setParam(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
+			lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, blockPos);
+			final var recipe = RecipeTypes.RANDOM_BLOCK_TICKING.process(serverLevel, state, context);
+			if (recipe != null && context.get(LycheeContextKey.ACTION).avoidDefault) {
 				ci.cancel();
 			}
 		}

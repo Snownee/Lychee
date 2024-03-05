@@ -134,8 +134,14 @@ public abstract class ExplosionMixin {
 		context.put(LycheeContextKey.ITEM, itemHolders);
 		var state = stateRef.get();
 		var recipe = RecipeTypes.BLOCK_EXPLODING.process(level, state, context);
+		if (recipe == null) {
+			if (currentDropsRef.get() != null) {
+				allDrops.addAll(currentDropsRef.get());
+			}
+			return;
+		}
 		var actionContext = context.get(LycheeContextKey.ACTION);
-		if (!actionContext.avoidDefault && recipe != null && currentDropsRef.get() != null) {
+		if (!actionContext.avoidDefault && currentDropsRef.get() != null) {
 			allDrops.addAll(currentDropsRef.get());
 		}
 		currentDropsRef.set(null);

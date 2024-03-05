@@ -65,22 +65,18 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 			return false;
 		}
 		var targetBlock = level.getBlockState(targetPos);
-		var result = RecipeTypes.DRIPSTONE_DRIPPING.process(level, targetBlock, () -> {
-			var context = new LycheeContext();
-			context.put(LycheeContextKey.LEVEL, level);
-			var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-			lootParamsContext.setParam(LootContextParams.BLOCK_STATE, targetBlock);
-			var origin = new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.99, targetPos.getZ() + 0.5);
-			lootParamsContext.setParam(LootContextParams.ORIGIN, origin);
-			lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, targetPos);
-			lootParamsContext.validate(LycheeLootContextParamSets.BLOCK_ONLY);
-			return context;
-		});
-		if (result == null) {
+		var context = new LycheeContext();
+		context.put(LycheeContextKey.LEVEL, level);
+		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, targetBlock);
+		var origin = new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.99, targetPos.getZ() + 0.5);
+		lootParamsContext.setParam(LootContextParams.ORIGIN, origin);
+		lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, targetPos);
+		lootParamsContext.validate(LycheeLootContextParamSets.BLOCK_ONLY);
+		var recipe = RecipeTypes.DRIPSTONE_DRIPPING.process(level, targetBlock, context);
+		if (recipe == null) {
 			return false;
 		}
-		var context = result.getFirst();
-		var recipe = result.getSecond();
 		level.levelEvent(LevelEvent.DRIPSTONE_DRIP, tipPos, 0);
 		var i = tipPos.getY() - targetPos.getY();
 		var j = 50 + i;
@@ -88,7 +84,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		var builder = new LocationPredicate.Builder();
 		((LocationPredicate$BuilderAccess) builder).setBlock(Optional.ofNullable(recipe.value().targetBlock));
 		var check = (LocationCheck) LocationCheck.checkLocation(builder).build();
-		breakAction.withCondition(new Not(new Location(check)));
+		breakAction.conditions().conditions().add(new Not(new Location(check)));
 		var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.jobs.offer(new Job(breakAction, 1));
 		actionContext.jobs.offer(new Job(new Delay(j / 20F), 1));
