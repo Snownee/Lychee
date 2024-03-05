@@ -38,11 +38,11 @@ public record AddItemCooldown(
 	}
 
 	public static class Type implements PostActionType<AddItemCooldown> {
-		public static final Codec<AddItemCooldown> CODEC = RecordCodecBuilder.create(inst ->
-				inst.group(
+		public static final Codec<AddItemCooldown> CODEC = RecordCodecBuilder.create(instance ->
+				instance.group(
 						PostActionCommonProperties.MAP_CODEC.forGetter(AddItemCooldown::commonProperties),
 						Codec.FLOAT.fieldOf("s").forGetter(AddItemCooldown::seconds)
-				).apply(inst, AddItemCooldown::new));
+				).apply(instance, AddItemCooldown::new));
 
 		@Override
 		public Codec<AddItemCooldown> codec() {
