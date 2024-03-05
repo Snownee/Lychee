@@ -14,6 +14,7 @@ import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.Contextual;
+import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.contextual.ContextualPredicate;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -32,6 +33,11 @@ public interface PostAction extends PostActionDisplay, ContextualPredicate, Cont
 
 	default void setPath(String path) {
 		commonProperties().setPath(path);
+	}
+
+	@Override
+	default ContextualHolder conditions() {
+		return commonProperties().conditions();
 	}
 
 	PostActionType<? extends PostAction> type();

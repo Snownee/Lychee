@@ -16,16 +16,15 @@ import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public record PreventDefault(PostActionCommonProperties commonProperties, ContextualHolder conditions) implements PostAction {
+public record PreventDefault(PostActionCommonProperties commonProperties) implements PostAction {
 
 	public static final PreventDefault CLIENT_DUMMY = new PreventDefault();
 
 	private PreventDefault() {
-		this(new PostActionCommonProperties(), new ContextualHolder(List.of(), null, null));
+		this(new PostActionCommonProperties());
 	}
 
 	@Override
@@ -57,8 +56,7 @@ public record PreventDefault(PostActionCommonProperties commonProperties, Contex
 
 	public static class Type implements PostActionType<PreventDefault> {
 		public static final Codec<PreventDefault> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				PostActionCommonProperties.MAP_CODEC.forGetter(PreventDefault::commonProperties),
-				ContextualHolder.CODEC.fieldOf("contextual").forGetter(PreventDefault::conditions)
+				PostActionCommonProperties.MAP_CODEC.forGetter(PreventDefault::commonProperties)
 		).apply(instance, PreventDefault::new));
 
 		@Override

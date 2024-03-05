@@ -1,40 +1,35 @@
 package snownee.lychee.action;
 
-import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class AddItemCooldown implements PostAction<AddItemCooldown> {
-
-	public final float seconds;
-
-	public AddItemCooldown(float seconds) {
-		this.seconds = seconds;
-	}
+public record AddItemCooldown(
+		PostActionCommonProperties commonProperties,
+		float seconds) implements PostAction {
 
 	@Override
-	public PostActionType<?> getType() {
+	public PostActionType<?> type() {
 		return PostActionTypes.ADD_ITEM_COOLDOWN;
 	}
 
 	@Override
-	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		apply(recipe, ctx, times);
-	}
-
-	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		Player player = (Player) ctx.getParam(LootContextParams.THIS_ENTITY);
-		ItemStack stack = ctx.getItem(0);
-		player.getCooldowns().addCooldown(stack.getItem(), (int) (seconds * 20 * times));
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		var player = (Player) lootParamsContext.get(LootContextParams.THIS_ENTITY);
+		var item = context.getItem(0);
+		player.getCooldowns().addCooldown(item.getItem(), (int) (seconds * 20 * times));
 	}
 
 	@Override
@@ -42,28 +37,16 @@ public class AddItemCooldown implements PostAction<AddItemCooldown> {
 		return true;
 	}
 
-	public static class Type extends PostActionType<AddItemCooldown> {
+	public static class Type implements PostActionType<AddItemCooldown> {
+		public static final Codec<AddItemCooldown> CODEC = RecordCodecBuilder.create(inst ->
+				inst.group(
+						PostActionCommonProperties.MAP_CODEC.forGetter(AddItemCooldown::commonProperties),
+						Codec.FLOAT.fieldOf("s").forGetter(AddItemCooldown::seconds)
+				).apply(inst, AddItemCooldown::new));
 
 		@Override
-		public AddItemCooldown fromJson(JsonObject o) {
-			return new AddItemCooldown(o.get("s").getAsFloat());
+		public Codec<AddItemCooldown> codec() {
+			return CODEC;
 		}
-
-		@Override
-		public void toJson(AddItemCooldown action, JsonObject o) {
-			o.addProperty("s", action.seconds);
-		}
-
-		@Override
-		public AddItemCooldown fromNetwork(FriendlyByteBuf buf) {
-			return new AddItemCooldown(buf.readFloat());
-		}
-
-		@Override
-		public void toNetwork(AddItemCooldown action, FriendlyByteBuf buf) {
-			buf.writeFloat(action.seconds);
-		}
-
 	}
-
 }

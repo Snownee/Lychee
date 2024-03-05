@@ -1,5 +1,6 @@
 package snownee.lychee.util.action;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
@@ -10,18 +11,28 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import snownee.lychee.util.contextual.ContextualHolder;
+
 public class PostActionCommonProperties {
 	public static final MapCodec<PostActionCommonProperties> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-			Codec.STRING.optionalFieldOf("@path", null).forGetter(it -> it.path)
+			Codec.STRING.optionalFieldOf("@path", null).forGetter(it -> it.path),
+			ContextualHolder.CODEC.fieldOf("contextual").forGetter(PostActionCommonProperties::conditions)
 	).apply(instance, PostActionCommonProperties::new));
 	private @Nullable String path;
+	private final ContextualHolder conditions;
 
-	public PostActionCommonProperties(@Nullable String path) {
+	public PostActionCommonProperties(@Nullable String path, ContextualHolder conditions) {
 		this.path = path;
+		this.conditions = conditions;
 	}
 
 	public PostActionCommonProperties() {
+		this.conditions = new ContextualHolder(List.of(), null, null);
 		this.path = null;
+	}
+
+	public ContextualHolder conditions() {
+		return conditions;
 	}
 
 	public Optional<String> getPath() {
