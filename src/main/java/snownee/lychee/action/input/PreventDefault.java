@@ -24,12 +24,12 @@ public record PreventDefault(PostActionCommonProperties commonProperties, Contex
 
 	public static final PreventDefault CLIENT_DUMMY = new PreventDefault();
 
-	public PreventDefault() {
+	private PreventDefault() {
 		this(new PostActionCommonProperties(), new ContextualHolder(List.of(), null, null));
 	}
 
 	@Override
-	public PostActionType<?> type() {
+	public PostActionType<PreventDefault> type() {
 		return PostActionTypes.PREVENT_DEFAULT;
 	}
 

@@ -1,12 +1,11 @@
 package snownee.lychee.core;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.GsonHelper;
 import snownee.lychee.util.json.JsonPointer;
 
 public abstract class Reference {
+	public static final Codec<Reference> CODEC = Codec.STRING.xmap(Reference::create, Object::toString);
 
 	public static Reference create(String value) {
 		if ("default".equals(value)) {
@@ -16,25 +15,6 @@ public abstract class Reference {
 			return new Pointer(new JsonPointer(value));
 		}
 		return new Constant(value);
-	}
-
-	public static Reference fromJson(JsonObject parent, String key) {
-		return create(GsonHelper.getAsString(parent, key, "default"));
-	}
-
-	public static void toJson(Reference reference, JsonObject parent, String key) {
-		if (reference == DEFAULT) {
-			return;
-		}
-		parent.addProperty(key, reference.toString());
-	}
-
-	public static Reference fromNetwork(FriendlyByteBuf buf) {
-		return create(buf.readUtf());
-	}
-
-	public static void toNetwork(Reference reference, FriendlyByteBuf buf) {
-		buf.writeUtf(reference.toString());
 	}
 
 	public boolean isPointer() {

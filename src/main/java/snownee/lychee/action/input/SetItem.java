@@ -1,64 +1,59 @@
 package snownee.lychee.action.input;
 
 import java.util.List;
-import java.util.Objects;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.ShapedRecipe;
-import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.Reference;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class SetItem extends PostAction {
-
-	public final ItemStack stack;
-	public final Reference target;
-
-	public SetItem(ItemStack stack, Reference target) {
-		this.stack = stack;
-		this.target = target;
-	}
+public record SetItem(
+		PostActionCommonProperties commonProperties,
+		ContextualHolder conditions,
+		ItemStack stack,
+		Reference target) implements PostAction {
 
 	@Override
-	public PostActionType<?> getType() {
+	public PostActionType<SetItem> type() {
 		return PostActionTypes.SET_ITEM;
 	}
 
 	@Override
-	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		apply(recipe, ctx, times);
-	}
-
-	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		IntList indexes = recipe.getItemIndexes(target);
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+		var indexes = recipe.getItemIndexes(target);
+		var registryAccess = context.get(LycheeContextKey.LEVEL).registryAccess();
 		for (var index : indexes) {
-			CompoundTag tag = ctx.getItem(index).getTag();
+			var tag = (CompoundTag) context.getItem(index).save(registryAccess);
 			ItemStack stack;
-			if (path == null) {
+			if (getPath().isEmpty()) {
 				stack = this.stack.copy();
 			} else {
-				stack = ItemStack.of(CommonProxy.jsonToTag(new JsonPointer(path).find(ctx.json)));
+				stack = ItemStack.parseOptional(
+						registryAccess,
+						CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON).json())));
+
 			}
-			ctx.setItem(index, stack);
-			if (tag != null && !stack.isEmpty()) {
-				ctx.getItem(index).getOrCreateTag().merge(tag);
+			context.setItem(index, stack);
+			if (!stack.isEmpty()) {
+				((CompoundTag) context.getItem(index).saveOptional(registryAccess)).merge(tag);
 			}
-			ctx.itemHolders.ignoreConsumptionFlags.set(index);
+			context.get(LycheeContextKey.ITEM).get(index).setIgnoreConsumption(true);
 		}
 	}
 
@@ -78,46 +73,27 @@ public class SetItem extends PostAction {
 	}
 
 	@Override
-	public void validate(ILycheeRecipe recipe, ILycheeRecipe.NBTPatchContext patchContext) {
-		Preconditions.checkArgument(recipe.getItemIndexes(target).size() > 0, "No target found for %s", target);
+	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
+		Preconditions.checkArgument(!recipe.getItemIndexes(target).isEmpty(), "No target found for %s", target);
 	}
 
-	@Override
-	public JsonElement provideJsonInfo(ILycheeRecipe recipe, JsonPointer pointer, JsonObject recipeObject) {
-		path = pointer.toString();
-		return CommonProxy.tagToJson(stack.save(new CompoundTag()));
+//	@Override
+//	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
+//		setPath(pointer.toString());
+//		return CommonProxy.tagToJson(stack.save(new CompoundTag()));
+//	}
+
+	public static class Type implements PostActionType<SetItem> {
+		public static final Codec<SetItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				PostActionCommonProperties.MAP_CODEC.forGetter(SetItem::commonProperties),
+				ContextualHolder.CODEC.fieldOf("contextual").forGetter(SetItem::conditions),
+				ItemStack.OPTIONAL_CODEC.fieldOf("item").forGetter(SetItem::stack),
+				Reference.CODEC.fieldOf("target").forGetter(SetItem::target)
+		).apply(instance, SetItem::new));
+
+		@Override
+		public Codec<SetItem> codec() {
+			return CODEC;
+		}
 	}
-
-	public static class Type extends PostActionType<SetItem> {
-
-		@Override
-		public SetItem fromJson(JsonObject o) {
-			ItemStack stack;
-			if ("minecraft:air".equals(Objects.toString(ResourceLocation.tryParse(o.get("item").getAsString())))) {
-				stack = ItemStack.EMPTY;
-			} else {
-				stack = ShapedRecipe.itemStackFromJson(o);
-			}
-			return new SetItem(stack, Reference.fromJson(o, "target"));
-		}
-
-		@Override
-		public void toJson(SetItem action, JsonObject o) {
-			CommonProxy.itemstackToJson(action.stack, o);
-			Reference.toJson(action.target, o, "target");
-		}
-
-		@Override
-		public SetItem fromNetwork(FriendlyByteBuf buf) {
-			return new SetItem(buf.readItem(), Reference.fromNetwork(buf));
-		}
-
-		@Override
-		public void toNetwork(SetItem action, FriendlyByteBuf buf) {
-			buf.writeItem(action.stack);
-			Reference.toNetwork(action.target, buf);
-		}
-
-	}
-
 }
