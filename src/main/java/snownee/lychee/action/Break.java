@@ -1,31 +1,37 @@
 package snownee.lychee.action;
 
-import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.network.FriendlyByteBuf;
-import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.action.ActionRuntime.State;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class Break extends PostAction {
+public record Break(PostActionCommonProperties commonProperties) implements PostAction {
 
 	public static final Break CLIENT_DUMMY = new Break();
 
+	public Break() {
+		this(new PostActionCommonProperties());
+	}
+
 	@Override
-	public PostActionType<?> getType() {
+	public PostActionType<Break> type() {
 		return PostActionTypes.BREAK;
 	}
 
 	@Override
-	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		ctx.runtime.state = State.STOPPED;
-	}
-
-	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+		context.get(LycheeContextKey.ACTION).state = ActionContext.State.STOPPED;
 	}
 
 	@Override
@@ -33,26 +39,19 @@ public class Break extends PostAction {
 		return true;
 	}
 
-	public static class Type extends PostActionType<Break> {
+	public static class Type implements PostActionType<Break> {
+		public static final Codec<Break> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				PostActionCommonProperties.MAP_CODEC.forGetter(Break::commonProperties)
+		).apply(instance, Break::new));
 
 		@Override
-		public Break fromJson(JsonObject o) {
-			return new Break();
+		public Codec<Break> codec() {
+			return CODEC;
 		}
 
 		@Override
-		public void toJson(Break action, JsonObject o) {
+		public StreamCodec<? extends ByteBuf, Break> streamCodec() {
+			return StreamCodec.of((buf, value) -> {}, (buf) -> CLIENT_DUMMY);
 		}
-
-		@Override
-		public Break fromNetwork(FriendlyByteBuf buf) {
-			return CLIENT_DUMMY;
-		}
-
-		@Override
-		public void toNetwork(Break action, FriendlyByteBuf buf) {
-		}
-
 	}
-
 }

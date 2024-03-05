@@ -23,7 +23,7 @@ public record PreventDefault(PostActionCommonProperties commonProperties) implem
 
 	public static final PreventDefault CLIENT_DUMMY = new PreventDefault();
 
-	private PreventDefault() {
+	public PreventDefault() {
 		this(new PostActionCommonProperties());
 	}
 
