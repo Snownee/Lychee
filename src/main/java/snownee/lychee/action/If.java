@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import snownee.lychee.action.input.NBTPatch;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
+import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;

@@ -26,6 +26,7 @@ import snownee.lychee.action.input.NBTPatch;
 import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
