@@ -1,71 +1,53 @@
 package snownee.lychee.action;
 
-import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.Vec3;
-import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class DropXp extends PostAction {
-
-	public final int xp;
-
-	public DropXp(int xp) {
-		this.xp = xp;
-	}
-
+public record DropXp(PostActionCommonProperties commonProperties, int xp) implements PostAction {
 	@Override
-	public PostActionType<?> getType() {
+	public PostActionType<DropXp> type() {
 		return PostActionTypes.DROP_XP;
 	}
 
 	@Override
-	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		apply(recipe, ctx, times);
-	}
-
-	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
-		ExperienceOrb.award(ctx.serverLevel(), pos, xp * times);
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParamsContext.get(LootContextParams.ORIGIN);
+		ExperienceOrb.award((ServerLevel) context.get(LycheeContextKey.LEVEL), pos, xp * times);
 	}
 
 	@Override
 	public Component getDisplayName() {
-		return ClientProxy.format(CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()), xp);
+		return ClientProxy.format(CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(type())), xp);
 	}
 
-	public static class Type extends PostActionType<DropXp> {
+	public static class Type implements PostActionType<DropXp> {
+		public static final Codec<DropXp> CODEC = RecordCodecBuilder.create(instance ->
+				instance.group(
+						PostActionCommonProperties.MAP_CODEC.forGetter(DropXp::commonProperties),
+						Codec.INT.fieldOf("xp").forGetter(DropXp::xp)
+				).apply(instance, DropXp::new));
 
 		@Override
-		public DropXp fromJson(JsonObject o) {
-			return new DropXp(o.get("xp").getAsInt());
+		public Codec<DropXp> codec() {
+			return CODEC;
 		}
-
-		@Override
-		public void toJson(DropXp action, JsonObject o) {
-			o.addProperty("xp", action.xp);
-		}
-
-		@Override
-		public DropXp fromNetwork(FriendlyByteBuf buf) {
-			return new DropXp(buf.readVarInt());
-		}
-
-		@Override
-		public void toNetwork(DropXp action, FriendlyByteBuf buf) {
-			buf.writeVarInt(action.xp);
-		}
-
 	}
-
 }
