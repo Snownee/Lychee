@@ -8,7 +8,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
@@ -19,6 +18,7 @@ import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	public static void invoke(ItemEntity entity) {
@@ -30,6 +30,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, entity);
 		lootParamsContext.validate(RecipeTypes.ITEM_BURNING.contextParamSet);
 		RecipeTypes.ITEM_BURNING.findFirst(context, entity.level()).ifPresent(it -> {
+			context.put(LycheeContextKey.RECIPE_ID, it.id());
 			int times = it.value().getRandomRepeats(entity.getItem().getCount(), context);
 			var itemStackHolders = ItemStackHolderCollection.InWorld.of(entity);
 			context.put(LycheeContextKey.ITEM, itemStackHolders);
@@ -55,12 +56,12 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public RecipeSerializer<ItemBurningRecipe> getSerializer() {
+	public @NotNull RecipeSerializer<ItemBurningRecipe> getSerializer() {
 		return RecipeSerializers.ITEM_BURNING;
 	}
 
 	@Override
-	public @NotNull RecipeType<ItemBurningRecipe> getType() {
+	public @NotNull LycheeRecipeType<LycheeContext, ItemBurningRecipe> getType() {
 		return RecipeTypes.ITEM_BURNING;
 	}
 

@@ -40,7 +40,7 @@ public interface PostAction extends PostActionDisplay, ContextualPredicate, Cont
 		return commonProperties().conditions();
 	}
 
-	PostActionType<? extends PostAction> type();
+	PostActionType<?> type();
 
 	default void validate(@Nullable ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {}
 

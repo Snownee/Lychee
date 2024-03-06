@@ -1,12 +1,10 @@
 package snownee.lychee.util.action;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.context.LycheeContextKey;
 
 public record Job(PostAction action, int times) {
 	public static final Codec<Job> CODEC =
@@ -16,8 +14,9 @@ public record Job(PostAction action, int times) {
 			).apply(instance, Job::new));
 
 
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context) {
-		int times = action.test(recipe, context, this.times);
+	public void apply(LycheeContext context) {
+		var recipe = context.get(LycheeContextKey.RECIPE);
+		var times = action.test(recipe, context, this.times);
 		if (times > 0) {
 			action.apply(recipe, context, times);
 		} else {

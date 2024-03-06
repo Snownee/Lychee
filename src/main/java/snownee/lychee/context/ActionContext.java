@@ -2,8 +2,6 @@ package snownee.lychee.context;
 
 import java.util.Queue;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.google.common.collect.Queues;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -15,7 +13,6 @@ import snownee.lychee.util.context.KeyedContextValue;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.context.LycheeContextSerializer;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ActionContext implements KeyedContextValue<ActionContext> {
 	public boolean avoidDefault = false;
@@ -46,11 +43,11 @@ public class ActionContext implements KeyedContextValue<ActionContext> {
 		RUNNING, PAUSED, STOPPED
 	}
 
-	public void run(@Nullable ILycheeRecipe<?> recipe, LycheeContext context) {
+	public void run(LycheeContext context) {
 		while (!jobs.isEmpty()) {
 			final var job = jobs.poll();
 			try {
-				job.apply(recipe, context);
+				job.apply(context);
 				if (state != State.RUNNING) {
 					break;
 				}

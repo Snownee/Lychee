@@ -48,11 +48,12 @@ public final class PreventDefault implements PostAction {
 
 	@Override
 	public <T extends ILycheeRecipe<?>> void loadCatalystsInfo(@Nullable T recipe, List<IngredientInfo> ingredients) {
-		if (recipe != null && recipe.getType().canPreventConsumeInputs) {
+		if (recipe != null &&
+				recipe.getType() instanceof LycheeRecipeType<?, ?> lycheeRecipeType &&
+				lycheeRecipeType.canPreventConsumeInputs) {
 			for (var ingredient : ingredients) {
 				if (ingredient.tooltips.isEmpty()) {
-					ingredient.addTooltip(((LycheeRecipeType<?, T>) recipe.getType()).getPreventDefaultDescription(
-							recipe));
+					ingredient.addTooltip(((LycheeRecipeType<?, T>) lycheeRecipeType).getPreventDefaultDescription(recipe));
 					ingredient.isCatalyst = true;
 				}
 			}

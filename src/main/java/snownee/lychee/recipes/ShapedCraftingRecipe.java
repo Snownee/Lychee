@@ -20,7 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -168,7 +167,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 	}
 
 	@Override
-	public @NotNull RecipeType<? extends Recipe<?>> getType() {
+	public @NotNull RecipeType<? extends CraftingRecipe> getType() {
 		return RecipeType.CRAFTING;
 	}
 

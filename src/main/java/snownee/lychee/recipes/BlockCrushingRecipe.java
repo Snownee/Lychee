@@ -114,9 +114,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 			return true;
 		}
 		final var blockPredicate = blockPredicate().get();
-		if (blockPredicate.tag().isPresent() && !blockstate.is(blockPredicate.tag().get())) {
-			return false;
-		} else if (blockPredicate.blocks().isPresent() && !blockstate.is(blockPredicate.blocks().get())) {
+		if (blockPredicate.blocks().isPresent() && !blockstate.is(blockPredicate.blocks().get())) {
 			return false;
 		} else if (blockPredicate.properties().isPresent() && !blockPredicate.properties().get().matches(blockstate)) {
 			return false;

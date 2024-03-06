@@ -165,6 +165,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 				}
 			}
 			if (tryMatch(recipe, level, context).isPresent()) {
+				context.put(LycheeContextKey.RECIPE_ID, recipe.id());
 				recipe.value().applyPostActions(context, 1);
 				return recipe;
 			}

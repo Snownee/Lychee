@@ -18,9 +18,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
@@ -33,6 +31,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
+import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
@@ -65,10 +64,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 				hitResult.getLocation(),
 				context
 		);
-		if (result.isPresent()) {
-			return InteractionResult.SUCCESS;
-		}
-		return InteractionResult.PASS;
+		return result.map(it -> InteractionResult.SUCCESS).orElse(InteractionResult.PASS);
 	}
 
 	protected final Pair<Ingredient, Ingredient> input;
@@ -108,12 +104,12 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<?> getSerializer() {
+	public @NotNull RecipeSerializer<? extends BlockInteractingRecipe> getSerializer() {
 		return RecipeSerializers.BLOCK_INTERACTING;
 	}
 
 	@Override
-	public @NotNull RecipeType<? extends Recipe<?>> getType() {
+	public @NotNull BlockKeyableRecipeType<? extends BlockInteractingRecipe> getType() {
 		return RecipeTypes.BLOCK_INTERACTING;
 	}
 

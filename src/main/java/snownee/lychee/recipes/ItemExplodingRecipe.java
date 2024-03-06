@@ -13,7 +13,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -27,6 +26,7 @@ import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements Comparable<ItemExplodingRecipe> {
 	public static void invoke(final ServerLevel level, double x, double y, double z, List<Entity> entityList, float radius) {
@@ -66,7 +66,7 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 	}
 
 	@Override
-	public @NotNull RecipeType<ItemExplodingRecipe> getType() {
+	public @NotNull LycheeRecipeType<LycheeContext, ItemExplodingRecipe> getType() {
 		return RecipeTypes.ITEM_EXPLODING;
 	}
 

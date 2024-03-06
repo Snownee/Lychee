@@ -13,7 +13,6 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
@@ -26,6 +25,7 @@ import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 	public static void invoke(final LightningBolt lightningBolt, final List<Entity> entities) {
@@ -64,7 +64,7 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public @NotNull RecipeType<LightningChannelingRecipe> getType() {
+	public @NotNull LycheeRecipeType<LycheeContext, LightningChannelingRecipe> getType() {
 		return RecipeTypes.LIGHTNING_CHANNELING;
 	}
 

@@ -39,7 +39,7 @@ public class MarkerMixin implements ActionMarker {
 
 		final var actionContext = lychee$data.getContext().get(LycheeContextKey.ACTION);
 		actionContext.state = ActionContext.State.RUNNING;
-		actionContext.run(lychee$data.getRecipe(), lychee$data.getContext());
+		actionContext.run(lychee$data.getContext());
 		if (actionContext.state == ActionContext.State.STOPPED) {
 			self().discard();
 		}

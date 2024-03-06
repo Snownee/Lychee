@@ -15,6 +15,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.lychee.core.Reference;
 import snownee.lychee.util.BoundsExtensions;
@@ -90,7 +91,7 @@ public interface ILycheeRecipe<C extends Container> extends Recipe<C>, Contextua
 		return ItemStack.EMPTY;
 	}
 
-	@NotNull LycheeRecipeType<? extends Container, ? extends ILycheeRecipe<?>> getType();
+	@NotNull RecipeType<? extends Recipe<?>> getType();
 
 	LycheeRecipeCommonProperties commonProperties();
 

@@ -33,10 +33,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 	private final ValidItemCache validItems = new ValidItemCache();
 
 	public BlockCrushingRecipeType(
-			String name,
-			Class<BlockCrushingRecipe> clazz,
-			@Nullable LootContextParamSet paramSet
-	) {
+			String name, Class<BlockCrushingRecipe> clazz, @Nullable LootContextParamSet paramSet) {
 		super(name, clazz, paramSet);
 		compactInputs = true;
 	}
@@ -47,10 +44,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		}
 		final var pos = CommonProxy.getOnPos(entity);
 		final var fallingBlock = entity.getBlockState();
-		final var recipes = recipesByBlock.getOrDefault(
-				fallingBlock.getBlock(),
-				Collections.emptyList()
-		);
+		final var recipes = recipesByBlock.getOrDefault(fallingBlock.getBlock(), Collections.emptyList());
 		if (recipes.isEmpty()) {
 			return;
 		}
@@ -63,8 +57,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		final var itemEntities = entity.level().getEntitiesOfClass(
 				ItemEntity.class,
 				box,
-				$ -> $.isAlive() && validItems.contains($.getItem())
-		);
+				$ -> $.isAlive() && validItems.contains($.getItem()));
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, entity.level());
 		final var itemShapelessContext = new ItemShapelessContext(itemEntities, context);
@@ -96,6 +89,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 					if (match.isPresent()) {
 						matchedAny = matched = true;
 						var times = 1;
+						context.put(LycheeContextKey.RECIPE_ID, recipe.id());
 						if (matcher.map(it -> it.inputUsed.length > 0).orElse(false)) {
 							final var inputUsed = matcher.get().inputUsed;
 							//System.out.println(Arrays.toString(context.match));
@@ -121,8 +115,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 									SCustomLevelEventPacket.sendItemParticles(
 											holder.get(),
 											(ServerLevel) context.get(LycheeContextKey.LEVEL),
-											entityHolder.getEntity().position()
-									);
+											entityHolder.getEntity().position());
 								}
 							}
 						}

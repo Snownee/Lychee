@@ -14,15 +14,21 @@ import snownee.lychee.context.CraftingContext;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.context.JsonContext;
 import snownee.lychee.context.LootParamsContext;
+import snownee.lychee.context.RecipeContext;
+import snownee.lychee.util.action.ActionMarker;
 import snownee.lychee.util.input.ItemStackHolderCollection;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface LycheeContextKey<T> {
 	LycheeContextKey<RandomSource> RANDOM = register("random");
 	LycheeContextKey<Level> LEVEL = register("level");
 	LycheeContextKey<LootParamsContext> LOOT_PARAMS = register("loot_params");
+	LycheeContextKey<RecipeContext> RECIPE_ID = register("recipe_id");
+	LycheeContextKey<ILycheeRecipe<?>> RECIPE = register("recipe");
 
 	LycheeContextKey<ItemStackHolderCollection> ITEM = register("item");
 	LycheeContextKey<ActionContext> ACTION = register("action");
+	LycheeContextKey<ActionMarker> MARKER = register("marker");
 	LycheeContextKey<JsonContext> JSON = register("json");
 
 	LycheeContextKey<AnvilContext> ANVIL = register("anvil");

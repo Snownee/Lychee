@@ -16,9 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
@@ -27,6 +25,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
@@ -65,12 +64,12 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<?> getSerializer() {
+	public @NotNull RecipeSerializer<? extends BlockClickingRecipe> getSerializer() {
 		return RecipeSerializers.BLOCK_CLICKING;
 	}
 
 	@Override
-	public @NotNull RecipeType<? extends Recipe<?>> getType() {
+	public @NotNull BlockKeyableRecipeType<? extends BlockClickingRecipe> getType() {
 		return RecipeTypes.BLOCK_CLICKING;
 	}
 
