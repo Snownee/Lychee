@@ -1,60 +1,51 @@
 package snownee.lychee.action;
 
-import com.google.gson.JsonObject;
+import java.util.Objects;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Marker;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.Vec3;
-import snownee.lychee.Lychee;
-import snownee.lychee.core.LycheeRecipeContext;
-import snownee.lychee.util.action.ActionMarker;
-import snownee.lychee.util.action.ActionRuntime.State;
+import org.jetbrains.annotations.Nullable;
+
+import com.google.common.base.MoreObjects;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class Delay extends PostAction {
+public final class Delay implements PostAction {
+	private final PostActionCommonProperties commonProperties;
+	private final float seconds;
 
-	public final float seconds;
-
-	public Delay(float seconds) {
+	public Delay(PostActionCommonProperties commonProperties, float seconds) {
+		this.commonProperties = commonProperties;
 		this.seconds = seconds;
 	}
 
+	public Delay(float seconds) {
+		this.seconds = seconds;
+		this.commonProperties = new PostActionCommonProperties();
+	}
+
 	@Override
-	public PostActionType<?> getType() {
+	public PostActionType<Delay> type() {
 		return PostActionTypes.DELAY;
 	}
 
 	@Override
-	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		apply(recipe, ctx, times);
-	}
-
-	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		if (ctx.runtime.marker == null) {
-			makeMarker(recipe, ctx);
-		}
-		ctx.runtime.marker.lychee$addDelay((int) (seconds * 20));
-		ctx.runtime.state = State.PAUSED;
-	}
-
-	public static void makeMarker(ILycheeRecipe recipe, LycheeRecipeContext ctx) {
-		Marker marker = EntityType.MARKER.create(ctx.getLevel());
-		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
-		if (pos != null) {
-			marker.moveTo(pos);
-		}
-		marker.setCustomName(Component.literal(Lychee.ID));
-		ctx.getLevel().addFreshEntity(marker);
-		ActionMarker actionMarker = (ActionMarker) marker;
-		actionMarker.lychee$setContext(recipe, ctx);
-		ctx.runtime.marker = actionMarker;
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+		var actionContext = context.get(LycheeContextKey.ACTION);
+		var actionMarker = context.get(LycheeContextKey.MARKER);
+		var actionData = actionMarker.lychee$getData();
+		context.put(LycheeContextKey.RECIPE, recipe);
+		actionData.addDelayedTicks((int) (seconds * 20));
+		actionContext.state = ActionContext.State.PAUSED;
 	}
 
 	@Override
@@ -62,28 +53,52 @@ public class Delay extends PostAction {
 		return true;
 	}
 
-	public static class Type extends PostActionType<Delay> {
+	@Override
+	public PostActionCommonProperties commonProperties() {return commonProperties;}
+
+	public float seconds() {return seconds;}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		}
+		if (obj == null || obj.getClass() != this.getClass()) {
+			return false;
+		}
+		var that = (Delay) obj;
+		return Objects.equals(this.commonProperties, that.commonProperties) &&
+				Float.floatToIntBits(this.seconds) == Float.floatToIntBits(that.seconds);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(commonProperties, seconds);
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("commonProperties", commonProperties)
+				.add("seconds", seconds)
+				.toString();
+	}
+
+	public static class Type implements PostActionType<Delay> {
+		public static final Codec<Delay> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				PostActionCommonProperties.MAP_CODEC.forGetter(Delay::commonProperties),
+				Codec.FLOAT.fieldOf("s").forGetter(Delay::seconds)
+		).apply(instance, Delay::new));
 
 		@Override
-		public Delay fromJson(JsonObject o) {
-			return new Delay(o.get("s").getAsFloat());
+		public Codec<Delay> codec() {
+			return CODEC;
 		}
 
 		@Override
-		public void toJson(Delay action, JsonObject o) {
-			o.addProperty("s", action.seconds);
-		}
-
-		@Override
-		public Delay fromNetwork(FriendlyByteBuf buf) {
+		public StreamCodec<? extends ByteBuf, Delay> streamCodec() {
 			throw new UnsupportedOperationException();
 		}
-
-		@Override
-		public void toNetwork(Delay action, FriendlyByteBuf buf) {
-			throw new UnsupportedOperationException();
-		}
-
 	}
 
 }
