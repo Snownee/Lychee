@@ -1,86 +1,75 @@
 package snownee.lychee.action;
 
-import com.google.gson.JsonObject;
-import com.mojang.brigadier.ParseResults;
+import org.jetbrains.annotations.Nullable;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import io.netty.buffer.ByteBuf;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.Lychee;
-import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class Execute extends PostAction {
+public record Execute(PostActionCommonProperties commonProperties, String command, boolean hide, boolean repeat) implements PostAction {
 
-	public static final Execute DUMMY = new Execute("", false, false);
+	public static final Execute DUMMY = new Execute(new PostActionCommonProperties(), "", false, false);
 	public static final Component DEFAULT_NAME = Component.literal(Lychee.ID);
 
-	private final String command;
-	private final boolean hide;
-	private final boolean repeat;
-
-	public Execute(String command, boolean hide, boolean repeat) {
-		this.command = command;
-		this.hide = hide;
-		this.repeat = repeat;
-	}
-
 	@Override
-	public PostActionType<?> getType() {
+	public PostActionType<Execute> type() {
 		return PostActionTypes.EXECUTE;
 	}
 
 	@Override
-	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		apply(recipe, ctx, times);
-	}
-
-	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
 		if (command.isEmpty()) {
 			return;
 		}
 		if (!repeat) {
 			times = 1;
 		}
-		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
+		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParamsContext.getOrNull(LootContextParams.ORIGIN);
 		if (pos == null) {
 			pos = Vec3.ZERO;
 		}
-		Entity entity = ctx.getParamOrNull(LootContextParams.THIS_ENTITY);
-		Vec2 rotation = Vec2.ZERO;
-		Component displayName = DEFAULT_NAME;
-		String name = Lychee.ID;
+		var entity = lootParamsContext.getOrNull(LootContextParams.THIS_ENTITY);
+		var rotation = Vec2.ZERO;
+		var displayName = DEFAULT_NAME;
+		var name = Lychee.ID;
 		if (entity != null) {
 			rotation = entity.getRotationVector();
 			displayName = entity.getDisplayName();
 			name = entity.getName().getString();
 		}
-		CommandSourceStack sourceStack = new CommandSourceStack(
+		var level = (ServerLevel) context.get(LycheeContextKey.LEVEL);
+		var commandSourceStack = new CommandSourceStack(
 				CommandSource.NULL,
 				pos,
 				rotation,
-				ctx.serverLevel(),
+				level,
 				2,
 				name,
 				displayName,
-				ctx.serverLevel().getServer(),
-				entity
-		);
+				level.getServer(),
+				entity);
 		for (int i = 0; i < times; i++) {
-			Commands cmds = ctx.serverLevel().getServer().getCommands();
-			ParseResults<CommandSourceStack> results = cmds.getDispatcher().parse(command, sourceStack);
-			cmds.performCommand(results, command);
+			var commands = level.getServer().getCommands();
+			var parseResults = commands.getDispatcher().parse(command, commandSourceStack);
+			commands.performCommand(parseResults, command);
 		}
 	}
 
@@ -89,41 +78,32 @@ public class Execute extends PostAction {
 		return hide;
 	}
 
-	public static class Type extends PostActionType<Execute> {
+	public static class Type implements PostActionType<Execute> {
+		public static final Codec<Execute> CODEC = RecordCodecBuilder.create(instance ->
+				instance.group(
+						PostActionCommonProperties.MAP_CODEC.forGetter(Execute::commonProperties),
+						Codec.STRING.fieldOf("command").forGetter(Execute::command),
+						Codec.BOOL.optionalFieldOf("hide", false).forGetter(Execute::hide),
+						Codec.BOOL.optionalFieldOf("repeat", true).forGetter(Execute::repeat)
+				).apply(instance, Execute::new));
+
 
 		@Override
-		public Execute fromJson(JsonObject o) {
-			return new Execute(
-					GsonHelper.getAsString(o, "command"),
-					GsonHelper.getAsBoolean(o, "hide", false),
-					GsonHelper.getAsBoolean(o, "repeat", true)
+		public Codec<Execute> codec() {
+			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<? extends ByteBuf, Execute> streamCodec() {
+			return StreamCodec.of(
+					(it, value) -> it.writeBoolean(!value.conditions().conditions().isEmpty()),
+					it -> {
+						if (it.readBoolean()) {
+							return new Execute(new PostActionCommonProperties(), "", false, false);
+						}
+						return DUMMY;
+					}
 			);
 		}
-
-		@Override
-		public void toJson(Execute action, JsonObject o) {
-			o.addProperty("command", action.command);
-			if (action.hide) {
-				o.addProperty("hide", true);
-			}
-			if (!action.repeat) {
-				o.addProperty("repeat", false);
-			}
-		}
-
-		@Override
-		public Execute fromNetwork(FriendlyByteBuf buf) {
-			if (buf.readBoolean()) {
-				return new Execute("", false, false);
-			}
-			return DUMMY;
-		}
-
-		@Override
-		public void toNetwork(Execute action, FriendlyByteBuf buf) {
-			buf.writeBoolean(!action.getConditions().isEmpty());
-		}
-
 	}
-
 }
