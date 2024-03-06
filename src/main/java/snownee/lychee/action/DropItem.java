@@ -2,70 +2,69 @@ package snownee.lychee.action;
 
 import java.util.List;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.ShapedRecipe;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.LycheeTags;
-import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.mixin.ItemEntityAccess;
-import snownee.lychee.recipes.block_crushing.BlockCrushingRecipe;
-import snownee.lychee.recipes.block_exploding.BlockExplodingContext;
+import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class DropItem extends PostAction {
+public class DropItem implements PostAction {
 
 	public final ItemStack stack;
+	private final PostActionCommonProperties commonProperties;
 
-	public DropItem(ItemStack stack) {
+	public DropItem(PostActionCommonProperties commonProperties, ItemStack stack) {
 		this.stack = stack;
+		this.commonProperties = commonProperties;
 	}
 
 	@Override
-	public PostActionType<?> getType() {
+	public PostActionCommonProperties commonProperties() {
+		return commonProperties;
+	}
+
+	@Override
+	public PostActionType<DropItem> type() {
 		return PostActionTypes.DROP_ITEM;
 	}
 
 	@Override
-	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		apply(recipe, ctx, times);
-	}
-
-	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		Vec3 pos = ctx.getParam(LootContextParams.ORIGIN);
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParamsContext.get(LootContextParams.ORIGIN);
+		var level = context.get(LycheeContextKey.LEVEL);
 		if (recipe instanceof BlockCrushingRecipe) {
-			BlockState landingBlock = ctx.getParam(LootContextParams.BLOCK_STATE);
-			if (landingBlock.is(LycheeTags.EXTEND_BOX)) {
-				pos = Vec3.atCenterOf(ctx.getParam(LycheeLootContextParams.BLOCK_POS));
+			var state = lootParamsContext.get(LootContextParams.BLOCK_STATE);
+			if (state.is(LycheeTags.EXTEND_BOX)) {
+				pos = Vec3.atCenterOf(lootParamsContext.get(LycheeLootContextParams.BLOCK_POS));
 			}
 		}
-		ItemStack stack;
-		if (path == null) {
-			stack = this.stack.copy();
-		} else {
-			stack = ItemStack.of(CommonProxy.jsonToTag(new JsonPointer(path).find(ctx.json)));
-		}
+		var stack = getPath().isEmpty() ? this.stack.copy() : ItemStack.parseOptional(
+				level.registryAccess(),
+				CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON).json())));
 		stack.setCount(stack.getCount() * times);
-		if (ctx.getClass() == BlockExplodingContext.class) {
-			ctx.itemHolders.stacksNeedHandle.add(stack);
+		if (recipe.getType() == RecipeTypes.BLOCK_EXPLODING) {
+			context.get(LycheeContextKey.ITEM).stacksNeedHandle.add(stack);
 		} else {
-			CommonProxy.dropItemStack(ctx.getLevel(), pos.x, pos.y, pos.z, stack, $ -> {
-				((ItemEntityAccess) $).setHealth(80);
-			});
+			CommonProxy.dropItemStack(level, pos.x, pos.y, pos.z, stack, $ -> ((ItemEntityAccess) $).setHealth(80));
 		}
 	}
 
@@ -79,33 +78,17 @@ public class DropItem extends PostAction {
 		return List.of(stack);
 	}
 
-	@Override
-	public JsonElement provideJsonInfo(ILycheeRecipe recipe, JsonPointer pointer, JsonObject recipeObject) {
-		path = pointer.toString();
-		return CommonProxy.tagToJson(stack.save(new CompoundTag()));
-	}
+	public static class Type implements PostActionType<DropItem> {
+		public static final Codec<DropItem> CODEC = RecordCodecBuilder.create(instance ->
+				instance.group(
+						PostActionCommonProperties.MAP_CODEC.forGetter(DropItem::commonProperties),
+						ItemStack.OPTIONAL_CODEC.fieldOf("stack").forGetter(it -> it.stack)
+				).apply(instance, DropItem::new));
 
-	public static class Type extends PostActionType<DropItem> {
-
-		@Override
-		public DropItem fromJson(JsonObject o) {
-			return new DropItem(ShapedRecipe.itemStackFromJson(o));
-		}
 
 		@Override
-		public void toJson(DropItem action, JsonObject o) {
-			CommonProxy.itemstackToJson(action.stack, o);
+		public Codec<DropItem> codec() {
+			return CODEC;
 		}
-
-		@Override
-		public DropItem fromNetwork(FriendlyByteBuf buf) {
-			return new DropItem(buf.readItem());
-		}
-
-		@Override
-		public void toNetwork(DropItem action, FriendlyByteBuf buf) {
-			buf.writeItem(action.stack);
-		}
-
 	}
 }

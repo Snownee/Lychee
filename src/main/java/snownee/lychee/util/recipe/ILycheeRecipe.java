@@ -146,7 +146,7 @@ public interface ILycheeRecipe<C extends Container> extends Recipe<C>, Contextua
 			final var actionContext = context.get(LycheeContextKey.ACTION);
 			actionContext.reset();
 			actionContext.jobs.addAll(postActions().stream().map(it -> new Job(it, times)).toList());
-			actionContext.run(this, context);
+			actionContext.run(context);
 		}
 	}
 
