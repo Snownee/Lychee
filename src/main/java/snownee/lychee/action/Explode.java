@@ -4,12 +4,13 @@ import java.util.Locale;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
@@ -17,122 +18,79 @@ import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.core.LycheeRecipeContext;
+import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class Explode extends PostAction {
+public record Explode(
+		PostActionCommonProperties commonProperties,
+		BlockInteraction blockInteraction,
+		BlockPos offset,
+		boolean fire,
+		float radius,
+		float step) implements PostAction {
 
-	public final BlockInteraction blockInteraction;
-	public final BlockPos offset;
-	public final boolean fire;
-	public final float radius;
-	public final float step;
-
-	public Explode(BlockInteraction blockInteraction, BlockPos offset, boolean fire, float radius, float step) {
-		this.blockInteraction = blockInteraction;
-		this.offset = offset;
-		this.fire = fire;
-		this.radius = radius;
-		this.step = step;
-	}
-
-	private void explode(Level level, @Nullable Entity entity, double d, double e, double f, float g) {
-		Explosion explosion = new Explosion(level, entity, null, null, d, e, f, g, fire, blockInteraction);
+	private void explode(
+			Level level,
+			@Nullable Entity source,
+			Vec3 pos,
+			float radius) {
+		var explosion = new Explosion(level, source, pos.x, pos.y, pos.z, radius, fire, blockInteraction);
 		explosion.explode();
 		explosion.finalizeExplosion(true);
 	}
 
 	@Override
-	public PostActionType<?> getType() {
+	public PostActionType<Explode> type() {
 		return PostActionTypes.EXPLODE;
 	}
 
 	@Override
-	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		apply(recipe, ctx, times);
-	}
-
-	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);
-		pos = pos.add(offset.getX(), offset.getY(), offset.getZ());
-		float r = Math.min(radius + step * (Mth.sqrt(times) - 1), radius * 4);
-		explode(ctx.getLevel(), ctx.getParamOrNull(LootContextParams.THIS_ENTITY), pos.x, pos.y, pos.z, r);
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParamsContext.getOrNull(LootContextParams.ORIGIN).add(Vec3.atLowerCornerOf(offset));
+		var boundedRadius = Math.min(radius + step * (Mth.sqrt(times) - 1), radius * 4);
+		explode(context.get(LycheeContextKey.LEVEL), lootParamsContext.get(LootContextParams.THIS_ENTITY), pos, boundedRadius);
 	}
 
 	@Override
 	public Component getDisplayName() {
-		return Component.translatable(CommonProxy.makeDescriptionId("postAction", getType().getRegistryName()) + "." +
+		return Component.translatable(CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(type())) + "." +
 				blockInteraction.name().toLowerCase(Locale.ENGLISH));
 	}
 
-	public static class Type extends PostActionType<Explode> {
+	public static class Type implements PostActionType<Explode> {
+		public static final Codec<Explode> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				PostActionCommonProperties.MAP_CODEC.forGetter(Explode::commonProperties),
+				Codec.STRING.comapFlatMap(
+								it -> switch (it) {
+									case "none", "keep" -> DataResult.success(BlockInteraction.KEEP);
+									case "break", "destroy_with_decay" -> DataResult.success(BlockInteraction.DESTROY_WITH_DECAY);
+									case "destroy" -> DataResult.success(BlockInteraction.DESTROY);
+									default -> DataResult.error(() -> "Unexpected value: " + it);
+								},
+								it -> it.name().toLowerCase(Locale.ENGLISH))
+						.optionalFieldOf("block_interaction", BlockInteraction.DESTROY)
+						.forGetter(Explode::blockInteraction),
+				RecordCodecBuilder.<BlockPos>mapCodec(posInstance -> posInstance.group(
+						Codec.INT.fieldOf("offsetX").forGetter(Vec3i::getX),
+						Codec.INT.fieldOf("offsetY").forGetter(Vec3i::getY),
+						Codec.INT.fieldOf("offsetZ").forGetter(Vec3i::getZ)
+				).apply(posInstance, BlockPos::new)).forGetter(it -> it.offset),
+				Codec.BOOL.optionalFieldOf("fire", false).forGetter(Explode::fire),
+				Codec.FLOAT.optionalFieldOf("radius", 4F).forGetter(Explode::radius),
+				Codec.FLOAT.optionalFieldOf("radius_step", 4F).forGetter(Explode::step)
+		).apply(instance, Explode::new));
 
 		@Override
-		public Explode fromJson(JsonObject o) {
-			BlockPos offset = CommonProxy.parseOffset(o);
-			boolean fire = GsonHelper.getAsBoolean(o, "fire", false);
-			String s = GsonHelper.getAsString(o, "block_interaction", "destroy");
-			BlockInteraction blockInteraction = switch (s) {
-				case "none", "keep" -> BlockInteraction.KEEP;
-				case "break", "destroy_with_decay" -> BlockInteraction.DESTROY_WITH_DECAY;
-				case "destroy" -> BlockInteraction.DESTROY;
-				default -> throw new IllegalArgumentException("Unexpected value: " + s);
-			};
-			float radius = GsonHelper.getAsFloat(o, "radius", 4);
-			float radiusStep = GsonHelper.getAsFloat(o, "radius_step", 0.5F);
-			return new Explode(blockInteraction, offset, fire, radius, radiusStep);
+		public Codec<Explode> codec() {
+			return CODEC;
 		}
-
-		@Override
-		public void toJson(Explode action, JsonObject o) {
-			BlockPos offset = action.offset;
-			if (offset.getX() != 0) {
-				o.addProperty("offsetX", offset.getX());
-			}
-			if (offset.getY() != 0) {
-				o.addProperty("offsetY", offset.getY());
-			}
-			if (offset.getZ() != 0) {
-				o.addProperty("offsetZ", offset.getX());
-			}
-			if (action.fire) {
-				o.addProperty("fire", true);
-			}
-			if (action.blockInteraction != BlockInteraction.DESTROY) {
-				o.addProperty("block_interaction", action.blockInteraction.name().toLowerCase(Locale.ENGLISH));
-			}
-			if (action.radius != 4) {
-				o.addProperty("radius", action.radius);
-			}
-			if (action.step != 0.5F) {
-				o.addProperty("radius_step", action.step);
-			}
-		}
-
-		@Override
-		public Explode fromNetwork(FriendlyByteBuf buf) {
-			BlockInteraction blockInteraction = buf.readEnum(BlockInteraction.class);
-			BlockPos offset = buf.readBlockPos();
-			boolean fire = buf.readBoolean();
-			float radius = buf.readFloat();
-			float step = buf.readFloat();
-			return new Explode(blockInteraction, offset, fire, radius, step);
-		}
-
-		@Override
-		public void toNetwork(Explode action, FriendlyByteBuf buf) {
-			buf.writeEnum(action.blockInteraction);
-			buf.writeBlockPos(action.offset);
-			buf.writeBoolean(action.fire);
-			buf.writeFloat(action.radius);
-			buf.writeFloat(action.step);
-		}
-
 	}
-
 }
