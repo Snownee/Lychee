@@ -71,11 +71,11 @@ public class ClientProxy implements ClientModInitializer {
 
 		PostActionRenderer.register(
 				PostActionTypes.DROP_ITEM,
-				(ItemStackPostActionRenderer<DropItem>) action -> action.stack
+				(ItemStackPostActionRenderer<DropItem>) DropItem::stack
 		);
 		PostActionRenderer.register(
 				PostActionTypes.SET_ITEM,
-				(ItemStackPostActionRenderer<SetItem>) action -> action.stack
+				(ItemStackPostActionRenderer<SetItem>) SetItem::stack
 		);
 		PostActionRenderer.register(
 				PostActionTypes.DROP_XP,

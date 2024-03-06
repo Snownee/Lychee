@@ -10,20 +10,36 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public final class CycleStateProperty extends PlaceBlock {
+public final class CycleStateProperty implements PostAction {
 	public final String property;
 	private final Supplier<Property<?>> propertySupplier;
+	private final PostActionCommonProperties commonProperties;
+	private final BlockPredicate block;
+	private final BlockPos offset;
 
-	public CycleStateProperty(PostActionCommonProperties commonProperties, BlockPredicate block, BlockPos offset, String property) {
-		super(commonProperties, block, offset);
+	public CycleStateProperty(
+			PostActionCommonProperties commonProperties,
+			BlockPredicate block,
+			BlockPos offset,
+			String property
+	) {
 		this.property = property;
+		this.commonProperties = commonProperties;
+		this.block = block;
+		this.offset = offset;
 		this.propertySupplier = Suppliers.memoize(() -> findProperty(block, property));
 	}
 
@@ -38,17 +54,30 @@ public final class CycleStateProperty extends PlaceBlock {
 	}
 
 	@Override
+	public PostActionCommonProperties commonProperties() {
+		return commonProperties;
+	}
+
+	@Override
 	public PostActionType<CycleStateProperty> type() {
 		return PostActionTypes.CYCLE_STATE_PROPERTY;
 	}
 
 	@Override
-	protected @Nullable BlockState getNewState(BlockState oldState) {
-		try {
-			return oldState.cycle(propertySupplier.get());
-		} catch (Throwable e) {
-			return null;
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		var blockPos = lootParamsContext.getOrNull(LycheeLootContextParams.BLOCK_POS);
+		if (blockPos == null) {
+			blockPos = BlockPos.containing(lootParamsContext.get(LootContextParams.ORIGIN));
 		}
+		blockPos = blockPos.offset(offset);
+		var level = context.get(LycheeContextKey.LEVEL);
+		var oldState = level.getBlockState(blockPos);
+		var state = oldState.cycle(propertySupplier.get());
+		if (!level.setBlockAndUpdate(blockPos, state)) {
+			return;
+		}
+		level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(state));
 	}
 
 	public Property<?> property() {return propertySupplier.get();}
@@ -64,7 +93,6 @@ public final class CycleStateProperty extends PlaceBlock {
 				).apply(posInstance, BlockPos::new)).forGetter(it -> it.offset),
 				Codec.STRING.fieldOf("property").forGetter(it -> it.property)
 		).apply(instance, CycleStateProperty::new));
-
 		@Override
 		public Codec<CycleStateProperty> codec() {
 			return null;

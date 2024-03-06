@@ -6,8 +6,6 @@ import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -40,19 +38,8 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class PlaceBlock implements PostAction {
-	private final PostActionCommonProperties commonProperties;
-
-	public final BlockPredicate block;
-	public final BlockPos offset;
-
-	public PlaceBlock(PostActionCommonProperties commonProperties, BlockPredicate block, BlockPos offset) {
-		this.commonProperties = commonProperties;
-		this.block = block;
-		this.offset = offset;
-	}
-
-	private static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {
+public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredicate block, BlockPos offset) implements PostAction {
+	static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {
 		var blockstate = level.getBlockState(pos);
 		if (blockstate.isAir()) {
 			return false;
@@ -100,7 +87,7 @@ public class PlaceBlock implements PostAction {
 		blockPos = blockPos.offset(offset);
 		var level = context.get(LycheeContextKey.LEVEL);
 		var oldState = level.getBlockState(blockPos);
-		var state = getNewState(oldState);
+		var state = BlockPredicateExtensions.anyBlockState(block);
 		if (state == null) {
 			return;
 		}
@@ -112,30 +99,28 @@ public class PlaceBlock implements PostAction {
 			level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, blockPos, Block.getId(oldState));
 		}
 
-		if (type() == PostActionTypes.PLACE) {
-			var properties = block.properties()
-					.map(StatePropertiesPredicate::properties)
-					.stream()
-					.flatMap(Collection::stream)
-					.map(StatePropertiesPredicate.PropertyMatcher::name)
-					.collect(Collectors.toSet());
-			for (var entry : oldState.getValues().entrySet()) {
-				var property = entry.getKey();
-				if (properties.contains(property.getName()) || !state.hasProperty(property)) {
-					continue;
-				}
-				state = state.setValue(property, (Comparable) entry.getValue());
+		var properties = block.properties()
+				.map(StatePropertiesPredicate::properties)
+				.stream()
+				.flatMap(Collection::stream)
+				.map(StatePropertiesPredicate.PropertyMatcher::name)
+				.collect(Collectors.toSet());
+		for (var entry : oldState.getValues().entrySet()) {
+			var property = entry.getKey();
+			if (properties.contains(property.getName()) || !state.hasProperty(property)) {
+				continue;
 			}
-			if (state.hasProperty(BlockStateProperties.WATERLOGGED) && oldState.getFluidState().isSourceOfType(Fluids.WATER)) {
-				state = state.setValue(BlockStateProperties.WATERLOGGED, true);
-			}
+			state = state.setValue(property, (Comparable) entry.getValue());
+		}
+		if (state.hasProperty(BlockStateProperties.WATERLOGGED) && oldState.getFluidState().isSourceOfType(Fluids.WATER)) {
+			state = state.setValue(BlockStateProperties.WATERLOGGED, true);
 		}
 
 		if (!level.setBlockAndUpdate(blockPos, state)) {
 			return;
 		}
 
-		if (type() == PostActionTypes.PLACE && block.nbt().isPresent()) {
+		if (block.nbt().isPresent()) {
 			var blockEntity = level.getBlockEntity(blockPos);
 			if (blockEntity != null) {
 				if (blockEntity.onlyOpCanSetNbt()) {
@@ -152,11 +137,6 @@ public class PlaceBlock implements PostAction {
 			}
 		}
 		level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(state));
-	}
-
-	@Nullable
-	protected BlockState getNewState(BlockState oldState) {
-		return BlockPredicateExtensions.anyBlockState(block);
 	}
 
 	@Override
@@ -182,36 +162,6 @@ public class PlaceBlock implements PostAction {
 	@Override
 	public boolean repeatable() {
 		return false;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		final PlaceBlock that = (PlaceBlock) o;
-		return Objects.equal(commonProperties, that.commonProperties) &&
-				Objects.equal(block, that.block) && Objects.equal(
-				offset,
-				that.offset
-		);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(commonProperties, block, offset);
-	}
-
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("commonProperties", commonProperties)
-				.add("block", block)
-				.add("offset", offset)
-				.toString();
 	}
 
 	public static class Type implements PostActionType<PlaceBlock> {

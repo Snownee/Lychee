@@ -1,10 +1,7 @@
 package snownee.lychee.action;
 
-import java.util.Objects;
-
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.base.MoreObjects;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -18,17 +15,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public final class AddItemCooldown implements PostAction {
-	private final PostActionCommonProperties commonProperties;
-	private final float seconds;
-
-	public AddItemCooldown(
-			PostActionCommonProperties commonProperties,
-			float seconds
-	) {
-		this.commonProperties = commonProperties;
-		this.seconds = seconds;
-	}
+public record AddItemCooldown(PostActionCommonProperties commonProperties, float seconds) implements PostAction {
 
 	@Override
 	public PostActionType<?> type() {
@@ -46,37 +33,6 @@ public final class AddItemCooldown implements PostAction {
 	@Override
 	public boolean hidden() {
 		return true;
-	}
-
-	@Override
-	public PostActionCommonProperties commonProperties() {return commonProperties;}
-
-	public float seconds() {return seconds;}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) {
-			return true;
-		}
-		if (obj == null || obj.getClass() != this.getClass()) {
-			return false;
-		}
-		var that = (AddItemCooldown) obj;
-		return Objects.equals(this.commonProperties, that.commonProperties) &&
-				Float.floatToIntBits(this.seconds) == Float.floatToIntBits(that.seconds);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(commonProperties, seconds);
-	}
-
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("commonProperties", commonProperties)
-				.add("seconds", seconds)
-				.toString();
 	}
 
 	public static class Type implements PostActionType<AddItemCooldown> {

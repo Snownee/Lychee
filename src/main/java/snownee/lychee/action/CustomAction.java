@@ -23,23 +23,12 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public final class CustomAction implements PostAction {
-	private final PostActionCommonProperties commonProperties;
-	private final Data data;
-	private final boolean canRepeat;
-	private final Apply applyFunc;
-
-	public CustomAction(
-			PostActionCommonProperties commonProperties,
-			Data data,
-			boolean canRepeat,
-			Apply applyFunc
-	) {
-		this.commonProperties = commonProperties;
-		this.data = data;
-		this.canRepeat = canRepeat;
-		this.applyFunc = applyFunc;
-	}
+public record CustomAction(
+		PostActionCommonProperties commonProperties,
+		Data data,
+		boolean canRepeat,
+		Apply applyFunc
+) implements PostAction {
 
 	public CustomAction(PostActionCommonProperties commonProperties, Data data, boolean canRepeat) {
 		this(commonProperties, data, canRepeat, null);

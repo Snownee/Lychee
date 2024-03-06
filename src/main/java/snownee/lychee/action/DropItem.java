@@ -26,21 +26,7 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class DropItem implements PostAction {
-
-	public final ItemStack stack;
-	private final PostActionCommonProperties commonProperties;
-
-	public DropItem(PostActionCommonProperties commonProperties, ItemStack stack) {
-		this.stack = stack;
-		this.commonProperties = commonProperties;
-	}
-
-	@Override
-	public PostActionCommonProperties commonProperties() {
-		return commonProperties;
-	}
-
+public record DropItem(PostActionCommonProperties commonProperties, ItemStack stack) implements PostAction {
 	@Override
 	public PostActionType<DropItem> type() {
 		return PostActionTypes.DROP_ITEM;
@@ -84,7 +70,6 @@ public class DropItem implements PostAction {
 						PostActionCommonProperties.MAP_CODEC.forGetter(DropItem::commonProperties),
 						ItemStack.OPTIONAL_CODEC.fieldOf("stack").forGetter(it -> it.stack)
 				).apply(instance, DropItem::new));
-
 
 		@Override
 		public Codec<DropItem> codec() {
