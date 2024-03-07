@@ -1,4 +1,4 @@
-package snownee.lychee.core;
+package snownee.lychee.util;
 
 import com.mojang.serialization.Codec;
 

@@ -5,24 +5,21 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
-import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.compat.IngredientInfo;
-import snownee.lychee.core.Reference;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -31,7 +28,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record DamageItem(PostActionCommonProperties commonProperties, int damage, Reference target) implements PostAction<DamageItem> {
+public record DamageItem(PostActionCommonProperties commonProperties, int damage, Reference target) implements PostAction {
 
 	@Override
 	public PostActionType<DamageItem> type() {
@@ -98,7 +95,7 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	}
 
 	@Override
-	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
+	public <T extends ILycheeRecipe<?>> void loadCatalystsInfo(@Nullable T recipe, List<IngredientInfo> ingredients) {
 		var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(type()));
 		var component = Component.translatable(key, damage).withStyle(ChatFormatting.YELLOW);
 		recipe.getItemIndexes(target).forEach(i -> {
@@ -117,38 +114,13 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 		public static final Codec<DamageItem> CODEC = RecordCodecBuilder.create(instance ->
 				instance.group(
 						PostActionCommonProperties.MAP_CODEC.forGetter(DamageItem::commonProperties),
-						Codec.INT.fieldOf("damage").forGetter(DamageItem::damage),
-						UNKNOWN_CLASS_CODEC.fieldOf("target").forGetter(DamageItem::target)
+						Codec.INT.optionalFieldOf("damage", 1).forGetter(DamageItem::damage),
+						Reference.CODEC.fieldOf("target").forGetter(DamageItem::target)
 				).apply(instance, DamageItem::new));
 
 		@Override
-		public DamageItem fromJson(JsonObject o) {
-			return new DamageItem(GsonHelper.getAsInt(o, "damage", 1), Reference.fromJson(o, "target"));
-		}
-
-		@Override
-		public void toJson(DamageItem action, JsonObject o) {
-			if (action.damage != 1) {
-				o.addProperty("damage", 1);
-			}
-			Reference.toJson(action.target, o, "target");
-		}
-
-		@Override
-		public DamageItem fromNetwork(FriendlyByteBuf buf) {
-			return new DamageItem(buf.readVarInt(), Reference.fromNetwork(buf));
-		}
-
-		@Override
-		public void toNetwork(DamageItem action, FriendlyByteBuf buf) {
-			buf.writeVarInt(action.damage);
-			Reference.toNetwork(action.target, buf);
-		}
-
-		@Override
 		public Codec<DamageItem> codec() {
-			return null;
+			return CODEC;
 		}
 	}
-
 }
