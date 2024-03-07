@@ -1,6 +1,5 @@
 package snownee.lychee.client.core.post;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -13,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import snownee.lychee.action.RandomSelect;
-import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
@@ -25,7 +23,7 @@ public interface PostActionRenderer<T extends PostAction> {
 	Map<PostActionType<?>, PostActionRenderer<?>> RENDERERS = Maps.newHashMap();
 
 	static <T extends PostAction> PostActionRenderer<T> of(PostAction action) {
-		return (PostActionRenderer<T>) Objects.requireNonNull(RENDERERS.get(action.getType()));
+		return (PostActionRenderer<T>) Objects.requireNonNull(RENDERERS.get(action.type()));
 	}
 
 	static <T extends PostAction> void register(PostActionType<T> type, PostActionRenderer<T> renderer) {
@@ -35,15 +33,15 @@ public interface PostActionRenderer<T extends PostAction> {
 	}
 
 	static List<Component> getTooltipsFromRandom(RandomSelect randomSelect, PostAction child) {
-		int index = Arrays.asList(randomSelect.entries).indexOf(child);
-		List<Component> list = randomSelect.entries.length == 1 && randomSelect.emptyWeight == 0 ? Lists.newArrayList(
+		var index = randomSelect.entries.indexOf(child);
+		var list = randomSelect.entries.size() == 1 && randomSelect.emptyWeight == 0 ? Lists.newArrayList(
 				randomSelect.getDisplayName()) : PostActionRenderer.of(child).getBaseTooltips(child);
 		if (index == -1) {
 			return list; //TODO nested actions?
 		}
-		if (randomSelect.entries.length > 1 || randomSelect.emptyWeight > 0) {
-			String chance = CommonProxy.chance(randomSelect.weights[index] / (float) randomSelect.totalWeight);
-			if (randomSelect.rolls == IntBoundsHelper.ONE) {
+		if (randomSelect.entries.size() > 1 || randomSelect.emptyWeight > 0) {
+			var chance = CommonProxy.chance(randomSelect.weights.get(index) / (float) randomSelect.totalWeight);
+			if (randomSelect.rolls == BoundsExtensions.ONE) {
 				list.add(Component.translatable("tip.lychee.randomChance.one", chance)
 						.withStyle(ChatFormatting.YELLOW));
 			} else {
@@ -54,13 +52,13 @@ public interface PostActionRenderer<T extends PostAction> {
 				).withStyle(ChatFormatting.YELLOW));
 			}
 		}
-		int c = randomSelect.showingConditionsCount() + child.showingConditionsCount();
+		var c = randomSelect.conditions().showingCount() + child.conditions().showingCount();
 		if (c > 0) {
 			list.add(ClientProxy.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
 		}
-		Minecraft mc = Minecraft.getInstance();
-		randomSelect.getConditionTooltips(list, 0, mc.level, mc.player);
-		child.getConditionTooltips(list, 0, mc.level, mc.player);
+		var mc = Minecraft.getInstance();
+		randomSelect.conditions().appendToTooltips(list, mc.level, mc.player, 0);
+		child.conditions().appendToTooltips(list, mc.level, mc.player, 0);
 		return list;
 	}
 
@@ -72,13 +70,13 @@ public interface PostActionRenderer<T extends PostAction> {
 	}
 
 	default List<Component> getTooltips(T action) {
-		List<Component> list = getBaseTooltips(action);
-		int c = action.showingConditionsCount();
+		var list = getBaseTooltips(action);
+		var c = action.conditions().showingCount();
 		if (c > 0) {
 			list.add(ClientProxy.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
 		}
-		Minecraft mc = Minecraft.getInstance();
-		action.getConditionTooltips(list, 0, mc.level, mc.player);
+		var mc = Minecraft.getInstance();
+		action.conditions().appendToTooltips(list, mc.level, mc.player, 0);
 		return list;
 	}
 }

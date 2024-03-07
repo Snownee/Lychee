@@ -39,7 +39,7 @@ import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredicate block, BlockPos offset) implements PostAction {
-	static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {
+	private static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {
 		var blockstate = level.getBlockState(pos);
 		if (blockstate.isAir()) {
 			return false;

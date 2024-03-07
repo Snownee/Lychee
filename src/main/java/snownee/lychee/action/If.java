@@ -122,7 +122,7 @@ public class If implements CompoundAction, PostAction {
 				"Failure entries must be empty when there is no condition"
 		);
 		for (PostAction action : getChildActions().toList()) {
-			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in " + "RandomSelect");
+			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in If");
 			action.validate(recipe, patchContext);
 		}
 	}

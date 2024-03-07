@@ -1,43 +1,41 @@
 package snownee.lychee.action;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import snownee.lychee.LycheeRegistries;
 import snownee.lychee.action.input.NBTPatch;
-import snownee.lychee.core.LycheeRecipeContext;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.codec.CompactListCodec;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class RandomSelect extends PostAction<RandomSelect> implements CompoundAction {
-
-	public final PostAction[] entries;
-	public final int[] weights;
+public class RandomSelect implements CompoundAction, PostAction {
+	public final List<PostAction> entries;
+	public final List<Integer> weights;
+	private final PostActionCommonProperties commonProperties;
 	public final MinMaxBounds.Ints rolls;
 	public final boolean canRepeat;
 	public final boolean hidden;
@@ -46,66 +44,86 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 	public final int emptyWeight;
 
 	public RandomSelect(
-		PostAction[] entries,
-			int[] weights,
+			PostActionCommonProperties commonProperties,
+			List<PostAction> entries,
+			List<Integer> weights,
 			int totalWeight,
 			int emptyWeight,
 			MinMaxBounds.Ints rolls
 	) {
-		Preconditions.checkArgument(entries.length == weights.length);
+		Preconditions.checkArgument(entries.size() == weights.size());
+		this.commonProperties = commonProperties;
 		this.entries = entries;
 		this.weights = weights;
 		this.totalWeight = totalWeight;
 		this.emptyWeight = emptyWeight;
 		this.rolls = rolls;
-		canRepeat = Arrays.stream(entries).allMatch(PostAction::repeatable);
-		hidden = Arrays.stream(entries).allMatch(PostAction::hidden);
-		preventSync = Arrays.stream(entries).allMatch(PostAction::preventSync);
+		canRepeat = entries.stream().allMatch(PostAction::repeatable);
+		hidden = entries.stream().allMatch(PostAction::hidden);
+		preventSync = entries.stream().allMatch(PostAction::preventSync);
+	}
+
+	public RandomSelect(
+			PostActionCommonProperties commonProperties,
+			List<PostAction> entries,
+			List<Integer> weights,
+			int emptyWeight,
+			MinMaxBounds.Ints rolls
+	) {
+		this(commonProperties, entries, weights, weights.stream().mapToInt(it -> it).sum() + emptyWeight, emptyWeight, rolls);
 	}
 
 	@Override
-	public PostActionType<RandomSelect> getType() {
+	public PostActionCommonProperties commonProperties() {
+		return commonProperties;
+	}
+
+	@Override
+	public PostActionType<RandomSelect> type() {
 		return PostActionTypes.RANDOM;
 	}
 
 	@Override
-	public void doApply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-		times *= IntBoundsHelper.random(rolls, ctx.getRandom());
+	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+		var randomSource = context.get(LycheeContextKey.RANDOM);
+		times *= BoundsExtensions.random(rolls, randomSource);
 		if (times == 0) {
 			return;
 		}
-		List<PostAction> validActions = Lists.newArrayList();
-		int[] validWeights = new int[entries.length];
-		int totalWeights = 0;
-		for (int i = 0; i < entries.length; i++) {
-			PostAction entry = entries[i];
-			if (entry.checkConditions(recipe, ctx, 1) == 1) {
-				validWeights[validActions.size()] = weights[i];
+
+		var validActions = Lists.<PostAction>newArrayList();
+		var validWeights = new int[entries.size()];
+		var totalWeights = 0;
+		for (var i = 0; i < entries.size(); i++) {
+			var entry = entries.get(i);
+			if (entry.test(recipe, context, 1) == 1) {
+				validWeights[validActions.size()] = weights.get(i);
 				validActions.add(entry);
-				totalWeights += weights[i];
+				totalWeights += weights.get(i);
 			}
 		}
 		if (validActions.isEmpty()) {
 			return;
 		}
 		totalWeights += emptyWeight;
-		int[] childTimes = new int[validActions.size()];
-		for (int i = 0; i < times; i++) {
-			int index = getRandomEntry(ctx.getRandom(), validWeights, totalWeights);
+		var childTimes = new int[validActions.size()];
+		for (var i = 0; i < times; i++) {
+			var index = getRandomEntry(randomSource, validWeights, totalWeights);
 			if (index >= 0) {
 				++childTimes[index];
 			}
 		}
-		for (int i = 0; i < validActions.size(); i++) {
+		var actionContext = context.get(LycheeContextKey.ACTION);
+		for (var i = 0; i < validActions.size(); i++) {
 			if (childTimes[i] > 0) {
-				ctx.runtime.jobs.push(new Job(validActions.get(i), childTimes[i]));
+				actionContext.jobs.offer(new Job(validActions.get(i), childTimes[i]));
 			}
 		}
 	}
 
 	private int getRandomEntry(RandomSource random, int[] weights, int totalWeights) {
-		int j = random.nextInt(totalWeights);
-		for (int i = 0; i < weights.length; i++) {
+		var j = random.nextInt(totalWeights);
+		for (var i = 0; i < weights.length; i++) {
 			j -= weights[i];
 			if (j < 0) {
 				return i;
@@ -115,28 +133,24 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 	}
 
 	@Override
-	protected void apply(ILycheeRecipe recipe, LycheeRecipeContext ctx, int times) {
-	}
-
-	@Override
 	public List<ItemStack> getOutputItems() {
-		return Stream.of(entries).map(PostAction::getOutputItems).flatMap(List::stream).toList();
+		return entries.stream().map(PostAction::getOutputItems).flatMap(List::stream).toList();
 	}
 
 	@Override
 	public List<BlockPredicate> getOutputBlocks() {
-		return Stream.of(entries).map(PostAction::getOutputBlocks).flatMap(List::stream).toList();
+		return entries.stream().map(PostAction::getOutputBlocks).flatMap(List::stream).toList();
 	}
 
 	@Override
 	public Component getDisplayName() {
-		if (entries.length == 1 && emptyWeight == 0) {
+		if (entries.size() == 1 && emptyWeight == 0) {
 			return Component.literal("%s × %s".formatted(
-					entries[0].getDisplayName().getString(),
+					entries.get(0).getDisplayName().getString(),
 					BoundsExtensions.getDescription(rolls).getString()
 			));
 		}
-		return CommonProxy.getCycledItem(List.of(entries), entries[0], 1000).getDisplayName();
+		return CommonProxy.getCycledItem(entries, entries.get(0), 1000).getDisplayName();
 	}
 
 	@Override
@@ -156,121 +170,36 @@ public class RandomSelect extends PostAction<RandomSelect> implements CompoundAc
 
 	@Override
 	public void validate(ILycheeRecipe recipe, ILycheeRecipe.NBTPatchContext patchContext) {
-		for (PostAction action : entries) {
-			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in " +
-					"RandomSelect");
+		for (var action : entries) {
+			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in RandomSelect");
 			action.validate(recipe, patchContext);
 		}
 	}
 
 	@Override
-	public void getUsedPointers(ILycheeRecipe recipe, Consumer<JsonPointer> consumer) {
-		for (PostAction action : entries) {
+	public void getUsedPointers(ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
+		for (var action : entries) {
 			action.getUsedPointers(recipe, consumer);
 		}
 	}
 
 	@Override
-	public JsonElement provideJsonInfo(ILycheeRecipe recipe, JsonPointer pointer, JsonObject recipeObject) {
-		int i = 0;
-		JsonArray array = new JsonArray();
-		for (PostAction action : entries) {
-			array.add(action.provideJsonInfo(recipe, pointer.append("entries/" + i), recipeObject));
-			i++;
-		}
-		JsonObject jsonObject = new JsonObject();
-		jsonObject.add("entries", array);
-		return jsonObject;
-	}
-
-	@Override
 	public Stream<PostAction> getChildActions() {
-		return Arrays.stream(entries);
+		return entries.stream();
 	}
 
-	public static class Type extends PostActionType<RandomSelect> {
+	public static class Type implements PostActionType<RandomSelect> {
+		public static final Codec<RandomSelect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				PostActionCommonProperties.MAP_CODEC.forGetter(RandomSelect::commonProperties),
+				ExtraCodecs.nonEmptyList(new CompactListCodec<>(PostAction.CODEC, true)).fieldOf("entries").forGetter(it -> it.entries),
+				Codec.list(ExtraCodecs.intRange(0, Integer.MAX_VALUE)).fieldOf("weights").forGetter(it -> it.weights),
+				ExtraCodecs.intRange(0, Integer.MAX_VALUE).optionalFieldOf("empty_weight", 0).forGetter(it -> it.emptyWeight),
+				MinMaxBounds.Ints.CODEC.optionalFieldOf("rolls", BoundsExtensions.ONE).forGetter(it -> it.rolls)
+		).apply(instance, RandomSelect::new));
 
 		@Override
-		public RandomSelect fromJson(JsonObject o) {
-			JsonArray array = o.getAsJsonArray("entries");
-			int size = array.size();
-			Preconditions.checkArgument(size > 0, "entries can not be empty");
-			PostAction[] entries = new PostAction[size];
-			int[] weights = new int[size];
-			for (int i = 0; i < size; i++) {
-				JsonObject e = array.get(i).getAsJsonObject();
-				weights[i] = GsonHelper.getAsInt(e, "weight", 1);
-				Preconditions.checkArgument(weights[i] > 0, "weight should be greater than 0");
-				entries[i] = PostAction.parse(e);
-			}
-			MinMaxBounds.Ints rolls;
-			if (o.has("rolls")) {
-				rolls = MinMaxBounds.Ints.fromJson(o.get("rolls"));
-				Objects.requireNonNull(rolls.getMin(), "min");
-				Objects.requireNonNull(rolls.getMax(), "max");
-			} else {
-				rolls = IntBoundsHelper.ONE;
-			}
-			int emptyWeight = GsonHelper.getAsInt(o, "empty_weight", 0);
-			Preconditions.checkArgument(emptyWeight >= 0, "empty_weight should be greater or equal to 0");
-			return new RandomSelect(entries, weights, IntStream.of(weights).sum() + emptyWeight, emptyWeight, rolls);
+		public Codec<RandomSelect> codec() {
+			return CODEC;
 		}
-
-		@Override
-		public void toJson(RandomSelect action, JsonObject o) {
-			JsonArray entries = new JsonArray(action.entries.length);
-			int i = 0;
-			for (var entry : action.entries) {
-				JsonObject entryJson = entry.toJson();
-				if (action.weights[i] != 1) {
-					entryJson.addProperty("weight", action.weights[i]);
-				}
-				entries.add(entryJson);
-				++i;
-			}
-			o.add("entries", entries);
-			if (action.rolls != IntBoundsHelper.ONE) {
-				o.add("rolls", action.rolls.serializeToJson());
-			}
-			if (action.emptyWeight != 0) {
-				o.addProperty("empty_weight", action.emptyWeight);
-			}
-		}
-
-		@Override
-		public RandomSelect fromNetwork(FriendlyByteBuf buf) {
-			int totalWeight = buf.readVarInt();
-			int emptyWeight = buf.readVarInt();
-			int size = buf.readVarInt();
-			PostAction[] entries = new PostAction[size];
-			int[] weights = new int[size];
-			for (int i = 0; i < size; i++) {
-				weights[i] = buf.readVarInt();
-				entries[i] = PostAction.read(buf);
-			}
-			return new RandomSelect(entries, weights, totalWeight, emptyWeight, IntBoundsHelper.fromNetwork(buf));
-		}
-
-		@SuppressWarnings("rawtypes")
-		@Override
-		public void toNetwork(RandomSelect action, FriendlyByteBuf buf) {
-			buf.writeVarInt(action.totalWeight);
-			buf.writeVarInt(action.emptyWeight);
-			buf.writeVarInt((int) Stream.of(action.entries).filter(Predicate.not(PostAction::preventSync)).count());
-			for (int i = 0; i < action.entries.length; i++) {
-				PostAction entry = action.entries[i];
-				if (entry.preventSync()) {
-					continue;
-				}
-				buf.writeVarInt(action.weights[i]);
-				PostActionType type = entry.getType();
-				CommonProxy.writeRegistryId(LycheeRegistries.POST_ACTION, type, buf);
-				type.toNetwork(entry, buf);
-				entry.conditionsToNetwork(buf);
-			}
-			IntBoundsHelper.toNetwork(action.rolls, buf);
-		}
-
 	}
-
 }
