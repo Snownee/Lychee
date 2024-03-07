@@ -107,7 +107,7 @@ public class If extends PostAction implements CompoundAction {
 	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 		Preconditions.checkArgument(!getConditions().isEmpty() || failureEntries.length == 0, "Failure entries must be empty when there is no condition");
 		for (PostAction action : getChildActions().toList()) {
-			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in RandomSelect");
+			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in If");
 			action.validate(recipe, patchContext);
 		}
 	}

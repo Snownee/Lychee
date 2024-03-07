@@ -83,9 +83,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<BlockCrushingContext> impl
 			return false;
 		} else {
 			if (access.getNbt() != NbtPredicate.ANY) {
-				if (nbt == null || !access.getNbt().matches(nbt)) {
-					return false;
-				}
+                return nbt != null && access.getNbt().matches(nbt);
 			}
 			return true;
 		}
