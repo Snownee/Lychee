@@ -38,4 +38,13 @@ public class BoundsExtensions {
 		}
 		return Mth.randomBetweenInclusive(random, min, max);
 	}
+
+	public static float random(MinMaxBounds.Doubles doubles, RandomSource random) {
+		float min = doubles.min().map(Double::floatValue).orElse(Float.MIN_VALUE);
+		float max = doubles.max().map(Double::floatValue).orElse(Float.MAX_VALUE);
+		if (min == max) {
+			return min;
+		}
+		return Mth.randomBetween(random, min, max);
+	}
 }
