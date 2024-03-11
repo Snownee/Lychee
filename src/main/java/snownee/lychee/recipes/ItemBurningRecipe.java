@@ -12,6 +12,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.context.RecipeContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
@@ -30,7 +31,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, entity);
 		lootParamsContext.validate(RecipeTypes.ITEM_BURNING.contextParamSet);
 		RecipeTypes.ITEM_BURNING.findFirst(context, entity.level()).ifPresent(it -> {
-			context.put(LycheeContextKey.RECIPE_ID, it.id());
+			context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(it.id()));
 			int times = it.value().getRandomRepeats(entity.getItem().getCount(), context);
 			var itemStackHolders = ItemStackHolderCollection.InWorld.of(entity);
 			context.put(LycheeContextKey.ITEM, itemStackHolders);

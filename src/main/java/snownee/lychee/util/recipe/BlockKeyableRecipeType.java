@@ -27,6 +27,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.context.RecipeContext;
 import snownee.lychee.contextual.Chance;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
@@ -165,7 +166,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 				}
 			}
 			if (tryMatch(recipe, level, context).isPresent()) {
-				context.put(LycheeContextKey.RECIPE_ID, recipe.id());
+				context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
 				recipe.value().applyPostActions(context, 1);
 				return recipe;
 			}

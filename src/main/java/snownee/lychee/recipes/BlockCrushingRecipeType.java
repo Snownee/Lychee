@@ -18,6 +18,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.context.ItemShapelessContext;
+import snownee.lychee.context.RecipeContext;
 import snownee.lychee.core.network.SCustomLevelEventPacket;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.LycheeFallingBlockEntity;
@@ -89,7 +90,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 					if (match.isPresent()) {
 						matchedAny = matched = true;
 						var times = 1;
-						context.put(LycheeContextKey.RECIPE_ID, recipe.id());
+						context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
 						if (matcher.map(it -> it.inputUsed.length > 0).orElse(false)) {
 							final var inputUsed = matcher.get().inputUsed;
 							//System.out.println(Arrays.toString(context.match));

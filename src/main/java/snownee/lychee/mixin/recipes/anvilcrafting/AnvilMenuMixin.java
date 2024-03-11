@@ -26,6 +26,7 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.AnvilContext;
+import snownee.lychee.context.RecipeContext;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -91,7 +92,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 				ItemStackHolderCollection.Inventory.of(context, left.copy(), right.copy(), ItemStack.EMPTY)
 		);
 		RecipeTypes.ANVIL_CRAFTING.findFirst(context, player.level()).ifPresent(it -> {
-			context.put(LycheeContextKey.RECIPE_ID, it.id());
+			context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(it.id()));
 			final var output = it.value().assemble(context, player.level().registryAccess());
 			if (output.isEmpty()) {
 				resultSlots.setItem(0, ItemStack.EMPTY);
