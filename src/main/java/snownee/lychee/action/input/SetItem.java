@@ -59,8 +59,7 @@ public final class SetItem implements PostAction {
 			} else {
 				stack = ItemStack.parseOptional(
 						registryAccess,
-						CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON)
-								.json()))
+						CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON).json()))
 				);
 
 			}
