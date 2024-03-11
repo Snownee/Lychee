@@ -18,15 +18,10 @@ import snownee.lychee.action.MoveTowardsFace;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.action.input.DamageItem;
-import snownee.lychee.action.input.NBTPatch;
 import snownee.lychee.action.input.PreventDefault;
 import snownee.lychee.action.input.SetItem;
 
 public class PostActionTypes {
-
-	public static void init() {
-	}
-
 	public static final PostActionType<DropItem> DROP_ITEM = register("drop_item", new DropItem.Type());
 	public static final PostActionType<DropXp> DROP_XP = register("drop_xp", new DropXp.Type());
 	public static final PostActionType<Execute> EXECUTE = register("execute", new Execute.Type());
@@ -58,7 +53,6 @@ public class PostActionTypes {
 			new MoveTowardsFace.Type()
 	);
 	public static final PostActionType<SetItem> SET_ITEM = register("set_item", new SetItem.Type());
-	public static final PostActionType<NBTPatch> NBT_PATCH = register("nbt_patch", new NBTPatch.Type());
 	public static final PostActionType<CustomAction> CUSTOM = register("custom", new CustomAction.Type());
 	public static final PostActionType<If> IF = register("if", new If.Type());
 
@@ -66,5 +60,4 @@ public class PostActionTypes {
 		Registry.register(LycheeRegistries.POST_ACTION, name, t);
 		return t;
 	}
-
 }

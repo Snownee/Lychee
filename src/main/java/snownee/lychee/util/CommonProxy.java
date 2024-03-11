@@ -1,6 +1,7 @@
 package snownee.lychee.util;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -73,9 +74,9 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 public class CommonProxy implements ModInitializer {
 	public static final KEvent<CustomActionListener> CUSTOM_ACTION_EVENT = KEvent.createArrayBacked(
 			CustomActionListener.class,
-			listeners -> (id, action, recipe, patchContext) -> {
+			listeners -> (id, action, recipe) -> {
 				for (CustomActionListener listener : listeners) {
-					if (listener.on(id, action, recipe, patchContext)) {
+					if (listener.on(id, action, recipe)) {
 						return true;
 					}
 				}
@@ -302,10 +303,9 @@ public class CommonProxy implements ModInitializer {
 	public static void postCustomActionEvent(
 			String id,
 			CustomAction action,
-			ILycheeRecipe<?> recipe,
-			ILycheeRecipe.NBTPatchContext patchContext
+			ILycheeRecipe<?> recipe
 	) {
-		CUSTOM_ACTION_EVENT.invoker().on(id, action, recipe, patchContext);
+		CUSTOM_ACTION_EVENT.invoker().on(id, action, recipe);
 	}
 
 	public static void postCustomConditionEvent(String id, CustomCondition condition) {
@@ -338,11 +338,11 @@ public class CommonProxy implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		RecipeTypes.init();
-		LycheeTags.init();
-		LycheeRegistries.init();
-		ContextualConditionType.init();
-		PostActionTypes.init();
-		RecipeSerializers.init();
+		Objects.requireNonNull(LycheeTags.FIRE_IMMUNE);
+		Objects.requireNonNull(LycheeRegistries.CONTEXTUAL);
+		Objects.requireNonNull(ContextualConditionType.AND);
+		Objects.requireNonNull(PostActionTypes.DROP_ITEM);
+		Objects.requireNonNull(RecipeSerializers.ITEM_BURNING);
 		CustomIngredientSerializer.register(AlwaysTrueIngredient.SERIALIZER);
 
 		// Interaction recipes
@@ -368,10 +368,7 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public interface CustomActionListener {
-		boolean on(
-				String id, CustomAction action, ILycheeRecipe recipe,
-				ILycheeRecipe.NBTPatchContext patchContext
-		);
+		boolean on(String id, CustomAction action, ILycheeRecipe<?> recipe);
 	}
 
 	public interface CustomConditionListener {

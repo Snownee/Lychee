@@ -10,10 +10,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 public final class LycheeTags {
-
-	public static void init() {
-	}
-
 	public static final TagKey<Item> FIRE_IMMUNE = itemTag("fire_immune");
 
 	public static final TagKey<Item> DISPENSER_PLACEMENT = itemTag("dispenser_placement");

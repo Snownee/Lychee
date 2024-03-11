@@ -90,7 +90,7 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	}
 
 	@Override
-	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
+	public void validate(ILycheeRecipe<?> recipe) {
 		Preconditions.checkArgument(!recipe.getItemIndexes(target).isEmpty(), "No target found for %s", target);
 	}
 

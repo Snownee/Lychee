@@ -18,10 +18,6 @@ import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public final class RecipeSerializers {
-
-	public static void init() {
-	}
-
 	public static final LycheeRecipeSerializer<ItemBurningRecipe> ITEM_BURNING = register(
 			"item_burning",
 			new ItemBurningRecipe.Serializer()

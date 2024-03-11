@@ -11,10 +11,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import snownee.lychee.recipes.item_exploding.ItemExplodingRecipe;
+import snownee.lychee.recipes.ItemExplodingRecipe;
 
 @Mixin(value = Explosion.class, priority = 700)
 public abstract class ExplosionMixin {
@@ -38,7 +39,7 @@ public abstract class ExplosionMixin {
 	public abstract float radius();
 
 	@Inject(at = @At("TAIL"), method = "explode()V")
-	private void lychee_explode(final CallbackInfo ci, @Local final List<Entity> list) {
-		ItemExplodingRecipe.on(level, x, y, z, list, radius());
+	private void lychee_explode(final CallbackInfo ci, @Local List<Entity> list) {
+		ItemExplodingRecipe.invoke((ServerLevel) level, x, y, z, list, radius());
 	}
 }

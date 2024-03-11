@@ -17,7 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import snownee.lychee.action.input.NBTPatch;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.CompoundAction;
@@ -166,14 +165,6 @@ public class RandomSelect implements CompoundAction, PostAction {
 	@Override
 	public boolean preventSync() {
 		return preventSync;
-	}
-
-	@Override
-	public void validate(ILycheeRecipe recipe, ILycheeRecipe.NBTPatchContext patchContext) {
-		for (var action : entries) {
-			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in RandomSelect");
-			action.validate(recipe, patchContext);
-		}
 	}
 
 	@Override

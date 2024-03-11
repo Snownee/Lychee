@@ -6,7 +6,6 @@ import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -16,7 +15,6 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
-import snownee.lychee.action.input.NBTPatch;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
@@ -113,18 +111,6 @@ public class If implements CompoundAction, PostAction {
 	@Override
 	public boolean preventSync() {
 		return preventSync;
-	}
-
-	@Override
-	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
-		Preconditions.checkArgument(
-				!conditions().conditions().isEmpty() || failureEntries.isEmpty(),
-				"Failure entries must be empty when there is no condition"
-		);
-		for (PostAction action : getChildActions().toList()) {
-			Preconditions.checkArgument(action.getClass() != NBTPatch.class, "NBTPatch cannot be used in If");
-			action.validate(recipe, patchContext);
-		}
 	}
 
 	@Override

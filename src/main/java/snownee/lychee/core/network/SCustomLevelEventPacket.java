@@ -26,7 +26,7 @@ public class SCustomLevelEventPacket extends PacketHandler {
 			Function<Runnable, CompletableFuture<FriendlyByteBuf>> executor,
 			FriendlyByteBuf buf,
 			ServerPlayer sender) {
-		ItemStack stack = buf.readItem();
+		ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
 		float x = buf.readFloat();
 		float y = buf.readFloat();
 		float z = buf.readFloat();

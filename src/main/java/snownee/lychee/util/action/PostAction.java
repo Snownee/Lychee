@@ -42,8 +42,6 @@ public interface PostAction extends PostActionDisplay, ContextualPredicate, Cont
 
 	PostActionType<?> type();
 
-	default void validate(@Nullable ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {}
-
 	void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times);
 
 	@Override
@@ -75,4 +73,6 @@ public interface PostAction extends PostActionDisplay, ContextualPredicate, Cont
 				.left()
 				.orElseThrow());
 	}
+
+	default void validate(ILycheeRecipe<?> recipe) {}
 }

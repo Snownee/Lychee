@@ -15,8 +15,6 @@ public final class LycheeRegistries {
 	public static final MappedRegistry<LycheeContextKey<?>> CONTEXT = register("context");
 	public static final MappedRegistry<LycheeContextSerializer<?>> CONTEXT_SERIALIZER = register("context_serializer");
 
-	public static void init() {}
-
 	private static <T> MappedRegistry<T> register(String id) {
 		return FabricRegistryBuilder.createSimple(ResourceKey.<T>createRegistryKey(Lychee.id(id)))
 				.attribute(RegistryAttribute.SYNCED)

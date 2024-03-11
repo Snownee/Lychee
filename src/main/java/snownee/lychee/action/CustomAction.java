@@ -57,8 +57,8 @@ public record CustomAction(
 	}
 
 	@Override
-	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
-		CommonProxy.postCustomActionEvent(data.id, this, recipe, patchContext);
+	public void validate(ILycheeRecipe<?> recipe) {
+		CommonProxy.postCustomActionEvent(data.id, this, recipe);
 	}
 
 	@Override

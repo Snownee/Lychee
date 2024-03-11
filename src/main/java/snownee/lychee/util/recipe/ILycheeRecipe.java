@@ -38,6 +38,10 @@ public interface ILycheeRecipe<C extends Container> extends Recipe<C>, Contextua
 	JsonPointer RESULT_POINTER = new JsonPointer("/result");
 	JsonPointer POST_POINTER = new JsonPointer("/post");
 
+	default void onConstructed() {
+		allActions().forEach(it -> it.validate(this));
+	}
+
 	default IntList getItemIndexes(Reference reference) {
 		JsonPointer pointer = null;
 		if (reference == Reference.DEFAULT) {
