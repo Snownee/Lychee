@@ -75,7 +75,7 @@ public class NBTPatch extends PostAction {
 	}
 
 	@Override
-	public void getUsedPointers(ILycheeRecipe recipe, Consumer<JsonPointer> consumer) {
+	public void getUsedPointers(ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
 		consumer.accept(patch.path);
 		if (patch.from != null) {
 			consumer.accept(patch.from);

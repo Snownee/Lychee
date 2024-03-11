@@ -12,7 +12,6 @@ import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DropperBlock;
 import net.minecraft.world.level.block.Fallable;
 import snownee.lychee.LycheeConfig;
@@ -41,7 +40,7 @@ public class DefaultDispenseItemBehaviorMixin {
 		if (!(pStack.getItem() instanceof BlockItem item)) {
 			return;
 		}
-		Block block = item.getBlock();
+		var block = item.getBlock();
 		if (!(
 				pStack.is(LycheeTags.DISPENSER_PLACEMENT) ||
 						LycheeConfig.dispenserFallableBlockPlacement && block instanceof Fallable)) {

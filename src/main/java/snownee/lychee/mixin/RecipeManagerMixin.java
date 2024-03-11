@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -55,7 +56,11 @@ public class RecipeManagerMixin {
 
 	// though we have processed fragments in apply, we still need to handle calls from other mods
 	@Inject(method = "fromJson", at = @At("HEAD"))
-	private static void lychee_fromJson(ResourceLocation recipeId, JsonObject json, CallbackInfoReturnable<RecipeHolder<?>> cir) {
+	private static void lychee_fromJson(
+			final ResourceLocation resourceLocation,
+			final JsonObject json,
+			final HolderLookup.Provider provider,
+			final CallbackInfoReturnable<RecipeHolder<?>> cir) {
 		if (LycheeConfig.enableFragment && json != null) {
 			JsonFragmentManager fragmentManager = fragmentManagerProvider.get();
 			if (fragmentManager != null) {

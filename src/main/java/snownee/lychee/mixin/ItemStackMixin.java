@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import snownee.lychee.util.codec.TweakedItemStackCodec;
 import snownee.lychee.util.codec.TweakedItemStackMapCodec;
 
+// TODO new component
 @Mixin(value = ItemStack.class, priority = 5000)
 public class ItemStackMixin {
 	@Mutable
