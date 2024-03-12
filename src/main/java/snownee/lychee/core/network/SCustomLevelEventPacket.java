@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -21,12 +22,23 @@ public class SCustomLevelEventPacket extends PacketHandler {
 
 	public static SCustomLevelEventPacket I;
 
+	public static void sendItemParticles(ItemStack stack, ServerLevel level, Vec3 pos) {
+		I.send(KPacketTarget.around(level, pos, 16), buf -> {
+			ItemStack.STREAM_CODEC.encode(new RegistryFriendlyByteBuf(buf, level.registryAccess()), stack);
+			buf.writeFloat((float) pos.x);
+			buf.writeFloat((float) pos.y);
+			buf.writeFloat((float) pos.z);
+		});
+	}
+
 	@Override
 	public CompletableFuture<FriendlyByteBuf> receive(
 			Function<Runnable, CompletableFuture<FriendlyByteBuf>> executor,
 			FriendlyByteBuf buf,
 			ServerPlayer sender) {
-		ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
+		ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(new RegistryFriendlyByteBuf(
+				buf,
+				Minecraft.getInstance().level.registryAccess()));
 		float x = buf.readFloat();
 		float y = buf.readFloat();
 		float z = buf.readFloat();
@@ -45,15 +57,6 @@ public class SCustomLevelEventPacket extends PacketHandler {
 						vec3.y + 0.05D,
 						vec3.z);
 			}
-		});
-	}
-
-	public static void sendItemParticles(ItemStack stack, ServerLevel level, Vec3 pos) {
-		I.send(KPacketTarget.around(level, pos, 16), buf -> {
-			buf.writeItem(stack);
-			buf.writeFloat((float) pos.x);
-			buf.writeFloat((float) pos.y);
-			buf.writeFloat((float) pos.z);
 		});
 	}
 
