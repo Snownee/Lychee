@@ -12,7 +12,6 @@
 		"EntityMixin",
 		"ItemEntityAccess",
 		"ItemEntityMixin",
-		"ItemStackMixin",
 		"LootContextParamSetsAccess",
 		"NonNullListAccess",
 		"RecipeManagerMixin",
@@ -34,8 +33,7 @@
 		"recipes.iteminside.EntityMixin",
 		"recipes.lightningchanneling.LightningBoltMixin",
 		"recipes.randomblockticking.BlockBehaviourMixin",
-		"recipes.randomblockticking.BlockStateMixin",
-		"rei.DefaultCraftingDisplayMixin"
+		"recipes.randomblockticking.BlockStateMixin"
 	],
 	"client": [
 		"ClientPacketListenerMixin",
