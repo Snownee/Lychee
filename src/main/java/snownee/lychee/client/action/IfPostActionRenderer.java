@@ -1,4 +1,4 @@
-package snownee.lychee.client.core.post;
+package snownee.lychee.client.action;
 
 import java.util.List;
 
@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.network.chat.Component;
 import snownee.lychee.action.If;
+import snownee.lychee.util.action.PostActionRenderer;
 
 public class IfPostActionRenderer implements PostActionRenderer<If> {
 

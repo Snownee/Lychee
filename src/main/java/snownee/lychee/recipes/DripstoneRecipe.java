@@ -88,7 +88,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.jobs.offer(new Job(breakAction, 1));
 		actionContext.jobs.offer(new Job(new Delay(j / 20F), 1));
-		actionContext.run(recipe.value(), context);
+		actionContext.run(context);
 		return true;
 	}
 

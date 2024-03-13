@@ -5,10 +5,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.mixin.LootContextParamSetsAccess;
 
 public final class LycheeLootContextParamSets {
-
-	public static void init() {
-	}
-
 	public static final LootContextParamSet ALL = LootContextParamSetsAccess.callRegister("lychee:all", $ -> {
 		$.required(LootContextParams.ORIGIN)
 				.optional(LootContextParams.THIS_ENTITY)

@@ -225,7 +225,7 @@ public class UIRenderHelper {
 	}
 
 	public static void flipForGuiRender(PoseStack poseStack) {
-		poseStack.mulPoseMatrix(new Matrix4f().scaling(1, -1, 1));
+		poseStack.mulPose(new Matrix4f().scaling(1, -1, 1));
 	}
 
 	public static class CustomRenderTarget extends RenderTarget {

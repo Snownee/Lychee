@@ -63,6 +63,14 @@ public final class CycleStateProperty implements PostAction {
 		return PostActionTypes.CYCLE_STATE_PROPERTY;
 	}
 
+	public BlockPredicate block() {
+		return block;
+	}
+
+	public BlockPos offset() {
+		return offset;
+	}
+
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
 		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);

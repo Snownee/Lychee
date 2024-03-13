@@ -1,17 +1,17 @@
-package snownee.lychee.client.core.post;
+package snownee.lychee.client.action;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.core.def.BlockPredicateHelper;
+import snownee.lychee.util.action.PostActionRenderer;
+import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public class PlaceBlockPostActionRenderer implements PostActionRenderer<PlaceBlock> {
 
 	@Override
 	public void render(PlaceBlock action, GuiGraphics graphics, int x, int y) {
-		BlockState state = BlockPredicateHelper.anyBlockState(action.block);
+		var state = BlockPredicateExtensions.anyBlockState(action.block());
 		if (state.isAir()) {
 			GuiGameElement.of(Items.BARRIER).render(graphics, x, y);
 			return;

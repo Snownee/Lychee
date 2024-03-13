@@ -101,7 +101,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.reset();
 		actionContext.jobs.addAll(assemblingActions.stream().map(it -> new Job(it, 1)).toList());
-		actionContext.run(this, context);
+		actionContext.run(context);
 		return context.getItem(2);
 	}
 

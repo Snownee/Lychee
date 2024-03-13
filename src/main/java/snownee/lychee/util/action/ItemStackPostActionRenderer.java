@@ -1,11 +1,10 @@
-package snownee.lychee.client.core.post;
+package snownee.lychee.util.action;
 
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
-import snownee.lychee.util.action.PostAction;
 
 public interface ItemStackPostActionRenderer<T extends PostAction> extends ItemBasedPostActionRenderer<T> {
 

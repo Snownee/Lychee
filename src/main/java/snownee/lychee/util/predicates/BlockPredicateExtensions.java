@@ -23,7 +23,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -42,7 +41,6 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.util.Pair;
-import snownee.lychee.util.codec.BlockPredicateCodec;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 
@@ -52,7 +50,7 @@ public class BlockPredicateExtensions {
 					.expireAfterAccess(10, TimeUnit.MINUTES)
 					.build();
 	public static final Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet();
-	public static final Codec<BlockPredicate> CODEC = new BlockPredicateCodec();
+	public static final Codec<BlockPredicate> CODEC = BlockPredicate.CODEC;
 
 	static {
 		ITERABLE_PROPERTIES.addAll(List.of(
@@ -83,9 +81,6 @@ public class BlockPredicateExtensions {
 		final var blocks = Lists.<Holder<Block>>newArrayList();
 		if (predicate.blocks().isPresent()) {
 			blocks.addAll(predicate.blocks().orElseThrow().unwrap().swap().orThrow());
-		}
-		if (predicate.tag().isPresent()) {
-			blocks.addAll(BuiltInRegistries.BLOCK.getOrCreateTag(predicate.tag().orElseThrow()).stream().toList());
 		}
 		return blocks.stream().map(Holder::value).collect(Collectors.toSet());
 	}
@@ -129,9 +124,6 @@ public class BlockPredicateExtensions {
 			BlockState state,
 			Supplier<BlockEntity> blockEntitySupplier
 	) {
-		if (predicate.tag().isPresent() && !state.is(predicate.tag().get())) {
-			return false;
-		}
 		if (predicate.blocks().isPresent() && !state.is(predicate.blocks().get())) {
 			return false;
 		}
@@ -189,7 +181,7 @@ public class BlockPredicateExtensions {
 					for (Comparable<?> object : property.getPossibleValues()) {
 						if (matcher.get().match(
 								block.getStateDefinition(),
-								state.setValue((Property<?>) property, (Comparable) object)
+								state.setValue((Property) property, (Comparable) object)
 						)) {
 							propertyMap.put(property, object);
 						}
@@ -203,7 +195,7 @@ public class BlockPredicateExtensions {
 				stream = stream.flatMap(
 						$ -> e.getValue()
 								.stream()
-								.map(v -> $.setValue((Property<?>) e.getKey(), (Comparable) v))
+								.map(v -> $.setValue((Property) e.getKey(), (Comparable) v))
 				);
 			}
 

@@ -7,13 +7,14 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
@@ -88,12 +89,8 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 		}
 
 		@Override
-		public Execute fromNetwork(FriendlyByteBuf buf) {
-			return DUMMY;
-		}
-
-		@Override
-		public void toNetwork(FriendlyByteBuf buf, Execute condition) {
+		public StreamCodec<? extends ByteBuf, Execute> streamCodec() {
+			return StreamCodec.unit(DUMMY);
 		}
 	}
 }

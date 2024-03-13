@@ -22,7 +22,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.core.recipe.recipe.ItemShapelessRecipe;
 import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.RecipeMatcher;
 import snownee.lychee.util.codec.CompactListCodec;
@@ -30,6 +29,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
+import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
@@ -97,7 +97,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		List<ItemEntity> itemEntities = itemShapelessContext.itemEntities.stream().filter($ -> {
 			// ingredient.test is not thread safe
 			return ingredients.stream().anyMatch(ingredient -> ingredient.test($.getItem()));
-		}).limit(ItemShapelessRecipe.MAX_INGREDIENTS).toList();
+		}).limit(ItemShapelessRecipeUtils.MAX_INGREDIENTS).toList();
 		List<ItemStack> items = itemEntities.stream().map(ItemEntity::getItem).toList();
 		int[] amount = items.stream().mapToInt(ItemStack::getCount).toArray();
 		Optional<RecipeMatcher<ItemStack>> match = RecipeMatcher.findMatches(items, ingredients, amount);

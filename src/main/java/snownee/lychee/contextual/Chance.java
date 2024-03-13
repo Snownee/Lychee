@@ -11,6 +11,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -25,7 +26,7 @@ public record Chance(float chance) implements ContextualCondition {
 	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		int n = 0;
 		for (int i = 0; i < times; i++) {
-			if (ctx.random.nextFloat() < chance) {
+			if (ctx.get(LycheeContextKey.RANDOM).nextFloat() < chance) {
 				++n;
 			}
 		}

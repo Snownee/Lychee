@@ -1,4 +1,4 @@
-package snownee.lychee.client.core.post;
+package snownee.lychee.util.action;
 
 import java.util.List;
 import java.util.Map;
@@ -15,8 +15,6 @@ import snownee.lychee.action.RandomSelect;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
-import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionType;
 
 public interface PostActionRenderer<T extends PostAction> {
 

@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -110,7 +111,7 @@ public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredi
 			if (properties.contains(property.getName()) || !state.hasProperty(property)) {
 				continue;
 			}
-			state = state.setValue(property, (Comparable) entry.getValue());
+			state = state.setValue((Property) property, (Comparable) entry.getValue());
 		}
 		if (state.hasProperty(BlockStateProperties.WATERLOGGED) && oldState.getFluidState().isSourceOfType(Fluids.WATER)) {
 			state = state.setValue(BlockStateProperties.WATERLOGGED, true);

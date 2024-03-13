@@ -1,5 +1,6 @@
 package snownee.lychee;
 
+import java.util.Objects;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
@@ -29,8 +30,8 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 public final class RecipeTypes {
 
 	static {
-		LycheeLootContextParams.init();
-		LycheeLootContextParamSets.init();
+		Objects.requireNonNull(LycheeLootContextParams.ALL);
+		Objects.requireNonNull(LycheeLootContextParamSets.ALL);
 	}
 
 	public static void init() {

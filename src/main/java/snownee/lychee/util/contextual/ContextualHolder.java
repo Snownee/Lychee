@@ -4,7 +4,6 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,15 +12,14 @@ import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
-import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.codec.CompactListCodec;
 import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ContextualHolder implements ContextualPredicate, Iterable<ContextualCondition> {
@@ -73,27 +71,6 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 			}
 			return new ContextualHolder(conditions, secretFlags, overrideDesc);
 		}
-	}
-
-	public static ContextualHolder conditionsFromNetwork(FriendlyByteBuf buf) {
-		var size = buf.readVarInt();
-		var conditions = Lists.<ContextualCondition>newArrayListWithCapacity(size);
-		for (var i = 0; i < size; i++) {
-			var type = CommonProxy.readRegistryId(LycheeRegistries.CONTEXTUAL, buf);
-			conditions.add(type.streamCodec().decode(buf));
-		}
-		BitSet secretFlags = null;
-		if (buf.readBoolean()) {
-			secretFlags = buf.readBitSet();
-		}
-		Component[] overrideDesc = null;
-		if (buf.readBoolean()) {
-			overrideDesc = new Component[size];
-			for (var i = 0; i < size; i++) {
-				overrideDesc[i] = buf.readOptional(FriendlyByteBuf::readComponent).orElse(null);
-			}
-		}
-		return new ContextualHolder(conditions, secretFlags, overrideDesc);
 	}
 
 	public List<ContextualCondition> conditions() {
@@ -170,34 +147,12 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 				Lychee.LOGGER.error(
 						"Failed to check condition {} of recipe {}",
 						LycheeRegistries.CONTEXTUAL.getKey(condition.type()),
-						ctx.getMatchedRecipeId(),
+						ctx.get(LycheeContextKey.RECIPE_ID),
 						e
 				);
 				return 0;
 			}
 		}
 		return times;
-	}
-
-	@SuppressWarnings("rawtypes")
-	public void conditionsToNetwork(FriendlyByteBuf buf) {
-		buf.writeVarInt(conditions.size());
-		for (var condition : conditions) {
-			ContextualConditionType type = condition.type();
-			CommonProxy.writeRegistryId(LycheeRegistries.CONTEXTUAL, type, buf);
-			type.toNetwork(buf, condition);
-		}
-		buf.writeBoolean(secretFlags != null);
-		if (secretFlags != null) {
-			buf.writeBitSet(secretFlags);
-			//we should sync condition even though it is secret because
-			//the client-side need to know the result in tooltips for UX
-		}
-		buf.writeBoolean(overrideDesc != null);
-		if (overrideDesc != null) {
-			for (var component : overrideDesc) {
-				buf.writeOptional(Optional.ofNullable(component), FriendlyByteBuf::writeComponent);
-			}
-		}
 	}
 }

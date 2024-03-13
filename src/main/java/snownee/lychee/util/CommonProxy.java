@@ -16,7 +16,6 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -43,7 +42,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
@@ -62,7 +60,6 @@ import snownee.lychee.action.CustomAction;
 import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.compat.fabric_recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.contextual.CustomCondition;
-import snownee.lychee.core.recipe.recipe.OldLycheeRecipe;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.util.action.PostActionTypes;
@@ -75,7 +72,7 @@ public class CommonProxy implements ModInitializer {
 	public static final KEvent<CustomActionListener> CUSTOM_ACTION_EVENT = KEvent.createArrayBacked(
 			CustomActionListener.class,
 			listeners -> (id, action, recipe) -> {
-				for (CustomActionListener listener : listeners) {
+				for (var listener : listeners) {
 					if (listener.on(id, action, recipe)) {
 						return true;
 					}
@@ -86,7 +83,7 @@ public class CommonProxy implements ModInitializer {
 	public static final KEvent<CustomConditionListener> CUSTOM_CONDITION_EVENT = KEvent.createArrayBacked(
 			CustomConditionListener.class,
 			listeners -> (id, condition) -> {
-				for (CustomConditionListener listener : listeners) {
+				for (var listener : listeners) {
 					if (listener.on(id, condition)) {
 						return true;
 					}
@@ -106,7 +103,7 @@ public class CommonProxy implements ModInitializer {
 			@Nullable Consumer<ItemEntity> extraStep
 	) {
 		while (!pStack.isEmpty()) {
-			ItemEntity itementity = new ItemEntity(
+			var itementity = new ItemEntity(
 					pLevel,
 					pX + RANDOM.nextGaussian() * 0.1 - 0.05,
 					pY,
@@ -144,11 +141,11 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static String capitaliseAllWords(String str) {
-		int sz = str.length();
-		StringBuilder buffer = new StringBuilder(sz);
-		boolean space = true;
-		for (int i = 0; i < sz; i++) {
-			char ch = str.charAt(i);
+		var sz = str.length();
+		var buffer = new StringBuilder(sz);
+		var space = true;
+		for (var i = 0; i < sz; i++) {
+			var ch = str.charAt(i);
 			if (Character.isWhitespace(ch)) {
 				buffer.append(ch);
 				space = true;
@@ -169,12 +166,12 @@ public class CommonProxy implements ModInitializer {
 		if (list.size() == 1) {
 			return list.get(0);
 		}
-		long index = (System.currentTimeMillis() / interval) % list.size();
+		var index = (System.currentTimeMillis() / interval) % list.size();
 		return list.get(Math.toIntExact(index));
 	}
 
 	public static ResourceLocation readNullableRL(FriendlyByteBuf buf) {
-		String string = buf.readUtf();
+		var string = buf.readUtf();
 		if (string.isEmpty()) {
 			return null;
 		} else {
@@ -200,7 +197,7 @@ public class CommonProxy implements ModInitializer {
 
 	@Nullable
 	public static RecipeHolder<?> recipe(ResourceLocation id) {
-		RecipeManager manager = Util.getRecipeManager();
+		var manager = Util.getRecipeManager();
 		if (manager == null) {
 			return null;
 		}
@@ -209,13 +206,13 @@ public class CommonProxy implements ModInitializer {
 
 	// see Entity.getOnPos
 	public static BlockPos getOnPos(Entity entity) {
-		int i = Mth.floor(entity.getX());
-		int j = Mth.floor(entity.getY() - 0.05); // vanilla is 0.2. carpet's height is 0.13
-		int k = Mth.floor(entity.getZ());
-		BlockPos blockpos = new BlockPos(i, j, k);
+		var i = Mth.floor(entity.getX());
+		var j = Mth.floor(entity.getY() - 0.05); // vanilla is 0.2. carpet's height is 0.13
+		var k = Mth.floor(entity.getZ());
+		var blockpos = new BlockPos(i, j, k);
 		if (entity.level().isEmptyBlock(blockpos)) {
-			BlockPos blockpos1 = blockpos.below();
-			BlockState blockstate = entity.level().getBlockState(blockpos1);
+			var blockpos1 = blockpos.below();
+			var blockstate = entity.level().getBlockState(blockpos1);
 			if (collisionExtendsVertically(blockstate, entity.level(), blockpos1, entity)) {
 				return blockpos1;
 			}
@@ -228,9 +225,9 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static Vec3 clampPos(Vec3 origin, BlockPos pos) {
-		double x = clamp(origin.x, pos.getX());
-		double y = clamp(origin.y, pos.getY());
-		double z = clamp(origin.z, pos.getZ());
+		var x = clamp(origin.x, pos.getX());
+		var y = clamp(origin.y, pos.getY());
+		var z = clamp(origin.z, pos.getZ());
 		if (x == origin.x && y == origin.y && z == origin.z) {
 			return origin;
 		}
@@ -256,10 +253,10 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static BlockPos parseOffset(JsonObject o) {
-		int x = GsonHelper.getAsInt(o, "offsetX", 0);
-		int y = GsonHelper.getAsInt(o, "offsetY", 0);
-		int z = GsonHelper.getAsInt(o, "offsetZ", 0);
-		BlockPos offset = BlockPos.ZERO;
+		var x = GsonHelper.getAsInt(o, "offsetX", 0);
+		var y = GsonHelper.getAsInt(o, "offsetY", 0);
+		var z = GsonHelper.getAsInt(o, "offsetZ", 0);
+		var offset = BlockPos.ZERO;
 		if (x != 0 || y != 0 || z != 0) {
 			offset = new BlockPos(x, y, z);
 		}
@@ -268,8 +265,9 @@ public class CommonProxy implements ModInitializer {
 
 	public static void itemstackToJson(ItemStack stack, JsonObject jsonObject) {
 		jsonObject.addProperty("item", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
-		if (stack.hasTag()) {
-			jsonObject.addProperty("nbt", stack.getTag().toString());
+		if (!stack.getComponents().isEmpty()) {
+			// TODO
+			jsonObject.addProperty("nbt", stack.getComponents().toString());
 		}
 		if (stack.getCount() > 1) {
 			jsonObject.addProperty("count", stack.getCount());
@@ -313,10 +311,10 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static IngredientInfo.Type getIngredientType(Ingredient ingredient) {
-		if (ingredient == OldLycheeRecipe.Serializer.EMPTY_INGREDIENT) {
+		if (ingredient.isEmpty()) {
 			return IngredientInfo.Type.AIR;
 		}
-		CustomIngredient customIngredient = ingredient.getCustomIngredient();
+		var customIngredient = ingredient.getCustomIngredient();
 		if (customIngredient != null && customIngredient.getSerializer() == AlwaysTrueIngredient.SERIALIZER) {
 			return IngredientInfo.Type.ANY;
 		}
@@ -327,8 +325,8 @@ public class CommonProxy implements ModInitializer {
 		if (!(pStack.getItem() instanceof BlockItem item)) {
 			return pStack;
 		}
-		BlockPos blockpos = pSource.pos().relative(direction);
-		BlockState state = pSource.level().getBlockState(blockpos);
+		var blockpos = pSource.pos().relative(direction);
+		var state = pSource.level().getBlockState(blockpos);
 		if (FallingBlock.isFree(state)) {
 			item.place(new DirectionalPlaceContext(pSource.level(), blockpos, direction, pStack, direction));
 		}

@@ -316,8 +316,13 @@ public class FluidRenderer {
 		int g = color >> 8 & 0xff;
 		int b = color & 0xff;
 
-		builder.vertex(peek.pose(), x, y, z).color(r, g, b, a).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(
-				light).normal(peek.normal(), normal.getX(), normal.getY(), normal.getZ()).endVertex();
+		builder.vertex(peek.pose(), x, y, z)
+				.color(r, g, b, a)
+				.uv(u, v)
+				.overlayCoords(OverlayTexture.NO_OVERLAY)
+				.uv2(light)
+				.normal(peek, normal.getX(), normal.getY(), normal.getZ())
+				.endVertex();
 	}
 
 }

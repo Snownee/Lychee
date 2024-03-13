@@ -44,8 +44,8 @@ public class If implements CompoundAction, PostAction {
 		preventSync = getChildActions().allMatch(PostAction::preventSync);
 	}
 
-	public void getConsequenceTooltips(List<Component> list, PostAction[] actions, String translation) {
-		if (actions.length == 0) {
+	public void getConsequenceTooltips(List<Component> list, List<PostAction> actions, String translation) {
+		if (actions.isEmpty()) {
 			return;
 		}
 		if (conditions().showingCount() > 0) {

@@ -4,7 +4,8 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 
-import net.minecraft.network.FriendlyByteBuf;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.util.context.LycheeContext;
@@ -36,12 +37,8 @@ public final class IsSneaking implements ContextualCondition {
 		}
 
 		@Override
-		public IsSneaking fromNetwork(FriendlyByteBuf buf) {
-			return IsSneaking.INSTANCE;
-		}
-
-		@Override
-		public void toNetwork(FriendlyByteBuf buf, IsSneaking condition) {
+		public StreamCodec<? extends ByteBuf, IsSneaking> streamCodec() {
+			return StreamCodec.unit(INSTANCE);
 		}
 	}
 }
