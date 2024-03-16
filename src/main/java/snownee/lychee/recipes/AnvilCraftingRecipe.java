@@ -178,7 +178,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 									return it.left().orElseThrow();
 								}, Either::left)
 								.forGetter(AnvilCraftingRecipe::input),
-						ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
+						ItemStack.CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
 						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
 								.forGetter(AnvilCraftingRecipe::assemblingActions),
 						ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),

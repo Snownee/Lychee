@@ -113,10 +113,9 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 								if (holder.holder() instanceof ItemStackHolder.Entity entityHolder &&
 										!alreadySentParticles.contains(holder)) {
 									alreadySentParticles.add(holder);
-									SCustomLevelEventPacket.sendItemParticles(
-											holder.get(),
-											(ServerLevel) context.get(LycheeContextKey.LEVEL),
-											entityHolder.getEntity().position());
+									var position = entityHolder.getEntity().position();
+									new SCustomLevelEventPacket(holder.get(), position)
+											.sendToAround((ServerLevel) entityHolder.getEntity().level());
 								}
 							}
 						}

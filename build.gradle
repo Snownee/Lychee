@@ -96,7 +96,7 @@ dependencies {
 //    modCompileOnlyApi("mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}")
 //    modImplementation("mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}")
 
-    implementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}-fabric")
+    modImplementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}-fabric")
 
 //    modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
 
