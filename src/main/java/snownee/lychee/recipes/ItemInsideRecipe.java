@@ -147,7 +147,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 		public static final Codec<ItemInsideRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
 				BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN).forGetter(ItemInsideRecipe::blockPredicate),
-				Codec.INT.fieldOf("time").forGetter(ItemInsideRecipe::time),
+				Codec.INT.optionalFieldOf("time", 0).forGetter(ItemInsideRecipe::time),
 				new CompactListCodec<>(Ingredient.CODEC_NONEMPTY, true).optionalFieldOf(ITEM_IN, List.of()).forGetter(it -> it.ingredients)
 		).apply(instance, ItemInsideRecipe::new));
 
