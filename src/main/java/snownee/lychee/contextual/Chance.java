@@ -1,5 +1,6 @@
 package snownee.lychee.contextual;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -50,7 +51,7 @@ public record Chance(float chance) implements ContextualCondition {
 		).apply(instance, Chance::new));
 
 		@Override
-		public Codec<Chance> codec() {
+		public @NotNull Codec<Chance> codec() {
 			return CODEC;
 		}
 	}

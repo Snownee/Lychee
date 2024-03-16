@@ -2,6 +2,7 @@ package snownee.lychee.contextual;
 
 import java.util.function.BiFunction;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonElement;
@@ -100,7 +101,7 @@ public class CustomCondition implements ContextualCondition {
 				}, it -> DataResult.success(it.data)).codec();
 
 		@Override
-		public Codec<CustomCondition> codec() {
+		public @NotNull Codec<CustomCondition> codec() {
 			return CODEC;
 		}
 	}

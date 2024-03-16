@@ -1,5 +1,7 @@
 package snownee.lychee.context;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -31,7 +33,7 @@ public record JsonContext(JsonObject json) implements KeyedContextValue<JsonCont
 		);
 
 		@Override
-		public Codec<JsonContext> codec() {
+		public @NotNull Codec<JsonContext> codec() {
 			return CODEC;
 		}
 	}

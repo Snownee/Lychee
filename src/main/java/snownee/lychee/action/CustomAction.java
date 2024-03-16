@@ -3,6 +3,7 @@ package snownee.lychee.action;
 import java.util.Objects;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.MoreObjects;
@@ -126,7 +127,7 @@ public record CustomAction(
 		).apply(instance, CustomAction::new));
 
 		@Override
-		public Codec<CustomAction> codec() {
+		public @NotNull Codec<CustomAction> codec() {
 			return CODEC;
 		}
 

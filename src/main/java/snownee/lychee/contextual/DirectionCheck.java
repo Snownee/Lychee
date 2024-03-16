@@ -4,6 +4,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Maps;
@@ -99,7 +100,7 @@ public class DirectionCheck implements ContextualCondition {
 				.apply(instance, LOOKUPS::get));
 
 		@Override
-		public Codec<DirectionCheck> codec() {
+		public @NotNull Codec<DirectionCheck> codec() {
 			return CODEC;
 		}
 	}

@@ -1,5 +1,6 @@
 package snownee.lychee.contextual;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -46,7 +47,7 @@ public record CheckParam(String key) implements ContextualCondition {
 						.apply(instance, CheckParam::new));
 
 		@Override
-		public Codec<CheckParam> codec() {
+		public @NotNull Codec<CheckParam> codec() {
 			return CODEC;
 		}
 	}

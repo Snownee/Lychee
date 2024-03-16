@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -177,7 +178,7 @@ public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredi
 		).apply(instance, PlaceBlock::new));
 
 		@Override
-		public Codec<PlaceBlock> codec() {
+		public @NotNull Codec<PlaceBlock> codec() {
 			return CODEC;
 		}
 	}

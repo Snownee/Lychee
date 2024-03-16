@@ -1,6 +1,7 @@
 package snownee.lychee.contextual;
 
 import org.apache.commons.lang3.mutable.MutableInt;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.brigadier.ParseResults;
@@ -84,7 +85,7 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 		).apply(instance, Execute::new));
 
 		@Override
-		public Codec<Execute> codec() {
+		public @NotNull Codec<Execute> codec() {
 			return CODEC;
 		}
 

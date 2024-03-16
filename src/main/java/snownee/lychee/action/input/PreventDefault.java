@@ -3,6 +3,7 @@ package snownee.lychee.action.input;
 import java.util.List;
 import java.util.Objects;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -93,7 +94,7 @@ public final class PreventDefault implements PostAction {
 		).apply(instance, PreventDefault::new));
 
 		@Override
-		public Codec<PreventDefault> codec() {
+		public @NotNull Codec<PreventDefault> codec() {
 			return CODEC;
 		}
 

@@ -1,5 +1,7 @@
 package snownee.lychee.context;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.mojang.serialization.Codec;
 
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +21,7 @@ public record RecipeContext(ResourceLocation id) implements KeyedContextValue<Re
 		public static final Codec<RecipeContext> CODEC = ResourceLocation.CODEC.xmap(RecipeContext::new, RecipeContext::id);
 
 		@Override
-		public Codec<RecipeContext> codec() {
+		public @NotNull Codec<RecipeContext> codec() {
 			return CODEC;
 		}
 	}

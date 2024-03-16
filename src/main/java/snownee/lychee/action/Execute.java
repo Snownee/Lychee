@@ -1,5 +1,6 @@
 package snownee.lychee.action;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -89,7 +90,7 @@ public record Execute(PostActionCommonProperties commonProperties, String comman
 
 
 		@Override
-		public Codec<Execute> codec() {
+		public @NotNull Codec<Execute> codec() {
 			return CODEC;
 		}
 

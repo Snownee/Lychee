@@ -2,6 +2,7 @@ package snownee.lychee.contextual;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -73,7 +74,7 @@ public record And(ContextualHolder conditions) implements ContextualCondition, C
 						).apply(instance, And::new));
 
 		@Override
-		public Codec<And> codec() {
+		public @NotNull Codec<And> codec() {
 			return CODEC;
 		}
 	}

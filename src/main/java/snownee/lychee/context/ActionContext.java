@@ -2,6 +2,8 @@ package snownee.lychee.context;
 
 import java.util.Queue;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.google.common.collect.Queues;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -84,7 +86,7 @@ public class ActionContext implements KeyedContextValue<ActionContext> {
 				).apply(instance, ActionContext::new));
 
 		@Override
-		public Codec<ActionContext> codec() {
+		public @NotNull Codec<ActionContext> codec() {
 			return CODEC;
 		}
 	}

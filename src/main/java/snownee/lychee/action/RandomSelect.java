@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
@@ -189,7 +190,7 @@ public class RandomSelect implements CompoundAction, PostAction {
 		).apply(instance, RandomSelect::new));
 
 		@Override
-		public Codec<RandomSelect> codec() {
+		public @NotNull Codec<RandomSelect> codec() {
 			return CODEC;
 		}
 	}

@@ -1,5 +1,6 @@
 package snownee.lychee.contextual;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -32,7 +33,7 @@ public final class IsSneaking implements ContextualCondition {
 		public static final Codec<IsSneaking> CODEC = Codec.unit(INSTANCE);
 
 		@Override
-		public Codec<IsSneaking> codec() {
+		public @NotNull Codec<IsSneaking> codec() {
 			return CODEC;
 		}
 

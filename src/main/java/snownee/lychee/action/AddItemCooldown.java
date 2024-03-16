@@ -1,5 +1,6 @@
 package snownee.lychee.action;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -43,7 +44,7 @@ public record AddItemCooldown(PostActionCommonProperties commonProperties, float
 				).apply(instance, AddItemCooldown::new));
 
 		@Override
-		public Codec<AddItemCooldown> codec() {
+		public @NotNull Codec<AddItemCooldown> codec() {
 			return CODEC;
 		}
 	}

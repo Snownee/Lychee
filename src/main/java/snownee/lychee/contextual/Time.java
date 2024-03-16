@@ -2,6 +2,7 @@ package snownee.lychee.contextual;
 
 import java.util.Optional;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -75,7 +76,7 @@ public record Time(MinMaxBounds.Ints value, Optional<Long> period) implements Co
 		);
 
 		@Override
-		public Codec<Time> codec() {
+		public @NotNull Codec<Time> codec() {
 			return CODEC;
 		}
 	}

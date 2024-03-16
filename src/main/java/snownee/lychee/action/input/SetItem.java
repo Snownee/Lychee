@@ -3,6 +3,7 @@ package snownee.lychee.action.input;
 import java.util.List;
 import java.util.Objects;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
@@ -146,7 +147,7 @@ public final class SetItem implements PostAction {
 		).apply(instance, SetItem::new));
 
 		@Override
-		public Codec<SetItem> codec() {
+		public @NotNull Codec<SetItem> codec() {
 			return CODEC;
 		}
 	}

@@ -1,5 +1,6 @@
 package snownee.lychee.action;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -45,7 +46,7 @@ public record Break(PostActionCommonProperties commonProperties) implements Post
 		).apply(instance, Break::new));
 
 		@Override
-		public Codec<Break> codec() {
+		public @NotNull Codec<Break> codec() {
 			return CODEC;
 		}
 

@@ -2,6 +2,7 @@ package snownee.lychee.action;
 
 import java.util.List;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -72,7 +73,7 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStack st
 				).apply(instance, DropItem::new));
 
 		@Override
-		public Codec<DropItem> codec() {
+		public @NotNull Codec<DropItem> codec() {
 			return CODEC;
 		}
 	}

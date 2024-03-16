@@ -1,5 +1,6 @@
 package snownee.lychee.action;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -65,7 +66,7 @@ public record Hurt(
 		).apply(inst, Hurt::new));
 
 		@Override
-		public Codec<Hurt> codec() {
+		public @NotNull Codec<Hurt> codec() {
 			return CODEC;
 		}
 	}

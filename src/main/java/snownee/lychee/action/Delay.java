@@ -1,5 +1,6 @@
 package snownee.lychee.action;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -49,7 +50,7 @@ public record Delay(PostActionCommonProperties commonProperties, float seconds) 
 		).apply(instance, Delay::new));
 
 		@Override
-		public Codec<Delay> codec() {
+		public @NotNull Codec<Delay> codec() {
 			return CODEC;
 		}
 

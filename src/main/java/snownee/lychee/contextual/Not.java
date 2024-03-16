@@ -1,5 +1,6 @@
 package snownee.lychee.contextual;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -46,7 +47,7 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 				.apply(instance, Not::new));
 
 		@Override
-		public Codec<Not> codec() {
+		public @NotNull Codec<Not> codec() {
 			return CODEC;
 		}
 	}
