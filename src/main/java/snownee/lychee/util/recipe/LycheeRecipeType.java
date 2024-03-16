@@ -9,15 +9,14 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.JavaOps;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import snownee.kiwi.util.Util;
 import snownee.lychee.Lychee;
+import snownee.lychee.mixin.LootContextParamSetsAccess;
 import snownee.lychee.util.context.LycheeContext;
 
 public class LycheeRecipeType<C extends Container, T extends ILycheeRecipe<C>> implements RecipeType<T> {
@@ -43,7 +42,7 @@ public class LycheeRecipeType<C extends Container, T extends ILycheeRecipe<C>> i
 		id = categoryId = Lychee.id(name);
 		this.clazz = clazz;
 		this.contextParamSet = contextParamSet == null
-				? LootContextParamSets.CODEC.parse(JavaOps.INSTANCE, id).result().orElseThrow()
+				? LootContextParamSetsAccess.registry().get(id)
 				: contextParamSet;
 		Objects.requireNonNull(this.contextParamSet);
 	}

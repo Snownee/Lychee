@@ -27,7 +27,7 @@
       "snownee.lychee.datagen.LycheeDataGen"
     ],
     "rei_client": [
-      "snownee.lychee.compat.rei.REICompat"
+		"snownee.lychee.compat.rei.LycheeREIPlugin"
     ],
     "jei_mod_plugin": [
       "snownee.lychee.compat.jei.JEICompat"

@@ -1,63 +1,70 @@
 package snownee.lychee.core.network;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
+import org.joml.Vector3f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import snownee.kiwi.network.KPacketTarget;
+import snownee.kiwi.contributor.network.CSetCosmeticPacket;
 import snownee.kiwi.network.KiwiPacket;
-import snownee.kiwi.network.KiwiPacket.Direction;
-import snownee.kiwi.network.PacketHandler;
+import snownee.kiwi.network.PayloadContext;
+import snownee.kiwi.network.PlayPacketHandler;
+import snownee.lychee.Lychee;
 
-@KiwiPacket(value = "level_event", dir = Direction.PLAY_TO_CLIENT)
-public class SCustomLevelEventPacket extends PacketHandler {
+@KiwiPacket
+public record SCustomLevelEventPacket(ItemStack stack, Vector3f pos) implements CustomPacketPayload {
+	public static final Type<CSetCosmeticPacket> TYPE = new CustomPacketPayload.Type<>(Lychee.id("level_event"));
 
 	public static SCustomLevelEventPacket I;
 
-	public static void sendItemParticles(ItemStack stack, ServerLevel level, Vec3 pos) {
-		I.send(KPacketTarget.around(level, pos, 16), buf -> {
-			ItemStack.STREAM_CODEC.encode(new RegistryFriendlyByteBuf(buf, level.registryAccess()), stack);
-			buf.writeFloat((float) pos.x);
-			buf.writeFloat((float) pos.y);
-			buf.writeFloat((float) pos.z);
-		});
+	@Override
+	public Type<? extends CustomPacketPayload> type() {
+		return TYPE;
 	}
 
-	@Override
-	public CompletableFuture<FriendlyByteBuf> receive(
-			Function<Runnable, CompletableFuture<FriendlyByteBuf>> executor,
-			FriendlyByteBuf buf,
-			ServerPlayer sender) {
-		ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(new RegistryFriendlyByteBuf(
-				buf,
-				Minecraft.getInstance().level.registryAccess()));
-		float x = buf.readFloat();
-		float y = buf.readFloat();
-		float z = buf.readFloat();
-		return executor.apply(() -> {
+	public static class Handler extends PlayPacketHandler<SCustomLevelEventPacket> {
+		public static final StreamCodec<RegistryFriendlyByteBuf, SCustomLevelEventPacket> STREAM_CODEC = StreamCodec.composite(
+				ItemStack.OPTIONAL_STREAM_CODEC,
+				SCustomLevelEventPacket::stack,
+				ByteBufCodecs.VECTOR3F,
+				SCustomLevelEventPacket::pos,
+				SCustomLevelEventPacket::new);
+
+		@Override
+		public SCustomLevelEventPacket read(RegistryFriendlyByteBuf buf) {
+			return streamCodec().decode(buf);
+		}
+
+		@Override
+		public void write(
+				SCustomLevelEventPacket packet, RegistryFriendlyByteBuf buf) {
+			streamCodec().encode(buf, packet);
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, SCustomLevelEventPacket> streamCodec() {
+			return STREAM_CODEC;
+		}
+
+		@Override
+		public void handle(SCustomLevelEventPacket packet, PayloadContext context) {
 			for (int i = 0; i < 8; ++i) {
-				Vec3 vec3 = new Vec3(
-						(Math.random() - 0.5D) * 0.2D,
-						Math.random() * 0.1D + 0.1D,
-						(Math.random() - 0.5D) * 0.2D);
+				Vec3 vec3 = new Vec3((Math.random() - 0.5D) * 0.2D, Math.random() * 0.1D + 0.1D, (Math.random() - 0.5D) * 0.2D);
 				Minecraft.getInstance().level.addParticle(
-						new ItemParticleOption(ParticleTypes.ITEM, stack),
-						x,
-						y,
-						z,
+						new ItemParticleOption(ParticleTypes.ITEM, packet.stack),
+						packet.pos.x,
+						packet.pos.y,
+						packet.pos.z,
 						vec3.x,
 						vec3.y + 0.05D,
 						vec3.z);
 			}
-		});
+		}
 	}
-
 }
