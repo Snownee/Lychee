@@ -40,7 +40,9 @@ public class LycheeContext extends EmptyContainer {
 
 	public <T> T get(LycheeContextKey<T> type) {
 		if (LycheeContextRequired.CONSTRUCTORS.containsKey(type)) {
-			return (T) context.putIfAbsent(type, LycheeContextRequired.CONSTRUCTORS.get(type).apply(this));
+			var context = (T) LycheeContextRequired.CONSTRUCTORS.get(type).apply(this);
+			this.context.putIfAbsent(type, context);
+			return context;
 		}
 		return (T) context.get(type);
 	}

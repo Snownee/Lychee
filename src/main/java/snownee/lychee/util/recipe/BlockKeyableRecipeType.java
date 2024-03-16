@@ -103,10 +103,10 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 			return Optional.empty();
 		}
 		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.params().put(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
-		lootParamsContext.params().put(LootContextParams.THIS_ENTITY, player);
-		lootParamsContext.params().put(LootContextParams.BLOCK_STATE, blockstate);
-		lootParamsContext.params().put(LycheeLootContextParams.BLOCK_POS, pos);
+		lootParamsContext.setParam(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
+		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, player);
+		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, blockstate);
+		lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, pos);
 		lootParamsContext.validate(contextParamSet);
 		final var stack = player.getItemInHand(hand);
 		final var otherStack = player.getItemInHand(
