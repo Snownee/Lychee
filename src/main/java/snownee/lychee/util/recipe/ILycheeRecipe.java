@@ -1,6 +1,7 @@
 package snownee.lychee.util.recipe;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -117,7 +118,7 @@ public interface ILycheeRecipe<C extends Container> extends Recipe<C>, Contextua
 		return commonProperties().ghost();
 	}
 
-	default @Nullable String comment() {
+	default Optional<String> comment() {
 		return commonProperties().comment();
 	}
 

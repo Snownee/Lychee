@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -33,15 +32,16 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<ItemInsideRecipe> {
-	protected final @Nullable BlockPredicate blockPredicate;
+	protected final Optional<BlockPredicate> blockPredicate;
 	protected final int time;
 	protected boolean special;
 	protected NonNullList<Ingredient> ingredients = NonNullList.create();
 
 	public ItemInsideRecipe(
 			final LycheeRecipeCommonProperties commonProperties,
-			final @Nullable BlockPredicate blockPredicate,
+			Optional<BlockPredicate> blockPredicate,
 			final int time
 	) {
 		super(commonProperties);
@@ -51,7 +51,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 
 	public ItemInsideRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			@Nullable BlockPredicate blockPredicate,
+			Optional<BlockPredicate> blockPredicate,
 			int time,
 			final List<Ingredient> ingredients
 	) {
@@ -72,7 +72,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 
 	@Override
 	public Optional<BlockPredicate> blockPredicate() {
-		return Optional.ofNullable(blockPredicate);
+		return blockPredicate;
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 		if (itemShapelessContext.totalItems < ingredients.size()) {
 			return false;
 		}
-		if (!BlockPredicateExtensions.matches(blockPredicate, context)) {
+		if (!BlockPredicateExtensions.matches(blockPredicate.orElseThrow(), context)) {
 			return false;
 		}
 		var itemEntities = itemShapelessContext.itemEntities.stream()
@@ -146,7 +146,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 	public static class Serializer implements LycheeRecipeSerializer<ItemInsideRecipe> {
 		public static final Codec<ItemInsideRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-				BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, null).forGetter(it -> it.blockPredicate),
+				BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN).forGetter(ItemInsideRecipe::blockPredicate),
 				Codec.INT.fieldOf("time").forGetter(ItemInsideRecipe::time),
 				new CompactListCodec<>(Ingredient.CODEC_NONEMPTY, true).optionalFieldOf(ITEM_IN, List.of()).forGetter(it -> it.ingredients)
 		).apply(instance, ItemInsideRecipe::new));

@@ -1,5 +1,8 @@
 package snownee.lychee.util.action;
 
+
+import java.util.Optional;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.MoreObjects;
@@ -13,12 +16,17 @@ public final class ActionData {
 	public static final Codec<ActionData> CODEC =
 			RecordCodecBuilder.create(inst ->
 					inst.group(
-							LycheeContext.CODEC.optionalFieldOf("context", null).forGetter(ActionData::getContext),
+							LycheeContext.CODEC.optionalFieldOf("context").forGetter(ActionData::getContext),
 							Codec.INT.fieldOf("delayedTicks").forGetter(ActionData::getDelayedTicks)
 					).apply(inst, ActionData::of));
 	@Nullable
 	private LycheeContext context;
 	private int delayedTicks;
+
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+	private static ActionData of(Optional<LycheeContext> context, int delayedTicks) {
+		return new ActionData(context.orElse(null), delayedTicks);
+	}
 
 	private ActionData(
 			@Nullable LycheeContext context,
@@ -35,8 +43,8 @@ public final class ActionData {
 		return new ActionData(context, delayedTicks);
 	}
 
-	public @Nullable LycheeContext getContext() {
-		return context;
+	public Optional<LycheeContext> getContext() {
+		return Optional.ofNullable(context);
 	}
 
 	public void setContext(final @Nullable LycheeContext context) {

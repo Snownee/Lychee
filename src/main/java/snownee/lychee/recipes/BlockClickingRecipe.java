@@ -1,7 +1,8 @@
 package snownee.lychee.recipes;
 
+import java.util.Optional;
+
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
@@ -58,7 +59,7 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 	protected BlockClickingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			Pair<Ingredient, Ingredient> input,
-			@Nullable BlockPredicate blockPredicate
+			Optional<BlockPredicate> blockPredicate
 	) {
 		super(commonProperties, input, blockPredicate);
 	}
@@ -97,7 +98,7 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 							return it.left().orElseThrow();
 						}, Either::left)
 						.forGetter(BlockInteractingRecipe::input),
-				BlockPredicate.CODEC.optionalFieldOf(BLOCK_IN, null).forGetter(it -> it.blockPredicate)
+				BlockPredicate.CODEC.optionalFieldOf(BLOCK_IN).forGetter(it -> it.blockPredicate())
 		).apply(instance, BlockClickingRecipe::new));
 
 		@Override

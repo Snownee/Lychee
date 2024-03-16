@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -34,11 +33,12 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockCrushingRecipe> {
 	public static final BlockPredicate ANVIL = BlockPredicate.Builder.block().of(BlockTags.ANVIL).build();
 
-	protected BlockPredicate fallingBlock = ANVIL;
-	protected @Nullable BlockPredicate landingBlock = null;
+	protected Optional<BlockPredicate> fallingBlock = Optional.of(ANVIL);
+	protected Optional<BlockPredicate> landingBlock = Optional.empty();
 	protected NonNullList<Ingredient> ingredients = NonNullList.create();
 
 	public BlockCrushingRecipe(final LycheeRecipeCommonProperties commonProperties) {
@@ -47,8 +47,8 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	public BlockCrushingRecipe(
 			final LycheeRecipeCommonProperties commonProperties,
-			final BlockPredicate fallingBlock,
-			@Nullable final BlockPredicate landingBlock,
+			Optional<BlockPredicate> fallingBlock,
+			Optional<BlockPredicate> landingBlock,
 			final NonNullList<Ingredient> ingredients
 	) {
 		super(commonProperties);
@@ -59,8 +59,8 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	public BlockCrushingRecipe(
 			final LycheeRecipeCommonProperties commonProperties,
-			final BlockPredicate fallingBlock,
-			@Nullable final BlockPredicate landingBlock,
+			Optional<BlockPredicate> fallingBlock,
+			Optional<BlockPredicate> landingBlock,
 			final List<Ingredient> ingredients
 	) {
 		super(commonProperties);
@@ -71,11 +71,11 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	@Override
 	public Optional<BlockPredicate> blockPredicate() {
-		return Optional.ofNullable(fallingBlock);
+		return fallingBlock;
 	}
 
 	public Optional<BlockPredicate> landingBlock() {
-		return Optional.ofNullable(fallingBlock);
+		return landingBlock;
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		if (itemShapelessContext.totalItems < ingredients.size()) {
 			return false;
 		}
-		if (!BlockPredicateExtensions.matches(landingBlock, context)) {
+		if (!BlockPredicateExtensions.matches(landingBlock.get(), context)) {
 			return false;
 		}
 		final var fallingBlockEntityContext = context.get(LycheeContextKey.FALLING_BLOCK_ENTITY);
@@ -133,7 +133,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	@Override
 	public List<BlockPredicate> getBlockInputs() {
-		return List.of(fallingBlock, landingBlock);
+		return List.of(fallingBlock.orElse(null), landingBlock.orElse(null));
 	}
 
 	@Override
@@ -172,8 +172,8 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		public static final Codec<BlockCrushingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(BlockCrushingRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC.optionalFieldOf("falling_block", null).forGetter(it -> it.fallingBlock),
-						BlockPredicateExtensions.CODEC.optionalFieldOf("landing_block", null).forGetter(it -> it.landingBlock),
+						BlockPredicateExtensions.CODEC.optionalFieldOf("falling_block").forGetter(BlockCrushingRecipe::blockPredicate),
+						BlockPredicateExtensions.CODEC.optionalFieldOf("landing_block").forGetter(BlockCrushingRecipe::landingBlock),
 						new CompactListCodec<>(Ingredient.CODEC_NONEMPTY).optionalFieldOf(ITEM_IN, List.of())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, BlockCrushingRecipe::new));

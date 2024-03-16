@@ -1,8 +1,7 @@
 package snownee.lychee.util.recipe;
 
 import java.util.List;
-
-import org.jetbrains.annotations.Nullable;
+import java.util.Optional;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -19,7 +18,7 @@ import snownee.lychee.util.contextual.ContextualHolder;
 public record LycheeRecipeCommonProperties(
 		boolean hideInRecipeViewer,
 		boolean ghost,
-		@Nullable String comment,
+		Optional<String> comment,
 		String group,
 		ContextualHolder conditions,
 		List<PostAction> postActions,
@@ -28,7 +27,7 @@ public record LycheeRecipeCommonProperties(
 
 	public static final MapCodec<Boolean> HIDE_IN_VIEWER_CODEC = Codec.BOOL.optionalFieldOf("hide_in_viewer", false);
 	public static final MapCodec<Boolean> GHOST_CODEC = Codec.BOOL.optionalFieldOf("ghost", false);
-	public static final MapCodec<String> COMMENT_CODEC = Codec.STRING.optionalFieldOf("comment", null);
+	public static final MapCodec<Optional<String>> COMMENT_CODEC = Codec.STRING.optionalFieldOf("comment");
 	public static final MapCodec<String> GROUP_CODEC = ExtraCodecs.validate(Codec.STRING, s -> {
 		if (!ResourceLocation.isValidResourceLocation(s)) {
 			return DataResult.error(() -> "Invalid group: " + s + " (must be a valid resource location)");

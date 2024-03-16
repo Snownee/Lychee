@@ -3,7 +3,6 @@ package snownee.lychee.recipes;
 import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -21,12 +20,13 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockExplodingRecipe> {
-	protected final @Nullable BlockPredicate blockPredicate;
+	protected final Optional<BlockPredicate> blockPredicate;
 
 	public BlockExplodingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			@Nullable BlockPredicate blockPredicate
+			Optional<BlockPredicate> blockPredicate
 	) {
 		super(commonProperties);
 		this.blockPredicate = blockPredicate;
@@ -39,7 +39,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 
 	@Override
 	public Optional<BlockPredicate> blockPredicate() {
-		return Optional.ofNullable(blockPredicate);
+		return blockPredicate;
 	}
 
 	@Override
@@ -67,8 +67,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 		public static final Codec<BlockExplodingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(BlockExplodingRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, null)
-								.forGetter(it -> it.blockPredicate)
+						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN).forGetter(BlockExplodingRecipe::blockPredicate)
 				).apply(instance, BlockExplodingRecipe::new));
 
 		@Override

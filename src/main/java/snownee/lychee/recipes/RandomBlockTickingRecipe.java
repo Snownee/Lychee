@@ -23,11 +23,11 @@ import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<RandomBlockTickingRecipe>, ChanceRecipe {
 	protected float chance = 1;
-	protected final BlockPredicate blockPredicate;
+	protected final Optional<BlockPredicate> blockPredicate;
 
 	protected RandomBlockTickingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			BlockPredicate blockPredicate
+			Optional<BlockPredicate> blockPredicate
 	) {
 		super(commonProperties);
 		this.blockPredicate = blockPredicate;
@@ -35,7 +35,7 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 
 	@Override
 	public Optional<BlockPredicate> blockPredicate() {
-		return Optional.ofNullable(blockPredicate);
+		return blockPredicate;
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 		public static final Codec<RandomBlockTickingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(RandomBlockTickingRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, null).forGetter(it -> it.blockPredicate)
+						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN).forGetter(RandomBlockTickingRecipe::blockPredicate)
 				).apply(instance, RandomBlockTickingRecipe::new));
 
 		@Override

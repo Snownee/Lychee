@@ -4,6 +4,7 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,11 +63,11 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 					}
 					secretFlags.set(i);
 				}
-				if (holder.description() != null) {
+				if (holder.description().isPresent()) {
 					if (overrideDesc == null) {
 						overrideDesc = new Component[holders.size()];
 					}
-					overrideDesc[i] = holder.description();
+					overrideDesc[i] = holder.description().get();
 				}
 			}
 			return new ContextualHolder(conditions, secretFlags, overrideDesc);
@@ -86,7 +87,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		for (var i = 0; i < conditions.size(); i++) {
 			var condition = conditions.get(i);
 			var secret = isSecretCondition(i);
-			list.add(new ContextualConditionData<>(condition, secret, getOverridenDesc(i)));
+			list.add(new ContextualConditionData<>(condition, secret, Optional.ofNullable(getOverridenDesc(i))));
 		}
 		return list;
 	}

@@ -3,7 +3,6 @@ package snownee.lychee.recipes;
 import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
@@ -36,6 +35,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockInteractingRecipe> {
 
 	public static InteractionResult invoke(
@@ -68,12 +68,12 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 	}
 
 	protected final Pair<Ingredient, Ingredient> input;
-	protected final @Nullable BlockPredicate blockPredicate;
+	protected final Optional<BlockPredicate> blockPredicate;
 
 	protected BlockInteractingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			Pair<Ingredient, Ingredient> input,
-			@Nullable BlockPredicate blockPredicate
+			Optional<BlockPredicate> blockPredicate
 	) {
 		super(commonProperties);
 		this.input = input;
@@ -86,7 +86,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 
 	@Override
 	public Optional<BlockPredicate> blockPredicate() {
-		return Optional.ofNullable(blockPredicate);
+		return blockPredicate;
 	}
 
 	@Override
@@ -94,12 +94,12 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		final var thisEntity = context.get(LycheeContextKey.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
 		final var stack = thisEntity instanceof ItemEntity itemEntity ? itemEntity.getItem() : context.getItem(0);
 		return input.getFirst().test(stack) &&
-				(blockPredicate == null || BlockPredicateExtensions.matches(blockPredicate, context)) &&
+				(blockPredicate.isEmpty() || BlockPredicateExtensions.matches(blockPredicate.get(), context)) &&
 				(input.getSecond().isEmpty() || input.getSecond().test(context.getItem(1)));
 	}
 
 	@Override
-	public NonNullList<Ingredient> getIngredients() {
+	public @NotNull NonNullList<Ingredient> getIngredients() {
 		return input.getSecond().isEmpty() ? super.getIngredients() : NonNullList.of(Ingredient.EMPTY, input.getFirst(), input.getSecond());
 	}
 
@@ -166,7 +166,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 							return it.left().orElseThrow();
 						}, Either::left)
 						.forGetter(BlockInteractingRecipe::input),
-				BlockPredicate.CODEC.optionalFieldOf(BLOCK_IN, null).forGetter(it -> it.blockPredicate)
+				BlockPredicate.CODEC.optionalFieldOf(BLOCK_IN).forGetter(BlockInteractingRecipe::blockPredicate)
 		).apply(instance, BlockInteractingRecipe::new));
 
 		@Override

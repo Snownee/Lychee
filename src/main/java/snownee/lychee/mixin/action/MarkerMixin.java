@@ -30,16 +30,17 @@ public class MarkerMixin implements ActionMarker {
 
 	@Inject(at = @At("HEAD"), method = "tick")
 	private void lychee_tick(CallbackInfo ci) {
-		if (lychee$data.getContext() == null) {
+		if (lychee$data.getContext().isEmpty()) {
 			return;
 		}
 		if (lychee$data.consumeDelayedTicks() > 0) {
 			return;
 		}
 
-		final var actionContext = lychee$data.getContext().get(LycheeContextKey.ACTION);
+		var context = lychee$data.getContext().get();
+		final var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.state = ActionContext.State.RUNNING;
-		actionContext.run(lychee$data.getContext());
+		actionContext.run(context);
 		if (actionContext.state == ActionContext.State.STOPPED) {
 			self().discard();
 		}

@@ -13,22 +13,23 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import snownee.lychee.util.contextual.ContextualHolder;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PostActionCommonProperties {
 	public static final MapCodec<PostActionCommonProperties> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-			Codec.STRING.optionalFieldOf("@path", null).forGetter(it -> it.path),
+			Codec.STRING.optionalFieldOf("@path").forGetter(PostActionCommonProperties::getPath),
 			ContextualHolder.CODEC.fieldOf("contextual").forGetter(PostActionCommonProperties::conditions)
 	).apply(instance, PostActionCommonProperties::new));
-	private @Nullable String path;
+	private Optional<String> path;
 	private final ContextualHolder conditions;
 
-	public PostActionCommonProperties(@Nullable String path, ContextualHolder conditions) {
+	public PostActionCommonProperties(Optional<String> path, ContextualHolder conditions) {
 		this.path = path;
 		this.conditions = conditions;
 	}
 
 	public PostActionCommonProperties() {
 		this.conditions = new ContextualHolder(List.of(), null, null);
-		this.path = null;
+		this.path = Optional.empty();
 	}
 
 	public ContextualHolder conditions() {
@@ -36,11 +37,11 @@ public class PostActionCommonProperties {
 	}
 
 	public Optional<String> getPath() {
-		return Optional.ofNullable(path);
+		return path;
 	}
 
 	public void setPath(final @Nullable String path) {
-		this.path = path;
+		this.path = Optional.ofNullable(path);
 	}
 
 	@Override
