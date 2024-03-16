@@ -63,6 +63,8 @@ import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.context.LycheeContextSerializer;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -341,6 +343,8 @@ public class CommonProxy implements ModInitializer {
 		Objects.requireNonNull(ContextualConditionType.AND);
 		Objects.requireNonNull(PostActionTypes.DROP_ITEM);
 		Objects.requireNonNull(RecipeSerializers.ITEM_BURNING);
+		Objects.requireNonNull(LycheeContextKey.ACTION);
+		Objects.requireNonNull(LycheeContextSerializer.ACTION);
 		CustomIngredientSerializer.register(AlwaysTrueIngredient.SERIALIZER);
 
 		// Interaction recipes
