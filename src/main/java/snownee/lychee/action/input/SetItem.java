@@ -13,6 +13,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Reference;
@@ -135,7 +136,7 @@ public final class SetItem implements PostAction {
 		public static final Codec<SetItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(SetItem::commonProperties),
 				LycheeCodecs.PLAIN_ITEM_STACK_CODEC.fieldOf("item").forGetter(SetItem::stack),
-				Reference.CODEC.fieldOf("target").forGetter(SetItem::target)
+				ExtraCodecs.strictOptionalField(Reference.CODEC, "target", Reference.DEFAULT).forGetter(SetItem::target)
 		).apply(instance, SetItem::new));
 
 		@Override

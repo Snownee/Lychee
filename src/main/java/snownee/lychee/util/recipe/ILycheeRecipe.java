@@ -58,10 +58,10 @@ public interface ILycheeRecipe<C extends Container> extends Recipe<C>, Contextua
 
 	default IntList getItemIndexes(JsonPointer pointer) {
 		int size = getIngredients().size();
-		if (pointer.size() == 1 && pointer.getString(0).equals("item_in")) {
+		if (pointer.size() == 1 && pointer.getString(0).equals(ITEM_IN)) {
 			return IntList.of(IntStream.range(0, size).toArray());
 		}
-		if (pointer.size() == 2 && pointer.getString(0).equals("item_in")) {
+		if (pointer.size() == 2 && pointer.getString(0).equals(ITEM_IN)) {
 			try {
 				return IntList.of(pointer.getInt(1));
 			} catch (NumberFormatException ignored) {

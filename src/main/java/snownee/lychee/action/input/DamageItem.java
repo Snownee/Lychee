@@ -117,7 +117,7 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 				instance.group(
 						PostActionCommonProperties.MAP_CODEC.forGetter(DamageItem::commonProperties),
 						ExtraCodecs.strictOptionalField(Codec.INT, "damage", 1).forGetter(DamageItem::damage),
-						Reference.CODEC.fieldOf("target").forGetter(DamageItem::target)
+						ExtraCodecs.strictOptionalField(Reference.CODEC, "target", Reference.DEFAULT).forGetter(DamageItem::target)
 				).apply(instance, DamageItem::new));
 
 		@Override

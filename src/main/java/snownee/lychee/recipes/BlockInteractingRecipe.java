@@ -102,7 +102,10 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return input.getSecond().isEmpty() ? super.getIngredients() : NonNullList.of(Ingredient.EMPTY, input.getFirst(), input.getSecond());
+		return input.getSecond().isEmpty() ? NonNullList.of(Ingredient.EMPTY, input.getFirst()) : NonNullList.of(
+				Ingredient.EMPTY,
+				input.getFirst(),
+				input.getSecond());
 	}
 
 	@Override

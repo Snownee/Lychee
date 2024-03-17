@@ -24,11 +24,11 @@ public final class CompactListCodec<E> implements Codec<List<E>> {
 
 	@Override
 	public <T> DataResult<Pair<List<E>, T>> decode(DynamicOps<T> ops, T input) {
-		DataResult<Pair<List<E>, T>> listRead = listCodec.decode(ops, input);
-		if (listRead.result().isPresent()) {
-			return listRead;
+		var singleResult = singleCodec.decode(ops, input);
+		if (singleResult.result().isPresent()) {
+			return singleResult.map($ -> $.mapFirst(List::of));
 		}
-		return singleCodec.decode(ops, input).map($ -> $.mapFirst(List::of));
+		return listCodec.decode(ops, input);
 	}
 
 	@Override
