@@ -98,7 +98,7 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 							return it.left().orElseThrow();
 						}, Either::left)
 						.forGetter(BlockInteractingRecipe::input),
-				BlockPredicate.CODEC.optionalFieldOf(BLOCK_IN).forGetter(it -> it.blockPredicate())
+				BlockPredicate.CODEC.optionalFieldOf(BLOCK_IN).forGetter(BlockInteractingRecipe::blockPredicate)
 		).apply(instance, BlockClickingRecipe::new));
 
 		@Override

@@ -91,6 +91,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 						matchedAny = matched = true;
 						var times = 1;
 						context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
+						context.put(LycheeContextKey.RECIPE, recipe.value());
 						if (matcher.map(it -> it.inputUsed.length > 0).orElse(false)) {
 							final var inputUsed = matcher.get().inputUsed;
 							//System.out.println(Arrays.toString(context.match));

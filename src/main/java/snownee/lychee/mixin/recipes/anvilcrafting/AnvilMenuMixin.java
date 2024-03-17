@@ -99,7 +99,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 				cost.set(0);
 				context = null;
 			} else {
-				recipe = it.value();
+				context.put(LycheeContextKey.RECIPE, it.value());
 				resultSlots.setItem(0, output);
 				if (player.isCreative() || left.getCount() == 1) {
 					cost.set(anvilContext.getLevelCost());
@@ -116,7 +116,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
 	@Inject(at = @At("HEAD"), method = "onTake")
 	private void lychee_onTake(Player player, ItemStack stack, CallbackInfo ci) {
-		if (recipe != null && context != null && !context.get(LycheeContextKey.LEVEL).isClientSide) {
+		if (context != null && !context.get(LycheeContextKey.LEVEL).isClientSide && context.get(LycheeContextKey.RECIPE)) {
 			onTakeCtx = context;
 			recipe.applyPostActions(context, 1);
 		}

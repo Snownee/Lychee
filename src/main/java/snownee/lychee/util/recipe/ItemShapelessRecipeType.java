@@ -83,6 +83,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 							continue;
 						}
 						context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
+						context.put(LycheeContextKey.RECIPE, recipe.value());
 						matchedAny = matched = true;
 						var times = 1;
 						if (matcher.map(it -> it.inputUsed.length > 0).orElse(false)) {
