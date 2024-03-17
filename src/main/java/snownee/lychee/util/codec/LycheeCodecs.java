@@ -2,24 +2,31 @@ package snownee.lychee.util.codec;
 
 import static snownee.lychee.util.recipe.LycheeRecipeSerializer.EMPTY_INGREDIENT;
 
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 
+import net.minecraft.Util;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.crafting.Ingredient;
 import snownee.lychee.mixin.IngredientAccess;
 
 public final class LycheeCodecs {
-	public static final Codec<Ingredient> SINGLE_INGREDIENT_CODEC = Ingredient.Value.CODEC.xmap(
+	public static final Codec<Ingredient> SINGLE_INGREDIENT_CODEC = Ingredient.Value.CODEC.flatComapMap(
 			IngredientAccess::construct,
-			it -> ((IngredientAccess) (Object) it).getValues()[0]);
+			it -> {
+				if (it.isEmpty()) {
+					return DataResult.error(() -> "No ingredient found");
+				}
+				var values = ((IngredientAccess) (Object) it).getValues();
+				return DataResult.success(values[0]);
+			});
 
 	public static final Codec<Pair<Ingredient, Ingredient>> PAIR_INGREDIENT_CODEC =
 			Codec.either(
-							ExtraCodecs.sizeLimitedList(LycheeCodecs.SINGLE_INGREDIENT_CODEC.listOf(), 2),
+							ExtraCodecs.sizeLimitedList(ExtraCodecs.nonEmptyList(LycheeCodecs.SINGLE_INGREDIENT_CODEC.listOf()), 2),
 							LycheeCodecs.SINGLE_INGREDIENT_CODEC)
 					.xmap(it -> {
 						if (it.right().isPresent()) {
@@ -27,5 +34,9 @@ public final class LycheeCodecs {
 						}
 						var left = it.left().orElseThrow();
 						return Pair.of(left.get(0), left.size() > 1 ? left.get(1) : EMPTY_INGREDIENT);
-					}, it -> Either.left(List.of(it.getFirst(), it.getSecond())));
+					}, it -> Either.left(Util.make(Lists.newArrayList(it.getFirst()), (list) -> {
+						if (!it.getSecond().isEmpty()) {
+							list.add(it.getSecond());
+						}
+					})));
 }
