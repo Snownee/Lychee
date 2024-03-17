@@ -171,7 +171,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
 						LycheeCodecs.PAIR_INGREDIENT_CODEC.fieldOf(ITEM_IN).forGetter(AnvilCraftingRecipe::input),
-						ItemStack.CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
+						LycheeCodecs.PLAIN_ITEM_STACK_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
 						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
 								.forGetter(AnvilCraftingRecipe::assemblingActions),
 						ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),

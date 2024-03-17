@@ -17,7 +17,7 @@ import snownee.lychee.util.contextual.ContextualHolder;
 public class PostActionCommonProperties {
 	public static final MapCodec<PostActionCommonProperties> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			Codec.STRING.optionalFieldOf("@path").forGetter(PostActionCommonProperties::getPath),
-			ContextualHolder.CODEC.fieldOf("contextual").forGetter(PostActionCommonProperties::conditions)
+			ContextualHolder.CODEC.optionalFieldOf("contextual", ContextualHolder.EMPTY).forGetter(PostActionCommonProperties::conditions)
 	).apply(instance, PostActionCommonProperties::new));
 	private Optional<String> path;
 	private final ContextualHolder conditions;

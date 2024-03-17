@@ -12,7 +12,7 @@ public record ContextualConditionData<T extends ContextualCondition>(
 		ContextualCondition condition, boolean secret, Optional<Component> description
 ) {
 	public static final Codec<ContextualConditionData<?>> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			ContextualCondition.CODEC.fieldOf("condition").forGetter(ContextualConditionData::condition),
+			ContextualCondition.CODEC.forGetter(ContextualConditionData::condition),
 			Codec.BOOL.optionalFieldOf("secret", false).forGetter(ContextualConditionData::secret),
 			ComponentSerialization.CODEC.optionalFieldOf("description").forGetter(ContextualConditionData::description)
 	).apply(instance, ContextualConditionData::new));

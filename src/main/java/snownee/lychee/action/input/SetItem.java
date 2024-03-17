@@ -1,11 +1,12 @@
 package snownee.lychee.action.input;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -19,26 +20,23 @@ import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public final class SetItem implements PostAction {
 	private final PostActionCommonProperties commonProperties;
-	private final ContextualHolder conditions;
 	private final ItemStack stack;
 	private final Reference target;
 
 	public SetItem(
 			PostActionCommonProperties commonProperties,
-			ContextualHolder conditions,
 			ItemStack stack,
 			Reference target
 	) {
 		this.commonProperties = commonProperties;
-		this.conditions = conditions;
 		this.stack = stack;
 		this.target = target;
 	}
@@ -95,42 +93,37 @@ public final class SetItem implements PostAction {
 	@Override
 	public PostActionCommonProperties commonProperties() {return commonProperties;}
 
-	@Override
-	public ContextualHolder conditions() {return conditions;}
-
 	public ItemStack stack() {return stack;}
 
 	public Reference target() {return target;}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) {
+	public boolean equals(Object o) {
+		if (this == o)
 			return true;
-		}
-		if (obj == null || obj.getClass() != this.getClass()) {
+		if (o == null || getClass() != o.getClass())
 			return false;
-		}
-		var that = (SetItem) obj;
-		return Objects.equals(this.commonProperties, that.commonProperties) &&
-				Objects.equals(this.conditions, that.conditions) &&
-				Objects.equals(this.stack, that.stack) &&
-				Objects.equals(this.target, that.target);
+		final SetItem setItem = (SetItem) o;
+		return Objects.equal(commonProperties, setItem.commonProperties) &&
+				Objects.equal(stack, setItem.stack) && Objects.equal(
+				target,
+				setItem.target
+		);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(commonProperties, conditions, stack, target);
+		return Objects.hashCode(commonProperties, stack, target);
 	}
 
 	@Override
 	public String toString() {
-		return "SetItem[" +
-				"commonProperties=" + commonProperties + ", " +
-				"conditions=" + conditions + ", " +
-				"stack=" + stack + ", " +
-				"target=" + target + ']';
+		return MoreObjects.toStringHelper(this)
+				.add("commonProperties", commonProperties)
+				.add("stack", stack)
+				.add("target", target)
+				.toString();
 	}
-
 
 	//	@Override
 	//	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
@@ -141,8 +134,7 @@ public final class SetItem implements PostAction {
 	public static class Type implements PostActionType<SetItem> {
 		public static final Codec<SetItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(SetItem::commonProperties),
-				ContextualHolder.CODEC.fieldOf("contextual").forGetter(SetItem::conditions),
-				ItemStack.OPTIONAL_CODEC.fieldOf("item").forGetter(SetItem::stack),
+				LycheeCodecs.PLAIN_ITEM_STACK_CODEC.fieldOf("item").forGetter(SetItem::stack),
 				Reference.CODEC.fieldOf("target").forGetter(SetItem::target)
 		).apply(instance, SetItem::new));
 

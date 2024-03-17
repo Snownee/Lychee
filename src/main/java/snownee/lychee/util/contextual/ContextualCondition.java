@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -13,7 +13,7 @@ import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 
 public interface ContextualCondition extends ContextualPredicate, ContextualConditionDisplay {
-	Codec<ContextualCondition> CODEC = LycheeRegistries.CONTEXTUAL.byNameCodec().dispatch(
+	MapCodec<ContextualCondition> CODEC = LycheeRegistries.CONTEXTUAL.byNameCodec().dispatchMap(
 			ContextualCondition::type,
 			ContextualConditionType::codec
 	);

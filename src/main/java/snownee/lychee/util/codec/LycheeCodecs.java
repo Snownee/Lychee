@@ -2,6 +2,8 @@ package snownee.lychee.util.codec;
 
 import static snownee.lychee.util.recipe.LycheeRecipeSerializer.EMPTY_INGREDIENT;
 
+import java.util.function.Function;
+
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
@@ -9,7 +11,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
 import net.minecraft.Util;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import snownee.lychee.mixin.IngredientAccess;
 
@@ -39,4 +43,9 @@ public final class LycheeCodecs {
 							list.add(it.getSecond());
 						}
 					})));
+
+	public static final Codec<ItemStack> PLAIN_ITEM_STACK_CODEC = Codec.either(
+					ItemStack.OPTIONAL_CODEC,
+					BuiltInRegistries.ITEM.holderByNameCodec().xmap(ItemStack::new, ItemStack::getItemHolder))
+			.xmap(it -> it.map(Function.identity(), Function.identity()), Either::left);
 }

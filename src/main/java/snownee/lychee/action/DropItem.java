@@ -22,6 +22,7 @@ import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.json.JsonPointer;
@@ -69,7 +70,7 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStack st
 		public static final Codec<DropItem> CODEC = RecordCodecBuilder.create(instance ->
 				instance.group(
 						PostActionCommonProperties.MAP_CODEC.forGetter(DropItem::commonProperties),
-						ItemStack.OPTIONAL_CODEC.fieldOf("stack").forGetter(it -> it.stack)
+						LycheeCodecs.PLAIN_ITEM_STACK_CODEC.fieldOf("item").forGetter(it -> it.stack)
 				).apply(instance, DropItem::new));
 
 		@Override
