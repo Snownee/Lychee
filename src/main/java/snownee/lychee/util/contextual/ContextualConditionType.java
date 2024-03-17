@@ -2,7 +2,6 @@ package snownee.lychee.util.contextual;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.contextual.And;
 import snownee.lychee.contextual.Chance;
@@ -50,7 +49,7 @@ public interface ContextualConditionType<T extends ContextualCondition> extends 
 
 
 	static <T extends ContextualConditionType<?>> T register(String name, T object) {
-		return register(Lychee.id(name), object);
+		return register(new ResourceLocation(name), object);
 	}
 
 	static <T extends ContextualConditionType<?>> T register(ResourceLocation location, T object) {
