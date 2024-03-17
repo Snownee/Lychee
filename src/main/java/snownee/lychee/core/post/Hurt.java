@@ -58,7 +58,8 @@ public class Hurt extends PostAction {
 
 		@Override
 		public Hurt fromJson(JsonObject o) {
-			return new Hurt(MinMaxBounds.Doubles.fromJson(o.get("damage")), new ResourceLocation(o.get("source").getAsString()));
+			var source = o.has("source") ? new ResourceLocation(o.get("source").getAsString()) : new ResourceLocation("generic");
+			return new Hurt(MinMaxBounds.Doubles.fromJson(o.get("damage")), source);
 		}
 
 		@Override
