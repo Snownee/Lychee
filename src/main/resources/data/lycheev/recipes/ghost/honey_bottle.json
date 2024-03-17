@@ -11,7 +11,7 @@
 		"item": "glass_bottle"
 	},
 	"block_in": {
-		"tag": "beehives",
+		"blocks": "#beehives",
 		"state": {
 			"honey_level": 5
 		}

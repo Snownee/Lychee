@@ -1,7 +1,7 @@
 {
 	"type": "lychee:block_crushing",
 	"landing_block": {
-		"tag": "c:gravel"
+		"blocks": "#c:gravel"
 	},
 	"post": [
 		{

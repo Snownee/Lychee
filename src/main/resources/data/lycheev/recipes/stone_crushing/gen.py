@@ -13,7 +13,7 @@ tag_template = '''
 {
     "type": "lychee:block_crushing",
     "landing_block": {
-        "tag": "%s"
+        "blocks": "%s"
     },
     "post": {
         "type": "place",
@@ -27,9 +27,9 @@ tag_template = tag_template.strip().replace("    ", "\t")
 recipes = [
     # ("stone", "cobblestone"),
     # ("deepslate", "cobbled_deepslate"),
-    ("c:cobblestone", "gravel"),
-    ("c:yellow_sandstones", "sand"),
-    ("c:red_sandstones", "red_sand"),
+    ("#c:cobblestone", "gravel"),
+    ("#c:yellow_sandstones", "sand"),
+    ("#c:red_sandstones", "red_sand"),
 ]
 
 for recipe in recipes:

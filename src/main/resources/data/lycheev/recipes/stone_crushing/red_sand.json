@@ -1,7 +1,7 @@
 {
 	"type": "lychee:block_crushing",
 	"landing_block": {
-		"tag": "c:red_sandstones"
+		"blocks": "#c:red_sandstones"
 	},
 	"post": {
 		"type": "place",

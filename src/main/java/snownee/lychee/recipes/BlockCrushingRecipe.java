@@ -88,7 +88,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		if (itemShapelessContext.totalItems < ingredients.size()) {
 			return false;
 		}
-		if (!BlockPredicateExtensions.matches(landingBlock.get(), context)) {
+		if (landingBlock.isPresent() && !BlockPredicateExtensions.matches(landingBlock.get(), context)) {
 			return false;
 		}
 		final var fallingBlockEntityContext = context.get(LycheeContextKey.FALLING_BLOCK_ENTITY);
@@ -122,12 +122,10 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 			return false;
 		} else if (blockPredicate.properties().isPresent() && !blockPredicate.properties().get().matches(blockstate)) {
 			return false;
-		} else {
-			if (blockPredicate.nbt().isPresent()) {
-				return nbt != null && blockPredicate.nbt().get().matches(nbt);
-			}
+		} else if (blockPredicate.nbt().isEmpty()) {
 			return true;
 		}
+		return nbt != null && blockPredicate.nbt().get().matches(nbt);
 	}
 
 	@Override

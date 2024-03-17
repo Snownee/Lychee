@@ -1,7 +1,7 @@
 {
 	"type": "lychee:block_crushing",
 	"landing_block": {
-		"tag": "c:glass_panes"
+		"blocks": "#c:glass_panes"
 	},
 	"post": {
 		"type": "place",

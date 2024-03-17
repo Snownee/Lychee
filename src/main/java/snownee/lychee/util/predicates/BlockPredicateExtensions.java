@@ -28,10 +28,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.JavaOps;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -82,13 +83,14 @@ public class BlockPredicateExtensions {
 		if (it.equals("*")) {
 			return DataResult.error(() -> "Wildcard needn't anymore in Lychee. Emit the field will act as a wildcard **if it's optional**.");
 		}
-		var tagResult = TagKey.hashedCodec(Registries.BLOCK).parse(JavaOps.INSTANCE, it);
-		if (tagResult.result().isPresent()) {
-			return DataResult.success(BlockPredicate.Builder.block().of(tagResult.result().get()).build());
-		}
-		var blockResult = BuiltInRegistries.BLOCK.byNameCodec().parse(JavaOps.INSTANCE, it);
-		if (blockResult.result().isPresent()) {
-			return DataResult.success(BlockPredicate.Builder.block().of(blockResult.result().get()).build());
+		var parsed = RegistryCodecs.homogeneousList(Registries.BLOCK).parse(JavaOps.INSTANCE, it);
+		if (parsed.result().isPresent()) {
+			if (parsed.result().get() instanceof HolderSet.Named<Block> named) {
+				return DataResult.success(BlockPredicate.Builder.block().of(named.key()).build());
+			}
+			return DataResult.success(BlockPredicate.Builder.block()
+					.of(parsed.result().get().stream().map(Holder::value).toList())
+					.build());
 		}
 		return DataResult.error(() -> "Invalid block predicate: " + it);
 	});

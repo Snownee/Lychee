@@ -2,7 +2,7 @@
     "type": "lychee:block_interacting",
     "group": "test",
     "block_in": {
-        "tag": "minecraft:beds"
+			"blocks": "#minecraft:beds"
     },
     "item_in": {
         "fabric:type": "lychee:always_true"

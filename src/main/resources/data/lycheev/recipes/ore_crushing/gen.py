@@ -2,7 +2,7 @@ template = '''
 {
     "type": "lychee:block_crushing",
     "landing_block": {
-        "tag": "%s"
+        "blocks": "%s"
     },
     "post": [
         {
@@ -28,13 +28,13 @@ template = '''
 template = template.strip().replace("    ", "\t")
 
 recipes = [
-    ("iron_ores", "raw_iron"),
-    ("copper_ores", "raw_copper"),
-    ("coal_ores", "coal"),
-    ("lapis_ores", "lapis_lazuli"),
-    ("redstone_ores", "redstone"),
-    ("diamond_ores", "diamond"),
-    ("emerald_ores", "emerald"),
+    ("#iron_ores", "raw_iron"),
+    ("#copper_ores", "raw_copper"),
+    ("#coal_ores", "coal"),
+    ("#lapis_ores", "lapis_lazuli"),
+    ("#redstone_ores", "redstone"),
+    ("#diamond_ores", "diamond"),
+    ("#emerald_ores", "emerald"),
 ]
 
 for recipe in recipes:
