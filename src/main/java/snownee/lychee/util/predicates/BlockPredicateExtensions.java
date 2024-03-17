@@ -2,7 +2,6 @@ package snownee.lychee.util.predicates;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -30,13 +29,10 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.JavaOps;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -83,32 +79,29 @@ public class BlockPredicateExtensions {
 			BlockStateProperties.DRIPSTONE_THICKNESS
 	));
 
-	public static final Decoder<BlockPredicate> STRING_DECODER = Codec.STRING.flatMap(it -> {
-		if (it.equals("*")) {
-			return DataResult.error(() -> "Wildcard needn't anymore in Lychee. Emit the field will act as a wildcard **if it's optional**.");
-		}
-
-		var parsed = RegistryCodecs.homogeneousList(Registries.BLOCK).parse(RegistryOps.create(
-				JavaOps.INSTANCE,
-				new RegistryOps.RegistryInfoLookup() {
-					@Override
-					public <E> Optional<RegistryOps.RegistryInfo<E>> lookup(ResourceKey<? extends Registry<? extends E>> registryKey) {
-						if (registryKey.equals(Registries.BLOCK)) {
-							return Optional.of((RegistryOps.RegistryInfo<E>) RegistryOps.RegistryInfo.fromRegistryLookup(BuiltInRegistries.BLOCK.asLookup()));
-						}
-						return Optional.empty();
-					}
-				}), it);
-		if (parsed.result().isPresent()) {
-			if (parsed.result().get() instanceof HolderSet.Named<Block> named) {
-				return DataResult.success(BlockPredicate.Builder.block().of(named.key()).build());
+	public static final Decoder<BlockPredicate> STRING_DECODER = new Decoder<>() {
+		@Override
+		public <T> DataResult<Pair<BlockPredicate, T>> decode(DynamicOps<T> ops, T input) {
+			var stringValue = ops.getStringValue(input);
+			if (stringValue.result().isEmpty()) {
+				return DataResult.error(() -> "Invalid input: " + input);
 			}
-			return DataResult.success(BlockPredicate.Builder.block()
-					.of(parsed.result().get().stream().map(Holder::value).toList())
-					.build());
+			var it = stringValue.result().get();
+			if (it.equals("*")) {
+				return DataResult.error(() -> "Wildcard needn't anymore in Lychee. Emit the field will act as a wildcard **if it's optional**.");
+			}
+			var parsed = RegistryCodecs.homogeneousList(Registries.BLOCK).parse(ops, JavaOps.INSTANCE.convertTo(ops, it));
+			if (parsed.result().isPresent()) {
+				if (parsed.result().get() instanceof HolderSet.Named<Block> named) {
+					return DataResult.success(Pair.of(BlockPredicate.Builder.block().of(named.key()).build(), ops.empty()));
+				}
+				return DataResult.success(Pair.of(
+						BlockPredicate.Builder.block().of(parsed.result().get().stream().map(Holder::value).toList()).build(),
+						ops.empty()));
+			}
+			return DataResult.error(() -> "Invalid block predicate: " + it);
 		}
-		return DataResult.error(() -> "Invalid block predicate: " + it);
-	});
+	};
 
 	public static final Codec<BlockPredicate> CODEC = Codec.of(BlockPredicate.CODEC, new Decoder<>() {
 		@Override

@@ -4,7 +4,6 @@
 		"blocks": "#c:glass"
 	},
 	"post": {
-		"type": "place",
-		"block": "*"
+		"type": "place"
 	}
 }
