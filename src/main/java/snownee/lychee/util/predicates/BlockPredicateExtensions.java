@@ -2,10 +2,10 @@ package snownee.lychee.util.predicates;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -17,15 +17,19 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.JavaOps;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -49,33 +53,49 @@ public class BlockPredicateExtensions {
 			CacheBuilder.newBuilder()
 					.expireAfterAccess(10, TimeUnit.MINUTES)
 					.build();
-	public static final Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet();
-	public static final Codec<BlockPredicate> CODEC = BlockPredicate.CODEC;
+	public static final Set<Property<?>> ITERABLE_PROPERTIES = Sets.newConcurrentHashSet(List.of(
+			BlockStateProperties.AGE_1,
+			BlockStateProperties.AGE_2,
+			BlockStateProperties.AGE_3,
+			BlockStateProperties.AGE_5,
+			BlockStateProperties.AGE_7,
+			BlockStateProperties.CANDLES,
+			BlockStateProperties.BITES,
+			BlockStateProperties.POWER,
+			BlockStateProperties.POWERED,
+			BlockStateProperties.LIT,
+			BlockStateProperties.BERRIES,
+			BlockStateProperties.OPEN,
+			BlockStateProperties.DELAY,
+			BlockStateProperties.DISTANCE,
+			BlockStateProperties.LAYERS,
+			BlockStateProperties.PICKLES,
+			BlockStateProperties.LEVEL,
+			BlockStateProperties.LEVEL_HONEY,
+			BlockStateProperties.LEVEL_CAULDRON,
+			BlockStateProperties.DRIPSTONE_THICKNESS
+	));
 
-	static {
-		ITERABLE_PROPERTIES.addAll(List.of(
-				BlockStateProperties.AGE_1,
-				BlockStateProperties.AGE_2,
-				BlockStateProperties.AGE_3,
-				BlockStateProperties.AGE_5,
-				BlockStateProperties.AGE_7,
-				BlockStateProperties.CANDLES,
-				BlockStateProperties.BITES,
-				BlockStateProperties.POWER,
-				BlockStateProperties.POWERED,
-				BlockStateProperties.LIT,
-				BlockStateProperties.BERRIES,
-				BlockStateProperties.OPEN,
-				BlockStateProperties.DELAY,
-				BlockStateProperties.DISTANCE,
-				BlockStateProperties.LAYERS,
-				BlockStateProperties.PICKLES,
-				BlockStateProperties.LEVEL,
-				BlockStateProperties.LEVEL_HONEY,
-				BlockStateProperties.LEVEL_CAULDRON,
-				BlockStateProperties.DRIPSTONE_THICKNESS
-		));
-	}
+	public static final Codec<BlockPredicate> CODEC = Codec.either(
+			Codec.of(
+					BlockPredicate.CODEC,
+					Codec.STRING.flatMap(it -> {
+						if (it.equals("*")) {
+							return DataResult.error(() -> "Wildcard needn't in newer Lychee. Emit the field will act as a wildcard.");
+						}
+						var tagResult = TagKey.hashedCodec(Registries.BLOCK).parse(JavaOps.INSTANCE, it);
+						if (tagResult.result().isPresent()) {
+							return DataResult.success(BlockPredicate.Builder.block().of(tagResult.result().get()).build());
+						}
+						var blockResult = BuiltInRegistries.BLOCK.byNameCodec().parse(JavaOps.INSTANCE, it);
+						if (blockResult.result().isPresent()) {
+							return DataResult.success(BlockPredicate.Builder.block().of(blockResult.result().get()).build());
+						}
+						return DataResult.error(() -> "Invalid block predicate: " + it);
+					})
+			),
+			BlockPredicate.CODEC
+	).xmap(it -> it.map(Function.identity(), Function.identity()), Either::right);
 
 	public static Set<Block> matchedBlocks(BlockPredicate predicate) {
 		final var blocks = Lists.<Holder<Block>>newArrayList();
@@ -137,14 +157,6 @@ public class BlockPredicateExtensions {
 		}
 
 		return true;
-	}
-
-	public static Optional<BlockPredicate> fromNetwork(FriendlyByteBuf buf) {
-		return buf.readOptional((it) -> it.readWithCodecTrusted(NbtOps.INSTANCE, BlockPredicate.CODEC));
-	}
-
-	public static void toNetwork(Optional<BlockPredicate> predicate, FriendlyByteBuf buf) {
-		buf.writeOptional(predicate, (it, obj) -> it.writeWithCodec(NbtOps.INSTANCE, BlockPredicate.CODEC, obj));
 	}
 
 	public static BlockState anyBlockState(BlockPredicate predicate) {

@@ -169,7 +169,7 @@ public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredi
 	public static class Type implements PostActionType<PlaceBlock> {
 		public static final Codec<PlaceBlock> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(PlaceBlock::commonProperties),
-				BlockPredicate.CODEC.fieldOf("block").forGetter(it -> it.block),
+				BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(it -> it.block),
 				RecordCodecBuilder.<BlockPos>mapCodec(posInstance -> posInstance.group(
 						Codec.INT.fieldOf("offsetX").forGetter(Vec3i::getX),
 						Codec.INT.fieldOf("offsetY").forGetter(Vec3i::getY),

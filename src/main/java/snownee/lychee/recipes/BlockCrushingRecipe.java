@@ -161,8 +161,8 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 			return i;
 		}
 		i = Integer.compare(
-				landingBlock == null ? 1 : 0,
-				that.landingBlock == null ? 1 : 0
+				landingBlock.isEmpty() ? 1 : 0,
+				that.landingBlock.isEmpty() ? 1 : 0
 		);
 		if (i != 0) {
 			return i;

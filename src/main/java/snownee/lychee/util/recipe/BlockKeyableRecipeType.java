@@ -71,7 +71,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 		}
 		for (final var e : multimap.asMap().entrySet()) {
 			final var list = Lists.newArrayList(e.getValue());
-			list.sort(null);
+			list.sort(Comparator.comparing(it -> (Comparable) it.value()));
 			recipesByBlock.put(e.getKey(), list);
 		}
 	}

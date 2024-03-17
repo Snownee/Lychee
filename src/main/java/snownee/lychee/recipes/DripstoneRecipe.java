@@ -8,7 +8,6 @@ import java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -48,6 +47,21 @@ import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<DripstoneRecipe>, ChanceRecipe {
+	protected final @NotNull BlockPredicate sourceBlock;
+
+	private float chance = 1;
+	protected final @NotNull BlockPredicate targetBlock;
+	protected DripstoneRecipe(
+			LycheeRecipeCommonProperties commonProperties,
+			@NotNull BlockPredicate sourceBlock,
+			@NotNull BlockPredicate targetBlock
+	) {
+		super(commonProperties);
+		this.sourceBlock = sourceBlock;
+		this.targetBlock = targetBlock;
+		onConstructed();
+	}
+
 	public static boolean invoke(BlockState blockState, ServerLevel level, BlockPos blockPos) {
 		if (RecipeTypes.DRIPSTONE_DRIPPING.isEmpty()) {
 			return false;
@@ -82,7 +96,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		var j = 50 + i;
 		var breakAction = new Break();
 		var builder = new LocationPredicate.Builder();
-		((LocationPredicate$BuilderAccess) builder).setBlock(Optional.ofNullable(recipe.value().targetBlock));
+		((LocationPredicate$BuilderAccess) builder).setBlock(Optional.of(recipe.value().targetBlock));
 		var check = (LocationCheck) LocationCheck.checkLocation(builder).build();
 		breakAction.conditions().conditions().add(new Not(new Location(check)));
 		var actionContext = context.get(LycheeContextKey.ACTION);
@@ -92,36 +106,20 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		return true;
 	}
 
-	private float chance = 1;
-	protected final @Nullable BlockPredicate sourceBlock;
-	protected final @Nullable BlockPredicate targetBlock;
-
-	protected DripstoneRecipe(
-			LycheeRecipeCommonProperties commonProperties,
-			@Nullable BlockPredicate sourceBlock,
-			@Nullable BlockPredicate targetBlock
-	) {
-		super(commonProperties);
-		this.sourceBlock = sourceBlock;
-		this.targetBlock = targetBlock;
-		onConstructed();
-	}
-
 	@Override
 	public boolean matches(LycheeContext context, Level level) {
-		if (targetBlock != null && !BlockPredicateExtensions.matches(targetBlock, context)) {
+		if (!BlockPredicateExtensions.matches(targetBlock, context)) {
 			return false;
 		}
 
 		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 
-		return sourceBlock != null &&
-				BlockPredicateExtensions.unsafeMatches(
-						level,
-						sourceBlock,
-						context.get(LycheeContextKey.DRIPSTONE_ROOT),
-						() -> level.getBlockEntity(lootParamsContext.get(LycheeLootContextParams.BLOCK_POS))
-				);
+		return BlockPredicateExtensions.unsafeMatches(
+				level,
+				sourceBlock,
+				context.get(LycheeContextKey.DRIPSTONE_ROOT),
+				() -> level.getBlockEntity(lootParamsContext.get(LycheeLootContextParams.BLOCK_POS))
+		);
 	}
 
 	@Override
@@ -148,37 +146,21 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 	public int compareTo(DripstoneRecipe that) {
 		int i;
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
-		if (i != 0) {
-			return i;
-		}
-		i = Integer.compare(targetBlock == null ? 1 : 0, that.targetBlock == null ? 1 : 0);
-		if (i != 0) {
-			return i;
-		}
-		i = Integer.compare(sourceBlock == null ? 1 : 0, that.sourceBlock == null ? 1 : 0);
 		return i;
 	}
 
 	@Override
 	public Optional<BlockPredicate> blockPredicate() {
-		return Optional.ofNullable(targetBlock);
+		return Optional.of(targetBlock);
 	}
 
-	public Optional<BlockPredicate> sourceBlock() {
-		return Optional.ofNullable(sourceBlock);
+	public BlockPredicate sourceBlock() {
+		return sourceBlock;
 	}
 
 	@Override
 	public List<BlockPredicate> getBlockInputs() {
-		var list = Lists.<BlockPredicate>newArrayList();
-		if (sourceBlock != null) {
-			list.add(sourceBlock);
-		}
-
-		if (targetBlock != null) {
-			list.add(targetBlock);
-		}
-		return list;
+		return List.of(sourceBlock, targetBlock);
 	}
 
 	public static boolean safeTick(
@@ -216,7 +198,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		public static final Codec<DripstoneRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(DripstoneRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC.fieldOf("source_block").forGetter(it -> it.sourceBlock),
+						BlockPredicateExtensions.CODEC.fieldOf("source_block").forGetter(DripstoneRecipe::sourceBlock),
 						BlockPredicateExtensions.CODEC.fieldOf("target_block").forGetter(it -> it.targetBlock)
 				).apply(instance, DripstoneRecipe::new));
 

@@ -94,7 +94,7 @@ public final class CycleStateProperty implements PostAction {
 	public static class Type implements PostActionType<CycleStateProperty> {
 		public static final Codec<CycleStateProperty> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(CycleStateProperty::commonProperties),
-				BlockPredicate.CODEC.fieldOf("block").forGetter(it -> it.block),
+				BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(it -> it.block),
 				RecordCodecBuilder.<BlockPos>mapCodec(posInstance -> posInstance.group(
 						Codec.INT.fieldOf("offsetX").forGetter(Vec3i::getX),
 						Codec.INT.fieldOf("offsetY").forGetter(Vec3i::getY),

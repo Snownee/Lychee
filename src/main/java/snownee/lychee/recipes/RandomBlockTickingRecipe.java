@@ -21,6 +21,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<RandomBlockTickingRecipe>, ChanceRecipe {
 	protected float chance = 1;
 	protected final Optional<BlockPredicate> blockPredicate;

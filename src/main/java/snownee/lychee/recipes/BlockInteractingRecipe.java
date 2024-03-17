@@ -159,7 +159,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 								).apply(commonPropertiesInstance, LycheeRecipeCommonProperties::new))
 						.forGetter(BlockInteractingRecipe::commonProperties),
 				LycheeCodecs.PAIR_INGREDIENT_CODEC.fieldOf(ITEM_IN).forGetter(BlockInteractingRecipe::input),
-				BlockPredicate.CODEC.optionalFieldOf(BLOCK_IN).forGetter(BlockInteractingRecipe::blockPredicate)
+				BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN).forGetter(BlockInteractingRecipe::blockPredicate)
 		).apply(instance, BlockInteractingRecipe::new));
 
 		@Override

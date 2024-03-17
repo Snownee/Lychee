@@ -26,6 +26,7 @@ import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
@@ -90,7 +91,7 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 								).apply(commonPropertiesInstance, LycheeRecipeCommonProperties::new))
 						.forGetter(BlockInteractingRecipe::commonProperties),
 				LycheeCodecs.PAIR_INGREDIENT_CODEC.fieldOf(ITEM_IN).forGetter(BlockInteractingRecipe::input),
-				BlockPredicate.CODEC.optionalFieldOf(BLOCK_IN).forGetter(BlockInteractingRecipe::blockPredicate)
+				BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN).forGetter(BlockInteractingRecipe::blockPredicate)
 		).apply(instance, BlockClickingRecipe::new));
 
 		@Override
