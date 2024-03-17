@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -32,7 +33,6 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.context.CraftingContext;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipeAccess;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipePatternAccess;
-import snownee.lychee.util.Pair;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;

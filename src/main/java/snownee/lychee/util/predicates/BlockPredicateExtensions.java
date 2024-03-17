@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -17,9 +16,11 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Decoder;
+import com.mojang.serialization.DynamicOps;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -44,7 +45,6 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.util.Pair;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 
@@ -76,26 +76,31 @@ public class BlockPredicateExtensions {
 			BlockStateProperties.DRIPSTONE_THICKNESS
 	));
 
-	public static final Codec<BlockPredicate> CODEC = Codec.either(
-			Codec.of(
-					BlockPredicate.CODEC,
-					Codec.STRING.flatMap(it -> {
-						if (it.equals("*")) {
-							return DataResult.error(() -> "Wildcard needn't anymore in Lychee. Emit the field will act as a wildcard **if it's optional**.");
-						}
-						var tagResult = TagKey.hashedCodec(Registries.BLOCK).parse(JavaOps.INSTANCE, it);
-						if (tagResult.result().isPresent()) {
-							return DataResult.success(BlockPredicate.Builder.block().of(tagResult.result().get()).build());
-						}
-						var blockResult = BuiltInRegistries.BLOCK.byNameCodec().parse(JavaOps.INSTANCE, it);
-						if (blockResult.result().isPresent()) {
-							return DataResult.success(BlockPredicate.Builder.block().of(blockResult.result().get()).build());
-						}
-						return DataResult.error(() -> "Invalid block predicate: " + it);
-					})
-			),
-			BlockPredicate.CODEC
-	).xmap(it -> it.map(Function.identity(), Function.identity()), Either::right);
+	public static final Decoder<BlockPredicate> STRING_DECODER = Codec.STRING.flatMap(it -> {
+		if (it.equals("*")) {
+			return DataResult.error(() -> "Wildcard needn't anymore in Lychee. Emit the field will act as a wildcard **if it's optional**.");
+		}
+		var tagResult = TagKey.hashedCodec(Registries.BLOCK).parse(JavaOps.INSTANCE, it);
+		if (tagResult.result().isPresent()) {
+			return DataResult.success(BlockPredicate.Builder.block().of(tagResult.result().get()).build());
+		}
+		var blockResult = BuiltInRegistries.BLOCK.byNameCodec().parse(JavaOps.INSTANCE, it);
+		if (blockResult.result().isPresent()) {
+			return DataResult.success(BlockPredicate.Builder.block().of(blockResult.result().get()).build());
+		}
+		return DataResult.error(() -> "Invalid block predicate: " + it);
+	});
+
+	public static final Codec<BlockPredicate> CODEC = Codec.of(BlockPredicate.CODEC, new Decoder<>() {
+		@Override
+		public <T> DataResult<Pair<BlockPredicate, T>> decode(DynamicOps<T> ops, T input) {
+			var stringValue = ops.getStringValue(input);
+			if (stringValue.result().isPresent()) {
+				return STRING_DECODER.decode(ops, input);
+			}
+			return BlockPredicate.CODEC.decode(ops, input);
+		}
+	});
 
 	public static Set<Block> matchedBlocks(BlockPredicate predicate) {
 		final var blocks = Lists.<Holder<Block>>newArrayList();

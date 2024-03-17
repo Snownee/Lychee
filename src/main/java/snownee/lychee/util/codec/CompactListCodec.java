@@ -6,12 +6,14 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.codecs.ListCodec;
 
 import net.minecraft.util.ExtraCodecs;
 
 public final class CompactListCodec<E> implements Codec<List<E>> {
 	private final Codec<E> singleCodec;
 	private final Codec<List<E>> listCodec;
+	private final boolean isNestedList;
 
 	public CompactListCodec(Codec<E> singleCodec) {
 		this(singleCodec, false);
@@ -19,16 +21,24 @@ public final class CompactListCodec<E> implements Codec<List<E>> {
 
 	public CompactListCodec(Codec<E> singleCodec, boolean nonEmpty) {
 		this.singleCodec = singleCodec;
+		this.isNestedList = singleCodec instanceof ListCodec;
 		this.listCodec = nonEmpty ? ExtraCodecs.nonEmptyList(singleCodec.listOf()) : singleCodec.listOf();
 	}
 
 	@Override
 	public <T> DataResult<Pair<List<E>, T>> decode(DynamicOps<T> ops, T input) {
-		var singleResult = singleCodec.decode(ops, input);
-		if (singleResult.result().isPresent()) {
-			return singleResult.map($ -> $.mapFirst(List::of));
+		var list = ops.getList(input);
+		if (isNestedList && list.result().isPresent()) {
+			var listResult = listCodec.decode(ops, input);
+			if (listResult.result().isPresent()) {
+				return listResult;
+			}
+			return singleCodec.decode(ops, input).map($ -> $.mapFirst(List::of));
 		}
-		return listCodec.decode(ops, input);
+		if (list.result().isPresent()) {
+			return listCodec.decode(ops, input);
+		}
+		return singleCodec.decode(ops, input).map($ -> $.mapFirst(List::of));
 	}
 
 	@Override

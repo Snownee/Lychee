@@ -260,10 +260,6 @@ public class Color {
 		);
 	}
 
-	public static Color mixColors(@NotNull Couple<Color> colors, float w) {
-		return mixColors(colors.getFirst(), colors.getSecond(), w);
-	}
-
 	public static int mixColors(int color1, int color2, float w) {
 		int a1 = (color1 >> 24);
 		int r1 = (color1 >> 16) & 0xFF;

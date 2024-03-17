@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -19,7 +20,6 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.mixin.CraftingMenuAccess;
 import snownee.lychee.mixin.InventoryMenuAccess;
 import snownee.lychee.mixin.recipes.crafting.TransientCraftingContainerAccess;
-import snownee.lychee.util.Pair;
 import snownee.lychee.util.context.LycheeContext;
 
 public record CraftingContext(
