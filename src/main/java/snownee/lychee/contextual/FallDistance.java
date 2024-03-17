@@ -30,7 +30,7 @@ public record FallDistance(Doubles range) implements ContextualCondition {
 		final var entity = ctx.get(LycheeContextKey.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
 		var distance = entity.fallDistance;
 		if (entity instanceof FallingBlockEntity block) {
-			distance = Math.max(block.getStartPos().getY() - block.getBlockY(), distance);
+			distance = (float) Math.max(block.getStartPos().getY() - block.getY(), distance);
 		}
 		return range.matches(distance) ? times : 0;
 	}
