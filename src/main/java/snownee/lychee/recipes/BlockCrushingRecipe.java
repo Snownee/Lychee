@@ -38,7 +38,7 @@ import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockCrushingRecipe> {
 	public static final BlockPredicate ANVIL = BlockPredicate.Builder.block().of(BlockTags.ANVIL).build();
 
-	protected Optional<BlockPredicate> fallingBlock = Optional.of(ANVIL);
+	protected @NotNull BlockPredicate fallingBlock = ANVIL;
 	protected Optional<BlockPredicate> landingBlock = Optional.empty();
 	protected NonNullList<Ingredient> ingredients = NonNullList.create();
 
@@ -49,7 +49,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	public BlockCrushingRecipe(
 			final LycheeRecipeCommonProperties commonProperties,
-			Optional<BlockPredicate> fallingBlock,
+			@NotNull BlockPredicate fallingBlock,
 			Optional<BlockPredicate> landingBlock,
 			final NonNullList<Ingredient> ingredients
 	) {
@@ -62,7 +62,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	public BlockCrushingRecipe(
 			final LycheeRecipeCommonProperties commonProperties,
-			Optional<BlockPredicate> fallingBlock,
+			BlockPredicate fallingBlock,
 			Optional<BlockPredicate> landingBlock,
 			final List<Ingredient> ingredients
 	) {
@@ -75,7 +75,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	@Override
 	public Optional<BlockPredicate> blockPredicate() {
-		return fallingBlock;
+		return Optional.of(fallingBlock);
 	}
 
 	public Optional<BlockPredicate> landingBlock() {
@@ -137,7 +137,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	@Override
 	public List<BlockPredicate> getBlockInputs() {
-		return List.of(fallingBlock.orElse(null), landingBlock.orElse(null));
+		return List.of(fallingBlock, landingBlock.orElse(null));
 	}
 
 	@Override
@@ -176,8 +176,8 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		public static final Codec<BlockCrushingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(BlockCrushingRecipe::commonProperties),
-						ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, "falling_block")
-								.forGetter(BlockCrushingRecipe::blockPredicate),
+						ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, "falling_block", ANVIL)
+								.forGetter(it -> it.fallingBlock),
 						ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, "landing_block")
 								.forGetter(BlockCrushingRecipe::landingBlock),
 						ExtraCodecs.strictOptionalField(new CompactListCodec<>(Ingredient.CODEC_NONEMPTY), ITEM_IN, List.of())

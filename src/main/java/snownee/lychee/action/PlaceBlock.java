@@ -2,6 +2,7 @@ package snownee.lychee.action;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
@@ -14,13 +15,13 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LevelEvent;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -40,7 +41,10 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredicate block, BlockPos offset) implements PostAction {
+public record PlaceBlock(
+		PostActionCommonProperties commonProperties,
+		Optional<BlockPredicate> block,
+		BlockPos offset) implements PostAction {
 	private static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {
 		var blockstate = level.getBlockState(pos);
 		if (blockstate.isAir()) {
@@ -89,10 +93,7 @@ public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredi
 		blockPos = blockPos.offset(offset);
 		var level = context.get(LycheeContextKey.LEVEL);
 		var oldState = level.getBlockState(blockPos);
-		var state = BlockPredicateExtensions.anyBlockState(block);
-		if (state == null) {
-			return;
-		}
+		var state = block.map(BlockPredicateExtensions::anyBlockState).orElse(Blocks.AIR.defaultBlockState());
 		if (state.isAir()) {
 			destroyBlock(level, blockPos, false);
 			return;
@@ -101,7 +102,7 @@ public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredi
 			level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, blockPos, Block.getId(oldState));
 		}
 
-		var properties = block.properties()
+		var properties = block.get().properties()
 				.map(StatePropertiesPredicate::properties)
 				.stream()
 				.flatMap(Collection::stream)
@@ -122,7 +123,7 @@ public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredi
 			return;
 		}
 
-		if (block.nbt().isPresent()) {
+		if (block.get().nbt().isPresent()) {
 			var blockEntity = level.getBlockEntity(blockPos);
 			if (blockEntity != null) {
 				if (blockEntity.onlyOpCanSetNbt()) {
@@ -131,7 +132,7 @@ public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredi
 
 				var prevTag = blockEntity.saveWithoutMetadata(level.registryAccess());
 				var originalTag = prevTag.copy();
-				prevTag.merge(block.nbt().get().tag());
+				prevTag.merge(block.get().nbt().get().tag());
 				if (!prevTag.equals(originalTag)) {
 					blockEntity.load(prevTag, level.registryAccess());
 					blockEntity.setChanged();
@@ -143,7 +144,7 @@ public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredi
 
 	@Override
 	public Component getDisplayName() {
-		BlockState state = BlockPredicateExtensions.anyBlockState(block);
+		var state = block.map(BlockPredicateExtensions::anyBlockState).orElse(Blocks.AIR.defaultBlockState());
 		var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(PostActionTypes.PLACE));
 		if (state.isAir()) {
 			return Component.translatable(key + ".consume");
@@ -153,12 +154,12 @@ public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredi
 
 	@Override
 	public List<ItemStack> getOutputItems() {
-		return BlockPredicateExtensions.matchedItemStacks(block);
+		return block.map(BlockPredicateExtensions::matchedItemStacks).orElse(List.of());
 	}
 
 	@Override
 	public List<BlockPredicate> getOutputBlocks() {
-		return List.of(block);
+		return block.map(List::of).orElse(List.of());
 	}
 
 	@Override
@@ -169,7 +170,7 @@ public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredi
 	public static class Type implements PostActionType<PlaceBlock> {
 		public static final Codec<PlaceBlock> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(PlaceBlock::commonProperties),
-				BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(it -> it.block),
+				ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, "block").forGetter(it -> it.block),
 				LycheeCodecs.OFFSET_CODEC.forGetter(it -> it.offset)
 		).apply(instance, PlaceBlock::new));
 

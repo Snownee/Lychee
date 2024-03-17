@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
@@ -105,7 +107,9 @@ public class BlockPredicateExtensions {
 	public static Set<Block> matchedBlocks(BlockPredicate predicate) {
 		final var blocks = Lists.<Holder<Block>>newArrayList();
 		if (predicate.blocks().isPresent()) {
-			blocks.addAll(predicate.blocks().orElseThrow().unwrap().swap().orThrow());
+			Iterables.addAll(
+					blocks,
+					predicate.blocks().orElseThrow().unwrap().map(BuiltInRegistries.BLOCK::getOrCreateTag, Function.identity()));
 		}
 		return blocks.stream().map(Holder::value).collect(Collectors.toSet());
 	}
@@ -186,14 +190,13 @@ public class BlockPredicateExtensions {
 		}
 
 		final var states = Lists.<BlockState>newArrayList();
-		final var propertiesPredicate = predicate.properties().orElseThrow();
 
 		for (final var block : blocks) {
 			final var state = block.defaultBlockState();
 			final var propertyMap = ArrayListMultimap.<Property<?>, Comparable<?>>create();
-			for (Property<? extends Comparable<?>> property : block.getStateDefinition().getProperties()) {
+			for (var property : block.getStateDefinition().getProperties()) {
 				final var name = property.getName();
-				final var matcher = PropertiesPredicateExtensions.findMatcher(propertiesPredicate, name);
+				final var matcher = predicate.properties().flatMap(it -> PropertiesPredicateExtensions.findMatcher(it, name));
 				if (matcher.isPresent()) {
 					for (Comparable<?> object : property.getPossibleValues()) {
 						if (matcher.get().match(
