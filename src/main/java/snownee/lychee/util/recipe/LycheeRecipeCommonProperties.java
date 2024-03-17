@@ -22,23 +22,27 @@ public record LycheeRecipeCommonProperties(
 		String group,
 		ContextualHolder conditions,
 		List<PostAction> postActions,
-		MinMaxBounds.Ints maxRepeats
-) {
+		MinMaxBounds.Ints maxRepeats) {
 
-	public static final MapCodec<Boolean> HIDE_IN_VIEWER_CODEC = Codec.BOOL.optionalFieldOf("hide_in_viewer", false);
-	public static final MapCodec<Boolean> GHOST_CODEC = Codec.BOOL.optionalFieldOf("ghost", false);
-	public static final MapCodec<Optional<String>> COMMENT_CODEC = Codec.STRING.optionalFieldOf("comment");
-	public static final MapCodec<String> GROUP_CODEC = ExtraCodecs.validate(Codec.STRING, s -> {
+	public static final MapCodec<Boolean> HIDE_IN_VIEWER_CODEC = ExtraCodecs.strictOptionalField(Codec.BOOL, "hide_in_viewer", false);
+	public static final MapCodec<Boolean> GHOST_CODEC = ExtraCodecs.strictOptionalField(Codec.BOOL, "ghost", false);
+	public static final MapCodec<Optional<String>> COMMENT_CODEC = ExtraCodecs.strictOptionalField(Codec.STRING, "comment");
+	public static final MapCodec<String> GROUP_CODEC = ExtraCodecs.strictOptionalField(ExtraCodecs.validate(Codec.STRING, s -> {
 		if (!ResourceLocation.isValidResourceLocation(s)) {
 			return DataResult.error(() -> "Invalid group: " + s + " (must be a valid resource location)");
 		}
 		return DataResult.success(s);
-	}).optionalFieldOf("group", ILycheeRecipe.DEFAULT_GROUP);
-	public static final MapCodec<ContextualHolder> CONTEXTUAL_CODEC = ContextualHolder.CODEC.optionalFieldOf(
+	}), "group", ILycheeRecipe.DEFAULT_GROUP);
+	public static final MapCodec<ContextualHolder> CONTEXTUAL_CODEC = ExtraCodecs.strictOptionalField(
+			ContextualHolder.CODEC,
 			"contextual",
 			ContextualHolder.EMPTY);
-	public static final MapCodec<List<PostAction>> POST_ACTION_CODEC = PostActionType.LIST_CODEC.optionalFieldOf("post", List.of());
-	public static final MapCodec<MinMaxBounds.Ints> MAX_REPEATS_CODEC = MinMaxBounds.Ints.CODEC.optionalFieldOf(
+	public static final MapCodec<List<PostAction>> POST_ACTION_CODEC = ExtraCodecs.strictOptionalField(
+			PostActionType.LIST_CODEC,
+			"post",
+			List.of());
+	public static final MapCodec<MinMaxBounds.Ints> MAX_REPEATS_CODEC = ExtraCodecs.strictOptionalField(
+			MinMaxBounds.Ints.CODEC,
 			"max_repeats",
 			MinMaxBounds.Ints.ANY);
 	public static final MapCodec<LycheeRecipeCommonProperties> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -48,6 +52,5 @@ public record LycheeRecipeCommonProperties(
 			GROUP_CODEC.forGetter(LycheeRecipeCommonProperties::group),
 			CONTEXTUAL_CODEC.forGetter(LycheeRecipeCommonProperties::conditions),
 			POST_ACTION_CODEC.forGetter(LycheeRecipeCommonProperties::postActions),
-			MAX_REPEATS_CODEC.forGetter(LycheeRecipeCommonProperties::maxRepeats)
-	).apply(instance, LycheeRecipeCommonProperties::new));
+			MAX_REPEATS_CODEC.forGetter(LycheeRecipeCommonProperties::maxRepeats)).apply(instance, LycheeRecipeCommonProperties::new));
 }

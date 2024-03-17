@@ -12,6 +12,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Explosion;
@@ -69,24 +70,26 @@ public record Explode(
 	public static class Type implements PostActionType<Explode> {
 		public static final Codec<Explode> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(Explode::commonProperties),
-				Codec.STRING.comapFlatMap(
+				ExtraCodecs.strictOptionalField(
+						Codec.STRING.comapFlatMap(
 								it -> switch (it) {
 									case "none", "keep" -> DataResult.success(BlockInteraction.KEEP);
 									case "break", "destroy_with_decay" -> DataResult.success(BlockInteraction.DESTROY_WITH_DECAY);
 									case "destroy" -> DataResult.success(BlockInteraction.DESTROY);
 									default -> DataResult.error(() -> "Unexpected value: " + it);
 								},
-								it -> it.name().toLowerCase(Locale.ENGLISH))
-						.optionalFieldOf("block_interaction", BlockInteraction.DESTROY)
-						.forGetter(Explode::blockInteraction),
+								it -> it.name().toLowerCase(Locale.ENGLISH)),
+						"block_interaction",
+						BlockInteraction.DESTROY
+				).forGetter(Explode::blockInteraction),
 				RecordCodecBuilder.<BlockPos>mapCodec(posInstance -> posInstance.group(
 						Codec.INT.fieldOf("offsetX").forGetter(Vec3i::getX),
 						Codec.INT.fieldOf("offsetY").forGetter(Vec3i::getY),
 						Codec.INT.fieldOf("offsetZ").forGetter(Vec3i::getZ)
 				).apply(posInstance, BlockPos::new)).forGetter(it -> it.offset),
-				Codec.BOOL.optionalFieldOf("fire", false).forGetter(Explode::fire),
-				Codec.FLOAT.optionalFieldOf("radius", 4F).forGetter(Explode::radius),
-				Codec.FLOAT.optionalFieldOf("radius_step", 4F).forGetter(Explode::step)
+				ExtraCodecs.strictOptionalField(Codec.BOOL, "fire", false).forGetter(Explode::fire),
+				ExtraCodecs.strictOptionalField(Codec.FLOAT, "radius", 4F).forGetter(Explode::radius),
+				ExtraCodecs.strictOptionalField(Codec.FLOAT, "radius_step", 4F).forGetter(Explode::step)
 		).apply(instance, Explode::new));
 
 		@Override

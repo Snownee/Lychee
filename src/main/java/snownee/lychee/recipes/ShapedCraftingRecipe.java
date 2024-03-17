@@ -14,6 +14,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
@@ -227,7 +228,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
 						((MapCodec.MapCodecCodec<ShapedRecipe>) RecipeSerializer.SHAPED_RECIPE.codec()).codec()
 								.forGetter(ShapedCraftingRecipe::shaped),
-						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
+						ExtraCodecs.strictOptionalField(PostActionType.LIST_CODEC, "assembling", List.of())
 								.forGetter(ShapedCraftingRecipe::assemblingActions)
 				).apply(instance, ShapedCraftingRecipe::new));
 

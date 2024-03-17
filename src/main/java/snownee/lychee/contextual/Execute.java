@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import snownee.lychee.Lychee;
@@ -81,7 +82,7 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 	public static class Type implements ContextualConditionType<Execute> {
 		public static final Codec<Execute> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				Codec.STRING.fieldOf("command").forGetter(Execute::command),
-				MinMaxBounds.Ints.CODEC.optionalFieldOf("value", DEFAULT_RANGE).forGetter(Execute::bounds)
+				ExtraCodecs.strictOptionalField(MinMaxBounds.Ints.CODEC, "value", DEFAULT_RANGE).forGetter(Execute::bounds)
 		).apply(instance, Execute::new));
 
 		@Override

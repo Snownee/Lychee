@@ -12,6 +12,7 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -175,9 +176,11 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		public static final Codec<BlockCrushingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(BlockCrushingRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC.optionalFieldOf("falling_block").forGetter(BlockCrushingRecipe::blockPredicate),
-						BlockPredicateExtensions.CODEC.optionalFieldOf("landing_block").forGetter(BlockCrushingRecipe::landingBlock),
-						new CompactListCodec<>(Ingredient.CODEC_NONEMPTY).optionalFieldOf(ITEM_IN, List.of())
+						ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, "falling_block")
+								.forGetter(BlockCrushingRecipe::blockPredicate),
+						ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, "landing_block")
+								.forGetter(BlockCrushingRecipe::landingBlock),
+						ExtraCodecs.strictOptionalField(new CompactListCodec<>(Ingredient.CODEC_NONEMPTY), ITEM_IN, List.of())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, BlockCrushingRecipe::new));
 

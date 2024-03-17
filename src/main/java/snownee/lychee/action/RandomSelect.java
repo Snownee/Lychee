@@ -185,8 +185,9 @@ public class RandomSelect implements CompoundAction, PostAction {
 				PostActionCommonProperties.MAP_CODEC.forGetter(RandomSelect::commonProperties),
 				ExtraCodecs.nonEmptyList(new CompactListCodec<>(PostAction.CODEC, true)).fieldOf("entries").forGetter(it -> it.entries),
 				Codec.list(ExtraCodecs.intRange(0, Integer.MAX_VALUE)).fieldOf("weights").forGetter(it -> it.weights),
-				ExtraCodecs.intRange(0, Integer.MAX_VALUE).optionalFieldOf("empty_weight", 0).forGetter(it -> it.emptyWeight),
-				MinMaxBounds.Ints.CODEC.optionalFieldOf("rolls", BoundsExtensions.ONE).forGetter(it -> it.rolls)
+				ExtraCodecs.strictOptionalField(ExtraCodecs.intRange(0, Integer.MAX_VALUE), "empty_weight", 0)
+						.forGetter(it -> it.emptyWeight),
+				ExtraCodecs.strictOptionalField(MinMaxBounds.Ints.CODEC, "rolls", BoundsExtensions.ONE).forGetter(it -> it.rolls)
 		).apply(instance, RandomSelect::new));
 
 		@Override

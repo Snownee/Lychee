@@ -8,6 +8,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -74,7 +75,7 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 		public static final Codec<LightningChannelingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						new CompactListCodec<>(Ingredient.CODEC_NONEMPTY).optionalFieldOf(ITEM_IN, List.of())
+						ExtraCodecs.strictOptionalField(new CompactListCodec<>(Ingredient.CODEC_NONEMPTY), ITEM_IN, List.of())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, LightningChannelingRecipe::new));
 

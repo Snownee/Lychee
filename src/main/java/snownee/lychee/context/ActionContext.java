@@ -9,6 +9,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.Lychee;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.context.KeyedContextValue;
@@ -69,7 +70,7 @@ public class ActionContext implements KeyedContextValue<ActionContext> {
 	public static final class Serializer implements LycheeContextSerializer<ActionContext> {
 		public static final Codec<ActionContext> CODEC = RecordCodecBuilder.create(instance ->
 				instance.group(
-						Codec.BOOL.optionalFieldOf("avoid_default", false).forGetter(it -> it.avoidDefault),
+						ExtraCodecs.strictOptionalField(Codec.BOOL, "avoid_default", false).forGetter(it -> it.avoidDefault),
 						Codec.INT.fieldOf("state")
 								.flatXmap(it -> {
 									try {

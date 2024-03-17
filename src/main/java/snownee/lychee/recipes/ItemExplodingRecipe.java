@@ -9,6 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -91,7 +92,7 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 		public static final Codec<ItemExplodingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						new CompactListCodec<>(Ingredient.CODEC_NONEMPTY).optionalFieldOf(ITEM_IN, List.of())
+						ExtraCodecs.strictOptionalField(new CompactListCodec<>(Ingredient.CODEC_NONEMPTY), ITEM_IN, List.of())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, ItemExplodingRecipe::new));
 

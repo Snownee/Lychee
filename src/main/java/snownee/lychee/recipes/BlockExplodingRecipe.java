@@ -8,6 +8,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -68,7 +69,8 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 		public static final Codec<BlockExplodingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(BlockExplodingRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN).forGetter(BlockExplodingRecipe::blockPredicate)
+						ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, BLOCK_IN)
+								.forGetter(BlockExplodingRecipe::blockPredicate)
 				).apply(instance, BlockExplodingRecipe::new));
 
 		@Override

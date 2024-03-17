@@ -11,6 +11,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.NonNullList;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -153,13 +154,12 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 										LycheeRecipeCommonProperties.GROUP_CODEC.forGetter(LycheeRecipeCommonProperties::group),
 										LycheeRecipeCommonProperties.CONTEXTUAL_CODEC.forGetter(LycheeRecipeCommonProperties::conditions),
 										LycheeRecipeCommonProperties.POST_ACTION_CODEC.forGetter(LycheeRecipeCommonProperties::postActions),
-										MinMaxBounds.Ints.CODEC
-												.optionalFieldOf("max_repeats", BoundsExtensions.ONE)
+										ExtraCodecs.strictOptionalField(MinMaxBounds.Ints.CODEC, "max_repeats", BoundsExtensions.ONE)
 												.forGetter(LycheeRecipeCommonProperties::maxRepeats)
 								).apply(commonPropertiesInstance, LycheeRecipeCommonProperties::new))
 						.forGetter(BlockInteractingRecipe::commonProperties),
 				LycheeCodecs.PAIR_INGREDIENT_CODEC.fieldOf(ITEM_IN).forGetter(BlockInteractingRecipe::input),
-				BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN).forGetter(BlockInteractingRecipe::blockPredicate)
+				ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, BLOCK_IN).forGetter(BlockInteractingRecipe::blockPredicate)
 		).apply(instance, BlockInteractingRecipe::new));
 
 		@Override

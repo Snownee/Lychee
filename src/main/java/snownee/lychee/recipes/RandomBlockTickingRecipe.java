@@ -8,6 +8,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
@@ -76,7 +77,8 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 		public static final Codec<RandomBlockTickingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(RandomBlockTickingRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN).forGetter(RandomBlockTickingRecipe::blockPredicate)
+						ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, BLOCK_IN)
+								.forGetter(RandomBlockTickingRecipe::blockPredicate)
 				).apply(instance, RandomBlockTickingRecipe::new));
 
 		@Override

@@ -12,6 +12,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -84,8 +85,8 @@ public record Execute(PostActionCommonProperties commonProperties, String comman
 				instance.group(
 						PostActionCommonProperties.MAP_CODEC.forGetter(Execute::commonProperties),
 						Codec.STRING.fieldOf("command").forGetter(Execute::command),
-						Codec.BOOL.optionalFieldOf("hide", false).forGetter(Execute::hide),
-						Codec.BOOL.optionalFieldOf("repeat", true).forGetter(Execute::repeat)
+						ExtraCodecs.strictOptionalField(Codec.BOOL, "hide", false).forGetter(Execute::hide),
+						ExtraCodecs.strictOptionalField(Codec.BOOL, "repeat", true).forGetter(Execute::repeat)
 				).apply(instance, Execute::new));
 
 

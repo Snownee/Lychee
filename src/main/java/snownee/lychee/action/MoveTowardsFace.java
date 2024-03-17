@@ -9,6 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
@@ -47,7 +48,7 @@ public record MoveTowardsFace(PostActionCommonProperties commonProperties, float
 	public static class Type implements PostActionType<MoveTowardsFace> {
 		public static final Codec<MoveTowardsFace> CODEC = RecordCodecBuilder.create(inst -> inst.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(MoveTowardsFace::commonProperties),
-				Codec.FLOAT.optionalFieldOf("factor", 1F).forGetter(MoveTowardsFace::factor)
+				ExtraCodecs.strictOptionalField(Codec.FLOAT, "factor", 1F).forGetter(MoveTowardsFace::factor)
 		).apply(inst, MoveTowardsFace::new));
 
 		@Override

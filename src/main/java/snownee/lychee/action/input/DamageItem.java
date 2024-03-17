@@ -13,6 +13,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -115,7 +116,7 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 		public static final Codec<DamageItem> CODEC = RecordCodecBuilder.create(instance ->
 				instance.group(
 						PostActionCommonProperties.MAP_CODEC.forGetter(DamageItem::commonProperties),
-						Codec.INT.optionalFieldOf("damage", 1).forGetter(DamageItem::damage),
+						ExtraCodecs.strictOptionalField(Codec.INT, "damage", 1).forGetter(DamageItem::damage),
 						Reference.CODEC.fieldOf("target").forGetter(DamageItem::target)
 				).apply(instance, DamageItem::new));
 
