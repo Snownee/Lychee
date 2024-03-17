@@ -98,9 +98,11 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 				resultSlots.setItem(0, output);
 				if (player.isCreative() || left.getCount() == 1) {
 					cost.set(anvilContext.getLevelCost());
-				} else { // Anvil will swallow all items on the left
+				} else {
+					// Anvil will swallow all items on the left
 					// Make it too expensive so player knows the recipe is working
-					cost.set(Integer.MAX_VALUE);
+					// ClientboundContainerSetDataPacket only send short.
+					cost.set(Short.MAX_VALUE);
 				}
 				repairItemCountCost = anvilContext.getMaterialCost();
 			}
@@ -114,11 +116,11 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		if (context == null) {
 			return;
 		}
-		var recipe = context.get(LycheeContextKey.RECIPE);
-		if (recipe == null) {
+		if (context.get(LycheeContextKey.LEVEL).isClientSide) {
 			return;
 		}
-		if (context.get(LycheeContextKey.LEVEL).isClientSide) {
+		var recipe = context.get(LycheeContextKey.RECIPE);
+		if (recipe == null) {
 			return;
 		}
 		onTakeCtx = context;

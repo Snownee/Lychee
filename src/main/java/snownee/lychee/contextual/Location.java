@@ -284,7 +284,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public TriState testClient(ResourceKey<Level> value, Level level, BlockPos pos, Vec3 vec) {
-			return TriState.of(value != level.dimension());
+			return TriState.of(value == level.dimension());
 		}
 
 		@Override

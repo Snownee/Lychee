@@ -9,6 +9,8 @@ import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 
@@ -156,5 +158,34 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 			}
 		}
 		return times;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		}
+		if (o == null || getClass() != o.getClass()) {
+			return false;
+		}
+		final ContextualHolder that = (ContextualHolder) o;
+		return Objects.equal(conditions, that.conditions) && Objects.equal(
+				secretFlags,
+				that.secretFlags
+		) && Objects.equal(overrideDesc, that.overrideDesc);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(conditions, secretFlags, overrideDesc);
+	}
+
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("conditions", conditions)
+				.add("secretFlags", secretFlags)
+				.add("overrideDesc", overrideDesc)
+				.toString();
 	}
 }
