@@ -27,7 +27,6 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.AnvilContext;
 import snownee.lychee.context.RecipeContext;
-import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
@@ -43,9 +42,6 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	@Final
 	@Shadow
 	private DataSlot cost;
-
-	@Unique
-	private AnvilCraftingRecipe recipe;
 	@Unique
 	private LycheeContext context;
 	@Unique
@@ -63,7 +59,6 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
 	@Inject(at = @At("HEAD"), method = "createResult", cancellable = true)
 	private void lychee_createResult(CallbackInfo ci) {
-		recipe = null;
 		context = null;
 		if (RecipeTypes.ANVIL_CRAFTING.isEmpty()) {
 			return;
@@ -116,10 +111,18 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 
 	@Inject(at = @At("HEAD"), method = "onTake")
 	private void lychee_onTake(Player player, ItemStack stack, CallbackInfo ci) {
-		if (context != null && !context.get(LycheeContextKey.LEVEL).isClientSide && context.get(LycheeContextKey.RECIPE)) {
-			onTakeCtx = context;
-			recipe.applyPostActions(context, 1);
+		if (context == null) {
+			return;
 		}
+		var recipe = context.get(LycheeContextKey.RECIPE);
+		if (recipe == null) {
+			return;
+		}
+		if (context.get(LycheeContextKey.LEVEL).isClientSide) {
+			return;
+		}
+		onTakeCtx = context;
+		recipe.applyPostActions(context, 1);
 	}
 
 	@Inject(

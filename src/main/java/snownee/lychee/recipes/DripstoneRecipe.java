@@ -104,6 +104,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		super(commonProperties);
 		this.sourceBlock = sourceBlock;
 		this.targetBlock = targetBlock;
+		onConstructed();
 	}
 
 	@Override

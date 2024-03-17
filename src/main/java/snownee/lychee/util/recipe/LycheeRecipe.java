@@ -7,7 +7,6 @@ public abstract class LycheeRecipe<C extends Container> implements ILycheeRecipe
 
 	protected LycheeRecipe(LycheeRecipeCommonProperties commonProperties) {
 		this.commonProperties = commonProperties;
-		onConstructed();
 	}
 
 	@Override

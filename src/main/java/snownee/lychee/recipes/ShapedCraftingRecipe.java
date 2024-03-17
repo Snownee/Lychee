@@ -55,6 +55,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 		super(commonProperties);
 		this.assemblingActions = assemblingActions;
 		this.shaped = shaped;
+		onConstructed();
 	}
 
 	public ShapedCraftingRecipe(
@@ -69,6 +70,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 		super(commonProperties);
 		this.assemblingActions = assemblingActions;
 		this.shaped = new ShapedRecipe(group, category, pattern, result, showNotification);
+		onConstructed();
 	}
 
 	@Override

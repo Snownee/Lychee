@@ -55,6 +55,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		this.materialCost = materialCost;
 		this.output = output;
 		this.assemblingActions = assemblingActions;
+		onConstructed();
 	}
 
 	@Override

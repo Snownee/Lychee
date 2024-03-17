@@ -43,6 +43,7 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 
 	public LightningChannelingRecipe(LycheeRecipeCommonProperties commonProperties) {
 		super(commonProperties);
+		onConstructed();
 	}
 
 	public LightningChannelingRecipe(
@@ -51,6 +52,7 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 	) {
 		super(commonProperties);
 		this.ingredients = NonNullListAccess.construct(ingredients, null);
+		onConstructed();
 	}
 
 	@Override

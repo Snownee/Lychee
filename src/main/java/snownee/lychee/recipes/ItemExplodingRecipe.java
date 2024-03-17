@@ -45,6 +45,7 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	public ItemExplodingRecipe(LycheeRecipeCommonProperties commonProperties) {
 		super(commonProperties);
+		onConstructed();
 	}
 
 	public ItemExplodingRecipe(
@@ -53,6 +54,7 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 	) {
 		super(commonProperties);
 		this.ingredients = NonNullListAccess.construct(ingredients, null);
+		onConstructed();
 	}
 
 	@Override

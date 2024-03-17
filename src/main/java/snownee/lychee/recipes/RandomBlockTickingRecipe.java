@@ -31,6 +31,7 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 	) {
 		super(commonProperties);
 		this.blockPredicate = blockPredicate;
+		onConstructed();
 	}
 
 	@Override

@@ -78,6 +78,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		super(commonProperties);
 		this.input = input;
 		this.blockPredicate = blockPredicate;
+		onConstructed();
 	}
 
 	public Pair<Ingredient, Ingredient> input() {

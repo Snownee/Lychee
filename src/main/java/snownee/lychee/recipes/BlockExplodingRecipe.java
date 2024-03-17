@@ -30,6 +30,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 	) {
 		super(commonProperties);
 		this.blockPredicate = blockPredicate;
+		onConstructed();
 	}
 
 	@Override

@@ -47,6 +47,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 		super(commonProperties);
 		this.blockPredicate = blockPredicate;
 		this.time = time;
+		onConstructed();
 	}
 
 	public ItemInsideRecipe(
@@ -59,6 +60,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 		this.blockPredicate = blockPredicate;
 		this.time = time;
 		this.ingredients = NonNullListAccess.construct(ingredients, null);
+		onConstructed();
 	}
 
 	public int time() {

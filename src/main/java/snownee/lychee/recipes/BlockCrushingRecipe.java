@@ -43,6 +43,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	public BlockCrushingRecipe(final LycheeRecipeCommonProperties commonProperties) {
 		super(commonProperties);
+		onConstructed();
 	}
 
 	public BlockCrushingRecipe(
@@ -55,6 +56,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		this.fallingBlock = fallingBlock;
 		this.landingBlock = landingBlock;
 		this.ingredients = ingredients;
+		onConstructed();
 	}
 
 	public BlockCrushingRecipe(
@@ -67,6 +69,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		this.fallingBlock = fallingBlock;
 		this.landingBlock = landingBlock;
 		this.ingredients = NonNullListAccess.construct(ingredients, null);
+		onConstructed();
 	}
 
 	@Override

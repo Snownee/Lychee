@@ -9,7 +9,7 @@
     }
   ],
   "item_out": {
-    "item": "diamond"
+	  "id": "diamond"
   },
   "level_cost": 10,
   "material_cost": 2,

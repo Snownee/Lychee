@@ -46,6 +46,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	protected ItemBurningRecipe(LycheeRecipeCommonProperties commonProperties, Ingredient input) {
 		super(commonProperties);
 		this.input = input;
+		onConstructed();
 	}
 
 	public Ingredient input() {
