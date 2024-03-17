@@ -10,6 +10,7 @@
 		"DamageSourcesAccess",
 		"DefaultDispenseItemBehaviorMixin",
 		"EntityMixin",
+		"IngredientAccess",
 		"ItemEntityAccess",
 		"ItemEntityMixin",
 		"LootContextParamSetsAccess",

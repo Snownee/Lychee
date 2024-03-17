@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -24,6 +23,7 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.BoundsExtensions;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
@@ -89,15 +89,7 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 												.forGetter(LycheeRecipeCommonProperties::maxRepeats)
 								).apply(commonPropertiesInstance, LycheeRecipeCommonProperties::new))
 						.forGetter(BlockInteractingRecipe::commonProperties),
-				Codec.either(Codec.pair(Ingredient.CODEC, Ingredient.CODEC), Ingredient.CODEC)
-						.fieldOf(ITEM_IN)
-						.xmap(it -> {
-							if (it.right().isPresent()) {
-								return Pair.of(it.right().get(), EMPTY_INGREDIENT);
-							}
-							return it.left().orElseThrow();
-						}, Either::left)
-						.forGetter(BlockInteractingRecipe::input),
+				LycheeCodecs.PAIR_INGREDIENT_CODEC.fieldOf(ITEM_IN).forGetter(BlockInteractingRecipe::input),
 				BlockPredicate.CODEC.optionalFieldOf(BLOCK_IN).forGetter(BlockInteractingRecipe::blockPredicate)
 		).apply(instance, BlockClickingRecipe::new));
 

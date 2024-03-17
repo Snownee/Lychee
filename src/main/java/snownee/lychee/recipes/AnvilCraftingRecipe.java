@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Streams;
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -26,6 +25,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.json.JsonPointer;
@@ -170,15 +170,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		public static final Codec<AnvilCraftingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
-						Codec.either(Codec.pair(Ingredient.CODEC, Ingredient.CODEC), Ingredient.CODEC)
-								.fieldOf(ITEM_IN)
-								.xmap(it -> {
-									if (it.right().isPresent()) {
-										return Pair.of(it.right().get(), EMPTY_INGREDIENT);
-									}
-									return it.left().orElseThrow();
-								}, Either::left)
-								.forGetter(AnvilCraftingRecipe::input),
+						LycheeCodecs.PAIR_INGREDIENT_CODEC.fieldOf(ITEM_IN).forGetter(AnvilCraftingRecipe::input),
 						ItemStack.CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
 						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
 								.forGetter(AnvilCraftingRecipe::assemblingActions),
