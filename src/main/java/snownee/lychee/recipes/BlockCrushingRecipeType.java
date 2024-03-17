@@ -19,7 +19,7 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.context.RecipeContext;
-import snownee.lychee.core.network.SCustomLevelEventPacket;
+import snownee.lychee.network.SCustomLevelEventPacket;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.LycheeFallingBlockEntity;
 import snownee.lychee.util.context.LycheeContext;

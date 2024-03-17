@@ -81,7 +81,7 @@ public class BlockPredicateExtensions {
 					BlockPredicate.CODEC,
 					Codec.STRING.flatMap(it -> {
 						if (it.equals("*")) {
-							return DataResult.error(() -> "Wildcard needn't in newer Lychee. Emit the field will act as a wildcard.");
+							return DataResult.error(() -> "Wildcard needn't anymore in Lychee. Emit the field will act as a wildcard **if it's optional**.");
 						}
 						var tagResult = TagKey.hashedCodec(Registries.BLOCK).parse(JavaOps.INSTANCE, it);
 						if (tagResult.result().isPresent()) {

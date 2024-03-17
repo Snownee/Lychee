@@ -1,4 +1,4 @@
-package snownee.lychee.core.network;
+package snownee.lychee.network;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
