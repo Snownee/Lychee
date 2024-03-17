@@ -26,8 +26,9 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 public class ContextualHolder implements ContextualPredicate, Iterable<ContextualCondition> {
 	public static final Component SECRET_COMPONENT = Component.translatable("contextual.lychee.secret").withStyle(
 			ChatFormatting.GRAY);
-	public static final Codec<ContextualHolder> CODEC = new CompactListCodec<>(ContextualConditionData.CODEC)
-			.xmap(ContextualHolder::pack, ContextualHolder::unpack);
+	public static final Codec<ContextualHolder> CODEC = new CompactListCodec<>(ContextualConditionData.CODEC).xmap(
+			ContextualHolder::pack,
+			ContextualHolder::unpack);
 
 	public static final ContextualHolder EMPTY = new ContextualHolder(List.of(), null, null);
 

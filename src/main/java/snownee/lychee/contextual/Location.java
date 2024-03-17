@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.ChatFormatting;
@@ -22,6 +23,7 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -31,6 +33,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.mixin.predicates.LocationCheckAccess;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.RegistryEntryDisplay;
@@ -157,7 +160,9 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	@Override
 	public int showingCount() {
 		var c = 0;
-		if (check.predicate().isEmpty()) return c;
+		if (check.predicate().isEmpty()) {
+			return c;
+		}
 		final var predicate = check.predicate().get();
 		for (var rule : RULES) {
 			if (!rule.isEmpty(predicate)) {
@@ -339,8 +344,13 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	}
 
 	public static class Type implements ContextualConditionType<Location> {
+		private static final MapCodec<LocationCheck> LOCATION_CHECK_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				ExtraCodecs.strictOptionalField(LocationPredicate.CODEC, "predicate").forGetter(LocationCheck::predicate),
+				LocationCheckAccess.getOffsetCodec().forGetter(LocationCheck::offset)
+		).apply(instance, LocationCheck::new));
+
 		public static final Codec<Location> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				LocationCheck.CODEC.fieldOf("check").forGetter(Location::check)
+				LOCATION_CHECK_CODEC.forGetter(Location::check)
 		).apply(instance, Location::new));
 
 		@Override

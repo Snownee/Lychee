@@ -15,13 +15,13 @@
   "material_cost": 2,
   "post": [
     {
-      "type": "set_item",
+		"type": "lychee:set_item",
       "target": "/item_in/1",
       "item": "apple"
     }
   ],
   "contextual": {
-    "type": "location",
+	  "type": "lychee:location",
     "predicate": {
       "dimension": "overworld"
     }

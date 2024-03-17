@@ -1,6 +1,7 @@
 package snownee.lychee.util.action;
 
 import net.minecraft.core.Registry;
+import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.action.AddItemCooldown;
 import snownee.lychee.action.AnvilDamageChance;
@@ -57,7 +58,7 @@ public class PostActionTypes {
 	public static final PostActionType<If> IF = register("if", new If.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
-		Registry.register(LycheeRegistries.POST_ACTION, name, t);
+		Registry.register(LycheeRegistries.POST_ACTION, Lychee.id(name), t);
 		return t;
 	}
 }
