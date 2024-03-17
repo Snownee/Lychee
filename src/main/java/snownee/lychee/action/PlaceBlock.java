@@ -13,7 +13,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -35,6 +34,7 @@ import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -170,11 +170,7 @@ public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredi
 		public static final Codec<PlaceBlock> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(PlaceBlock::commonProperties),
 				BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(it -> it.block),
-				RecordCodecBuilder.<BlockPos>mapCodec(posInstance -> posInstance.group(
-						Codec.INT.fieldOf("offsetX").forGetter(Vec3i::getX),
-						Codec.INT.fieldOf("offsetY").forGetter(Vec3i::getY),
-						Codec.INT.fieldOf("offsetZ").forGetter(Vec3i::getZ)
-				).apply(posInstance, BlockPos::new)).forGetter(it -> it.offset)
+				LycheeCodecs.OFFSET_CODEC.forGetter(it -> it.offset)
 		).apply(instance, PlaceBlock::new));
 
 		@Override

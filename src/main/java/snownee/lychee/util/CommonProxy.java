@@ -33,7 +33,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -252,17 +251,6 @@ public class CommonProxy implements ModInitializer {
 
 	public static boolean isSimpleIngredient(Ingredient ingredient) {
 		return !ingredient.requiresTesting();
-	}
-
-	public static BlockPos parseOffset(JsonObject o) {
-		var x = GsonHelper.getAsInt(o, "offsetX", 0);
-		var y = GsonHelper.getAsInt(o, "offsetY", 0);
-		var z = GsonHelper.getAsInt(o, "offsetZ", 0);
-		var offset = BlockPos.ZERO;
-		if (x != 0 || y != 0 || z != 0) {
-			offset = new BlockPos(x, y, z);
-		}
-		return offset;
 	}
 
 	public static void itemstackToJson(ItemStack stack, JsonObject jsonObject) {

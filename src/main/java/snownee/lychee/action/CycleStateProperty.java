@@ -10,7 +10,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -19,6 +18,7 @@ import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -95,11 +95,7 @@ public final class CycleStateProperty implements PostAction {
 		public static final Codec<CycleStateProperty> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(CycleStateProperty::commonProperties),
 				BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(it -> it.block),
-				RecordCodecBuilder.<BlockPos>mapCodec(posInstance -> posInstance.group(
-						Codec.INT.fieldOf("offsetX").forGetter(Vec3i::getX),
-						Codec.INT.fieldOf("offsetY").forGetter(Vec3i::getY),
-						Codec.INT.fieldOf("offsetZ").forGetter(Vec3i::getZ)
-				).apply(posInstance, BlockPos::new)).forGetter(it -> it.offset),
+				LycheeCodecs.OFFSET_CODEC.forGetter(it -> it.offset),
 				Codec.STRING.fieldOf("property").forGetter(it -> it.property)
 		).apply(instance, CycleStateProperty::new));
 		@Override

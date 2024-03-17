@@ -9,8 +9,12 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
@@ -48,4 +52,10 @@ public final class LycheeCodecs {
 					ItemStack.OPTIONAL_CODEC,
 					BuiltInRegistries.ITEM.holderByNameCodec().xmap(ItemStack::new, ItemStack::getItemHolder))
 			.xmap(it -> it.map(Function.identity(), Function.identity()), Either::left);
+
+	public static final MapCodec<BlockPos> OFFSET_CODEC = RecordCodecBuilder.<BlockPos>mapCodec(posInstance -> posInstance.group(
+			ExtraCodecs.strictOptionalField(Codec.INT, "offsetX", 0).forGetter(Vec3i::getX),
+			ExtraCodecs.strictOptionalField(Codec.INT, "offsetY", 0).forGetter(Vec3i::getY),
+			ExtraCodecs.strictOptionalField(Codec.INT, "offsetZ", 0).forGetter(Vec3i::getZ)
+	).apply(posInstance, BlockPos::new));
 }

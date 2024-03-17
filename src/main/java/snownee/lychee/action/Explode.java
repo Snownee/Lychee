@@ -10,7 +10,6 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
@@ -26,6 +25,7 @@ import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -82,11 +82,7 @@ public record Explode(
 						"block_interaction",
 						BlockInteraction.DESTROY
 				).forGetter(Explode::blockInteraction),
-				RecordCodecBuilder.<BlockPos>mapCodec(posInstance -> posInstance.group(
-						Codec.INT.fieldOf("offsetX").forGetter(Vec3i::getX),
-						Codec.INT.fieldOf("offsetY").forGetter(Vec3i::getY),
-						Codec.INT.fieldOf("offsetZ").forGetter(Vec3i::getZ)
-				).apply(posInstance, BlockPos::new)).forGetter(it -> it.offset),
+				LycheeCodecs.OFFSET_CODEC.forGetter(it -> it.offset),
 				ExtraCodecs.strictOptionalField(Codec.BOOL, "fire", false).forGetter(Explode::fire),
 				ExtraCodecs.strictOptionalField(Codec.FLOAT, "radius", 4F).forGetter(Explode::radius),
 				ExtraCodecs.strictOptionalField(Codec.FLOAT, "radius_step", 4F).forGetter(Explode::step)
