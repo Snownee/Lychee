@@ -95,7 +95,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 		if (itemShapelessContext.totalItems < ingredients.size()) {
 			return false;
 		}
-		if (!BlockPredicateExtensions.matches(blockPredicate.orElseThrow(), context)) {
+		if (blockPredicate.isPresent() && !BlockPredicateExtensions.matches(blockPredicate.get(), context)) {
 			return false;
 		}
 		var itemEntities = itemShapelessContext.itemEntities.stream()
