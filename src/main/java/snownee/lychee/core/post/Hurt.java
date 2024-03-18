@@ -8,6 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.Lychee;
@@ -58,7 +59,8 @@ public class Hurt extends PostAction {
 
 		@Override
 		public Hurt fromJson(JsonObject o) {
-			return new Hurt(MinMaxBounds.Doubles.fromJson(o.get("damage")), new ResourceLocation(o.get("source").getAsString()));
+			var source = new ResourceLocation(GsonHelper.getAsString(o, "source", "generic"));
+			return new Hurt(MinMaxBounds.Doubles.fromJson(o.get("damage")), source);
 		}
 
 		@Override

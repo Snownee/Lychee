@@ -136,6 +136,9 @@ public abstract class ExplosionMixin {
 			return ctx;
 		});
 		if (result == null) {
+			for (ItemStack stack : pair.getSecond()) {
+				addBlockDrops(objectArrayList, stack, blockPos);
+			}
 			return;
 		}
 		BlockExplodingContext ctx = result.getFirst();
