@@ -114,6 +114,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 		}
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
+		context.put(LycheeContextKey.RECIPE, this);
 		var matchX = 0;
 		var matchY = 0;
 		var mirror = false;
@@ -195,6 +196,29 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 	}
 
 	@Override
+	public @NotNull NonNullList<ItemStack> getRemainingItems(CraftingContainer container) {
+		var items = shaped.getRemainingItems(container);
+		var context = CONTEXT_CACHE.getIfPresent(container);
+		if (context == null) {
+			return items;
+		}
+		applyPostActions(context, 1);
+		var craftingContext = context.get(LycheeContextKey.CRAFTING);
+		var startIndex = container.getWidth() * craftingContext.matchY() + craftingContext.matchX();
+		var itemStackHolders = context.get(LycheeContextKey.ITEM);
+		var k = 0;
+		for (var i = 0; i < getHeight(); i++) {
+			for (var j = 0; j < getWidth(); j++) {
+				if (itemStackHolders.get(k).getIgnoreConsumption()) {
+					items.set(startIndex + container.getWidth() * i + (craftingContext.mirror() ? getWidth() - j : j), context.getItem(k));
+				}
+				++k;
+			}
+		}
+		return items;
+	}
+
+	@Override
 	public @NotNull RecipeSerializer<ShapedCraftingRecipe> getSerializer() {
 		return RecipeSerializers.CRAFTING;
 	}
@@ -233,10 +257,6 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 
 	@Override
 	public boolean isIncomplete() {return shaped.isIncomplete();}
-
-	public @NotNull NonNullList<ItemStack> getRemainingItems(final CraftingContainer container) {
-		return shaped.getRemainingItems(container);
-	}
 
 	@Override
 	public boolean isSpecial() {return shaped.isSpecial();}

@@ -147,10 +147,11 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 					break;
 				}
 			} catch (Throwable e) {
+				var recipeContext = ctx.get(LycheeContextKey.RECIPE_ID);
 				Lychee.LOGGER.error(
 						"Failed to check condition {} of recipe {}",
 						LycheeRegistries.CONTEXTUAL.getKey(condition.type()),
-						ctx.get(LycheeContextKey.RECIPE_ID),
+						recipeContext == null ? ctx.get(LycheeContextKey.RECIPE) : recipeContext.id(),
 						e
 				);
 				return 0;
