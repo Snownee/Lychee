@@ -3,7 +3,7 @@
   "item_in": {
     "item": "diamond"
   },
-  "block_in": "grass",
+	"block_in": "short_grass",
   "post": [
     {
       "type": "place",

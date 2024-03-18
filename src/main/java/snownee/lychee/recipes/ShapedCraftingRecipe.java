@@ -13,6 +13,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.util.ExtraCodecs;
@@ -39,6 +41,7 @@ import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
+import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
@@ -72,6 +75,33 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingContainer> implem
 		this.assemblingActions = assemblingActions;
 		this.shaped = new ShapedRecipe(group, category, pattern, result, showNotification);
 		onConstructed();
+	}
+
+	@Override
+	public IntList getItemIndexes(JsonPointer pointer) {
+		var size = getIngredients().size();
+		if (pointer.size() == 1 && pointer.getString(0).equals("result")) {
+			return IntList.of(size);
+		}
+		if (pointer.size() == 2 && pointer.getString(0).equals("key")) {
+			var key = pointer.getString(1);
+			if (key.length() != 1) {
+				return IntList.of();
+			}
+			var pattern = ((ShapedRecipeAccess) shaped).getPattern();
+			if (pattern.data().isEmpty()) {
+				return IntList.of();
+			}
+			var data = pattern.data().get();
+			IntList list = IntArrayList.of();
+			for (var i = 0; i < data.pattern().size(); i++) {
+				if (key.equals(data.pattern().get(i))) {
+					list.add(i);
+				}
+			}
+			return list;
+		}
+		return IntList.of(size);
 	}
 
 	@Override
