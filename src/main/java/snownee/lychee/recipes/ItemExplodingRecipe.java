@@ -74,6 +74,11 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 	}
 
 	@Override
+	public @NotNull NonNullList<Ingredient> getIngredients() {
+		return ingredients;
+	}
+
+	@Override
 	public int compareTo(@NotNull ItemExplodingRecipe that) {
 		int i;
 		i = Integer.compare(maxRepeats().isAny() ? 1 : 0, that.maxRepeats().isAny() ? 1 : 0);

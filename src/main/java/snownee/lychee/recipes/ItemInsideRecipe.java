@@ -124,6 +124,11 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 	}
 
 	@Override
+	public @NotNull NonNullList<Ingredient> getIngredients() {
+		return ingredients;
+	}
+
+	@Override
 	public int compareTo(@NotNull ItemInsideRecipe that) {
 		int i;
 		i = Integer.compare(maxRepeats().isAny() ? 1 : 0, that.maxRepeats().isAny() ? 1 : 0);

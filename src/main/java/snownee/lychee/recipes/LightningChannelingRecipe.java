@@ -71,6 +71,11 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 		return RecipeTypes.LIGHTNING_CHANNELING;
 	}
 
+	@Override
+	public @NotNull NonNullList<Ingredient> getIngredients() {
+		return ingredients;
+	}
+
 	public static class Serializer implements LycheeRecipeSerializer<LightningChannelingRecipe> {
 		public static final Codec<LightningChannelingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(

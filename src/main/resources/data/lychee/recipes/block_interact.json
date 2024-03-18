@@ -17,7 +17,7 @@
     },
     {
       "type": "drop_item",
-      "item": "diamond",
+			"id": "diamond",
       "contextual": {
         "type": "chance",
         "chance": 0.5
@@ -44,7 +44,7 @@
       "entries": [
         {
           "type": "drop_item",
-          "item": "gold_ingot",
+					"id": "gold_ingot",
           "contextual": {
             "type": "weather",
             "weather": "rain"
@@ -52,12 +52,12 @@
         },
         {
           "type": "drop_item",
-          "item": "ender_pearl"
+					"id": "ender_pearl"
         },
         {
           "weight": 2,
           "type": "drop_item",
-          "item": "dirt"
+					"id": "dirt"
         }
       ]
     },
@@ -70,7 +70,7 @@
       "then": [
         {
           "type": "drop_item",
-          "item": "gold_ingot",
+					"id": "gold_ingot",
           "contextual": {
             "type": "weather",
             "weather": "rain"
@@ -78,13 +78,13 @@
         },
         {
           "type": "drop_item",
-          "item": "ender_pearl"
+					"id": "ender_pearl"
         }
       ],
       "else": [
         {
           "type": "drop_item",
-          "item": "dirt"
+					"id": "dirt"
         }
       ]
     }

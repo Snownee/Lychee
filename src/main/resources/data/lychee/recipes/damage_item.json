@@ -8,7 +8,6 @@
       "item": "pumpkin"
     }
   ],
-  "block_in": "*",
   "post": [
     {
       "type": "damage_item",
@@ -16,12 +15,12 @@
     },
     {
       "type": "set_item",
-      "item": "carved_pumpkin",
+			"id": "carved_pumpkin",
       "target": "/item_in/1"
     },
     {
       "type": "drop_item",
-      "item": "pumpkin_seeds"
+			"id": "pumpkin_seeds"
     }
   ]
 }
