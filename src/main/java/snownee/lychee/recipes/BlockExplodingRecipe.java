@@ -36,7 +36,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 
 	@Override
 	public boolean matches(final LycheeContext context, final Level level) {
-		return BlockPredicateExtensions.matches(blockPredicate().orElseThrow(), context);
+		return blockPredicate().isEmpty() || BlockPredicateExtensions.matches(blockPredicate().get(), context);
 	}
 
 	@Override

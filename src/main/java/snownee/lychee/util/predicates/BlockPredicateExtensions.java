@@ -119,7 +119,7 @@ public class BlockPredicateExtensions {
 		if (predicate.blocks().isPresent()) {
 			Iterables.addAll(
 					blocks,
-					predicate.blocks().orElseThrow().unwrap().map(BuiltInRegistries.BLOCK::getOrCreateTag, Function.identity()));
+					predicate.blocks().get().unwrap().map(BuiltInRegistries.BLOCK::getOrCreateTag, Function.identity()));
 		}
 		return blocks.stream().map(Holder::value).collect(Collectors.toSet());
 	}
@@ -237,30 +237,32 @@ public class BlockPredicateExtensions {
 	@SuppressWarnings("rawtypes")
 	public static List<Component> getTooltips(BlockState state, BlockPredicate predicate) {
 		final var list = Lists.<Component>newArrayList(state.getBlock().getName());
-		final var matchers = predicate.properties().orElseThrow().properties();
-		for (final var matcher : matchers) {
-			final var name = Component.literal(matcher.name() + "=").withStyle(ChatFormatting.GRAY);
-			if (matcher.valueMatcher() instanceof StatePropertiesPredicate.ExactMatcher exactMatcher) {
-				name.append(Component.literal(exactMatcher.value()).withStyle(ChatFormatting.WHITE));
-			} else if (matcher.valueMatcher() instanceof StatePropertiesPredicate.RangedMatcher rangedMatcher) {
-				final var definition = state.getBlock().getStateDefinition();
-				final Property property = definition.getProperty(matcher.name());
-				final var rangePair = Suppliers.memoize(() -> {
-					final var sorted = property.getPossibleValues()
-							.stream()
-							.sorted()
-							.toList();
-					return Pair.of(sorted.get(0), sorted.get(sorted.size() - 1));
-				});
-				name.append(Component.literal(rangedMatcher.minValue().orElseGet(
-						() -> property.getName((Comparable) rangePair.get().getFirst())
-				)).withStyle(ChatFormatting.WHITE));
-				name.append(Component.literal("~").withStyle(ChatFormatting.GRAY));
-				name.append(Component.literal(rangedMatcher.minValue().orElseGet(
-						() -> property.getName((Comparable) rangePair.get().getSecond())
-				)).withStyle(ChatFormatting.WHITE));
+		final var matchers = predicate.properties().map(StatePropertiesPredicate::properties);
+		if (matchers.isPresent()) {
+			for (final var matcher : matchers.get()) {
+				final var name = Component.literal(matcher.name() + "=").withStyle(ChatFormatting.GRAY);
+				if (matcher.valueMatcher() instanceof StatePropertiesPredicate.ExactMatcher exactMatcher) {
+					name.append(Component.literal(exactMatcher.value()).withStyle(ChatFormatting.WHITE));
+				} else if (matcher.valueMatcher() instanceof StatePropertiesPredicate.RangedMatcher rangedMatcher) {
+					final var definition = state.getBlock().getStateDefinition();
+					final Property property = definition.getProperty(matcher.name());
+					final var rangePair = Suppliers.memoize(() -> {
+						final var sorted = property.getPossibleValues()
+								.stream()
+								.sorted()
+								.toList();
+						return Pair.of(sorted.get(0), sorted.get(sorted.size() - 1));
+					});
+					name.append(Component.literal(rangedMatcher.minValue().orElseGet(
+							() -> property.getName((Comparable) rangePair.get().getFirst())
+					)).withStyle(ChatFormatting.WHITE));
+					name.append(Component.literal("~").withStyle(ChatFormatting.GRAY));
+					name.append(Component.literal(rangedMatcher.minValue().orElseGet(
+							() -> property.getName((Comparable) rangePair.get().getSecond())
+					)).withStyle(ChatFormatting.WHITE));
+				}
+				list.add(name);
 			}
-			list.add(name);
 		}
 		if (predicate.nbt().isPresent()) {
 			list.add(Component.translatable("tip.lychee.nbtPredicate").withStyle(ChatFormatting.GRAY));
