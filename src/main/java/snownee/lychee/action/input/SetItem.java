@@ -100,10 +100,12 @@ public final class SetItem implements PostAction {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if (o == null || getClass() != o.getClass()) {
 			return false;
+		}
 		final SetItem setItem = (SetItem) o;
 		return Objects.equal(commonProperties, setItem.commonProperties) &&
 				Objects.equal(stack, setItem.stack) && Objects.equal(
@@ -135,7 +137,7 @@ public final class SetItem implements PostAction {
 	public static class Type implements PostActionType<SetItem> {
 		public static final Codec<SetItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(SetItem::commonProperties),
-				LycheeCodecs.PLAIN_ITEM_STACK_CODEC.fieldOf("item").forGetter(SetItem::stack),
+				LycheeCodecs.FLAT_ITEM_STACK_CODEC.forGetter(SetItem::stack),
 				ExtraCodecs.strictOptionalField(Reference.CODEC, "target", Reference.DEFAULT).forGetter(SetItem::target)
 		).apply(instance, SetItem::new));
 
