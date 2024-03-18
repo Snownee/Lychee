@@ -121,7 +121,10 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 
 		final var iterable = Iterables.concat(recipes, anyBlockRecipes);
 		for (final var recipe : iterable) {
+
 			if (tryMatch(recipe, level, context).isPresent()) {
+				context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
+				context.put(LycheeContextKey.RECIPE, recipe.value());
 				if (!level.isClientSide && recipe.value().tickOrApply(context)) {
 					int times = Math.min(context.getItem(0).getCount(), context.getItem(1).getCount());
 					times = recipe.value().getRandomRepeats(Math.max(1, times), context);

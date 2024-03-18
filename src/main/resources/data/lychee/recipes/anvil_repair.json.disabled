@@ -2,17 +2,14 @@
   "type": "lychee:anvil_crafting",
   "item_in": [
     {
-      "item": "diamond_sword",
-      "lychee:tag": {
-        "Damage": 1
-      }
+      "item": "diamond_sword"
     },
     {
       "item": "dirt"
     }
   ],
   "item_out": {
-    "item": "diamond_sword"
+    "id": "diamond_sword"
   },
   "level_cost": 1,
   "material_cost": 1,
