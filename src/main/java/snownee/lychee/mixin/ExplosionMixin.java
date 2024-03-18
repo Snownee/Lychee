@@ -106,6 +106,9 @@ public abstract class ExplosionMixin {
 		pair.setFirst(null);
 		var result = RecipeTypes.BLOCK_EXPLODING.process(level, state, () -> ctxBuilder.create(RecipeTypes.BLOCK_EXPLODING.contextParamSet));
 		if (result == null) {
+			for (ItemStack stack : pair.getSecond()) {
+				addBlockDrops(objectArrayList, stack, blockPos);
+			}
 			return;
 		}
 		BlockExplodingContext ctx = result.getFirst();
