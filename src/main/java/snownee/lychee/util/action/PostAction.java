@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.MapCodec;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
@@ -20,10 +21,12 @@ import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostAction extends PostActionDisplay, ContextualPredicate, Contextual {
-	Codec<PostAction> CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatch(
+	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatchMap(
 			PostAction::type,
 			PostActionType::codec
 	);
+
+	Codec<PostAction> CODEC = MAP_CODEC.codec();
 
 	PostActionCommonProperties commonProperties();
 

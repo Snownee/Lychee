@@ -38,7 +38,7 @@ public interface PostActionRenderer<T extends PostAction> {
 			return list; //TODO nested actions?
 		}
 		if (randomSelect.entries.size() > 1 || randomSelect.emptyWeight > 0) {
-			var chance = CommonProxy.chance(randomSelect.weights.get(index) / (float) randomSelect.totalWeight);
+			var chance = CommonProxy.chance(randomSelect.entries.get(index).weight() / (float) randomSelect.totalWeight);
 			if (randomSelect.rolls == BoundsExtensions.ONE) {
 				list.add(Component.translatable("tip.lychee.randomChance.one", chance)
 						.withStyle(ChatFormatting.YELLOW));

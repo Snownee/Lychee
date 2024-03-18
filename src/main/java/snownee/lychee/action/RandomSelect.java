@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -33,8 +32,7 @@ import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class RandomSelect implements CompoundAction, PostAction {
-	public final List<PostAction> entries;
-	public final List<Integer> weights;
+	public final List<Entry> entries;
 	private final PostActionCommonProperties commonProperties;
 	public final MinMaxBounds.Ints rolls;
 	public final boolean canRepeat;
@@ -45,32 +43,28 @@ public class RandomSelect implements CompoundAction, PostAction {
 
 	public RandomSelect(
 			PostActionCommonProperties commonProperties,
-			List<PostAction> entries,
-			List<Integer> weights,
+			List<Entry> entries,
 			int totalWeight,
 			int emptyWeight,
 			MinMaxBounds.Ints rolls
 	) {
-		Preconditions.checkArgument(entries.size() == weights.size());
 		this.commonProperties = commonProperties;
 		this.entries = entries;
-		this.weights = weights;
 		this.totalWeight = totalWeight;
 		this.emptyWeight = emptyWeight;
 		this.rolls = rolls;
-		canRepeat = entries.stream().allMatch(PostAction::repeatable);
-		hidden = entries.stream().allMatch(PostAction::hidden);
-		preventSync = entries.stream().allMatch(PostAction::preventSync);
+		canRepeat = entries.stream().allMatch(it -> it.action.repeatable());
+		hidden = entries.stream().allMatch(it -> it.action.hidden());
+		preventSync = entries.stream().allMatch(it -> it.action.preventSync());
 	}
 
 	public RandomSelect(
 			PostActionCommonProperties commonProperties,
-			List<PostAction> entries,
-			List<Integer> weights,
+			List<Entry> entries,
 			int emptyWeight,
 			MinMaxBounds.Ints rolls
 	) {
-		this(commonProperties, entries, weights, weights.stream().mapToInt(it -> it).sum() + emptyWeight, emptyWeight, rolls);
+		this(commonProperties, entries, entries.stream().mapToInt(it -> it.weight).sum() + emptyWeight, emptyWeight, rolls);
 	}
 
 	@Override
@@ -94,12 +88,11 @@ public class RandomSelect implements CompoundAction, PostAction {
 		var validActions = Lists.<PostAction>newArrayList();
 		var validWeights = new int[entries.size()];
 		var totalWeights = 0;
-		for (var i = 0; i < entries.size(); i++) {
-			var entry = entries.get(i);
-			if (entry.test(recipe, context, 1) == 1) {
-				validWeights[validActions.size()] = weights.get(i);
-				validActions.add(entry);
-				totalWeights += weights.get(i);
+		for (var entry : entries) {
+			if (entry.action.test(recipe, context, 1) == 1) {
+				validWeights[validActions.size()] = entry.weight;
+				validActions.add(entry.action);
+				totalWeights += entry.weight;
 			}
 		}
 		if (validActions.isEmpty()) {
@@ -134,23 +127,23 @@ public class RandomSelect implements CompoundAction, PostAction {
 
 	@Override
 	public List<ItemStack> getOutputItems() {
-		return entries.stream().map(PostAction::getOutputItems).flatMap(List::stream).toList();
+		return entries.stream().map(it -> it.action.getOutputItems()).flatMap(List::stream).toList();
 	}
 
 	@Override
 	public List<BlockPredicate> getOutputBlocks() {
-		return entries.stream().map(PostAction::getOutputBlocks).flatMap(List::stream).toList();
+		return entries.stream().map(it -> it.action.getOutputBlocks()).flatMap(List::stream).toList();
 	}
 
 	@Override
 	public Component getDisplayName() {
 		if (entries.size() == 1 && emptyWeight == 0) {
 			return Component.literal("%s × %s".formatted(
-					entries.get(0).getDisplayName().getString(),
+					entries.get(0).action.getDisplayName().getString(),
 					BoundsExtensions.getDescription(rolls).getString()
 			));
 		}
-		return CommonProxy.getCycledItem(entries, entries.get(0), 1000).getDisplayName();
+		return CommonProxy.getCycledItem(entries, entries.get(0), 1000).action.getDisplayName();
 	}
 
 	@Override
@@ -170,21 +163,27 @@ public class RandomSelect implements CompoundAction, PostAction {
 
 	@Override
 	public void getUsedPointers(ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
-		for (var action : entries) {
-			action.getUsedPointers(recipe, consumer);
+		for (var entry : entries) {
+			entry.action.getUsedPointers(recipe, consumer);
 		}
 	}
 
 	@Override
 	public Stream<PostAction> getChildActions() {
-		return entries.stream();
+		return entries.stream().map(it -> it.action);
+	}
+
+	public record Entry(PostAction action, int weight) {
+		public static final Codec<Entry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				PostAction.MAP_CODEC.forGetter(Entry::action),
+				ExtraCodecs.strictOptionalField(Codec.INT, "weight", 1).forGetter(Entry::weight)
+		).apply(instance, Entry::new));
 	}
 
 	public static class Type implements PostActionType<RandomSelect> {
 		public static final Codec<RandomSelect> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(RandomSelect::commonProperties),
-				ExtraCodecs.nonEmptyList(new CompactListCodec<>(PostAction.CODEC, true)).fieldOf("entries").forGetter(it -> it.entries),
-				Codec.list(ExtraCodecs.intRange(0, Integer.MAX_VALUE)).fieldOf("weights").forGetter(it -> it.weights),
+				ExtraCodecs.nonEmptyList(new CompactListCodec<>(Entry.CODEC, true)).fieldOf("entries").forGetter(it -> it.entries),
 				ExtraCodecs.strictOptionalField(ExtraCodecs.intRange(0, Integer.MAX_VALUE), "empty_weight", 0)
 						.forGetter(it -> it.emptyWeight),
 				ExtraCodecs.strictOptionalField(MinMaxBounds.Ints.CODEC, "rolls", BoundsExtensions.ONE).forGetter(it -> it.rolls)

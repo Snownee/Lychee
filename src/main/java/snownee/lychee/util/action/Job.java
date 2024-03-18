@@ -9,7 +9,7 @@ import snownee.lychee.util.context.LycheeContextKey;
 public record Job(PostAction action, int times) {
 	public static final Codec<Job> CODEC =
 			RecordCodecBuilder.create(instance -> instance.group(
-					PostAction.CODEC.fieldOf("action").forGetter(Job::action),
+					PostAction.MAP_CODEC.fieldOf("action").forGetter(Job::action),
 					Codec.INT.fieldOf("times").forGetter(Job::times)
 			).apply(instance, Job::new));
 
