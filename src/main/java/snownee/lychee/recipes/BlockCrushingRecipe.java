@@ -98,13 +98,13 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		if (ingredients.isEmpty()) {
 			return true;
 		}
-		List<ItemEntity> itemEntities = itemShapelessContext.itemEntities.stream().filter($ -> {
+		var itemEntities = itemShapelessContext.itemEntities.stream().filter($ -> {
 			// ingredient.test is not thread safe
 			return ingredients.stream().anyMatch(ingredient -> ingredient.test($.getItem()));
 		}).limit(ItemShapelessRecipeUtils.MAX_INGREDIENTS).toList();
-		List<ItemStack> items = itemEntities.stream().map(ItemEntity::getItem).toList();
-		int[] amount = items.stream().mapToInt(ItemStack::getCount).toArray();
-		Optional<RecipeMatcher<ItemStack>> match = RecipeMatcher.findMatches(items, ingredients, amount);
+		var items = itemEntities.stream().map(ItemEntity::getItem).toList();
+		var amount = items.stream().mapToInt(ItemStack::getCount).toArray();
+		var match = RecipeMatcher.findMatches(items, ingredients, amount);
 		if (match.isEmpty()) {
 			return false;
 		}

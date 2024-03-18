@@ -53,10 +53,8 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 			if (holder.getIgnoreConsumption() || holder.get().isEmpty()) {
 				continue;
 			}
-			final var count = holder.get().getCount();
-			holder.shrink(times);
-			// TODO 这里逻辑从原来的直接加 times 变成了加实际消耗的数量，不知道有什么影响
-			result += count - holder.get().getCount();
+			var stack = holder.shrink(times);
+			result += stack.getCount();
 		}
 
 		return result;

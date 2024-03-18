@@ -27,9 +27,7 @@ public interface ItemStackHolder extends Supplier<ItemStack> {
 	 */
 	default ItemStack shrink(int amount) {
 		final var original = get();
-		ItemStack stack = original.split(amount);
-		set(stack);
-		return original;
+		return original.split(amount);
 	}
 
 	class Direct implements ItemStackHolder {

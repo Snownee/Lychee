@@ -9,7 +9,6 @@ import com.google.common.collect.Sets;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -24,7 +23,6 @@ import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.LycheeFallingBlockEntity;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.input.ExtendedItemStackHolder;
 import snownee.lychee.util.input.ItemStackHolder;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.ValidItemCache;
@@ -75,7 +73,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 
-		boolean matchedAny = false;
+		var matchedAny = false;
 		var loop = 0;
 		major:
 		while (true) {
@@ -96,9 +94,9 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 							final var inputUsed = matcher.get().inputUsed;
 							//System.out.println(Arrays.toString(context.match));
 							times = recipe.value().getRandomRepeats(Integer.MAX_VALUE, context);
-							for (int i = 0; i < inputUsed.length; i++) {
+							for (var i = 0; i < inputUsed.length; i++) {
 								if (inputUsed[i] > 0) {
-									ItemStack stack = itemShapelessContext.filteredItems.get(i).getItem();
+									var stack = itemShapelessContext.filteredItems.get(i).getItem();
 									times = Math.min(times, stack.getCount() / inputUsed[i]);
 								}
 							}
@@ -109,7 +107,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 						}
 						final var alreadySentParticles = Sets.newHashSet();
 						final var itemContext = context.get(LycheeContextKey.ITEM);
-						for (final ExtendedItemStackHolder holder : itemContext) {
+						for (final var holder : itemContext) {
 							if (!holder.getIgnoreConsumption() && !holder.get().isEmpty()) {
 								if (holder.holder() instanceof ItemStackHolder.Entity entityHolder &&
 										!alreadySentParticles.contains(holder)) {

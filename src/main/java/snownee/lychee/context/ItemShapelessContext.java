@@ -31,9 +31,9 @@ public class ItemShapelessContext {
 			context.put(LycheeContextKey.ITEM, ItemStackHolderCollection.EMPTY);
 			return;
 		}
-		ItemEntity[] entities = new ItemEntity[matcher.tests.size()];
-		for (int i = 0; i < matcher.inputUsed.length; i++) {
-			for (int j = 0; j < matcher.inputUsed[i]; j++) {
+		var entities = new ItemEntity[matcher.tests.size()];
+		for (var i = 0; i < matcher.inputUsed.length; i++) {
+			for (var j = 0; j < matcher.inputUsed[i]; j++) {
 				entities[matcher.use[i][j]] = filteredItems.get(i);
 			}
 		}
