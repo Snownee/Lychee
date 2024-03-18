@@ -113,7 +113,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 										!alreadySentParticles.contains(holder)) {
 									alreadySentParticles.add(holder);
 									var position = entityHolder.getEntity().position();
-									new SCustomLevelEventPacket(holder.get(), position)
+									new SCustomLevelEventPacket(holder.get().copy(), position)
 											.sendToAround((ServerLevel) entityHolder.getEntity().level());
 								}
 							}
