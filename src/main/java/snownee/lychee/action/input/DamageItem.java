@@ -107,11 +107,6 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 		});
 	}
 
-	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		return 0;
-	}
-
 	public static class Type implements PostActionType<DamageItem> {
 		public static final Codec<DamageItem> CODEC = RecordCodecBuilder.create(instance ->
 				instance.group(

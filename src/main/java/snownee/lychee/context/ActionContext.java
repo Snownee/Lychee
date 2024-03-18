@@ -55,7 +55,6 @@ public class ActionContext implements KeyedContextValue<ActionContext> {
 					break;
 				}
 			} catch (Throwable e) {
-				// TODO 需要检查这里提供的类型是否可读
 				Lychee.LOGGER.error("Error running action {}", job.action().type(), e);
 				state = State.STOPPED;
 			}
