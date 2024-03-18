@@ -32,39 +32,39 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     }
   ]
 }

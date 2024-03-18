@@ -12,6 +12,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.ActionData;
 import snownee.lychee.util.action.ActionMarker;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -53,7 +54,9 @@ public final class LycheeContextRequired {
 		}
 		marker.setCustomName(Component.literal(Lychee.ID));
 		level.addFreshEntity(marker);
-		return (ActionMarker) marker;
+		var actionMarker = (ActionMarker) marker;
+		actionMarker.lychee$setData(new ActionData(it, 0));
+		return actionMarker;
 	});
 
 	public static final Function<LycheeContext, ? extends ILycheeRecipe<?>> RECIPE =

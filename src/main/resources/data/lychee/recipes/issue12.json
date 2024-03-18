@@ -8,7 +8,7 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "obsidian"
+			"id": "obsidian"
     },
     {
       "type": "place",

@@ -7,7 +7,7 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "delay",
@@ -15,7 +15,7 @@
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "delay",
@@ -23,7 +23,7 @@
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "delay",
@@ -31,7 +31,7 @@
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "delay",
@@ -39,7 +39,7 @@
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "delay",
@@ -47,7 +47,7 @@
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "delay",
@@ -55,7 +55,7 @@
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     }
   ]
 }

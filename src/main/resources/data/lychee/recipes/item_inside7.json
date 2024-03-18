@@ -15,7 +15,7 @@
     },
     {
       "type": "drop_item",
-      "item": "minecraft:torch",
+			"id": "minecraft:torch",
       "count": 2
     }
   ]

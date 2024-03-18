@@ -7,7 +7,7 @@
     },
     {
       "type": "drop_item",
-      "item": "copper_block"
+			"id": "copper_block"
     }
   ]
 }

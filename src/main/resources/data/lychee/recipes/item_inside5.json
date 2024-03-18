@@ -7,7 +7,7 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "raw_iron"
+			"id": "raw_iron"
     },
     {
       "type": "place",

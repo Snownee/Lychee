@@ -58,7 +58,7 @@ public class MarkerMixin implements ActionMarker {
 						self().discard();
 					});
 		}
-		if (lychee$data.getContext() == null
+		if (lychee$data.getContext().isEmpty()
 				&& self().hasCustomName()
 				&& Lychee.ID.equals(self().getCustomName().getString())) {
 			self().discard();
@@ -67,7 +67,7 @@ public class MarkerMixin implements ActionMarker {
 
 	@Inject(at = @At("HEAD"), method = "addAdditionalSaveData")
 	private void lychee_addAdditionalSaveData(CompoundTag compoundTag, CallbackInfo ci) {
-		if (lychee$data.getContext() == null) {
+		if (lychee$data.getContext().isEmpty()) {
 			return;
 		}
 

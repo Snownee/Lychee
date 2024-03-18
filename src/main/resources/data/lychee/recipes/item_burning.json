@@ -14,12 +14,12 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "diamond",
+			"id": "diamond",
       "count": 5
     },
     {
       "type": "drop_item",
-      "item": "gold_ingot"
+			"id": "gold_ingot"
     }
   ]
 }

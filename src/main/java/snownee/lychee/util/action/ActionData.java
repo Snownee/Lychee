@@ -29,19 +29,12 @@ public final class ActionData {
 		return new ActionData(context.orElse(null), delayedTicks);
 	}
 
-	private ActionData(
+	public ActionData(
 			@Nullable LycheeContext context,
 			int delayedTicks
 	) {
 		this.context = context;
 		this.delayedTicks = delayedTicks;
-	}
-
-	public static ActionData of(@Nullable LycheeContext context, int delayedTicks) {
-		if (context == null) {
-			return new ActionData(null, delayedTicks);
-		}
-		return new ActionData(context, delayedTicks);
 	}
 
 	public Optional<LycheeContext> getContext() {

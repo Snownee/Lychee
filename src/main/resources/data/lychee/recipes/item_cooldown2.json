@@ -7,7 +7,7 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "add_item_cooldown",

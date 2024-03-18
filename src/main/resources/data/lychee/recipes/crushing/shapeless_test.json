@@ -22,39 +22,39 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "paper"
+			"id": "paper"
     },
     {
       "type": "drop_item",
-      "item": "paper"
+			"id": "paper"
     },
     {
       "type": "drop_item",
-      "item": "paper"
+			"id": "paper"
     },
     {
       "type": "drop_item",
-      "item": "paper"
+			"id": "paper"
     },
     {
       "type": "drop_item",
-      "item": "paper"
+			"id": "paper"
     },
     {
       "type": "drop_item",
-      "item": "paper"
+			"id": "paper"
     },
     {
       "type": "drop_item",
-      "item": "paper"
+			"id": "paper"
     },
     {
       "type": "drop_item",
-      "item": "paper"
+			"id": "paper"
     },
     {
       "type": "drop_item",
-      "item": "paper"
+			"id": "paper"
     }
   ]
 }

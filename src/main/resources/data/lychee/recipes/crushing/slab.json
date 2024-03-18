@@ -14,7 +14,7 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "oak_slab"
+			"id": "oak_slab"
     }
   ]
 }
