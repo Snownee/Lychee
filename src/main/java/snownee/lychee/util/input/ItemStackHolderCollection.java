@@ -28,11 +28,12 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 
 	public ItemStackHolder split(int index, int amount) {
 		final var holder = get(index);
-		final var original = holder.shrink(amount);
+		final var original = holder.get();
+		var split = holder.split(amount);
 		if (!original.isEmpty()) {
 			stacksNeedHandle.add(original);
 		}
-		set(index, holder);
+		holder.set(split);
 		return holder;
 	}
 
@@ -53,7 +54,7 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 			if (holder.getIgnoreConsumption() || holder.get().isEmpty()) {
 				continue;
 			}
-			var stack = holder.shrink(times);
+			var stack = holder.split(times);
 			result += stack.getCount();
 		}
 

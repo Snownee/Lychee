@@ -19,7 +19,9 @@ public class ExtendedItemStackHolder implements ItemStackHolder {
 	public ItemStack replace(final ItemStack item) {return holder.replace(item);}
 
 	@Override
-	public ItemStack shrink(final int amount) {return holder.shrink(amount);}
+	public ItemStack split(final int amount) {
+		return holder.split(amount);
+	}
 
 	@Override
 	public ItemStack get() {return holder.get();}
