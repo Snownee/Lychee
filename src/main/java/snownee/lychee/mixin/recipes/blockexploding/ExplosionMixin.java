@@ -79,6 +79,7 @@ public abstract class ExplosionMixin {
 			return state;
 		}
 		contextRef.set(new LycheeContext());
+		contextRef.get().put(LycheeContextKey.LEVEL, level);
 		var lootParamsContext = contextRef.get().get(LycheeContextKey.LOOT_PARAMS);
 		lootParamsContext.setParam(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
 		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, state);
@@ -102,7 +103,9 @@ public abstract class ExplosionMixin {
 	private BiConsumer<ItemStack, BlockPos> lychee_redirectDrops(
 			BiConsumer<ItemStack, BlockPos> original,
 			@Share("currentDrops") LocalRef<List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
-		return (itemStack, blockPos) -> addOrAppendStack(currentDropsRef.get(), itemStack, blockPos);
+		return currentDropsRef.get() == null ?
+				original :
+				(itemStack, blockPos) -> addOrAppendStack(currentDropsRef.get(), itemStack, blockPos);
 	}
 
 	@Inject(
