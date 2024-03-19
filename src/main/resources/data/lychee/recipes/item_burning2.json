@@ -93,7 +93,7 @@
       "block": {
         "blocks": ["oak_stairs"],
         "state": {
-          "waterlogged": true
+					"waterlogged": "true"
         }
       }
     },

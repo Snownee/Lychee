@@ -15,7 +15,7 @@
 		{
 			"type": "set_item",
 			"target": "/item_in/1",
-			"item": "apple"
+			"id": "apple"
 		}
 	],
 	"contextual": {

@@ -1,7 +1,6 @@
 package snownee.lychee.util.recipe;
 
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +31,6 @@ import snownee.lychee.contextual.Chance;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
@@ -53,11 +51,11 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 		super.refreshCache();
 		final var multimap = HashMultimap.<Block, RecipeHolder<R>>create();
 		for (final var recipe : recipes) {
-			Iterator<ContextualCondition> iterator = recipe.value().conditions().iterator();
+			var iterator = recipe.value().conditions().iterator();
 			if (iterator.hasNext()) {
 				final var condition = iterator.next();
-				if (condition instanceof Chance chance) {
-					((ChanceRecipe) recipe.value()).setChance(chance.chance());
+				if (condition instanceof Chance chance && recipe.value() instanceof ChanceRecipe chanceRecipe) {
+					chanceRecipe.setChance(chance.chance());
 				}
 			}
 			if (recipe.value().blockPredicate().isEmpty()) {
@@ -126,7 +124,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 				context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
 				context.put(LycheeContextKey.RECIPE, recipe.value());
 				if (!level.isClientSide && recipe.value().tickOrApply(context)) {
-					int times = Math.min(context.getItem(0).getCount(), context.getItem(1).getCount());
+					var times = Math.min(context.getItem(0).getCount(), context.getItem(1).getCount());
 					times = recipe.value().getRandomRepeats(Math.max(1, times), context);
 					if (recipe.value().getIngredients().size() == 1) {
 						itemContext.get(1).setIgnoreConsumption(true);

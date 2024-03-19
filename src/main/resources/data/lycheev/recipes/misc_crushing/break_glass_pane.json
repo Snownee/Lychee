@@ -4,7 +4,6 @@
 		"blocks": "#c:glass_panes"
 	},
 	"post": {
-		"type": "place",
-		"block": "*"
+		"type": "place"
 	}
 }

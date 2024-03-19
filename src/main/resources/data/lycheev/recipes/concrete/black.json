@@ -6,6 +6,6 @@
 	"block_in": "water",
 	"post": {
 		"type": "drop_item",
-		"item": "black_concrete"
+		"id": "black_concrete"
 	}
 }
