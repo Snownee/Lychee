@@ -6,7 +6,7 @@
   "block_in": {
     "blocks": ["water_cauldron"],
     "state": {
-      "level": 3
+			"level": "3"
     }
   },
   "post": [
