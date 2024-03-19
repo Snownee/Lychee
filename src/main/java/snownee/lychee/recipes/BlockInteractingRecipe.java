@@ -65,7 +65,10 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 				hitResult.getLocation(),
 				context
 		);
-		return result.map(it -> InteractionResult.SUCCESS).orElse(InteractionResult.PASS);
+		return result.map(it -> {
+			player.swing(hand, true);
+			return InteractionResult.SUCCESS;
+		}).orElse(InteractionResult.PASS);
 	}
 
 	protected final Pair<Ingredient, Ingredient> input;
@@ -129,7 +132,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		if (i != 0) {
 			return i;
 		}
-		i = Integer.compare(blockPredicate == null ? 1 : 0, that.blockPredicate == null ? 1 : 0);
+		i = Integer.compare(blockPredicate.isEmpty() ? 1 : 0, that.blockPredicate.isEmpty() ? 1 : 0);
 		if (i != 0) {
 			return i;
 		}
