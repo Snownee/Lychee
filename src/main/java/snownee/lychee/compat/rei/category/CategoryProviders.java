@@ -42,6 +42,7 @@ public interface CategoryProviders {
 			(id, icon, recipes) -> new ItemAndBlockBaseCategory<>(id, icon, RecipeTypes.BLOCK_EXPLODING) {
 				{
 					inputBlockRect = new Rect2i(18, 30, 20, 20);
+					infoRect = new Rect2i(3, 25, 8, 8);
 				}
 
 				@Override
