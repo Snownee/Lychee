@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Nullable;
 import com.google.common.collect.Sets;
 
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.Lychee;
@@ -61,12 +60,10 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 		final var excluded = Sets.newHashSet();
 		var level = context.get(LycheeContextKey.LEVEL);
 		var itemShapelessContext = context.get(LycheeContextKey.ITEM_SHAPELESS);
-		final var matcher = itemShapelessContext.getMatcher();
-		final var itemStackHolders = context.get(LycheeContextKey.ITEM);
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 		major:
 		while (true) {
-			boolean matched = false;
+			var matched = false;
 			for (final var recipe : recipes) {
 				// recipe without ingredients will only run once to prevent dead loop
 				if (recipe.value().getIngredients().isEmpty() && loop > 0) {
@@ -86,19 +83,22 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 						context.put(LycheeContextKey.RECIPE, recipe.value());
 						matchedAny = matched = true;
 						var times = 1;
+						final var matcher = itemShapelessContext.getMatcher();
 						if (matcher.map(it -> it.inputUsed.length > 0).orElse(false)) {
-							int[] inputUsed = matcher.get().inputUsed;
+							var inputUsed = matcher.get().inputUsed;
 							times = recipe.value().getRandomRepeats(Integer.MAX_VALUE, context);
-							for (int i = 0; i < inputUsed.length; i++) {
+							for (var i = 0; i < inputUsed.length; i++) {
 								if (inputUsed[i] > 0) {
-									ItemStack stack = itemShapelessContext.filteredItems.get(i).getItem();
+									var stack = itemShapelessContext.filteredItems.get(i).getItem();
 									times = Math.min(times, stack.getCount() / inputUsed[i]);
 								}
 							}
 						}
 						match.get().value().applyPostActions(context, times);
 						if (matcher.isPresent()) {
-							itemShapelessContext.totalItems -= itemStackHolders.postApply(!actionContext.avoidDefault, times);
+							itemShapelessContext.totalItems -= context.get(LycheeContextKey.ITEM).postApply(
+									!actionContext.avoidDefault,
+									times);
 						}
 						if (!recipe.value().maxRepeats().isAny()) {
 							break major;
