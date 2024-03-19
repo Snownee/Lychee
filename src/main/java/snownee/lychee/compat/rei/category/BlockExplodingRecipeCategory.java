@@ -15,6 +15,7 @@ public class BlockExplodingRecipeCategory extends ItemAndBlockBaseCategory<Block
 	public BlockExplodingRecipeCategory(LycheeRecipeType<BlockExplodingContext, BlockExplodingRecipe> recipeType, ScreenElement mainIcon) {
 		super(List.of(recipeType), mainIcon);
 		inputBlockRect = new Rect2i(18, 30, 20, 20);
+		infoRect.setPosition(4, 25);
 	}
 
 	@Override
