@@ -123,7 +123,7 @@ public record CustomAction(
 		public static final Codec<CustomAction> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(CustomAction::commonProperties),
 				Data.CODEC.forGetter(CustomAction::data),
-				Codec.BOOL.fieldOf("repeatable").forGetter(CustomAction::repeatable)
+				ExtraCodecs.strictOptionalField(Codec.BOOL, "repeatable", true).forGetter(CustomAction::repeatable)
 		).apply(instance, CustomAction::new));
 
 		@Override

@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "polished_andesite",
+			"id": "polished_andesite",
 			"count": 4
 		},
 		{

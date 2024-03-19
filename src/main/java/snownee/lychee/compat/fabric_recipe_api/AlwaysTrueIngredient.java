@@ -13,7 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import snownee.lychee.Lychee;
 
 public class AlwaysTrueIngredient implements CustomIngredient {
-	public static final ResourceLocation ID = new ResourceLocation(Lychee.ID, "always_true");
+	public static final ResourceLocation ID = Lychee.id("always_true");
 	public static final CustomIngredientSerializer<AlwaysTrueIngredient> SERIALIZER =
 			new CustomIngredientSerializer<>() {
 

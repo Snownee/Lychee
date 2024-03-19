@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "spruce_wood",
+			"id": "spruce_wood",
 			"count": 3
 		},
 		{

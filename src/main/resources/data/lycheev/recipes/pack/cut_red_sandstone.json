@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "cut_red_sandstone",
+			"id": "cut_red_sandstone",
 			"count": 4
 		},
 		{

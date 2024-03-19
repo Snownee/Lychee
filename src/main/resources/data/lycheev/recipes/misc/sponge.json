@@ -6,7 +6,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "sponge"
+			"id": "sponge"
 		},
 		{
 			"type": "execute",

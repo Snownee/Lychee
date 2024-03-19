@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "glowstone",
+			"id": "glowstone",
 			"count": 1
 		},
 		{

@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "amethyst_block",
+			"id": "amethyst_block",
 			"count": 1
 		},
 		{

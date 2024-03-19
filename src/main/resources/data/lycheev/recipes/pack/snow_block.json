@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "snow_block",
+			"id": "snow_block",
 			"count": 1
 		},
 		{

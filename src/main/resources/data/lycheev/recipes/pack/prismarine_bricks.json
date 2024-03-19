@@ -33,7 +33,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "prismarine_bricks"
+			"id": "prismarine_bricks"
 		},
 		{
 			"type": "anvil_damage_chance",

@@ -33,7 +33,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "lapis_block"
+			"id": "lapis_block"
 		},
 		{
 			"type": "anvil_damage_chance",

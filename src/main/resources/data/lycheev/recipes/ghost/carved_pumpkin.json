@@ -8,7 +8,7 @@
 		},
 		{
 			"type": "drop_item",
-			"item": "pumpkin_seeds",
+			"id": "pumpkin_seeds",
 			"count": 4
 		},
 		{

@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.RecipeContext;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
@@ -81,7 +83,8 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		public static final Codec<ItemBurningRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						Ingredient.CODEC_NONEMPTY.fieldOf(ITEM_IN).forGetter(ItemBurningRecipe::input)
+						ExtraCodecs.strictOptionalField(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC, ITEM_IN, Ingredient.EMPTY)
+								.forGetter(ItemBurningRecipe::input)
 				).apply(instance, ItemBurningRecipe::new));
 
 		@Override

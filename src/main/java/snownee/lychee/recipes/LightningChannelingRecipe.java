@@ -20,6 +20,7 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.codec.CompactListCodec;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
@@ -80,7 +81,7 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 		public static final Codec<LightningChannelingRecipe> CODEC =
 				RecordCodecBuilder.create(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						ExtraCodecs.strictOptionalField(new CompactListCodec<>(Ingredient.CODEC_NONEMPTY), ITEM_IN, List.of())
+						ExtraCodecs.strictOptionalField(new CompactListCodec<>(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC), ITEM_IN, List.of())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, LightningChannelingRecipe::new));
 

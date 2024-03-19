@@ -6,7 +6,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "blaze_powder",
+			"id": "blaze_powder",
 			"count": 3
 		}
 	]

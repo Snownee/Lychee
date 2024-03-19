@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "honeycomb_block",
+			"id": "honeycomb_block",
 			"count": 1
 		},
 		{

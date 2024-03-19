@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "polished_basalt",
+			"id": "polished_basalt",
 			"count": 4
 		},
 		{

@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "polished_blackstone",
+			"id": "polished_blackstone",
 			"count": 4
 		},
 		{

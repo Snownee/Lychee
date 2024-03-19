@@ -19,10 +19,6 @@
     {
       "type": "execute",
       "command": "execute if entity @s[predicate=lychee:is_survival]"
-    },
-    {
-      "type": "custom",
-      "id": "always_true"
     }
   ]
 }

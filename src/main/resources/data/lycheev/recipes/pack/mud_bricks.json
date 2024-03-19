@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "mud_bricks",
+			"id": "mud_bricks",
 			"count": 4
 		},
 		{

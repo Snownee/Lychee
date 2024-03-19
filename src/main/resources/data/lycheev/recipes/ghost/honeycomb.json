@@ -4,7 +4,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "honeycomb",
+			"id": "honeycomb",
 			"count": 3
 		},
 		{

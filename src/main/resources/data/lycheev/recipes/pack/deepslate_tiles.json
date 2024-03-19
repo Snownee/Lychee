@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "deepslate_tiles",
+			"id": "deepslate_tiles",
 			"count": 4
 		},
 		{

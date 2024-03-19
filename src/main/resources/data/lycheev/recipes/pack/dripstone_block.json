@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "dripstone_block",
+			"id": "dripstone_block",
 			"count": 1
 		},
 		{

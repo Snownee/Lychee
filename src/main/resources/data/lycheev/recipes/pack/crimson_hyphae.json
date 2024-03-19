@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "crimson_hyphae",
+			"id": "crimson_hyphae",
 			"count": 3
 		},
 		{

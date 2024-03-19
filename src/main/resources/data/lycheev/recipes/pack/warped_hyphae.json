@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "warped_hyphae",
+			"id": "warped_hyphae",
 			"count": 3
 		},
 		{

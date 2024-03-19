@@ -33,7 +33,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "raw_iron_block"
+			"id": "raw_iron_block"
 		},
 		{
 			"type": "anvil_damage_chance",

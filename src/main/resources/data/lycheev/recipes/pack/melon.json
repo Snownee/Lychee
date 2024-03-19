@@ -33,7 +33,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "melon"
+			"id": "melon"
 		},
 		{
 			"type": "anvil_damage_chance",

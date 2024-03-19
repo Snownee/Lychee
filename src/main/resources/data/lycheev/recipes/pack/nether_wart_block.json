@@ -33,7 +33,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "nether_wart_block"
+			"id": "nether_wart_block"
 		},
 		{
 			"type": "anvil_damage_chance",

@@ -4,7 +4,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "honey_bottle"
+			"id": "honey_bottle"
 		}
 	],
 	"item_in": {

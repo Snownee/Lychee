@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "oxidized_cut_copper",
+			"id": "oxidized_cut_copper",
 			"count": 4
 		},
 		{

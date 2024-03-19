@@ -24,6 +24,7 @@ import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.LycheeCounter;
 import snownee.lychee.util.RecipeMatcher;
 import snownee.lychee.util.codec.CompactListCodec;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -156,7 +157,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 				LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
 				ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, BLOCK_IN).forGetter(ItemInsideRecipe::blockPredicate),
 				ExtraCodecs.strictOptionalField(Codec.INT, "time", 0).forGetter(ItemInsideRecipe::time),
-				ExtraCodecs.strictOptionalField(new CompactListCodec<>(Ingredient.CODEC_NONEMPTY, true), ITEM_IN, List.of())
+				ExtraCodecs.strictOptionalField(new CompactListCodec<>(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC, true), ITEM_IN, List.of())
 						.forGetter(it -> it.ingredients)
 		).apply(instance, ItemInsideRecipe::new));
 

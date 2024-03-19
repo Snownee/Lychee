@@ -8,7 +8,7 @@
 		},
 		{
 			"type": "drop_item",
-			"item": "hanging_roots"
+			"id": "hanging_roots"
 		},
 		{
 			"type": "damage_item"

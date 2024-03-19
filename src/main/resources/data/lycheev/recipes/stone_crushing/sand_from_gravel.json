@@ -10,7 +10,7 @@
 		},
 		{
 			"type": "drop_item",
-			"item": "flint",
+			"id": "flint",
 			"contextual": {
 				"type": "chance",
 				"chance": 0.2

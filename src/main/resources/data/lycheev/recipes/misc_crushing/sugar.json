@@ -6,11 +6,11 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "sugar"
+			"id": "sugar"
 		},
 		{
 			"type": "drop_item",
-			"item": "sugar",
+			"id": "sugar",
 			"contextual": {
 				"type": "chance",
 				"chance": 0.5

@@ -178,7 +178,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 								.forGetter(it -> it.fallingBlock),
 						ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, "landing_block")
 								.forGetter(BlockCrushingRecipe::landingBlock),
-						ExtraCodecs.strictOptionalField(new CompactListCodec<>(Ingredient.CODEC_NONEMPTY), ITEM_IN, List.of())
+						ExtraCodecs.strictOptionalField(new CompactListCodec<>(ExtraCodecs.withAlternative()), ITEM_IN, List.of())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, BlockCrushingRecipe::new));
 

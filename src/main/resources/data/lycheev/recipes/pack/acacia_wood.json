@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "acacia_wood",
+			"id": "acacia_wood",
 			"count": 3
 		},
 		{

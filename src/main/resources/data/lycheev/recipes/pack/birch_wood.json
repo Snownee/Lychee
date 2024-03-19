@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "birch_wood",
+			"id": "birch_wood",
 			"count": 3
 		},
 		{

@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "quartz_block",
+			"id": "quartz_block",
 			"count": 1
 		},
 		{

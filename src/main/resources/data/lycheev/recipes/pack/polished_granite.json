@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "polished_granite",
+			"id": "polished_granite",
 			"count": 4
 		},
 		{

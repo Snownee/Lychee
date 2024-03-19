@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "waxed_exposed_cut_copper",
+			"id": "waxed_exposed_cut_copper",
 			"count": 4
 		},
 		{

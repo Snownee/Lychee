@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "purpur_block",
+			"id": "purpur_block",
 			"count": 4
 		},
 		{

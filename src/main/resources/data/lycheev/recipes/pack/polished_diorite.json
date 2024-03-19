@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "polished_diorite",
+			"id": "polished_diorite",
 			"count": 4
 		},
 		{

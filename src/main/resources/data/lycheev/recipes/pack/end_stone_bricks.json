@@ -18,7 +18,7 @@
 	"post": [
 		{
 			"type": "drop_item",
-			"item": "end_stone_bricks",
+			"id": "end_stone_bricks",
 			"count": 4
 		},
 		{
