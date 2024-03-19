@@ -1,15 +1,15 @@
 package snownee.lychee.contextual;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.codecs.KeyDispatchCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -69,36 +69,26 @@ public class CustomCondition implements ContextualCondition {
 		return Component.translatable(getDescriptionId(inverted), GsonHelper.getAsString(data, "id"));
 	}
 
+	public JsonObject data() {
+		return data;
+	}
+
+	public String id() {
+		return id;
+	}
+
 	public static class Type implements ContextualConditionType<CustomCondition> {
 		// TODO 需要测试能不能用
-		public static final Codec<CustomCondition> CODEC =
-				KeyDispatchCodec.unsafe(
-						"id",
-						Codec.STRING,
-						(JsonElement it) -> {
-							try {
-								return DataResult.success(
-										GsonHelper.getAsString(
-												it.getAsJsonObject(),
-												"id"
-										));
-							} catch (Exception e) {
-								return DataResult.error(e::getMessage);
-							}
-						},
-						(it) -> DataResult.success(ExtraCodecs.JSON),
-						(it) -> DataResult.success(ExtraCodecs.JSON)
-				).flatXmap(it -> {
+		public static final Codec<CustomCondition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				Codec.STRING.fieldOf("id").forGetter(CustomCondition::id),
+				ExtraCodecs.strictOptionalField(ExtraCodecs.JSON.comapFlatMap(it -> {
 					try {
-						final var json = it.getAsJsonObject();
-						return DataResult.success(new CustomCondition(
-								GsonHelper.getAsString(json, "id"),
-								json.getAsJsonObject()
-						));
+						return DataResult.success(it.getAsJsonObject());
 					} catch (Exception e) {
 						return DataResult.error(e::getMessage);
 					}
-				}, it -> DataResult.success(it.data)).codec();
+				}, Function.identity()), "data", new JsonObject()).forGetter(CustomCondition::data)
+		).apply(instance, CustomCondition::new));
 
 		@Override
 		public @NotNull Codec<CustomCondition> codec() {

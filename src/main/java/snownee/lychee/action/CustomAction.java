@@ -1,12 +1,12 @@
 package snownee.lychee.action;
 
-import java.util.Objects;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -26,13 +26,19 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record CustomAction(
 		PostActionCommonProperties commonProperties,
-		Data data,
+		String id,
+		JsonObject data,
 		boolean canRepeat,
 		Apply applyFunc
 ) implements PostAction {
 
-	public CustomAction(PostActionCommonProperties commonProperties, Data data, boolean canRepeat) {
-		this(commonProperties, data, canRepeat, null);
+	public CustomAction(
+			PostActionCommonProperties commonProperties,
+			String id,
+			JsonObject json,
+			boolean canRepeat
+	) {
+		this(commonProperties, id, json, canRepeat, null);
 	}
 
 	@Override
@@ -59,42 +65,51 @@ public record CustomAction(
 
 	@Override
 	public void validate(ILycheeRecipe<?> recipe) {
-		CommonProxy.postCustomActionEvent(data.id, this, recipe);
+		CommonProxy.postCustomActionEvent(id, this, recipe);
 	}
 
 	@Override
 	public PostActionCommonProperties commonProperties() {return commonProperties;}
-
-	public Data data() {return data;}
 
 	public boolean canRepeat() {return canRepeat;}
 
 	public Apply applyFunc() {return applyFunc;}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) {
+	public String id() {
+		return id;
+	}
+
+	public JsonObject data() {
+		return data;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) {
 			return true;
 		}
-		if (obj == null || obj.getClass() != this.getClass()) {
+		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		var that = (CustomAction) obj;
-		return Objects.equals(this.commonProperties, that.commonProperties) &&
-				Objects.equals(this.data, that.data) &&
-				this.canRepeat == that.canRepeat &&
-				Objects.equals(this.applyFunc, that.applyFunc);
+		final CustomAction that = (CustomAction) o;
+		return canRepeat == that.canRepeat && Objects.equal(
+				commonProperties,
+				that.commonProperties
+		) && Objects.equal(id, that.id) && Objects.equal(data, that.data) &&
+				Objects.equal(applyFunc, that.applyFunc);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(commonProperties, data, canRepeat, applyFunc);
+		return Objects.hashCode(commonProperties, id, data, canRepeat, applyFunc);
 	}
 
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
 				.add("commonProperties", commonProperties)
+				.add("id", id)
 				.add("data", data)
 				.add("canRepeat", canRepeat)
 				.add("applyFunc", applyFunc)
@@ -122,7 +137,14 @@ public record CustomAction(
 	public static class Type implements PostActionType<CustomAction> {
 		public static final Codec<CustomAction> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(CustomAction::commonProperties),
-				Data.CODEC.forGetter(CustomAction::data),
+				Codec.STRING.fieldOf("id").forGetter(CustomAction::id),
+				ExtraCodecs.strictOptionalField(ExtraCodecs.JSON.comapFlatMap(it -> {
+					try {
+						return DataResult.success(it.getAsJsonObject());
+					} catch (Exception e) {
+						return DataResult.error(e::getMessage);
+					}
+				}, Function.identity()), "data", new JsonObject()).forGetter(CustomAction::data),
 				ExtraCodecs.strictOptionalField(Codec.BOOL, "repeatable", true).forGetter(CustomAction::repeatable)
 		).apply(instance, CustomAction::new));
 

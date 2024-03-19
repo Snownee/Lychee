@@ -29,7 +29,7 @@ public interface LycheeContextKey<T> {
 	LycheeContextKey<ItemStackHolderCollection> ITEM = register("item");
 	LycheeContextKey<ActionContext> ACTION = register("action");
 	LycheeContextKey<ActionMarker> MARKER = register("marker");
-	LycheeContextKey<JsonContext> JSON = register("json");
+	LycheeContextKey<JsonContext> JSON = register("data");
 
 	LycheeContextKey<AnvilContext> ANVIL = register("anvil");
 

@@ -36,7 +36,7 @@ public final class LycheeCodecs {
 
 	public static final Codec<Pair<Ingredient, Ingredient>> PAIR_INGREDIENT_CODEC =
 			ExtraCodecs.withAlternative(
-					ExtraCodecs.sizeLimitedList(ExtraCodecs.nonEmptyList(LycheeCodecs.SINGLE_INGREDIENT_CODEC.listOf()), 2)
+					ExtraCodecs.sizeLimitedList(ExtraCodecs.nonEmptyList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC.listOf()), 2)
 							.xmap(
 									it -> Pair.of(it.get(0), it.size() > 1 ? it.get(1) : Ingredient.EMPTY),
 									it -> Util.make(Lists.newArrayList(it.getFirst()), (list) -> {
@@ -44,7 +44,7 @@ public final class LycheeCodecs {
 											list.add(it.getSecond());
 										}
 									})),
-					LycheeCodecs.SINGLE_INGREDIENT_CODEC.xmap(it -> Pair.of(it, Ingredient.EMPTY), Pair::getFirst)
+					LycheeCodecs.OPTIONAL_INGREDIENT_CODEC.xmap(it -> Pair.of(it, Ingredient.EMPTY), Pair::getFirst)
 			);
 
 	public static final Codec<ItemStack> PLAIN_ITEM_STACK_CODEC = ExtraCodecs.withAlternative(

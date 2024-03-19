@@ -25,6 +25,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.RecipeMatcher;
 import snownee.lychee.util.codec.CompactListCodec;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -178,7 +179,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 								.forGetter(it -> it.fallingBlock),
 						ExtraCodecs.strictOptionalField(BlockPredicateExtensions.CODEC, "landing_block")
 								.forGetter(BlockCrushingRecipe::landingBlock),
-						ExtraCodecs.strictOptionalField(new CompactListCodec<>(ExtraCodecs.withAlternative()), ITEM_IN, List.of())
+						ExtraCodecs.strictOptionalField(new CompactListCodec<>(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC), ITEM_IN, List.of())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, BlockCrushingRecipe::new));
 

@@ -70,7 +70,7 @@ recipes = [
 ]
 
 for recipe in recipes:
-    with open("%s.json" % recipe[1], "w") as f:
+    with open("%s.data" % recipe[1], "w") as f:
         f.write(template % (
             recipe[0], recipe[0], recipe[0], recipe[0], recipe[0], recipe[0], recipe[0], recipe[0], recipe[0],
             recipe[1]))
@@ -167,5 +167,5 @@ recipes = [
 ]
 
 for recipe in recipes:
-    with open("%s.json" % recipe[1], "w") as f:
+    with open("%s.data" % recipe[1], "w") as f:
         f.write(template % (recipe[0], recipe[0], recipe[0], recipe[0], recipe[1], recipe[2]))

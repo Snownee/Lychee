@@ -33,5 +33,5 @@ recipes = [
 ]
 
 for recipe in recipes:
-    with open("%s.json" % recipe[1], "w") as f:
+    with open("%s.data" % recipe[1], "w") as f:
         f.write(tag_template % recipe)
