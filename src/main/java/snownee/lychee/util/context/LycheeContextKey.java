@@ -38,7 +38,7 @@ public interface LycheeContextKey<T> {
 
 	LycheeContextKey<CraftingContext> CRAFTING = register("crafting");
 
-	LycheeContextKey<BlockState> DRIPSTONE_ROOT = register("dripstone_root");
+	LycheeContextKey<BlockState> DRIPSTONE_SOURCE = register("dripstone_root");
 
 	static <T extends LycheeContextKey<?>> T register(ResourceLocation location, T object) {
 		Registry.register(LycheeRegistries.CONTEXT, location, object);

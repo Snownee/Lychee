@@ -81,6 +81,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		var targetBlock = level.getBlockState(targetPos);
 		var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
+		context.put(LycheeContextKey.DRIPSTONE_SOURCE, sourceBlock);
 		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, targetBlock);
 		var origin = new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.99, targetPos.getZ() + 0.5);
@@ -117,7 +118,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		return BlockPredicateExtensions.unsafeMatches(
 				level,
 				sourceBlock,
-				context.get(LycheeContextKey.DRIPSTONE_ROOT),
+				context.get(LycheeContextKey.DRIPSTONE_SOURCE),
 				() -> level.getBlockEntity(lootParamsContext.get(LycheeLootContextParams.BLOCK_POS))
 		);
 	}
