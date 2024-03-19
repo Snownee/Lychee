@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -35,8 +36,10 @@ import snownee.lychee.contextual.Not;
 import snownee.lychee.mixin.particles.PointedDripstoneBlockAccess;
 import snownee.lychee.mixin.predicates.LocationPredicate$BuilderAccess;
 import snownee.lychee.util.action.Job;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
@@ -51,6 +54,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 
 	private float chance = 1;
 	protected final @NotNull BlockPredicate targetBlock;
+
 	protected DripstoneRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			@NotNull BlockPredicate sourceBlock,
@@ -95,11 +99,12 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		level.levelEvent(LevelEvent.DRIPSTONE_DRIP, tipPos, 0);
 		var i = tipPos.getY() - targetPos.getY();
 		var j = 50 + i;
-		var breakAction = new Break();
 		var builder = new LocationPredicate.Builder();
 		((LocationPredicate$BuilderAccess) builder).setBlock(Optional.of(recipe.value().targetBlock));
 		var check = (LocationCheck) LocationCheck.checkLocation(builder).build();
-		breakAction.conditions().conditions().add(new Not(new Location(check)));
+		var breakAction = new Break(new PostActionCommonProperties(
+				Optional.empty(),
+				new ContextualHolder(Lists.newArrayList(new Not(new Location(check))))));
 		var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.jobs.offer(new Job(breakAction, 1));
 		actionContext.jobs.offer(new Job(new Delay(j / 20F), 1));

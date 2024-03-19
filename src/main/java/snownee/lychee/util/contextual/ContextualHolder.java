@@ -49,6 +49,12 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		this.overrideDesc = overrideDesc;
 	}
 
+	public ContextualHolder(List<ContextualCondition> conditions) {
+		this.conditions = conditions;
+		this.secretFlags = null;
+		this.overrideDesc = null;
+	}
+
 	private static ContextualHolder pack(List<ContextualConditionData<?>> holders) {
 		if (holders.isEmpty()) {
 			return EMPTY;
