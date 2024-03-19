@@ -23,7 +23,9 @@ public class PointedDripstoneBlockMixin {
 					target = "Lnet/minecraft/world/level/block/PointedDripstoneBlock;getFluidAboveStalactite" +
 							"(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;" +
 							"Lnet/minecraft/world/level/block/state/BlockState;)Ljava/util/Optional;"
-			), method = "maybeTransferFluid", cancellable = true
+			),
+			method = "maybeTransferFluid",
+			cancellable = true
 	)
 	private static void lychee_maybeTransferFluid(
 			BlockState blockState,

@@ -10,7 +10,11 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundExplodePacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -46,6 +50,27 @@ public record Explode(
 		var explosion = new Explosion(level, source, pos.x, pos.y, pos.z, radius, fire, blockInteraction);
 		explosion.explode();
 		explosion.finalizeExplosion(true);
+		if (!explosion.interactsWithBlocks()) {
+			explosion.clearToBlow();
+		}
+		if (level instanceof ServerLevel serverLevel) {
+			for (var player : serverLevel.players()) {
+				if (!(player.distanceToSqr(pos) < 4096.0)) {
+					continue;
+				}
+				player.connection.send(new ClientboundExplodePacket(
+						pos.x,
+						pos.y,
+						pos.z,
+						radius,
+						explosion.getToBlow(),
+						explosion.getHitPlayers().get(player),
+						blockInteraction,
+						ParticleTypes.EXPLOSION,
+						ParticleTypes.EXPLOSION_EMITTER,
+						SoundEvents.GENERIC_EXPLODE));
+			}
+		}
 	}
 
 	@Override

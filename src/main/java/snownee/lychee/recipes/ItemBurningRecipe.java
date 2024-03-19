@@ -5,7 +5,9 @@ import org.jetbrains.annotations.NotNull;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
@@ -55,7 +57,14 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 
 	@Override
 	public boolean matches(LycheeContext context, Level level) {
-		return false;
+		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		ItemStack stack = ((ItemEntity) lootParamsContext.get(LootContextParams.THIS_ENTITY)).getItem();
+		return input.test(stack);
+	}
+
+	@Override
+	public @NotNull NonNullList<Ingredient> getIngredients() {
+		return NonNullList.of(Ingredient.EMPTY, input);
 	}
 
 	@Override
