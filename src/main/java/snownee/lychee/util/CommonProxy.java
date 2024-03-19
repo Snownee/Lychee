@@ -263,7 +263,10 @@ public class CommonProxy {
 		return recipeManager;
 	}
 
-	public static void setRecipeManager(RecipeManager recipeManager) {
+	public static void setRecipeManager(RecipeManager recipeManager, boolean fromServer) {
+		if (!fromServer && isPhysicalClient() && ClientProxy.isSinglePlayer()) {
+			return; // Fix incompatibility with Polymer: https://github.com/Patbox/polymer/blob/dev/1.20/polymer-core/src/main/java/eu/pb4/polymer/core/mixin/item/packet/SynchronizeRecipesS2CPacketMixin.java#L64
+		}
 		CommonProxy.recipeManager = recipeManager;
 		if (LycheeConfig.debug) {
 			Lychee.LOGGER.trace("Setting recipe manager..");

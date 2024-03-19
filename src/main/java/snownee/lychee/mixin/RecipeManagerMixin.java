@@ -21,12 +21,12 @@ public class RecipeManagerMixin {
 
 	@Inject(at = @At("HEAD"), method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V")
 	private void lychee_apply(Map<ResourceLocation, JsonElement> pObject, ResourceManager pResourceManager, ProfilerFiller pProfiler, CallbackInfo ci) {
-		CommonProxy.setRecipeManager((RecipeManager) (Object) this);
+		CommonProxy.setRecipeManager((RecipeManager) (Object) this, true);
 	}
 
 	@Inject(at = @At("HEAD"), method = "replaceRecipes")
 	private void lychee_replaceRecipes(Iterable<Recipe<?>> pRecipes, CallbackInfo ci) {
-		CommonProxy.setRecipeManager((RecipeManager) (Object) this);
+		CommonProxy.setRecipeManager((RecipeManager) (Object) this, false);
 	}
 
 }

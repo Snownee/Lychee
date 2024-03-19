@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -95,6 +96,10 @@ public interface ClientProxy {
 		PostActionRenderer.register(PostActionTypes.IF, new IfPostActionRenderer());
 		PostActionRenderer.register(PostActionTypes.PLACE, new PlaceBlockPostActionRenderer());
 		PostActionRenderer.register(PostActionTypes.CYCLE_STATE_PROPERTY, new CycleStatePropertyPostActionRenderer());
+	}
+
+	static boolean isSinglePlayer() {
+		return Minecraft.getInstance().getSingleplayerServer() != null;
 	}
 
 	@FunctionalInterface
