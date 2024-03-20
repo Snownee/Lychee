@@ -16,7 +16,7 @@
 	"post": [
 		{
 			"type": "set_item",
-			"item": "water_bucket",
+			"id": "water_bucket",
 			"target": "/item_in/1"
 		},
 		{

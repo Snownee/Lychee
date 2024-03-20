@@ -1,5 +1,5 @@
 {
-  "_": "Preventing damage from lightning for entity. For execute command on low max health mob in lightning channelling post event",
-  "replace": false,
-  "values": []
+	"_": "Preventing damage from lightning for entity. For execute command on low max health mob in lightning channelling post event",
+	"replace": false,
+	"values": []
 }

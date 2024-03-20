@@ -1,5 +1,5 @@
 {
-  "_": "Preventing ignition for entity by lightning. Mainly for the entities summoned by lightning channelling will be ignited by lightning",
-  "replace": false,
-  "values": []
+	"_": "Preventing ignition for entity by lightning. Mainly for the entities summoned by lightning channelling will be ignited by lightning",
+	"replace": false,
+	"values": []
 }

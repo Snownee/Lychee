@@ -14,7 +14,7 @@
       "contextual": {
         "type": "location",
         "predicate": {
-          "lychee:biome_tag": "is_ocean"
+					"biomes": "#is_ocean"
         }
       }
     }

@@ -8,7 +8,6 @@
       "item": "flint"
     }
   ],
-  "block_in": "*",
   "post": [
     {
       "type": "move_towards_face"
