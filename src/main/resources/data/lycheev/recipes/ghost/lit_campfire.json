@@ -9,7 +9,7 @@
 					"campfire"
 				],
 				"state": {
-					"lit": true
+					"lit": "true"
 				}
 			}
 		},
@@ -25,7 +25,7 @@
 			"campfire"
 		],
 		"state": {
-			"lit": false
+			"lit": "false"
 		}
 	}
 }

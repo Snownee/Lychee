@@ -17,7 +17,7 @@
 	"block_in": {
 		"blocks": "#beehives",
 		"state": {
-			"honey_level": 5
+			"honey_level": "5"
 		}
 	}
 }
