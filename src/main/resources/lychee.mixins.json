@@ -9,6 +9,7 @@
 		"CraftingMenuAccess",
 		"DamageSourcesAccess",
 		"DefaultDispenseItemBehaviorMixin",
+		"EntityAccess",
 		"EntityMixin",
 		"IngredientAccess",
 		"ItemEntityAccess",

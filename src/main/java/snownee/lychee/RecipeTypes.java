@@ -24,6 +24,7 @@ import snownee.lychee.recipes.RandomBlockTickingRecipe;
 import snownee.lychee.recipes.RandomBlockTickingRecipeType;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.ItemShapelessRecipeType;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
@@ -50,7 +51,7 @@ public final class RecipeTypes {
 		ANVIL_CRAFTING.hasStandaloneCategory = false;
 	}
 
-	public static final Set<LycheeRecipeType<?, ?>> ALL = Sets.newLinkedHashSet();
+	public static final Set<LycheeRecipeType<LycheeContext, ? extends ILycheeRecipe<LycheeContext>>> ALL = Sets.newLinkedHashSet();
 	public static final LycheeRecipeType<LycheeContext, ItemBurningRecipe> ITEM_BURNING =
 			register(new LycheeRecipeType<>("item_burning", ItemBurningRecipe.class, null));
 	public static final ItemInsideRecipeType ITEM_INSIDE = register(new ItemInsideRecipeType(
@@ -99,7 +100,7 @@ public final class RecipeTypes {
 			LycheeLootContextParamSets.BLOCK_ONLY
 	));
 
-	public static <T extends LycheeRecipeType<?, ?>> T register(T recipeType) {
+	public static <T extends LycheeRecipeType<LycheeContext, ? extends ILycheeRecipe<LycheeContext>>> T register(T recipeType) {
 		ALL.add(recipeType);
 		return Registry.register(BuiltInRegistries.RECIPE_TYPE, recipeType.id, recipeType);
 	}
