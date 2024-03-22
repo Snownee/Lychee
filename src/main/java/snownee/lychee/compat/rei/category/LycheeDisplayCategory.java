@@ -3,11 +3,11 @@ package snownee.lychee.compat.rei.category;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
-import me.shedaniel.rei.api.common.display.Display;
 import net.minecraft.network.chat.Component;
 import snownee.lychee.compat.DisplayUtils;
+import snownee.lychee.compat.rei.display.LycheeDisplay;
 
-public interface LycheeDisplayCategory<T extends Display> extends DisplayCategory<T> {
+public interface LycheeDisplayCategory<T extends LycheeDisplay<?>> extends DisplayCategory<T> {
 	CategoryIdentifier<? extends T> categoryIdentifier();
 
 	@Override

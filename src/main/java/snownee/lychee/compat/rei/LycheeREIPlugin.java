@@ -3,9 +3,12 @@ package snownee.lychee.compat.rei;
 import java.util.Collection;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
+import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import net.minecraft.resources.ResourceLocation;
@@ -13,7 +16,9 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.rei.category.CategoryProviders;
+import snownee.lychee.compat.rei.category.DisplayRegisters;
 import snownee.lychee.compat.rei.category.IconProviders;
+import snownee.lychee.compat.rei.category.LycheeDisplayCategory;
 import snownee.lychee.compat.rei.category.WorkstationRegisters;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.util.action.PostAction;
@@ -51,8 +56,11 @@ public class LycheeREIPlugin implements REIClientPlugin {
 				.build();
 	}
 
+	private final Multimap<ResourceLocation, CategoryHolder> categories = LinkedHashMultimap.create();
+
 	@Override
 	public void registerCategories(CategoryRegistry registry) {
+		categories.clear();
 		for (var recipeType : RecipeTypes.ALL) {
 			if (!recipeType.hasStandaloneCategory) {
 				continue;
@@ -60,16 +68,19 @@ public class LycheeREIPlugin implements REIClientPlugin {
 
 			var generatedCategories = generateCategories(recipeType);
 
+			var categoryProvider = CategoryProviders.get(recipeType);
+
 			// TODO For developing
-			if (CategoryProviders.get(recipeType) == null) {
+			if (categoryProvider == null) {
 				continue;
 			}
 
 			generatedCategories.asMap().forEach((id, recipes) -> {
-				var category = CategoryProviders.get(recipeType).get(
+				var category = categoryProvider.get(
 						(CategoryIdentifier) id,
 						IconProviders.get(recipeType).get(recipes),
 						(Collection) recipes);
+				categories.put(recipeType.categoryId, new CategoryHolder(category, (Collection) recipes));
 				registry.add(category);
 				var workstationRegister = WorkstationRegisters.get(recipeType);
 				if (workstationRegister != null) {
@@ -78,4 +89,18 @@ public class LycheeREIPlugin implements REIClientPlugin {
 			});
 		}
 	}
+
+	@Override
+	public void registerDisplays(DisplayRegistry registry) {
+		categories.asMap().forEach((id, categories) -> {
+			var displayRegister = DisplayRegisters.get(id);
+			for (var category : categories) {
+				displayRegister.consume(registry, (LycheeDisplayCategory) category.category, category.recipes);
+			}
+		});
+	}
+
+	public record CategoryHolder(
+			LycheeDisplayCategory<?> category,
+			Collection<RecipeHolder<ILycheeRecipe<LycheeContext>>> recipes) {}
 }

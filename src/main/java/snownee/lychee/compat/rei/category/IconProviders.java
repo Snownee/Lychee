@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.common.util.EntryStacks;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.RecipeTypes;
@@ -15,19 +16,19 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public interface IconProviders {
-	Map<LycheeRecipeType<LycheeContext, ?>, IconProvider> ALL = Maps.newHashMap();
+	Map<ResourceLocation, IconProvider> ALL = Maps.newHashMap();
 
 	IconProvider BLOCK_CRUSHING = register(RecipeTypes.BLOCK_CRUSHING, (recipes) -> EntryStacks.of(Items.ANVIL));
 
 	static <R extends ILycheeRecipe<LycheeContext>> IconProvider register(
 			LycheeRecipeType<LycheeContext, R> recipeType,
 			IconProvider renderer) {
-		ALL.put(recipeType, renderer);
+		ALL.put(recipeType.categoryId, renderer);
 		return renderer;
 	}
 
 	static <R extends ILycheeRecipe<LycheeContext>> IconProvider get(LycheeRecipeType<LycheeContext, R> recipeType) {
-		return ALL.get(recipeType);
+		return ALL.get(recipeType.categoryId);
 	}
 
 	@FunctionalInterface

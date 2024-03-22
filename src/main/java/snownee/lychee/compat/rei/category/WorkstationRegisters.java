@@ -24,7 +24,7 @@ public interface WorkstationRegisters {
 	Map<ResourceLocation, WorkstationRegister<?>> ALL = Maps.newHashMap();
 
 	WorkstationRegister<BlockCrushingRecipe> BLOCK_CRUSHING = register(
-			RecipeTypes.BLOCK_CRUSHING.categoryId,
+			RecipeTypes.BLOCK_CRUSHING,
 			(registry, category, recipes) -> {
 				recipes.stream()
 						.<BlockPredicate>mapMulti((recipe, consumer) -> {
@@ -48,9 +48,9 @@ public interface WorkstationRegisters {
 	}
 
 	static <R extends ILycheeRecipe<LycheeContext>> WorkstationRegister<R> register(
-			ResourceLocation type,
+			LycheeRecipeType<LycheeContext, R> type,
 			WorkstationRegister<R> provider) {
-		ALL.put(type, provider);
+		ALL.put(type.categoryId, provider);
 		return provider;
 	}
 

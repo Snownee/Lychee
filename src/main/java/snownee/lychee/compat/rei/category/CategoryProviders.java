@@ -20,7 +20,7 @@ public interface CategoryProviders {
 	Map<ResourceLocation, CategoryProvider<?>> ALL = Maps.newHashMap();
 
 	CategoryProvider<BlockCrushingRecipe> BLOCK_CRUSHING = register(
-			RecipeTypes.BLOCK_CRUSHING.categoryId,
+			RecipeTypes.BLOCK_CRUSHING,
 			(id, icon, recipes) -> new BlockCrushingRecipeCategory(id, icon));
 
 	static <R extends ILycheeRecipe<LycheeContext>> CategoryProvider<R> get(LycheeRecipeType<LycheeContext, R> type) {
@@ -28,9 +28,9 @@ public interface CategoryProviders {
 	}
 
 	static <R extends ILycheeRecipe<LycheeContext>> CategoryProvider<R> register(
-			ResourceLocation type,
+			LycheeRecipeType<LycheeContext, R> type,
 			CategoryProvider<R> provider) {
-		ALL.put(type, provider);
+		ALL.put(type.categoryId, provider);
 		return provider;
 	}
 
