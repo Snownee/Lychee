@@ -5,9 +5,11 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.Util;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
@@ -136,7 +138,9 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	@Override
 	public List<BlockPredicate> getBlockInputs() {
-		return List.of(fallingBlock, landingBlock.orElse(null));
+		return Util.make(Lists.newArrayList(fallingBlock), it -> {
+			landingBlock.ifPresent(it::add);
+		});
 	}
 
 	@Override

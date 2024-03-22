@@ -47,7 +47,7 @@ public class LycheeREIPlugin implements REIClientPlugin {
 							map.put(
 									CategoryIdentifier.of(composeCategoryIdentifier(
 											recipeType.categoryId,
-											Lychee.id(recipeHolder.value().group()))),
+											new ResourceLocation(recipeHolder.value().group()))),
 									recipeHolder
 							);
 							return map;
