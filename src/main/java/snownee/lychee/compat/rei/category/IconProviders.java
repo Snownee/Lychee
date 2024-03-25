@@ -19,6 +19,7 @@ public interface IconProviders {
 	Map<ResourceLocation, IconProvider> ALL = Maps.newHashMap();
 
 	IconProvider BLOCK_CRUSHING = register(RecipeTypes.BLOCK_CRUSHING, (recipes) -> EntryStacks.of(Items.ANVIL));
+	IconProvider LIGHTNING_CHANNELING = register(RecipeTypes.LIGHTNING_CHANNELING, (recipes) -> EntryStacks.of(Items.LIGHTNING_ROD));
 
 	static <R extends ILycheeRecipe<LycheeContext>> IconProvider register(
 			LycheeRecipeType<LycheeContext, R> recipeType,

@@ -11,7 +11,7 @@ public abstract class LycheeDisplayCategory<T extends LycheeDisplay<?>> implemen
 	private final CategoryIdentifier<? extends T> categoryIdentifier;
 	public Renderer icon;
 
-	public LycheeDisplayCategory(Renderer icon, CategoryIdentifier<? extends T> categoryIdentifier) {
+	public LycheeDisplayCategory(CategoryIdentifier<? extends T> categoryIdentifier, Renderer icon) {
 		this.icon = icon;
 		this.categoryIdentifier = categoryIdentifier;
 	}

@@ -6,25 +6,31 @@ import com.google.common.collect.Lists;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public abstract class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>, D extends LycheeDisplay<T>> extends LycheeCategory<T>,
-		LycheeDisplayCategory<D> {
+public abstract class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>> extends LycheeDisplayCategory<LycheeDisplay<T>> implements LycheeCategory<T> {
 
-	public ItemShapelessRecipeCategory(LycheeRecipeType<LycheeContext, T> recipeType) {
-		super();
-		infoRect = new Rect2i(3, 25, 8, 8);
+	private static final Rect2i INFO_RECT = new Rect2i(3, 25, 8, 8);
+
+	public ItemShapelessRecipeCategory(CategoryIdentifier<? extends LycheeDisplay<T>> id, Renderer icon) {
+		super(id, icon);
 	}
 
 	@Override
-	public int getDisplayWidth(D display) {
+	public Rect2i infoRect() {
+		return INFO_RECT;
+	}
+
+	@Override
+	public int getDisplayWidth(LycheeDisplay<T> display) {
 		return contentWidth();
 	}
 
@@ -34,7 +40,7 @@ public abstract class ItemShapelessRecipeCategory<T extends ILycheeRecipe<Lychee
 	}
 
 	@Override
-	public List<Widget> setupDisplay(D display, Rectangle bounds) {
+	public List<Widget> setupDisplay(LycheeDisplay<T> display, Rectangle bounds) {
 		Point startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
 		T recipe = display.recipe();
 		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
@@ -47,7 +53,7 @@ public abstract class ItemShapelessRecipeCategory<T extends ILycheeRecipe<Lychee
 		return widgets;
 	}
 
-	public void drawExtra(List<Widget> widgets, D display, Rectangle bounds) {
+	public void drawExtra(List<Widget> widgets, LycheeDisplay<T> display, Rectangle bounds) {
 		Rectangle iconBounds = new Rectangle(bounds.getCenterX() - 8, bounds.y + 19, 24, 24);
 		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 			graphics.pose().pushPose();

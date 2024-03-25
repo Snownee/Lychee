@@ -37,12 +37,12 @@ public final class BlockCrushingRecipeCategory extends LycheeDisplayCategory<Lyc
 	private final Rect2i landingBlockRect;
 
 	public BlockCrushingRecipeCategory(
-			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> categoryIdentifier,
+			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> id,
 			Renderer icon,
 			Rect2i fallingBlockRect,
 			Rect2i landingBlockRect) {
-		super(icon, categoryIdentifier);
-		this.categoryIdentifier = categoryIdentifier;
+		super(id, icon);
+		this.categoryIdentifier = id;
 		this.fallingBlockRect = fallingBlockRect;
 		this.landingBlockRect = landingBlockRect;
 	}
