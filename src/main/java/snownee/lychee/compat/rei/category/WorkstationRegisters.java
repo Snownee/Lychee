@@ -6,15 +6,20 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
-import me.shedaniel.rei.api.common.entry.EntryStack;
-import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
+import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.recipes.BlockCrushingRecipe;
+import snownee.lychee.recipes.ItemExplodingRecipe;
+import snownee.lychee.recipes.LightningChannelingRecipe;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -38,10 +43,24 @@ public interface WorkstationRegisters {
 								var itemStack = item.getDefaultInstance();
 								registry.addWorkstations(
 										category.getCategoryIdentifier(),
-										EntryStack.of(VanillaEntryTypes.ITEM, itemStack));
+										EntryStacks.of(itemStack));
 							}
 						});
 			});
+
+	WorkstationRegister<LightningChannelingRecipe> LIGHTNING_CHANNELING = register(
+			RecipeTypes.LIGHTNING_CHANNELING,
+			(registry, category, recipes) -> registry.addWorkstations(category.getCategoryIdentifier(), EntryStacks.of(Items.LIGHTNING_ROD))
+	);
+
+	WorkstationRegister<ItemExplodingRecipe> ITEM_EXPLODING = register(
+			RecipeTypes.ITEM_EXPLODING,
+			(registry, category, recipes) -> {
+				for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
+					registry.addWorkstations(category.getCategoryIdentifier(), EntryStacks.of(item));
+				}
+			}
+	);
 
 	static <R extends ILycheeRecipe<LycheeContext>> WorkstationRegister<R> get(LycheeRecipeType<LycheeContext, R> type) {
 		return (WorkstationRegister<R>) ALL.get(type.categoryId);
