@@ -33,8 +33,7 @@ public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<ItemBurn
 	}
 
 	@Override
-	protected boolean shouldRenderInputBlock() {
+	protected boolean needRenderInputBlock(ItemBurningRecipe recipe) {
 		return false;
 	}
-
 }

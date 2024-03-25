@@ -120,14 +120,6 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 
 		renderIngredientGroup(widgets, startPoint, recipe, y);
 
-//		if (recipe instanceof ItemInsideRecipe) {
-//			ingredientGroup(widgets, startPoint, recipe, 40, y);
-//		} else if (recipe instanceof BlockInteractingRecipe) {
-//			ingredientGroup(widgets, startPoint, recipe, 22, 21);
-//		} else {
-//			ingredientGroup(widgets, startPoint, recipe, 12, 21);
-//		}
-
 		actionGroup(widgets, startPoint, recipe, contentWidth() - 34, y);
 
 		InteractiveWidget reactive;
@@ -138,7 +130,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 			widgets.add(reactive);
 		}
 
-		if (shouldRenderInputBlock()) {
+		if (needRenderInputBlock(recipe)) {
 			reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, inputBlockRect));
 			reactive.setTooltipFunction($ -> {
 				var list = getInputBlock(recipe).map(it -> BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), it))
@@ -154,8 +146,8 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 		return widgets;
 	}
 
-	protected boolean shouldRenderInputBlock() {
-		return true;
+	protected boolean needRenderInputBlock(T recipe) {
+		return getInputBlock(recipe).isPresent();
 	}
 
 	protected void renderIngredientGroup(List<Widget> widgets, Point startPoint, T recipe, int y) {

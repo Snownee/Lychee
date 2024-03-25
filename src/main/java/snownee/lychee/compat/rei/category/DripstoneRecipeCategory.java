@@ -1,70 +1,74 @@
 package snownee.lychee.compat.rei.category;
 
+import java.util.Collections;
 import java.util.List;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.google.common.collect.Lists;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
-import me.shedaniel.rei.api.common.util.EntryStacks;
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.JEIREI;
-import snownee.lychee.compat.rei.REICompat;
-import snownee.lychee.compat.rei.ReactiveWidget;
-import snownee.lychee.compat.rei.display.BaseREIDisplay;
-import snownee.lychee.core.def.BlockPredicateHelper;
-import snownee.lychee.dripstone_dripping.DripstoneContext;
-import snownee.lychee.dripstone_dripping.DripstoneRecipe;
-import snownee.lychee.dripstone_dripping.DripstoneRecipeType;
+import snownee.lychee.client.gui.ILightingSettings;
+import snownee.lychee.compat.rei.LycheeREIPlugin;
+import snownee.lychee.compat.rei.display.LycheeDisplay;
+import snownee.lychee.compat.rei.elements.InteractiveWidget;
+import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.predicates.BlockPredicateExtensions;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public class DripstoneRecipeCategory extends LycheeCategory<DripstoneContext, DripstoneRecipe, BaseREIDisplay<DripstoneRecipe>> {
+public class DripstoneRecipeCategory extends LycheeDisplayCategory<LycheeDisplay<DripstoneRecipe>> implements LycheeCategory<DripstoneRecipe> {
 
-	private Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
-	private Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
+	private final Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
+	private final Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
 
-	public DripstoneRecipeCategory(DripstoneRecipeType recipeType) {
-		super();
-		infoRect.setX(-10);
+	public DripstoneRecipeCategory(
+			CategoryIdentifier<? extends LycheeDisplay<DripstoneRecipe>> categoryIdentifier,
+			Renderer icon
+	) {
+		super(categoryIdentifier, icon);
+		infoRect().setX(-10);
 	}
+
 
 	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {
 		GuiGameElement.of(state)
 				.scale(12)
-				.lighting(JEIREI.BLOCK_LIGHTING)
+				.lighting(ILightingSettings.DEFAULT_3D)
 				.atLocal(localX, localY, localZ)
 				.rotateBlock(12.5, -22.5, 0)
 				.render(graphics);
 	}
 
 	@Override
-	public List<Widget> setupDisplay(BaseREIDisplay<DripstoneRecipe> display, Rectangle bounds) {
-		Point startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
-		DripstoneRecipe recipe = display.recipe;
-		List<Widget> widgets = super.setupDisplay(display, bounds);
+	public List<Widget> setupDisplay(LycheeDisplay<DripstoneRecipe> display, Rectangle bounds) {
+		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
+		var recipe = display.recipe();
+		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
 		drawInfoBadgeIfNeeded(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
-			PoseStack matrixStack = graphics.pose();
+			var matrixStack = graphics.pose();
 			matrixStack.pushPose();
 			matrixStack.translate(startPoint.x, startPoint.y, 0);
 
-			BlockState targetBlock = getTargetBlock(recipe);
+			var targetBlock = getTargetBlock(recipe);
 			if (targetBlock.getLightEmission() < 5) {
 				matrixStack.pushPose();
 				matrixStack.translate(31, 56, 0);
-				float shadow = 0.5F;
+				var shadow = 0.5F;
 				matrixStack.scale(shadow, shadow, shadow);
 				matrixStack.translate(-26, -5.5, 0);
 				AllGuiTextures.JEI_SHADOW.render(graphics, 0, 0);
@@ -87,12 +91,12 @@ public class DripstoneRecipeCategory extends LycheeCategory<DripstoneContext, Dr
 			matrixStack.popPose();
 		}));
 
-		int y = recipe.conditions().showingCount() > 9 ? 26 : 28;
+		var y = recipe.conditions().showingCount() > 9 ? 26 : 28;
 		actionGroup(widgets, startPoint, recipe, contentWidth() - 24, y);
 
-		ReactiveWidget reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, sourceBlockRect));
+		var reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, sourceBlockRect));
 		reactive.setTooltipFunction($ -> {
-			List<Component> list = BlockPredicateHelper.getTooltips(getSourceBlock(recipe), recipe.getSourceBlock());
+			var list = BlockPredicateExtensions.getTooltips(getSourceBlock(recipe), recipe.sourceBlock());
 			return list.toArray(new Component[0]);
 		});
 		reactive.setOnClick(($, button) -> {
@@ -100,10 +104,12 @@ public class DripstoneRecipeCategory extends LycheeCategory<DripstoneContext, Dr
 		});
 		widgets.add(reactive);
 
-		reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, targetBlockRect));
+		reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, targetBlockRect));
 		reactive.setTooltipFunction($ -> {
-			List<Component> list = BlockPredicateHelper.getTooltips(getTargetBlock(recipe), recipe.getBlock());
-			return list.toArray(new Component[0]);
+			var components = recipe.blockPredicate()
+					.map(it -> BlockPredicateExtensions.getTooltips(getTargetBlock(recipe), it))
+					.orElse(Collections.emptyList());
+			return components.toArray(new Component[0]);
 		});
 		reactive.setOnClick(($, button) -> {
 			clickBlock(getTargetBlock(recipe), button);
@@ -115,21 +121,20 @@ public class DripstoneRecipeCategory extends LycheeCategory<DripstoneContext, Dr
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {
 		return CommonProxy.getCycledItem(
-				BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()),
+				BlockPredicateExtensions.getShowcaseBlockStates(recipe.sourceBlock()),
 				Blocks.AIR.defaultBlockState(),
 				2000);
 	}
 
 	private BlockState getTargetBlock(DripstoneRecipe recipe) {
 		return CommonProxy.getCycledItem(
-				BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()),
+				recipe.blockPredicate().map(BlockPredicateExtensions::getShowcaseBlockStates).orElse(Collections.emptyList()),
 				Blocks.AIR.defaultBlockState(),
 				2000);
 	}
 
 	@Override
-	public Renderer createIcon(List<DripstoneRecipe> recipes) {
-		return EntryStacks.of(Items.POINTED_DRIPSTONE);
+	public LycheeRecipeType<?, ? extends DripstoneRecipe> recipeType() {
+		return RecipeTypes.DRIPSTONE_DRIPPING;
 	}
-
 }

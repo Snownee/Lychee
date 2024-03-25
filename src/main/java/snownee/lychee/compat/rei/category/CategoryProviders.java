@@ -21,6 +21,7 @@ import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
+import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.ItemInsideRecipe;
@@ -57,6 +58,11 @@ public interface CategoryProviders {
 	CategoryProvider<BlockInteractingRecipe> BLOCK_INTERACTING = register(
 			RecipeTypes.BLOCK_INTERACTING,
 			(id, icon, recipes) -> new BlockInteractionRecipeCategory(id, icon)
+	);
+
+	CategoryProvider<DripstoneRecipe> DRIPSTONE = register(
+			RecipeTypes.DRIPSTONE_DRIPPING,
+			(id, icon, recipes) -> new DripstoneRecipeCategory(id, icon)
 	);
 
 	CategoryProvider<LightningChannelingRecipe> LIGHTNING_CHANNELING = register(

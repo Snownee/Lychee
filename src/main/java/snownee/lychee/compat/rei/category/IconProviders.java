@@ -37,6 +37,9 @@ public interface IconProviders {
 				mainIcon,
 				Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection<RecipeHolder<? extends BlockKeyableRecipe<?>>>) (Collection) recipes))));
 	});
+
+	IconProvider DRIPSTONE = register(RecipeTypes.DRIPSTONE_DRIPPING, (recipes) -> EntryStacks.of(Items.POINTED_DRIPSTONE));
+
 	IconProvider LIGHTNING_CHANNELING = register(RecipeTypes.LIGHTNING_CHANNELING, (recipes) -> EntryStacks.of(Items.LIGHTNING_ROD));
 	IconProvider ITEM_EXPLODING = register(RecipeTypes.ITEM_EXPLODING, (recipes) -> EntryStacks.of(Items.TNT));
 

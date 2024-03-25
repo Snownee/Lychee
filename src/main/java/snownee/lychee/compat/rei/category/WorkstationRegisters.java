@@ -18,6 +18,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
+import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.util.CommonProxy;
@@ -58,7 +59,12 @@ public interface WorkstationRegisters {
 			}
 	);
 
-
+	WorkstationRegister<DripstoneRecipe> DRIPSTONE = register(
+			RecipeTypes.DRIPSTONE_DRIPPING,
+			(registry, category, recipes) -> registry.addWorkstations(
+					category.getCategoryIdentifier(),
+					EntryStacks.of(Items.POINTED_DRIPSTONE))
+	);
 
 	WorkstationRegister<LightningChannelingRecipe> LIGHTNING_CHANNELING = register(
 			RecipeTypes.LIGHTNING_CHANNELING,
