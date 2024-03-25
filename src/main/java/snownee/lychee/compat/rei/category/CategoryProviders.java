@@ -23,6 +23,7 @@ import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
+import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -77,6 +78,11 @@ public interface CategoryProviders {
 					widgets.add(widget);
 				}
 			}
+	);
+
+	CategoryProvider<ItemInsideRecipe> ITEM_INSIDE = register(
+			RecipeTypes.ITEM_INSIDE,
+			(id, icon, recipes) -> new ItemInsideRecipeCategory(id, icon)
 	);
 
 	CategoryProvider<ItemBurningRecipe> ITEM_BURNING = register(

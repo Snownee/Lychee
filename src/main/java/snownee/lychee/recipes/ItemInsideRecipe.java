@@ -114,6 +114,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 		return true;
 	}
 
+
 	@Override
 	public @NotNull RecipeSerializer<ItemInsideRecipe> getSerializer() {
 		return RecipeSerializers.ITEM_INSIDE;
