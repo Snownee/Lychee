@@ -20,6 +20,7 @@ public interface IconProviders {
 
 	IconProvider BLOCK_CRUSHING = register(RecipeTypes.BLOCK_CRUSHING, (recipes) -> EntryStacks.of(Items.ANVIL));
 	IconProvider LIGHTNING_CHANNELING = register(RecipeTypes.LIGHTNING_CHANNELING, (recipes) -> EntryStacks.of(Items.LIGHTNING_ROD));
+	IconProvider ITEM_EXPLODING = register(RecipeTypes.ITEM_EXPLODING, (recipes) -> EntryStacks.of(Items.TNT));
 
 	static <R extends ILycheeRecipe<LycheeContext>> IconProvider register(
 			LycheeRecipeType<LycheeContext, R> recipeType,

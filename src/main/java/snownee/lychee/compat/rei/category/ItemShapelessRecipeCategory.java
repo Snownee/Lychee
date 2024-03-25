@@ -15,13 +15,24 @@ import net.minecraft.client.renderer.Rect2i;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public abstract class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>> extends LycheeDisplayCategory<LycheeDisplay<T>> implements LycheeCategory<T> {
+public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>> extends LycheeDisplayCategory<LycheeDisplay<T>> implements LycheeCategory<T> {
 
 	private static final Rect2i INFO_RECT = new Rect2i(3, 25, 8, 8);
+	private final LycheeRecipeType<LycheeContext, T> recipeType;
 
-	public ItemShapelessRecipeCategory(CategoryIdentifier<? extends LycheeDisplay<T>> id, Renderer icon) {
+	public ItemShapelessRecipeCategory(
+			CategoryIdentifier<? extends LycheeDisplay<T>> id,
+			Renderer icon,
+			LycheeRecipeType<LycheeContext, T> recipeType) {
 		super(id, icon);
+		this.recipeType = recipeType;
+	}
+
+	@Override
+	public LycheeRecipeType<?, ? extends T> recipeType() {
+		return recipeType;
 	}
 
 	@Override
