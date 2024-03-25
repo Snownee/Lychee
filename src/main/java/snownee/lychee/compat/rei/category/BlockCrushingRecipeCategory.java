@@ -68,7 +68,7 @@ public final class BlockCrushingRecipeCategory extends LycheeDisplayCategory<Lyc
 
 		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
 		var recipe = display.recipe();
-		drawInfoBadgeIfNeededIfNeeded(widgets, display, startPoint);
+		drawInfoBadgeIfNeeded(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 			var x = recipe.getIngredients().isEmpty() ? 41 : 77;
 			var anyLandingBlock = recipe.landingBlock().isEmpty();

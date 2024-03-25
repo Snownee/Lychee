@@ -1,6 +1,7 @@
 package snownee.lychee.compat;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -27,6 +28,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -120,11 +122,11 @@ public final class DisplayUtils {
 		return list;
 	}
 
-	public static <T extends ILycheeRecipe<LycheeContext>> Pair<BlockState, Integer> getMostUsedBlock(List<T> recipes) {
+	public static <T extends BlockKeyableRecipe<?>> Pair<BlockState, Integer> getMostUsedBlock(Collection<RecipeHolder<? extends T>> recipes) {
 		var blockStateCount = new Object2IntOpenHashMap<Block>();
 		var blockPredicateMap = Maps.<Block, BlockPredicate>newHashMap();
-		for (T object : recipes) {
-			var recipe = (BlockKeyableRecipe<?>) object;
+		for (var object : recipes) {
+			var recipe = object.value();
 			for (Block block : recipe.blockPredicate().map(BlockPredicateExtensions::matchedBlocks).orElse(Collections.emptySet())) {
 				if (block.defaultBlockState().isAir()) {
 					continue;

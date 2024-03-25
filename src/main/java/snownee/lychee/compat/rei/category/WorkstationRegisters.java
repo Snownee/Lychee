@@ -17,6 +17,7 @@ import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.recipes.BlockCrushingRecipe;
+import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.util.CommonProxy;
@@ -47,6 +48,17 @@ public interface WorkstationRegisters {
 							}
 						});
 			});
+
+	WorkstationRegister<BlockExplodingRecipe> BLOCK_EXPLODING = register(
+			RecipeTypes.BLOCK_EXPLODING,
+			(registry, category, recipes) -> {
+				for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
+					registry.addWorkstations(category.getCategoryIdentifier(), EntryStacks.of(item));
+				}
+			}
+	);
+
+
 
 	WorkstationRegister<LightningChannelingRecipe> LIGHTNING_CHANNELING = register(
 			RecipeTypes.LIGHTNING_CHANNELING,

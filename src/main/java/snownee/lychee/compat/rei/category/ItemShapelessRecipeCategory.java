@@ -55,7 +55,7 @@ public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>>
 		Point startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
 		T recipe = display.recipe();
 		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
-		drawInfoBadgeIfNeededIfNeeded(widgets, display, startPoint);
+		drawInfoBadgeIfNeeded(widgets, display, startPoint);
 		int xCenter = bounds.getCenterX();
 		int y = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9 ? 26 : 28;
 		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y);

@@ -12,12 +12,14 @@ import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.DisplayUtils;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.recipes.BlockCrushingRecipe;
+import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.util.context.LycheeContext;
@@ -30,6 +32,24 @@ public interface CategoryProviders {
 	CategoryProvider<BlockCrushingRecipe> BLOCK_CRUSHING = register(
 			RecipeTypes.BLOCK_CRUSHING,
 			(id, icon, recipes) -> new BlockCrushingRecipeCategory(id, icon));
+
+	CategoryProvider<BlockExplodingRecipe> BLOCK_EXPLODING = register(
+			RecipeTypes.BLOCK_EXPLODING,
+			(id, icon, recipes) -> new ItemAndBlockBaseCategory<>(id, icon, RecipeTypes.BLOCK_EXPLODING) {
+				{
+					inputBlockRect = new Rect2i(18, 30, 20, 20);
+				}
+
+				@Override
+				public void drawExtra(
+						BlockExplodingRecipe recipe,
+						GuiGraphics graphics,
+						double mouseX,
+						double mouseY,
+						int centerX
+				) {}
+			}
+	);
 
 	CategoryProvider<LightningChannelingRecipe> LIGHTNING_CHANNELING = register(
 			RecipeTypes.LIGHTNING_CHANNELING,

@@ -132,7 +132,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return 120;
 	}
 
-	default void drawInfoBadgeIfNeededIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
+	default void drawInfoBadgeIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
 		if (!recipe.conditions().conditions().isEmpty() || recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
 			widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 				var matrixStack = graphics.pose();
@@ -149,8 +149,8 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		}
 	}
 
-	default void drawInfoBadgeIfNeededIfNeeded(List<Widget> widgets, LycheeDisplay<R> display, Point startPoint) {
-		drawInfoBadgeIfNeededIfNeeded(widgets, display.recipe(), startPoint, infoRect());
+	default void drawInfoBadgeIfNeeded(List<Widget> widgets, LycheeDisplay<R> display, Point startPoint) {
+		drawInfoBadgeIfNeeded(widgets, display.recipe(), startPoint, infoRect());
 	}
 
 	default void actionGroup(List<Widget> widgets, Point startPoint, R recipe, int x, int y) {
