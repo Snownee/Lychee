@@ -18,7 +18,6 @@ import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.rei.ScreenElementWrapper;
 import snownee.lychee.compat.rei.SideBlockIcon;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
@@ -28,14 +27,14 @@ public interface IconProviders {
 	IconProvider BLOCK_CRUSHING = register(RecipeTypes.BLOCK_CRUSHING, (recipes) -> EntryStacks.of(Items.ANVIL));
 	IconProvider BLOCK_EXPLODING = register(RecipeTypes.BLOCK_EXPLODING, (recipes) -> new ScreenElementWrapper(new SideBlockIcon(
 			GuiGameElement.of(Items.TNT),
-			Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection<RecipeHolder<? extends BlockKeyableRecipe<?>>>) (Collection) recipes)))));
+			Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection) recipes)))));
 	IconProvider BLOCK_INTERACTING = register(RecipeTypes.BLOCK_INTERACTING, (recipes) -> {
 		var mainIcon = recipes.stream()
 				.map(it -> it.value().getType())
 				.anyMatch(it -> it == RecipeTypes.BLOCK_INTERACTING) ? AllGuiTextures.RIGHT_CLICK : AllGuiTextures.LEFT_CLICK;
 		return new ScreenElementWrapper(new SideBlockIcon(
 				mainIcon,
-				Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection<RecipeHolder<? extends BlockKeyableRecipe<?>>>) (Collection) recipes))));
+				Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection) recipes))));
 	});
 
 	IconProvider DRIPSTONE = register(RecipeTypes.DRIPSTONE_DRIPPING, (recipes) -> EntryStacks.of(Items.POINTED_DRIPSTONE));
@@ -51,7 +50,7 @@ public interface IconProviders {
 
 	IconProvider ITEM_INSIDE = register(RecipeTypes.ITEM_INSIDE, (recipes) -> new ScreenElementWrapper(new SideBlockIcon(
 			AllGuiTextures.JEI_DOWN_ARROW,
-			Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection<RecipeHolder<? extends BlockKeyableRecipe<?>>>) (Collection) recipes)))));
+			Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection) recipes)))));
 
 	static <R extends ILycheeRecipe<LycheeContext>> IconProvider register(
 			LycheeRecipeType<LycheeContext, R> recipeType,
