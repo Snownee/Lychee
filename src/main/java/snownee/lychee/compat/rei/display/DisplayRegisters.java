@@ -20,7 +20,7 @@ public interface DisplayRegisters {
 
 	DisplayRegister<ILycheeRecipe<LycheeContext>> DEFAULT = (registry, category, recipes) -> {
 		for (var recipe : recipes) {
-			registry.add(new SimpleLycheeDisplay<>(recipe.value(), (CategoryIdentifier) category.categoryIdentifier()));
+			registry.add(new SimpleLycheeDisplay<>(recipe.value(), (CategoryIdentifier) category.getCategoryIdentifier()));
 		}
 	};
 
