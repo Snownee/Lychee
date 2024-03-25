@@ -36,7 +36,7 @@ public class DripstoneRecipeCategory extends LycheeCategory<DripstoneContext, Dr
 	private Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
 
 	public DripstoneRecipeCategory(DripstoneRecipeType recipeType) {
-		super(recipeType);
+		super();
 		infoRect.setX(-10);
 	}
 

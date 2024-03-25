@@ -11,7 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
+import snownee.lychee.compat.rei.display.SimpleLycheeDisplay;
 import snownee.lychee.recipes.BlockCrushingRecipe;
+import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
@@ -22,6 +24,13 @@ public interface CategoryProviders {
 	CategoryProvider<BlockCrushingRecipe> BLOCK_CRUSHING = register(
 			RecipeTypes.BLOCK_CRUSHING,
 			(id, icon, recipes) -> new BlockCrushingRecipeCategory(id, icon));
+
+	CategoryProvider<LightningChannelingRecipe> LIGHTNING_CHANNELING = register(
+			RecipeTypes.LIGHTNING_CHANNELING,
+			(id, icon, recipes) -> new ItemShapelessRecipeCategory<LightningChannelingRecipe, SimpleLycheeDisplay<LightningChannelingRecipe>>(
+					id,
+					icon) {}
+	);
 
 	static <R extends ILycheeRecipe<LycheeContext>> CategoryProvider<R> get(LycheeRecipeType<LycheeContext, R> type) {
 		return (CategoryProvider<R>) ALL.get(type.categoryId);

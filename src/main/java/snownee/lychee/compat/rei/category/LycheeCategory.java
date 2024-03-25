@@ -38,16 +38,13 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public abstract class LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
-	public static final int WIDTH = 150;
-	public static final int HEIGHT = 59;
-	protected Rect2i infoRect;
+public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
+	int WIDTH = 150;
+	int HEIGHT = 59;
 
-	public LycheeCategory(LycheeRecipeType<LycheeContext, R> recipeType) {
-		this.infoRect = new Rect2i(4, 25, 8, 8);
-	}
+	Rect2i INFO_RECT = new Rect2i(4, 25, 8, 8);
 
-	public static <T> void slotGroup(
+	static <T> void slotGroup(
 			List<Widget> widgets,
 			Point startPoint,
 			int x,
@@ -74,7 +71,7 @@ public abstract class LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		}
 	}
 
-	public static void actionSlot(List<Widget> widgets, Point startPoint, PostAction action, int x, int y) {
+	static void actionSlot(List<Widget> widgets, Point startPoint, PostAction action, int x, int y) {
 		var slot = LycheeREIPlugin.slot(
 				startPoint,
 				x,
@@ -108,7 +105,7 @@ public abstract class LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		});
 	}
 
-	public static void buildActionSlot(
+	static void buildActionSlot(
 			List<EntryStack<?>> entries,
 			PostAction action,
 			Map<EntryStack<ItemStack>, PostAction> itemMap
@@ -127,13 +124,15 @@ public abstract class LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		}
 	}
 
-	public abstract LycheeRecipeType<?, ? extends R> recipeType();
+	LycheeRecipeType<?, ? extends R> recipeType();
 
-	public int contentWidth() {
+	default Rect2i infoRect() {return INFO_RECT;}
+
+	default int contentWidth() {
 		return 120;
 	}
 
-	public void drawInfoBadgeIfNeededIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
+	default void drawInfoBadgeIfNeededIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
 		if (!recipe.conditions().conditions().isEmpty() || recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
 			widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 				var matrixStack = graphics.pose();
@@ -150,11 +149,11 @@ public abstract class LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		}
 	}
 
-	public void drawInfoBadgeIfNeededIfNeeded(List<Widget> widgets, LycheeDisplay<R> display, Point startPoint) {
-		drawInfoBadgeIfNeededIfNeeded(widgets, display.recipe(), startPoint, infoRect);
+	default void drawInfoBadgeIfNeededIfNeeded(List<Widget> widgets, LycheeDisplay<R> display, Point startPoint) {
+		drawInfoBadgeIfNeededIfNeeded(widgets, display.recipe(), startPoint, infoRect());
 	}
 
-	public void actionGroup(List<Widget> widgets, Point startPoint, R recipe, int x, int y) {
+	default void actionGroup(List<Widget> widgets, Point startPoint, R recipe, int x, int y) {
 		slotGroup(
 				widgets,
 				startPoint,
@@ -164,7 +163,7 @@ public abstract class LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 				LycheeCategory::actionSlot);
 	}
 
-	public void ingredientGroup(List<Widget> widgets, Point startPoint, R recipe, int x, int y) {
+	default void ingredientGroup(List<Widget> widgets, Point startPoint, R recipe, int x, int y) {
 		var ingredients = DisplayUtils.generateShapelessInputs(recipe);
 		slotGroup(widgets, startPoint, x, y, ingredients, (widgets0, startPoint0, ingredient, x0, y0) -> {
 			var items = ingredient.ingredient.getItems();
@@ -191,7 +190,7 @@ public abstract class LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		});
 	}
 
-	public boolean clickBlock(BlockState state, int button) {
+	default boolean clickBlock(BlockState state, int button) {
 		if (state.is(Blocks.CHIPPED_ANVIL) || state.is(Blocks.DAMAGED_ANVIL)) {
 			state = Blocks.ANVIL.defaultBlockState();
 		}
@@ -217,7 +216,7 @@ public abstract class LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 	}
 
 	@FunctionalInterface
-	public interface SlotLayoutFunction<T> {
+	interface SlotLayoutFunction<T> {
 		void apply(List<Widget> widgets, Point startPoint, T item, int x, int y);
 	}
 }

@@ -15,10 +15,11 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public abstract class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>, D extends LycheeDisplay<T>> extends LycheeCategory<T> implements LycheeDisplayCategory<D> {
+public abstract class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>, D extends LycheeDisplay<T>> extends LycheeCategory<T>,
+		LycheeDisplayCategory<D> {
 
 	public ItemShapelessRecipeCategory(LycheeRecipeType<LycheeContext, T> recipeType) {
-		super(recipeType);
+		super();
 		infoRect = new Rect2i(3, 25, 8, 8);
 	}
 

@@ -46,7 +46,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
 
 	public ItemAndBlockBaseCategory(List<LycheeRecipeType<C, T>> recipeTypes, ScreenElement mainIcon) {
-		super(recipeTypes);
+		super();
 		this.mainIcon = mainIcon;
 		infoRect.setPosition(8, 32);
 	}

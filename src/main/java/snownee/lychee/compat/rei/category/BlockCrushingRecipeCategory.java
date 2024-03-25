@@ -2,7 +2,6 @@ package snownee.lychee.compat.rei.category;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import com.google.common.collect.Lists;
 
@@ -29,13 +28,11 @@ import snownee.lychee.recipes.BlockCrushingRecipeType;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-public final class BlockCrushingRecipeCategory extends LycheeCategory<BlockCrushingRecipe>
-		implements LycheeDisplayCategory<LycheeDisplay<BlockCrushingRecipe>> {
+public final class BlockCrushingRecipeCategory extends LycheeDisplayCategory<LycheeDisplay<BlockCrushingRecipe>> implements LycheeCategory<BlockCrushingRecipe> {
 
 	public static final Rect2i FALLING_BLOCK_RECT = new Rect2i(0, -35, 20, 35);
 	public static final Rect2i LANDING_BLOCK_RECT = new Rect2i(0, 0, 20, 20);
 	private final CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> categoryIdentifier;
-	private final Renderer icon;
 	private final Rect2i fallingBlockRect;
 	private final Rect2i landingBlockRect;
 
@@ -43,19 +40,15 @@ public final class BlockCrushingRecipeCategory extends LycheeCategory<BlockCrush
 			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> categoryIdentifier,
 			Renderer icon,
 			Rect2i fallingBlockRect,
-			Rect2i landingBlockRect
-	) {
-		super(RecipeTypes.BLOCK_CRUSHING);
+			Rect2i landingBlockRect) {
+		super(icon, categoryIdentifier);
 		this.categoryIdentifier = categoryIdentifier;
-		this.icon = icon;
 		this.fallingBlockRect = fallingBlockRect;
 		this.landingBlockRect = landingBlockRect;
 	}
 
 	public BlockCrushingRecipeCategory(
-			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> categoryIdentifier,
-			Renderer icon
-	) {
+			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> categoryIdentifier, Renderer icon) {
 		this(categoryIdentifier, icon, FALLING_BLOCK_RECT, LANDING_BLOCK_RECT);
 	}
 
@@ -105,13 +98,8 @@ public final class BlockCrushingRecipeCategory extends LycheeCategory<BlockCrush
 
 			matrixStack.pushPose();
 			matrixStack.translate(x, y - 13, 0);
-			GuiGameElement.of(getFallingBlock(recipe))
-					.scale(15)
-					.atLocal(0, ticks * 1.3 - 1.3, 2)
-					.rotateBlock(20, 225, 0)
-					.lighting(ILightingSettings.DEFAULT_3D)
-					.at(0, 0, 300)
-					.render(graphics);
+			GuiGameElement.of(getFallingBlock(recipe)).scale(15).atLocal(0, ticks * 1.3 - 1.3, 2).rotateBlock(20, 225, 0).lighting(
+					ILightingSettings.DEFAULT_3D).at(0, 0, 300).render(graphics);
 			if (!landingBlock.isAir()) {
 				GuiGameElement.of(landingBlock)
 						.scale(15)
@@ -146,10 +134,7 @@ public final class BlockCrushingRecipeCategory extends LycheeCategory<BlockCrush
 		if (recipe.landingBlock().isPresent()) {
 			reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, landingBlockRect));
 			reactive.setTooltipFunction($ -> {
-				List<Component> list = BlockPredicateExtensions.getTooltips(
-						getLandingBlock(recipe),
-						recipe.landingBlock().orElseThrow()
-				);
+				List<Component> list = BlockPredicateExtensions.getTooltips(getLandingBlock(recipe), recipe.landingBlock().orElseThrow());
 				return list.toArray(new Component[0]);
 			});
 			reactive.setOnClick(($, button) -> {
@@ -166,8 +151,8 @@ public final class BlockCrushingRecipeCategory extends LycheeCategory<BlockCrush
 				.map(it -> CommonProxy.getCycledItem(
 						BlockPredicateExtensions.getShowcaseBlockStates(it),
 						Blocks.AIR.defaultBlockState(),
-						2000
-				)).orElse(Blocks.AIR.defaultBlockState());
+						2000))
+				.orElse(Blocks.AIR.defaultBlockState());
 	}
 
 	private BlockState getLandingBlock(BlockCrushingRecipe recipe) {
@@ -175,8 +160,8 @@ public final class BlockCrushingRecipeCategory extends LycheeCategory<BlockCrush
 				.map(it -> CommonProxy.getCycledItem(
 						BlockPredicateExtensions.getShowcaseBlockStates(it),
 						Blocks.AIR.defaultBlockState(),
-						2000
-				)).orElse(Blocks.AIR.defaultBlockState());
+						2000))
+				.orElse(Blocks.AIR.defaultBlockState());
 	}
 
 	@Override
@@ -186,41 +171,4 @@ public final class BlockCrushingRecipeCategory extends LycheeCategory<BlockCrush
 
 	@Override
 	public CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> getCategoryIdentifier() {return categoryIdentifier;}
-
-	@Override
-	public Renderer getIcon() {return icon;}
-
-	public Rect2i fallingBlockRect() {return fallingBlockRect;}
-
-	public Rect2i landingBlockRect() {return landingBlockRect;}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) {
-			return true;
-		}
-		if (obj == null || obj.getClass() != this.getClass()) {
-			return false;
-		}
-		var that = (BlockCrushingRecipeCategory) obj;
-		return Objects.equals(this.categoryIdentifier, that.categoryIdentifier) &&
-				Objects.equals(this.icon, that.icon) &&
-				Objects.equals(this.fallingBlockRect, that.fallingBlockRect) &&
-				Objects.equals(this.landingBlockRect, that.landingBlockRect);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(categoryIdentifier, icon, fallingBlockRect, landingBlockRect);
-	}
-
-	@Override
-	public String toString() {
-		return "BlockCrushingRecipeCategory[" +
-				"categoryIdentifier=" + categoryIdentifier + ", " +
-				"icon=" + icon + ", " +
-				"fallingBlockRect=" + fallingBlockRect + ", " +
-				"landingBlockRect=" + landingBlockRect + ']';
-	}
-
 }
