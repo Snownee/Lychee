@@ -50,7 +50,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, BlockCrushingRecipe recipe, IFocusGroup focuses) {
 		int xCenter = getWidth() / 2;
-		int y = recipe.getIngredients().size() > 9 || recipe.showingActionsCount() > 9 ? 26 : 28;
+		int y = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9 ? 26 : 28;
 		ingredientGroup(builder, recipe, xCenter - 45, y);
 		actionGroup(builder, recipe, xCenter + 50, y);
 		addBlockIngredients(builder, recipe);
@@ -59,7 +59,7 @@ public class BlockCrushingRecipeCategory extends BaseJEICategory<BlockCrushingCo
 	@SuppressWarnings("deprecation")
 	@Override
 	public void draw(BlockCrushingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, graphics, mouseX, mouseY);
+		drawInfoBadgeIfNeeded(recipe, graphics, mouseX, mouseY);
 		BlockState fallingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.ANVIL.defaultBlockState(), 2000);
 		BlockState landingBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getLandingBlock()), Blocks.AIR.defaultBlockState(), 2000);
 		int x = recipe.getIngredients().isEmpty() ? 41 : 77;

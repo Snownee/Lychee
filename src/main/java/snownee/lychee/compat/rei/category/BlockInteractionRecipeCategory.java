@@ -19,7 +19,9 @@ import snownee.lychee.interaction.BlockInteractingRecipe;
 
 public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<LycheeContext, BlockInteractingRecipe, BaseREIDisplay<BlockInteractingRecipe>> {
 
-	public BlockInteractionRecipeCategory(List<BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe>> recipeTypes, ScreenElement mainIcon) {
+	public BlockInteractionRecipeCategory(
+			List<BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe>> recipeTypes,
+			ScreenElement mainIcon) {
 		super(List.copyOf(recipeTypes), mainIcon);
 		inputBlockRect.setX(inputBlockRect.getX() + 18);
 		methodRect.setX(methodRect.getX() + 18);

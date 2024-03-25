@@ -38,12 +38,12 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public abstract class BaseREICategory<R extends ILycheeRecipe<LycheeContext>> {
+public abstract class LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 	public static final int WIDTH = 150;
 	public static final int HEIGHT = 59;
 	protected Rect2i infoRect;
 
-	public BaseREICategory(LycheeRecipeType<LycheeContext, R> recipeType) {
+	public LycheeCategory(LycheeRecipeType<LycheeContext, R> recipeType) {
 		this.infoRect = new Rect2i(4, 25, 8, 8);
 	}
 
@@ -133,7 +133,7 @@ public abstract class BaseREICategory<R extends ILycheeRecipe<LycheeContext>> {
 		return 120;
 	}
 
-	public void drawInfoBadgeIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
+	public void drawInfoBadgeIfNeededIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
 		if (!recipe.conditions().conditions().isEmpty() || recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
 			widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 				var matrixStack = graphics.pose();
@@ -150,8 +150,8 @@ public abstract class BaseREICategory<R extends ILycheeRecipe<LycheeContext>> {
 		}
 	}
 
-	public void drawInfoBadgeIfNeeded(List<Widget> widgets, LycheeDisplay<R> display, Point startPoint) {
-		drawInfoBadgeIfNeeded(widgets, display.recipe(), startPoint, infoRect);
+	public void drawInfoBadgeIfNeededIfNeeded(List<Widget> widgets, LycheeDisplay<R> display, Point startPoint) {
+		drawInfoBadgeIfNeededIfNeeded(widgets, display.recipe(), startPoint, infoRect);
 	}
 
 	public void actionGroup(List<Widget> widgets, Point startPoint, R recipe, int x, int y) {
@@ -161,7 +161,7 @@ public abstract class BaseREICategory<R extends ILycheeRecipe<LycheeContext>> {
 				x,
 				y,
 				recipe.postActions().stream().filter(it -> !it.hidden()).toList(),
-				BaseREICategory::actionSlot);
+				LycheeCategory::actionSlot);
 	}
 
 	public void ingredientGroup(List<Widget> widgets, Point startPoint, R recipe, int x, int y) {

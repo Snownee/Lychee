@@ -24,7 +24,7 @@ public abstract class ItemShapelessRecipeCategory<T extends ItemShapelessRecipe<
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses) {
 		int xCenter = getWidth() / 2;
-		int y = recipe.getIngredients().size() > 9 || recipe.showingActionsCount() > 9 ? 26 : 28;
+		int y = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9 ? 26 : 28;
 		ingredientGroup(builder, recipe, xCenter - 45, y);
 		actionGroup(builder, recipe, xCenter + 50, y);
 		addBlockIngredients(builder, recipe);
@@ -32,7 +32,7 @@ public abstract class ItemShapelessRecipeCategory<T extends ItemShapelessRecipe<
 
 	@Override
 	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, graphics, mouseX, mouseY);
+		drawInfoBadgeIfNeeded(recipe, graphics, mouseX, mouseY);
 		PoseStack matrixStack = graphics.pose();
 		matrixStack.pushPose();
 		matrixStack.translate(76, 16, 0);

@@ -73,7 +73,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses) {
-		int y = recipe.getIngredients().size() > 9 || recipe.showingActionsCount() > 9 ? 26 : 28;
+		int y = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9 ? 26 : 28;
 		if (recipe instanceof ItemShapelessRecipe) {
 			ingredientGroup(builder, recipe, 38, y);
 		} else if (recipe instanceof BlockInteractingRecipe) {
@@ -92,7 +92,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	@SuppressWarnings("deprecation")
 	@Override
 	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, graphics, mouseX, mouseY);
+		drawInfoBadgeIfNeeded(recipe, graphics, mouseX, mouseY);
 		int centerX = getWidth() / 2;
 		drawExtra(recipe, graphics, mouseX, mouseY, centerX);
 

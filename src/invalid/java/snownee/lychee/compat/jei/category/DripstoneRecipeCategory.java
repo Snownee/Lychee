@@ -45,14 +45,14 @@ public class DripstoneRecipeCategory extends BaseJEICategory<DripstoneContext, D
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, DripstoneRecipe recipe, IFocusGroup focuses) {
-		int y = recipe.showingActionsCount() > 9 ? 26 : 28;
+		int y = recipe.conditions().showingCount() > 9 ? 26 : 28;
 		actionGroup(builder, recipe, getWidth() - 28, y);
 		addBlockIngredients(builder, recipe);
 	}
 
 	@Override
 	public void draw(DripstoneRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, graphics, mouseX, mouseY);
+		drawInfoBadgeIfNeeded(recipe, graphics, mouseX, mouseY);
 		BlockState sourceBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
 		BlockState targetBlock = CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
 

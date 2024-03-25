@@ -39,11 +39,11 @@ import snownee.lychee.core.recipe.type.LycheeRecipeType;
 import snownee.lychee.interaction.BlockInteractingRecipe;
 import snownee.lychee.util.CommonProxy;
 
-public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> extends BaseREICategory<C, T, D> {
+public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> extends LycheeCategory<C, T, D> {
 
+	private final ScreenElement mainIcon;
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
-	private final ScreenElement mainIcon;
 
 	public ItemAndBlockBaseCategory(List<LycheeRecipeType<C, T>> recipeTypes, ScreenElement mainIcon) {
 		super(recipeTypes);
@@ -65,7 +65,10 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 	}
 
 	public BlockState getRenderingBlock(T recipe) {
-		return CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(getInputBlock(recipe)), Blocks.AIR.defaultBlockState(), 1000);
+		return CommonProxy.getCycledItem(
+				BlockPredicateHelper.getShowcaseBlockStates(getInputBlock(recipe)),
+				Blocks.AIR.defaultBlockState(),
+				1000);
 	}
 
 	public void drawExtra(T recipe, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
@@ -131,7 +134,7 @@ public abstract class ItemAndBlockBaseCategory<C extends LycheeContext, T extend
 		if (description != null) {
 			reactive = new ReactiveWidget(REICompat.offsetRect(startPoint, methodRect));
 			reactive.setTooltipFunction($ -> {
-				return new Component[] { description };
+				return new Component[]{description};
 			});
 			widgets.add(reactive);
 		}

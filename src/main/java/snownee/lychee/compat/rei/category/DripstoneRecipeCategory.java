@@ -30,7 +30,7 @@ import snownee.lychee.dripstone_dripping.DripstoneRecipe;
 import snownee.lychee.dripstone_dripping.DripstoneRecipeType;
 import snownee.lychee.util.CommonProxy;
 
-public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, DripstoneRecipe, BaseREIDisplay<DripstoneRecipe>> {
+public class DripstoneRecipeCategory extends LycheeCategory<DripstoneContext, DripstoneRecipe, BaseREIDisplay<DripstoneRecipe>> {
 
 	private Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
 	private Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
@@ -38,6 +38,15 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 	public DripstoneRecipeCategory(DripstoneRecipeType recipeType) {
 		super(recipeType);
 		infoRect.setX(-10);
+	}
+
+	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {
+		GuiGameElement.of(state)
+				.scale(12)
+				.lighting(JEIREI.BLOCK_LIGHTING)
+				.atLocal(localX, localY, localZ)
+				.rotateBlock(12.5, -22.5, 0)
+				.render(graphics);
 	}
 
 	@Override
@@ -66,7 +75,12 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 			matrixStack.translate(22, 24, 300);
 			drawBlock(getSourceBlock(recipe), graphics, 0, -2, 0);
 			drawBlock(Blocks.DRIPSTONE_BLOCK.defaultBlockState(), graphics, 0, -1, 0);
-			drawBlock(Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN), graphics, 0, 0, 0);
+			drawBlock(
+					Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN),
+					graphics,
+					0,
+					0,
+					0);
 			drawBlock(targetBlock, graphics, 0, 1.5, 0);
 			matrixStack.popPose();
 
@@ -99,16 +113,18 @@ public class DripstoneRecipeCategory extends BaseREICategory<DripstoneContext, D
 		return widgets;
 	}
 
-	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {
-		GuiGameElement.of(state).scale(12).lighting(JEIREI.BLOCK_LIGHTING).atLocal(localX, localY, localZ).rotateBlock(12.5, -22.5, 0).render(graphics);
-	}
-
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {
-		return CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()), Blocks.AIR.defaultBlockState(), 2000);
+		return CommonProxy.getCycledItem(
+				BlockPredicateHelper.getShowcaseBlockStates(recipe.getSourceBlock()),
+				Blocks.AIR.defaultBlockState(),
+				2000);
 	}
 
 	private BlockState getTargetBlock(DripstoneRecipe recipe) {
-		return CommonProxy.getCycledItem(BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()), Blocks.AIR.defaultBlockState(), 2000);
+		return CommonProxy.getCycledItem(
+				BlockPredicateHelper.getShowcaseBlockStates(recipe.getBlock()),
+				Blocks.AIR.defaultBlockState(),
+				2000);
 	}
 
 	@Override

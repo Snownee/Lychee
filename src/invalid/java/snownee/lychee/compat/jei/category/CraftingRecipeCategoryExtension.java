@@ -30,7 +30,7 @@ public class CraftingRecipeCategoryExtension implements ICraftingCategoryExtensi
 
 	@Override
 	public void drawInfo(int recipeWidth, int recipeHeight, GuiGraphics graphics, double mouseX, double mouseY) {
-		BaseJEICategory.drawInfoBadge(recipe, graphics, mouseX, mouseY, infoRect);
+		BaseJEICategory.drawInfoBadgeIfNeeded(recipe, graphics, mouseX, mouseY, infoRect);
 	}
 
 	@Override

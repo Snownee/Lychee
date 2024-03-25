@@ -40,20 +40,20 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 
 	@Override
 	public int getDisplayWidth(BaseREIDisplay<BlockCrushingRecipe> display) {
-		return getRealWidth();
+		return contentWidth();
 	}
 
 	@Override
-	public int getRealWidth() {
+	public int contentWidth() {
 		return width + 20;
 	}
 
 	@Override
 	public List<Widget> setupDisplay(BaseREIDisplay<BlockCrushingRecipe> display, Rectangle bounds) {
-		Point startPoint = new Point(bounds.getCenterX() - getRealWidth() / 2, bounds.getY() + 4);
+		Point startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
 		BlockCrushingRecipe recipe = display.recipe;
 		List<Widget> widgets = super.setupDisplay(display, bounds);
-		drawInfoBadge(widgets, display, startPoint);
+		drawInfoBadgeIfNeeded(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 			int x = recipe.getIngredients().isEmpty() ? 41 : 77;
 			boolean anyLandingBlock = recipe.getLandingBlock() == BlockPredicate.ANY;
@@ -92,7 +92,7 @@ public class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingCo
 		}));
 
 		int xCenter = bounds.getCenterX();
-		int y = recipe.getIngredients().size() > 9 || recipe.showingActionsCount() > 9 ? 26 : 28;
+		int y = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9 ? 26 : 28;
 		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y);
 		actionGroup(widgets, startPoint, recipe, xCenter + 50 - startPoint.x, y);
 

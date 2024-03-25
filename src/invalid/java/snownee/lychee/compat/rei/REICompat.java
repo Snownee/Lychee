@@ -150,7 +150,7 @@ public class REICompat implements REIClientPlugin {
 							}
 						}
 						if (rect != null) {
-							BaseREICategory.drawInfoBadge(widgets, recipe, bounds.getLocation(), rect);
+							BaseREICategory.drawInfoBadgeIfNeeded(widgets, recipe, bounds.getLocation(), rect);
 						}
 						return widgets;
 					}

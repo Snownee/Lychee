@@ -29,7 +29,7 @@ import snownee.lychee.recipes.BlockCrushingRecipeType;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-public final class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrushingRecipe>
+public final class BlockCrushingRecipeCategory extends LycheeCategory<BlockCrushingRecipe>
 		implements LycheeDisplayCategory<LycheeDisplay<BlockCrushingRecipe>> {
 
 	public static final Rect2i FALLING_BLOCK_RECT = new Rect2i(0, -35, 20, 35);
@@ -75,7 +75,7 @@ public final class BlockCrushingRecipeCategory extends BaseREICategory<BlockCrus
 
 		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
 		var recipe = display.recipe();
-		drawInfoBadgeIfNeeded(widgets, display, startPoint);
+		drawInfoBadgeIfNeededIfNeeded(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 			var x = recipe.getIngredients().isEmpty() ? 41 : 77;
 			var anyLandingBlock = recipe.landingBlock().isEmpty();

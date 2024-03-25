@@ -128,7 +128,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 		}
 	}
 
-	public static void drawInfoBadge(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
+	public static void drawInfoBadgeIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
 		if (!recipe.getContextualHolder().getConditions().isEmpty() || !Strings.isNullOrEmpty(recipe.getComment())) {
 			widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 				PoseStack matrixStack = graphics.pose();
@@ -172,7 +172,7 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 		return 150;
 	}
 
-	public int getRealWidth() {
+	public int contentWidth() {
 		return 120;
 	}
 
@@ -205,8 +205,8 @@ public abstract class BaseREICategory<C extends LycheeContext, T extends LycheeR
 		return Lists.newArrayList(DisplayCategory.super.setupDisplay(display, bounds));
 	}
 
-	public void drawInfoBadge(List<Widget> widgets, D display, Point startPoint) {
-		drawInfoBadge(widgets, display.recipe, startPoint, infoRect);
+	public void drawInfoBadgeIfNeeded(List<Widget> widgets, D display, Point startPoint) {
+		drawInfoBadgeIfNeeded(widgets, display.recipe, startPoint, infoRect);
 	}
 
 	public boolean clickBlock(BlockState state, int button) {

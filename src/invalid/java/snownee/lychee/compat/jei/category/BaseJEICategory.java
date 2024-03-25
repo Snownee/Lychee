@@ -155,7 +155,7 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 		}
 	}
 
-	public static void drawInfoBadge(ILycheeRecipe<?> recipe, GuiGraphics graphics, double mouseX, double mouseY, Rect2i rect) {
+	public static void drawInfoBadgeIfNeeded(ILycheeRecipe<?> recipe, GuiGraphics graphics, double mouseX, double mouseY, Rect2i rect) {
 		if (hasInfoBadge(recipe)) {
 			PoseStack matrixStack = graphics.pose();
 			matrixStack.pushPose();
@@ -239,11 +239,11 @@ public abstract class BaseJEICategory<C extends LycheeContext, T extends LycheeR
 
 	@Override
 	public void draw(T recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, graphics, mouseX, mouseY);
+		drawInfoBadgeIfNeeded(recipe, graphics, mouseX, mouseY);
 	}
 
-	public void drawInfoBadge(T recipe, GuiGraphics graphics, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, graphics, mouseX, mouseY, infoRect);
+	public void drawInfoBadgeIfNeeded(T recipe, GuiGraphics graphics, double mouseX, double mouseY) {
+		drawInfoBadgeIfNeeded(recipe, graphics, mouseX, mouseY, infoRect);
 	}
 
 	@Override

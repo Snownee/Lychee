@@ -37,7 +37,7 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 
 	@Override
 	public void draw(ItemExplodingRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics graphics, double mouseX, double mouseY) {
-		drawInfoBadge(recipe, graphics, mouseX, mouseY);
+		drawInfoBadgeIfNeeded(recipe, graphics, mouseX, mouseY);
 
 		Minecraft mc = Minecraft.getInstance();
 		if (tnt == null) {

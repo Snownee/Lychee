@@ -26,7 +26,9 @@ public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemShape
 	public List<Widget> setupDisplay(BaseREIDisplay<ItemInsideRecipe> display, Rectangle bounds) {
 		List<Widget> widgets = super.setupDisplay(display, bounds);
 		if (display.recipe.getTime() > 0) {
-			widgets.add(Widgets.createLabel(new Point(bounds.x + methodRect.getX() + 10, bounds.y + methodRect.getY() - 6), ClientProxy.format("tip.lychee.sec", display.recipe.getTime())).color(0xFF666666, 0xFFBBBBBB).noShadow().centered());
+			widgets.add(Widgets.createLabel(
+					new Point(bounds.x + methodRect.getX() + 10, bounds.y + methodRect.getY() - 6),
+					ClientProxy.format("tip.lychee.sec", display.recipe.getTime())).color(0xFF666666, 0xFFBBBBBB).noShadow().centered());
 		}
 		return widgets;
 	}
