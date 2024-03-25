@@ -20,6 +20,8 @@ import snownee.lychee.compat.DisplayUtils;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
+import snownee.lychee.recipes.BlockInteractingRecipe;
+import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.util.context.LycheeContext;
@@ -51,6 +53,11 @@ public interface CategoryProviders {
 			}
 	);
 
+	CategoryProvider<BlockInteractingRecipe> BLOCK_INTERACTING = register(
+			RecipeTypes.BLOCK_INTERACTING,
+			(id, icon, recipes) -> new BlockInteractionRecipeCategory(id, icon)
+	);
+
 	CategoryProvider<LightningChannelingRecipe> LIGHTNING_CHANNELING = register(
 			RecipeTypes.LIGHTNING_CHANNELING,
 			(id, icon, recipes) -> new ItemShapelessRecipeCategory<>(id, icon, RecipeTypes.LIGHTNING_CHANNELING)
@@ -70,6 +77,11 @@ public interface CategoryProviders {
 					widgets.add(widget);
 				}
 			}
+	);
+
+	CategoryProvider<ItemBurningRecipe> ITEM_BURNING = register(
+			RecipeTypes.ITEM_BURNING,
+			(id, icon, recipes) -> new ItemBurningRecipeCategory(id, icon)
 	);
 
 	static <R extends ILycheeRecipe<LycheeContext>> CategoryProvider<R> get(LycheeRecipeType<LycheeContext, R> type) {

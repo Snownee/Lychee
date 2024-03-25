@@ -11,7 +11,9 @@ import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.block.Blocks;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.rei.ScreenElementWrapper;
 import snownee.lychee.compat.rei.SideBlockIcon;
@@ -27,8 +29,22 @@ public interface IconProviders {
 	IconProvider BLOCK_EXPLODING = register(RecipeTypes.BLOCK_EXPLODING, (recipes) -> new ScreenElementWrapper(new SideBlockIcon(
 			GuiGameElement.of(Items.TNT),
 			Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection<RecipeHolder<? extends BlockKeyableRecipe<?>>>) (Collection) recipes)))));
+	IconProvider BLOCK_INTERACTING = register(RecipeTypes.BLOCK_INTERACTING, (recipes) -> {
+		var mainIcon = recipes.stream()
+				.map(it -> it.value().getType())
+				.anyMatch(it -> it == RecipeTypes.BLOCK_INTERACTING) ? AllGuiTextures.RIGHT_CLICK : AllGuiTextures.LEFT_CLICK;
+		return new ScreenElementWrapper(new SideBlockIcon(
+				mainIcon,
+				Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection<RecipeHolder<? extends BlockKeyableRecipe<?>>>) (Collection) recipes))));
+	});
 	IconProvider LIGHTNING_CHANNELING = register(RecipeTypes.LIGHTNING_CHANNELING, (recipes) -> EntryStacks.of(Items.LIGHTNING_ROD));
 	IconProvider ITEM_EXPLODING = register(RecipeTypes.ITEM_EXPLODING, (recipes) -> EntryStacks.of(Items.TNT));
+
+	IconProvider ITEM_BURNING = register(
+			RecipeTypes.ITEM_BURNING,
+			(recipes) -> new ScreenElementWrapper(new SideBlockIcon(
+					AllGuiTextures.JEI_DOWN_ARROW,
+					Suppliers.memoize(Blocks.FIRE::defaultBlockState))));
 
 	static <R extends ILycheeRecipe<LycheeContext>> IconProvider register(
 			LycheeRecipeType<LycheeContext, R> recipeType,
