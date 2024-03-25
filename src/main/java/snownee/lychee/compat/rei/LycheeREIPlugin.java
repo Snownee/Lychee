@@ -1,6 +1,7 @@
 package snownee.lychee.compat.rei;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.LinkedHashMultimap;
@@ -14,6 +15,7 @@ import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -80,14 +82,15 @@ public class LycheeREIPlugin implements REIClientPlugin {
 			var categoryProvider = CategoryProviders.get(recipeType);
 
 			// TODO For developing
-			if (categoryProvider == null) {
+			if (categoryProvider == null && FabricLoader.getInstance().isDevelopmentEnvironment()) {
+				Lychee.LOGGER.error("Missing category provider for {}", recipeType);
 				continue;
 			}
 
 			generatedCategories.asMap().forEach((id, recipes) -> {
 				var category = categoryProvider.get(
 						(CategoryIdentifier) id,
-						IconProviders.get(recipeType).get(recipes),
+						Objects.requireNonNull(IconProviders.get(recipeType), recipeType::toString).get(recipes),
 						(Collection) recipes);
 				categories.put(recipeType.categoryId, new CategoryHolder(category, (Collection) recipes));
 				registry.add(category);

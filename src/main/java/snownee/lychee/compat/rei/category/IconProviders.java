@@ -49,6 +49,10 @@ public interface IconProviders {
 					AllGuiTextures.JEI_DOWN_ARROW,
 					Suppliers.memoize(Blocks.FIRE::defaultBlockState))));
 
+	IconProvider ITEM_INSIDE = register(RecipeTypes.ITEM_INSIDE, (recipes) -> new ScreenElementWrapper(new SideBlockIcon(
+			AllGuiTextures.JEI_DOWN_ARROW,
+			Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection<RecipeHolder<? extends BlockKeyableRecipe<?>>>) (Collection) recipes)))));
+
 	static <R extends ILycheeRecipe<LycheeContext>> IconProvider register(
 			LycheeRecipeType<LycheeContext, R> recipeType,
 			IconProvider renderer) {

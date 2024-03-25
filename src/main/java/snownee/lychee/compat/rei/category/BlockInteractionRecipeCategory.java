@@ -1,8 +1,12 @@
 package snownee.lychee.compat.rei.category;
 
+import java.util.List;
+
 import org.jetbrains.annotations.Nullable;
 
+import me.shedaniel.math.Point;
 import me.shedaniel.rei.api.client.gui.Renderer;
+import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
@@ -34,6 +38,11 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Blo
 	}
 
 	@Override
+	protected void renderIngredientGroup(List<Widget> widgets, Point startPoint, BlockInteractingRecipe recipe, int y) {
+		ingredientGroup(widgets, startPoint, recipe, 22, 21);
+	}
+
+	@Override
 	public void drawExtra(BlockInteractingRecipe recipe, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
 		KeyMapping keyMapping = getKeyMapping(recipe);
 		//		if (keyMapping.getKey().getValue() == -1) { // key is unset or unknown
@@ -59,5 +68,4 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Blo
 	public int contentWidth() {
 		return super.contentWidth() + 20;
 	}
-
 }
