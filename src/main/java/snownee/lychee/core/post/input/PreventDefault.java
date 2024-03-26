@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gson.JsonObject;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.compat.IngredientInfo;
@@ -39,13 +40,13 @@ public class PreventDefault extends PostAction {
 	@Override
 	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
 		if (recipe instanceof LycheeRecipe<?> lycheeRecipe && lycheeRecipe.getType().canPreventConsumeInputs) {
+			Minecraft mc = Minecraft.getInstance();
 			for (var ingredient : ingredients) {
 				if (!ingredient.tooltips.isEmpty()) {
 					continue;
 				}
-				if (getConditions().isEmpty()) {
-					ingredient.addTooltip(lycheeRecipe.getType().getPreventDefaultDescription(lycheeRecipe));
-				}
+				ingredient.addTooltip(lycheeRecipe.getType().getPreventDefaultDescription(lycheeRecipe));
+				getConditionTooltips(ingredient.tooltips, 0, mc.level, mc.player);
 				ingredient.isCatalyst = true;
 			}
 		}
