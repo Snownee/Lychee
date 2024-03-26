@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.client.gui.ILightingSettings;
+import snownee.lychee.compat.DisplayUtils;
 import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
@@ -47,7 +47,7 @@ public class DripstoneRecipeCategory extends LycheeDisplayCategory<LycheeDisplay
 	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {
 		GuiGameElement.of(state)
 				.scale(12)
-				.lighting(ILightingSettings.DEFAULT_3D)
+				.lighting(DisplayUtils.BLOCK_LIGHTING)
 				.atLocal(localX, localY, localZ)
 				.rotateBlock(12.5, -22.5, 0)
 				.render(graphics);

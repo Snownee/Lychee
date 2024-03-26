@@ -45,12 +45,12 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 public final class DisplayUtils {
 	public static final CachedRenderingEntity<PrimedTnt> TNT_ENTITY = CachedRenderingEntity.ofFactory(EntityType.TNT::create);
 	public static ILightingSettings BLOCK_LIGHTING = CustomLightingSettings.builder()
-			.firstLightRotation(-30, 45)
-			.secondLightRotation(0, 65)
+			.firstLightRotation(-45, -45)
+			.secondLightRotation(15, -60)
 			.build();
 	public static ILightingSettings SIDE_ICON_LIGHTING = CustomLightingSettings.builder()
-			.firstLightRotation(135, 35)
-			.secondLightRotation(-20, 50)
+			.firstLightRotation(-30, -60)
+			.secondLightRotation(30, -60)
 			.build();
 	public static ILightingSettings FUSED_TNT_LIGHTING = CustomLightingSettings.builder()
 			.firstLightRotation(-120, 20)

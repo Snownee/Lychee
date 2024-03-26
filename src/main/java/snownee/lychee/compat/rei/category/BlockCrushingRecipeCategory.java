@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.client.gui.ILightingSettings;
+import snownee.lychee.compat.DisplayUtils;
 import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
@@ -98,14 +98,19 @@ public final class BlockCrushingRecipeCategory extends LycheeDisplayCategory<Lyc
 
 			matrixStack.pushPose();
 			matrixStack.translate(x, y - 13, 0);
-			GuiGameElement.of(getFallingBlock(recipe)).scale(15).atLocal(0, ticks * 1.3 - 1.3, 2).rotateBlock(20, 225, 0).lighting(
-					ILightingSettings.DEFAULT_3D).at(0, 0, 300).render(graphics);
+			GuiGameElement.of(getFallingBlock(recipe))
+					.scale(15)
+					.atLocal(0, ticks * 1.3 - 1.3, 2)
+					.rotateBlock(20, 225, 0)
+					.lighting(DisplayUtils.BLOCK_LIGHTING)
+					.at(0, 0, 300)
+					.render(graphics);
 			if (!landingBlock.isAir()) {
 				GuiGameElement.of(landingBlock)
 						.scale(15)
 						.atLocal(0, 1, 2)
 						.rotateBlock(20, 225, 0)
-						.lighting(ILightingSettings.DEFAULT_3D)
+						.lighting(DisplayUtils.BLOCK_LIGHTING)
 						.render(graphics);
 			}
 			matrixStack.popPose();

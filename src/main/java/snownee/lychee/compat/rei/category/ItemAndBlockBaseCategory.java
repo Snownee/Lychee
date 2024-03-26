@@ -25,7 +25,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.compat.DisplayUtils;
 import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
@@ -109,7 +108,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 			GuiGameElement.of(state)
 					.rotateBlock(12.5, -22.5, 0)
 					.scale(15)
-					.lighting(ILightingSettings.DEFAULT_3D)
+					.lighting(DisplayUtils.BLOCK_LIGHTING)
 					.atLocal(0, 0.2, 0)
 					.at(inputBlockRect.getX(), inputBlockRect.getY())
 					.render(graphics);

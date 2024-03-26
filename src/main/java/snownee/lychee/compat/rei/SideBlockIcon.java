@@ -7,9 +7,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.DisplayUtils;
 
 public class SideBlockIcon extends RenderElement {
 
@@ -30,7 +30,7 @@ public class SideBlockIcon extends RenderElement {
 		mainIcon.render(graphics, 0, 0);
 		ms.popPose();
 		GuiGameElement.of(blockProvider.get())
-				.lighting(ILightingSettings.DEFAULT_3D)
+				.lighting(DisplayUtils.SIDE_ICON_LIGHTING)
 				.scale(7)
 				.rotateBlock(30, 202.5, 0)
 				.at(x + 4, y + 2)
