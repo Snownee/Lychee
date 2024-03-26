@@ -25,9 +25,9 @@ public class BoundsExtensions {
 			return Component.literal(">=" + DECIMAL_FORMAT.format(bounds.min().orElseThrow()));
 		}
 		if (Objects.equals(bounds.min().orElseThrow(), bounds.max().orElseThrow())) {
-			return Component.literal(DECIMAL_FORMAT.format(bounds.min()));
+			return Component.literal(DECIMAL_FORMAT.format(bounds.min().get()));
 		}
-		return Component.literal(DECIMAL_FORMAT.format(bounds.min()) + "~" + DECIMAL_FORMAT.format(bounds.max()));
+		return Component.literal(DECIMAL_FORMAT.format(bounds.min().get()) + "~" + DECIMAL_FORMAT.format(bounds.max().get()));
 	}
 
 	public static int random(MinMaxBounds.Ints ints, RandomSource random) {

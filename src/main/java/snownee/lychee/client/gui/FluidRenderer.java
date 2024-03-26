@@ -1,18 +1,15 @@
 package snownee.lychee.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
-import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
+import dev.architectury.hooks.fluid.FluidStackHooks;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
-import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.material.FluidState;
 
@@ -115,10 +112,10 @@ public class FluidRenderer {
 			int light,
 			boolean renderBottom
 	) {
-		FluidRenderHandler renderHandler = FluidRenderHandlerRegistry.INSTANCE.get(fluidState.getType());
-		TextureAtlasSprite fluidTexture = renderHandler.getFluidSprites(null, null, fluidState)[0];
+		var fluid = fluidState.getType();
+		var fluidTexture = FluidStackHooks.getStillTexture(fluid);
 
-		int color = renderHandler.getFluidColor(null, null, fluidState) | 0xFF000000;
+		var color = FluidStackHooks.getColor(fluid) | 0xFF000000;
 		//		int blockLightIn = (light >> 4) & 0xF;
 		//		int luminosity = Math.max(blockLightIn, fluidAttributes.getLuminosity(fluidStack));
 		//		light = (light & 0xF00000) | luminosity << 4;
@@ -132,12 +129,12 @@ public class FluidRenderer {
 		//		RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
 		//		RenderSystem.setShaderColor(1, 1, 1, 1);
 		//		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		for (Direction side : Direction.values()) {
+		for (var side : Direction.values()) {
 			if (side == Direction.DOWN && !renderBottom) {
 				continue;
 			}
 
-			boolean positive = side.getAxisDirection() == AxisDirection.POSITIVE;
+			var positive = side.getAxisDirection() == AxisDirection.POSITIVE;
 			if (side.getAxis().isHorizontal()) {
 				if (side.getAxis() == Axis.X) {
 					renderStillTiledFace(
@@ -234,42 +231,42 @@ public class FluidRenderer {
 			TextureAtlasSprite texture,
 			float textureScale
 	) {
-		boolean positive = dir.getAxisDirection() == Direction.AxisDirection.POSITIVE;
-		boolean horizontal = dir.getAxis().isHorizontal();
-		boolean x = dir.getAxis() == Axis.X;
+		var positive = dir.getAxisDirection() == Direction.AxisDirection.POSITIVE;
+		var horizontal = dir.getAxis().isHorizontal();
+		var x = dir.getAxis() == Axis.X;
 
-		float shrink = texture.uvShrinkRatio() * 0.25f * textureScale;
-		float centerU = texture.getU0() + (texture.getU1() - texture.getU0()) * 0.5f * textureScale;
-		float centerV = texture.getV0() + (texture.getV1() - texture.getV0()) * 0.5f * textureScale;
+		var shrink = texture.uvShrinkRatio() * 0.25f * textureScale;
+		var centerU = texture.getU0() + (texture.getU1() - texture.getU0()) * 0.5f * textureScale;
+		var centerV = texture.getV0() + (texture.getV1() - texture.getV0()) * 0.5f * textureScale;
 
 		float f;
 		float x2 = 0;
 		float y2 = 0;
 		float u1, u2;
 		float v1, v2;
-		for (float x1 = left; x1 < right; x1 = x2) {
+		for (var x1 = left; x1 < right; x1 = x2) {
 			f = Mth.floor(x1);
 			x2 = Math.min(f + 1, right);
 			if (dir == Direction.NORTH || dir == Direction.EAST) {
 				f = Mth.ceil(x2);
-				u1 = texture.getU((f - x2) * 16 * textureScale);
-				u2 = texture.getU((f - x1) * 16 * textureScale);
+				u1 = texture.getU((f - x2) * textureScale);
+				u2 = texture.getU((f - x1) * textureScale);
 			} else {
-				u1 = texture.getU((x1 - f) * 16 * textureScale);
-				u2 = texture.getU((x2 - f) * 16 * textureScale);
+				u1 = texture.getU((x1 - f) * textureScale);
+				u2 = texture.getU((x2 - f) * textureScale);
 			}
 			u1 = Mth.lerp(shrink, u1, centerU);
 			u2 = Mth.lerp(shrink, u2, centerU);
-			for (float y1 = down; y1 < up; y1 = y2) {
+			for (var y1 = down; y1 < up; y1 = y2) {
 				f = Mth.floor(y1);
 				y2 = Math.min(f + 1, up);
 				if (dir == Direction.UP) {
-					v1 = texture.getV((y1 - f) * 16 * textureScale);
-					v2 = texture.getV((y2 - f) * 16 * textureScale);
+					v1 = texture.getV((y1 - f) * textureScale);
+					v2 = texture.getV((y2 - f) * textureScale);
 				} else {
 					f = Mth.ceil(y2);
-					v1 = texture.getV((f - y2) * 16 * textureScale);
-					v2 = texture.getV((f - y1) * 16 * textureScale);
+					v1 = texture.getV((f - y2) * textureScale);
+					v2 = texture.getV((f - y1) * textureScale);
 				}
 				v1 = Mth.lerp(shrink, v1, centerV);
 				v2 = Mth.lerp(shrink, v2, centerV);
@@ -309,12 +306,12 @@ public class FluidRenderer {
 			int light
 	) {
 
-		Vec3i normal = face.getNormal();
-		Pose peek = ms.last();
-		int a = color >> 24 & 0xff;
-		int r = color >> 16 & 0xff;
-		int g = color >> 8 & 0xff;
-		int b = color & 0xff;
+		var normal = face.getNormal();
+		var peek = ms.last();
+		var a = color >> 24 & 0xff;
+		var r = color >> 16 & 0xff;
+		var g = color >> 8 & 0xff;
+		var b = color & 0xff;
 
 		builder.vertex(peek.pose(), x, y, z)
 				.color(r, g, b, a)
