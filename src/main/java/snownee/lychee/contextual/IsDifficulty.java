@@ -8,13 +8,13 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.TriState;
 import snownee.lychee.util.codec.CompactListCodec;
 import snownee.lychee.util.context.LycheeContext;
@@ -46,21 +46,25 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 		int size = difficulties.size();
 		if (size == 1) {
 			return Component.translatable(
-					key, CommonProxy.white(difficulties.get(0).getKey()));
+					key, difficulties.get(0).getDisplayName().copy().withStyle(ChatFormatting.WHITE));
 		} else {
 			key += ".more";
 
-			// TODO 需要确定显示正确
+			var components = difficulties.stream()
+					.map(it -> it.getDisplayName().copy().withStyle(ChatFormatting.WHITE))
+					.toList();
+
+			var component = Component.empty().append(components.get(0));
+
+			for (int i = 1; i < size - 1; i++) {
+				component.append(", ");
+				component.append(components.get(i));
+			}
+
 			return Component.translatable(
 					key,
-					CommonProxy.white(String.join(
-							", ",
-							difficulties.stream()
-									.limit(size - 1)
-									.map(Difficulty::getKey)
-									.toList()
-					)),
-					CommonProxy.white(difficulties.get(size - 1).getKey())
+					component,
+					components.get(size - 1)
 			);
 		}
 	}
