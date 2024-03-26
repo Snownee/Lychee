@@ -12,7 +12,11 @@
   "post": [
     {
       "type": "damage_item",
-      "target": "/item_in/0"
+      "target": "/item_in/0",
+      "contextual": {
+        "type": "chance",
+        "chance": 0.5
+      }
     },
     {
       "type": "set_item",
