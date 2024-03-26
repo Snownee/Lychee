@@ -32,7 +32,7 @@ public final class RegistryEntryDisplay {
 		if (value instanceof HolderSet.Named<T> named) {
 			return Component.translatableWithFallback(
 					registry.location().toShortLanguageKey() + ".#" + named.key().location().toLanguageKey(),
-					CommonProxy.capitaliseAllWords(named.key().location().getPath())
+					CommonProxy.capitaliseAllWords(named.key().location().getPath().replace('_', ' '))
 			);
 		}
 		if (value.size() == 1) {
