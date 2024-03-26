@@ -4,7 +4,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 
@@ -39,10 +38,9 @@ public final class RegistryEntryDisplay {
 			return of(value.get(0), registry);
 		}
 		// TODO Need to consider how to display list backend HolderSet
-		return Component.literal(String.valueOf(value.size()))
-				.withStyle(style -> style.withHoverEvent(new HoverEvent(
-						HoverEvent.Action.SHOW_TEXT,
-						value.stream().reduce(Component.empty(), (component, holder) -> of(holder, registry), MutableComponent::append)
-				)));
+		return value.stream().limit(value.size() - 1).reduce(
+				Component.empty(),
+				(component, holder) -> of(holder, registry),
+				(prev, curr) -> prev.append(curr).append(", ")).append(of(value.get(value.size() - 1), registry));
 	}
 }

@@ -12,7 +12,7 @@ import snownee.lychee.util.context.KeyedContextValue;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.context.LycheeContextSerializer;
 
-// TODO 暂时不涉及
+// Unused for now
 public record JsonContext(JsonObject json) implements KeyedContextValue<JsonContext> {
 	@Override
 	public LycheeContextKey<JsonContext> key() {

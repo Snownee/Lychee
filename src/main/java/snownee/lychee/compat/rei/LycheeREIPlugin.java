@@ -15,7 +15,6 @@ import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -81,8 +80,7 @@ public class LycheeREIPlugin implements REIClientPlugin {
 
 			var categoryProvider = CategoryProviders.get(recipeType);
 
-			// TODO For developing
-			if (categoryProvider == null && FabricLoader.getInstance().isDevelopmentEnvironment()) {
+			if (categoryProvider == null) {
 				Lychee.LOGGER.error("Missing category provider for {}", recipeType);
 				continue;
 			}
