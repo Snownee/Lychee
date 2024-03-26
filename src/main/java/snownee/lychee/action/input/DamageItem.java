@@ -10,6 +10,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -100,9 +101,11 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	public <T extends ILycheeRecipe<?>> void loadCatalystsInfo(@Nullable T recipe, List<IngredientInfo> ingredients) {
 		var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(type()));
 		var component = Component.translatable(key, damage).withStyle(ChatFormatting.YELLOW);
+		var mc = Minecraft.getInstance();
 		recipe.getItemIndexes(target).forEach(i -> {
 			var info = ingredients.get(i);
 			info.addTooltip(component);
+			conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
 			info.isCatalyst = true;
 		});
 	}

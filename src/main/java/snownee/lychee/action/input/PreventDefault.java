@@ -10,6 +10,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.codec.StreamCodec;
 import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.util.action.PostAction;
@@ -52,14 +53,13 @@ public final class PreventDefault implements PostAction {
 		if (recipe != null &&
 				recipe.getType() instanceof LycheeRecipeType<?, ?> lycheeRecipeType &&
 				lycheeRecipeType.canPreventConsumeInputs) {
+			var mc = Minecraft.getInstance();
 			for (var ingredient : ingredients) {
 				if (!ingredient.tooltips.isEmpty()) {
 					continue;
 				}
-				if (!commonProperties().conditions().conditions().isEmpty()) {
-					continue;
-				}
 				ingredient.addTooltip(((LycheeRecipeType<?, T>) lycheeRecipeType).getPreventDefaultDescription(recipe));
+				conditions().appendToTooltips(ingredient.tooltips, mc.level, mc.player, 0);
 				ingredient.isCatalyst = true;
 			}
 		}
