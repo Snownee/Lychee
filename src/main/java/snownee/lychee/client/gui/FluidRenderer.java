@@ -3,7 +3,9 @@ package snownee.lychee.client.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import dev.architectury.hooks.fluid.FluidStackHooks;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
+import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -113,9 +115,9 @@ public class FluidRenderer {
 			boolean renderBottom
 	) {
 		var fluid = fluidState.getType();
-		var fluidTexture = FluidStackHooks.getStillTexture(fluid);
+		var fluidTexture = FluidVariantRendering.getSprites(FluidVariant.of(fluid))[0];
 
-		var color = FluidStackHooks.getColor(fluid) | 0xFF000000;
+		var color = FluidRenderHandlerRegistry.INSTANCE.get(fluid).getFluidColor(null, null, fluidState) | 0xFF000000;
 		//		int blockLightIn = (light >> 4) & 0xF;
 		//		int luminosity = Math.max(blockLightIn, fluidAttributes.getLuminosity(fluidStack));
 		//		light = (light & 0xF00000) | luminosity << 4;
