@@ -1,4 +1,4 @@
-package snownee.lychee.compat.rei.category;
+package snownee.lychee.compat.rei.display;
 
 import java.util.Collection;
 import java.util.Map;
@@ -9,8 +9,7 @@ import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import snownee.lychee.compat.rei.display.LycheeDisplay;
-import snownee.lychee.compat.rei.display.SimpleLycheeDisplay;
+import snownee.lychee.compat.rei.category.LycheeDisplayCategory;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
