@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.List;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -23,13 +24,17 @@ import snownee.lychee.client.core.post.ItemBasedPostActionRenderer;
 import snownee.lychee.client.core.post.ItemStackPostActionRenderer;
 import snownee.lychee.client.core.post.PlaceBlockPostActionRenderer;
 import snownee.lychee.client.core.post.PostActionRenderer;
+import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.core.post.DropItem;
 import snownee.lychee.core.post.DropXp;
 import snownee.lychee.core.post.Execute;
 import snownee.lychee.core.post.Explode;
 import snownee.lychee.core.post.Hurt;
+import snownee.lychee.core.post.input.DamageItem;
+import snownee.lychee.core.post.input.PreventDefault;
 import snownee.lychee.core.post.input.SetItem;
 import snownee.lychee.core.recipe.ILycheeRecipe;
+import snownee.lychee.core.recipe.LycheeRecipe;
 import snownee.lychee.dripstone_dripping.DripstoneRecipeMod;
 import snownee.lychee.dripstone_dripping.client.ParticleFactories;
 
@@ -96,6 +101,42 @@ public interface ClientProxy {
 		PostActionRenderer.register(PostActionTypes.IF, new IfPostActionRenderer());
 		PostActionRenderer.register(PostActionTypes.PLACE, new PlaceBlockPostActionRenderer());
 		PostActionRenderer.register(PostActionTypes.CYCLE_STATE_PROPERTY, new CycleStatePropertyPostActionRenderer());
+		PostActionRenderer.register(PostActionTypes.DAMAGE_ITEM, new PostActionRenderer<>() {
+			@Override
+			public void loadCatalystsInfo(
+					DamageItem action,
+					final ILycheeRecipe<?> recipe,
+					final List<IngredientInfo> ingredients) {
+				String key = CommonProxy.makeDescriptionId("postAction", PostActionTypes.DAMAGE_ITEM.getRegistryName());
+				Component component = Component.translatable(key, action.damage).withStyle(ChatFormatting.YELLOW);
+				Minecraft mc = Minecraft.getInstance();
+				recipe.getItemIndexes(action.target).forEach(i -> {
+					IngredientInfo info = ingredients.get(i);
+					info.addTooltip(component);
+					action.getConditionTooltips(info.tooltips, 0, mc.level, mc.player);
+					info.isCatalyst = true;
+				});
+			}
+		});
+		PostActionRenderer.register(PostActionTypes.PREVENT_DEFAULT, new PostActionRenderer<>() {
+			@Override
+			public void loadCatalystsInfo(
+					PreventDefault action,
+					final ILycheeRecipe<?> recipe,
+					final List<IngredientInfo> ingredients) {
+				if (!(recipe instanceof LycheeRecipe<?> lycheeRecipe) ||
+					!lycheeRecipe.getType().canPreventConsumeInputs) {return;}
+				Minecraft mc = Minecraft.getInstance();
+				for (var ingredient : ingredients) {
+					if (!ingredient.tooltips.isEmpty()) {
+						continue;
+					}
+					ingredient.addTooltip(lycheeRecipe.getType().getPreventDefaultDescription(lycheeRecipe));
+					action.getConditionTooltips(ingredient.tooltips, 0, mc.level, mc.player);
+					ingredient.isCatalyst = true;
+				}
+			}
+		});
 	}
 
 	static boolean isSinglePlayer() {

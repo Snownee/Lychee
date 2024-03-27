@@ -1,0 +1,24 @@
+{
+	"type": "lychee:block_interacting",
+	"item_in": {
+		"item": "minecraft:snowball"
+	},
+	"block_in": "minecraft:mud",
+	"post": [
+		{
+			"type": "prevent_default",
+			"contextual": {
+				"type": "chance",
+				"chance": 0.5
+			}
+		},
+		{
+			"type": "drop_item",
+			"item": "minecraft:clay"
+		},
+		{
+			"type": "place",
+			"block": "air"
+		}
+	]
+}
