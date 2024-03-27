@@ -38,8 +38,6 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
-	int WIDTH = 150;
-	int HEIGHT = 59;
 
 	Rect2i INFO_RECT = new Rect2i(4, 25, 8, 8);
 

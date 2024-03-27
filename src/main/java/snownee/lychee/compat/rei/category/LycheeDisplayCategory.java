@@ -8,6 +8,9 @@ import snownee.lychee.compat.DisplayUtils;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 
 public abstract class LycheeDisplayCategory<T extends LycheeDisplay<?>> implements DisplayCategory<T> {
+	public static final int WIDTH = 150;
+	public static final int HEIGHT = 59;
+
 	private final CategoryIdentifier<? extends T> categoryIdentifier;
 	public Renderer icon;
 
@@ -29,5 +32,10 @@ public abstract class LycheeDisplayCategory<T extends LycheeDisplay<?>> implemen
 	@Override
 	public CategoryIdentifier<? extends T> getCategoryIdentifier() {
 		return categoryIdentifier;
+	}
+
+	@Override
+	public int getDisplayHeight() {
+		return HEIGHT + 8;
 	}
 }
