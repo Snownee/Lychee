@@ -1,6 +1,5 @@
 package snownee.lychee.action.input;
 
-import java.util.List;
 import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +9,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.codec.StreamCodec;
-import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -20,7 +17,6 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public final class PreventDefault implements PostAction {
 
@@ -46,23 +42,6 @@ public final class PreventDefault implements PostAction {
 	@Override
 	public boolean hidden() {
 		return true;
-	}
-
-	@Override
-	public <T extends ILycheeRecipe<?>> void loadCatalystsInfo(@Nullable T recipe, List<IngredientInfo> ingredients) {
-		if (recipe != null &&
-				recipe.getType() instanceof LycheeRecipeType<?, ?> lycheeRecipeType &&
-				lycheeRecipeType.canPreventConsumeInputs) {
-			var mc = Minecraft.getInstance();
-			for (var ingredient : ingredients) {
-				if (!ingredient.tooltips.isEmpty()) {
-					continue;
-				}
-				ingredient.addTooltip(((LycheeRecipeType<?, T>) lycheeRecipeType).getPreventDefaultDescription(recipe));
-				conditions().appendToTooltips(ingredient.tooltips, mc.level, mc.player, 0);
-				ingredient.isCatalyst = true;
-			}
-		}
 	}
 
 	@Override

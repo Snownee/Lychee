@@ -36,6 +36,7 @@ import snownee.lychee.client.gui.CustomLightingSettings;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.util.CachedRenderingEntity;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.PostActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
@@ -62,7 +63,7 @@ public final class DisplayUtils {
 				.stream()
 				.map(IngredientInfo::new)
 				.collect(Collectors.toCollection(ArrayList::new));
-		recipe.postActions().forEach(action -> action.loadCatalystsInfo(recipe, ingredients));
+		recipe.postActions().forEach(action -> PostActionRenderer.of(action).loadCatalystsInfo(action, recipe, ingredients));
 		var type = (LycheeRecipeType<LycheeContext, ?>) recipe.getType();
 		if (!type.compactInputs) {
 			addIngredientTips(recipe, ingredients);

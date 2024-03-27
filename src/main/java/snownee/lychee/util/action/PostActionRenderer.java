@@ -12,9 +12,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import snownee.lychee.action.RandomSelect;
+import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostActionRenderer<T extends PostAction> {
 
@@ -77,4 +79,9 @@ public interface PostActionRenderer<T extends PostAction> {
 		action.conditions().appendToTooltips(list, mc.level, mc.player, 0);
 		return list;
 	}
+
+	default void loadCatalystsInfo(
+			T action,
+			ILycheeRecipe<?> recipe,
+			List<IngredientInfo> ingredients) {}
 }

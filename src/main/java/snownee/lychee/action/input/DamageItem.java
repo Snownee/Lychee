@@ -1,7 +1,5 @@
 package snownee.lychee.action.input;
 
-import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,9 +7,6 @@ import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.ExtraCodecs;
@@ -19,9 +14,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.LycheeRegistries;
-import snownee.lychee.compat.IngredientInfo;
-import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -95,19 +87,6 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	@Override
 	public void validate(ILycheeRecipe<?> recipe) {
 		Preconditions.checkArgument(!recipe.getItemIndexes(target).isEmpty(), "No target found for %s", target);
-	}
-
-	@Override
-	public <T extends ILycheeRecipe<?>> void loadCatalystsInfo(@Nullable T recipe, List<IngredientInfo> ingredients) {
-		var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(type()));
-		var component = Component.translatable(key, damage).withStyle(ChatFormatting.YELLOW);
-		var mc = Minecraft.getInstance();
-		recipe.getItemIndexes(target).forEach(i -> {
-			var info = ingredients.get(i);
-			info.addTooltip(component);
-			conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
-			info.isCatalyst = true;
-		});
 	}
 
 	public static class Type implements PostActionType<DamageItem> {
