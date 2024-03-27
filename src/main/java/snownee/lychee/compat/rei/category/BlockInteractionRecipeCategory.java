@@ -4,23 +4,29 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
+import me.shedaniel.math.Point;
+import me.shedaniel.rei.api.client.gui.Renderer;
+import me.shedaniel.rei.api.client.gui.widgets.Widget;
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
-import snownee.lychee.client.gui.ScreenElement;
-import snownee.lychee.compat.rei.display.BaseREIDisplay;
-import snownee.lychee.core.LycheeContext;
-import snownee.lychee.core.recipe.type.BlockKeyRecipeType;
-import snownee.lychee.interaction.BlockInteractingRecipe;
+import snownee.lychee.compat.rei.display.LycheeDisplay;
+import snownee.lychee.recipes.BlockInteractingRecipe;
 
-public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<LycheeContext, BlockInteractingRecipe, BaseREIDisplay<BlockInteractingRecipe>> {
+public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<BlockInteractingRecipe> {
 
-	public BlockInteractionRecipeCategory(List<BlockKeyRecipeType<LycheeContext, BlockInteractingRecipe>> recipeTypes, ScreenElement mainIcon) {
-		super(List.copyOf(recipeTypes), mainIcon);
+
+	public BlockInteractionRecipeCategory(
+			CategoryIdentifier<? extends LycheeDisplay<BlockInteractingRecipe>> id,
+			Renderer icon
+	) {
+		super(id, icon, RecipeTypes.BLOCK_INTERACTING);
 		inputBlockRect.setX(inputBlockRect.getX() + 18);
 		methodRect.setX(methodRect.getX() + 18);
 		infoRect.setX(infoRect.getX() + 10);
@@ -28,7 +34,12 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Lyc
 
 	@Override
 	public @Nullable Component getMethodDescription(BlockInteractingRecipe recipe) {
-		return Component.translatable(Util.makeDescriptionId("tip", recipe.getSerializer().getRegistryName()));
+		return Component.translatable(Util.makeDescriptionId("tip", BuiltInRegistries.RECIPE_SERIALIZER.getKey(recipe.getSerializer())));
+	}
+
+	@Override
+	protected void renderIngredientGroup(List<Widget> widgets, Point startPoint, BlockInteractingRecipe recipe, int y) {
+		ingredientGroup(widgets, startPoint, recipe, 22, 21);
 	}
 
 	@Override
@@ -54,8 +65,7 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Lyc
 		return click ? Minecraft.getInstance().options.keyAttack : Minecraft.getInstance().options.keyUse;
 	}
 
-	public int getRealWidth() {
-		return super.getRealWidth() + 20;
+	public int contentWidth() {
+		return super.contentWidth() + 20;
 	}
-
 }

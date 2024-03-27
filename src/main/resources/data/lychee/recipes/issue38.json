@@ -1,17 +1,36 @@
 {
-    "type": "lychee:crafting",
-    "pattern": [
-        "A",
-        " ",
-        "B"
-    ],
-    "key": {
-        "A": {"item": "minecraft:anvil"},
-        "B": {"item": "minecraft:cobblestone"}
-    },
-    "result": {"item": "minecraft:gravel"},
-    "post": [
-        {"type": "set_item","target": "/key/A","item": "minecraft:anvil"},
-        {"type": "execute","command": "playsound minecraft:block.anvil.land block @a ~ ~ ~ 0.3 1 0","hide": false}
-    ]
+	"type": "lychee:crafting",
+	"pattern": [
+		"A",
+		" ",
+		"B"
+	],
+	"key": {
+		"A": {
+			"item": "minecraft:anvil"
+		},
+		"B": {
+			"item": "minecraft:cobblestone"
+		}
+	},
+	"result": {
+		"id": "minecraft:gravel"
+	},
+	"post": [
+		{
+			"type": "set_item",
+			"target": "/key/A",
+			"id": "minecraft:air"
+		},
+		{
+			"type": "set_item",
+			"target": "/key/B",
+			"id": "minecraft:anvil"
+		},
+		{
+			"type": "execute",
+			"command": "playsound minecraft:block.anvil.land block @a ~ ~ ~ 0.3 1 0",
+			"hide": false
+		}
+	]
 }

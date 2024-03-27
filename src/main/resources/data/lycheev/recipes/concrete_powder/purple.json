@@ -1,8 +1,0 @@
-{
-	"type": "lychee:block_crushing",
-	"landing_block": "purple_concrete",
-	"post": {
-		"type": "place",
-		"block": "purple_concrete_powder"
-	}
-}

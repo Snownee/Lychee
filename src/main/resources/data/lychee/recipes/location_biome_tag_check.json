@@ -6,15 +6,15 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "drop_item",
-      "item": "cod",
+			"id": "cod",
       "contextual": {
         "type": "location",
         "predicate": {
-          "lychee:biome_tag": "is_ocean"
+					"biomes": "#is_ocean"
         }
       }
     }

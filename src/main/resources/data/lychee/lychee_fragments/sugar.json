@@ -1,7 +1,0 @@
-{
-  "value": {
-    "type": "drop_item",
-    "item": "sugar",
-    "count": "$amount"
-  }
-}

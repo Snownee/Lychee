@@ -11,7 +11,7 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "orange_dye",
+			"id": "orange_dye",
       "count": 2
     }
   ]

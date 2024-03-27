@@ -1,21 +1,27 @@
 {
-  "type": "lychee:block_clicking",
-  "contextual": {
-    "type": "is_sneaking",
-    "description": "Test"
-  },
-  "item_in": {
-    "tag": "sand"
-  },
-  "block_in": "water_cauldron",
-  "post": [
-    {
-      "type": "drop_item",
-      "item": "water_bucket"
-    },
-    {
-      "type": "place",
-      "block": "cauldron"
-    }
-  ]
+	"type": "lychee:block_clicking",
+	"contextual": {
+		"type": "is_sneaking",
+		"description": "Test"
+	},
+	"item_in": [
+		{
+			"tag": "sand"
+		},
+		{
+			"item": "bucket"
+		}
+	],
+	"block_in": "water_cauldron",
+	"post": [
+		{
+			"type": "set_item",
+			"id": "water_bucket",
+			"target": "/item_in/1"
+		},
+		{
+			"type": "place",
+			"block": "cauldron"
+		}
+	]
 }

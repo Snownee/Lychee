@@ -6,16 +6,16 @@
   "block_in": {
     "blocks": ["minecraft:campfire"],
     "state": {
-      "lit": true
+			"lit": "true"
     }
   },
   "post": [{
       "type": "delay",
-      "s": "0.6"
+		"s": 0.6
     },
     {
       "type": "drop_item",
-      "item": "minecraft:torch",
+			"id": "minecraft:torch",
       "count": 2
     }
   ]

@@ -1,29 +1,27 @@
 {
-  "type": "lychee:anvil_crafting",
-  "item_in": [
-    {
-      "item": "dirt"
-    },
-    {
-      "item": "dirt"
-    }
-  ],
-  "item_out": {
-    "item": "diamond"
-  },
-  "level_cost": 10,
-  "material_cost": 2,
-  "post": [
-    {
-      "type": "set_item",
-      "target": "/item_in/1",
-      "item": "apple"
-    }
-  ],
-  "contextual": {
-    "type": "location",
-    "predicate": {
-      "dimension": "overworld"
-    }
-  }
+	"type": "lychee:anvil_crafting",
+	"item_in": [
+		{
+			"item": "dirt"
+		},
+		{
+			"item": "dirt"
+		}
+	],
+	"item_out": "diamond",
+	"level_cost": 10,
+	"material_cost": 2,
+	"post": [
+		{
+			"type": "set_item",
+			"target": "/item_in/1",
+			"id": "apple"
+		}
+	],
+	"contextual": {
+		"type": "location",
+		"predicate": {
+			"dimension": "overworld"
+		}
+	}
 }

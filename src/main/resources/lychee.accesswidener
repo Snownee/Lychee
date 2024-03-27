@@ -1,6 +1,13 @@
 accessWidener   v1  named
 accessible class net/minecraft/client/renderer/RenderType$CompositeState
+
 accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$PropertyMatcher
+accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactMatcher
+accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedMatcher
+
+accessible field net/minecraft/world/level/storage/loot/IntRange min Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;
+accessible field net/minecraft/world/level/storage/loot/IntRange max Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;
+
 accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
 accessible method net/minecraft/client/particle/DripParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDLnet/minecraft/world/level/material/Fluid;)V
 accessible field net/minecraft/client/particle/DripParticle isGlowing Z
@@ -12,3 +19,5 @@ accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
 accessible method net/minecraft/world/item/crafting/Ingredient$ItemValue <init> (Lnet/minecraft/world/item/ItemStack;)V
 accessible class net/minecraft/world/item/crafting/Ingredient$Value
 accessible field net/minecraft/world/level/block/DropperBlock DISPENSE_BEHAVIOUR Lnet/minecraft/core/dispenser/DispenseItemBehavior;
+
+accessible class net/minecraft/advancements/critereon/LocationPredicate$PositionPredicate

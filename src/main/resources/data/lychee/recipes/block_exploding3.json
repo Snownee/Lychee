@@ -1,14 +1,18 @@
 {
-    "type": "lychee:block_exploding",
-    "block_in": "gold_block",
-    "post": [
-        {
-            "type": "place",
-            "block": "diamond_block"
-        },
-        {
-            "type": "drop_item",
-            "item": "diamond_block"
-        }
-    ]
+	"type": "lychee:block_exploding",
+	"block_in": "gold_block",
+	"contextual": {
+		"type": "weather",
+		"weather": "rain"
+	},
+	"post": [
+		{
+			"type": "place",
+			"block": "diamond_block"
+		},
+		{
+			"type": "drop_item",
+			"id": "diamond_block"
+		}
+	]
 }

@@ -14,7 +14,7 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "water_bucket"
+			"id": "water_bucket"
     },
     {
       "type": "place",

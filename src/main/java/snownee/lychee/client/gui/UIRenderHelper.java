@@ -36,8 +36,9 @@ public class UIRenderHelper {
 	}
 
 	public static void updateWindowSize(Window mainWindow) {
-		if (framebuffer != null)
+		if (framebuffer != null) {
 			framebuffer.resize(mainWindow.getWidth(), mainWindow.getHeight(), Minecraft.ON_OSX);
+		}
 	}
 
 	public static void drawFramebuffer(float alpha) {
@@ -50,51 +51,181 @@ public class UIRenderHelper {
 	public static void swapAndBlitColor(RenderTarget src, RenderTarget dst) {
 		GlStateManager._glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, src.frameBufferId);
 		GlStateManager._glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, dst.frameBufferId);
-		GlStateManager._glBlitFrameBuffer(0, 0, src.viewWidth, src.viewHeight, 0, 0, dst.viewWidth, dst.viewHeight, GL30.GL_COLOR_BUFFER_BIT, GL20.GL_LINEAR);
+		GlStateManager._glBlitFrameBuffer(
+				0,
+				0,
+				src.viewWidth,
+				src.viewHeight,
+				0,
+				0,
+				dst.viewWidth,
+				dst.viewHeight,
+				GL30.GL_COLOR_BUFFER_BIT,
+				GL20.GL_LINEAR
+		);
 
 		GlStateManager._glBindFramebuffer(GlConst.GL_FRAMEBUFFER, dst.frameBufferId);
 	}
 
 	//just like AbstractGui#drawTexture, but with a color at every vertex
-	public static void drawColoredTexture(GuiGraphics graphics, Color c, int x, int y, int tex_left, int tex_top, int width, int height) {
+	public static void drawColoredTexture(
+			GuiGraphics graphics,
+			Color c,
+			int x,
+			int y,
+			int tex_left,
+			int tex_top,
+			int width,
+			int height
+	) {
 		drawColoredTexture(graphics, c, x, y, 0, (float) tex_left, (float) tex_top, width, height, 256, 256);
 	}
 
-	public static void drawColoredTexture(GuiGraphics graphics, Color c, int x, int y, int z, float tex_left, float tex_top, int width, int height, int sheet_width, int sheet_height) {
-		drawColoredTexture(graphics, c, x, x + width, y, y + height, z, width, height, tex_left, tex_top, sheet_width, sheet_height);
+	public static void drawColoredTexture(
+			GuiGraphics graphics,
+			Color c,
+			int x,
+			int y,
+			int z,
+			float tex_left,
+			float tex_top,
+			int width,
+			int height,
+			int sheet_width,
+			int sheet_height
+	) {
+		drawColoredTexture(
+				graphics,
+				c,
+				x,
+				x + width,
+				y,
+				y + height,
+				z,
+				width,
+				height,
+				tex_left,
+				tex_top,
+				sheet_width,
+				sheet_height
+		);
 	}
 
-	public static void drawStretched(GuiGraphics graphics, int left, int top, int w, int h, int z, AllGuiTextures tex) {
+	public static void drawStretched(
+			GuiGraphics graphics, int left, int top, int w, int h, int z,
+			AllGuiTextures tex) {
 		tex.bind();
-		drawTexturedQuad(graphics.pose().last().pose(), Color.WHITE, left, left + w, top, top + h, z, tex.startX / 256f, (tex.startX + tex.width) / 256f, tex.startY / 256f, (tex.startY + tex.height) / 256f);
+		drawTexturedQuad(
+				graphics.pose().last().pose(),
+				Color.WHITE,
+				left,
+				left + w,
+				top,
+				top + h,
+				z,
+				tex.startX / 256f,
+				(tex.startX + tex.width) / 256f,
+				tex.startY / 256f,
+				(tex.startY + tex.height) / 256f
+		);
 	}
 
 	public static void drawCropped(GuiGraphics graphics, int left, int top, int w, int h, int z, AllGuiTextures tex) {
 		tex.bind();
-		drawTexturedQuad(graphics.pose().last().pose(), Color.WHITE, left, left + w, top, top + h, z, tex.startX / 256f, (tex.startX + w) / 256f, tex.startY / 256f, (tex.startY + h) / 256f);
+		drawTexturedQuad(
+				graphics.pose().last().pose(),
+				Color.WHITE,
+				left,
+				left + w,
+				top,
+				top + h,
+				z,
+				tex.startX / 256f,
+				(tex.startX + w) / 256f,
+				tex.startY / 256f,
+				(tex.startY + h) / 256f
+		);
 	}
 
-	private static void drawColoredTexture(GuiGraphics graphics, Color c, int left, int right, int top, int bot, int z, int tex_width, int tex_height, float tex_left, float tex_top, int sheet_width, int sheet_height) {
-		drawTexturedQuad(graphics.pose().last().pose(), c, left, right, top, bot, z, (tex_left + 0.0F) / (float) sheet_width, (tex_left + (float) tex_width) / (float) sheet_width, (tex_top + 0.0F) / (float) sheet_height, (tex_top + (float) tex_height) / (float) sheet_height);
+	private static void drawColoredTexture(
+			GuiGraphics graphics,
+			Color c,
+			int left,
+			int right,
+			int top,
+			int bot,
+			int z,
+			int tex_width,
+			int tex_height,
+			float tex_left,
+			float tex_top,
+			int sheet_width,
+			int sheet_height
+	) {
+		drawTexturedQuad(
+				graphics.pose().last().pose(),
+				c,
+				left,
+				right,
+				top,
+				bot,
+				z,
+				(tex_left + 0.0F) / (float) sheet_width,
+				(tex_left + (float) tex_width) / (float) sheet_width,
+				(tex_top + 0.0F) / (float) sheet_height,
+				(tex_top + (float) tex_height) / (float) sheet_height
+		);
 	}
 
-	private static void drawTexturedQuad(Matrix4f m, Color c, int left, int right, int top, int bot, int z, float u1, float u2, float v1, float v2) {
+	private static void drawTexturedQuad(
+			Matrix4f m,
+			Color c,
+			int left,
+			int right,
+			int top,
+			int bot,
+			int z,
+			float u1,
+			float u2,
+			float v1,
+			float v2
+	) {
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
 		bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-		bufferbuilder.vertex(m, (float) left, (float) bot, (float) z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).uv(u1, v2).endVertex();
-		bufferbuilder.vertex(m, (float) right, (float) bot, (float) z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).uv(u2, v2).endVertex();
-		bufferbuilder.vertex(m, (float) right, (float) top, (float) z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).uv(u2, v1).endVertex();
-		bufferbuilder.vertex(m, (float) left, (float) top, (float) z).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).uv(u1, v1).endVertex();
+		bufferbuilder.vertex(m, (float) left, (float) bot, (float) z).color(
+				c.getRed(),
+				c.getGreen(),
+				c.getBlue(),
+				c.getAlpha()
+		).uv(u1, v2).endVertex();
+		bufferbuilder.vertex(m, (float) right, (float) bot, (float) z).color(
+				c.getRed(),
+				c.getGreen(),
+				c.getBlue(),
+				c.getAlpha()
+		).uv(u2, v2).endVertex();
+		bufferbuilder.vertex(m, (float) right, (float) top, (float) z).color(
+				c.getRed(),
+				c.getGreen(),
+				c.getBlue(),
+				c.getAlpha()
+		).uv(u2, v1).endVertex();
+		bufferbuilder.vertex(m, (float) left, (float) top, (float) z).color(
+				c.getRed(),
+				c.getGreen(),
+				c.getBlue(),
+				c.getAlpha()
+		).uv(u1, v1).endVertex();
 		tesselator.end();
 		RenderSystem.disableBlend();
 	}
 
 	public static void flipForGuiRender(PoseStack poseStack) {
-		poseStack.mulPoseMatrix(new Matrix4f().scaling(1, -1, 1));
+		poseStack.mulPose(new Matrix4f().scaling(1, -1, 1));
 	}
 
 	public static class CustomRenderTarget extends RenderTarget {

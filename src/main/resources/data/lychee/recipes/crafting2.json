@@ -14,20 +14,20 @@
     }
   },
   "result": {
-    "item": "pufferfish_bucket"
+		"id": "pufferfish_bucket"
   },
   "post": [
     {
       "type": "set_item",
       "target": "/key/B",
-      "item": "air"
+			"id": "air"
     }
   ],
   "assembling": [
     {
       "type": "set_item",
       "target": "/result",
-      "item": "apple"
+			"id": "apple"
     }
   ]
 }

@@ -6,32 +6,40 @@ import java.util.stream.Stream;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.plugin.common.displays.anvil.AnvilRecipe;
 import me.shedaniel.rei.plugin.common.displays.anvil.DefaultAnvilDisplay;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
-import snownee.lychee.anvil_crafting.AnvilCraftingRecipe;
-import snownee.lychee.core.recipe.ILycheeRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import snownee.lychee.recipes.AnvilCraftingRecipe;
 
-public class AnvilCraftingDisplay extends DefaultAnvilDisplay implements DisplayRecipeProvider {
+public class AnvilCraftingDisplay extends DefaultAnvilDisplay implements LycheeDisplay<AnvilCraftingRecipe> {
 
-	private final AnvilCraftingRecipe lycheeRecipe;
+	private final RecipeHolder<AnvilCraftingRecipe> lycheeRecipe;
 
-	public AnvilCraftingDisplay(AnvilCraftingRecipe lycheeRecipe) {
-		super(makeRecipe(lycheeRecipe));
-		this.lycheeRecipe = lycheeRecipe;
+	public AnvilCraftingDisplay(RecipeHolder<AnvilCraftingRecipe> recipeHolder) {
+		super(makeRecipe(recipeHolder));
+		this.lycheeRecipe = recipeHolder;
 	}
 
-	private static AnvilRecipe makeRecipe(AnvilCraftingRecipe $) {
-		List<ItemStack> right = Stream.of($.getRight().getItems()).map(ItemStack::copy).peek($$ -> $$.setCount($.getMaterialCost())).toList();
-		return new AnvilRecipe($.getId(), List.of($.getLeft().getItems()), right, List.of($.getResultItem()));
+	private static AnvilRecipe makeRecipe(RecipeHolder<AnvilCraftingRecipe> recipe) {
+		var right = Stream.of(recipe.value().input().getSecond().getItems())
+				.map(ItemStack::copy)
+				.peek(it -> it.setCount(recipe.value().materialCost()))
+				.toList();
+		return new AnvilRecipe(
+				recipe.id(),
+				List.of(recipe.value().input().getFirst().getItems()),
+				right,
+				List.of(recipe.value().getResultItem(Minecraft.getInstance().level.registryAccess())));
 	}
 
 	@Override
-	public ILycheeRecipe<?> recipe() {
-		return lycheeRecipe;
+	public AnvilCraftingRecipe recipe() {
+		return lycheeRecipe.value();
 	}
 
 	@Override
 	public List<EntryIngredient> getOutputEntries() {
-		List<EntryIngredient> ingredients = BaseREIDisplay.getOutputEntries(recipe());
+		var ingredients = LycheeDisplay.super.getOutputEntries();
 		ingredients.addAll(0, super.getOutputEntries());
 		return ingredients;
 	}

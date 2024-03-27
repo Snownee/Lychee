@@ -10,7 +10,7 @@ import com.google.common.hash.Hashing;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
-//@SuppressWarnings("PointlessBitwiseExpression")
+@SuppressWarnings("PointlessBitwiseExpression")
 public class Color {
 	public final static Color TRANSPARENT_BLACK = new Color(0, 0, 0, 0).setImmutable();
 	public final static Color BLACK = new Color(0, 0, 0).setImmutable();
@@ -29,7 +29,12 @@ public class Color {
 	}
 
 	public Color(float r, float g, float b, float a) {
-		this((int) (0.5 + 0xff * Mth.clamp(r, 0, 1)), (int) (0.5 + 0xff * Mth.clamp(g, 0, 1)), (int) (0.5 + 0xff * Mth.clamp(b, 0, 1)), (int) (0.5 + 0xff * Mth.clamp(a, 0, 1)));
+		this(
+				(int) (0.5 + 0xff * Mth.clamp(r, 0, 1)),
+				(int) (0.5 + 0xff * Mth.clamp(g, 0, 1)),
+				(int) (0.5 + 0xff * Mth.clamp(b, 0, 1)),
+				(int) (0.5 + 0xff * Mth.clamp(a, 0, 1))
+		);
 	}
 
 	public Color(int rgba) {
@@ -49,10 +54,11 @@ public class Color {
 	}
 
 	public Color copy(boolean mutable) {
-		if (mutable)
+		if (mutable) {
 			return new Color(value);
-		else
+		} else {
 			return new Color(value).setImmutable();
+		}
 	}
 
 	/**
@@ -127,6 +133,7 @@ public class Color {
 	/**
 	 * Returns the RGB value representing this color
 	 * (Bits 24-31 are alpha, 16-23 are red, 8-15 are green, 0-7 are blue).
+	 *
 	 * @return the RGB value of the color
 	 */
 	public int getRGB() {
@@ -178,7 +185,10 @@ public class Color {
 	}
 
 	public Color mixWith(Color other, float weight) {
-		return ensureMutable().setRedUnchecked((int) (getRed() + (other.getRed() - getRed()) * weight)).setGreenUnchecked((int) (getGreen() + (other.getGreen() - getGreen()) * weight)).setBlueUnchecked((int) (getBlue() + (other.getBlue() - getBlue()) * weight)).setAlphaUnchecked((int) (getAlpha() + (other.getAlpha() - getAlpha()) * weight));
+		return ensureMutable().setRedUnchecked((int) (getRed() + (other.getRed() - getRed()) * weight))
+				.setGreenUnchecked((int) (getGreen() + (other.getGreen() - getGreen()) * weight))
+				.setBlueUnchecked((int) (getBlue() + (other.getBlue() - getBlue()) * weight))
+				.setAlphaUnchecked((int) (getAlpha() + (other.getAlpha() - getAlpha()) * weight));
 	}
 
 	public Color darker() {
@@ -197,8 +207,9 @@ public class Color {
 
 	public Color modifyValue(UnaryOperator<Integer> function) {
 		int newValue = function.apply(value);
-		if (newValue == value)
+		if (newValue == value) {
 			return this;
+		}
 
 		return ensureMutable().setValueUnchecked(newValue);
 	}
@@ -206,8 +217,9 @@ public class Color {
 	// ********* //
 
 	protected Color ensureMutable() {
-		if (this.mutable)
+		if (this.mutable) {
 			return this;
+		}
 
 		return new Color(this.value);
 	}
@@ -240,11 +252,12 @@ public class Color {
 	// ********* //
 
 	public static Color mixColors(@NotNull Color c1, @NotNull Color c2, float w) {
-		return new Color((int) (c1.getRed() + (c2.getRed() - c1.getRed()) * w), (int) (c1.getGreen() + (c2.getGreen() - c1.getGreen()) * w), (int) (c1.getBlue() + (c2.getBlue() - c1.getBlue()) * w), (int) (c1.getAlpha() + (c2.getAlpha() - c1.getAlpha()) * w));
-	}
-
-	public static Color mixColors(@NotNull Couple<Color> colors, float w) {
-		return mixColors(colors.getFirst(), colors.getSecond(), w);
+		return new Color(
+				(int) (c1.getRed() + (c2.getRed() - c1.getRed()) * w),
+				(int) (c1.getGreen() + (c2.getGreen() - c1.getGreen()) * w),
+				(int) (c1.getBlue() + (c2.getBlue() - c1.getBlue()) * w),
+				(int) (c1.getAlpha() + (c2.getAlpha() - c1.getAlpha()) * w)
+		);
 	}
 
 	public static int mixColors(int color1, int color2, float w) {
@@ -257,7 +270,8 @@ public class Color {
 		int g2 = (color2 >> 8) & 0xFF;
 		int b2 = color2 & 0xFF;
 
-		return ((int) (a1 + (a2 - a1) * w) << 24) + ((int) (r1 + (r2 - r1) * w) << 16) + ((int) (g1 + (g2 - g1) * w) << 8) + ((int) (b1 + (b2 - b1) * w) << 0);
+		return ((int) (a1 + (a2 - a1) * w) << 24) + ((int) (r1 + (r2 - r1) * w) << 16) +
+				((int) (g1 + (g2 - g1) * w) << 8) + ((int) (b1 + (b2 - b1) * w) << 0);
 	}
 
 	public static Color rainbowColor(int timeStep) {
@@ -272,14 +286,17 @@ public class Color {
 
 	private static int colorInPhase(int phase, int progress) {
 		phase = phase % 6;
-		if (phase <= 1)
+		if (phase <= 1) {
 			return 0;
-		if (phase == 2)
+		}
+		if (phase == 2) {
 			return progress;
-		if (phase <= 4)
+		}
+		if (phase <= 4) {
 			return 255;
-		else
+		} else {
 			return 255 - progress;
+		}
 	}
 
 	public static Color generateFromLong(long l) {

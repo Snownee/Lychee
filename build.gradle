@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.1-SNAPSHOT'
+    id 'fabric-loom' version '1.5.+'
     id 'maven-publish'
     id "me.shedaniel.unified-publishing" version "0.1.+"
 }
@@ -42,6 +42,21 @@ repositories {
             includeGroup "dev.latvian.mods"
         }
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
+    maven {
+        name = 'ParchmentMC'
+        url = 'https://maven.parchmentmc.org'
+    }
     flatDir { dir 'libs' }
     // Add repositories to retrieve artifacts from in here.
     // You should only use this when depending on other mods because
@@ -58,7 +73,10 @@ sourceSets {
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.20.2:${project.parchmentmc_version}@zip")
+    }
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
@@ -66,27 +84,23 @@ dependencies {
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
-    modImplementation("dev.architectury:architectury-fabric:${project.architectury_version}")
-    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
+//    modImplementation("dev.architectury:architectury-fabric:${project.architectury_version}")
+//    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+//        exclude(group: "net.fabricmc.fabric-api")
+//    }
     modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+    modImplementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+//
+//    modCompileOnlyApi("mezz.jei:jei-${project.minecraft_version}-common-api:${project.jei_version}")
+//    modCompileOnlyApi("mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}")
+//    modImplementation("mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}")
 
-    modCompileOnlyApi("mezz.jei:jei-${project.minecraft_version}-common-api:${project.jei_version}")
-    modCompileOnlyApi("mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}")
-    modImplementation("mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}")
-    //modImplementation "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
-    //annotationProcessor "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
+    modImplementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}-fabric")
 
-    modImplementation "curse.maven:kiwi-549404:4688477"
-    annotationProcessor "curse.maven:kiwi-549404:4688477"
+//    modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
 
-    modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
-
-    modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
+//    modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
 }
 
 loom {
@@ -95,6 +109,20 @@ loom {
     }
 
     accessWidenerPath = file("src/main/resources/${project.mod_id}.accesswidener")
+    enableTransitiveAccessWideners = false
+
+    runs {
+        // This adds a new gradle task that runs the datagen API: "gradlew runDatagen"
+        datagen {
+            inherit server
+            name "Data Generation"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
+            vmArg "-Dfabric-api.datagen.modid=${project.mod_id}"
+
+            runDir "build/datagen"
+        }
+    }
 }
 
 processResources {
@@ -130,6 +158,7 @@ jar {
     exclude '/data/lychee/lychee_fragments'
     exclude '/data/lycheev'
     exclude '/data/c'
+    exclude "/assets/${project.mod_id}/lang/en_us.existing.json"
 
     exclude '**/*.bat'
     from("LICENSE") {
@@ -168,35 +197,36 @@ publishing {
 
 unifiedPublishing {
     project {
-        displayName = project.version
+        displayName = "[Fabric $project.supported_version] $project.mod_version"
         version = project.mod_version // Optional, Inferred from project by default
         changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "" // Optional, in markdown format
         releaseType = project.release_type // Optional, use "release", "beta" or "alpha"
-        gameVersions = ["1.20", "1.20.1"]
+        gameVersions = ["1.20.4"]
         gameLoaders = ["fabric", "quilt"]
 
         mainPublication tasks.remapJar // Declares the publicated jar
 
-        curseforge {
-            token = System.getenv("CURSE_TOKEN") ?: ""
-            id = "574650" // Required, must be a string, ID of CurseForge project
+        if (System.getenv("CURSE_TOKEN") != null) {
+            curseforge {
+                token = System.getenv("CURSE_TOKEN")
+                id = "574650" // Required, must be a string, ID of CurseForge project
 
-            relations { // Optional, Inferred from the relations above by default
-                //depends "fabric-api"
-                optional "kiwi-fabric"
-                optional "kubejs"
+                relations { // Optional, Inferred from the relations above by default
+                    depends "kiwi-fabric"
+                    optional "kubejs"
+                }
             }
         }
 
-        modrinth {
-            token = System.getenv("MODRINTH_TOKEN") ?: ""
-            id = "TdN6LxjM" // Required, must be a string, ID of Modrinth project
-            displayName = project.mod_version
+        if (System.getenv("MODRINTH_TOKEN") != null) {
+            modrinth {
+                token = System.getenv("MODRINTH_TOKEN")
+                id = "TdN6LxjM" // Required, must be a string, ID of Modrinth project
 
-            relations { // Optional, Inferred from the relations above by default
-                //depends "fabric-api"
-                optional "kiwi"
-                optional "kubejs"
+                relations { // Optional, Inferred from the relations above by default
+                    depends "kiwi"
+                    optional "kubejs"
+                }
             }
         }
     }

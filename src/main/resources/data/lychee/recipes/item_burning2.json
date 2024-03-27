@@ -6,11 +6,11 @@
   "post": [
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "drop_item",
-      "item": "cod",
+			"id": "cod",
       "contextual": {
         "type": "chance",
         "chance": 0.5
@@ -18,7 +18,7 @@
     },
     {
       "type": "drop_item",
-      "item": "cod",
+			"id": "cod",
       "contextual": {
         "type": "chance",
         "chance": 0.5
@@ -26,7 +26,7 @@
     },
     {
       "type": "drop_item",
-      "item": "cod",
+			"id": "cod",
       "contextual": {
         "type": "chance",
         "chance": 0.5
@@ -34,7 +34,7 @@
     },
     {
       "type": "drop_item",
-      "item": "cod",
+			"id": "cod",
       "contextual": [
         {
           "type": "chance",
@@ -48,7 +48,7 @@
     },
     {
       "type": "drop_item",
-      "item": "cod",
+			"id": "cod",
       "contextual": {
         "type": "or",
         "contextual": [
@@ -93,7 +93,7 @@
       "block": {
         "blocks": ["oak_stairs"],
         "state": {
-          "waterlogged": true
+					"waterlogged": "true"
         }
       }
     },

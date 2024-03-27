@@ -1,8 +1,0 @@
-{
-	"type": "lychee:block_crushing",
-	"landing_block": "stone",
-	"post": {
-		"type": "place",
-		"block": "cobblestone"
-	}
-}

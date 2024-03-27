@@ -10,7 +10,7 @@
       "entries": [
         {
           "type": "drop_item",
-          "item": "diamond",
+					"id": "diamond",
           "contextual": {
             "type": "chance",
             "chance": 0.5

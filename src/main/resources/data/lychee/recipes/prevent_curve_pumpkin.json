@@ -22,7 +22,7 @@
     },
     {
       "type": "drop_item",
-      "item": "dirt"
+			"id": "dirt"
     }
   ]
 }

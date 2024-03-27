@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
-import snownee.lychee.compat.JEIREI;
+import snownee.lychee.compat.DisplayUtils;
 
 public class SideBlockIcon extends RenderElement {
 
@@ -26,18 +26,15 @@ public class SideBlockIcon extends RenderElement {
 		PoseStack ms = graphics.pose();
 		ms.pushPose();
 		ms.translate(x, y, z);
-		//		ms.scale(.75F, .75F, .75F);
 		ms.scale(.625F, .625F, .625F);
 		mainIcon.render(graphics, 0, 0);
 		ms.popPose();
-		/* off */
 		GuiGameElement.of(blockProvider.get())
-				.lighting(JEIREI.SIDE_ICON_LIGHTING)
+				.lighting(DisplayUtils.SIDE_ICON_LIGHTING)
 				.scale(7)
 				.rotateBlock(30, 202.5, 0)
 				.at(x + 4, y + 2)
 				.render(graphics);
-		/* on */
 	}
 
 }

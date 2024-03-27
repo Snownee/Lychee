@@ -1,28 +1,24 @@
 {
-  "type": "lychee:block_interacting",
-  "item_in": {
-    "item": "air"
-  },
-  "block_in": "sand",
-  "post": [
-    {
-      "type": "drop_item",
-      "item": "diamond"
-    },
-    {
-      "type": "custom",
-      "id": "log",
-      "msg": "You mined a diamond!"
-    }
-  ],
-  "contextual": [
-    {
-      "type": "execute",
-      "command": "execute if entity @s[predicate=lychee:is_survival]"
-    },
-    {
-      "type": "custom",
-      "id": "always_true"
-    }
-  ]
+	"type": "lychee:block_interacting",
+	"item_in": { },
+	"block_in": "sand",
+	"post": [
+		{
+			"type": "drop_item",
+			"id": "diamond"
+		},
+		{
+			"type": "custom",
+			"id": "log",
+			"data": {
+				"msg": "You mined a diamond!"
+			}
+		}
+	],
+	"contextual": [
+		{
+			"type": "execute",
+			"command": "execute if entity @s[predicate=lychee:is_survival]"
+		}
+	]
 }

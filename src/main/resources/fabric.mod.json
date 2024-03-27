@@ -6,7 +6,7 @@
   "name": "Lychee Tweaker",
   "description": "Data-driven in-world crafting",
   "authors": ["Snownee"],
-  "contributors": ["MikhailTapio"],
+  "contributors": ["MikhailTapio", "SettingDust"],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/lychee-fabric",
     "sources": "https://github.com/Snownee/Lychee",
@@ -23,8 +23,11 @@
     "client": [
       "snownee.lychee.util.ClientProxy"
     ],
+    "fabric-datagen": [
+      "snownee.lychee.datagen.LycheeDataGen"
+    ],
     "rei_client": [
-      "snownee.lychee.compat.rei.REICompat"
+		"snownee.lychee.compat.rei.LycheeREIPlugin"
     ],
     "jei_mod_plugin": [
       "snownee.lychee.compat.jei.JEICompat"
@@ -34,12 +37,10 @@
   "accessWidener" : "lychee.accesswidener",
 
   "depends": {
-    "fabric-api": ">=0.73",
-    "minecraft": ">=1.20",
+    "fabric-api": ">=0.95",
+    "fabricloader": ">=0.15",
+    "kiwi": ">=13.5",
     "java": ">=17"
-  },
-  "breaks": {
-    "kubejs": "<1902.6.1-"
   },
 
   "custom": {

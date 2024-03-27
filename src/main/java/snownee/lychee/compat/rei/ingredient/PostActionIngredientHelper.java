@@ -14,15 +14,16 @@ import me.shedaniel.rei.api.common.entry.type.EntryType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import snownee.lychee.compat.rei.REICompat;
-import snownee.lychee.core.post.PostAction;
+import snownee.lychee.LycheeRegistries;
+import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.PostAction;
 
 public class PostActionIngredientHelper implements EntryDefinition<PostAction> {
 
 	@Override
 	public @Nullable String getContainingNamespace(EntryStack<PostAction> entry, PostAction value) {
-		String modid = value.getType().getRegistryName().getNamespace();
+		String modid = LycheeRegistries.POST_ACTION.getKey(value.type()).getNamespace();
 		return CommonProxy.wrapNamespace(modid);
 	}
 
@@ -33,7 +34,7 @@ public class PostActionIngredientHelper implements EntryDefinition<PostAction> {
 
 	@Override
 	public EntryType<PostAction> getType() {
-		return REICompat.POST_ACTION;
+		return LycheeREIPlugin.POST_ACTION;
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public class PostActionIngredientHelper implements EntryDefinition<PostAction> {
 
 	@Override
 	public @Nullable ResourceLocation getIdentifier(EntryStack<PostAction> entry, PostAction value) {
-		return value.getType().getRegistryName();
+		return LycheeRegistries.POST_ACTION.getKey(value.type());
 	}
 
 	@Override

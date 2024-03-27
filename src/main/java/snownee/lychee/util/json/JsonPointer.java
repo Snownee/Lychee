@@ -118,7 +118,8 @@ public class JsonPointer {
 		}
 
 		@Override
-		public JsonPointer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+		public JsonPointer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws
+				JsonParseException {
 			return new JsonPointer(json.getAsString());
 		}
 

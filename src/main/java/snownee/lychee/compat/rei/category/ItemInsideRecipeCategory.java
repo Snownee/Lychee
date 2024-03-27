@@ -4,41 +4,50 @@ import java.util.List;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
-import snownee.lychee.client.gui.ScreenElement;
-import snownee.lychee.compat.rei.display.BaseREIDisplay;
-import snownee.lychee.core.ItemShapelessContext;
-import snownee.lychee.item_inside.ItemInsideRecipe;
-import snownee.lychee.item_inside.ItemInsideRecipeType;
+import me.shedaniel.rei.api.common.category.CategoryIdentifier;
+import snownee.lychee.RecipeTypes;
+import snownee.lychee.compat.rei.display.LycheeDisplay;
+import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.util.ClientProxy;
 
-public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemShapelessContext, ItemInsideRecipe, BaseREIDisplay<ItemInsideRecipe>> {
+public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemInsideRecipe> {
 
-	public ItemInsideRecipeCategory(ItemInsideRecipeType recipeType, ScreenElement mainIcon) {
-		super(List.of(recipeType), mainIcon);
+	public ItemInsideRecipeCategory(
+			CategoryIdentifier<? extends LycheeDisplay<ItemInsideRecipe>> id,
+			Renderer icon
+	) {
+		super(id, icon, RecipeTypes.ITEM_INSIDE);
 		infoRect.setPosition(4, 25);
 		inputBlockRect.setX(80);
 		methodRect.setX(77);
 	}
 
 	@Override
-	public List<Widget> setupDisplay(BaseREIDisplay<ItemInsideRecipe> display, Rectangle bounds) {
+	public List<Widget> setupDisplay(LycheeDisplay<ItemInsideRecipe> display, Rectangle bounds) {
 		List<Widget> widgets = super.setupDisplay(display, bounds);
-		if (display.recipe.getTime() > 0) {
-			widgets.add(Widgets.createLabel(new Point(bounds.x + methodRect.getX() + 10, bounds.y + methodRect.getY() - 6), ClientProxy.format("tip.lychee.sec", display.recipe.getTime())).color(0xFF666666, 0xFFBBBBBB).noShadow().centered());
+		if (display.recipe().time() > 0) {
+			widgets.add(Widgets.createLabel(
+					new Point(bounds.x + methodRect.getX() + 10, bounds.y + methodRect.getY() - 6),
+					ClientProxy.format("tip.lychee.sec", display.recipe().time())).color(0xFF666666, 0xFFBBBBBB).noShadow().centered());
 		}
 		return widgets;
 	}
 
 	@Override
-	public int getDisplayWidth(BaseREIDisplay<ItemInsideRecipe> display) {
-		return getRealWidth();
+	public int getDisplayWidth(LycheeDisplay<ItemInsideRecipe> display) {
+		return contentWidth();
 	}
 
 	@Override
-	public int getRealWidth() {
-		return width + 20;
+	public int contentWidth() {
+		return WIDTH + 20;
 	}
 
+	@Override
+	protected void renderIngredientGroup(List<Widget> widgets, Point startPoint, ItemInsideRecipe recipe, int y) {
+		ingredientGroup(widgets, startPoint, recipe, 40, y);
+	}
 }

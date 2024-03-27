@@ -8,8 +8,6 @@ import net.minecraft.server.level.ChunkMap;
 
 @Mixin(ChunkMap.class)
 public interface ChunkMapAccess {
-
 	@Invoker
 	Iterable<ChunkHolder> callGetChunks();
-
 }

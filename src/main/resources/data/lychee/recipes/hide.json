@@ -8,6 +8,6 @@
   },
   "post": {
     "type": "drop_item",
-    "item": "charcoal"
+		"id": "charcoal"
   }
 }

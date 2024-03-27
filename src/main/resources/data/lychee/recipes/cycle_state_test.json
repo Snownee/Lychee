@@ -1,14 +1,12 @@
 {
-  "type": "lychee:block_interacting",
-  "item_in": {
-    "item": "air"
-  },
-  "block_in": "water_cauldron",
-  "post": [
-    {
-      "type": "cycle_state_property",
-      "block": "water_cauldron",
-      "property": "level"
-    }
-  ]
+	"type": "lychee:block_interacting",
+	"item_in": { },
+	"block_in": "water_cauldron",
+	"post": [
+		{
+			"type": "cycle_state_property",
+			"block": "water_cauldron",
+			"property": "level"
+		}
+	]
 }

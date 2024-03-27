@@ -1,0 +1,7 @@
+{
+  "value": {
+    "type": "drop_item",
+		"id": "sugar",
+    "count": "$amount"
+  }
+}

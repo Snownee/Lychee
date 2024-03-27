@@ -24,8 +24,8 @@ public enum AllGuiTextures implements ScreenElement {
 	RIGHT_CLICK("jei/widgets", 224, 0, 16, 16);
 
 	public final ResourceLocation location;
-	public int width, height;
-	public int startX, startY;
+	public final int width, height;
+	public final int startX, startY;
 
 	AllGuiTextures(String location, int width, int height) {
 		this(location, 0, 0, width, height);

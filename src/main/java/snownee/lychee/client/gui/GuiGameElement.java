@@ -59,7 +59,9 @@ public class GuiGameElement {
 	}
 
 	public static GuiRenderBuilder of(Fluid fluid) {
-		return new GuiBlockStateRenderBuilder(fluid.defaultFluidState().createLegacyBlock().setValue(LiquidBlock.LEVEL, 0));
+		return new GuiBlockStateRenderBuilder(fluid.defaultFluidState()
+				.createLegacyBlock()
+				.setValue(LiquidBlock.LEVEL, 0));
 	}
 
 	public static abstract class GuiRenderBuilder extends RenderElement {
@@ -167,7 +169,9 @@ public class GuiGameElement {
 			Minecraft mc = Minecraft.getInstance();
 			BlockRenderDispatcher blockRenderer = mc.getBlockRenderer();
 			MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
-			RenderType renderType = blockState.getBlock() == Blocks.AIR ? Sheets.translucentCullBlockSheet() : ItemBlockRenderTypes.getRenderType(blockState, true);
+			RenderType renderType = blockState.getBlock() == Blocks.AIR
+					? Sheets.translucentCullBlockSheet()
+					: ItemBlockRenderTypes.getRenderType(blockState, true);
 			VertexConsumer vb = buffer.getBuffer(renderType);
 
 			transformMatrix(matrixStack);
@@ -178,11 +182,32 @@ public class GuiGameElement {
 			cleanUpMatrix(matrixStack);
 		}
 
-		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, RenderType renderType, VertexConsumer vb, PoseStack ms) {
+		protected void renderModel(
+				BlockRenderDispatcher blockRenderer,
+				MultiBufferSource.BufferSource buffer,
+				RenderType renderType,
+				VertexConsumer vb,
+				PoseStack ms
+		) {
 			Minecraft mc = Minecraft.getInstance();
-			int color = mc.getBlockColors().getColor(blockState, mc.level, mc.cameraEntity != null ? mc.cameraEntity.blockPosition() : null, 0);
+			int color = mc.getBlockColors().getColor(
+					blockState,
+					mc.level,
+					mc.cameraEntity != null ? mc.cameraEntity.blockPosition() : null,
+					0
+			);
 			Color rgb = new Color(color == -1 ? this.color : color);
-			blockRenderer.getModelRenderer().renderModel(ms.last(), vb, blockState, blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(), rgb.getBlueAsFloat(), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+			blockRenderer.getModelRenderer().renderModel(
+					ms.last(),
+					vb,
+					blockState,
+					blockModel,
+					rgb.getRedAsFloat(),
+					rgb.getGreenAsFloat(),
+					rgb.getBlueAsFloat(),
+					LightTexture.FULL_BRIGHT,
+					OverlayTexture.NO_OVERLAY
+			);
 			buffer.endBatch();
 		}
 
@@ -195,10 +220,22 @@ public class GuiGameElement {
 		}
 
 		@Override
-		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, RenderType renderType, VertexConsumer vb, PoseStack ms) {
+		protected void renderModel(
+				BlockRenderDispatcher blockRenderer,
+				MultiBufferSource.BufferSource buffer,
+				RenderType renderType,
+				VertexConsumer vb,
+				PoseStack ms
+		) {
 			if (blockState.getBlock() instanceof FireBlock) {
 				Lighting.setupForFlatItems();
-				blockRenderer.renderSingleBlock(blockState, ms, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+				blockRenderer.renderSingleBlock(
+						blockState,
+						ms,
+						buffer,
+						LightTexture.FULL_BRIGHT,
+						OverlayTexture.NO_OVERLAY
+				);
 				buffer.endBatch();
 				Lighting.setupFor3DItems();
 				return;
@@ -206,12 +243,25 @@ public class GuiGameElement {
 
 			super.renderModel(blockRenderer, buffer, renderType, vb, ms);
 
-			if (blockState.getFluidState().isEmpty())
+			if (blockState.getFluidState().isEmpty()) {
 				return;
+			}
 
 			float min = 0.001F, max = 0.999F;
 			// LiquidBlockRenderer.MAX_FLUID_HEIGHT
-			FluidRenderer.renderFluidBox(blockState.getFluidState(), min, min, min, max, max * 0.8888889F, max, buffer, ms, LightTexture.FULL_BRIGHT, false);
+			FluidRenderer.renderFluidBox(
+					blockState.getFluidState(),
+					min,
+					min,
+					min,
+					max,
+					max * 0.8888889F,
+					max,
+					buffer,
+					ms,
+					LightTexture.FULL_BRIGHT,
+					false
+			);
 			buffer.endBatch();
 		}
 	}
@@ -252,7 +302,10 @@ public class GuiGameElement {
 			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
 			RenderSystem.enableBlend();
 			RenderSystem.enableCull();
-			RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+			RenderSystem.blendFunc(
+					GlStateManager.SourceFactor.SRC_ALPHA,
+					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
+			);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 			matrixStack.pushPose();
 			matrixStack.translate(0, 0, 100.0F);
@@ -264,7 +317,16 @@ public class GuiGameElement {
 				Lighting.setupForFlatItems();
 			}
 
-			renderer.render(stack, ItemDisplayContext.GUI, false, matrixStack, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, bakedModel);
+			renderer.render(
+					stack,
+					ItemDisplayContext.GUI,
+					false,
+					matrixStack,
+					buffer,
+					LightTexture.FULL_BRIGHT,
+					OverlayTexture.NO_OVERLAY,
+					bakedModel
+			);
 			RenderSystem.disableDepthTest();
 			buffer.endBatch();
 

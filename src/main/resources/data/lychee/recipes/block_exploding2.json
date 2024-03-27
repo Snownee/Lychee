@@ -1,13 +1,13 @@
 {
-    "type": "lychee:block_exploding",
-    "block_in": "ice",
-    "post": [
-        {
-            "type": "prevent_default"
-        },
-        {
-            "type": "place",
-            "block": "gold_block"
-        }
-    ]
+	"type": "lychee:block_exploding",
+	"block_in": "ice",
+	"post": [
+		{
+			"type": "prevent_default"
+		},
+		{
+			"type": "place",
+			"block": "gold_block"
+		}
+	]
 }

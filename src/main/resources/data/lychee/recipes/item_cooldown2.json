@@ -1,17 +1,15 @@
 {
-  "type": "lychee:block_clicking",
-  "item_in": {
-    "item": "air"
-  },
-  "block_in": "deepslate_iron_ore",
-  "post": [
-    {
-      "type": "drop_item",
-      "item": "diamond"
-    },
-    {
-      "type": "add_item_cooldown",
-      "s": "0.5"
-    }
-  ]
+	"type": "lychee:block_clicking",
+	"item_in": { },
+	"block_in": "deepslate_iron_ore",
+	"post": [
+		{
+			"type": "drop_item",
+			"id": "diamond"
+		},
+		{
+			"type": "add_item_cooldown",
+			"s": 0.5
+		}
+	]
 }

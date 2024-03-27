@@ -10,7 +10,7 @@
     },
     {
       "type": "drop_item",
-      "item": "diamond"
+			"id": "diamond"
     },
     {
       "type": "nbt_patch",
