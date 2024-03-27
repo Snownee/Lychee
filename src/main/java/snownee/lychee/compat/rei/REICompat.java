@@ -39,6 +39,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+
+import org.jetbrains.annotations.NotNull;
+
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
@@ -274,7 +277,7 @@ public class REICompat implements REIClientPlugin {
 		}
 
 		@Override
-		public List<? extends GuiEventListener> children() {
+		public @NotNull List<? extends GuiEventListener> children() {
 			return Collections.emptyList();
 		}
 

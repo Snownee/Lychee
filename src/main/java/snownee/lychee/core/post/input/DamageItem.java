@@ -7,7 +7,10 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 
 import it.unimi.dsi.fastutil.ints.IntList;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -109,18 +112,7 @@ public class DamageItem extends PostAction {
 
 	@Override
 	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
-		Preconditions.checkArgument(recipe.getItemIndexes(target).size() > 0, "No target found for %s", target);
-	}
-
-	@Override
-	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
-		String key = CommonProxy.makeDescriptionId("postAction", getType().getRegistryName());
-		Component component = Component.translatable(key, damage).withStyle(ChatFormatting.YELLOW);
-		recipe.getItemIndexes(target).forEach(i -> {
-			IngredientInfo info = ingredients.get(i);
-			info.addTooltip(component);
-			info.isCatalyst = true;
-		});
+		Preconditions.checkArgument(!recipe.getItemIndexes(target).isEmpty(), "No target found for %s", target);
 	}
 
 	public static class Type extends PostActionType<DamageItem> {
