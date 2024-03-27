@@ -52,12 +52,12 @@ public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>>
 
 	@Override
 	public List<Widget> setupDisplay(LycheeDisplay<T> display, Rectangle bounds) {
-		Point startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
-		T recipe = display.recipe();
+		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
+		var recipe = display.recipe();
 		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
 		drawInfoBadgeIfNeeded(widgets, display, startPoint);
-		int xCenter = bounds.getCenterX();
-		int y = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9 ? 26 : 28;
+		var xCenter = bounds.getCenterX();
+		var y = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9 ? 26 : 28;
 		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y);
 		actionGroup(widgets, startPoint, recipe, xCenter + 50 - startPoint.x, y);
 		drawExtra(widgets, display, bounds);
@@ -65,7 +65,7 @@ public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>>
 	}
 
 	public void drawExtra(List<Widget> widgets, LycheeDisplay<T> display, Rectangle bounds) {
-		Rectangle iconBounds = new Rectangle(bounds.getCenterX() - 8, bounds.y + 19, 24, 24);
+		var iconBounds = new Rectangle(bounds.getCenterX() - 8, bounds.y + 19, 24, 24);
 		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 			graphics.pose().pushPose();
 			graphics.pose().translate(0, 0, 100);

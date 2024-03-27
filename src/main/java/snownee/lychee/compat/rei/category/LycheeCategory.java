@@ -16,7 +16,6 @@ import me.shedaniel.rei.api.client.view.ViewSearchBuilder;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -134,7 +133,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 
 	default void drawInfoBadgeIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
 		if (!recipe.conditions().conditions().isEmpty() || recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
-			widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
+			widgets.add(Widgets.createDrawableWidget((graphics, mouseX, mouseY, delta) -> {
 				var matrixStack = graphics.pose();
 				matrixStack.pushPose();
 				matrixStack.translate(startPoint.x + rect.getX(), startPoint.y + rect.getY(), 0);

@@ -253,13 +253,13 @@ public class BlockPredicateExtensions {
 								.toList();
 						return Pair.of(sorted.get(0), sorted.get(sorted.size() - 1));
 					});
-					name.append(Component.literal(rangedMatcher.minValue().orElseGet(
-							() -> property.getName((Comparable) rangePair.get().getFirst())
-					)).withStyle(ChatFormatting.WHITE));
-					name.append(Component.literal("~").withStyle(ChatFormatting.GRAY));
-					name.append(Component.literal(rangedMatcher.minValue().orElseGet(
-							() -> property.getName((Comparable) rangePair.get().getSecond())
-					)).withStyle(ChatFormatting.WHITE));
+					var min = rangedMatcher.minValue().orElseGet(() -> property.getName((Comparable) rangePair.get().getFirst()));
+					var max = rangedMatcher.maxValue().orElseGet(() -> property.getName((Comparable) rangePair.get().getSecond()));
+					name.append(Component.literal(min).withStyle(ChatFormatting.WHITE));
+					if (!min.equals(max)) {
+						name.append(Component.literal("~").withStyle(ChatFormatting.GRAY));
+						name.append(Component.literal(max).withStyle(ChatFormatting.WHITE));
+					}
 				}
 				list.add(name);
 			}
