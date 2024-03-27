@@ -10,32 +10,32 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.compat.rei.category.LycheeDisplayCategory;
-import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public interface DisplayRegisters {
 	Map<ResourceLocation, DisplayRegister<?>> ALL = Maps.newHashMap();
 
-	DisplayRegister<ILycheeRecipe<LycheeContext>> DEFAULT = (registry, category, recipes) -> {
+	DisplayRegister<ILycheeRecipe<?>> DEFAULT = (registry, category, recipes) -> {
 		for (var recipe : recipes) {
 			registry.add(new SimpleLycheeDisplay<>(recipe.value(), (CategoryIdentifier) category.getCategoryIdentifier()));
 		}
 	};
 
-	static <R extends ILycheeRecipe<LycheeContext>> DisplayRegister<R> get(ResourceLocation id) {
+
+	static <R extends ILycheeRecipe<?>> DisplayRegister<R> get(ResourceLocation id) {
 		return (DisplayRegister<R>) ALL.getOrDefault(id, DEFAULT);
 	}
 
-	static <R extends ILycheeRecipe<LycheeContext>> DisplayRegister<R> register(
-			LycheeRecipeType<LycheeContext, R> type,
+	static <R extends ILycheeRecipe<?>> DisplayRegister<R> register(
+			LycheeRecipeType<?, R> type,
 			DisplayRegister<R> provider) {
 		ALL.put(type.categoryId, provider);
 		return provider;
 	}
 
 	@FunctionalInterface
-	interface DisplayRegister<R extends ILycheeRecipe<LycheeContext>> {
+	interface DisplayRegister<R extends ILycheeRecipe<?>> {
 		void consume(
 				DisplayRegistry registry,
 				LycheeDisplayCategory<? extends LycheeDisplay<R>> category,

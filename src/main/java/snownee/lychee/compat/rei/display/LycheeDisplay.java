@@ -6,19 +6,17 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 
 import dev.architectury.fluid.FluidStack;
-import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import snownee.lychee.util.action.PostActionDisplay;
-import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public interface LycheeDisplay<T extends ILycheeRecipe<LycheeContext>> extends Display {
-	static List<EntryIngredient> getInputEntries(ILycheeRecipe<LycheeContext> recipe) {
+public interface LycheeDisplay<T extends ILycheeRecipe<?>> extends Display {
+	static List<EntryIngredient> getInputEntries(ILycheeRecipe<?> recipe) {
 		var ingredients = Lists.newArrayList(EntryIngredients.ofIngredients(recipe.getIngredients()));
 		recipe.getBlockInputs().stream()
 				.map(BlockPredicateExtensions::matchedFluids)
@@ -37,7 +35,7 @@ public interface LycheeDisplay<T extends ILycheeRecipe<LycheeContext>> extends D
 		return ingredients;
 	}
 
-	static List<EntryIngredient> getOutputEntries(ILycheeRecipe<LycheeContext> recipe) {
+	static List<EntryIngredient> getOutputEntries(ILycheeRecipe<?> recipe) {
 		var ingredients = Lists.<EntryIngredient>newArrayList();
 		recipe.allActions().filter(it -> !it.hidden())
 				.map(PostActionDisplay::getOutputItems)
@@ -54,13 +52,6 @@ public interface LycheeDisplay<T extends ILycheeRecipe<LycheeContext>> extends D
 	}
 
 	T recipe();
-
-	CategoryIdentifier<? extends LycheeDisplay<T>> categoryIdentifier();
-
-	@Override
-	default CategoryIdentifier<? extends LycheeDisplay<T>> getCategoryIdentifier() {
-		return categoryIdentifier();
-	}
 
 	@Override
 	default List<EntryIngredient> getInputEntries() {

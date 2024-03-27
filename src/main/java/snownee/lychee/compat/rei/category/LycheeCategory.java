@@ -127,7 +127,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return 120;
 	}
 
-	default void drawInfoBadgeIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
+	static void drawInfoBadgeIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
 		if (recipe.conditions().conditions().isEmpty() && !recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
 			return;
 		}

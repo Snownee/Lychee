@@ -1,31 +1,44 @@
 package snownee.lychee.compat.rei;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
+import dev.architectury.event.EventResult;
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.gui.DisplayRenderer;
+import me.shedaniel.rei.api.client.gui.widgets.Arrow;
+import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
+import me.shedaniel.rei.api.client.registry.category.extension.CategoryExtensionProvider;
+import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
+import me.shedaniel.rei.api.client.registry.display.DisplayCategoryView;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
+import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import snownee.kiwi.util.Util;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.compat.rei.category.CategoryProviders;
 import snownee.lychee.compat.rei.category.IconProviders;
+import snownee.lychee.compat.rei.category.LycheeCategory;
 import snownee.lychee.compat.rei.category.LycheeDisplayCategory;
 import snownee.lychee.compat.rei.category.WorkstationRegisters;
+import snownee.lychee.compat.rei.display.AnvilCraftingDisplay;
 import snownee.lychee.compat.rei.display.DisplayRegisters;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.LEntryWidget;
@@ -98,6 +111,41 @@ public class LycheeREIPlugin implements REIClientPlugin {
 				}
 			});
 		}
+
+		CategoryExtensionProvider<Display> extensionProvider = (display, category, lastView) -> {
+			if (display instanceof LycheeDisplay<?> lycheeDisplay) {
+				var recipe = lycheeDisplay.recipe();
+				return new DisplayCategoryView<>() {
+					@Override
+					public DisplayRenderer getDisplayRenderer(Display display) {
+						return lastView.getDisplayRenderer(display);
+					}
+
+					@Override
+					public List<Widget> setupDisplay(Display display, Rectangle bounds) {
+						List<Widget> widgets = lastView.setupDisplay(display, bounds);
+						Rect2i rect = null;
+						for (Widget widget : widgets) {
+							if (widget instanceof Arrow arrow) {
+								rect = new Rect2i(
+										arrow.getBounds().getCenterX() - bounds.getX() - 4,
+										Math.max(arrow.getY() - bounds.getY() - 9, 4),
+										8,
+										8);
+								break;
+							}
+						}
+						if (rect != null) {
+							LycheeCategory.drawInfoBadgeIfNeeded(widgets, recipe, bounds.getLocation(), rect);
+						}
+						return widgets;
+					}
+				};
+			}
+			return lastView;
+		};
+		registry.get(CategoryIdentifier.of("minecraft", "plugins/crafting")).registerExtension(extensionProvider);
+		registry.get(CategoryIdentifier.of("minecraft", "plugins/anvil")).registerExtension(extensionProvider);
 	}
 
 	@Override
@@ -105,8 +153,30 @@ public class LycheeREIPlugin implements REIClientPlugin {
 		categories.asMap().forEach((id, categories) -> {
 			var displayRegister = DisplayRegisters.get(id);
 			for (var category : categories) {
-				displayRegister.consume(registry, (LycheeDisplayCategory) category.category, category.recipes);
+				displayRegister.consume(
+						registry,
+						(LycheeDisplayCategory) category.category,
+						(Collection) category.recipes);
 			}
+		});
+
+		var registryAccess = Minecraft.getInstance().level.registryAccess();
+		try {
+			Util.getRecipes(RecipeTypes.ANVIL_CRAFTING).stream()
+					.filter(it ->
+							!it.value().getResultItem(registryAccess).isEmpty() &&
+									!it.value().isSpecial() && !it.value().hideInRecipeViewer())
+					.map(AnvilCraftingDisplay::new)
+					.forEach(registry::add);
+		} catch (Throwable e) {
+			Lychee.LOGGER.error("", e);
+		}
+
+		registry.registerVisibilityPredicate((DisplayCategory<?> category, Display display) -> {
+			if (display instanceof LycheeDisplay<?> lycheeDisplay && lycheeDisplay.recipe().hideInRecipeViewer()) {
+				return EventResult.interruptFalse();
+			}
+			return EventResult.pass();
 		});
 	}
 

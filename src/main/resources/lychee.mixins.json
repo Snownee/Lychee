@@ -35,7 +35,8 @@
 		"recipes.iteminside.EntityMixin",
 		"recipes.lightningchanneling.LightningBoltMixin",
 		"recipes.randomblockticking.BlockBehaviourMixin",
-		"recipes.randomblockticking.BlockStateMixin"
+		"recipes.randomblockticking.BlockStateMixin",
+		"rei.DefaultCraftingDisplayMixin"
 	],
 	"client": [
 		"ClientPacketListenerMixin",
