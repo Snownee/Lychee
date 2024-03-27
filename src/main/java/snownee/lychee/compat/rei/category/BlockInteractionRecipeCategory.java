@@ -29,7 +29,7 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Blo
 		super(id, icon, RecipeTypes.BLOCK_INTERACTING);
 		inputBlockRect.setX(inputBlockRect.getX() + 18);
 		methodRect.setX(methodRect.getX() + 18);
-		infoRect().setX(infoRect().getX() + 10);
+		infoRect.setX(infoRect.getX() + 10);
 	}
 
 	@Override

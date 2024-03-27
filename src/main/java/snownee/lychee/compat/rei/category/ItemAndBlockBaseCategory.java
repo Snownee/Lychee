@@ -36,7 +36,7 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends LycheeDisplayCategory<LycheeDisplay<T>> implements LycheeCategory<T> {
+public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
 
 	private final LycheeRecipeType<LycheeContext, T> recipeType;
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
@@ -48,7 +48,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 			LycheeRecipeType<LycheeContext, T> recipeType) {
 		super(id, icon);
 		this.recipeType = recipeType;
-		infoRect().setPosition(8, 32);
+		infoRect.setPosition(8, 32);
 	}
 
 	public static BlockState getIconBlock(Collection<RecipeHolder<? extends BlockKeyableRecipe<?>>> recipes) {
@@ -136,9 +136,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 						.orElse(Collections.emptyList());
 				return list.toArray(new Component[0]);
 			});
-			reactive.setOnClick(($, button) -> {
-				clickBlock(getRenderingBlock(recipe), button);
-			});
+			reactive.setOnClick(($, button) -> clickBlock(getRenderingBlock(recipe), button));
 			widgets.add(reactive);
 		}
 

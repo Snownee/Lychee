@@ -28,7 +28,7 @@ import snownee.lychee.recipes.BlockCrushingRecipeType;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-public final class BlockCrushingRecipeCategory extends LycheeDisplayCategory<LycheeDisplay<BlockCrushingRecipe>> implements LycheeCategory<BlockCrushingRecipe> {
+public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<BlockCrushingRecipe> {
 
 	public static final Rect2i FALLING_BLOCK_RECT = new Rect2i(0, -35, 20, 35);
 	public static final Rect2i LANDING_BLOCK_RECT = new Rect2i(0, 0, 20, 20);
@@ -142,9 +142,7 @@ public final class BlockCrushingRecipeCategory extends LycheeDisplayCategory<Lyc
 				List<Component> list = BlockPredicateExtensions.getTooltips(getLandingBlock(recipe), recipe.landingBlock().orElseThrow());
 				return list.toArray(new Component[0]);
 			});
-			reactive.setOnClick(($, button) -> {
-				clickBlock(getLandingBlock(recipe), button);
-			});
+			reactive.setOnClick(($, button) -> clickBlock(getLandingBlock(recipe), button));
 			widgets.add(reactive);
 		}
 

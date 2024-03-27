@@ -20,7 +20,7 @@ public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemInsid
 			Renderer icon
 	) {
 		super(id, icon, RecipeTypes.ITEM_INSIDE);
-		infoRect().setPosition(4, 25);
+		infoRect.setPosition(4, 25);
 		inputBlockRect.setX(80);
 		methodRect.setX(77);
 	}

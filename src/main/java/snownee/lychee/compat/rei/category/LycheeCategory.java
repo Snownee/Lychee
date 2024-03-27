@@ -39,8 +39,6 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 
-	Rect2i INFO_RECT = new Rect2i(4, 25, 8, 8);
-
 	static <T> void slotGroup(
 			List<Widget> widgets,
 			Point startPoint,
@@ -123,27 +121,28 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 
 	LycheeRecipeType<?, ? extends R> recipeType();
 
-	default Rect2i infoRect() {return INFO_RECT;}
+	Rect2i infoRect();
 
 	default int contentWidth() {
 		return 120;
 	}
 
 	default void drawInfoBadgeIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
-		if (!recipe.conditions().conditions().isEmpty() || recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
-			widgets.add(Widgets.createDrawableWidget((graphics, mouseX, mouseY, delta) -> {
-				var matrixStack = graphics.pose();
-				matrixStack.pushPose();
-				matrixStack.translate(startPoint.x + rect.getX(), startPoint.y + rect.getY(), 0);
-				matrixStack.scale(.5F, .5F, .5F);
-				AllGuiTextures.INFO.render(graphics, 0, 0);
-				matrixStack.popPose();
-			}));
-			var reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, rect));
-			reactive.setTooltipFunction($ -> DisplayUtils.getRecipeTooltip(recipe).toArray(new Component[0]));
-			reactive.setOnClick((widget, button) -> ClientProxy.postInfoBadgeClickEvent(recipe, button));
-			widgets.add(reactive);
+		if (recipe.conditions().conditions().isEmpty() && !recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
+			return;
 		}
+		widgets.add(Widgets.createDrawableWidget((graphics, mouseX, mouseY, delta) -> {
+			var matrixStack = graphics.pose();
+			matrixStack.pushPose();
+			matrixStack.translate(startPoint.x + rect.getX(), startPoint.y + rect.getY(), 0);
+			matrixStack.scale(.5F, .5F, .5F);
+			AllGuiTextures.INFO.render(graphics, 0, 0);
+			matrixStack.popPose();
+		}));
+		var reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, rect));
+		reactive.setTooltipFunction($ -> DisplayUtils.getRecipeTooltip(recipe).toArray(new Component[0]));
+		reactive.setOnClick((widget, button) -> ClientProxy.postInfoBadgeClickEvent(recipe, button));
+		widgets.add(reactive);
 	}
 
 	default void drawInfoBadgeIfNeeded(List<Widget> widgets, LycheeDisplay<R> display, Point startPoint) {

@@ -30,7 +30,7 @@ import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public class DripstoneRecipeCategory extends LycheeDisplayCategory<LycheeDisplay<DripstoneRecipe>> implements LycheeCategory<DripstoneRecipe> {
+public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRecipe> {
 
 	private final Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
 	private final Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
@@ -40,7 +40,7 @@ public class DripstoneRecipeCategory extends LycheeDisplayCategory<LycheeDisplay
 			Renderer icon
 	) {
 		super(categoryIdentifier, icon);
-		infoRect().setX(-10);
+		infoRect.setX(-10);
 	}
 
 
@@ -99,9 +99,7 @@ public class DripstoneRecipeCategory extends LycheeDisplayCategory<LycheeDisplay
 			var list = BlockPredicateExtensions.getTooltips(getSourceBlock(recipe), recipe.sourceBlock());
 			return list.toArray(new Component[0]);
 		});
-		reactive.setOnClick(($, button) -> {
-			clickBlock(getSourceBlock(recipe), button);
-		});
+		reactive.setOnClick(($, button) -> clickBlock(getSourceBlock(recipe), button));
 		widgets.add(reactive);
 
 		reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, targetBlockRect));
@@ -111,9 +109,7 @@ public class DripstoneRecipeCategory extends LycheeDisplayCategory<LycheeDisplay
 					.orElse(Collections.emptyList());
 			return components.toArray(new Component[0]);
 		});
-		reactive.setOnClick(($, button) -> {
-			clickBlock(getTargetBlock(recipe), button);
-		});
+		reactive.setOnClick(($, button) -> clickBlock(getTargetBlock(recipe), button));
 		widgets.add(reactive);
 
 		return widgets;
