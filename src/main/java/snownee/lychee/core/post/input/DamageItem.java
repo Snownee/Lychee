@@ -1,16 +1,12 @@
 package snownee.lychee.core.post.input;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.GsonHelper;
@@ -22,13 +18,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.PostActionTypes;
-import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.Reference;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.util.CommonProxy;
 
 public class DamageItem extends PostAction {
 
@@ -111,19 +105,6 @@ public class DamageItem extends PostAction {
 	@Override
 	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
 		Preconditions.checkArgument(recipe.getItemIndexes(target).size() > 0, "No target found for %s", target);
-	}
-
-	@Override
-	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
-		String key = CommonProxy.makeDescriptionId("postAction", getType().getRegistryName());
-		Component component = Component.translatable(key, damage).withStyle(ChatFormatting.YELLOW);
-		Minecraft mc = Minecraft.getInstance();
-		recipe.getItemIndexes(target).forEach(i -> {
-			IngredientInfo info = ingredients.get(i);
-			info.addTooltip(component);
-			getConditionTooltips(info.tooltips, 0, mc.level, mc.player);
-			info.isCatalyst = true;
-		});
 	}
 
 	public static class Type extends PostActionType<DamageItem> {
