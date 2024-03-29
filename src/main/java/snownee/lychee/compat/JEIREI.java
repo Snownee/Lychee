@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.client.core.post.PostActionRenderer;
 import snownee.lychee.client.gui.CustomLightingSettings;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.core.def.BlockPredicateHelper;
@@ -72,7 +73,7 @@ public class JEIREI {
 				.map(IngredientInfo::new)
 				.collect(Collectors.toCollection(ArrayList::new));
 		/* on */
-		recipe.getPostActions().forEach(action -> action.loadCatalystsInfo(recipe, ingredients));
+		recipe.getPostActions().forEach(action -> PostActionRenderer.of(action).loadCatalystsInfo(action, recipe, ingredients));
 		if (!recipe.getType().compactInputs) {
 			addIngredientTips(recipe, ingredients);
 			return ingredients;

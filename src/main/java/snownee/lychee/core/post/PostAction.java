@@ -18,7 +18,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.LycheeRegistries;
-import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.contextual.ContextualHolder;
 import snownee.lychee.core.recipe.ILycheeRecipe;
@@ -109,9 +108,6 @@ public abstract class PostAction extends ContextualHolder {
 	}
 
 	public void validate(ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
-	}
-
-	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
 	}
 
 	public void getUsedPointers(ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {

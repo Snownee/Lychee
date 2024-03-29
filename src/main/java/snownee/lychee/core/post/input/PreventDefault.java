@@ -1,18 +1,13 @@
 package snownee.lychee.core.post.input;
 
-import java.util.List;
-
 import com.google.gson.JsonObject;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import snownee.lychee.PostActionTypes;
-import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.core.LycheeContext;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.recipe.ILycheeRecipe;
-import snownee.lychee.core.recipe.LycheeRecipe;
 
 public class PreventDefault extends PostAction {
 
@@ -35,21 +30,6 @@ public class PreventDefault extends PostAction {
 	@Override
 	public boolean isHidden() {
 		return true;
-	}
-
-	@Override
-	public void loadCatalystsInfo(ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
-		if (recipe instanceof LycheeRecipe<?> lycheeRecipe && lycheeRecipe.getType().canPreventConsumeInputs) {
-			Minecraft mc = Minecraft.getInstance();
-			for (var ingredient : ingredients) {
-				if (!ingredient.tooltips.isEmpty()) {
-					continue;
-				}
-				ingredient.addTooltip(lycheeRecipe.getType().getPreventDefaultDescription(lycheeRecipe));
-				getConditionTooltips(ingredient.tooltips, 0, mc.level, mc.player);
-				ingredient.isCatalyst = true;
-			}
-		}
 	}
 
 	public static class Type extends PostActionType<PreventDefault> {

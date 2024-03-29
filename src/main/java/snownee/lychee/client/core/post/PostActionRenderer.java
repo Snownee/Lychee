@@ -12,11 +12,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import snownee.lychee.compat.IngredientInfo;
 import snownee.lychee.core.def.BoundsHelper;
 import snownee.lychee.core.def.IntBoundsHelper;
 import snownee.lychee.core.post.PostAction;
 import snownee.lychee.core.post.PostActionType;
 import snownee.lychee.core.post.RandomSelect;
+import snownee.lychee.core.recipe.ILycheeRecipe;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
 
@@ -38,16 +40,22 @@ public interface PostActionRenderer<T extends PostAction> {
 
 	static List<Component> getTooltipsFromRandom(RandomSelect randomSelect, PostAction child) {
 		int index = Arrays.asList(randomSelect.entries).indexOf(child);
-		List<Component> list = randomSelect.entries.length == 1 && randomSelect.emptyWeight == 0 ? Lists.newArrayList(randomSelect.getDisplayName()) : PostActionRenderer.of(child).getBaseTooltips(child);
+		List<Component> list = randomSelect.entries.length == 1 && randomSelect.emptyWeight == 0 ? Lists.newArrayList(
+				randomSelect.getDisplayName()) : PostActionRenderer.of(child).getBaseTooltips(child);
 		if (index == -1) {
 			return list; //TODO nested actions?
 		}
 		if (randomSelect.entries.length > 1 || randomSelect.emptyWeight > 0) {
 			String chance = CommonProxy.chance(randomSelect.weights[index] / (float) randomSelect.totalWeight);
 			if (randomSelect.rolls == IntBoundsHelper.ONE) {
-				list.add(Component.translatable("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
-			} else {
-				list.add(Component.translatable("tip.lychee.randomChance", chance, BoundsHelper.getDescription(randomSelect.rolls)).withStyle(ChatFormatting.YELLOW));
+				list.add(Component.translatable("tip.lychee.randomChance.one", chance)
+								  .withStyle(ChatFormatting.YELLOW));
+			}
+			else {
+				list.add(Component.translatable("tip.lychee.randomChance",
+												chance,
+												BoundsHelper.getDescription(randomSelect.rolls))
+								  .withStyle(ChatFormatting.YELLOW));
 			}
 		}
 		int c = randomSelect.showingConditionsCount() + child.showingConditionsCount();
@@ -76,5 +84,8 @@ public interface PostActionRenderer<T extends PostAction> {
 		Minecraft mc = Minecraft.getInstance();
 		action.getConditionTooltips(list, 0, mc.level, mc.player);
 		return list;
+	}
+
+	default void loadCatalystsInfo(T action, ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {
 	}
 }
