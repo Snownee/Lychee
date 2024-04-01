@@ -386,7 +386,7 @@ public class CommonProxy {
 	}
 
 	public static IngredientInfo.Type getIngredientType(Ingredient ingredient) {
-		if (ingredient == LycheeRecipe.Serializer.EMPTY_INGREDIENT) {
+		if (ingredient == LycheeRecipe.Serializer.AIR_INGREDIENT) {
 			return IngredientInfo.Type.AIR;
 		}
 		if (ingredient.getSerializer() == AlwaysTrueIngredient.Serializer.INSTANCE) {
