@@ -21,7 +21,7 @@ public class InteractionRecipeMod {
 		if (player.isSpectator()) {
 			return InteractionResult.PASS;
 		}
-		if (hand == InteractionHand.OFF_HAND && player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty()) {
+		if (hand == InteractionHand.OFF_HAND && player.getOffhandItem().isEmpty()) {
 			return InteractionResult.PASS;
 		}
 		ItemStack stack = player.getItemInHand(hand);
