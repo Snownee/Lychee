@@ -7,7 +7,7 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 ## Basic Format
 
 | Name        | Description                                                         | Type / Literal |
-|-------------|---------------------------------------------------------------------|----------------|
+| ----------- | ------------------------------------------------------------------- | -------------- |
 | type        | type                                                                | string         |
 | secret      | displays as "???" in player's tooltip ^optional^                    | boolean        |
 | description | overrides the default description with a translation key ^optional^ | string         |
@@ -121,6 +121,17 @@ Special usage: you can use `lychee:biome_tag` option to specify biome tag.
 !!! note
 
     Fluid state predicate is not supported yet. (because I am lazy)
+
+### Item Cooldown Check
+
+Checks if an item is off cooldown, just like the cooldown when you use an ender pearl.
+
+!!! note "Format"
+
+    | Name | Description          | Type / Literal         |
+    | ---- | -------------------- | ---------------------- |
+    | type | type                 | "is_off_item_cooldown" |
+    | item | the item resource id | string                 |
 
 ### Weather Check
 
@@ -238,9 +249,8 @@ Checks if entity's is in a range.
                 "type": "prevent_default"
             },
             {
-                "type": "hurt",
-                "source": "generic",
-                "damage": 2
+                "type": "execute",
+                "command": "damage @s 2"
             }
         ]
     }

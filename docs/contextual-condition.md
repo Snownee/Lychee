@@ -7,7 +7,7 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 ## Basic Format
 
 | Name        | Description                                                         | Type / Literal |
-|-------------|---------------------------------------------------------------------|----------------|
+| ----------- | ------------------------------------------------------------------- | -------------- |
 | type        | type                                                                | string         |
 | secret      | displays as "???" in player's tooltip ^optional^                    | boolean        |
 | description | overrides the default description with a translation key ^optional^ | string         |
@@ -65,12 +65,21 @@ Generates a random number between 0.0 and 1.0, and checks if it is less than a s
 
 ??? example
 
-    ```json
-    {
-        "type": "chance",
-        "chance": 0.5
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        type: chance
+        chance: 0.5
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "chance",
+            "chance": 0.5
+        }
+        ```
 
 ### Location Check
 
@@ -90,37 +99,72 @@ Checks if a `location_check` predicate is passed.
 
     Checks if player is in The End, and X position is between -100 and 100.
 
-    ```json
-    {
-        "type": "location",
-        "predicate": {
-            "dimension": "the_end",
-            "position": {
-                "x": {
-                    "min": -100,
-                    "max": 100
+    === "YAML"
+
+        ```yaml
+        type: location
+        predicate:
+          dimension: the_end
+          position:
+            x:
+              min: -100
+              max: 100
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "location",
+            "predicate": {
+                "dimension": "the_end",
+                "position": {
+                    "x": {
+                        "min": -100,
+                        "max": 100
+                    }
                 }
             }
         }
-    }
-    ```
+        ```
 
 Special usage: you can use `lychee:biome_tag` option to specify biome tag.
 
 ??? example
 
-    ```json
-    {
-        "type": "location",
-        "predicate": {
-            "lychee:biome_tag": "is_ocean"
+    === "YAML"
+
+        ```yaml
+        type: location
+        predicate:
+          lychee:biome_tag: is_ocean
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "location",
+            "predicate": {
+                "lychee:biome_tag": "is_ocean"
+            }
         }
-    }
-    ```
+        ```
 
 !!! note
 
     Fluid state predicate is not supported yet. (because I am lazy)
+
+### Item Cooldown Check
+
+Checks if an item is off cooldown, just like the cooldown when you use an ender pearl.
+
+!!! note "Format"
+
+    | Name | Description          | Type / Literal         |
+    | ---- | -------------------- | ---------------------- |
+    | type | type                 | "is_off_item_cooldown" |
+    | item | the item resource id | string                 |
 
 ### Weather Check
 
@@ -148,12 +192,23 @@ Checks if world is in any of the listed difficulties.
 
     Recipe or post action only works when difficulty is peaceful or easy:
 
-    ```json
-    {
-        "type": "difficulty",
-        "difficulty": ["peaceful", 1]
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        type: difficulty
+        difficulty:
+        - peaceful
+        - 1
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "difficulty",
+            "difficulty": ["peaceful", 1]
+        }
+        ```
 
 ### Time Check
 
@@ -173,16 +228,28 @@ Compares the current game time (the age of the world in game ticks) against give
 
     Recipe works every other second:
 
-    ```json
-    {
-        "type": "time",
-        "value": {
-            "min": 0,
-            "max": 20
-        },
-        "period": 40
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        type: time
+        value:
+          min: 0
+          max: 20
+        period: 40
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "time",
+            "value": {
+                "min": 0,
+                "max": 20
+            },
+            "period": 40
+        }
+        ```
 
 ### Command Check
 
@@ -220,31 +287,49 @@ Checks if entity's is in a range.
 
 ??? example
 
-    ```json
-    {
-        "type": "lychee:block_interacting",
-        "item_in": {
-            "item": "shears"
-        },
-        "block_in": "pumpkin",
-        "contextual": {
-            "type": "entity_health",
-            "range": {
-                "min": 2.1
-            }
-        },
-        "post": [
-            {
-                "type": "prevent_default"
+    === "YAML"
+
+        ```yaml
+        type: lychee:block_interacting
+        item_in:
+          item: shears
+        block_in: pumpkin
+        contextual:
+          type: entity_health
+          range:
+            min: 2.1
+        post:
+        - type: prevent_default
+        - type: execute
+          command: damage @s 2
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:block_interacting",
+            "item_in": {
+                "item": "shears"
             },
-            {
-                "type": "hurt",
-                "source": "generic",
-                "damage": 2
-            }
-        ]
-    }
-    ```
+            "block_in": "pumpkin",
+            "contextual": {
+                "type": "entity_health",
+                "range": {
+                    "min": 2.1
+                }
+            },
+            "post": [
+                {
+                    "type": "prevent_default"
+                },
+                {
+                    "type": "execute",
+                    "command": "damage @s 2"
+                }
+            ]
+        }
+        ```
 
 ### Requires Entity Crouching
 
@@ -284,9 +369,18 @@ Checks if a parameter exists in the context.
 
     Checks if we can know the location in the context.
 
-    ```json
-    {
-        "type": "check_param",
-        "key": "origin"
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        type: check_param
+        key: origin
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "check_param",
+            "key": "origin"
+        }
+        ```

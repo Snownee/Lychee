@@ -59,12 +59,21 @@ A BlockPredicate is a predicate of an in-world block. It can also be used to rep
 
 ??? example
 
-    ```json
-    {
-        "blocks": "tconstruct:seared_lantern",
-        "nbt": "{\"tank\":{\"FluidName\":\"thermal:tree_oil\",\"Amount\":50}}"
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        blocks: tconstruct:seared_lantern
+        nbt: '{"tank":{"FluidName":"thermal:tree_oil","Amount":50}}'
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "blocks": "tconstruct:seared_lantern",
+            "nbt": "{\"tank\":{\"FluidName\":\"thermal:tree_oil\",\"Amount\":50}}"
+        }
+        ```
 
 ### Special case
 
@@ -79,7 +88,7 @@ A BlockPredicate is a predicate of StateDefinition.
     | Name  | Description                           | Type / Literal           |
     | ----- | ------------------------------------- | ------------------------ |
     | *key* | block property key and value pair     | string \| boolean \| int |
-    | *key* | block property key with ranged number | object                   |
+    | *key* | block property key with ranged number | dictionary               |
     | - min | minimum value                         | int                      |
     | - max | maximum value                         | int                      |
 
@@ -87,14 +96,24 @@ A BlockPredicate is a predicate of StateDefinition.
 
     Matches water source block:
 
-    ```json
-    {
-        "blocks": "water",
-        "state": {
-            "level": 0
+    === "YAML"
+
+        ```yaml
+        blocks: water
+        state:
+          level: 0
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "blocks": "water",
+            "state": {
+                "level": 0
+            }
         }
-    }
-    ```
+        ```
 
 ## LocationPredicate
 
@@ -130,6 +149,15 @@ Describes a inclusive range for doubles.
 
 JsonPointer is a string syntax for identifying a specific value within a JSON. But the only thing you need to know is you should separate the path to the target with `/`.
 
-```json
-"/path/to/the/target"
-```
+=== "YAML"
+
+	```yaml
+	/path/to/the/target
+	...
+	```
+
+=== "JSON"
+
+	```json
+	"/path/to/the/target"
+	```

@@ -1,6 +1,6 @@
 # Preface
 
-Lychee is a mod that allows you to define custom interactions using JSON recipes and datapack.
+Lychee is a mod that allows you to define custom interactions using YAML/JSON recipes and datapack.
 
 You can download Lychee on CurseForge:
 

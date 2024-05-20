@@ -79,7 +79,7 @@ A BlockPredicate is a predicate of StateDefinition.
     | Name  | Description                           | Type / Literal           |
     | ----- | ------------------------------------- | ------------------------ |
     | *key* | block property key and value pair     | string \| boolean \| int |
-    | *key* | block property key with ranged number | object                   |
+    | *key* | block property key with ranged number | dictionary               |
     | - min | minimum value                         | int                      |
     | - max | maximum value                         | int                      |
 

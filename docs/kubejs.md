@@ -14,15 +14,26 @@ First you need to add a custom action somewhere in your recipe:
 
 !!! example
 
-    ```json
-    {
-        "type": "custom",
-        "id": "example_log_action",
-        "data": {
-            "custom_property": "my_value"
+    === "YAML"
+
+        ```yaml
+        type: custom
+        id: example_log_action
+        data:
+          custom_property: my_value
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "custom",
+            "id": "example_log_action",
+            "data": {
+                "custom_property": "my_value"
+            }
         }
-    }
-    ```
+        ```
 
 Then define the behavior of your custom action in KubeJS:
 
@@ -54,12 +65,21 @@ First you need to add a custom condition somewhere in your recipe:
 
 !!! example
 
-    ```json
-    {
-        "type": "custom",
-        "id": "example_always_true_condition"
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        type: custom
+        id: example_always_true_condition
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "custom",
+            "id": "example_always_true_condition"
+        }
+        ```
 
 Then define the behavior of your custom condition in KubeJS:
 
@@ -101,48 +121,78 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 
 === "Recipe"
 
-    ```json
-    {
-        "type": "lychee:anvil_crafting",
-        "item_in": [
-            {
-                "item": "diamond_sword",
-                "lychee:tag": { 
-                    "Damage": 1
+    === "YAML"
+
+        ```yaml
+        type: lychee:anvil_crafting
+        item_in:
+        - item: diamond_sword
+          lychee:tag:
+            Damage: 1
+        - item: dirt
+        item_out:
+          id: diamond_sword
+        assembling:
+        - type: nbt_patch
+          op: copy
+          from: /item_in/0/tag
+          path: /item_out/tag
+        - type: custom
+          id: repair_item
+          data:
+            target: /item_out
+            durability: 1
+        if:
+          type: custom
+          id: is_item_damaged
+          data:
+            target: /item_in/0
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:anvil_crafting",
+            "item_in": [
+                {
+                    "item": "diamond_sword",
+                    "lychee:tag": { 
+                        "Damage": 1
+                    }
+                },
+                {
+                    "item": "dirt"
                 }
+            ],
+            "item_out": {
+                "id": "diamond_sword"
             },
-            {
-                "item": "dirt"
-            }
-        ],
-        "item_out": {
-            "id": "diamond_sword"
-        },
-        "assembling": [
-            {
-                "type": "nbt_patch",
-                "op": "copy",
-                "from": "/item_in/0/tag",
-                "path": "/item_out/tag"
-            },
-            {
+            "assembling": [
+                {
+                    "type": "nbt_patch",
+                    "op": "copy",
+                    "from": "/item_in/0/tag",
+                    "path": "/item_out/tag"
+                },
+                {
+                    "type": "custom",
+                    "id": "repair_item",
+                    "data": {
+                        "target": "/item_out",
+                        "durability": 1
+                    }
+                }
+            ],
+            "if": {
                 "type": "custom",
-                "id": "repair_item",
+                "id": "is_item_damaged",
                 "data": {
-                    "target": "/item_out",
-                    "durability": 1
+                    "target": "/item_in/0"
                 }
-            }
-        ],
-        "if": {
-            "type": "custom",
-            "id": "is_item_damaged",
-            "data": {
-                "target": "/item_in/0"
             }
         }
-    }
-    ```
+        ```
 
 === "Startup Script"
 
@@ -173,12 +223,57 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 
 === "Recipe"
 
-    ```json
-    {
-        "type": "lychee:anvil_crafting",
-        "item_in": [
-            {
-                "item": "diamond_chestplate",
+    === "YAML"
+
+        ```yaml
+        type: lychee:anvil_crafting
+        item_in:
+        - item: diamond_chestplate
+          lychee:tag:
+            Trim:
+              material: minecraft:copper
+              pattern: minecraft:eye
+        - item: emerald
+        item_out:
+          id: diamond_chestplate
+          lychee:tag:
+            Trim:
+              material: minecraft:copper
+              pattern: minecraft:eye
+        assembling:
+        - type: custom
+          id: apply_random_trim
+        post:
+        - type: custom
+          id: update_enchantment_seed
+        if:
+          type: custom
+          id: is_item_trimmed
+          data:
+            target: /item_in/0
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:anvil_crafting",
+            "item_in": [
+                {
+                    "item": "diamond_chestplate",
+                    "lychee:tag": {
+                        "Trim": {
+                            "material": "minecraft:copper",
+                            "pattern": "minecraft:eye"
+                        }
+                    }
+                },
+                {
+                    "item": "emerald"
+                }
+            ],
+            "item_out": {
+                "id": "diamond_chestplate",
                 "lychee:tag": {
                     "Trim": {
                         "material": "minecraft:copper",
@@ -186,40 +281,27 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
                     }
                 }
             },
-            {
-                "item": "emerald"
-            }
-        ],
-        "item_out": {
-            "id": "diamond_chestplate",
-            "lychee:tag": {
-                "Trim": {
-                    "material": "minecraft:copper",
-                    "pattern": "minecraft:eye"
+            "assembling": [
+                {
+                    "type": "custom",
+                    "id": "apply_random_trim"
+                }
+            ],
+            "post": [
+                {
+                    "type": "custom",
+                    "id": "update_enchantment_seed"
+                }
+            ],
+            "if": {
+                "type": "custom",
+                "id": "is_item_trimmed",
+                "data": {
+                    "target": "/item_in/0"
                 }
             }
-        },
-        "assembling": [
-            {
-                "type": "custom",
-                "id": "apply_random_trim"
-            }
-        ],
-        "post": [
-            {
-                "type": "custom",
-                "id": "update_enchantment_seed"
-            }
-        ],
-        "if": {
-            "type": "custom",
-            "id": "is_item_trimmed",
-            "data": {
-                "target": "/item_in/0"
-            }
         }
-    }
-    ```
+        ```
 
 === "Startup Script"
 
@@ -266,37 +348,60 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 
 === "Recipe"
 
-    ```json
-    {
-        "type": "lychee:block_interacting",
-        "item_in": {
-            "item": "create:wrench"
-        },
-        "block_in": "create:depot",
-        "post": [
-            {
-                "type": "drop_item",
-                "id": "minecraft:cobblestone"
+    === "YAML"
+
+        ```yaml
+        type: lychee:block_interacting
+        item_in:
+          item: create:wrench
+        block_in: create:depot
+        post:
+        - type: drop_item
+          id: minecraft:cobblestone
+        - type: prevent_default
+        - type: custom
+          id: consume_item_on_depot
+        if:
+          type: custom
+          id: has_item_on_depot
+          data:
+            ingredient:
+              item: minecraft:stone
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:block_interacting",
+            "item_in": {
+                "item": "create:wrench"
             },
-            {
-                "type": "prevent_default"
-            },
-            {
+            "block_in": "create:depot",
+            "post": [
+                {
+                    "type": "drop_item",
+                    "id": "minecraft:cobblestone"
+                },
+                {
+                    "type": "prevent_default"
+                },
+                {
+                    "type": "custom",
+                    "id": "consume_item_on_depot"
+                }
+            ],
+            "if": {
                 "type": "custom",
-                "id": "consume_item_on_depot"
-            }
-        ],
-        "if": {
-            "type": "custom",
-            "id": "has_item_on_depot",
-            "data": {
-                "ingredient": {
-                    "item": "minecraft:stone"
+                "id": "has_item_on_depot",
+                "data": {
+                    "ingredient": {
+                        "item": "minecraft:stone"
+                    }
                 }
             }
         }
-    }
-    ```
+        ```
 
 === "Startup Script"
 
@@ -325,33 +430,53 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 
 === "Recipe"
 
-    ```json
-    {
-        "type": "lychee:item_inside",
-        "time": 5,
-        "block_in": "*",
-        "item_in": [
-            {
-                "item": "yellow_dye"
-            }
-        ],
-        "post": [
-            {
-                "type": "drop_item",
-                "id": "red_dye"
-            }
-        ],
-        "if": [
-            {
-                "type": "custom",
-                "id": "neighbor_block_boost",
-                "data": {
-                    "booster_block": "minecraft:red_wool"
+    === "YAML"
+
+        ```yaml
+        type: lychee:item_inside
+        time: 5
+        block_in: '*'
+        item_in:
+        - item: yellow_dye
+        post:
+        - type: drop_item
+          id: red_dye
+        if:
+        - type: custom
+          id: neighbor_block_boost
+          data:
+            booster_block: minecraft:red_wool
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:item_inside",
+            "time": 5,
+            "block_in": "*",
+            "item_in": [
+                {
+                    "item": "yellow_dye"
                 }
-            }
-        ]
-    }
-    ```
+            ],
+            "post": [
+                {
+                    "type": "drop_item",
+                    "id": "red_dye"
+                }
+            ],
+            "if": [
+                {
+                    "type": "custom",
+                    "id": "neighbor_block_boost",
+                    "data": {
+                        "booster_block": "minecraft:red_wool"
+                    }
+                }
+            ]
+        }
+        ```
 
 === "Startup Script"
 

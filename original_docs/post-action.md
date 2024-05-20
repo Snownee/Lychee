@@ -36,8 +36,10 @@ Spawns an item entity on the ground.
     {
         "type": "drop_item",
         "id": "potion",
-        "nbt": {
-            "Potion": "minecraft:water"
+        "components": {
+            "potion_contents": {
+                "potion": "minecraft:water"
+            }
         }
     }
     ```
@@ -204,48 +206,6 @@ Creates an explosion at where the interaction occurs.
     | radius            | the base radius of the explosion. 4 by default ^optional^                                     | number                                      |
     | radius_step       | the radius step according to how many times the recipe can be done. 0.5 by default ^optional^ | number                                      |
 
-### Hurt Entity
-
-Causes damage to the entity.
-
-!!! note "Format"
-
-    | Name   | Description                                                 | Type / Literal                                |
-    | ------ | ----------------------------------------------------------- | --------------------------------------------- |
-    | type   | type                                                        | "hurt"                                        |
-    | damage | range of damage                                             | [DoubleBounds](general-types.md#doublebounds) |
-    | source | damage source type ^optional^{ title='default: "generic"' } | string                                        |
-    
-    All the vanilla damage source types can be found [here](https://github.com/misode/mcmeta/tree/data/data/minecraft/damage_type).
-
-??? example
-
-    ```json
-    {
-        "type": "lychee:block_interacting",
-        "item_in": {
-            "item": "shears"
-        },
-        "block_in": "pumpkin",
-        "if": {
-            "type": "entity_health",
-            "range": {
-                "min": 2.1
-            }
-        },
-        "post": [
-            {
-                "type": "prevent_default"
-            },
-            {
-                "type": "hurt",
-                "source": "generic",
-                "damage": 2
-            }
-        ]
-    }
-    ```
-
 ### Set Falling Anvil Damage Chance
 
 This action can only be used in the [Block Crushing](recipe.md#block-crushing) recipe. The default damage chance depends
@@ -260,16 +220,15 @@ on the falling height.
 
 ### Add Item Cooldown
 
-Adds item cooldown to the item in player's hand, just like when you use ender pearl.
-
-This action only works for interaction recipes.
+Adds item cooldown to an item, just like the cooldown when you use an ender pearl.
 
 !!! note "Format"
 
-    | Name | Description | Type / Literal      |
-    | ---- | ----------- | ------------------- |
-    | type | type        | "add_item_cooldown" |
-    | s    | seconds     | number              |
+    | Name | Description                                                                   | Type / Literal      |
+    | ---- | ----------------------------------------------------------------------------- | ------------------- |
+    | type | type                                                                          | "add_item_cooldown" |
+    | s    | seconds                                                                       | number              |
+    | item | the item resource id ^optional^{ title="default: the item in player's hand" } | string              |
 
 ### Move towards Face
 
@@ -298,7 +257,7 @@ Waits for several seconds, then execute the following actions.
 
     After the delay, some context will lose. For example, if the player leaves the game while delaying, you can't hurt the player after this delay.
 
-### Break
+### Exit
 
 Stops executing the following actions.
 
@@ -306,7 +265,7 @@ Stops executing the following actions.
 
     | Name | Description | Type / Literal |
     | ---- | ----------- | -------------- |
-    | type | type        | "break"        |
+    | type | type        | "exit"        |
 
 ### Cycle State Property
 

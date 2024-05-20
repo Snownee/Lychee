@@ -32,15 +32,29 @@ Spawns an item entity on the ground.
 
     Drops a water bottle:
 
-    ```json
-    {
-        "type": "drop_item",
-        "id": "potion",
-        "nbt": {
-            "Potion": "minecraft:water"
+    === "YAML"
+
+        ```yaml
+        type: drop_item
+        id: potion
+        components:
+          potion_contents:
+            potion: minecraft:water
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "drop_item",
+            "id": "potion",
+            "components": {
+                "potion_contents": {
+                    "potion": "minecraft:water"
+                }
+            }
         }
-    }
-    ```
+        ```
 
 ### Place Block
 
@@ -62,35 +76,65 @@ This action is not [repeatable](concepts.md#repeatability).
 
     Places a cauldron:
 
-    ```json
-    {
-        "type": "place",
-        "block": "cauldron"
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        type: place
+        block: cauldron
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "place",
+            "block": "cauldron"
+        }
+        ```
 
     Places a waterlogged oak stairs:
 
-    ```json
-    {
-        "type": "place",
-        "block": {
-            "blocks": "oak_stairs",
-            "state": {
-                "waterlogged": "true"
+    === "YAML"
+
+        ```yaml
+        type: place
+        block:
+          blocks: oak_stairs
+          state:
+            waterlogged: 'true'
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "place",
+            "block": {
+                "blocks": "oak_stairs",
+                "state": {
+                    "waterlogged": "true"
+                }
             }
         }
-    }
-    ```
+        ```
 
     Destroys current block (place air):
 
-    ```json
-    {
-        "type": "place",
-        "block": "*"
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        type: place
+        block: '*'
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "place",
+            "block": "*"
+        }
+        ```
 
 ### Execute Command
 
@@ -108,13 +152,23 @@ Executes a command.
 
     Spawns particles:
 
-    ```json
-    {
-        "type": "execute",
-        "command": "particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20",
-        "hide": true
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        type: execute
+        command: particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20
+        hide: true
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "execute",
+            "command": "particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20",
+            "hide": true
+        }
+        ```
 
     For how to use `particle` command, please read the [wiki](https://minecraft.wiki/w/Commands/particle).
 
@@ -146,34 +200,56 @@ Randomly selects entries from an action list to apply. Similar to loot table.
 
 ??? example
 
-    ```json
-    {
-        "type": "random",
-        "rolls": {
-            "min": 3,
-            "max": 5
-        },
-        "entries": [
-            {
-                "type": "drop_item",
-                "id": "gold_ingot",
-                "if": {
-                    "type": "weather",
-                    "weather": "rain"
+    === "YAML"
+
+        ```yaml
+        type: random
+        rolls:
+          min: 3
+          max: 5
+        entries:
+        - type: drop_item
+          id: gold_ingot
+          if:
+            type: weather
+            weather: rain
+        - type: drop_item
+          id: ender_pearl
+        - weight: 2
+          type: drop_item
+          id: dirt
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "random",
+            "rolls": {
+                "min": 3,
+                "max": 5
+            },
+            "entries": [
+                {
+                    "type": "drop_item",
+                    "id": "gold_ingot",
+                    "if": {
+                        "type": "weather",
+                        "weather": "rain"
+                    }
+                },
+                {
+                    "type": "drop_item",
+                    "id": "ender_pearl"
+                },
+                {
+                    "weight": 2,
+                    "type": "drop_item",
+                    "id": "dirt"
                 }
-            },
-            {
-                "type": "drop_item",
-                "id": "ender_pearl"
-            },
-            {
-                "weight": 2,
-                "type": "drop_item",
-                "id": "dirt"
-            }
-        ]
-    }
-    ```
+            ]
+        }
+        ```
 
 ### If-Else Statement
 
@@ -204,48 +280,6 @@ Creates an explosion at where the interaction occurs.
     | radius            | the base radius of the explosion. 4 by default ^optional^                                     | number                                      |
     | radius_step       | the radius step according to how many times the recipe can be done. 0.5 by default ^optional^ | number                                      |
 
-### Hurt Entity
-
-Causes damage to the entity.
-
-!!! note "Format"
-
-    | Name   | Description                                                 | Type / Literal                                |
-    | ------ | ----------------------------------------------------------- | --------------------------------------------- |
-    | type   | type                                                        | "hurt"                                        |
-    | damage | range of damage                                             | [DoubleBounds](general-types.md#doublebounds) |
-    | source | damage source type ^optional^{ title='default: "generic"' } | string                                        |
-    
-    All the vanilla damage source types can be found [here](https://github.com/misode/mcmeta/tree/data/data/minecraft/damage_type).
-
-??? example
-
-    ```json
-    {
-        "type": "lychee:block_interacting",
-        "item_in": {
-            "item": "shears"
-        },
-        "block_in": "pumpkin",
-        "if": {
-            "type": "entity_health",
-            "range": {
-                "min": 2.1
-            }
-        },
-        "post": [
-            {
-                "type": "prevent_default"
-            },
-            {
-                "type": "hurt",
-                "source": "generic",
-                "damage": 2
-            }
-        ]
-    }
-    ```
-
 ### Set Falling Anvil Damage Chance
 
 This action can only be used in the [Block Crushing](recipe.md#block-crushing) recipe. The default damage chance depends
@@ -260,16 +294,15 @@ on the falling height.
 
 ### Add Item Cooldown
 
-Adds item cooldown to the item in player's hand, just like when you use ender pearl.
-
-This action only works for interaction recipes.
+Adds item cooldown to an item, just like the cooldown when you use an ender pearl.
 
 !!! note "Format"
 
-    | Name | Description | Type / Literal      |
-    | ---- | ----------- | ------------------- |
-    | type | type        | "add_item_cooldown" |
-    | s    | seconds     | number              |
+    | Name | Description                                                                   | Type / Literal      |
+    | ---- | ----------------------------------------------------------------------------- | ------------------- |
+    | type | type                                                                          | "add_item_cooldown" |
+    | s    | seconds                                                                       | number              |
+    | item | the item resource id ^optional^{ title="default: the item in player's hand" } | string              |
 
 ### Move towards Face
 
@@ -298,7 +331,7 @@ Waits for several seconds, then execute the following actions.
 
     After the delay, some context will lose. For example, if the player leaves the game while delaying, you can't hurt the player after this delay.
 
-### Break
+### Exit
 
 Stops executing the following actions.
 
@@ -306,7 +339,7 @@ Stops executing the following actions.
 
     | Name | Description | Type / Literal |
     | ---- | ----------- | -------------- |
-    | type | type        | "break"        |
+    | type | type        | "exit"        |
 
 ### Cycle State Property
 

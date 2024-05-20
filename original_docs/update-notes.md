@@ -18,4 +18,6 @@
 - `hide` now is a common property in all the actions.
 - Added new condition type `is_off_item_cooldown` to check if the cooldown of an item is off.
 - Now you can specify an item in the `add_item_cooldown` action.
+- The `break` action type has been renamed to `exit`. 
+- The `hurt` action type has been removed. You should now use the [`damage`](https://minecraft.wiki/w/Commands/damage) command instead.
 - The `nbt_patch` action type has been removed.

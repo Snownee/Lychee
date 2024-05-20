@@ -6,8 +6,21 @@
   min-width: 100%;
 }
 
+.admonition>.md-typeset__scrollwrap:last-child>.md-typeset__table {
+  padding: 0;
+  margin: 0;
+}
+
 .md-typeset table:not([class]) {
   display: table;
+}
+
+.md-typeset .tabbed-labels--linked>label>a {
+  padding: 0.25em 1.25em 0.25em 1.25em !important;
+}
+
+.md-typeset code {
+  font-size: 1em !important;
 }
 
 sup[title] {

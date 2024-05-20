@@ -66,47 +66,80 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
     Prevent player from carving pumpkins. Here the `prevent_default` means do not consume the shears.
 
-    ```json
-    {
-        "type": "lychee:block_interacting",
-        "item_in": {
-            "item": "shears"
-        },
-        "block_in": "pumpkin",
-        "post": {
-            "type": "prevent_default"
+    === "YAML"
+
+        ```yaml
+        type: lychee:block_interacting
+        item_in:
+          item: shears
+        block_in: pumpkin
+        post:
+          type: prevent_default
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:block_interacting",
+            "item_in": {
+                "item": "shears"
+            },
+            "block_in": "pumpkin",
+            "post": {
+                "type": "prevent_default"
+            }
         }
-    }
-    ```
+        ```
 
     Stripping an oak log with an iron axe, you will have 50% chance to obtain a diamond:
 
-    ```json
-    {
-        "type": "lychee:block_interacting",
-        "item_in": {
-            "item": "iron_axe"
-        },
-        "block_in": "oak_log",
-        "post": [
-            {
-                "type": "drop_item",
-                "id": "diamond",
-                "if": {
-                    "type": "chance",
-                    "chance": 0.5
+    === "YAML"
+
+        ```yaml
+        type: lychee:block_interacting
+        item_in:
+          item: iron_axe
+        block_in: oak_log
+        post:
+        - type: drop_item
+          id: diamond
+          if:
+            type: chance
+            chance: 0.5
+        - type: place
+          block: stripped_oak_log
+        - type: damage_item
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:block_interacting",
+            "item_in": {
+                "item": "iron_axe"
+            },
+            "block_in": "oak_log",
+            "post": [
+                {
+                    "type": "drop_item",
+                    "id": "diamond",
+                    "if": {
+                        "type": "chance",
+                        "chance": 0.5
+                    }
+                },
+                {
+                    "type": "place",
+                    "block": "stripped_oak_log"
+                },
+                {
+                    "type": "damage_item"
                 }
-            },
-            {
-                "type": "place",
-                "block": "stripped_oak_log"
-            },
-            {
-                "type": "damage_item"
-            }
-        ]
-    }
-    ```
+            ]
+        }
+        ```
 
 ??? note "Note: Matches empty hand"
 
@@ -118,27 +151,49 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
     === "NeoForge"
 
-        ```json
-        {
-            "type": "lychee:block_interacting",
-            "item_in": {
-                "type": "lychee:always_true"
-            },
-            "block_in": "minecraft:stone"
-        }
-        ```
+        === "YAML"
+
+            ```yaml
+            type: lychee:block_interacting
+            item_in:
+              type: lychee:always_true
+            block_in: minecraft:stone
+            ```
+
+        === "JSON"
+
+            ```json
+            {
+                "type": "lychee:block_interacting",
+                "item_in": {
+                    "type": "lychee:always_true"
+                },
+                "block_in": "minecraft:stone"
+            }
+            ```
 
     === "Fabric"
 
-        ```json
-        {
-            "type": "lychee:block_interacting",
-            "item_in": {
-                "fabric:type": "lychee:always_true"
-            },
-            "block_in": "minecraft:stone"
-        }
-        ```
+        === "YAML"
+
+            ```yaml
+            type: lychee:block_interacting
+            item_in:
+              fabric:type: lychee:always_true
+            block_in: minecraft:stone
+            ```
+
+        === "JSON"
+
+            ```json
+            {
+                "type": "lychee:block_interacting",
+                "item_in": {
+                    "fabric:type": "lychee:always_true"
+                },
+                "block_in": "minecraft:stone"
+            }
+            ```
 
 !!! warning
 
@@ -174,27 +229,49 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
     === "NeoForge"
 
-        ```json
-        {
-            "type": "lychee:block_clicking",
-            "item_in": {
-                "type": "lychee:always_true"
-            },
-            "block_in": "minecraft:stone"
-        }
-        ```
+        === "YAML"
+
+            ```yaml
+            type: lychee:block_clicking
+            item_in:
+              type: lychee:always_true
+            block_in: minecraft:stone
+            ```
+
+        === "JSON"
+
+            ```json
+            {
+                "type": "lychee:block_clicking",
+                "item_in": {
+                    "type": "lychee:always_true"
+                },
+                "block_in": "minecraft:stone"
+            }
+            ```
 
     === "Fabric"
 
-        ```json
-        {
-            "type": "lychee:block_clicking",
-            "item_in": {
-                "fabric:type": "lychee:always_true"
-            },
-            "block_in": "minecraft:stone"
-        }
-        ```
+        === "YAML"
+
+            ```yaml
+            type: lychee:block_clicking
+            item_in:
+              fabric:type: lychee:always_true
+            block_in: minecraft:stone
+            ```
+
+        === "JSON"
+
+            ```json
+            {
+                "type": "lychee:block_clicking",
+                "item_in": {
+                    "fabric:type": "lychee:always_true"
+                },
+                "block_in": "minecraft:stone"
+            }
+            ```
 
 !!! warning
 
@@ -225,18 +302,31 @@ Default behavior: none.
 
     Burning logs produces charcoal:
 
-    ```json
-    {
-        "type": "lychee:item_burning",
-        "item_in": {
-            "tag": "logs_that_burn"
-        },
-        "post": {
-            "type": "drop_item",
-            "id": "charcoal"
+    === "YAML"
+
+        ```yaml
+        type: lychee:item_burning
+        item_in:
+          tag: logs_that_burn
+        post:
+          type: drop_item
+          id: charcoal
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:item_burning",
+            "item_in": {
+                "tag": "logs_that_burn"
+            },
+            "post": {
+                "type": "drop_item",
+                "id": "charcoal"
+            }
         }
-    }
-    ```
+        ```
 
 ### Item Entity inside a Block
 
@@ -259,57 +349,95 @@ Default behavior: Item is consumed.
 
     Drop a bucket into a full water cauldron, it returns a water bucket and empty the cauldron:
 
-    ```json
-    {
-        "type": "lychee:item_inside",
-        "item_in": {
-            "item": "bucket"
-        },
-        "block_in": {
-            "blocks": "water_cauldron",
-            "state": {
-                "level": 3
-            }
-        },
-        "post": [
-            {
-                "type": "drop_item",
-                "id": "water_bucket"
+    === "YAML"
+
+        ```yaml
+        type: lychee:item_inside
+        item_in:
+          item: bucket
+        block_in:
+          blocks: water_cauldron
+          state:
+            level: 3
+        post:
+        - type: drop_item
+          id: water_bucket
+        - type: place
+          block: cauldron
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:item_inside",
+            "item_in": {
+                "item": "bucket"
             },
-            {
-                "type": "place",
-                "block": "cauldron"
-            }
-        ]
-    }
-    ```
+            "block_in": {
+                "blocks": "water_cauldron",
+                "state": {
+                    "level": 3
+                }
+            },
+            "post": [
+                {
+                    "type": "drop_item",
+                    "id": "water_bucket"
+                },
+                {
+                    "type": "place",
+                    "block": "cauldron"
+                }
+            ]
+        }
+        ```
 
     Drop a bucket to pick up a water source block:
 
-    ```json
-    {
-        "type": "lychee:item_inside",
-        "item_in": {
-            "item": "bucket"
-        },
-        "block_in": {
-            "blocks": "water",
-            "state": {
-                "level": 0
-            }
-        },
-        "post": [
-            {
-                "type": "drop_item",
-                "id": "water_bucket"
+    === "YAML"
+
+        ```yaml
+        type: lychee:item_inside
+        item_in:
+          item: bucket
+        block_in:
+          blocks: water
+          state:
+            level: 0
+        post:
+        - type: drop_item
+          id: water_bucket
+        - type: place
+          block: '*'
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:item_inside",
+            "item_in": {
+                "item": "bucket"
             },
-            {
-                "type": "place",
-                "block": "*"
-            }
-        ]
-    }
-    ```
+            "block_in": {
+                "blocks": "water",
+                "state": {
+                    "level": 0
+                }
+            },
+            "post": [
+                {
+                    "type": "drop_item",
+                    "id": "water_bucket"
+                },
+                {
+                    "type": "place",
+                    "block": "*"
+                }
+            ]
+        }
+        ```
 
 !!! note
 
@@ -338,27 +466,44 @@ Default behavior: Anvil is damaged.
 
     It costs 1 apple, 8 gold ingots and 1 level to make a golden_apple. Does not damage the anvil:
 
-    ```json
-    {
-        "type": "lychee:anvil_crafting",
-        "item_in": [
-            {
-                "item": "apple"
+    === "YAML"
+
+        ```yaml
+        type: lychee:anvil_crafting
+        item_in:
+        - item: apple
+        - item: gold_ingot
+        item_out:
+          id: golden_apple
+        level_cost: 1
+        material_cost: 8
+        post:
+          type: prevent_default
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:anvil_crafting",
+            "item_in": [
+                {
+                    "item": "apple"
+                },
+                {
+                    "item": "gold_ingot"
+                }
+            ],
+            "item_out": {
+                "id": "golden_apple"
             },
-            {
-                "item": "gold_ingot"
+            "level_cost": 1,
+            "material_cost": 8,
+            "post": {
+                "type": "prevent_default"
             }
-        ],
-        "item_out": {
-            "id": "golden_apple"
-        },
-        "level_cost": 1,
-        "material_cost": 8,
-        "post": {
-            "type": "prevent_default"
         }
-    }
-    ```
+        ```
 
 ### Block Crushing
 
@@ -381,58 +526,95 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
 
     Papers from sugar canes:
 
-    ```json
-    {
-        "type": "lychee:block_crushing",
-        "item_in": [
-            {
-                "item": "sugar_cane"
-            },
-            {
-                "item": "sugar_cane"
-            },
-            {
-                "item": "sugar_cane"
-            }
-        ],
-        "post": [
-            {
-                "type": "drop_item",
-                "id": "paper",
-                "count": 3
-            }
-        ]
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        type: lychee:block_crushing
+        item_in:
+        - item: sugar_cane
+        - item: sugar_cane
+        - item: sugar_cane
+        post:
+        - type: drop_item
+          id: paper
+          count: 3
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:block_crushing",
+            "item_in": [
+                {
+                    "item": "sugar_cane"
+                },
+                {
+                    "item": "sugar_cane"
+                },
+                {
+                    "item": "sugar_cane"
+                }
+            ],
+            "post": [
+                {
+                    "type": "drop_item",
+                    "id": "paper",
+                    "count": 3
+                }
+            ]
+        }
+        ```
 
     Making a mossy stone bricks block. It uses a location check to check the block below the current position:
 
-    ```json
-    {
-        "type": "lychee:block_crushing",
-        "landing_block": "moss_carpet",
-        "if": {
-            "type": "location",
-            "offsetY": -1,
-            "predicate": {
-                "block": {
-                    "blocks": "stone_bricks"
-                }
-            }
-        },
-        "post": [
-            {
-                "type": "place",
-                "block": "*"
-            },
-            {
-                "type": "place",
+    === "YAML"
+
+        ```yaml
+        type: lychee:block_crushing
+        landing_block: moss_carpet
+        if:
+          type: location
+          offsetY: -1
+          predicate:
+            block:
+              blocks: stone_bricks
+        post:
+        - type: place
+          block: '*'
+        - type: place
+          offsetY: -1
+          block: mossy_stone_bricks
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:block_crushing",
+            "landing_block": "moss_carpet",
+            "if": {
+                "type": "location",
                 "offsetY": -1,
-                "block": "mossy_stone_bricks"
-            }
-        ]
-    }
-    ```
+                "predicate": {
+                    "block": {
+                        "blocks": "stone_bricks"
+                    }
+                }
+            },
+            "post": [
+                {
+                    "type": "place",
+                    "block": "*"
+                },
+                {
+                    "type": "place",
+                    "offsetY": -1,
+                    "block": "mossy_stone_bricks"
+                }
+            ]
+        }
+        ```
 
 !!! note
 
@@ -461,17 +643,28 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 
     Make nearby stone become calcite:
 
-    ```json
-    {
-        "type": "lychee:lightning_channeling",
-        "post": [
-            {
-                "type": "execute",
-                "command": "fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite"
-            }
-        ]
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        type: lychee:lightning_channeling
+        post:
+        - type: execute
+          command: fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:lightning_channeling",
+            "post": [
+                {
+                    "type": "execute",
+                    "command": "fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite"
+                }
+            ]
+        }
+        ```
 
 ### Item Exploding
 
@@ -548,19 +741,32 @@ Default behavior: Do the default ticking behavior.
 
 ??? example
 
-    ```json
-    {
-        "type": "lychee:dripstone_dripping",
-        "source_block": "water",
-        "target_block": "sponge",
-        "post": [
-            {
-                "type": "place",
-                "block": "wet_sponge"
-            }
-        ]
-    }
-    ```
+    === "YAML"
+
+        ```yaml
+        type: lychee:dripstone_dripping
+        source_block: water
+        target_block: sponge
+        post:
+        - type: place
+          block: wet_sponge
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:dripstone_dripping",
+            "source_block": "water",
+            "target_block": "sponge",
+            "post": [
+                {
+                    "type": "place",
+                    "block": "wet_sponge"
+                }
+            ]
+        }
+        ```
 
 ### Advanced Shaped Crafting
 
@@ -585,40 +791,66 @@ Default behavior: none.
 
     With the uses of the [`set_item`](post-action.md#set-item-set_item) action, you can customize the remainders and dynamically change the crafting result.
 
-    ```json
-    {
-        "type": "lychee:crafting",
-        "pattern": [
-            "A",
-            "B"
-        ],
-        "key": {
-            "A": {
-                "item": "pufferfish"
+    === "YAML"
+
+        ```yaml
+        type: lychee:crafting
+        pattern:
+        - A
+        - B
+        key:
+          A:
+            item: pufferfish
+          B:
+            item: water_bucket
+        result:
+          id: apple
+        post:
+        - type: set_item
+          target: /key/B
+          id: air
+        assembling:
+        - type: set_item
+          target: /result
+          id: pufferfish_bucket
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:crafting",
+            "pattern": [
+                "A",
+                "B"
+            ],
+            "key": {
+                "A": {
+                    "item": "pufferfish"
+                },
+                "B": {
+                    "item": "water_bucket"
+                }
             },
-            "B": {
-                "item": "water_bucket"
-            }
-        },
-        "result": {
-            "id": "apple"
-        },
-        "post": [
-            {
-                "type": "set_item",
-                "target": "/key/B",
-                "id": "air"
-            }
-        ],
-        "assembling": [
-            {
-                "type": "set_item",
-                "target": "/result",
-                "id": "pufferfish_bucket"
-            }
-        ]
-    }
-    ```
+            "result": {
+                "id": "apple"
+            },
+            "post": [
+                {
+                    "type": "set_item",
+                    "target": "/key/B",
+                    "id": "air"
+                }
+            ],
+            "assembling": [
+                {
+                    "type": "set_item",
+                    "target": "/result",
+                    "id": "pufferfish_bucket"
+                }
+            ]
+        }
+        ```
 
     [Here](kubejs.md#example-repairing-tool-with-anvil-and-custom-item) is a more advanced example that uses KubeJS Integration.
 
