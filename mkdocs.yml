@@ -40,7 +40,7 @@ theme:
             name: Switch to light mode
 
 extra_css:
-    - stylesheets/extra.dcd3f2.css
+    - stylesheets/extra.e7efd6.css
 extra_javascript:
     - path: scripts/extra.32b0df.js
       defer: false

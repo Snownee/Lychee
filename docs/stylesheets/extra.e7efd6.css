@@ -19,7 +19,8 @@
   padding: 0.25em 1.25em 0.25em 1.25em !important;
 }
 
-.md-typeset .admonition code {
+.md-typeset .admonition code,
+.md-typeset details code {
   font-size: 1em !important;
 }
 
