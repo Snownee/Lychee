@@ -88,7 +88,7 @@ Checks if a `location_check` predicate is passed.
 
 ??? example
 
-    Checks if player is in The End, and X position is between -100 and 100.
+    Checks if the location is in The End, and X position is between -100 and 100.
 
     ```json
     {
@@ -105,15 +105,14 @@ Checks if a `location_check` predicate is passed.
     }
     ```
 
-Special usage: you can use `lychee:biome_tag` option to specify biome tag.
-
-??? example
+    Checks if the location is in the ocean and can see the sky.
 
     ```json
     {
         "type": "location",
         "predicate": {
-            "lychee:biome_tag": "is_ocean"
+            "biomes": "#is_ocean",
+            "can_see_sky": true
         }
     }
     ```

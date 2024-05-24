@@ -40,7 +40,7 @@ An ingredient is a predicate of ItemStack.
         | fabric:type | ingredient type          | string         |
         |             | additional properties... |                |
 
-        You can use Fabric's built-in features to check item nbt or combine several ingredients to one compound ingredient: [Documentation](https://github.com/FabricMC/fabric/blob/1.20.1/fabric-recipe-api-v1/src/main/java/net/fabricmc/fabric/api/recipe/v1/ingredient/DefaultCustomIngredients.java)
+        You can use Fabric's built-in features to check item nbt or combine several ingredients to one compound ingredient: [Documentation](https://github.com/FabricMC/fabric/blob/1.20.6/fabric-recipe-api-v1/src/main/java/net/fabricmc/fabric/api/recipe/v1/ingredient/DefaultCustomIngredients.java)
 
 ## BlockPredicate
 
@@ -98,7 +98,7 @@ A BlockPredicate is a predicate of StateDefinition.
 
 ## LocationPredicate
 
-Predicate applied to location. Please refer to the [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/location?oldid=2544408).
+Predicate applied to location. Please refer to the [Minecraft Wiki](https://minecraft.wiki/w/Advancement/Conditions/location?direction=next&oldid=2544408).
 
 ## IntBounds
 
