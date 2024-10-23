@@ -177,7 +177,7 @@ public class REICompat implements REIClientPlugin {
 		registration.get(CategoryIdentifier.of("minecraft", "plugins/anvil")).registerExtension(extensionProvider);
 	}
 
-	private static <C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> void forEachCategories(LycheeRecipeType<C, T> recipeType, Consumer<BaseREICategory<C, T, D>> consumer) {
+	public static <C extends LycheeContext, T extends LycheeRecipe<C>, D extends BaseREIDisplay<T>> void forEachCategories(LycheeRecipeType<C, T> recipeType, Consumer<BaseREICategory<C, T, D>> consumer) {
 		CATEGORIES.getOrDefault(recipeType.categoryId, Map.of()).values().stream().map($ -> (BaseREICategory<C, T, D>) $).forEach(consumer);
 	}
 
