@@ -1,0 +1,17 @@
+{
+  "type": "lychee:block_interacting",
+  "item_in": {
+    "item": "air"
+  },
+  "block_in": {
+    "blocks": [
+      "stone"
+    ]
+  },
+  "post": [
+    {
+      "type": "drop_item",
+      "item": "stone"
+    }
+  ]
+}

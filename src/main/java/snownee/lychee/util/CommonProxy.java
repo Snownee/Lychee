@@ -343,7 +343,7 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static IngredientInfo.Type getIngredientType(Ingredient ingredient) {
-		if (ingredient == LycheeRecipe.Serializer.EMPTY_INGREDIENT) {
+		if (ingredient == LycheeRecipe.Serializer.AIR_INGREDIENT) {
 			return IngredientInfo.Type.AIR;
 		}
 		CustomIngredient customIngredient = ingredient.getCustomIngredient();
