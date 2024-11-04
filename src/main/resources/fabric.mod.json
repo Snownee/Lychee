@@ -2,20 +2,21 @@
   "schemaVersion": 1,
   "id": "lychee",
   "version": "${version}",
-
   "name": "Lychee Tweaker",
   "description": "Data-driven in-world crafting",
-  "authors": ["Snownee"],
-  "contributors": ["MikhailTapio"],
+  "authors": [
+    "Snownee"
+  ],
+  "contributors": [
+    "MikhailTapio"
+  ],
   "contact": {
     "homepage": "https://www.curseforge.com/minecraft/mc-mods/lychee-fabric",
     "sources": "https://github.com/Snownee/Lychee",
     "issues": "https://github.com/Snownee/Lychee/issues"
   },
-
   "license": "ARR",
   "icon": "assets/lychee/logo.png",
-
   "entrypoints": {
     "main": [
       "snownee.lychee.util.CommonProxy"
@@ -30,9 +31,10 @@
       "snownee.lychee.compat.jei.JEICompat"
     ]
   },
-  "mixins": [ "lychee.mixins.json" ],
-  "accessWidener" : "lychee.accesswidener",
-
+  "mixins": [
+    "lychee.mixins.json"
+  ],
+  "accessWidener": "lychee.accesswidener",
   "depends": {
     "fabric-api": ">=0.73",
     "minecraft": ">=1.20",
@@ -44,11 +46,11 @@
   "recommends": {
     "kiwi": "*"
   },
-
   "custom": {
     "modmenu": {
       "links": {
-        "modmenu.discord": "https://discord.gg/KzGQW7a"
+        "modmenu.discord": "https://discord.gg/KzGQW7a",
+        "modmenu.donate": "https://ko-fi.com/snownee"
       },
       "badges": [
         "library"
