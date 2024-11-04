@@ -136,7 +136,9 @@ public class ItemInsideRecipe extends ItemShapelessRecipe<ItemInsideRecipe> impl
 			super.fromJson(pRecipe, pSerializedRecipe);
 			pRecipe.time = GsonHelper.getAsInt(pSerializedRecipe, "time", 0);
 			pRecipe.block = BlockPredicateHelper.fromJson(pSerializedRecipe.get("block_in"));
-			Preconditions.checkArgument(!pRecipe.ingredients.isEmpty(), "Ingredients cannot be empty");
+			if (!pRecipe.ghost) {
+				Preconditions.checkArgument(!pRecipe.ingredients.isEmpty(), "Ingredients cannot be empty");
+			}
 		}
 
 		@Override

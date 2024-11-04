@@ -87,11 +87,13 @@ public class DripstoneRecipe extends LycheeRecipe<DripstoneContext> implements B
 	public int compareTo(DripstoneRecipe that) {
 		int i;
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		i = Integer.compare(targetBlock == BlockPredicate.ANY ? 1 : 0, that.targetBlock == BlockPredicate.ANY ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		return getId().compareTo(that.getId());
 	}
 
@@ -174,8 +176,15 @@ public class DripstoneRecipe extends LycheeRecipe<DripstoneContext> implements B
 	@Nullable
 	private static BlockPos findTargetBelowStalactiteTip(Level level, BlockPos blockPos2) {
 		Predicate<BlockState> predicate = blockState -> !blockState.isAir() && RecipeTypes.DRIPSTONE_DRIPPING.has(blockState);
-		BiPredicate<BlockPos, BlockState> biPredicate = (blockPos, blockState) -> PointedDripstoneBlockAccess.callCanDripThrough(level, blockPos, blockState);
-		return PointedDripstoneBlockAccess.callFindBlockVertical(level, blockPos2, Direction.DOWN.getAxisDirection(), biPredicate, predicate, 11).orElse(null);
+		BiPredicate<BlockPos, BlockState> biPredicate = (blockPos, blockState) -> PointedDripstoneBlockAccess.callCanDripThrough(level,
+				blockPos,
+				blockState);
+		return PointedDripstoneBlockAccess.callFindBlockVertical(level,
+				blockPos2,
+				Direction.DOWN.getAxisDirection(),
+				biPredicate,
+				predicate,
+				11).orElse(null);
 	}
 
 	public static BlockState getBlockAboveStalactite(Level level, BlockPos blockPos2, BlockState blockState) {
@@ -197,8 +206,10 @@ public class DripstoneRecipe extends LycheeRecipe<DripstoneContext> implements B
 		public void fromJson(DripstoneRecipe pRecipe, JsonObject pSerializedRecipe) {
 			pRecipe.sourceBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.get("source_block"));
 			pRecipe.targetBlock = BlockPredicateHelper.fromJson(pSerializedRecipe.get("target_block"));
-			Preconditions.checkArgument(pRecipe.sourceBlock != BlockPredicate.ANY, "source_block can't be wildcard");
-			Preconditions.checkArgument(pRecipe.targetBlock != BlockPredicate.ANY, "target_block can't be wildcard");
+			if (!pRecipe.ghost) {
+				Preconditions.checkArgument(pRecipe.sourceBlock != BlockPredicate.ANY, "source_block can't be wildcard");
+				Preconditions.checkArgument(pRecipe.targetBlock != BlockPredicate.ANY, "target_block can't be wildcard");
+			}
 		}
 
 		@Override

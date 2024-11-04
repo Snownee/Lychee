@@ -29,8 +29,9 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 	public int compareTo(RandomBlockTickingRecipe that) {
 		int i;
 		i = Integer.compare(isSpecial() ? 1 : 0, that.isSpecial() ? 1 : 0);
-		if (i != 0)
+		if (i != 0) {
 			return i;
+		}
 		return getId().compareTo(that.getId());
 	}
 
@@ -73,7 +74,10 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 		@Override
 		public void fromJson(RandomBlockTickingRecipe pRecipe, JsonObject pSerializedRecipe) {
 			pRecipe.block = BlockPredicateHelper.fromJson(pSerializedRecipe.get("block_in"));
-			Preconditions.checkArgument(pRecipe.block != BlockPredicate.ANY, "Wildcard block input is not allowed for this recipe type.");
+			if (!pRecipe.ghost) {
+				Preconditions.checkArgument(pRecipe.block != BlockPredicate.ANY,
+						"Wildcard block input is not allowed for this recipe type.");
+			}
 		}
 
 		@Override
