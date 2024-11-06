@@ -1,0 +1,25 @@
+{
+	"type": "lychee:lightning_channeling",
+	"item_in": [
+		{
+			"item": "minecraft:diamond_pickaxe",
+			"nbt": "{Damage:50}",
+			"type": "forge:nbt"
+		},
+		{
+			"item": "minecraft:diamond_pickaxe",
+			"nbt": "{Damage:50}",
+			"type": "forge:nbt"
+		},
+		{
+			"item": "minecraft:diamond_pickaxe",
+			"nbt": "{Damage:150}",
+			"type": "forge:nbt"
+		},
+		{
+			"item": "minecraft:diamond_pickaxe",
+			"nbt": "{Damage:150}",
+			"type": "forge:nbt"
+		}
+	]
+}
