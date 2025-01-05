@@ -30,6 +30,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -74,10 +75,37 @@ public final class JEIREI {
 		List<IngredientInfo> newIngredients = Lists.newArrayList();
 		for (var ingredient : ingredients) {
 			IngredientInfo match = null;
-			if (CommonProxy.isSimpleIngredient(ingredient.ingredient)) {
-				for (var toCompare : newIngredients) {
-					if (Objects.equals(toCompare.tooltips, ingredient.tooltips) && CommonProxy.isSimpleIngredient(toCompare.ingredient) &&
-							toCompare.ingredient.getStackingIds().equals(ingredient.ingredient.getStackingIds())) {
+			boolean simpleA = CommonProxy.isSimpleIngredient(ingredient.ingredient);
+			for (var toCompare : newIngredients) {
+				boolean simpleB = CommonProxy.isSimpleIngredient(toCompare.ingredient);
+				if (simpleA != simpleB) {
+					continue;
+				}
+				if (ingredient.isCatalyst != toCompare.isCatalyst) {
+					continue;
+				}
+				if (!Objects.equals(toCompare.tooltips, ingredient.tooltips)) {
+					continue;
+				}
+				if (simpleA) {
+					if (toCompare.ingredient.getStackingIds().equals(ingredient.ingredient.getStackingIds())) {
+						match = toCompare;
+						break;
+					}
+				} else {
+					ItemStack[] itemsA = ingredient.ingredient.getItems();
+					ItemStack[] itemsB = toCompare.ingredient.getItems();
+					if (itemsA.length == 0 || itemsA.length != itemsB.length) {
+						continue;
+					}
+					boolean matchAll = true;
+					for (int i = 0; i < itemsA.length; i++) {
+						if (!ItemStack.isSameItemSameComponents(itemsA[i], itemsB[i])) {
+							matchAll = false;
+							break;
+						}
+					}
+					if (matchAll) {
 						match = toCompare;
 						break;
 					}
