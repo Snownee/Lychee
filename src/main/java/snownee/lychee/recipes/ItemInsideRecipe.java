@@ -132,7 +132,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 	}
 
 	public static class Serializer implements LycheeRecipeSerializer<ItemInsideRecipe> {
-		public static final MapCodec<ItemInsideRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+		public static final MapCodec<ItemInsideRecipe> CODEC = ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
 				LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
 				BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
 						.forGetter(ItemInsideRecipe::blockPredicate),
@@ -140,7 +140,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 				ExtraCodecs.nonEmptyList(KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC))
 						.optionalFieldOf(ITEM_IN, List.of())
 						.forGetter(it -> it.ingredients)
-		).apply(instance, ItemInsideRecipe::new));
+		).apply(instance, ItemInsideRecipe::new)));
 
 		@Override
 		public @NotNull MapCodec<ItemInsideRecipe> codec() {

@@ -128,11 +128,12 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	@Override
 	public List<BlockPredicate> getBlockInputs() {
-		return Util.make(Lists.newArrayList(fallingBlock), it -> {
-			if (!BlockPredicateExtensions.isAny(landingBlock)) {
-				it.add(landingBlock);
-			}
-		});
+		return Util.make(
+				Lists.newArrayList(fallingBlock), it -> {
+					if (!BlockPredicateExtensions.isAny(landingBlock)) {
+						it.add(landingBlock);
+					}
+				});
 	}
 
 	@Override
@@ -147,7 +148,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	public static class Serializer implements LycheeRecipeSerializer<BlockCrushingRecipe> {
 		public static final MapCodec<BlockCrushingRecipe> CODEC =
-				RecordCodecBuilder.mapCodec(instance -> instance.group(
+				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(BlockCrushingRecipe::commonProperties),
 						BlockPredicateExtensions.CODEC.optionalFieldOf("falling_block", ANVIL)
 								.forGetter(it -> it.fallingBlock),
@@ -155,7 +156,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 								.forGetter(BlockCrushingRecipe::landingBlock),
 						KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC).optionalFieldOf(ITEM_IN, List.of())
 								.forGetter(it -> it.ingredients)
-				).apply(instance, BlockCrushingRecipe::new));
+				).apply(instance, BlockCrushingRecipe::new)));
 
 		@Override
 		public @NotNull MapCodec<BlockCrushingRecipe> codec() {

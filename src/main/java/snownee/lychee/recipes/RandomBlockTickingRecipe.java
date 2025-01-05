@@ -2,6 +2,7 @@ package snownee.lychee.recipes;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -25,10 +26,7 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 	protected float chance = 1;
 	protected final BlockPredicate blockPredicate;
 
-	protected RandomBlockTickingRecipe(
-			LycheeRecipeCommonProperties commonProperties,
-			BlockPredicate blockPredicate
-	) {
+	protected RandomBlockTickingRecipe(LycheeRecipeCommonProperties commonProperties, BlockPredicate blockPredicate) {
 		super(commonProperties);
 		this.blockPredicate = blockPredicate;
 		onConstructed();
@@ -65,12 +63,16 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 	}
 
 	public static class Serializer implements LycheeRecipeSerializer<RandomBlockTickingRecipe> {
-		public static final MapCodec<RandomBlockTickingRecipe> CODEC =
-				RecordCodecBuilder.mapCodec(instance -> instance.group(
+		public static final MapCodec<RandomBlockTickingRecipe> CODEC = RecordCodecBuilder.<RandomBlockTickingRecipe>mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(RandomBlockTickingRecipe::commonProperties),
 						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
-								.forGetter(RandomBlockTickingRecipe::blockPredicate)
-				).apply(instance, RandomBlockTickingRecipe::new));
+								.forGetter(RandomBlockTickingRecipe::blockPredicate)).apply(instance, RandomBlockTickingRecipe::new))
+				.validate(it -> {
+					if (!it.ghost() && BlockPredicateExtensions.isAny(it.blockPredicate())) {
+						return DataResult.error(() -> "Wildcard block input is not allowed for this recipe type.");
+					}
+					return DataResult.success(it);
+				});
 
 		@Override
 		public @NotNull MapCodec<RandomBlockTickingRecipe> codec() {
@@ -78,14 +80,12 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 		}
 
 
-		public static final StreamCodec<RegistryFriendlyByteBuf, RandomBlockTickingRecipe> STREAM_CODEC =
-				StreamCodec.composite(
-						LycheeRecipeCommonProperties.STREAM_CODEC,
-						RandomBlockTickingRecipe::commonProperties,
-						BlockPredicate.STREAM_CODEC,
-						RandomBlockTickingRecipe::blockPredicate,
-						RandomBlockTickingRecipe::new
-				);
+		public static final StreamCodec<RegistryFriendlyByteBuf, RandomBlockTickingRecipe> STREAM_CODEC = StreamCodec.composite(
+				LycheeRecipeCommonProperties.STREAM_CODEC,
+				RandomBlockTickingRecipe::commonProperties,
+				BlockPredicate.STREAM_CODEC,
+				RandomBlockTickingRecipe::blockPredicate,
+				RandomBlockTickingRecipe::new);
 
 		@Override
 		public @NotNull StreamCodec<RegistryFriendlyByteBuf, RandomBlockTickingRecipe> streamCodec() {

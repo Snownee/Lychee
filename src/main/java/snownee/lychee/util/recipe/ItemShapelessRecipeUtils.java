@@ -1,5 +1,8 @@
 package snownee.lychee.util.recipe;
 
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -32,5 +35,14 @@ public class ItemShapelessRecipeUtils {
 		itemShapelessContext.filteredItems = itemEntities;
 		itemShapelessContext.setMatcher(match.get());
 		return true;
+	}
+
+	public static <T extends ILycheeRecipe<?>> MapCodec<T> validatedCodec(MapCodec<T> codec) {
+		return codec.validate(it -> {
+			if (!it.ghost() && it.getIngredients().size() > MAX_INGREDIENTS) {
+				return DataResult.error(() -> "Ingredients cannot be more than " + MAX_INGREDIENTS);
+			}
+			return DataResult.success(it);
+		});
 	}
 }
