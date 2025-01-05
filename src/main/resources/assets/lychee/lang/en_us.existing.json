@@ -57,6 +57,8 @@
 	"contextual.lychee.custom.not": "Custom condition: !%s",
 	"contextual.lychee.is_off_item_cooldown": "Off cooldown: %s",
 	"contextual.lychee.is_off_item_cooldown.not": "On cooldown: %s",
+	"contextual.lychee.sky_darken": "Sky darken test",
+	"contextual.lychee.sky_darken.not": "Sky darken test",
 	"direction.lychee.up": "Up",
 	"direction.lychee.down": "Down",
 	"direction.lychee.north": "North",

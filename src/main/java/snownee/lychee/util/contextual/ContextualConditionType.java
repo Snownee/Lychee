@@ -18,6 +18,7 @@ import snownee.lychee.contextual.IsWeather;
 import snownee.lychee.contextual.Location;
 import snownee.lychee.contextual.Not;
 import snownee.lychee.contextual.Or;
+import snownee.lychee.contextual.SkyDarken;
 import snownee.lychee.contextual.Time;
 import snownee.lychee.util.SerializableType;
 
@@ -47,6 +48,7 @@ public interface ContextualConditionType<T extends ContextualCondition> extends 
 			register("check_param", new CheckParam.Type());
 	ContextualConditionType<IsOffItemCooldown> IS_OFF_ITEM_COOLDOWN =
 			register("is_off_item_cooldown", new IsOffItemCooldown.Type());
+	ContextualConditionType<SkyDarken> SKY_DARKEN = register("sky_darken", new SkyDarken.Type());
 	ContextualConditionType<CustomCondition> CUSTOM =
 			register("custom", new CustomCondition.Type());
 

@@ -19,6 +19,8 @@
   "contextual.lychee.fall_distance.not": "Fall distance is not: %s",
   "contextual.lychee.is_off_item_cooldown": "Off cooldown: %s",
   "contextual.lychee.is_off_item_cooldown.not": "On cooldown: %s",
+	"contextual.lychee.sky_darken": "Sky darken test",
+	"contextual.lychee.sky_darken.not": "Sky darken test",
   "contextual.lychee.is_sneaking": "Requires crouching",
   "contextual.lychee.is_sneaking.not": "Requires not crouching",
   "contextual.lychee.location": "Check at [~%s,~%s,~%s]:",
