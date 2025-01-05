@@ -32,7 +32,7 @@ LycheeEvents.customAction('example_log_action', event => {
     let msg = event.data.custom_property
 
     // use ProbeJS for more information about the parameters
-    event.action.applyFunc = (recipe, ctx, times) => {
+    event.applyFunc = (recipe, ctx, times) => {
         console.log(msg)
     }
     // it is recommended to cancel the event to prevent the action from being modified by other codes
@@ -69,14 +69,14 @@ LycheeEvents.customCondition('example_always_true_condition', event => {
     // use ProbeJS for more information about the parameters
     // here you need to return the repeat times that no greater than the given times, or 0 if the condition is not met
     // in this case, the condition is always met
-    event.condition.testFunc = (recipe, ctx, times) => times
+    event.testFunc = (recipe, ctx, times) => times
 
     // this function is optional
     // will be called when the condition is displayed in JEI/REI on the client side
-    // InteractionResult.SUCCESS => checkmark
-    // InteractionResult.FAIL    => cross
-    // InteractionResult.PASS    => the default "-"
-    event.condition.testInTooltipsFunc = () => InteractionResult.SUCCESS
+    // true    => checkmark
+    // false   => cross
+    // "default" => the default "-"
+    event.testInTooltipsFunc = () => true
 
     // it is recommended to cancel the event to prevent the action from being modified by other codes
     event.cancel()
@@ -90,7 +90,7 @@ You can execute code when clicking the info badge in JEI/REI:
 ```js
 // client script
 LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
-    console.log(event.recipe.id)
+    console.log(event.recipeId)
     console.log(event.button == 0) // 0 for left click, 1 for right click
 })
 ```
@@ -149,7 +149,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     ```js
     LycheeEvents.customAction('repair_item', event => {
         let durability = event.data.durability
-        event.action.applyFunc = (recipe, ctx, times) => {
+        event.applyFunc = (recipe, ctx, times) => {
             let material = ctx.getItem(1)
             let tool = ctx.getItem(2)
             let cost = 0
@@ -162,7 +162,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 
     LycheeEvents.customCondition('is_item_damaged', event => {
         let target = LycheeReference.fromJson(event.data, 'target')
-        event.condition.testFunc = (recipe, ctx, times) => {
+        event.testFunc = (recipe, ctx, times) => {
             let indexes = recipe.getItemIndexes(target)
             return ctx.getItem(indexes.get(0)).damaged ? times : 0
         }
@@ -228,7 +228,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     let trimPool = ['coast', 'spire', 'rib', 'snout', 'dune']
 
     LycheeEvents.customAction('apply_random_trim', event => {
-        event.action.applyFunc = (recipe, ctx, times) => {
+        event.applyFunc = (recipe, ctx, times) => {
             let input = ctx.getItem(0)
             let output = ctx.getItem(2)
             let player = ctx.getParam('this_entity')
@@ -246,7 +246,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     })
 
     LycheeEvents.customAction('update_enchantment_seed', event => {
-        event.action.applyFunc = (recipe, ctx, times) => {
+        event.applyFunc = (recipe, ctx, times) => {
             let player = ctx.getParam('this_entity')
             player.onEnchantmentPerformed(null, 0) // update seed. null == ItemStack.EMPTY
         }
@@ -254,7 +254,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 
     LycheeEvents.customCondition('is_item_trimmed', event => {
         let target = LycheeReference.fromJson(event.data, 'target')
-        event.condition.testFunc = (recipe, ctx, times) => {
+        event.testFunc = (recipe, ctx, times) => {
             let indexes = recipe.getItemIndexes(target)
             let stack = ctx.getItem(indexes.getInt(0))
             return stack?.nbt?.Trim ? times : 0
@@ -304,7 +304,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     let $LevelPlatformHelper = Java.loadClass('dev.latvian.mods.kubejs.platform.LevelPlatformHelper')
 
     LycheeEvents.customAction('consume_item_on_depot', event => {
-        event.action.applyFunc = (recipe, ctx, times) => {
+        event.applyFunc = (recipe, ctx, times) => {
             let be = ctx.getParam('block_entity')
             let inv = $LevelPlatformHelper.get().getInventoryFromBlockEntity(be, 'up')
             inv.extractItem(0, 1, false)
@@ -313,7 +313,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 
     LycheeEvents.customCondition('has_item_on_depot', event => {
         let ingredient = Ingredient.of(event.data.ingredient)
-        event.condition.testFunc = (recipe, ctx, times) => {
+        event.testFunc = (recipe, ctx, times) => {
             let be = ctx.getParam('block_entity')
             let inv = $LevelPlatformHelper.get().getInventoryFromBlockEntity(be, 'up')
             return ingredient.test(inv.getStackInSlot(0)) ? times : 0
@@ -361,7 +361,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     LycheeEvents.customCondition('neighbor_block_boost', event => {
         let booster_block = event.data.booster_block
 
-        event.condition.testFunc = (recipe, ctx, times) => {
+        event.testFunc = (recipe, ctx, times) => {
             let item = ctx.getParam('this_entity')
             let count = item.lychee$getCount()
             if (count != 0) {

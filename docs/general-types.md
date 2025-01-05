@@ -48,14 +48,15 @@ A BlockPredicate is a predicate of an in-world block. It can also be used to rep
 
 !!! note "Format"
 
-    | Name   | Description                                        | Type / Literal                                        |
-    | ------ | -------------------------------------------------- | ----------------------------------------------------- |
-    | blocks | block resource ids ^optional^                      | string[]                                              |
-    | tag    | the block tag ^optional^                           | string                                                |
-    | nbt    | the block nbt ^optional^                           | string                                                |
-    | state  | a map of block property names to values ^optional^ | [StatePropertiesPredicate](#statepropertiespredicate) |
+    A BlockPredicate can be either a simple string or a dictionary:
 
-    As a shortcut you can use a string to represent a simple BlockPredicate.
+    | Name   | Description                                                                             | Type / Literal                                        |
+    | ------ | --------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+    | blocks | one or more block(s) (an ID, or a tag with `#`, or an array containing IDs). ^optional^ | string \| string[]                                    |
+    | nbt    | the block nbt ^optional^                                                                | string                                                |
+    | state  | a map of block property names to values ^optional^                                      | [StatePropertiesPredicate](#statepropertiespredicate) |
+
+    As a shortcut you can use a string (an ID, or a tag with `#`) to represent a simple BlockPredicate.
 
 ??? example
 

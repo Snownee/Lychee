@@ -354,20 +354,20 @@ Checks the direction that being interacted. Only works for interaction recipes.
 
     Allowed value for "direction": "up", "down", "north", "south", "east", "west", "side", "forward"
 
-### Check Parameter
+### Loot Parameter Check
 
-Checks if a parameter exists in the context.
+Checks if a parameter exists in the loot context.
 
 !!! note "Format"
 
-    | Name | Description    | Type / Literal |
-    | ---- | -------------- | -------------- |
-    | type | type           | "check_param"  |
-    | key  | parameter name | string         |
+    | Name | Description         | Type / Literal |
+    | ---- | ------------------- | -------------- |
+    | type | type                | "check_param"  |
+    | key  | loot parameter name | string         |
 
 ??? example
 
-    Checks if we can know the location in the context.
+    Checks if we can know the location from the context.
 
     === "YAML"
 
@@ -384,3 +384,16 @@ Checks if a parameter exists in the context.
             "key": "origin"
         }
         ```
+
+### Sky Darkness Check
+
+Checks the sky darken level.
+
+!!! note "Format"
+
+    | Name              | Description                                                        | Type / Literal                          |
+    | ----------------- | ------------------------------------------------------------------ | --------------------------------------- |
+    | type              | type                                                               | "sky_darken"                            |
+    | value             | value                                                              | [IntBounds](general-types.md#intbounds) |
+    | require_sky_light | dimension must be a surface world (not like the nether) ^optional^ | boolean                                 |
+    | can_see_sky       | the location must be able to see the sky ^optional^                | boolean                                 |
