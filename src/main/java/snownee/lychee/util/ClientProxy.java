@@ -3,6 +3,8 @@ package snownee.lychee.util;
 import java.text.MessageFormat;
 import java.util.List;
 
+import net.neoforged.api.distmarker.Dist;
+
 import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
@@ -76,84 +78,86 @@ public class ClientProxy {
 		graphics.drawString(font, formattedCharSequence, x - font.width(formattedCharSequence) / 2, y, color, false);
 	}
 
-	public ClientProxy(IEventBus modEventBus) {
-		ParticleFactoryRegistry.getInstance().register(
-				DripstoneParticleService.DRIPSTONE_DRIPPING,
-				ParticleFactories.Dripping::new
-		);
-		ParticleFactoryRegistry.getInstance().register(
-				DripstoneParticleService.DRIPSTONE_FALLING,
-				ParticleFactories.Falling::new
-		);
-		ParticleFactoryRegistry.getInstance().register(
-				DripstoneParticleService.DRIPSTONE_SPLASH,
-				ParticleFactories.Splash::new
-		);
+	public ClientProxy(IEventBus modEventBus, Dist dist) {
+		if (dist.isClient()) {
+			ParticleFactoryRegistry.getInstance().register(
+					DripstoneParticleService.DRIPSTONE_DRIPPING,
+					ParticleFactories.Dripping::new
+			);
+			ParticleFactoryRegistry.getInstance().register(
+					DripstoneParticleService.DRIPSTONE_FALLING,
+					ParticleFactories.Falling::new
+			);
+			ParticleFactoryRegistry.getInstance().register(
+					DripstoneParticleService.DRIPSTONE_SPLASH,
+					ParticleFactories.Splash::new
+			);
 
-		PostActionRenderer.register(
-				PostActionTypes.DROP_ITEM,
-				(ItemStackPostActionRenderer<DropItem>) DropItem::stack
-		);
-		PostActionRenderer.register(
-				PostActionTypes.SET_ITEM,
-				(ItemStackPostActionRenderer<SetItem>) SetItem::stack
-		);
-		PostActionRenderer.register(
-				PostActionTypes.DROP_XP,
-				(ItemBasedPostActionRenderer<DropXp>) action -> Items.EXPERIENCE_BOTTLE.getDefaultInstance()
-		);
-		PostActionRenderer.register(
-				PostActionTypes.EXECUTE,
-				(ItemBasedPostActionRenderer<Execute>) action -> Items.COMMAND_BLOCK.getDefaultInstance()
-		);
-		PostActionRenderer.register(
-				PostActionTypes.EXPLODE,
-				(ItemBasedPostActionRenderer<Explode>) action -> Items.TNT.getDefaultInstance()
-		);
-		PostActionRenderer.register(PostActionTypes.IF, new IfPostActionRenderer());
-		PostActionRenderer.register(PostActionTypes.PLACE, new PlaceBlockPostActionRenderer());
-		PostActionRenderer.register(PostActionTypes.CYCLE_STATE_PROPERTY, new CycleStatePropertyPostActionRenderer());
-		PostActionRenderer.register(
-				PostActionTypes.DAMAGE_ITEM, new PostActionRenderer<>() {
-					@Override
-					public void loadCatalystsInfo(
-							DamageItem action,
-							final ILycheeRecipe<?> recipe,
-							final List<IngredientInfo> ingredients) {
-						var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(action.type()));
-						var component = Component.translatable(key, action.damage()).withStyle(ChatFormatting.YELLOW);
-						var mc = Minecraft.getInstance();
-						recipe.getItemIndexes(action.target()).forEach(i -> {
-							var info = ingredients.get(i);
-							info.addTooltip(component);
-							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
-							info.isCatalyst = true;
-						});
-					}
-				});
-		PostActionRenderer.register(
-				PostActionTypes.PREVENT_DEFAULT, new PostActionRenderer<>() {
-					@Override
-					public void loadCatalystsInfo(
-							PreventDefault action,
-							final ILycheeRecipe<?> recipe,
-							final List<IngredientInfo> ingredients) {
-						if (recipe == null ||
-								!(recipe.getType() instanceof LycheeRecipeType<?> lycheeRecipeType) ||
-								!lycheeRecipeType.canPreventConsumeInputs) {
-							return;
+			PostActionRenderer.register(
+					PostActionTypes.DROP_ITEM,
+					(ItemStackPostActionRenderer<DropItem>) DropItem::stack
+			);
+			PostActionRenderer.register(
+					PostActionTypes.SET_ITEM,
+					(ItemStackPostActionRenderer<SetItem>) SetItem::stack
+			);
+			PostActionRenderer.register(
+					PostActionTypes.DROP_XP,
+					(ItemBasedPostActionRenderer<DropXp>) action -> Items.EXPERIENCE_BOTTLE.getDefaultInstance()
+			);
+			PostActionRenderer.register(
+					PostActionTypes.EXECUTE,
+					(ItemBasedPostActionRenderer<Execute>) action -> Items.COMMAND_BLOCK.getDefaultInstance()
+			);
+			PostActionRenderer.register(
+					PostActionTypes.EXPLODE,
+					(ItemBasedPostActionRenderer<Explode>) action -> Items.TNT.getDefaultInstance()
+			);
+			PostActionRenderer.register(PostActionTypes.IF, new IfPostActionRenderer());
+			PostActionRenderer.register(PostActionTypes.PLACE, new PlaceBlockPostActionRenderer());
+			PostActionRenderer.register(PostActionTypes.CYCLE_STATE_PROPERTY, new CycleStatePropertyPostActionRenderer());
+			PostActionRenderer.register(
+					PostActionTypes.DAMAGE_ITEM, new PostActionRenderer<>() {
+						@Override
+						public void loadCatalystsInfo(
+								DamageItem action,
+								final ILycheeRecipe<?> recipe,
+								final List<IngredientInfo> ingredients) {
+							var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(action.type()));
+							var component = Component.translatable(key, action.damage()).withStyle(ChatFormatting.YELLOW);
+							var mc = Minecraft.getInstance();
+							recipe.getItemIndexes(action.target()).forEach(i -> {
+								var info = ingredients.get(i);
+								info.addTooltip(component);
+								action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
+								info.isCatalyst = true;
+							});
 						}
-						var mc = Minecraft.getInstance();
-						for (var ingredient : ingredients) {
-							if (!ingredient.tooltips.isEmpty()) {
-								continue;
+					});
+			PostActionRenderer.register(
+					PostActionTypes.PREVENT_DEFAULT, new PostActionRenderer<>() {
+						@Override
+						public void loadCatalystsInfo(
+								PreventDefault action,
+								final ILycheeRecipe<?> recipe,
+								final List<IngredientInfo> ingredients) {
+							if (recipe == null ||
+									!(recipe.getType() instanceof LycheeRecipeType<?> lycheeRecipeType) ||
+									!lycheeRecipeType.canPreventConsumeInputs) {
+								return;
 							}
-							ingredient.addTooltip(((LycheeRecipeType) lycheeRecipeType).getPreventDefaultDescription(recipe));
-							action.conditions().appendToTooltips(ingredient.tooltips, mc.level, mc.player, 0);
-							ingredient.isCatalyst = true;
+							var mc = Minecraft.getInstance();
+							for (var ingredient : ingredients) {
+								if (!ingredient.tooltips.isEmpty()) {
+									continue;
+								}
+								ingredient.addTooltip(((LycheeRecipeType) lycheeRecipeType).getPreventDefaultDescription(recipe));
+								action.conditions().appendToTooltips(ingredient.tooltips, mc.level, mc.player, 0);
+								ingredient.isCatalyst = true;
+							}
 						}
-					}
-				});
+					});
+		}
 	}
 
 	@FunctionalInterface

@@ -3,7 +3,7 @@ package snownee.lychee.mixin.recipes.blockexploding;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import org.apache.commons.compress.utils.Lists;
+import com.google.common.collect.Lists;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
