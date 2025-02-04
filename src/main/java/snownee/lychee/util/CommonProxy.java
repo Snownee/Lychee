@@ -133,7 +133,13 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static String chance(float chance) {
-		return (chance < 0.01 ? "<1" : String.valueOf((int) (chance * 100))) + "%";
+		if (chance >= 0.1F) {
+			return (int) (chance * 100) + "%";
+		} else if (chance >= 0.001F) {
+			return String.format("%.1f%%", chance * 100);
+		} else {
+			return "<0.1%";
+		}
 	}
 
 	public static String capitaliseAllWords(String str) {
