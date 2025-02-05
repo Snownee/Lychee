@@ -1,6 +1,7 @@
 package snownee.lychee.core.recipe.type;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -79,11 +80,13 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 	}
 
 	public List<ItemStack> blockKeysToItems() {
-		return recipesByBlock.keySet().stream().map(Block::asItem).filter($ -> {
-			return $ != Items.AIR;
-		}).sorted((a, b) -> {
-			return Integer.compare(Item.getId(a), Item.getId(b));
-		}).map(Item::getDefaultInstance).toList();
+		return recipesByBlock.keySet()
+				.stream()
+				.map(Block::asItem)
+				.filter($ -> $ != Items.AIR)
+				.sorted(Comparator.comparingInt(Item::getId))
+				.map(Item::getDefaultInstance)
+				.toList();
 	}
 
 	public Optional<T> process(Player player, InteractionHand hand, BlockPos pos, Vec3 origin, LycheeContext.Builder<C> ctxBuilder) {

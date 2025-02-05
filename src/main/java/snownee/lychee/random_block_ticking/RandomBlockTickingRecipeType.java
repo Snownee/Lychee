@@ -7,6 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.kiwi.loader.Platform;
@@ -32,6 +33,7 @@ public class RandomBlockTickingRecipeType extends BlockKeyRecipeType<LycheeConte
 		for (Block block : BuiltInRegistries.BLOCK) {
 			((RandomlyTickable) block).lychee$setTickable(has(block));
 		}
+		Blocks.rebuildCache();
 		if (CommonProxy.hasKiwi) {
 			MinecraftServer server = Platform.getServer();
 			if (server == null) {
