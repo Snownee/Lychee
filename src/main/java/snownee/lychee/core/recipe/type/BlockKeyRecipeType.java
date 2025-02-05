@@ -107,7 +107,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 		ItemStack stack = player.getItemInHand(hand);
 		ItemStack otherStack = player.getItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
 		ctx.itemHolders = ItemHolderCollection.Inventory.of(ctx, stack, otherStack);
-		Iterable<T> iterable = Iterables.concat(recipes, anyBlockRecipes);
+		Iterable<T> iterable = mergeAnyBlockRecipes(recipes);
 		for (T recipe : iterable) {
 			if (tryMatch(recipe, level, ctx).isPresent()) {
 				if (!level.isClientSide && recipe.tickOrApply(ctx)) {
@@ -138,7 +138,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 	@Nullable
 	public Pair<C, T> process(Level level, BlockState state, Supplier<C> ctxSupplier) {
 		Collection<T> recipes = recipesByBlock.getOrDefault(state.getBlock(), List.of());
-		Iterable<T> iterable = Iterables.concat(recipes, anyBlockRecipes);
+		Iterable<T> iterable = mergeAnyBlockRecipes(recipes);
 		C ctx = null;
 		for (T recipe : iterable) {
 			if (extractChance) {
@@ -156,6 +156,16 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 			}
 		}
 		return null;
+	}
+
+	public Iterable<T> mergeAnyBlockRecipes(Collection<T> recipes) {
+		if (anyBlockRecipes.isEmpty()) {
+			return recipes;
+		}
+		if (recipes.isEmpty()) {
+			return anyBlockRecipes;
+		}
+		return Iterables.concat(recipes, anyBlockRecipes);
 	}
 
 }

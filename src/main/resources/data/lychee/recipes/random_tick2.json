@@ -1,0 +1,24 @@
+{
+	"type": "lychee:random_block_ticking",
+	"contextual": [
+		{
+			"type": "weather",
+			"weather": "rain"
+		}
+	],
+	"post": [
+		{
+			"type": "place",
+			"block": {
+				"blocks": [
+					"minecraft:air"
+				]
+			}
+		},
+		{
+			"type": "execute",
+			"command": "say 2"
+		}
+	],
+	"block_in": "wheat"
+}
