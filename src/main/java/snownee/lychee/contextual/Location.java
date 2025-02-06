@@ -59,6 +59,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		builder.add(new FluidRule());
 		builder.add(new LightRule());
 		builder.add(new SmokeyRule());
+		builder.add(new CanSeeSkyRule());
 		return builder.build();
 	}
 
@@ -312,6 +313,21 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	private static class SmokeyRule extends Rule<Boolean> {
 		private SmokeyRule() {
 			super("smokey", LocationPredicate::smokey);
+		}
+
+		@Override
+		public void appendToTooltips(List<Component> tooltips, int indent, String key, Boolean value, TriState result) {
+			key = key + "." + name;
+			if (!value) {
+				key += ".not";
+			}
+			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(key));
+		}
+	}
+
+	private static class CanSeeSkyRule extends Rule<Boolean> {
+		private CanSeeSkyRule() {
+			super("can_see_sky", LocationPredicate::canSeeSky);
 		}
 
 		@Override

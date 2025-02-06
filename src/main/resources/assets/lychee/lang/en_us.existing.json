@@ -41,6 +41,8 @@
 	"contextual.lychee.location.light": "Light is: %s",
 	"contextual.lychee.location.smokey": "Closely above a §fCampfire",
 	"contextual.lychee.location.smokey.not": "Not closely above a §fCampfire",
+	"contextual.lychee.location.can_see_sky": "Can see sky",
+	"contextual.lychee.location.can_see_sky.not": "Can't see sky",
 	"contextual.lychee.time": "Time check",
 	"contextual.lychee.execute": "Execute a command",
 	"contextual.lychee.fall_distance": "Fall distance is: %s",

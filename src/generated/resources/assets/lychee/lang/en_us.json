@@ -35,6 +35,8 @@
   "contextual.lychee.location.x": "X position: %s",
   "contextual.lychee.location.y": "Y position: %s",
   "contextual.lychee.location.z": "Z position: %s",
+	"contextual.lychee.location.can_see_sky": "Can see sky",
+	"contextual.lychee.location.can_see_sky.not": "Can't see sky",
   "contextual.lychee.or": "True for any:",
   "contextual.lychee.secret": "§o???",
   "contextual.lychee.time": "Time check",
