@@ -1,14 +1,14 @@
 package snownee.lychee.compat.jei.category;
 
-import com.mojang.blaze3d.platform.InputConstants;
-
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
@@ -18,6 +18,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.JEIREI;
+import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipeType;
 import snownee.lychee.util.CommonProxy;
@@ -129,30 +130,38 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 	}
 
 	@Override
-	public boolean handleInput(RecipeHolder<BlockCrushingRecipe> recipeHolder, double mouseX, double mouseY, InputConstants.Key input) {
-		if (input.getType() == InputConstants.Type.MOUSE) {
-			var recipe = recipeHolder.value();
-			var x = recipe.getIngredients().isEmpty() ? 41 : 77;
-			var anyLandingBlock = BlockPredicateExtensions.isAny(recipe.landingBlock());
-			var y = anyLandingBlock ? 45 : 36;
-			x = (int) mouseX - x;
-			y = (int) mouseY - y;
-			if (FALLING_BLOCK_RECT.contains(x, y)) {
-				BlockState fallingBlock = CommonProxy.getCycledItem(
+	public void createRecipeExtras(
+			IRecipeExtrasBuilder builder,
+			RecipeHolder<BlockCrushingRecipe> recipeHolder,
+			IFocusGroup focuses
+	) {
+		super.createRecipeExtras(builder, recipeHolder, focuses);
+		var recipe = recipeHolder.value();
+		var x = recipe.getIngredients().isEmpty() ? 41 : 77;
+		var anyLandingBlock = BlockPredicateExtensions.isAny(recipe.landingBlock());
+		var y = anyLandingBlock ? 45 : 36;
+		builder.addInputHandler(new BlockClickingInputHandler(
+				new ScreenRectangle(
+						x + FALLING_BLOCK_RECT.getX(),
+						y + FALLING_BLOCK_RECT.getY(),
+						FALLING_BLOCK_RECT.getWidth(),
+						FALLING_BLOCK_RECT.getHeight()),
+				() -> CommonProxy.getCycledItem(
 						BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 						Blocks.ANVIL.defaultBlockState(),
-						2000);
-				return clickBlock(fallingBlock, input);
-			}
-			if (!anyLandingBlock && LANDING_BLOCK_RECT.contains(x, y)) {
-				BlockState landingBlock = CommonProxy.getCycledItem(
-						BlockPredicateExtensions.getShowcaseBlockStates(recipe.landingBlock()),
-						Blocks.AIR.defaultBlockState(),
-						2000);
-				return clickBlock(landingBlock, input);
-			}
+						2000)));
+		if (!anyLandingBlock) {
+			builder.addInputHandler(new BlockClickingInputHandler(
+					new ScreenRectangle(
+							x + LANDING_BLOCK_RECT.getX(),
+							y + LANDING_BLOCK_RECT.getY(),
+							LANDING_BLOCK_RECT.getWidth(),
+							LANDING_BLOCK_RECT.getHeight()),
+					() -> CommonProxy.getCycledItem(
+							BlockPredicateExtensions.getShowcaseBlockStates(recipe.landingBlock()),
+							Blocks.AIR.defaultBlockState(),
+							2000)));
 		}
-		return false;
 	}
 
 	private BlockState getFallingBlock(BlockCrushingRecipe recipe) {

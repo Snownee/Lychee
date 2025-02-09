@@ -200,7 +200,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 	}
 
 
-	default boolean clickBlock(BlockState state, InputConstants.Key input) {
+	static boolean clickBlock(BlockState state, InputConstants.Key input) {
 		if (input.getType() != InputConstants.Type.MOUSE) {
 			return false;
 		}

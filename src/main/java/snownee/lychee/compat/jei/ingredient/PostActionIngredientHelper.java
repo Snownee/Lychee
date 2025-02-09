@@ -48,6 +48,7 @@ public class PostActionIngredientHelper implements IIngredientHelper<PostAction>
 		return Objects.requireNonNull(LycheeRegistries.POST_ACTION.getKey(postAction.type()));
 	}
 
+	@SuppressWarnings("removal")
 	@Override
 	public String getUniqueId(PostAction ingredient, UidContext context) {
 		return "";

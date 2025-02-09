@@ -1,14 +1,14 @@
 package snownee.lychee.compat.jei.category;
 
-import com.mojang.blaze3d.platform.InputConstants;
-
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -20,6 +20,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.JEIREI;
+import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
 import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -120,27 +121,33 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 	}
 
 	@Override
-	public boolean handleInput(RecipeHolder<DripstoneRecipe> recipeHolder, double mouseX, double mouseY, InputConstants.Key input) {
-		if (input.getType() == InputConstants.Type.MOUSE) {
-			DripstoneRecipe recipe = recipeHolder.value();
-			int x = (int) mouseX;
-			int y = (int) mouseY;
-			if (sourceBlockRect.contains(x, y)) {
-				BlockState fallingBlock = CommonProxy.getCycledItem(
+	public void createRecipeExtras(
+			IRecipeExtrasBuilder builder,
+			RecipeHolder<DripstoneRecipe> recipeHolder,
+			IFocusGroup focuses
+	) {
+		super.createRecipeExtras(builder, recipeHolder, focuses);
+		DripstoneRecipe recipe = recipeHolder.value();
+		builder.addInputHandler(new BlockClickingInputHandler(
+				new ScreenRectangle(
+						sourceBlockRect.getX(),
+						sourceBlockRect.getY(),
+						sourceBlockRect.getWidth(),
+						sourceBlockRect.getHeight()),
+				() -> CommonProxy.getCycledItem(
 						BlockPredicateExtensions.getShowcaseBlockStates(recipe.sourceBlock()),
 						Blocks.AIR.defaultBlockState(),
-						2000);
-				return clickBlock(fallingBlock, input);
-			}
-			if (targetBlockRect.contains(x, y)) {
-				BlockState landingBlock = CommonProxy.getCycledItem(
+						2000)));
+		builder.addInputHandler(new BlockClickingInputHandler(
+				new ScreenRectangle(
+						targetBlockRect.getX(),
+						targetBlockRect.getY(),
+						targetBlockRect.getWidth(),
+						targetBlockRect.getHeight()),
+				() -> CommonProxy.getCycledItem(
 						BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 						Blocks.AIR.defaultBlockState(),
-						2000);
-				return clickBlock(landingBlock, input);
-			}
-		}
-		return false;
+						2000)));
 	}
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {

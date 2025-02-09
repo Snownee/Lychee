@@ -17,6 +17,7 @@ public enum PostActionIngredientRenderer implements IIngredientRenderer<PostActi
 
 	INSTANCE;
 
+	@SuppressWarnings("removal")
 	@Override
 	public List<Component> getTooltip(PostAction ingredient, TooltipFlag tooltipFlag) {
 		return List.of();
