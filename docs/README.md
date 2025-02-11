@@ -1,5 +1,8 @@
 # Preface
 
+!!! info
+    This is the documentation for Lychee 1.20. If you are using a different version, please select the correct version in the bottom right corner of the page.
+
 Lychee is a mod that allows you to define custom interactions using JSON recipes and datapack.
 
 You can download Lychee on CurseForge:
