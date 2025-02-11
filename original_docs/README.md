@@ -1,5 +1,8 @@
 # Preface
 
+!!! info
+    This is the documentation for Lychee 1.21. If you are using a different version, please select the correct version in the bottom right corner of the page.
+
 Lychee is a mod that allows you to define custom interactions using YAML/JSON recipes and datapack.
 
 You can download Lychee on CurseForge:
@@ -46,5 +49,5 @@ There are no built-in integrations for adding recipes, which means you need to a
 
 There are some utility libraries from the community you may want to know:
 
- - [LycheeTweaker for CraftTweaker](https://github.com/ProbablyNotPetey/LycheeTweaker) by ProbablyNotPetey
+ - [LycheeTweaker for CraftTweaker](https://github.com/lyuxc-unknow/LycheeTweaker) by lyuxc-unknow
  - Lychee.JS for KubeJS by Quentin765 (No links, search in the KubeJS discord)

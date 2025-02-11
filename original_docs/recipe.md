@@ -2,7 +2,7 @@
 
 !!! info
 
-    Try [**Fruitful Generator**](https://fruitful-generator.github.io/) !
+    Try [**Fruitful Generator**](https://fruitful-generator.github.io/) ! (Currently only supports 1.20.1)
     
     It's a convenient tool for creating Lychee recipes.
 
