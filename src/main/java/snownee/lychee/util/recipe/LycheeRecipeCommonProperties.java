@@ -13,6 +13,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.codec.AliasOptionalFieldCodec;
@@ -43,9 +44,8 @@ public record LycheeRecipeCommonProperties(
 			ContextualHolder.EMPTY,
 			"contextual");
 	public static final MapCodec<List<PostAction>> POST_ACTION_CODEC = PostActionType.LIST_CODEC.optionalFieldOf("post", List.of());
-	public static final MapCodec<MinMaxBounds.Ints> MAX_REPEATS_CODEC = MinMaxBounds.Ints.CODEC.optionalFieldOf(
-			"max_repeats",
-			MinMaxBounds.Ints.ANY);
+	public static final MapCodec<MinMaxBounds.Ints> MAX_REPEATS_CODEC =
+			MinMaxBounds.Ints.CODEC.optionalFieldOf("max_repeats", MinMaxBounds.Ints.ANY);
 	public static final MapCodec<LycheeRecipeCommonProperties> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			HIDE_IN_VIEWER_CODEC.forGetter(LycheeRecipeCommonProperties::hideInRecipeViewer),
 			GHOST_CODEC.forGetter(LycheeRecipeCommonProperties::ghost),
@@ -53,7 +53,7 @@ public record LycheeRecipeCommonProperties(
 			GROUP_CODEC.forGetter(LycheeRecipeCommonProperties::group),
 			CONTEXTUAL_CODEC.forGetter(LycheeRecipeCommonProperties::conditions),
 			POST_ACTION_CODEC.forGetter(LycheeRecipeCommonProperties::postActions),
-			MAX_REPEATS_CODEC.forGetter(LycheeRecipeCommonProperties::maxRepeats)).apply(instance, LycheeRecipeCommonProperties::new));
+			MAX_REPEATS_CODEC.forGetter(LycheeRecipeCommonProperties::maxRepeats)).apply(instance, LycheeRecipeCommonProperties::of));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, LycheeRecipeCommonProperties> STREAM_CODEC =
 			LycheeStreamCodecs.composite(
@@ -73,4 +73,18 @@ public record LycheeRecipeCommonProperties(
 					LycheeRecipeCommonProperties::maxRepeats,
 					LycheeRecipeCommonProperties::new
 			);
+
+	private static LycheeRecipeCommonProperties of(
+			boolean hideInRecipeViewer,
+			boolean ghost,
+			Optional<String> comment,
+			String group,
+			ContextualHolder conditions,
+			List<PostAction> postActions,
+			MinMaxBounds.Ints maxRepeats) {
+		if (postActions.stream().anyMatch(it -> !it.repeatable())) {
+			maxRepeats = BoundsExtensions.ONE;
+		}
+		return new LycheeRecipeCommonProperties(hideInRecipeViewer, ghost, comment, group, conditions, postActions, maxRepeats);
+	}
 }
