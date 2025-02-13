@@ -37,7 +37,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 	protected int levelCost;
 	protected int materialCost;
 	protected ItemStack output;
-	private List<PostAction> assembling = Collections.EMPTY_LIST;
+	private List<PostAction> assembling = Collections.emptyList();
 
 	public AnvilCraftingRecipe(ResourceLocation id) {
 		super(id);

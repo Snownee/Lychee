@@ -2,6 +2,7 @@ package snownee.lychee.client.gui;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.jozufozu.flywheel.core.model.ModelUtil;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
@@ -35,6 +36,8 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.model.data.ModelData;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.Color;
 import snownee.lychee.util.VecHelper;
 
@@ -153,10 +156,15 @@ public class GuiGameElement {
 
 		protected BakedModel blockModel;
 		protected BlockState blockState;
+		private ModelData modelData;
 
 		public GuiBlockModelRenderBuilder(BakedModel blockmodel, @Nullable BlockState blockState) {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
 			this.blockModel = blockmodel;
+			this.modelData = ModelData.EMPTY;
+			if (ClientProxy.HAS_FLYWHEEL) {
+				this.modelData = ModelData.builder().with(ModelUtil.VIRTUAL_PROPERTY, true).build();
+			}
 		}
 
 		@Override
@@ -182,7 +190,18 @@ public class GuiGameElement {
 			Minecraft mc = Minecraft.getInstance();
 			int color = mc.getBlockColors().getColor(blockState, mc.level, mc.cameraEntity != null ? mc.cameraEntity.blockPosition() : null, 0);
 			Color rgb = new Color(color == -1 ? this.color : color);
-			blockRenderer.getModelRenderer().renderModel(ms.last(), vb, blockState, blockModel, rgb.getRedAsFloat(), rgb.getGreenAsFloat(), rgb.getBlueAsFloat(), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+			blockRenderer.getModelRenderer().renderModel(
+					ms.last(),
+					vb,
+					blockState,
+					blockModel,
+					rgb.getRedAsFloat(),
+					rgb.getGreenAsFloat(),
+					rgb.getBlueAsFloat(),
+					LightTexture.FULL_BRIGHT,
+					OverlayTexture.NO_OVERLAY,
+					modelData,
+					null);
 			buffer.endBatch();
 		}
 

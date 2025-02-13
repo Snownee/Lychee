@@ -52,7 +52,7 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Lyc
 		boolean click = recipe.getType() == RecipeTypes.BLOCK_CLICKING;
 		return click ? Minecraft.getInstance().options.keyAttack : Minecraft.getInstance().options.keyUse;
 	}
-	
+
 	@Override
 	public int getWidth() {
 		return super.getWidth() + 20;

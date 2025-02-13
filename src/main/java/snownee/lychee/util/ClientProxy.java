@@ -16,6 +16,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import snownee.lychee.PostActionTypes;
 import snownee.lychee.client.core.post.CycleStatePropertyPostActionRenderer;
@@ -40,6 +41,7 @@ import snownee.lychee.dripstone_dripping.client.ParticleFactories;
 
 public interface ClientProxy {
 	List<RecipeViewerWidgetClickListener> recipeViewerWidgetClickListeners = ObjectArrayList.of();
+	boolean HAS_FLYWHEEL = ModList.get().isLoaded("flywheel");
 
 	static MutableComponent getDimensionDisplayName(ResourceKey<Level> dimension) {
 		String key = Util.makeDescriptionId("dimension", dimension.location());
