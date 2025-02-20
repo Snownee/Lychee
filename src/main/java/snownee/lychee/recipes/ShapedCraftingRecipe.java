@@ -99,8 +99,9 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 			int cp = key.codePointAt(0);
 			int index = 0;
 			for (var i = 0; i < data.pattern().size(); i++) {
-				for (char c : data.pattern().get(i).toCharArray()) {
-					if (c == cp) {
+				var row = data.pattern().get(i);
+				for (var j = 0; j < row.length(); j++) {
+					if (row.charAt(j) == cp) {
 						list.add(index);
 					}
 					index++;
@@ -219,7 +220,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 		for (var i = 0; i < getHeight(); i++) {
 			for (var j = 0; j < getWidth(); j++) {
 				if (itemStackHolders.get(k).getIgnoreConsumption()) {
-					items.set(startIndex + container.width() * i + (craftingContext.mirror() ? getWidth() - j : j), context.getItem(k));
+					items.set(startIndex + container.width() * i + (craftingContext.mirror() ? getWidth() - j - 1 : j), context.getItem(k));
 				}
 				++k;
 			}
