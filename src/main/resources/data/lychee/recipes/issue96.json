@@ -3,8 +3,7 @@
 	"comment": "testing",
 	"pattern": [
 		"aa",
-		"b ",
-		"aa"
+		"b "
 	],
 	"key": {
 		"a": {

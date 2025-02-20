@@ -24,9 +24,7 @@ import snownee.lychee.util.context.LycheeContext;
 
 public record CraftingContext(
 		LycheeContext context,
-	CraftingInput container,
-		int matchX,
-		int matchY,
+		CraftingInput container,
 		boolean mirror
 ) {
 	public static final LoadingCache<Class<?>, Function<CraftingInput, Pair<Vec3, Player>>>
