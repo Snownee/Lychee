@@ -96,15 +96,12 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 			}
 			var data = dataOptional.get();
 			IntList list = IntArrayList.of();
-			int cp = key.codePointAt(0);
+			char cp = key.charAt(0);
 			int index = 0;
-			for (var i = 0; i < data.pattern().size(); i++) {
-				var row = data.pattern().get(i);
-				for (var j = 0; j < row.length(); j++) {
-					if (row.charAt(j) == cp) {
-						list.add(index);
-					}
-					index++;
+			var ingredient = data.key().get(cp);
+			for (var i = 0; i < getIngredients().size(); i++) {
+				if (ingredient == getIngredients().get(i)) {
+					list.add(i);
 				}
 			}
 			return list;
@@ -128,6 +125,11 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 		var matched = false;
 		final var shapedRecipeAccess = (ShapedRecipeAccess) shaped;
 		final var pattern = (ShapedRecipePatternAccess) (Object) shapedRecipeAccess.getPattern();
+		if (pattern.ingredientCount() != input.ingredientCount()
+				|| shapedRecipeAccess.getPattern().width() != input.width()
+				|| shapedRecipeAccess.getPattern().height() != input.height()) {
+			return false;
+		}
 		if (getWidth() > 1 && pattern.callMatches(input, false)) {
 			matched = true;
 			mirror = true;
