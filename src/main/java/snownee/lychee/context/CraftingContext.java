@@ -35,7 +35,7 @@ public record CraftingContext(
 				@Override
 				public @NotNull Function<CraftingInput, Pair<Vec3, Player>> load(final @NotNull Class<?> key) {
 					var clazz = key.getSuperclass();
-					while (clazz != CraftingInput.class) {
+					while (clazz != CraftingInput.class && clazz != null) {
 						var locator = CONTAINER_WORLD_LOCATOR.getIfPresent(clazz);
 						if (locator != null) {
 							return locator;

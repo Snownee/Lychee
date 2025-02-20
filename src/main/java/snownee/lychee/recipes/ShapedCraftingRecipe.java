@@ -96,9 +96,14 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 			}
 			var data = dataOptional.get();
 			IntList list = IntArrayList.of();
+			int cp = key.codePointAt(0);
+			int index = 0;
 			for (var i = 0; i < data.pattern().size(); i++) {
-				if (key.equals(data.pattern().get(i))) {
-					list.add(i);
+				for (char c : data.pattern().get(i).toCharArray()) {
+					if (c == cp) {
+						list.add(index);
+					}
+					index++;
 				}
 			}
 			return list;
@@ -127,11 +132,11 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 		outer:
 		for (matchX = 0; matchX <= input.width() - getWidth(); ++matchX) {
 			for (matchY = 0; matchY <= input.height() - getHeight(); ++matchY) {
-				if (pattern.callMatches(CraftingInput.of(matchX, matchY, input.items()), true)) {
+				if (pattern.callMatches(input, true)) {
 					matched = true;
 					break outer;
 				}
-				if (getWidth() > 1 && pattern.callMatches(CraftingInput.of(matchX, matchY, input.items()), false)) {
+				if (getWidth() > 1 && pattern.callMatches(input, false)) {
 					matched = true;
 					mirror = true;
 					break outer;
@@ -167,7 +172,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 			var k = 0;
 			for (var i = 0; i < getHeight(); i++) {
 				for (var j = 0; j < getWidth(); j++) {
-					items[k] = input.getItem(startIndex + input.width() * k + (craftingContext.mirror() ? getWidth() - j : j));
+					items[k] = input.getItem(startIndex + input.width() * i + (craftingContext.mirror() ? getWidth() - j - 1 : j));
 					if (!items[k].isEmpty()) {
 						items[k] = items[k].copy();
 						items[k].setCount(1);
