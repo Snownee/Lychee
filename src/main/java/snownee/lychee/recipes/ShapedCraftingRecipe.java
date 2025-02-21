@@ -97,7 +97,6 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 			var data = dataOptional.get();
 			IntList list = IntArrayList.of();
 			char cp = key.charAt(0);
-			int index = 0;
 			var ingredient = data.key().get(cp);
 			for (var i = 0; i < getIngredients().size(); i++) {
 				if (ingredient == getIngredients().get(i)) {
