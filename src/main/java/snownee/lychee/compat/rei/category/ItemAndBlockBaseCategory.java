@@ -123,16 +123,13 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 		var description = getMethodDescription(recipe);
 		if (description != null) {
 			reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, methodRect));
-			reactive.setTooltipFunction($ -> new Component[]{description});
+			reactive.setTooltipFunction($ -> List.of(description));
 			widgets.add(reactive);
 		}
 
 		if (needRenderInputBlock(recipe)) {
 			reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, inputBlockRect));
-			reactive.setTooltipFunction($ -> {
-				var list = BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe));
-				return list.toArray(new Component[0]);
-			});
+			reactive.setTooltipFunction($ -> BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe)));
 			reactive.setOnClick(($, button) -> clickBlock(getRenderingBlock(recipe), button));
 			widgets.add(reactive);
 		}

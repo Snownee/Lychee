@@ -1,14 +1,13 @@
 package snownee.lychee.compat.jei.category;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
-import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.advancements.critereon.BlockPredicate;
@@ -19,6 +18,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.JEIREI;
@@ -29,18 +29,15 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
+@NotNullByDefault
 public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
 
 	private final LycheeRecipeType<T> recipeType;
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
 
-	public ItemAndBlockBaseCategory(
-			RecipeType<T> recipeType,
-			IDrawable icon,
-			IGuiHelper guiHelper,
-			LycheeRecipeType<T> vanillaRecipeType) {
-		super(recipeType, icon, guiHelper);
+	public ItemAndBlockBaseCategory(RecipeType<RecipeHolder<T>> recipeType, IDrawable icon, LycheeRecipeType<T> vanillaRecipeType) {
+		super(recipeType, icon);
 		this.recipeType = vanillaRecipeType;
 		infoRect.setPosition(8, 32);
 	}
@@ -70,28 +67,30 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focuses) {
+	public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<T> recipeHolder, IFocusGroup focuses) {
+		var recipe = recipeHolder.value();
 		var y = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9 ? 26 : 28;
 		renderIngredientGroup(builder, recipe, y);
 		actionGroup(builder, recipe, getWidth() - 29, y);
 		LycheeCategory.addBlockIngredients(builder, recipe);
 	}
 
-	public void drawExtra(T recipe, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
+	public void drawExtra(RecipeHolder<T> recipeHolder, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
 		AllGuiTextures.JEI_DOWN_ARROW.render(graphics, methodRect.getX(), methodRect.getY());
 	}
 
 	@Override
 	public void draw(
-			T recipe,
+			RecipeHolder<T> recipeHolder,
 			IRecipeSlotsView recipeSlotsView,
 			GuiGraphics graphics,
 			double mouseX,
 			double mouseY
 	) {
+		var recipe = recipeHolder.value();
 		drawInfoBadgeIfNeeded(graphics, recipe, mouseX, mouseY);
 		var centerX = getWidth() / 2;
-		drawExtra(recipe, graphics, mouseX, mouseY, centerX);
+		drawExtra(recipeHolder, graphics, mouseX, mouseY, centerX);
 
 		var state = getRenderingBlock(recipe);
 		if (state.isAir()) {
@@ -116,19 +115,22 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 				.render(graphics);
 	}
 
-
 	@Override
-	public List<Component> getTooltipStrings(T recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+	public void getTooltip(
+			ITooltipBuilder tooltip,
+			RecipeHolder<T> recipeHolder,
+			IRecipeSlotsView recipeSlotsView,
+			double mouseX,
+			double mouseY) {
+		var recipe = recipeHolder.value();
 		if (needRenderInputBlock(recipe) && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
-			return BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe));
-		}
-		if (methodRect.contains((int) mouseX, (int) mouseY)) {
+			tooltip.addAll(BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe)));
+		} else if (methodRect.contains((int) mouseX, (int) mouseY)) {
 			Component description = getMethodDescription(recipe);
 			if (description != null) {
-				return List.of(description);
+				tooltip.add(description);
 			}
 		}
-		return super.getTooltipStrings(recipe, recipeSlotsView, mouseX, mouseY);
 	}
 
 	protected boolean needRenderInputBlock(T recipe) {

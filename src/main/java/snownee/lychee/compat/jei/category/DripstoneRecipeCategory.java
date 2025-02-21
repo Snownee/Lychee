@@ -1,22 +1,21 @@
 package snownee.lychee.compat.jei.category;
 
-import java.util.List;
-
 import com.mojang.blaze3d.platform.InputConstants;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
-import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
@@ -26,15 +25,14 @@ import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
+@NotNullByDefault
 public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRecipe> {
-
 	private final Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
 	private final Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
 
-	public DripstoneRecipeCategory(RecipeType<DripstoneRecipe> recipeType, IDrawable icon, IGuiHelper guiHelper) {
-		super(recipeType, icon, guiHelper);
+	public DripstoneRecipeCategory(RecipeType<RecipeHolder<DripstoneRecipe>> recipeType, IDrawable icon) {
+		super(recipeType, icon);
 	}
-
 
 	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {
 		GuiGameElement.of(state)
@@ -46,7 +44,8 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 	}
 
 	@Override
-	public void setRecipe(IRecipeLayoutBuilder builder, DripstoneRecipe recipe, IFocusGroup focuses) {
+	public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, IFocusGroup focuses) {
+		DripstoneRecipe recipe = recipeHolder.value();
 		int y = recipe.conditions().showingCount() > 9 ? 26 : 28;
 		actionGroup(builder, recipe, getWidth() - 28, y);
 		LycheeCategory.addBlockIngredients(builder, recipe);
@@ -54,12 +53,12 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 
 	@Override
 	public void draw(
-			DripstoneRecipe recipe,
+			RecipeHolder<DripstoneRecipe> recipeHolder,
 			IRecipeSlotsView recipeSlotsView,
 			GuiGraphics graphics,
 			double mouseX,
-			double mouseY
-	) {
+			double mouseY) {
+		DripstoneRecipe recipe = recipeHolder.value();
 		drawInfoBadgeIfNeeded(graphics, recipe, mouseX, mouseY);
 		BlockState sourceBlock = CommonProxy.getCycledItem(
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.sourceBlock()),
@@ -96,7 +95,13 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 	}
 
 	@Override
-	public List<Component> getTooltipStrings(DripstoneRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+	public void getTooltip(
+			ITooltipBuilder tooltip,
+			RecipeHolder<DripstoneRecipe> recipeHolder,
+			IRecipeSlotsView recipeSlotsView,
+			double mouseX,
+			double mouseY) {
+		DripstoneRecipe recipe = recipeHolder.value();
 		int x = (int) mouseX;
 		int y = (int) mouseY;
 		if (sourceBlockRect.contains(x, y)) {
@@ -104,21 +109,20 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 					BlockPredicateExtensions.getShowcaseBlockStates(recipe.sourceBlock()),
 					Blocks.AIR.defaultBlockState(),
 					2000);
-			return BlockPredicateExtensions.getTooltips(sourceBlock, recipe.sourceBlock());
-		}
-		if (targetBlockRect.contains(x, y)) {
+			tooltip.addAll(BlockPredicateExtensions.getTooltips(sourceBlock, recipe.sourceBlock()));
+		} else if (targetBlockRect.contains(x, y)) {
 			BlockState targetBlock = CommonProxy.getCycledItem(
 					BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 					Blocks.AIR.defaultBlockState(),
 					2000);
-			return BlockPredicateExtensions.getTooltips(targetBlock, recipe.blockPredicate());
+			tooltip.addAll(BlockPredicateExtensions.getTooltips(targetBlock, recipe.blockPredicate()));
 		}
-		return super.getTooltipStrings(recipe, recipeSlotsView, mouseX, mouseY);
 	}
 
 	@Override
-	public boolean handleInput(DripstoneRecipe recipe, double mouseX, double mouseY, InputConstants.Key input) {
+	public boolean handleInput(RecipeHolder<DripstoneRecipe> recipeHolder, double mouseX, double mouseY, InputConstants.Key input) {
 		if (input.getType() == InputConstants.Type.MOUSE) {
+			DripstoneRecipe recipe = recipeHolder.value();
 			int x = (int) mouseX;
 			int y = (int) mouseY;
 			if (sourceBlockRect.contains(x, y)) {
@@ -136,7 +140,7 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 				return clickBlock(landingBlock, input);
 			}
 		}
-		return super.handleInput(recipe, mouseX, mouseY, input);
+		return false;
 	}
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {

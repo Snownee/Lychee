@@ -9,6 +9,7 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
+import me.shedaniel.rei.plugincompatibilities.api.REIPluginCompatIgnore;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IJeiHelpers;
@@ -25,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.KUtil;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
@@ -41,6 +43,9 @@ import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
+@REIPluginCompatIgnore
+@JeiPlugin
+@NotNullByDefault
 public class LycheeJEIPlugin implements IModPlugin {
 	public static final ResourceLocation ID = Lychee.id("main");
 	public static final IIngredientType<PostAction> POST_ACTION = () -> PostAction.class;
@@ -66,7 +71,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 				continue;
 			}
 
-			var generatedCategories = JEIREI.generateCategories(recipeType, $ -> new RecipeType<>($, recipeType.clazz));
+			var generatedCategories = JEIREI.generateCategories(recipeType, RecipeType::createRecipeHolderType);
 
 			var categoryProvider = CategoryProviders.get(recipeType);
 
@@ -95,35 +100,30 @@ public class LycheeJEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
-		registration.getCraftingCategory().addExtension(
-				ShapedCraftingRecipe.class,
-				new CraftingRecipeCategoryExtension());
+		registration.getCraftingCategory().addExtension(ShapedCraftingRecipe.class, new CraftingRecipeCategoryExtension());
 	}
 
 	@Override
 	public void registerRecipes(IRecipeRegistration registry) {
 		helpers = registry.getJeiHelpers();
-		categories.asMap()
-				.forEach((category, recipes) -> registry.addRecipes(
-						(RecipeType) category.getRecipeType(),
-						recipes.stream().map(RecipeHolder::value).toList()));
+		categories.asMap().forEach((category, recipes) -> registry.addRecipes(
+				(RecipeType) category.getRecipeType(),
+				recipes.stream().toList()));
 
 		try {
-			var recipes = KUtil.getRecipes(RecipeTypes.ANVIL_CRAFTING)
-					.stream()
-					.map(RecipeHolder::value)
-					.filter($ -> !$.output().isEmpty() && !$.isSpecial() && !$.hideInRecipeViewer())
-					.map($ -> {
-						var right = Stream.of($.input().getSecond().getItems())
-								.map(ItemStack::copy)
-								.peek($$ -> $$.setCount($.materialCost()))
-								.toList();
-						return registry.getVanillaRecipeFactory().createAnvilRecipe(
-								List.of($.input().getFirst().getItems()),
-								right,
-								List.of($.output()));
-					})
-					.toList();
+			var recipes = KUtil.getRecipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ ->
+					!$.value().output().isEmpty() && !$.value().isSpecial() && !$.value().hideInRecipeViewer()).map($ -> {
+				var recipe = $.value();
+				var right = Stream.of(recipe.input().getSecond().getItems())
+						.map(ItemStack::copy)
+						.peek(is -> is.setCount(recipe.materialCost()))
+						.toList();
+				return registry.getVanillaRecipeFactory().createAnvilRecipe(
+						List.of(recipe.input().getFirst().getItems()),
+						right,
+						List.of(recipe.output()),
+						$.id());
+			}).toList();
 			registry.addRecipes(mezz.jei.api.constants.RecipeTypes.ANVIL, recipes);
 		} catch (Throwable e) {
 			Lychee.LOGGER.error("Error when registering anvil crafting recipes", e);
@@ -132,7 +132,12 @@ public class LycheeJEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerIngredients(IModIngredientRegistration registration) {
-		registration.register(POST_ACTION, List.of(), new PostActionIngredientHelper(), PostActionIngredientRenderer.INSTANCE);
+		registration.register(
+				POST_ACTION,
+				List.of(),
+				new PostActionIngredientHelper(),
+				PostActionIngredientRenderer.INSTANCE,
+				PostAction.CODEC);
 	}
 
 	@Override
@@ -149,18 +154,14 @@ public class LycheeJEIPlugin implements IModPlugin {
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 		runtime = jeiRuntime;
 		Minecraft.getInstance().execute(() -> {
-			var recipes = KUtil.getRecipes(net.minecraft.world.item.crafting.RecipeType.CRAFTING).stream()
-					.filter($ -> $.value() instanceof ILycheeRecipe<?> recipe && recipe.hideInRecipeViewer())
-					.toList();
+			var recipes = KUtil.getRecipes(net.minecraft.world.item.crafting.RecipeType.CRAFTING).stream().filter($ ->
+					$.value() instanceof ILycheeRecipe<?> recipe && recipe.hideInRecipeViewer()).toList();
 			jeiRuntime.getRecipeManager().hideRecipes(mezz.jei.api.constants.RecipeTypes.CRAFTING, recipes);
 		});
 	}
 
-
 	public enum SlotType {
-		NORMAL(AllGuiTextures.JEI_SLOT),
-		CHANCE(AllGuiTextures.JEI_CHANCE_SLOT),
-		CATALYST(AllGuiTextures.JEI_CATALYST_SLOT);
+		NORMAL(AllGuiTextures.JEI_SLOT), CHANCE(AllGuiTextures.JEI_CHANCE_SLOT), CATALYST(AllGuiTextures.JEI_CATALYST_SLOT);
 
 		final IDrawable element;
 

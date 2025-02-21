@@ -1,7 +1,6 @@
 package snownee.lychee.compat.jei.category;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -92,7 +91,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		var slotBuilder = builder.addSlot(RecipeIngredientRole.OUTPUT, x + 1, y + 1);
 		var itemMap = Maps.<ItemStack, PostAction>newIdentityHashMap();
 		buildActionSlot(builder, slotBuilder, action, itemMap);
-		slotBuilder.addTooltipCallback((view, tooltip) -> {
+		slotBuilder.addRichTooltipCallback((view, tooltip) -> {
 			var displayedIngredient = view.getDisplayedIngredient();
 			if (displayedIngredient.isEmpty()) {
 				return;
@@ -112,9 +111,10 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 			}
 			tooltip.addAll(list);
 		});
-		slotBuilder.setBackground(LycheeJEIPlugin.slot(action.conditions().conditions().isEmpty() ?
-				LycheeJEIPlugin.SlotType.NORMAL :
-				LycheeJEIPlugin.SlotType.CHANCE), -1, -1);
+		slotBuilder.setBackground(
+				LycheeJEIPlugin.slot(action.conditions().conditions().isEmpty() ?
+						LycheeJEIPlugin.SlotType.NORMAL :
+						LycheeJEIPlugin.SlotType.CHANCE), -1, -1);
 	}
 
 	static void buildActionSlot(
@@ -157,13 +157,6 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		matrixStack.popPose();
 	}
 
-	static List<Component> getInfoBadgeTooltipStrings(ILycheeRecipe<?> recipe, double mouseX, double mouseY, Rect2i infoRect) {
-		if (infoRect.contains((int) mouseX, (int) mouseY)) {
-			return JEIREI.getRecipeTooltip(recipe);
-		}
-		return Collections.emptyList();
-	}
-
 	LycheeRecipeType<? extends R> recipeType();
 
 	Rect2i infoRect();
@@ -174,10 +167,6 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 
 	default void drawInfoBadgeIfNeeded(GuiGraphics graphics, ILycheeRecipe<?> recipe, double mouseX, double mouseY) {
 		drawInfoBadgeIfNeeded(graphics, recipe, mouseX, mouseY, infoRect());
-	}
-
-	default List<Component> getInfoBadgeTooltipStrings(ILycheeRecipe<?> recipe, double mouseX, double mouseY) {
-		return getInfoBadgeTooltipStrings(recipe, mouseX, mouseY, infoRect());
 	}
 
 	default void actionGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
@@ -192,20 +181,22 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 
 	default void ingredientGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
 		var ingredients = JEIREI.generateShapelessInputs(recipe);
-		slotGroup(builder, x + 1, y + 1, 0, ingredients, (layout0, ingredient, i, x0, y0) -> {
-			var items = ingredient.ingredient.getItems();
-			var slotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, x0, y0);
-			slotBuilder.addItemStacks(Arrays.stream(items)
-					.map(it -> ingredient.count == 1 ? it : it.copy())
-					.peek(it -> it.setCount(ingredient.count))
-					.toList());
-			slotBuilder.setBackground(LycheeJEIPlugin.slot(ingredient.isCatalyst ?
-					LycheeJEIPlugin.SlotType.CATALYST :
-					LycheeJEIPlugin.SlotType.NORMAL), -1, -1);
-			if (!ingredient.tooltips.isEmpty()) {
-				slotBuilder.addTooltipCallback((stack, tooltip) -> tooltip.addAll(ingredient.tooltips));
-			}
-		});
+		slotGroup(
+				builder, x + 1, y + 1, 0, ingredients, (layout0, ingredient, i, x0, y0) -> {
+					var items = ingredient.ingredient.getItems();
+					var slotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, x0, y0);
+					slotBuilder.addItemStacks(Arrays.stream(items)
+							.map(it -> ingredient.count == 1 ? it : it.copy())
+							.peek(it -> it.setCount(ingredient.count))
+							.toList());
+					slotBuilder.setBackground(
+							LycheeJEIPlugin.slot(ingredient.isCatalyst ?
+									LycheeJEIPlugin.SlotType.CATALYST :
+									LycheeJEIPlugin.SlotType.NORMAL), -1, -1);
+					if (!ingredient.tooltips.isEmpty()) {
+						slotBuilder.addRichTooltipCallback((stack, tooltip) -> tooltip.addAll(ingredient.tooltips));
+					}
+				});
 	}
 
 

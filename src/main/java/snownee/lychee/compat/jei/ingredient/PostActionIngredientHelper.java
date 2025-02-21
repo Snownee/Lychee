@@ -2,15 +2,19 @@ package snownee.lychee.compat.jei.ingredient;
 
 import java.util.Objects;
 
+import org.jetbrains.annotations.Nullable;
+
 import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import net.minecraft.resources.ResourceLocation;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.compat.jei.LycheeJEIPlugin;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
 
+@NotNullByDefault
 public class PostActionIngredientHelper implements IIngredientHelper<PostAction> {
 
 	@Override
@@ -24,7 +28,7 @@ public class PostActionIngredientHelper implements IIngredientHelper<PostAction>
 	}
 
 	@Override
-	public String getErrorInfo(PostAction postAction) {
+	public String getErrorInfo(@Nullable PostAction postAction) {
 		return Objects.toString(postAction);
 	}
 
@@ -41,11 +45,16 @@ public class PostActionIngredientHelper implements IIngredientHelper<PostAction>
 
 	@Override
 	public ResourceLocation getResourceLocation(PostAction postAction) {
-		return LycheeRegistries.POST_ACTION.getKey(postAction.type());
+		return Objects.requireNonNull(LycheeRegistries.POST_ACTION.getKey(postAction.type()));
 	}
 
 	@Override
-	public String getUniqueId(PostAction postAction, UidContext arg1) {
+	public String getUniqueId(PostAction ingredient, UidContext context) {
+		return "";
+	}
+
+	@Override
+	public String getUid(PostAction postAction, UidContext context) {
 		return getResourceLocation(postAction).toString() + postAction;
 	}
 }

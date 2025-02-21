@@ -1,22 +1,17 @@
 package snownee.lychee;
 
+import java.util.function.Predicate;
+
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.mixin.LootContextParamSetsAccess;
 
 public final class LycheeLootContextParamSets {
-	public static final LootContextParamSet ALL = LootContextParamSetsAccess.callRegister("lychee:all", $ -> {
-		$.required(LootContextParams.ORIGIN)
-				.optional(LootContextParams.THIS_ENTITY)
-				.optional(LootContextParams.LAST_DAMAGE_PLAYER)
-				.optional(LootContextParams.DAMAGE_SOURCE)
-				.optional(LootContextParams.ATTACKING_ENTITY)
-				.optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
-				.optional(LootContextParams.BLOCK_STATE)
-				.optional(LootContextParams.BLOCK_ENTITY)
-				.optional(LootContextParams.EXPLOSION_RADIUS);
-		LycheeLootContextParams.ALL.forEach($::optional);
-	});
+	public static final LootContextParamSet ALL = LootContextParamSetsAccess.callRegister(
+			"lychee:all", $ -> {
+				$.required(LootContextParams.ORIGIN);
+				LycheeLootContextParams.ALL.values().stream().filter(Predicate.not(LootContextParams.ORIGIN::equals)).forEach($::optional);
+			});
 
 	public static final LootContextParamSet ITEM_BURNING =
 			LootContextParamSetsAccess.callRegister(

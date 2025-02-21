@@ -27,7 +27,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -170,31 +169,6 @@ public class CommonProxy implements ModInitializer {
 		}
 		var index = (System.currentTimeMillis() / interval) % list.size();
 		return list.get(Math.toIntExact(index));
-	}
-
-	public static ResourceLocation readNullableRL(FriendlyByteBuf buf) {
-		var string = buf.readUtf();
-		if (string.isEmpty()) {
-			return null;
-		} else {
-			return ResourceLocation.parse(string);
-		}
-	}
-
-	public static void writeNullableRL(ResourceLocation rl, FriendlyByteBuf buf) {
-		if (rl == null) {
-			buf.writeUtf("");
-		} else {
-			buf.writeUtf(rl.toString());
-		}
-	}
-
-	public static <T> T readRegistryId(Registry<T> registry, FriendlyByteBuf buf) {
-		return registry.byId(buf.readVarInt());
-	}
-
-	public static <T> void writeRegistryId(Registry<T> registry, T entry, FriendlyByteBuf buf) {
-		buf.writeVarInt(registry.getId(entry));
 	}
 
 	@Nullable
