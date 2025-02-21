@@ -29,7 +29,7 @@ public class BlockClickingInputHandler implements IJeiInputHandler {
 		if (input.getKey().getType() != InputConstants.Type.MOUSE) {
 			return false;
 		}
-		if (blockFactory.get().isEmpty()) {
+		if (blockFactory.get().isAir()) {
 			return false;
 		}
 		if (input.isSimulate()) {

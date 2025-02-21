@@ -42,14 +42,15 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 public class ClientProxy implements ClientModInitializer {
 
 	private static final KEvent<RecipeViewerWidgetClickListener> RECIPE_VIEWER_WIDGET_CLICK_EVENT =
-			KEvent.createArrayBacked(RecipeViewerWidgetClickListener.class, listeners -> (recipe, button) -> {
-				for (var listener : listeners) {
-					if (listener.onClick(recipe, button)) {
-						return true;
-					}
-				}
-				return false;
-			});
+			KEvent.createArrayBacked(
+					RecipeViewerWidgetClickListener.class, listeners -> (recipe, location, button) -> {
+						for (var listener : listeners) {
+							if (listener.onClick(recipe, location, button)) {
+								return true;
+							}
+						}
+						return false;
+					});
 
 	public static MutableComponent format(String s, Object... objects) {
 		try {
