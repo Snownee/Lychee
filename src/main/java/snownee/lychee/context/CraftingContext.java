@@ -24,9 +24,7 @@ import snownee.lychee.util.context.LycheeContext;
 
 public record CraftingContext(
 		LycheeContext context,
-	CraftingInput container,
-		int matchX,
-		int matchY,
+		CraftingInput container,
 		boolean mirror
 ) {
 	public static final LoadingCache<Class<?>, Function<CraftingInput, Pair<Vec3, Player>>>
@@ -35,7 +33,7 @@ public record CraftingContext(
 				@Override
 				public @NotNull Function<CraftingInput, Pair<Vec3, Player>> load(final @NotNull Class<?> key) {
 					var clazz = key.getSuperclass();
-					while (clazz != CraftingInput.class) {
+					while (clazz != null && clazz != CraftingInput.class) {
 						var locator = CONTAINER_WORLD_LOCATOR.getIfPresent(clazz);
 						if (locator != null) {
 							return locator;
