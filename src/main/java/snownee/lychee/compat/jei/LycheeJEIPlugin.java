@@ -23,8 +23,10 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.KUtil;
 import snownee.kiwi.util.NotNullByDefault;
@@ -115,12 +117,13 @@ public class LycheeJEIPlugin implements IModPlugin {
 			var recipes = KUtil.getRecipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ ->
 					!$.value().output().isEmpty() && !$.value().isSpecial() && !$.value().hideInRecipeViewer()).map($ -> {
 				var recipe = $.value();
-				var right = Stream.of(recipe.input().getSecond().getItems())
+				NonNullList<Ingredient> ingredients = recipe.getIngredients();
+				List<ItemStack> right = ingredients.size() == 1 ? List.of() : Stream.of(ingredients.getLast().getItems())
 						.map(ItemStack::copy)
-						.peek(is -> is.setCount(recipe.materialCost()))
+						.peek(it -> it.setCount(recipe.materialCost()))
 						.toList();
 				return registry.getVanillaRecipeFactory().createAnvilRecipe(
-						List.of(recipe.input().getFirst().getItems()),
+						List.of(recipe.getIngredients().getFirst().getItems()),
 						right,
 						List.of(recipe.output()),
 						$.id());

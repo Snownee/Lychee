@@ -18,10 +18,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -43,20 +41,15 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 
-	protected NonNullList<Ingredient> ingredients = NonNullList.create();
-
-	public LightningChannelingRecipe(LycheeRecipeCommonProperties commonProperties) {
-		super(commonProperties);
-		onConstructed();
-	}
+	protected NonNullList<Ingredient> ingredients;
 
 	@SuppressWarnings("UnreachableCode")
 	public LightningChannelingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			final List<Ingredient> ingredients
+			final NonNullList<Ingredient> ingredients
 	) {
 		super(commonProperties);
-		this.ingredients = NonNullListAccess.construct(ingredients, null);
+		this.ingredients = ingredients;
 		onConstructed();
 	}
 
@@ -84,7 +77,8 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 		public static final MapCodec<LightningChannelingRecipe> CODEC =
 				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC).optionalFieldOf(ITEM_IN, List.of())
+						LycheeCodecs.nonNullList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)
+								.optionalFieldOf(ITEM_IN, LycheeCodecs.emptyNonNullList())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, LightningChannelingRecipe::new)));
 
@@ -98,7 +92,7 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						LightningChannelingRecipe::commonProperties,
-						ByteBufCodecs.fromCodecWithRegistries(KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)),
+						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.nonNullList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)),
 						LightningChannelingRecipe::getIngredients,
 						LightningChannelingRecipe::new
 				);

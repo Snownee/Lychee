@@ -19,10 +19,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -45,19 +43,14 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 		RecipeTypes.ITEM_EXPLODING.process(itemEntities, context);
 	}
 
-	protected NonNullList<Ingredient> ingredients = NonNullList.create();
-
-	public ItemExplodingRecipe(LycheeRecipeCommonProperties commonProperties) {
-		super(commonProperties);
-		onConstructed();
-	}
+	protected NonNullList<Ingredient> ingredients;
 
 	public ItemExplodingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			final List<Ingredient> ingredients
+			final NonNullList<Ingredient> ingredients
 	) {
 		super(commonProperties);
-		this.ingredients = NonNullListAccess.construct(ingredients, null);
+		this.ingredients = ingredients;
 		onConstructed();
 	}
 
@@ -100,7 +93,8 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 		public static final MapCodec<ItemExplodingRecipe> CODEC =
 				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC).optionalFieldOf(ITEM_IN, List.of())
+						LycheeCodecs.nonNullList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)
+								.optionalFieldOf(ITEM_IN, LycheeCodecs.emptyNonNullList())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, ItemExplodingRecipe::new)));
 
@@ -114,7 +108,7 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						ItemExplodingRecipe::commonProperties,
-						ByteBufCodecs.fromCodecWithRegistries(KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)),
+						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.nonNullList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)),
 						ItemExplodingRecipe::getIngredients,
 						ItemExplodingRecipe::new
 				);

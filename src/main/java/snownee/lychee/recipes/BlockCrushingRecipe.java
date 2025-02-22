@@ -23,10 +23,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.RecipeMatcher;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
@@ -56,15 +54,6 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		this.landingBlock = landingBlock;
 		this.ingredients = ingredients;
 		onConstructed();
-	}
-
-	public BlockCrushingRecipe(
-			final LycheeRecipeCommonProperties commonProperties,
-			BlockPredicate fallingBlock,
-			BlockPredicate landingBlock,
-			final List<Ingredient> ingredients
-	) {
-		this(commonProperties, fallingBlock, landingBlock, NonNullListAccess.construct(ingredients, null));
 	}
 
 	@Override
@@ -154,7 +143,8 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 								.forGetter(it -> it.fallingBlock),
 						BlockPredicateExtensions.CODEC.optionalFieldOf("landing_block", BlockPredicateExtensions.ANY)
 								.forGetter(BlockCrushingRecipe::landingBlock),
-						KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC).optionalFieldOf(ITEM_IN, List.of())
+						LycheeCodecs.nonNullList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)
+								.optionalFieldOf(ITEM_IN, LycheeCodecs.emptyNonNullList())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, BlockCrushingRecipe::new)));
 
@@ -171,7 +161,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 						it -> it.fallingBlock,
 						BlockPredicate.STREAM_CODEC,
 						BlockCrushingRecipe::landingBlock,
-						ByteBufCodecs.fromCodecWithRegistries(KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)),
+						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.nonNullList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)),
 						it -> it.ingredients,
 						BlockCrushingRecipe::new
 				);
