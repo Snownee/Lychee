@@ -1,0 +1,34 @@
+{
+	"type": "lychee:anvil_crafting",
+	"item_in": [
+		{
+			"type": "neoforge:components",
+			"items": "diamond_chestplate",
+			"components": {
+				"minecraft:trim": {
+					"material": "minecraft:copper",
+					"pattern": "minecraft:eye"
+				}
+			}
+		},
+		{
+			"item": "emerald"
+		}
+	],
+	"item_out": {
+		"id": "diamond_chestplate"
+	},
+	"assembling": [
+		{
+			"type": "custom",
+			"id": "apply_random_trim"
+		}
+	],
+	"if": {
+		"type": "custom",
+		"id": "is_item_trimmed",
+		"data": {
+			"target": "/item_in/0"
+		}
+	}
+}

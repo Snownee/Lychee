@@ -58,6 +58,10 @@ public class LycheeContext extends EmptyRecipeInput {
 		return (T) context.put(key, value);
 	}
 
+	public boolean remove(LycheeContextKey<?> key) {
+		return context.remove(key) != null;
+	}
+
 	public void putAll(Map<? extends LycheeContextKey<?>, ?> map) {
 		context.putAll(map);
 	}

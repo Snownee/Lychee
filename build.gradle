@@ -159,9 +159,7 @@ dependencies {
 //    implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:0.107.0+2.0.22+1.21.1"
     implementation "org.sinytra.forgified-fabric-api:fabric-api-base:0.4.42+d1308ded19"
     // https://github.com/neoforged/ModDevGradle?tab=readme-ov-file#jar-in-jar
-    jarJar(implementation("org.sinytra.forgified-fabric-api:fabric-particles-v1:4.0.2+824f924c19")) {
-
-    }
+    jarJar(implementation("org.sinytra.forgified-fabric-api:fabric-particles-v1:4.0.2+824f924c19"))
 
     implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 }
