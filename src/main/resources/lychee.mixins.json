@@ -16,7 +16,6 @@
 		"ItemEntityMixin",
 		"LootContextParamSetsAccess",
 		"LootContextParamSetsMixin",
-		"NonNullListAccess",
 		"RecipeManagerMixin",
 		"ReloadableServerResourcesMixin",
 		"action.MarkerMixin",
