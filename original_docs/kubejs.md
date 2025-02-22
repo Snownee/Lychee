@@ -4,7 +4,7 @@
 
 ```js
 ServerEvents.recipes(event => {
-	let yamlRecipe = yaml => event.custom(Lychee.toJSON(yaml))
+    let yamlRecipe = yaml => event.custom(Lychee.toJSON(yaml))
     yamlRecipe(`
     type: 'lychee:item_burning'
     item_in:
@@ -127,65 +127,73 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 
     ```json
     {
-        "type": "lychee:anvil_crafting",
-        "item_in": [
-            {
-                "item": "diamond_sword",
-                "lychee:tag": { 
-                    "Damage": 1
-                }
-            },
-            {
-                "item": "dirt"
-            }
-        ],
-        "item_out": {
-            "id": "diamond_sword"
-        },
-        "assembling": [
-            {
-                "type": "nbt_patch",
-                "op": "copy",
-                "from": "/item_in/0/tag",
-                "path": "/item_out/tag"
-            },
-            {
-                "type": "custom",
-                "id": "repair_item",
-                "data": {
-                    "target": "/item_out",
-                    "durability": 1
-                }
-            }
-        ],
-        "if": {
-            "type": "custom",
-            "id": "is_item_damaged",
-            "data": {
-                "target": "/item_in/0"
-            }
-        }
+	    "type": "lychee:anvil_crafting",
+	    "item_in": [
+	    	{
+	    		"item": "diamond_sword"
+	    	},
+	    	{
+	    		"item": "dirt"
+	    	}
+	    ],
+	    "item_out": {
+	    	"id": "diamond_sword"
+	    },
+	    "level_cost": 1,
+	    "material_cost": 1,
+	    "assembling": [
+	    	{
+	    		"type": "custom",
+	    		"id": "repair_item",
+	    		"target": "/item_out",
+	    		"data": {
+	    			"durability": 1
+	    		}
+	    	}
+	    ],
+	    "contextual": {
+	    	"type": "custom",
+	    	"id": "is_item_damaged",
+	    	"target": "/item_in/0"
+	    }
     }
     ```
 
 === "Startup Script"
 
     ```js
+    function copyComponents(input, output) {
+    	let components = input.getComponentsPatch();
+    	if (typeof components === "function") {
+    		components = components();
+    	}
+    
+    	for (let entry of components.entrySet()) {
+    		let type = entry.getKey();
+    		let value = entry.getValue();
+    		if (type == null) continue;
+    		if (!value.isPresent()) continue;
+    		output.set(type, value.get());
+    	}
+    }
+
     LycheeEvents.customAction('repair_item', event => {
-        let durability = event.data.durability
-        event.applyFunc = (recipe, ctx, times) => {
-            let material = ctx.getItem(1)
-            let tool = ctx.getItem(2)
-            let cost = 0
-            for (; cost < material.count && tool.damaged; cost++) {
-                tool.setDamageValue(tool.damageValue - durability)
-            }
-            ctx.materialCost = cost
-        }
+	    let durability = event.data.durability
+	    event.applyFunc = (recipe, ctx, times) => {
+	    	let input = ctx.getItem(0)
+	    	let material = ctx.getItem(1)
+	    	let output = ctx.getItem(2)
+	    	copyComponents(input, output)
+	    	let cost = 0
+	    	for (; cost < material.count && output.damaged; cost++) {
+	    		output.setDamageValue(output.damageValue - durability)
+	    	}
+	    	ctx.get(LycheeContextKey.ANVIL).materialCost = cost
+	    }
     })
 
     LycheeEvents.customCondition('is_item_damaged', event => {
-        let target = LycheeReference.fromJson(event.data, 'target')
+        let target = LycheeReference.fromJson(event.data, "target")
         event.testFunc = (recipe, ctx, times) => {
             let indexes = recipe.getItemIndexes(target)
             return ctx.getItem(indexes.get(0)).damaged ? times : 0
@@ -199,91 +207,79 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 
     ```json
     {
-        "type": "lychee:anvil_crafting",
-        "item_in": [
-            {
-                "item": "diamond_chestplate",
-                "lychee:tag": {
-                    "Trim": {
-                        "material": "minecraft:copper",
-                        "pattern": "minecraft:eye"
-                    }
-                }
-            },
-            {
-                "item": "emerald"
-            }
-        ],
-        "item_out": {
-            "id": "diamond_chestplate",
-            "lychee:tag": {
-                "Trim": {
-                    "material": "minecraft:copper",
-                    "pattern": "minecraft:eye"
-                }
-            }
-        },
-        "assembling": [
-            {
-                "type": "custom",
-                "id": "apply_random_trim"
-            }
-        ],
-        "post": [
-            {
-                "type": "custom",
-                "id": "update_enchantment_seed"
-            }
-        ],
-        "if": {
-            "type": "custom",
-            "id": "is_item_trimmed",
-            "data": {
-                "target": "/item_in/0"
-            }
-        }
+    	"type": "lychee:anvil_crafting",
+    	"item_in": [
+    		{
+    			"type": "neoforge:components",
+    			"items": "diamond_chestplate",
+    			"components": {
+    				"minecraft:trim": {
+    					"material": "minecraft:copper",
+    					"pattern": "minecraft:eye"
+    				}
+    			}
+    		},
+    		{
+    			"item": "emerald"
+    		}
+    	],
+    	"item_out": {
+    		"id": "diamond_chestplate"
+    	},
+    	"assembling": [
+    		{
+    			"type": "custom",
+    			"id": "apply_random_trim"
+    		}
+    	],
+    	"if": {
+    		"type": "custom",
+    		"id": "is_item_trimmed",
+    		"data": {
+    			"target": "/item_in/0"
+    		}
+    	}
     }
     ```
 
 === "Startup Script"
 
     ```js
-    let $RandomSource = Java.loadClass('net.minecraft.util.RandomSource')
-    let trimPool = ['coast', 'spire', 'rib', 'snout', 'dune']
-
-    LycheeEvents.customAction('apply_random_trim', event => {
-        event.applyFunc = (recipe, ctx, times) => {
-            let input = ctx.getItem(0)
-            let output = ctx.getItem(2)
-            let player = ctx.getParam('this_entity')
-            let random = $RandomSource.create()
-            //make sure the crafting result consistent
-            random.setSeed(player.enchantmentSeed)
-            output.setNbt(
-                input.nbt.merge({
-                    Trim: {
-                        pattern: trimPool[random.nextInt(trimPool.length)]
-                    }
-                })
-            )
-        }
-    })
-
-    LycheeEvents.customAction('update_enchantment_seed', event => {
-        event.applyFunc = (recipe, ctx, times) => {
-            let player = ctx.getParam('this_entity')
-            player.onEnchantmentPerformed(null, 0) // update seed. null == ItemStack.EMPTY
-        }
-    })
-
-    LycheeEvents.customCondition('is_item_trimmed', event => {
-        let target = LycheeReference.fromJson(event.data, 'target')
-        event.testFunc = (recipe, ctx, times) => {
-            let indexes = recipe.getItemIndexes(target)
-            let stack = ctx.getItem(indexes.getInt(0))
-            return stack?.nbt?.Trim ? times : 0
-        }
-    })
+    let $DataComponents = Java.loadClass("net.minecraft.core.component.DataComponents");
+    let $ArmorTrim = Java.loadClass("net.minecraft.world.item.armortrim.ArmorTrim");
+    let $Registries = Java.loadClass("net.minecraft.core.registries.Registries");
+    let $TrimMaterials = Java.loadClass("net.minecraft.world.item.armortrim.TrimMaterials");
+    let $TrimPatterns = Java.loadClass("net.minecraft.world.item.armortrim.TrimPatterns");
+    
+    let trimPool = [$TrimPatterns.COAST, $TrimPatterns.SPIRE, $TrimPatterns.RIB, $TrimPatterns.SNOUT, $TrimPatterns.DUNE];
+    
+    LycheeEvents.customAction("apply_random_trim", (event) => {
+      event.applyFunc = (recipe, ctx, times) => {
+        let input = ctx.getItem(0);
+        let output = ctx.getItem(2);
+        let random = ctx.get(LycheeContextKey.RANDOM);
+        let level = ctx.get(LycheeContextKey.LEVEL);
+        copyComponents(input, output);
+        let registryAccess = level.registryAccess();
+        let material = output.get($DataComponents.TRIM).material() ?? $TrimMaterials.COPPER;
+        let pattern = registryAccess
+          .lookup($Registries.TRIM_PATTERN)
+          .orElseThrow()
+          .get(trimPool[random.nextInt(trimPool.length)])
+          .orElseThrow();
+        output.set($DataComponents.TRIM, new $ArmorTrim(material, pattern));
+      };
+    });
+    
+    LycheeEvents.customCondition("is_item_trimmed", (event) => {
+      let target = LycheeReference.fromJson(event.data, "target");
+      console.log(target);
+      event.testFunc = (recipe, ctx, times) => {
+        let indexes = recipe.getItemIndexes(target);
+        let stack = ctx.getItem(indexes.getInt(0));
+        return stack == null ? 0 : stack.get($DataComponents.TRIM) != null ? times : 0;
+      };
+    });
     ```
 
 ### Transforming Item on Depot
