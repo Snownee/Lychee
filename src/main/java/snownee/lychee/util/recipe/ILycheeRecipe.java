@@ -18,6 +18,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.Job;
@@ -170,5 +171,9 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 				.map(PostAction::getOutputBlocks)
 				.flatMap(List::stream)
 				.toList();
+	}
+
+	default List<SizedIngredient> sizedIngredients() {
+		throw new UnsupportedOperationException();
 	}
 }

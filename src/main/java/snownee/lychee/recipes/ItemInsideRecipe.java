@@ -122,7 +122,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 				BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
 						.forGetter(ItemInsideRecipe::blockPredicate),
 				ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("time", 0).forGetter(ItemInsideRecipe::time),
-				LycheeCodecs.nonNullList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC, 1, Integer.MAX_VALUE)
+				LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY, 1, Integer.MAX_VALUE)
 						.fieldOf(ITEM_IN)
 						.forGetter(it -> it.ingredients)
 		).apply(instance, ItemInsideRecipe::new)));
@@ -142,7 +142,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 						ByteBufCodecs.VAR_INT,
 						ItemInsideRecipe::time,
 						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.nonNullList(
-								LycheeCodecs.OPTIONAL_INGREDIENT_CODEC,
+								Ingredient.CODEC_NONEMPTY,
 								1,
 								Integer.MAX_VALUE)),
 						ItemInsideRecipe::getIngredients,

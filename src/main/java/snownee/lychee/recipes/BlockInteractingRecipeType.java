@@ -27,8 +27,8 @@ public class BlockInteractingRecipeType<T extends BlockInteractingRecipe> extend
 						.thenComparingInt($ -> $.getIngredients().size())
 						.thenComparing($ -> !$.maxRepeats().isAny())
 						.thenComparing(Recipe::isSpecial)
-						.thenComparing($ -> !CommonProxy.isSimpleIngredient($.input().getFirst()))
-						.thenComparing($ -> !CommonProxy.isSimpleIngredient($.input().getSecond()))
+						.thenComparing($ -> !CommonProxy.isSimpleIngredient($.sizedIngredients().getFirst().ingredient()))
+						.thenComparing($ -> !CommonProxy.isSimpleIngredient($.sizedIngredients().getLast().ingredient()))
 						.reversed());
 	}
 }

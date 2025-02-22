@@ -42,7 +42,7 @@ public final class LycheeContextRequired {
 	);
 
 	public static final Function<LycheeContext, ItemStackHolderCollection> ITEM =
-			register(LycheeContextKey.ITEM, it -> ItemStackHolderCollection.EMPTY);
+			register(LycheeContextKey.ITEM, it -> ItemStackHolderCollection.empty());
 
 	public static final Function<LycheeContext, ActionMarker> MARKER = register(LycheeContextKey.MARKER, it -> {
 		var level = it.level();
