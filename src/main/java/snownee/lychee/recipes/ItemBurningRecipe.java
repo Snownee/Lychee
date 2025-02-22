@@ -84,7 +84,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	public static class Serializer implements LycheeRecipeSerializer<ItemBurningRecipe> {
 		public static final MapCodec<ItemBurningRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
 						LycheeCodecs.OPTIONAL_INGREDIENT_CODEC.optionalFieldOf(ITEM_IN, Ingredient.EMPTY)
 								.forGetter(ItemBurningRecipe::input)
 				).apply(instance, ItemBurningRecipe::new));

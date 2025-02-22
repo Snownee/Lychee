@@ -99,7 +99,7 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 	public static class Serializer implements LycheeRecipeSerializer<ItemExplodingRecipe> {
 		public static final MapCodec<ItemExplodingRecipe> CODEC =
 				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
 						KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC).optionalFieldOf(ITEM_IN, List.of())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, ItemExplodingRecipe::new)));
