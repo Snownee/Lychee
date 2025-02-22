@@ -129,7 +129,8 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return 120;
 	}
 
-	static void drawInfoBadgeIfNeeded(List<Widget> widgets, ILycheeRecipe<?> recipe, Point startPoint, Rect2i rect) {
+	static void drawInfoBadgeIfNeeded(List<Widget> widgets, LycheeDisplay<?> display, Point startPoint, Rect2i rect) {
+		ILycheeRecipe<?> recipe = display.recipe();
 		if (recipe.conditions().conditions().isEmpty() && !recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
 			return;
 		}
@@ -142,13 +143,16 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 			matrixStack.popPose();
 		}));
 		var reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, rect));
-		reactive.setTooltipFunction($ -> JEIREI.getRecipeTooltip(recipe).toArray(new Component[0]));
-		reactive.setOnClick((widget, button) -> ClientProxy.postInfoBadgeClickEvent(recipe, button));
+		reactive.setTooltipFunction($ -> JEIREI.getRecipeTooltip(recipe));
+		reactive.setOnClick((widget, button) -> ClientProxy.postInfoBadgeClickEvent(
+				display.recipe(),
+				display.getDisplayLocation().orElse(null),
+				button));
 		widgets.add(reactive);
 	}
 
 	default void drawInfoBadgeIfNeeded(List<Widget> widgets, LycheeDisplay<R> display, Point startPoint) {
-		drawInfoBadgeIfNeeded(widgets, display.recipe(), startPoint, infoRect());
+		drawInfoBadgeIfNeeded(widgets, display, startPoint, infoRect());
 	}
 
 	default void actionGroup(List<Widget> widgets, Point startPoint, R recipe, int x, int y) {
@@ -163,29 +167,30 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 
 	default void ingredientGroup(List<Widget> widgets, Point startPoint, R recipe, int x, int y) {
 		var ingredients = JEIREI.generateShapelessInputs(recipe);
-		slotGroup(widgets, startPoint, x, y, ingredients, (widgets0, startPoint0, ingredient, x0, y0) -> {
-			var items = ingredient.ingredient.getItems();
-			var slot = LycheeREIPlugin.slot(
-					startPoint,
-					x0,
-					y0,
-					ingredient.isCatalyst ? LycheeREIPlugin.SlotType.CATALYST : LycheeREIPlugin.SlotType.NORMAL);
-			slot.entries(EntryIngredients.ofItemStacks(Stream.of(items)
-					.map($ -> ingredient.count == 1 ? $ : $.copy())
-					.peek($ -> $.setCount(ingredient.count))
-					.toList()));
-			slot.markInput();
-			if (!ingredient.tooltips.isEmpty()) {
-				slot.addTooltipCallback(tooltip -> {
-					if (tooltip == null) {
-						tooltip = Tooltip.create();
+		slotGroup(
+				widgets, startPoint, x, y, ingredients, (widgets0, startPoint0, ingredient, x0, y0) -> {
+					var items = ingredient.ingredient.getItems();
+					var slot = LycheeREIPlugin.slot(
+							startPoint,
+							x0,
+							y0,
+							ingredient.isCatalyst ? LycheeREIPlugin.SlotType.CATALYST : LycheeREIPlugin.SlotType.NORMAL);
+					slot.entries(EntryIngredients.ofItemStacks(Stream.of(items)
+							.map($ -> ingredient.count == 1 ? $ : $.copy())
+							.peek($ -> $.setCount(ingredient.count))
+							.toList()));
+					slot.markInput();
+					if (!ingredient.tooltips.isEmpty()) {
+						slot.addTooltipCallback(tooltip -> {
+							if (tooltip == null) {
+								tooltip = Tooltip.create();
+							}
+							ingredient.tooltips.forEach(tooltip::add);
+							return tooltip;
+						});
 					}
-					ingredient.tooltips.forEach(tooltip::add);
-					return tooltip;
+					widgets.add(slot);
 				});
-			}
-			widgets.add(slot);
-		});
 	}
 
 	default boolean clickBlock(BlockState state, int button) {

@@ -1,86 +1,60 @@
 package snownee.lychee.compat.jei.elements;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
 
-import me.shedaniel.math.Point;
-import me.shedaniel.math.Rectangle;
-import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
-import me.shedaniel.rei.api.client.gui.widgets.WidgetWithBounds;
-import me.shedaniel.rei.api.client.gui.widgets.Widgets;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
+import mezz.jei.api.gui.inputs.IJeiGuiEventListener;
+import mezz.jei.api.gui.widgets.IRecipeWidget;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.navigation.ScreenPosition;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import snownee.kiwi.util.NotNullByDefault;
 
-public class InteractiveWidget extends WidgetWithBounds {
+@NotNullByDefault
+public class InteractiveWidget implements IRecipeWidget, IJeiGuiEventListener {
 
-	private final Rectangle bounds;
-	private boolean focused = false;
-	private boolean focusable = true;
-	private Point point;
+	private final ScreenRectangle bounds;
+	private ScreenPosition point;
 	@Nullable
-	private Function<InteractiveWidget, @Nullable Component[]> tooltip;
+	private Function<InteractiveWidget, @Nullable List<Component>> tooltip;
 	@Nullable
 	private BiConsumer<InteractiveWidget, Integer> onClick;
 
-	public InteractiveWidget(Rectangle bounds) {
+	public InteractiveWidget(ScreenRectangle bounds) {
 		this.bounds = bounds;
-		point = new Point(bounds.getCenterX(), bounds.getMaxY());
+		point = bounds.position();
 	}
 
-	public final Point getPoint() {
+	public static void produceClickSound() {
+		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+	}
+
+	@Override
+	public ScreenRectangle getArea() {
+		return bounds;
+	}
+
+	@Override
+	public ScreenPosition getPosition() {
 		return point;
 	}
 
-	public final void setPoint(Point point) {
-		this.point = Objects.requireNonNull(point);
-	}
-
-	@Override
-	public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-		if (isHovered(mouseX, mouseY)) {
-			Component[] tooltip = getTooltipLines();
-			if (tooltip != null) {
-				if (!focused && containsMouse(mouseX, mouseY)) {
-					Tooltip.create(tooltip).queue();
-				} else if (focused) {
-					Tooltip.create(point, tooltip).queue();
-				}
-			}
-		}
-	}
-
-	@Nullable
-	public final Component[] getTooltipLines() {
-		if (tooltip == null) {
-			return null;
-		}
-		return tooltip.apply(this);
-	}
-
-	public final void setTooltipFunction(@Nullable Function<InteractiveWidget, @Nullable Component[]> tooltip) {
-		this.tooltip = tooltip;
-	}
-
-	@Override
-	public List<? extends GuiEventListener> children() {
-		return Collections.emptyList();
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		return bounds;
+	public void setPosition(ScreenPosition position) {
+		this.point = position;
 	}
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (isClickable() && containsMouse(mouseX, mouseY)) {
-			Widgets.produceClickSound();
+			produceClickSound();
 			onClick.accept(this, button);
 			return true;
 		}
@@ -88,22 +62,29 @@ public class InteractiveWidget extends WidgetWithBounds {
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (!isClickable() || !isFocusable() || !focused) {
-			return false;
-		}
-		if (keyCode != 257 && keyCode != 32 && keyCode != 335) {
-			return false;
-		}
-		Widgets.produceClickSound();
-		if (onClick != null) {
-			onClick.accept(this, 0);
-		}
-		return true;
+	public void drawWidget(GuiGraphics guiGraphics, double mouseX, double mouseY) {
 	}
 
-	public final boolean isClickable() {
-		return getOnClick() != null;
+	@Override
+	public void getTooltip(ITooltipBuilder tooltip, double mouseX, double mouseY) {
+		if (containsMouse(mouseX, mouseY)) {
+			@Nullable List<Component> lines = getTooltipLines();
+			if (lines != null) {
+				tooltip.addAll(lines);
+			}
+		}
+	}
+
+	@Nullable
+	public final List<Component> getTooltipLines() {
+		if (tooltip == null) {
+			return null;
+		}
+		return tooltip.apply(this);
+	}
+
+	public final void setTooltipFunction(@Nullable Function<InteractiveWidget, @Nullable List<Component>> tooltip) {
+		this.tooltip = tooltip;
 	}
 
 	@Nullable
@@ -115,15 +96,13 @@ public class InteractiveWidget extends WidgetWithBounds {
 		this.onClick = onClick;
 	}
 
-	public final boolean isFocusable() {
-		return focusable;
+	public final boolean isClickable() {
+		return onClick != null;
 	}
 
-	public final void setFocusable(boolean focusable) {
-		this.focusable = focusable;
+	public boolean containsMouse(double mouseX, double mouseY) {
+		ScreenRectangle area = getArea();
+		return mouseX >= 0 && mouseY >= 0 && mouseX < area.width() && mouseY < area.height();
 	}
 
-	public boolean isHovered(int mouseX, int mouseY) {
-		return containsMouse(mouseX, mouseY) || focused;
-	}
 }

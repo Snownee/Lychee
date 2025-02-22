@@ -1,0 +1,33 @@
+{
+	"type": "lychee:crafting",
+	"comment": "testing",
+	"pattern": [
+		"aa",
+		"b ",
+		"aa"
+	],
+	"key": {
+		"a": {
+			"count": 1,
+			"item": "minecraft:stone",
+			"id": "minecraft:stone"
+		},
+		"b": {
+			"count": 1,
+			"item": "minecraft:dirt",
+			"id": "minecraft:dirt"
+		}
+	},
+	"post": [
+		{
+			"id": "minecraft:redstone",
+			"type": "set_item",
+			"target": "/key/a"
+		}
+	],
+	"result": {
+		"item": "minecraft:coarse_dirt",
+		"count": 1,
+		"id": "minecraft:coarse_dirt"
+	}
+}

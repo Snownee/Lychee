@@ -16,15 +16,15 @@ import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
+import snownee.kiwi.util.NotNullByDefault;
 
+@NotNullByDefault
 public class InteractiveWidget extends WidgetWithBounds {
 
 	private final Rectangle bounds;
-	private boolean focused = false;
-	private boolean focusable = true;
 	private Point point;
 	@Nullable
-	private Function<InteractiveWidget, @Nullable Component[]> tooltip;
+	private Function<InteractiveWidget, @Nullable List<Component>> tooltip;
 	@Nullable
 	private BiConsumer<InteractiveWidget, Integer> onClick;
 
@@ -43,27 +43,23 @@ public class InteractiveWidget extends WidgetWithBounds {
 
 	@Override
 	public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-		if (isHovered(mouseX, mouseY)) {
-			Component[] tooltip = getTooltipLines();
+		if (containsMouse(mouseX, mouseY)) {
+			@Nullable List<Component> tooltip = getTooltipLines();
 			if (tooltip != null) {
-				if (!focused && containsMouse(mouseX, mouseY)) {
-					Tooltip.create(tooltip).queue();
-				} else if (focused) {
-					Tooltip.create(point, tooltip).queue();
-				}
+				Tooltip.create(point, tooltip).queue();
 			}
 		}
 	}
 
 	@Nullable
-	public final Component[] getTooltipLines() {
+	public final List<Component> getTooltipLines() {
 		if (tooltip == null) {
 			return null;
 		}
 		return tooltip.apply(this);
 	}
 
-	public final void setTooltipFunction(@Nullable Function<InteractiveWidget, @Nullable Component[]> tooltip) {
+	public final void setTooltipFunction(@Nullable Function<InteractiveWidget, @Nullable List<Component>> tooltip) {
 		this.tooltip = tooltip;
 	}
 
@@ -89,7 +85,7 @@ public class InteractiveWidget extends WidgetWithBounds {
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		if (!isClickable() || !isFocusable() || !focused) {
+		if (!isClickable()) {
 			return false;
 		}
 		if (keyCode != 257 && keyCode != 32 && keyCode != 335) {
@@ -103,7 +99,7 @@ public class InteractiveWidget extends WidgetWithBounds {
 	}
 
 	public final boolean isClickable() {
-		return getOnClick() != null;
+		return onClick != null;
 	}
 
 	@Nullable
@@ -113,17 +109,5 @@ public class InteractiveWidget extends WidgetWithBounds {
 
 	public final void setOnClick(@Nullable BiConsumer<InteractiveWidget, Integer> onClick) {
 		this.onClick = onClick;
-	}
-
-	public final boolean isFocusable() {
-		return focusable;
-	}
-
-	public final void setFocusable(boolean focusable) {
-		this.focusable = focusable;
-	}
-
-	public boolean isHovered(int mouseX, int mouseY) {
-		return containsMouse(mouseX, mouseY) || focused;
 	}
 }

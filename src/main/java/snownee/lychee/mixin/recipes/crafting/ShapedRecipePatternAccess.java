@@ -16,4 +16,7 @@ public interface ShapedRecipePatternAccess {
 
 	@Accessor("data")
 	Optional<ShapedRecipePattern.Data> data();
+
+	@Accessor("ingredientCount")
+	int ingredientCount();
 }

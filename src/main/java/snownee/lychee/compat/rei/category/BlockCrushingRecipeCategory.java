@@ -12,7 +12,6 @@ import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeTypes;
@@ -127,19 +126,13 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		landingBlockRect.setPosition(x, y);
 
 		var reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, fallingBlockRect));
-		reactive.setTooltipFunction($ -> {
-			var components = BlockPredicateExtensions.getTooltips(getFallingBlock(recipe), recipe.blockPredicate());
-			return components.toArray(new Component[0]);
-		});
+		reactive.setTooltipFunction($ -> BlockPredicateExtensions.getTooltips(getFallingBlock(recipe), recipe.blockPredicate()));
 		reactive.setOnClick(($, button) -> clickBlock(getFallingBlock(recipe), button));
 		widgets.add(reactive);
 
 		if (!BlockPredicateExtensions.isAny(recipe.landingBlock())) {
 			reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, landingBlockRect));
-			reactive.setTooltipFunction($ -> {
-				List<Component> list = BlockPredicateExtensions.getTooltips(getLandingBlock(recipe), recipe.landingBlock());
-				return list.toArray(new Component[0]);
-			});
+			reactive.setTooltipFunction($ -> BlockPredicateExtensions.getTooltips(getLandingBlock(recipe), recipe.landingBlock()));
 			reactive.setOnClick(($, button) -> clickBlock(getLandingBlock(recipe), button));
 			widgets.add(reactive);
 		}

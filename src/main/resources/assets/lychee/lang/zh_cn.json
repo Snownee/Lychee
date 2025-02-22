@@ -41,6 +41,8 @@
   "contextual.lychee.location.light": "光照为：%s",
   "contextual.lychee.location.smokey": "位于§f营火§r上方",
   "contextual.lychee.location.smokey.not": "不位于§f营火§r上方",
+	"contextual.lychee.location.can_see_sky": "可以看见天空",
+	"contextual.lychee.location.can_see_sky.not": "不可以看见天空",
   "contextual.lychee.time": "检查当前时间",
   "contextual.lychee.execute": "Execute a command",
   "contextual.lychee.fall_distance": "Fall distance is: %s",

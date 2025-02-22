@@ -21,6 +21,7 @@ public interface PostActionType<T extends PostAction> extends SerializableType<T
 			PostActionType::streamCodec);
 
 	StreamCodec<RegistryFriendlyByteBuf, List<PostAction>> STREAM_LIST_CODEC = STREAM_CODEC.apply(original ->
+			// Error on Eclipse without the generic type (?)
 			new StreamCodec<RegistryFriendlyByteBuf, List<PostAction>>() {
 				@Override
 				public void encode(RegistryFriendlyByteBuf byteBuf, List<PostAction> list) {

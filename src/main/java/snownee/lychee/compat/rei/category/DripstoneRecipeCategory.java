@@ -13,7 +13,6 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -94,18 +93,12 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 		actionGroup(widgets, startPoint, recipe, contentWidth() - 24, y);
 
 		var reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, sourceBlockRect));
-		reactive.setTooltipFunction($ -> {
-			var list = BlockPredicateExtensions.getTooltips(getSourceBlock(recipe), recipe.sourceBlock());
-			return list.toArray(new Component[0]);
-		});
+		reactive.setTooltipFunction($ -> BlockPredicateExtensions.getTooltips(getSourceBlock(recipe), recipe.sourceBlock()));
 		reactive.setOnClick(($, button) -> clickBlock(getSourceBlock(recipe), button));
 		widgets.add(reactive);
 
 		reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, targetBlockRect));
-		reactive.setTooltipFunction($ -> {
-			var components = BlockPredicateExtensions.getTooltips(getTargetBlock(recipe), recipe.blockPredicate());
-			return components.toArray(new Component[0]);
-		});
+		reactive.setTooltipFunction($ -> BlockPredicateExtensions.getTooltips(getTargetBlock(recipe), recipe.blockPredicate()));
 		reactive.setOnClick(($, button) -> clickBlock(getTargetBlock(recipe), button));
 		widgets.add(reactive);
 

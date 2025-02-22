@@ -4,7 +4,6 @@ import org.jetbrains.annotations.Nullable;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
@@ -12,17 +11,17 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 
+@NotNullByDefault
 public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<BlockInteractingRecipe> {
 
-
-	public BlockInteractionRecipeCategory(
-			RecipeType<BlockInteractingRecipe> recipeType, IDrawable icon, IGuiHelper guiHelper
-	) {
-		super(recipeType, icon, guiHelper, RecipeTypes.BLOCK_INTERACTING);
+	public BlockInteractionRecipeCategory(RecipeType<RecipeHolder<BlockInteractingRecipe>> recipeType, IDrawable icon) {
+		super(recipeType, icon, RecipeTypes.BLOCK_INTERACTING);
 		inputBlockRect.setX(inputBlockRect.getX() + 18);
 		methodRect.setX(methodRect.getX() + 18);
 		infoRect.setX(infoRect.getX() + 10);
@@ -39,7 +38,13 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Blo
 	}
 
 	@Override
-	public void drawExtra(BlockInteractingRecipe recipe, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
+	public void drawExtra(
+			RecipeHolder<BlockInteractingRecipe> recipeHolder,
+			GuiGraphics graphics,
+			double mouseX,
+			double mouseY,
+			int centerX) {
+		BlockInteractingRecipe recipe = recipeHolder.value();
 		KeyMapping keyMapping = getKeyMapping(recipe);
 		//		if (keyMapping.getKey().getValue() == -1) { // key is unset or unknown
 		//

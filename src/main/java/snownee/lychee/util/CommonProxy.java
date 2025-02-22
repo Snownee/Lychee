@@ -27,7 +27,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -133,7 +132,13 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static String chance(float chance) {
-		return (chance < 0.01 ? "<1" : String.valueOf((int) (chance * 100))) + "%";
+		if (chance >= 0.1F) {
+			return (int) (chance * 100) + "%";
+		} else if (chance >= 0.001F) {
+			return String.format("%.1f%%", chance * 100);
+		} else {
+			return "<0.1%";
+		}
 	}
 
 	public static String capitaliseAllWords(String str) {
@@ -164,31 +169,6 @@ public class CommonProxy implements ModInitializer {
 		}
 		var index = (System.currentTimeMillis() / interval) % list.size();
 		return list.get(Math.toIntExact(index));
-	}
-
-	public static ResourceLocation readNullableRL(FriendlyByteBuf buf) {
-		var string = buf.readUtf();
-		if (string.isEmpty()) {
-			return null;
-		} else {
-			return ResourceLocation.parse(string);
-		}
-	}
-
-	public static void writeNullableRL(ResourceLocation rl, FriendlyByteBuf buf) {
-		if (rl == null) {
-			buf.writeUtf("");
-		} else {
-			buf.writeUtf(rl.toString());
-		}
-	}
-
-	public static <T> T readRegistryId(Registry<T> registry, FriendlyByteBuf buf) {
-		return registry.byId(buf.readVarInt());
-	}
-
-	public static <T> void writeRegistryId(Registry<T> registry, T entry, FriendlyByteBuf buf) {
-		buf.writeVarInt(registry.getId(entry));
 	}
 
 	@Nullable
