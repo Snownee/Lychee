@@ -200,7 +200,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 	public static class Serializer implements LycheeRecipeSerializer<DripstoneRecipe> {
 		public static final MapCodec<DripstoneRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(DripstoneRecipe::commonProperties),
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(DripstoneRecipe::commonProperties),
 						BlockPredicateExtensions.CODEC.fieldOf("source_block").forGetter(DripstoneRecipe::sourceBlock),
 						BlockPredicateExtensions.CODEC.fieldOf("target_block").forGetter(DripstoneRecipe::blockPredicate)
 				).apply(instance, DripstoneRecipe::new));

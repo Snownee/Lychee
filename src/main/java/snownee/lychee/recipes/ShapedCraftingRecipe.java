@@ -274,7 +274,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 	public static class Serializer implements LycheeRecipeSerializer<ShapedCraftingRecipe> {
 		public static final MapCodec<ShapedCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance ->
 				instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
 						RecipeSerializer.SHAPED_RECIPE.codec()
 								.forGetter(ShapedCraftingRecipe::shaped),
 						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())

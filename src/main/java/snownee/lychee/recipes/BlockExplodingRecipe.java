@@ -55,7 +55,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 	public static class Serializer implements LycheeRecipeSerializer<BlockExplodingRecipe> {
 		public static final MapCodec<BlockExplodingRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(BlockExplodingRecipe::commonProperties),
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(BlockExplodingRecipe::commonProperties),
 						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
 								.forGetter(BlockExplodingRecipe::blockPredicate)
 				).apply(instance, BlockExplodingRecipe::new));

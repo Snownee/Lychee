@@ -64,7 +64,7 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 
 	public static class Serializer implements LycheeRecipeSerializer<RandomBlockTickingRecipe> {
 		public static final MapCodec<RandomBlockTickingRecipe> CODEC = RecordCodecBuilder.<RandomBlockTickingRecipe>mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(RandomBlockTickingRecipe::commonProperties),
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(RandomBlockTickingRecipe::commonProperties),
 						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
 								.forGetter(RandomBlockTickingRecipe::blockPredicate)).apply(instance, RandomBlockTickingRecipe::new))
 				.validate(it -> {

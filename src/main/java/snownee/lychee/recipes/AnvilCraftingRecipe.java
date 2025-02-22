@@ -172,7 +172,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	public static class Serializer implements LycheeRecipeSerializer<AnvilCraftingRecipe> {
 		public static final MapCodec<AnvilCraftingRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
 						LycheeCodecs.PAIR_INGREDIENT_CODEC.fieldOf(ITEM_IN).forGetter(AnvilCraftingRecipe::input),
 						LycheeCodecs.PLAIN_ITEM_STACK_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
 						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
