@@ -77,7 +77,7 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 		public static final MapCodec<LightningChannelingRecipe> CODEC =
 				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						LycheeCodecs.nonNullList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)
+						LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY)
 								.optionalFieldOf(ITEM_IN, LycheeCodecs.emptyNonNullList())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, LightningChannelingRecipe::new)));
@@ -92,7 +92,7 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						LightningChannelingRecipe::commonProperties,
-						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.nonNullList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)),
+						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY)),
 						LightningChannelingRecipe::getIngredients,
 						LightningChannelingRecipe::new
 				);
