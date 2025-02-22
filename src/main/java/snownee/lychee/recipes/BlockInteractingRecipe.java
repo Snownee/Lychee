@@ -1,9 +1,10 @@
 package snownee.lychee.recipes;
 
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.datafixers.util.Function3;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -21,6 +22,8 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
+import snownee.kiwi.recipe_.SizedIngredient;
+import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
@@ -62,12 +65,12 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		}).orElse(InteractionResult.PASS);
 	}
 
-	protected final Pair<Ingredient, Ingredient> input;
+	protected final List<SizedIngredient> input;
 	protected final BlockPredicate blockPredicate;
 
 	protected BlockInteractingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			Pair<Ingredient, Ingredient> input,
+			List<SizedIngredient> input,
 			BlockPredicate blockPredicate) {
 		super(commonProperties);
 		this.input = input;
@@ -75,7 +78,8 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		onConstructed();
 	}
 
-	public Pair<Ingredient, Ingredient> input() {
+	@Override
+	public List<SizedIngredient> sizedIngredients() {
 		return input;
 	}
 
@@ -90,15 +94,12 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		final var stack = thisEntity instanceof ItemEntity itemEntity ? itemEntity.getItem() : context.getItem(0);
 		return input.getFirst().test(stack) && (
 				BlockPredicateExtensions.isAny(blockPredicate) || BlockPredicateExtensions.matches(blockPredicate, context)) &&
-				(input.getSecond().isEmpty() || input.getSecond().test(context.getItem(1)));
+				(input.size() == 1 || input.getLast().test(context.getItem(1)));
 	}
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return input.getSecond().isEmpty() ? NonNullList.of(Ingredient.EMPTY, input.getFirst()) : NonNullList.of(
-				Ingredient.EMPTY,
-				input.getFirst(),
-				input.getSecond());
+		return NonNullList.copyOf(input.stream().map(SizedIngredient::ingredient).toList());
 	}
 
 	@Override
@@ -111,10 +112,10 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		return RecipeTypes.BLOCK_INTERACTING;
 	}
 
-	public static <T extends BlockInteractingRecipe> MapCodec<T> codec(Function3<LycheeRecipeCommonProperties, Pair<Ingredient, Ingredient>, BlockPredicate, T> constructor) {
+	public static <T extends BlockInteractingRecipe> MapCodec<T> codec(Function3<LycheeRecipeCommonProperties, List<SizedIngredient>, BlockPredicate, T> constructor) {
 		return RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.mapCodec(BoundsExtensions.ONE).forGetter(T::commonProperties),
-						LycheeCodecs.PAIR_INGREDIENT_CODEC.fieldOf(ITEM_IN).forGetter(T::input),
+						LycheeCodecs.sizeLimit(KCodecs.compactList(SizedIngredient.CODEC), 1, 2).fieldOf(ITEM_IN).forGetter(T::sizedIngredients),
 						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY).forGetter(T::blockPredicate))
 				.apply(instance, constructor));
 	}
@@ -130,8 +131,8 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		public static final StreamCodec<RegistryFriendlyByteBuf, BlockInteractingRecipe> STREAM_CODEC = StreamCodec.composite(
 				LycheeRecipeCommonProperties.STREAM_CODEC,
 				BlockInteractingRecipe::commonProperties,
-				ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.PAIR_INGREDIENT_CODEC),
-				BlockInteractingRecipe::input,
+				SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list(2)),
+				BlockInteractingRecipe::sizedIngredients,
 				BlockPredicate.STREAM_CODEC,
 				BlockInteractingRecipe::blockPredicate,
 				BlockInteractingRecipe::new);

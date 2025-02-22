@@ -1,13 +1,11 @@
 package snownee.lychee.compat;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.joml.Quaternionf;
 
@@ -39,6 +37,7 @@ import snownee.lychee.client.gui.CustomLightingSettings;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.util.CachedRenderingEntity;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -62,13 +61,19 @@ public final class JEIREI {
 			.build();
 
 	public static List<IngredientInfo> generateShapelessInputs(ILycheeRecipe<LycheeContext> recipe) {
-		var ingredients = recipe.getIngredients()
-				.stream()
-				.map(IngredientInfo::new)
-				.collect(Collectors.toCollection(ArrayList::new));
-		recipe.postActions().forEach(action -> PostActionRenderer.of(action).loadCatalystsInfo(action, recipe, ingredients));
+		boolean sized = false;
+		List<IngredientInfo> ingredients;
+		try {
+			ingredients = recipe.sizedIngredients().stream().map(IngredientInfo::new).toList();
+			sized = true;
+		} catch (Exception e) {
+			ingredients = recipe.getIngredients().stream().map(IngredientInfo::new).toList();
+		}
+		for (PostAction action : recipe.postActions()) {
+			PostActionRenderer.of(action).loadCatalystsInfo(action, recipe, ingredients);
+		}
 		var type = (LycheeRecipeType<?>) recipe.getType();
-		if (!type.compactInputs) {
+		if (sized || !type.compactInputs) {
 			addIngredientTips(recipe, ingredients);
 			return ingredients;
 		}

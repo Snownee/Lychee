@@ -6,7 +6,8 @@
 	},
 	"item_in": [
 		{
-			"tag": "sand"
+			"tag": "sand",
+			"count": 3
 		},
 		{
 			"item": "bucket"

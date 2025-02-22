@@ -7,7 +7,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +17,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.RecipeContext;
-import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
@@ -85,8 +83,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		public static final MapCodec<ItemBurningRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						LycheeCodecs.OPTIONAL_INGREDIENT_CODEC.optionalFieldOf(ITEM_IN, Ingredient.EMPTY)
-								.forGetter(ItemBurningRecipe::input)
+						Ingredient.CODEC_NONEMPTY.fieldOf(ITEM_IN).forGetter(ItemBurningRecipe::input)
 				).apply(instance, ItemBurningRecipe::new));
 
 		@Override
@@ -99,7 +96,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						ItemBurningRecipe::commonProperties,
-						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC),
+						Ingredient.CONTENTS_STREAM_CODEC,
 						ItemBurningRecipe::input,
 						ItemBurningRecipe::new
 				);

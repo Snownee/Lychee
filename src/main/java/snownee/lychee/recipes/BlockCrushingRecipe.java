@@ -143,7 +143,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 								.forGetter(it -> it.fallingBlock),
 						BlockPredicateExtensions.CODEC.optionalFieldOf("landing_block", BlockPredicateExtensions.ANY)
 								.forGetter(BlockCrushingRecipe::landingBlock),
-						LycheeCodecs.nonNullList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)
+						LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY)
 								.optionalFieldOf(ITEM_IN, LycheeCodecs.emptyNonNullList())
 								.forGetter(it -> it.ingredients)
 				).apply(instance, BlockCrushingRecipe::new)));
@@ -161,7 +161,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 						it -> it.fallingBlock,
 						BlockPredicate.STREAM_CODEC,
 						BlockCrushingRecipe::landingBlock,
-						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.nonNullList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)),
+						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY)),
 						it -> it.ingredients,
 						BlockCrushingRecipe::new
 				);
