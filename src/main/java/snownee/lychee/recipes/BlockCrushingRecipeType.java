@@ -113,7 +113,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 						final var alreadySentParticles = Sets.newHashSet();
 						final var itemContext = context.get(LycheeContextKey.ITEM);
 						for (final var holder : itemContext) {
-							if (!holder.getIgnoreConsumption() && !holder.get().isEmpty()) {
+							if (holder.getConsumption() > 0 && !holder.get().isEmpty()) {
 								if (holder.holder() instanceof ItemStackHolder.Entity entityHolder &&
 										!alreadySentParticles.contains(holder)) {
 									alreadySentParticles.add(holder);

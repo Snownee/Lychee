@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.ToIntFunction;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +31,7 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.context.RecipeContext;
 import snownee.lychee.contextual.Chance;
+import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -130,18 +132,37 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 
 		final Iterable<RecipeHolder<R>> iterable = mergeAnyBlockRecipes(recipes);
-		for (final var recipe : iterable) {
+		for (final var recipeHolder : iterable) {
 
-			if (tryMatch(recipe, level, context).isPresent()) {
-				context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
-				context.put(LycheeContextKey.RECIPE, recipe.value());
-				if (!level.isClientSide && recipe.value().tickOrApply(context)) {
-					var times = Math.min(context.getItem(0).getCount(), context.getItem(1).getCount());
-					times = recipe.value().getRandomRepeats(Math.max(1, times), context);
-					if (recipe.value().getIngredients().size() == 1) {
-						itemContext.get(1).setIgnoreConsumption(true);
+			if (tryMatch(recipeHolder, level, context).isPresent()) {
+				context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipeHolder.id()));
+				R recipe = recipeHolder.value();
+				context.put(LycheeContextKey.RECIPE, recipe);
+				if (!level.isClientSide && recipe.tickOrApply(context)) {
+					if (recipe.sizedIngredients().size() == 1) {
+						itemContext.get(1).setConsumption(0);
 					}
-					recipe.value().applyPostActions(context, times);
+					for (int i = 0; i < recipe.sizedIngredients().size(); i++) {
+						itemContext.get(i).setConsumption(recipe.sizedIngredients().get(i).count());
+					}
+					int times;
+					if (recipe.maxRepeats() == BoundsExtensions.ONE) {
+						times = 1;
+					} else {
+						times = Integer.MAX_VALUE;
+						for (var holder : itemContext) {
+							if (holder.getConsumption() == 0) {
+								continue;
+							}
+							int count = holder.get().getCount() / holder.getConsumption();
+							if (count == 0) {
+								return Optional.empty();
+							}
+							times = Math.min(times, count);
+						}
+					}
+					times = recipe.getRandomRepeats(Math.max(1, times), context);
+					recipe.applyPostActions(context, times);
 					itemContext.postApply(!actionContext.avoidDefault, times);
 					player.setItemInHand(hand, context.getItem(0));
 					player.setItemInHand(
@@ -149,7 +170,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 							context.getItem(1)
 					);
 				}
-				return Optional.of(recipe.value());
+				return Optional.of(recipe);
 			}
 		}
 		return Optional.empty();

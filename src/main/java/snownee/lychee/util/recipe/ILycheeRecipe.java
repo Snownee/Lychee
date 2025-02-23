@@ -137,6 +137,9 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	}
 
 	default int getRandomRepeats(int max, LycheeContext ctx) {
+		if (maxRepeats() == BoundsExtensions.ONE) {
+			return 1;
+		}
 		int times = Integer.MAX_VALUE;
 		if (!maxRepeats().isAny()) {
 			times = BoundsExtensions.random(maxRepeats(), ctx.get(LycheeContextKey.RANDOM));

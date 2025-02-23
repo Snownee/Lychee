@@ -136,7 +136,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	private void lychee_preventDefault(Player player, ItemStack stack, CallbackInfo ci) {
 		if (onTakeCtx != null) {
 			for (int i = 0; i < 2; i++) {
-				if (onTakeCtx.get(LycheeContextKey.ITEM).get(i).getIgnoreConsumption()) {
+				if (onTakeCtx.get(LycheeContextKey.ITEM).get(i).getConsumption() == 0) {
 					inputSlots.setItem(i, onTakeCtx.get(LycheeContextKey.ITEM).get(i).get());
 				}
 			}
