@@ -90,9 +90,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 
 	@Override
 	public boolean matches(LycheeContext context, Level level) {
-		final var thisEntity = context.get(LycheeContextKey.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
-		final var stack = thisEntity instanceof ItemEntity itemEntity ? itemEntity.getItem() : context.getItem(0);
-		return input.getFirst().test(stack) && (
+		return input.getFirst().test(context.getItem(0)) && (
 				BlockPredicateExtensions.isAny(blockPredicate) || BlockPredicateExtensions.matches(blockPredicate, context)) &&
 				(input.size() == 1 || input.getLast().test(context.getItem(1)));
 	}

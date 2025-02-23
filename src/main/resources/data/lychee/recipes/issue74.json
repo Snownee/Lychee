@@ -1,0 +1,15 @@
+{
+  "type": "lychee:block_interacting",
+	"max_repeats": 64,
+  "item_in": {
+    "item": "glass",
+		"count": 4
+  },
+  "block_in": "glass",
+  "post": [
+    {
+      "type": "drop_item",
+			"id": "diamond"
+    }
+  ]
+}

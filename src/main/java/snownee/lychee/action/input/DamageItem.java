@@ -42,7 +42,7 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 			if (!stackHolder.get().isDamageableItem()) {
 				return;
 			}
-			stackHolder.setIgnoreConsumption(true);
+			stackHolder.setConsumption(0);
 			var itemStack = itemStackHolders.split(index, 1).get();
 
 			// Forge hook

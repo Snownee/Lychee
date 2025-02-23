@@ -66,7 +66,7 @@ public final class SetItem implements PostAction {
 			if (!stack.isEmpty()) {
 				((CompoundTag) context.getItem(index).saveOptional(registryAccess)).merge(tag);
 			}
-			context.get(LycheeContextKey.ITEM).get(index).setIgnoreConsumption(true);
+			context.get(LycheeContextKey.ITEM).get(index).setConsumption(0);
 		}
 	}
 

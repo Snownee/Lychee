@@ -208,7 +208,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 		var k = 0;
 		for (var i = 0; i < getHeight(); i++) {
 			for (var j = 0; j < getWidth(); j++) {
-				if (itemStackHolders.get(k).getIgnoreConsumption()) {
+				if (itemStackHolders.get(k).getConsumption() == 0) {
 					items.set(container.width() * i + (craftingContext.mirror() ? getWidth() - j - 1 : j), context.getItem(k));
 				}
 				++k;
