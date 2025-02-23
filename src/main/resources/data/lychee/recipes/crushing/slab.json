@@ -2,13 +2,8 @@
   "type": "lychee:block_crushing",
   "item_in": [
     {
-      "item": "oak_planks"
-    },
-    {
-      "item": "oak_planks"
-    },
-    {
-      "item": "oak_planks"
+      "item": "oak_planks",
+			"count": 3
     }
   ],
   "post": [

@@ -13,7 +13,6 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -23,10 +22,11 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.RecipeMatcher;
-import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -41,13 +41,13 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	protected BlockPredicate fallingBlock;
 	protected BlockPredicate landingBlock;
-	protected NonNullList<Ingredient> ingredients;
+	protected IngredientCollection ingredients;
 
 	public BlockCrushingRecipe(
 			final LycheeRecipeCommonProperties commonProperties,
 			BlockPredicate fallingBlock,
 			BlockPredicate landingBlock,
-			final NonNullList<Ingredient> ingredients
+			final IngredientCollection ingredients
 	) {
 		super(commonProperties);
 		this.fallingBlock = fallingBlock;
@@ -68,7 +68,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 	@Override
 	public boolean matches(final LycheeContext context, final Level level) {
 		final var itemShapelessContext = context.get(LycheeContextKey.ITEM_SHAPELESS);
-		if (itemShapelessContext.totalItems < ingredients.size()) {
+		if (itemShapelessContext.totalItems < ingredients.ingredientCount()) {
 			return false;
 		}
 		if (!BlockPredicateExtensions.isAny(landingBlock) && !BlockPredicateExtensions.matches(landingBlock, context)) {
@@ -81,13 +81,11 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		if (ingredients.isEmpty()) {
 			return true;
 		}
-		var itemEntities = itemShapelessContext.itemEntities.stream().filter($ -> {
-			// ingredient.test is not thread safe
-			return ingredients.stream().anyMatch(ingredient -> ingredient.test($.getItem()));
-		}).limit(ItemShapelessRecipeUtils.MAX_INGREDIENTS).toList();
+		var itemEntities = itemShapelessContext.itemEntities.stream().filter($ -> ingredients.anyMatch($.getItem())).limit(
+				ItemShapelessRecipeUtils.MAX_INGREDIENTS).toList();
 		var items = itemEntities.stream().map(ItemEntity::getItem).toList();
 		var amount = items.stream().mapToInt(ItemStack::getCount).toArray();
-		var match = RecipeMatcher.findMatches(items, ingredients, amount);
+		var match = RecipeMatcher.findMatches(items, ingredients.flattenedIngredients(), amount);
 		if (match.isEmpty()) {
 			return false;
 		}
@@ -111,8 +109,13 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 	}
 
 	@Override
+	public List<SizedIngredient> sizedIngredients() {
+		return ingredients.ingredients();
+	}
+
+	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return ingredients;
+		return ingredients.flattenedIngredients();
 	}
 
 	@Override
@@ -143,8 +146,8 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 								.forGetter(it -> it.fallingBlock),
 						BlockPredicateExtensions.CODEC.optionalFieldOf("landing_block", BlockPredicateExtensions.ANY)
 								.forGetter(BlockCrushingRecipe::landingBlock),
-						LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY)
-								.optionalFieldOf(ITEM_IN, LycheeCodecs.emptyNonNullList())
+						IngredientCollection.CODEC
+								.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
 								.forGetter(it -> it.ingredients)
 				).apply(instance, BlockCrushingRecipe::new)));
 
@@ -161,7 +164,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 						it -> it.fallingBlock,
 						BlockPredicate.STREAM_CODEC,
 						BlockCrushingRecipe::landingBlock,
-						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY)),
+						IngredientCollection.STREAM_CODEC,
 						it -> it.ingredients,
 						BlockCrushingRecipe::new
 				);
