@@ -7,16 +7,12 @@
   "falling_block": "dragon_egg",
   "item_in": [
     {
-      "tag": "coals"
+      "tag": "coals",
+			"count": 2
     },
     {
-      "item": "coal"
-    },
-    {
-      "tag": "coals"
-    },
-    {
-      "item": "coal"
+      "item": "coal",
+			"count": 2
     }
   ],
   "post": [
