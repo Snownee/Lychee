@@ -22,7 +22,7 @@ Recipes should be placed in `data/<namespace>/recipes/` folder, like normal data
     | ghost               | only show in JEI/REI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
     | hide_in_viewer      | hide in JEI/REI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
     | group               | show this recipe in a new category in JEI/REI ^optional^                           | string (ResourceLocation)                                                                          |
-    | max_repeats         | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | int                                                                                                |
+    | max_repeats         | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | [IntBounds](general-types.md#intbounds)                                                            |
     |                     | additional properties...                                                           |                                                                                                    |
 
 === "Fabric"
@@ -37,7 +37,7 @@ Recipes should be placed in `data/<namespace>/recipes/` folder, like normal data
     | ghost                  | only show in JEI/REI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
     | hide_in_viewer         | hide in JEI/REI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
     | group                  | show this recipe in a new category in JEI/REI ^optional^                           | string (ResourceLocation)                                                                          |
-    | max_repeats            | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | int                                                                                                |
+    | max_repeats            | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | [IntBounds](general-types.md#intbounds)                                                            |
     |                        | additional properties...                                                           |                                                                                                    |
 
 ## Recipe Types
@@ -143,7 +143,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 ??? note "Note: Matches empty hand"
 
-    Use `"item": "air"` to require interaction with empty hand.
+    Use `{}` to require interaction with empty hand.
 
 ??? note "Note: Matches any item"
 
@@ -221,7 +221,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 ??? note "Note: Matches empty hand"
 
-    Use `"item": "air"` to require interaction with empty hand.
+    Use `{}` to require interaction with empty hand.
 
 ??? note "Note: Matches any item"
 
