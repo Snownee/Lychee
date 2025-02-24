@@ -20,11 +20,11 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 
 public final class SizedIngredient {
-	public static final SizedIngredient EMPTY = new SizedIngredient(Ingredient.EMPTY, 1);
+	public static final SizedIngredient EMPTY = new SizedIngredient(Ingredient.EMPTY, 0);
 
 	public static final Codec<SizedIngredient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 					Ingredient.MAP_CODEC_NONEMPTY.forGetter(SizedIngredient::ingredient),
-					ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 1).forGetter(SizedIngredient::count))
+					ExtraCodecs.POSITIVE_INT.optionalFieldOf("count", 0).forGetter(SizedIngredient::count))
 			.apply(instance, SizedIngredient::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, SizedIngredient> STREAM_CODEC = StreamCodec.composite(
@@ -48,7 +48,7 @@ public final class SizedIngredient {
 	private ItemStack[] cachedStacks;
 
 	public SizedIngredient(Ingredient ingredient, int count) {
-		Preconditions.checkArgument(count > 0, "Count must be positive");
+		Preconditions.checkArgument(count >= 0, "Count can't be negative");
 		this.ingredient = ingredient;
 		this.count = count;
 	}
