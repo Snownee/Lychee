@@ -126,37 +126,38 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 === "Recipe"
 
     ```json
-    {
-	    "type": "lychee:anvil_crafting",
-	    "item_in": [
-	    	{
-	    		"item": "diamond_sword"
-	    	},
-	    	{
-	    		"item": "dirt"
-	    	}
-	    ],
-	    "item_out": {
-	    	"id": "diamond_sword"
-	    },
-	    "level_cost": 1,
-	    "material_cost": 1,
-	    "assembling": [
-	    	{
-	    		"type": "custom",
-	    		"id": "repair_item",
-	    		"target": "/item_out",
-	    		"data": {
-	    			"durability": 1
-	    		}
-	    	}
-	    ],
-	    "contextual": {
-	    	"type": "custom",
-	    	"id": "is_item_damaged",
-	    	"target": "/item_in/0"
-	    }
-    }
+	{
+		"type": "lychee:anvil_crafting",
+		"item_in": [
+			{
+				"item": "diamond_sword"
+			},
+			{
+				"item": "dirt"
+			}
+		],
+		"item_out": {
+			"id": "diamond_sword"
+		},
+		"level_cost": 1,
+		"material_cost": 1,
+		"assembling": [
+			{
+				"type": "custom",
+				"id": "repair_item",
+				"data": {
+					"durability": 1
+				}
+			}
+		],
+		"contextual": {
+			"type": "custom",
+			"id": "is_item_damaged",
+			"data": {
+				"target": "/item_in/0"
+			}
+		}
+	}
     ```
 
 === "Startup Script"
@@ -245,6 +246,21 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 === "Startup Script"
 
     ```js
+    function copyComponents(input, output) {
+    	let components = input.getComponentsPatch();
+    	if (typeof components === "function") {
+    		components = components();
+    	}
+    
+    	for (let entry of components.entrySet()) {
+    		let type = entry.getKey();
+    		let value = entry.getValue();
+    		if (type == null) continue;
+    		if (!value.isPresent()) continue;
+    		output.set(type, value.get());
+    	}
+    }
+
     let $DataComponents = Java.loadClass("net.minecraft.core.component.DataComponents");
     let $ArmorTrim = Java.loadClass("net.minecraft.world.item.armortrim.ArmorTrim");
     let $Registries = Java.loadClass("net.minecraft.core.registries.Registries");
@@ -273,72 +289,12 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     
     LycheeEvents.customCondition("is_item_trimmed", (event) => {
       let target = LycheeReference.fromJson(event.data, "target");
-      console.log(target);
       event.testFunc = (recipe, ctx, times) => {
         let indexes = recipe.getItemIndexes(target);
         let stack = ctx.getItem(indexes.getInt(0));
         return stack == null ? 0 : stack.get($DataComponents.TRIM) != null ? times : 0;
       };
     });
-    ```
-
-### Transforming Item on Depot
-
-=== "Recipe"
-
-    ```json
-    {
-        "type": "lychee:block_interacting",
-        "item_in": {
-            "item": "create:wrench"
-        },
-        "block_in": "create:depot",
-        "post": [
-            {
-                "type": "drop_item",
-                "id": "minecraft:cobblestone"
-            },
-            {
-                "type": "prevent_default"
-            },
-            {
-                "type": "custom",
-                "id": "consume_item_on_depot"
-            }
-        ],
-        "if": {
-            "type": "custom",
-            "id": "has_item_on_depot",
-            "data": {
-                "ingredient": {
-                    "item": "minecraft:stone"
-                }
-            }
-        }
-    }
-    ```
-
-=== "Startup Script"
-
-    ```js
-    let $LevelPlatformHelper = Java.loadClass('dev.latvian.mods.kubejs.platform.LevelPlatformHelper')
-
-    LycheeEvents.customAction('consume_item_on_depot', event => {
-        event.applyFunc = (recipe, ctx, times) => {
-            let be = ctx.getParam('block_entity')
-            let inv = $LevelPlatformHelper.get().getInventoryFromBlockEntity(be, 'up')
-            inv.extractItem(0, 1, false)
-        }
-    })
-
-    LycheeEvents.customCondition('has_item_on_depot', event => {
-        let ingredient = Ingredient.of(event.data.ingredient)
-        event.testFunc = (recipe, ctx, times) => {
-            let be = ctx.getParam('block_entity')
-            let inv = $LevelPlatformHelper.get().getInventoryFromBlockEntity(be, 'up')
-            return ingredient.test(inv.getStackInSlot(0)) ? times : 0
-        }
-    })
     ```
 
 ### Item Inside Recipe with Dynamic Time
@@ -377,26 +333,28 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 
     ```js
     let $DirectionPlane = Java.loadClass('net.minecraft.core.Direction$Plane')
-
+    let $LootContextParams = Java.loadClass('net.minecraft.world.level.storage.loot.parameters.LootContextParams')
+    
     LycheeEvents.customCondition('neighbor_block_boost', event => {
-        let booster_block = event.data.booster_block
-
-        event.testFunc = (recipe, ctx, times) => {
-            let item = ctx.getParam('this_entity')
-            let count = item.lychee$getCount()
-            if (count != 0) {
-                return times
-            }
-            let pos = ctx.getParam('lychee:block_pos')
-            for (const direction of $DirectionPlane.HORIZONTAL) {
-                let neighbor = ctx.level.getBlock(pos.relative(direction))
-                if (neighbor == booster_block) {
-                    count += 1
-                }
-            }
-            item.lychee$setCount(count)
-            console.info('Neighbor block boost: ' + count)
-            return times
-        }
+    	let booster_block = event.data.booster_block
+    
+    	event.testFunc = (recipe, ctx, times) => {
+    		let params = ctx.get(LycheeContextKey.LOOT_PARAMS)
+    		let item = params.get($LootContextParams.THIS_ENTITY)
+    		let count = item.lychee$getCount()
+    		if (count != 0) {
+    			return times
+    		}
+    		let pos = params.get(LycheeLootContextParams.BLOCK_POS)
+    		for (const direction of $DirectionPlane.HORIZONTAL) {
+    			let neighbor = ctx.get(LycheeContextKey.LEVEL).getBlock(pos.relative(direction))
+    			if (neighbor == booster_block) {
+    				count += 1
+    			}
+    		}
+    		item.lychee$setCount(count)
+    		console.info('Neighbor block boost: ' + count)
+    		return times
+    	}
     })
     ```
