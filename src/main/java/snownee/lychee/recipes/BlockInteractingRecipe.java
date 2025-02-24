@@ -23,11 +23,13 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import snownee.kiwi.recipe_.SizedIngredient;
+import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.IngredientCollection;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -79,12 +81,16 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		this.blockPredicate = blockPredicate;
 		onConstructed();
 	}
+
 	protected final BlockPredicate blockPredicate;
 
 	public static <T extends BlockInteractingRecipe> MapCodec<T> codec(Function3<LycheeRecipeCommonProperties, IngredientCollection, BlockPredicate, T> constructor) {
 		return RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.mapCodec(BoundsExtensions.ONE).forGetter(T::commonProperties),
-						IngredientCollection.codec(1, 2).fieldOf(ITEM_IN).forGetter(it -> it.input),
+						LycheeCodecs.sizeLimit(KCodecs.compactList(OPTIONAL_SIZED_INGREDIENT_CODEC), 1, 2)
+								.xmap(IngredientCollection::of, IngredientCollection::ingredients)
+								.fieldOf(ITEM_IN)
+								.forGetter(it -> it.input),
 						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY).forGetter(T::blockPredicate))
 				.apply(instance, constructor));
 	}
