@@ -3,10 +3,9 @@ package snownee.lychee.util.recipe;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 
-import net.minecraft.core.NonNullList;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
+import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.RecipeMatcher;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -14,7 +13,7 @@ import snownee.lychee.util.context.LycheeContextKey;
 public class ItemShapelessRecipeUtils {
 	public static final int MAX_INGREDIENTS = 27;
 
-	public static boolean matches(LycheeContext context, NonNullList<Ingredient> ingredients) {
+	public static boolean matches(LycheeContext context, IngredientCollection ingredients) {
 		var itemShapelessContext = context.get(LycheeContextKey.ITEM_SHAPELESS);
 		if (itemShapelessContext.totalItems < ingredients.size()) {
 			return false;
@@ -24,11 +23,11 @@ public class ItemShapelessRecipeUtils {
 		}
 		final var itemEntities = itemShapelessContext.itemEntities.stream().filter(it -> {
 			// ingredient.test is not thread safe
-			return ingredients.stream().anyMatch(ingredient -> ingredient.test(it.getItem()));
+			return ingredients.ingredients().stream().anyMatch(ingredient -> ingredient.test(it.getItem()));
 		}).limit(MAX_INGREDIENTS).toList();
 		final var items = itemEntities.stream().map(ItemEntity::getItem).toList();
 		final var amount = items.stream().mapToInt(ItemStack::getCount).toArray();
-		final var match = RecipeMatcher.findMatches(items, ingredients, amount);
+		final var match = RecipeMatcher.findMatches(items, ingredients.flattenedIngredients(), amount);
 		if (match.isEmpty()) {
 			return false;
 		}

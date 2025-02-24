@@ -23,6 +23,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionType;
@@ -36,7 +37,7 @@ import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
-	protected final NonNullList<Ingredient> ingredients;
+	protected final IngredientCollection ingredients;
 	protected final int levelCost;
 	protected final int materialCost;
 	protected final ItemStack output;
@@ -44,7 +45,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 
 	public AnvilCraftingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			NonNullList<Ingredient> ingredients,
+			IngredientCollection ingredients,
 			ItemStack output,
 			List<PostAction> assemblingActions,
 			int levelCost,
@@ -90,7 +91,8 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		if (ingredients.size() == 2 && anvilContext.input().getSecond().getCount() < materialCost) {
 			return false;
 		}
-		return ingredients.getFirst().test(anvilContext.input().getFirst()) && ingredients.getLast().test(anvilContext.input().getSecond());
+		return ingredients.ingredients().getFirst().test(anvilContext.input().getFirst()) && ingredients.ingredients().getLast().test(
+				anvilContext.input().getSecond());
 	}
 
 	@Override
@@ -113,7 +115,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return ingredients;
+		return ingredients.flattenedIngredients();
 	}
 
 	@Override
@@ -151,9 +153,9 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		public static final MapCodec<AnvilCraftingRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
-						LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY, 1, 2)
+						IngredientCollection.codec(1, 2)
 								.fieldOf(ITEM_IN)
-								.forGetter(AnvilCraftingRecipe::getIngredients),
+								.forGetter(it -> it.ingredients),
 						LycheeCodecs.PLAIN_ITEM_STACK_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
 						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
 								.forGetter(AnvilCraftingRecipe::assemblingActions),
@@ -172,8 +174,8 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						AnvilCraftingRecipe::commonProperties,
-						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY, 1, 2)),
-						AnvilCraftingRecipe::getIngredients,
+						IngredientCollection.STREAM_CODEC,
+						it -> it.ingredients,
 						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.PLAIN_ITEM_STACK_CODEC),
 						AnvilCraftingRecipe::output,
 						PostActionType.STREAM_LIST_CODEC,
