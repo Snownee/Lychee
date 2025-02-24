@@ -66,10 +66,36 @@ LycheeEvents.customAction('apply_random_trim', event => {
 
 LycheeEvents.customCondition('is_item_trimmed', event => {
     let target = LycheeReference.fromJson(event.data, 'target')
-    console.log(target)
     event.testFunc = (recipe, ctx, times) => {
         let indexes = recipe.getItemIndexes(target)
         let stack = ctx.getItem(indexes.getInt(0))
         return stack == null ? 0 : (stack.get($DataComponents.TRIM) != null ? times : 0)
     }
+})
+
+
+let $DirectionPlane = Java.loadClass('net.minecraft.core.Direction$Plane')
+let $LootContextParams = Java.loadClass('net.minecraft.world.level.storage.loot.parameters.LootContextParams')
+
+LycheeEvents.customCondition('neighbor_block_boost', event => {
+	let booster_block = event.data.booster_block
+
+	event.testFunc = (recipe, ctx, times) => {
+		let params = ctx.get(LycheeContextKey.LOOT_PARAMS)
+		let item = params.get($LootContextParams.THIS_ENTITY)
+		let count = item.lychee$getCount()
+		if (count != 0) {
+			return times
+		}
+		let pos = params.get(LycheeLootContextParams.BLOCK_POS)
+		for (const direction of $DirectionPlane.HORIZONTAL) {
+			let neighbor = ctx.get(LycheeContextKey.LEVEL).getBlock(pos.relative(direction))
+			if (neighbor == booster_block) {
+				count += 1
+			}
+		}
+		item.lychee$setCount(count)
+		console.info('Neighbor block boost: ' + count)
+		return times
+	}
 })

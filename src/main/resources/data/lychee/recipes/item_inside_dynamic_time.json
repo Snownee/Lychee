@@ -1,0 +1,25 @@
+{
+	"type": "lychee:item_inside",
+	"time": 5,
+	"block_in": "*",
+	"item_in": [
+		{
+			"item": "yellow_dye"
+		}
+	],
+	"post": [
+		{
+			"type": "drop_item",
+			"id": "red_dye"
+		}
+	],
+	"if": [
+		{
+			"type": "custom",
+			"id": "neighbor_block_boost",
+			"data": {
+				"booster_block": "minecraft:red_wool"
+			}
+		}
+	]
+}
