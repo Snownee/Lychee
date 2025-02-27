@@ -13,6 +13,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.InteractionHand;
@@ -28,7 +29,6 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.BoundsExtensions;
-import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -45,7 +45,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 			it -> it.orElse(SizedIngredient.EMPTY),
 			Optional::of);
 
-	protected final IngredientCollection input;
+	protected final List<SizedIngredient> input;
 
 	public static InteractionResult invoke(
 			final Player player,
@@ -71,10 +71,10 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 			return InteractionResult.SUCCESS;
 		}).orElse(InteractionResult.PASS);
 	}
-
+	protected final BlockPredicate blockPredicate;
 	protected BlockInteractingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			IngredientCollection input,
+			List<SizedIngredient> input,
 			BlockPredicate blockPredicate) {
 		super(commonProperties);
 		this.input = input;
@@ -82,22 +82,19 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		onConstructed();
 	}
 
-	protected final BlockPredicate blockPredicate;
-
-	public static <T extends BlockInteractingRecipe> MapCodec<T> codec(Function3<LycheeRecipeCommonProperties, IngredientCollection, BlockPredicate, T> constructor) {
+	public static <T extends BlockInteractingRecipe> MapCodec<T> codec(Function3<LycheeRecipeCommonProperties, List<SizedIngredient>, BlockPredicate, T> constructor) {
 		return RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.mapCodec(BoundsExtensions.ONE).forGetter(T::commonProperties),
 						LycheeCodecs.sizeLimit(KCodecs.compactList(OPTIONAL_SIZED_INGREDIENT_CODEC), 1, 2)
-								.xmap(IngredientCollection::of, IngredientCollection::ingredients)
 								.fieldOf(ITEM_IN)
-								.forGetter(it -> it.input),
+								.forGetter(T::sizedIngredients),
 						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY).forGetter(T::blockPredicate))
 				.apply(instance, constructor));
 	}
 
 	@Override
 	public List<SizedIngredient> sizedIngredients() {
-		return input.ingredients();
+		return input;
 	}
 
 	@Override
@@ -107,14 +104,14 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 
 	@Override
 	public boolean matches(LycheeContext context, Level level) {
-		return sizedIngredients().getFirst().test(context.getItem(0)) && (
+		return input.getFirst().test(context.getItem(0)) && (
 				BlockPredicateExtensions.isAny(blockPredicate) || BlockPredicateExtensions.matches(blockPredicate, context)) &&
-				(input.size() == 1 || sizedIngredients().getLast().test(context.getItem(1)));
+				(input.size() == 1 || input.getLast().test(context.getItem(1)));
 	}
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return NonNullList.copyOf(sizedIngredients().stream().map(SizedIngredient::ingredient).toList());
+		return NonNullList.copyOf(input.stream().map(SizedIngredient::ingredient).toList());
 	}
 
 	@Override
@@ -138,8 +135,8 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		public static final StreamCodec<RegistryFriendlyByteBuf, BlockInteractingRecipe> STREAM_CODEC = StreamCodec.composite(
 				LycheeRecipeCommonProperties.STREAM_CODEC,
 				BlockInteractingRecipe::commonProperties,
-				IngredientCollection.STREAM_CODEC,
-				it -> it.input,
+				SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list(2)),
+				BlockInteractingRecipe::sizedIngredients,
 				BlockPredicate.STREAM_CODEC,
 				BlockInteractingRecipe::blockPredicate,
 				BlockInteractingRecipe::new);

@@ -1,5 +1,7 @@
 package snownee.lychee.recipes;
 
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.serialization.MapCodec;
@@ -8,6 +10,7 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -15,10 +18,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
@@ -53,7 +56,7 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 
 	protected BlockClickingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			IngredientCollection input,
+			List<SizedIngredient> input,
 			BlockPredicate blockPredicate
 	) {
 		super(commonProperties, input, blockPredicate);
@@ -81,8 +84,8 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						BlockClickingRecipe::commonProperties,
-						IngredientCollection.STREAM_CODEC,
-						it -> it.input,
+						SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list(2)),
+						BlockClickingRecipe::sizedIngredients,
 						BlockPredicate.STREAM_CODEC,
 						BlockClickingRecipe::blockPredicate,
 						BlockClickingRecipe::new
