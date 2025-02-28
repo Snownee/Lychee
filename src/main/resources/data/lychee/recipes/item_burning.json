@@ -9,7 +9,8 @@
     }
   },
   "item_in": {
-    "item": "dirt"
+		"item": "dirt",
+		"count": 5
   },
   "post": [
     {

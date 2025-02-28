@@ -45,14 +45,6 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 			it -> it.orElse(SizedIngredient.EMPTY),
 			Optional::of);
 
-	public static <T extends BlockInteractingRecipe> MapCodec<T> codec(Function3<LycheeRecipeCommonProperties, List<SizedIngredient>, BlockPredicate, T> constructor) {
-		return RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.mapCodec(BoundsExtensions.ONE).forGetter(T::commonProperties),
-						LycheeCodecs.sizeLimit(KCodecs.compactList(OPTIONAL_SIZED_INGREDIENT_CODEC), 1, 2).fieldOf(ITEM_IN).forGetter(T::sizedIngredients),
-						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY).forGetter(T::blockPredicate))
-				.apply(instance, constructor));
-	}
-
 	public static InteractionResult invoke(
 			final Player player,
 			final Level level,
@@ -89,6 +81,16 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		this.input = input;
 		this.blockPredicate = blockPredicate;
 		onConstructed();
+	}
+
+	public static <T extends BlockInteractingRecipe> MapCodec<T> codec(Function3<LycheeRecipeCommonProperties, List<SizedIngredient>, BlockPredicate, T> constructor) {
+		return RecordCodecBuilder.mapCodec(instance -> instance.group(
+						LycheeRecipeCommonProperties.mapCodec(BoundsExtensions.ONE).forGetter(T::commonProperties),
+						LycheeCodecs.sizeLimit(KCodecs.compactList(OPTIONAL_SIZED_INGREDIENT_CODEC), 1, 2)
+								.fieldOf(ITEM_IN)
+								.forGetter(T::sizedIngredients),
+						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY).forGetter(T::blockPredicate))
+				.apply(instance, constructor));
 	}
 
 	@Override

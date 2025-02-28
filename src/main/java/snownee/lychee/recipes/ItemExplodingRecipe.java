@@ -19,6 +19,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.codec.LycheeCodecs;
@@ -72,6 +73,11 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
 		return ingredients;
+	}
+
+	@Override
+	public List<SizedIngredient> sizedIngredients() {
+		return ingredients.ingredients();
 	}
 
 	@Override

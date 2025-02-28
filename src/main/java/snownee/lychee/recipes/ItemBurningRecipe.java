@@ -1,5 +1,7 @@
 package snownee.lychee.recipes;
 
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.serialization.MapCodec;
@@ -14,6 +16,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.RecipeContext;
@@ -45,15 +48,15 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		});
 	}
 
-	protected final Ingredient input;
+	protected final SizedIngredient input;
 
-	protected ItemBurningRecipe(LycheeRecipeCommonProperties commonProperties, Ingredient input) {
+	protected ItemBurningRecipe(LycheeRecipeCommonProperties commonProperties, SizedIngredient input) {
 		super(commonProperties);
 		this.input = input;
 		onConstructed();
 	}
 
-	public Ingredient input() {
+	public SizedIngredient input() {
 		return input;
 	}
 
@@ -66,7 +69,12 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return NonNullList.of(Ingredient.EMPTY, input);
+		return NonNullList.copyOf(List.of(input.ingredient()));
+	}
+
+	@Override
+	public List<SizedIngredient> sizedIngredients() {
+		return List.of(input);
 	}
 
 	@Override
@@ -83,7 +91,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		public static final MapCodec<ItemBurningRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						Ingredient.CODEC_NONEMPTY.fieldOf(ITEM_IN).forGetter(ItemBurningRecipe::input)
+						SizedIngredient.CODEC.fieldOf(ITEM_IN).forGetter(ItemBurningRecipe::input)
 				).apply(instance, ItemBurningRecipe::new));
 
 		@Override
@@ -96,7 +104,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						ItemBurningRecipe::commonProperties,
-						Ingredient.CONTENTS_STREAM_CODEC,
+						SizedIngredient.STREAM_CODEC,
 						ItemBurningRecipe::input,
 						ItemBurningRecipe::new
 				);
