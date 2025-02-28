@@ -45,8 +45,6 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 			it -> it.orElse(SizedIngredient.EMPTY),
 			Optional::of);
 
-	protected final List<SizedIngredient> input;
-
 	public static InteractionResult invoke(
 			final Player player,
 			final Level level,
@@ -71,7 +69,10 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 			return InteractionResult.SUCCESS;
 		}).orElse(InteractionResult.PASS);
 	}
+
+	protected final List<SizedIngredient> input;
 	protected final BlockPredicate blockPredicate;
+
 	protected BlockInteractingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			List<SizedIngredient> input,

@@ -1,5 +1,7 @@
 package snownee.lychee.recipes;
 
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.serialization.MapCodec;
@@ -67,7 +69,12 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return NonNullList.of(Ingredient.EMPTY, input.ingredient());
+		return NonNullList.copyOf(List.of(input.ingredient()));
+	}
+
+	@Override
+	public List<SizedIngredient> sizedIngredients() {
+		return List.of(input);
 	}
 
 	@Override

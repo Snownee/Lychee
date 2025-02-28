@@ -1,5 +1,7 @@
 package snownee.lychee.recipes;
 
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.serialization.MapCodec;
@@ -11,18 +13,16 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.LycheeCounter;
-import snownee.lychee.util.RecipeMatcher;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -85,19 +85,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 		if (!BlockPredicateExtensions.isAny(blockPredicate) && !BlockPredicateExtensions.matches(blockPredicate, context)) {
 			return false;
 		}
-		var itemEntities = itemShapelessContext.itemEntities.stream()
-				.filter(item -> ingredients.ingredients().stream().anyMatch(it -> it.test(item.getItem())))
-				.limit(ItemShapelessRecipeUtils.MAX_INGREDIENTS)
-				.toList();
-		var items = itemEntities.stream().map(ItemEntity::getItem).toList();
-		var counts = items.stream().mapToInt(ItemStack::getCount).toArray();
-		var recipeMatcher = RecipeMatcher.findMatches(items, ingredients.flattenedIngredients(), counts);
-		if (recipeMatcher.isEmpty()) {
-			return false;
-		}
-		itemShapelessContext.filteredItems = itemEntities;
-		itemShapelessContext.setMatcher(recipeMatcher.get());
-		return true;
+		return ItemShapelessRecipeUtils.matches(context, ingredients);
 	}
 
 
@@ -114,6 +102,11 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
 		return ingredients.flattenedIngredients();
+	}
+
+	@Override
+	public List<SizedIngredient> sizedIngredients() {
+		return ingredients.ingredients();
 	}
 
 	public static class Serializer implements LycheeRecipeSerializer<ItemInsideRecipe> {

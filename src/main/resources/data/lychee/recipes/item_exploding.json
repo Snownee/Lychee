@@ -2,31 +2,8 @@
   "type": "lychee:item_exploding",
   "item_in": [
     {
-      "tag": "coals"
-    },
-    {
-      "tag": "coals"
-    },
-    {
-      "tag": "coals"
-    },
-    {
-      "tag": "coals"
-    },
-    {
-      "tag": "coals"
-    },
-    {
-      "tag": "coals"
-    },
-    {
-      "tag": "coals"
-    },
-    {
-      "tag": "coals"
-    },
-    {
-      "tag": "coals"
+      "tag": "coals",
+			"count": 9
     }
   ],
   "post": [

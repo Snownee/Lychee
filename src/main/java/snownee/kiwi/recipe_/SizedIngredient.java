@@ -48,7 +48,7 @@ public final class SizedIngredient {
 	private ItemStack[] cachedStacks;
 
 	public SizedIngredient(Ingredient ingredient, int count) {
-		Preconditions.checkArgument(count > 0, "Count can't be negative");
+		Preconditions.checkArgument(count > 0, "Count must be positive");
 		this.ingredient = ingredient;
 		this.count = count;
 	}
