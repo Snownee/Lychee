@@ -13,6 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.ExtraCodecs;
@@ -39,7 +40,7 @@ public class RecipeManagerMixin {
 		if (LycheeConfig.enableYamlRecipes) {
 			Map<ResourceLocation, JsonElement> yamlRecipes = OneTimeLoader.load(
 					resourceManager,
-					"recipes",
+					Registries.elementsDirPath(Registries.RECIPE),
 					ExtraCodecs.JSON,
 					new OneTimeLoader.Context());
 			for (Map.Entry<ResourceLocation, JsonElement> entry : yamlRecipes.entrySet()) {

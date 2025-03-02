@@ -166,6 +166,9 @@ dependencies {
 
 jar {
     exclude("/assets/${project.mod_id}/lang/en_us.existing.json")
+    exclude("/data/${project.mod_id}/lychee_fragment")
+    exclude("/data/${project.mod_id}/predicate")
+    exclude("/data/${project.mod_id}/recipe")
     manifest {
         attributes([
                 "Implementation-Title"    : project.name,
