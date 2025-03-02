@@ -4,7 +4,7 @@ Fragment is a reusable JSON element that can be attached to your Lychee recipes.
 
 ## Define
 
-All fragments should be defined in the `lychee_fragments` folder in a data pack, as a JSON file.
+All fragments should be defined in the `lychee_fragment` folder in a data pack, as a JSON file.
 
 ```json
 {
@@ -20,7 +20,7 @@ All fragments should be defined in the `lychee_fragments` folder in a data pack,
 
 First let's assume we have such a fragment:
 
-```json title="mymod/lychee_fragments/gems.json"
+```json title="mymod/lychee_fragment/gems.json"
 {
     "value": [
         {
@@ -125,7 +125,7 @@ You can define variables together with the fragment path, and reference it in th
     }
     ```
 
-=== "`mymod/lychee_fragments/gems.json`"
+=== "`mymod/lychee_fragment/gems.json`"
 
     ```json
     {
@@ -144,7 +144,7 @@ You can define variables together with the fragment path, and reference it in th
     }
     ```
 
-=== "`mymod/lychee_fragments/comment.json`"
+=== "`mymod/lychee_fragment/comment.json`"
 
     ```json
     {

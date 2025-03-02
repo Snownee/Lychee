@@ -54,11 +54,11 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name     | Description               | Type / Literal                                                                           |
-    | -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
-    | type     | type                      | "lychee:block_interacting"                                                               |
-    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | block_in | the block being used      | [BlockPredicate](general-types.md#blockpredicate)                                        |
+    | Name     | Description               | Type / Literal                                                                                               |
+    | -------- | ------------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | type     | type                      | "lychee:block_interacting"                                                                                   |
+    | item_in  | the item in player's hand | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
+    | block_in | the block being used      | [BlockPredicate](general-types.md#blockpredicate)                                                            |
 
     `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
 
@@ -211,11 +211,11 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name     | Description               | Type / Literal                                                                           |
-    | -------- | ------------------------- | ---------------------------------------------------------------------------------------- |
-    | type     | type                      | "lychee:block_clicking"                                                                  |
-    | item_in  | the item in player's hand | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate)                                        |
+    | Name     | Description               | Type / Literal                                                                                               |
+    | -------- | ------------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | type     | type                      | "lychee:block_clicking"                                                                                      |
+    | item_in  | the item in player's hand | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
+    | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate)                                                            |
 
     `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
 
@@ -338,12 +338,12 @@ Default behavior: Item is consumed.
 
 !!! note "Format"
 
-    | Name     | Description                        | Type / Literal                                                                           |
-    | -------- | ---------------------------------- | ---------------------------------------------------------------------------------------- |
-    | type     | type                               | "lychee:item_inside"                                                                     |
-    | item_in  | the ticking item(s)                | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | block_in | the block where the item(s) in     | [BlockPredicate](general-types.md#blockpredicate)                                        |
-    | time     | waiting time in seconds ^optional^ | int                                                                                      |
+    | Name     | Description                        | Type / Literal                                                                                                         |
+    | -------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+    | type     | type                               | "lychee:item_inside"                                                                                                   |
+    | item_in  | the ticking item(s)                | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#ingsizedingredientredient)[] |
+    | block_in | the block where the item(s) in     | [BlockPredicate](general-types.md#blockpredicate)                                                                      |
+    | time     | waiting time in seconds ^optional^ | int                                                                                                                    |
 
 ??? example
 
@@ -515,12 +515,12 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
 
 !!! note "Format"
 
-    | Name          | Description                                              | Type / Literal                                                                           |
-    | ------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-    | type          | type                                                     | "lychee:block_crushing"                                                                  |
-    | item_in       | the crushed items ^optional^                             | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | falling_block | the falling block. default are all the anvils ^optional^ | [BlockPredicate](general-types.md#blockpredicate)                                        |
-    | landing_block | the landing block. default is any block ^optional^       | [BlockPredicate](general-types.md#blockpredicate)                                        |
+    | Name          | Description                                              | Type / Literal                                                                                               |
+    | ------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | type          | type                                                     | "lychee:block_crushing"                                                                                      |
+    | item_in       | the crushed items ^optional^                             | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
+    | falling_block | the falling block. default are all the anvils ^optional^ | [BlockPredicate](general-types.md#blockpredicate)                                                            |
+    | landing_block | the landing block. default is any block ^optional^       | [BlockPredicate](general-types.md#blockpredicate)                                                            |
 
 ??? example
 
@@ -532,8 +532,7 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
         type: lychee:block_crushing
         item_in:
         - item: sugar_cane
-        - item: sugar_cane
-        - item: sugar_cane
+          count: 3
         post:
         - type: drop_item
           id: paper
@@ -547,13 +546,8 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
             "type": "lychee:block_crushing",
             "item_in": [
                 {
-                    "item": "sugar_cane"
-                },
-                {
-                    "item": "sugar_cane"
-                },
-                {
-                    "item": "sugar_cane"
+                    "item": "sugar_cane",
+                    "count": 3
                 }
             ],
             "post": [
@@ -634,10 +628,10 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 
 !!! note "Format"
 
-    | Name    | Description                           | Type / Literal                                                                           |
-    | ------- | ------------------------------------- | ---------------------------------------------------------------------------------------- |
-    | type    | type                                  | "lychee:lightning_channeling"                                                            |
-    | item_in | items nearby the lightning ^optional^ | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | Name    | Description                           | Type / Literal                                                                                               |
+    | ------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | type    | type                                  | "lychee:lightning_channeling"                                                                                |
+    | item_in | items nearby the lightning ^optional^ | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
 
 ??? example
 
@@ -676,10 +670,10 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 
 !!! note "Format"
 
-    | Name    | Description                                | Type / Literal                                                                           |
-    | ------- | ------------------------------------------ | ---------------------------------------------------------------------------------------- |
-    | type    | type                                       | "lychee:item_exploding"                                                                  |
-    | item_in | items affected by the explosion ^optional^ | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | Name    | Description                                | Type / Literal                                                                                               |
+    | ------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+    | type    | type                                       | "lychee:item_exploding"                                                                                      |
+    | item_in | items affected by the explosion ^optional^ | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
 
 !!! note
 

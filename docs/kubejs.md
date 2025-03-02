@@ -141,7 +141,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 
 ## Examples
 
-### Anvil Crafting Recipe to Repair Tools //FIXME
+### Anvil Crafting Recipe to Repair Tools
 
 === "Recipe"
 

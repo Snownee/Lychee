@@ -1,5 +1,12 @@
 # Update Notes
 
+## 6.1
+
+- Some recipes now use [SizedIngredient](general-types.md#sizedingredient) instead of [Ingredient](general-types.md#ingredient).
+- Block interacting and clicking recipes now support item input with count.
+- The folder name for fragments is now `lychee_fragment` instead of `lychee_fragments`.
+- Added new condition type `sky_darken` to check the sky darkness.
+
 ## 6.0
 
 - Ported to 1.21
