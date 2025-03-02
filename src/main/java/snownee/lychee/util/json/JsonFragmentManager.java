@@ -25,7 +25,7 @@ public class JsonFragmentManager {
 	private final Set<JsonElement> processed = Sets.newIdentityHashSet();
 
 	public JsonFragmentManager(ResourceManager resourceManager) {
-		this(resourceManager, "lychee_fragments");
+		this(resourceManager, "lychee_fragment");
 	}
 
 	public JsonFragmentManager(ResourceManager resourceManager, String directory) {

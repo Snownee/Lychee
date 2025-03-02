@@ -13,6 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.ExtraCodecs;
@@ -37,7 +38,10 @@ public class RecipeManagerMixin {
 			ProfilerFiller profiler,
 			CallbackInfo ci) {
 		if (LycheeConfig.enableYamlRecipes) {
-			Map<ResourceLocation, JsonElement> yamlRecipes = OneTimeLoader.load(resourceManager, "recipes", ExtraCodecs.JSON);
+			Map<ResourceLocation, JsonElement> yamlRecipes = OneTimeLoader.load(
+					resourceManager,
+					Registries.elementsDirPath(Registries.RECIPE),
+					ExtraCodecs.JSON);
 			for (Map.Entry<ResourceLocation, JsonElement> entry : yamlRecipes.entrySet()) {
 				object.putIfAbsent(entry.getKey(), entry.getValue());
 			}
