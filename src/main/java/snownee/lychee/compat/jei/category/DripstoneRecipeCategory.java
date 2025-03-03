@@ -19,8 +19,8 @@ import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -38,7 +38,7 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {
 		GuiGameElement.of(state)
 				.scale(12)
-				.lighting(JEIREI.BLOCK_LIGHTING)
+				.lighting(RVs.BLOCK_LIGHTING)
 				.atLocal(localX, localY, localZ)
 				.rotateBlock(12.5, -22.5, 0)
 				.render(graphics);
@@ -60,7 +60,6 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 			double mouseX,
 			double mouseY) {
 		DripstoneRecipe recipe = recipeHolder.value();
-		drawInfoBadgeIfNeeded(graphics, recipe, mouseX, mouseY);
 		BlockState sourceBlock = CommonProxy.getCycledItem(
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.sourceBlock()),
 				Blocks.AIR.defaultBlockState(),

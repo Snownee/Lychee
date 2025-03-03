@@ -31,7 +31,6 @@ import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.ScreenElement;
-import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.rei.category.AbstractLycheeCategory;
 import snownee.lychee.compat.rei.category.CategoryProviders;
 import snownee.lychee.compat.rei.category.IconProviders;
@@ -40,9 +39,10 @@ import snownee.lychee.compat.rei.category.WorkstationRegisters;
 import snownee.lychee.compat.rei.display.AnvilCraftingDisplay;
 import snownee.lychee.compat.rei.display.DisplayRegisters;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
-import snownee.lychee.compat.rei.elements.LEntryWidget;
+import snownee.lychee.compat.rei.elements.LycheeEntryWidget;
 import snownee.lychee.compat.rei.elements.ScreenElementWidget;
 import snownee.lychee.compat.rei.ingredient.PostActionIngredientHelper;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -53,6 +53,45 @@ public class LycheeREIPlugin implements REIClientPlugin {
 
 	private final Multimap<AbstractLycheeCategory<?>, RecipeHolder<? extends ILycheeRecipe<LycheeContext>>> categories = LinkedHashMultimap.create();
 
+	public static LycheeEntryWidget slot(Point startPoint, int x, int y, SlotType slotType) {
+		LycheeEntryWidget widget = new LycheeEntryWidget(new Point(startPoint.x + x + 1, startPoint.y + y + 1));
+		widget.background(slotType.element);
+		return widget;
+	}
+
+	@Override
+	public void registerDisplays(DisplayRegistry registry) {
+		categories.asMap().forEach((category, recipes) -> {
+			var displayRegister = DisplayRegisters.get(category.recipeType().categoryId);
+			displayRegister.consume(
+					registry,
+					(AbstractLycheeCategory) category,
+					(Collection) recipes);
+		});
+
+		try {
+			KUtil.getRecipes(RecipeTypes.ANVIL_CRAFTING).stream()
+					.filter(it ->
+							!it.value().output().isEmpty() &&
+									!it.value().isSpecial() && !it.value().hideInRecipeViewer())
+					.map(AnvilCraftingDisplay::new)
+					.forEach(registry::add);
+		} catch (Throwable e) {
+			Lychee.LOGGER.error("", e);
+		}
+
+		registry.registerVisibilityPredicate((DisplayCategory<?> category, Display display) -> {
+			if (display instanceof LycheeDisplay<?> lycheeDisplay && lycheeDisplay.recipe().hideInRecipeViewer()) {
+				return EventResult.interruptFalse();
+			}
+			return EventResult.pass();
+		});
+	}
+
+	public static Rectangle offsetRect(Point startPoint, Rect2i rect) {
+		return new Rectangle(startPoint.x + rect.getX(), startPoint.y + rect.getY(), rect.getWidth(), rect.getHeight());
+	}
+
 	@Override
 	public void registerCategories(CategoryRegistry registry) {
 		categories.clear();
@@ -61,7 +100,7 @@ public class LycheeREIPlugin implements REIClientPlugin {
 				continue;
 			}
 
-			var generatedCategories = JEIREI.generateCategories(recipeType, CategoryIdentifier::of);
+			var generatedCategories = RVs.generateCategories(recipeType, CategoryIdentifier::of);
 
 			var categoryProvider = CategoryProviders.get(recipeType);
 
@@ -110,7 +149,7 @@ public class LycheeREIPlugin implements REIClientPlugin {
 							}
 						}
 						if (rect != null) {
-							LycheeCategory.drawInfoBadgeIfNeeded(widgets, lycheeDisplay, bounds.getLocation(), rect);
+							LycheeCategory.createInfoBadgeIfNeeded(widgets, lycheeDisplay, bounds.getLocation(), rect);
 						}
 						return widgets;
 					}
@@ -120,45 +159,6 @@ public class LycheeREIPlugin implements REIClientPlugin {
 		};
 		registry.get(CategoryIdentifier.of("plugins/crafting")).registerExtension(extensionProvider);
 		registry.get(CategoryIdentifier.of("plugins/anvil")).registerExtension(extensionProvider);
-	}
-
-	@Override
-	public void registerDisplays(DisplayRegistry registry) {
-		categories.asMap().forEach((category, recipes) -> {
-			var displayRegister = DisplayRegisters.get(category.recipeType().categoryId);
-			displayRegister.consume(
-					registry,
-					(AbstractLycheeCategory) category,
-					(Collection) recipes);
-		});
-
-		try {
-			KUtil.getRecipes(RecipeTypes.ANVIL_CRAFTING).stream()
-					.filter(it ->
-							!it.value().output().isEmpty() &&
-									!it.value().isSpecial() && !it.value().hideInRecipeViewer())
-					.map(AnvilCraftingDisplay::new)
-					.forEach(registry::add);
-		} catch (Throwable e) {
-			Lychee.LOGGER.error("", e);
-		}
-
-		registry.registerVisibilityPredicate((DisplayCategory<?> category, Display display) -> {
-			if (display instanceof LycheeDisplay<?> lycheeDisplay && lycheeDisplay.recipe().hideInRecipeViewer()) {
-				return EventResult.interruptFalse();
-			}
-			return EventResult.pass();
-		});
-	}
-
-	public static Rectangle offsetRect(Point startPoint, Rect2i rect) {
-		return new Rectangle(startPoint.x + rect.getX(), startPoint.y + rect.getY(), rect.getWidth(), rect.getHeight());
-	}
-
-	public static LEntryWidget slot(Point startPoint, int x, int y, SlotType slotType) {
-		LEntryWidget widget = new LEntryWidget(new Point(startPoint.x + x + 1, startPoint.y + y + 1));
-		widget.background(slotType.element);
-		return widget;
 	}
 
 	@Override

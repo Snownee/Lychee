@@ -14,14 +14,16 @@ import mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient;
 import mezz.jei.api.gui.builder.IIngredientAcceptor;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IPlatformFluidHelper;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,8 +31,10 @@ import net.minecraft.world.level.material.Fluid;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.client.gui.AllGuiTextures;
-import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.jei.LycheeJEIPlugin;
+import snownee.lychee.compat.jei.elements.InteractiveWidget;
+import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionRenderer;
@@ -145,16 +149,25 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		}
 	}
 
-	static void drawInfoBadgeIfNeeded(GuiGraphics graphics, ILycheeRecipe<?> recipe, double mouseX, double mouseY, Rect2i rect) {
+	static void createInfoBadgeIfNeeded(IRecipeExtrasBuilder builder, RecipeHolder<? extends ILycheeRecipe<?>> recipeHolder, Rect2i rect) {
+		ILycheeRecipe<?> recipe = recipeHolder.value();
 		if (recipe.conditions().conditions().isEmpty() && !recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
 			return;
 		}
-		var matrixStack = graphics.pose();
-		matrixStack.pushPose();
-		matrixStack.translate(rect.getX(), rect.getY(), 0);
-		matrixStack.scale(.5F, .5F, .5F);
-		AllGuiTextures.INFO.render(graphics, 0, 0);
-		matrixStack.popPose();
+		ScreenRectangle bounds = new ScreenRectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+		InteractiveWidget widget = new InteractiveWidget(bounds);
+		widget.setOnClick((w, button) -> ClientProxy.postInfoBadgeClickEvent(recipeHolder.value(), recipeHolder.id(), button));
+		widget.setTooltipFunction($ -> RVs.getRecipeTooltip(recipeHolder.value()));
+		widget.setRenderable((graphics, mouseX, mouseY, delta) -> {
+			var matrixStack = graphics.pose();
+			matrixStack.pushPose();
+			matrixStack.translate(bounds.left(), bounds.top(), 0);
+			matrixStack.scale(.5F, .5F, .5F);
+			AllGuiTextures.INFO.render(graphics, 0, 0);
+			matrixStack.popPose();
+		});
+		builder.addWidget(widget);
+		builder.addGuiEventListener(widget);
 	}
 
 	LycheeRecipeType<? extends R> recipeType();
@@ -165,8 +178,8 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return 120;
 	}
 
-	default void drawInfoBadgeIfNeeded(GuiGraphics graphics, ILycheeRecipe<?> recipe, double mouseX, double mouseY) {
-		drawInfoBadgeIfNeeded(graphics, recipe, mouseX, mouseY, infoRect());
+	default void createInfoBadgeIfNeeded(IRecipeExtrasBuilder builder, RecipeHolder<? extends ILycheeRecipe<?>> recipeHolder) {
+		createInfoBadgeIfNeeded(builder, recipeHolder, infoRect());
 	}
 
 	default void actionGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
@@ -180,7 +193,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 	}
 
 	default void ingredientGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
-		var ingredients = JEIREI.generateShapelessInputs(recipe);
+		var ingredients = RVs.generateShapelessInputs(recipe);
 		slotGroup(
 				builder, x + 1, y + 1, 0, ingredients, (layout0, ingredient, i, x0, y0) -> {
 					var items = ingredient.ingredient.getItems();

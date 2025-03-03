@@ -23,8 +23,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -50,7 +50,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 		if (con == null) {
 			return Blocks.AIR.defaultBlockState();
 		}
-		return JEIREI.getMostUsedBlock(recipes).getFirst();
+		return RVs.getMostUsedBlock(recipes).getFirst();
 	}
 
 	public BlockPredicate getInputBlock(T recipe) {
@@ -104,7 +104,6 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 			double mouseY
 	) {
 		var recipe = recipeHolder.value();
-		drawInfoBadgeIfNeeded(graphics, recipe, mouseX, mouseY);
 		var centerX = getWidth() / 2;
 		drawExtra(recipeHolder, graphics, mouseX, mouseY, centerX);
 
@@ -125,7 +124,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 		GuiGameElement.of(state)
 				.rotateBlock(12.5, 202.5, 0)
 				.scale(15)
-				.lighting(JEIREI.BLOCK_LIGHTING)
+				.lighting(RVs.BLOCK_LIGHTING)
 				.atLocal(0, 0.2, 0)
 				.at(inputBlockRect.getX(), inputBlockRect.getY())
 				.render(graphics);

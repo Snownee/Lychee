@@ -14,6 +14,7 @@ import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.gui.widgets.WidgetWithBounds;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import snownee.kiwi.util.NotNullByDefault;
@@ -27,6 +28,8 @@ public class InteractiveWidget extends WidgetWithBounds {
 	private Function<InteractiveWidget, @Nullable List<Component>> tooltip;
 	@Nullable
 	private BiConsumer<InteractiveWidget, Integer> onClick;
+	@Nullable
+	private Renderable renderable;
 
 	public InteractiveWidget(Rectangle bounds) {
 		this.bounds = bounds;
@@ -48,6 +51,9 @@ public class InteractiveWidget extends WidgetWithBounds {
 			if (tooltip != null) {
 				Tooltip.create(point, tooltip).queue();
 			}
+		}
+		if (renderable != null) {
+			renderable.render(graphics, mouseX, mouseY, delta);
 		}
 	}
 
@@ -109,5 +115,9 @@ public class InteractiveWidget extends WidgetWithBounds {
 
 	public final void setOnClick(@Nullable BiConsumer<InteractiveWidget, Integer> onClick) {
 		this.onClick = onClick;
+	}
+
+	public void setRenderable(@Nullable Renderable renderable) {
+		this.renderable = renderable;
 	}
 }

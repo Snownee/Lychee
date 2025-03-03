@@ -3,16 +3,16 @@ package snownee.lychee.compat.rei.elements;
 import java.util.Collections;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.WidgetWithBounds;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
 
+@NotNullByDefault
 public class ScreenElementWidget extends WidgetWithBounds {
 
 	public final Rectangle bounds = new Rectangle(16, 16);
@@ -41,7 +41,7 @@ public class ScreenElementWidget extends WidgetWithBounds {
 	}
 
 	@Override
-	public @NotNull List<? extends GuiEventListener> children() {
+	public List<? extends GuiEventListener> children() {
 		return Collections.emptyList();
 	}
 
