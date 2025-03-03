@@ -1,6 +1,7 @@
 package snownee.lychee.recipes;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.action.Job;
@@ -48,8 +50,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 			ItemStack output,
 			List<PostAction> assemblingActions,
 			int levelCost,
-			int materialCost
-	) {
+			int materialCost) {
 		super(commonProperties);
 		this.ingredients = ingredients;
 		this.levelCost = levelCost;
@@ -148,42 +149,37 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	public static class Serializer implements LycheeRecipeSerializer<AnvilCraftingRecipe> {
-		public static final MapCodec<AnvilCraftingRecipe> CODEC =
-				RecordCodecBuilder.mapCodec(instance -> instance.group(
+		public static final MapCodec<AnvilCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
-						LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY, 1, 2)
+						LycheeCodecs.sizeLimit(KCodecs.compactList(Ingredient.CODEC_NONEMPTY), 1, 2)
+								.xmap(NonNullList::copyOf, Function.identity())
 								.fieldOf(ITEM_IN)
 								.forGetter(AnvilCraftingRecipe::getIngredients),
-						LycheeCodecs.PLAIN_ITEM_STACK_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
-						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
-								.forGetter(AnvilCraftingRecipe::assemblingActions),
-						ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1)
-								.forGetter(AnvilCraftingRecipe::levelCost),
-						ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1)
-								.forGetter(AnvilCraftingRecipe::materialCost)
-				).apply(instance, AnvilCraftingRecipe::new));
+						LycheeCodecs.ITEM_STACK_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
+						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
+						ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),
+						ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1).forGetter(AnvilCraftingRecipe::materialCost))
+				.apply(instance, AnvilCraftingRecipe::new));
 
 		@Override
 		public @NotNull MapCodec<AnvilCraftingRecipe> codec() {
 			return CODEC;
 		}
 
-		public static final StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> STREAM_CODEC =
-				StreamCodec.composite(
-						LycheeRecipeCommonProperties.STREAM_CODEC,
-						AnvilCraftingRecipe::commonProperties,
-						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY, 1, 2)),
-						AnvilCraftingRecipe::getIngredients,
-						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.PLAIN_ITEM_STACK_CODEC),
-						AnvilCraftingRecipe::output,
-						PostActionType.STREAM_LIST_CODEC,
-						AnvilCraftingRecipe::assemblingActions,
-						ByteBufCodecs.VAR_INT,
-						AnvilCraftingRecipe::levelCost,
-						ByteBufCodecs.VAR_INT,
-						AnvilCraftingRecipe::materialCost,
-						AnvilCraftingRecipe::new
-				);
+		public static final StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> STREAM_CODEC = StreamCodec.composite(
+				LycheeRecipeCommonProperties.STREAM_CODEC,
+				AnvilCraftingRecipe::commonProperties,
+				Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(2)).map(NonNullList::copyOf, Function.identity()),
+				AnvilCraftingRecipe::getIngredients,
+				ItemStack.STREAM_CODEC,
+				AnvilCraftingRecipe::output,
+				PostActionType.STREAM_LIST_CODEC,
+				AnvilCraftingRecipe::assemblingActions,
+				ByteBufCodecs.VAR_INT,
+				AnvilCraftingRecipe::levelCost,
+				ByteBufCodecs.VAR_INT,
+				AnvilCraftingRecipe::materialCost,
+				AnvilCraftingRecipe::new);
 
 		@Override
 		public @NotNull StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> streamCodec() {

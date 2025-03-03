@@ -89,7 +89,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 						LycheeCodecs.sizeLimit(KCodecs.compactList(OPTIONAL_SIZED_INGREDIENT_CODEC), 1, 2)
 								.fieldOf(ITEM_IN)
 								.forGetter(T::sizedIngredients),
-						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY).forGetter(T::blockPredicate))
+						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY).forGetter(T::blockPredicate))
 				.apply(instance, constructor));
 	}
 

@@ -142,9 +142,9 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		public static final MapCodec<BlockCrushingRecipe> CODEC =
 				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(BlockCrushingRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC.optionalFieldOf("falling_block", ANVIL)
+						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf("falling_block", ANVIL)
 								.forGetter(it -> it.fallingBlock),
-						BlockPredicateExtensions.CODEC.optionalFieldOf("landing_block", BlockPredicateExtensions.ANY)
+						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf("landing_block", BlockPredicateExtensions.ANY)
 								.forGetter(BlockCrushingRecipe::landingBlock),
 						IngredientCollection.CODEC
 								.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)

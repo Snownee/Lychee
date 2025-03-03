@@ -3,8 +3,8 @@
   "item_in": {
     "item": "iron_axe"
   },
-  "block_in": "oak_log",
-  "contextual": [
+  "block_in": "oak_log[axis=y]",
+  "if": [
     {
       "type": "direction",
       "direction": "up"
@@ -18,14 +18,14 @@
     {
       "type": "drop_item",
 			"id": "diamond",
-      "contextual": {
+      "if": {
         "type": "chance",
         "chance": 0.5
       }
     },
     {
       "type": "place",
-      "block": "stripped_oak_log"
+      "block": "stripped_oak_log[axis=y]"
     },
     {
       "type": "damage_item",
@@ -33,7 +33,7 @@
     },
     {
       "type": "random",
-      "contextual": {
+      "if": {
         "type": "chance",
         "chance": 0.9
       },
@@ -45,7 +45,7 @@
         {
           "type": "drop_item",
 					"id": "gold_ingot",
-          "contextual": {
+          "if": {
             "type": "weather",
             "weather": "rain"
           }
@@ -63,7 +63,7 @@
     },
     {
       "type": "if",
-      "contextual": {
+      "if": {
         "type": "chance",
         "chance": 0.5
       },
@@ -71,7 +71,7 @@
         {
           "type": "drop_item",
 					"id": "gold_ingot",
-          "contextual": {
+          "if": {
             "type": "weather",
             "weather": "rain"
           }

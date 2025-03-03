@@ -19,6 +19,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -27,11 +28,12 @@ import com.mojang.serialization.DynamicOps;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.critereon.NbtPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -78,38 +80,76 @@ public class BlockPredicateExtensions {
 			BlockStateProperties.DRIPSTONE_THICKNESS
 	));
 
-	public static <T> DataResult<BlockPredicate> fromString(DynamicOps<T> ops, T input) {
+	public static <T> DataResult<BlockPredicate> fromString(DynamicOps<T> ops, T input, boolean forTesting) {
 		String s = ops.getStringValue(input).result().orElseThrow();
 		if ("*".equals(s)) {
 			return DataResult.success(ANY);
 		}
-		var parsed = RegistryCodecs.homogeneousList(Registries.BLOCK).parse(ops, input);
-		if (parsed.result().isEmpty()) {
-			return DataResult.error(() -> "Invalid block predicate: " + s);
+		Either<BlockStateParser.BlockResult, BlockStateParser.TagResult> result;
+		try {
+			if (forTesting) {
+				result = BlockStateParser.parseForTesting(BuiltInRegistries.BLOCK.asLookup(), s, true);
+			} else {
+				result = Either.left(BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), s, true));
+			}
+		} catch (Exception e) {
+			return DataResult.error(() -> "Invalid block predicate: %s - %s".formatted(s, e.getMessage()));
 		}
-		return DataResult.success(new BlockPredicate(Optional.of(parsed.result().get()), Optional.empty(), Optional.empty()));
+
+		return DataResult.success(result.map(
+				$ -> new BlockPredicate(
+						Optional.of(HolderSet.direct($.blockState().getBlockHolder())),
+						$.properties().isEmpty() ?
+								Optional.empty() :
+								Optional.of(new StatePropertiesPredicate($.properties()
+										.entrySet()
+										.stream()
+										.map(it -> new StatePropertiesPredicate.PropertyMatcher(
+												it.getKey().getName(),
+												new StatePropertiesPredicate.ExactMatcher(getNameByValue(it.getKey(), it.getValue()))))
+										.toList())),
+						Optional.ofNullable($.nbt()).map(NbtPredicate::new)),
+				$ -> new BlockPredicate(
+						Optional.of($.tag()),
+						$.vagueProperties().isEmpty() ?
+								Optional.empty() :
+								Optional.of(new StatePropertiesPredicate($.vagueProperties()
+										.entrySet()
+										.stream()
+										.map(it -> new StatePropertiesPredicate.PropertyMatcher(
+												it.getKey(),
+												new StatePropertiesPredicate.ExactMatcher(it.getValue())))
+										.toList())),
+						Optional.ofNullable($.nbt()).map(NbtPredicate::new)
+				)
+		));
 	}
 
-	public static final Codec<BlockPredicate> CODEC = Codec.of(BlockPredicate.CODEC, new Decoder<>() {
-		@Override
-		public <T> DataResult<Pair<BlockPredicate, T>> decode(DynamicOps<T> ops, T input) {
-			var stringValue = ops.getStringValue(input);
-			if (stringValue.result().isPresent()) {
-				return fromString(ops, input).flatMap(it -> DataResult.success(Pair.of(it, ops.empty())));
-			}
-			DataResult<Pair<BlockPredicate, T>> result = BlockPredicate.CODEC.decode(ops, input);
-			if (result.result().isPresent()) {
-				BlockPredicate predicate = result.result().get().getFirst();
-				if (isAny(predicate)) {
-					if (ops.getMap(input).result().orElseThrow().entries().findAny().isPresent()) {
-						return DataResult.error(() -> "Wildcard BlockPredicate must be an empty object, but found " + input);
+	private static <T extends Comparable<T>> String getNameByValue(Property<T> property, Object value) {
+		//noinspection unchecked
+		return property.getName((T) value);
+	}
+
+	public static final Codec<BlockPredicate> CODEC_FOR_TESTING = codec(true);
+	public static final Codec<BlockPredicate> CODEC = codec(false);
+
+	private static Codec<BlockPredicate> codec(boolean forTesting) {
+		return Codec.of(
+				BlockPredicate.CODEC, new Decoder<>() {
+					@Override
+					public <T> DataResult<Pair<BlockPredicate, T>> decode(DynamicOps<T> ops, T input) {
+						var stringValue = ops.getStringValue(input);
+						if (stringValue.result().isPresent()) {
+							return fromString(ops, input, forTesting).flatMap(it -> DataResult.success(Pair.of(it, ops.empty())));
+						}
+						DataResult<Pair<BlockPredicate, T>> result = BlockPredicate.CODEC.decode(ops, input);
+						if (result.result().isPresent() && isAny(result.getOrThrow().getFirst())) {
+							return DataResult.error(() -> "Wildcard BlockPredicate must be \"*\" string, but found " + input);
+						}
+						return result;
 					}
-					return DataResult.success(Pair.of(ANY, ops.empty()));
-				}
-			}
-			return result;
-		}
-	});
+				});
+	}
 
 	public static boolean isAny(BlockPredicate predicate) {
 		if (predicate == ANY) {
