@@ -296,7 +296,7 @@ Default behavior: none.
 
     Items such as netherite or nether star can't catch fire.
 
-    If you want to make an item fire-immune as well, you can tag it with `lychee:fire_immune`
+    Related tag: [`lychee:fire_immune`](extra-features.md#lycheefire_immune)
 
 ??? example
 
@@ -445,7 +445,7 @@ Default behavior: Item is consumed.
 
 ### Anvil Crafting
 
-It is not recommended to add contextual conditions or actions to the recipe, because JEI/REI does not support drawing extra things on an anvil recipe.
+It is not recommended to add actions to the recipe, because they cannot be displayed on JEI/REI at the moment.
 
 This recipe type is not [repeatable](concepts.md#repeatability).
 
@@ -457,7 +457,7 @@ Default behavior: Anvil is damaged.
     | ------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
     | type          | type                                                                                     | "lychee:anvil_crafting"                                                                  |
     | item_in       | the input items (the second one is optional)                                             | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | item_out      | the result item                                                                          | ItemStack                                                                                |
+    | item_out      | the result item                                                                          | [ItemStack](general-types.md#itemstack)                                                  |
     | level_cost    | player's xp level ^optional^{ title="default: 1" }                                       | int && >=1                                                                               |
     | material_cost | amount of items that will be cost from right input slot ^optional^{ title="default: 1" } | int                                                                                      |
     | assembling    | actions that running before the result is displayed ^optional^                           | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
@@ -659,6 +659,10 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
             ]
         }
         ```
+
+!!! note
+    
+    Related tags: [``lychee:lightning_immune``](extra-features.md#lycheelightning_immune), [``lychee:lightning_fire_immune``](extra-features.md#lycheelightning_fire_immune)
 
 ### Item Exploding
 

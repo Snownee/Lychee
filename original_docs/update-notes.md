@@ -1,5 +1,11 @@
 # Update Notes
 
+## 6.2
+
+- Now you can use bracketed item to specify an ItemStack with components, just like in the `give` command.
+- Now you can use bracketed block to specify a BlockPredicate with properties or nbt, just like in the `setblock` command.
+- Now you can see the comment and conditions of an anvil recipe in JEI.
+
 ## 6.1
 
 - Some recipes now use [SizedIngredient](general-types.md#sizedingredient) instead of [Ingredient](general-types.md#ingredient).

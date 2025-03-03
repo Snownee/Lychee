@@ -173,6 +173,10 @@ Describes a inclusive range for doubles.
 
     DoubleBounds can also be a simple `number` to represent [n, n].
 
+## ItemStack
+
+An ItemStack is an item with its count and components.
+
 ## JsonPointer
 
 JsonPointer is a string syntax for identifying a specific value within a JSON. But the only thing you need to know is you should separate the path to the target with `/`.
