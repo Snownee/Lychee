@@ -58,7 +58,7 @@ import snownee.lychee.LycheeRegistries;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.action.CustomAction;
-import snownee.lychee.compat.IngredientInfo;
+import snownee.lychee.compat.rv.IngredientInfo;
 import snownee.lychee.compat.recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.compat.recipe_api.VisualOnlyComponentsIngredient;
 import snownee.lychee.contextual.CustomCondition;

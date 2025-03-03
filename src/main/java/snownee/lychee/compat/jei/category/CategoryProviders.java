@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.compat.JEIREI;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
@@ -80,8 +80,7 @@ public interface CategoryProviders {
 						GuiGraphics graphics,
 						double mouseX,
 						double mouseY) {
-					drawInfoBadgeIfNeeded(graphics, recipe.value(), mouseX, mouseY);
-					JEIREI.renderTnt(graphics, 85, 34);
+					RVs.renderTnt(graphics, 85, 34);
 				}
 			});
 

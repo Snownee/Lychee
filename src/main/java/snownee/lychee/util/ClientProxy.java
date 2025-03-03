@@ -32,7 +32,7 @@ import snownee.lychee.action.input.SetItem;
 import snownee.lychee.client.action.CycleStatePropertyPostActionRenderer;
 import snownee.lychee.client.action.IfPostActionRenderer;
 import snownee.lychee.client.action.PlaceBlockPostActionRenderer;
-import snownee.lychee.compat.IngredientInfo;
+import snownee.lychee.compat.rv.IngredientInfo;
 import snownee.lychee.util.action.ItemBasedPostActionRenderer;
 import snownee.lychee.util.action.ItemStackPostActionRenderer;
 import snownee.lychee.util.action.PostActionRenderer;

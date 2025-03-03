@@ -3,7 +3,6 @@ package snownee.lychee.compat.jei;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Maps;
@@ -16,6 +15,7 @@ import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
 import mezz.jei.api.registration.IModIngredientRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -23,22 +23,21 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.KUtil;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
-import snownee.lychee.compat.JEIREI;
+import snownee.lychee.compat.jei.elements.ScreenElementWidget;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.jei.category.AbstractLycheeCategory;
 import snownee.lychee.compat.jei.category.CategoryProviders;
 import snownee.lychee.compat.jei.category.CraftingRecipeCategoryExtension;
 import snownee.lychee.compat.jei.category.IconProviders;
 import snownee.lychee.compat.jei.category.WorkstationRegisters;
+import snownee.lychee.compat.jei.display.AnvilCraftingDisplay;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
@@ -74,7 +73,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 				continue;
 			}
 
-			var generatedCategories = JEIREI.generateCategories(recipeType, RecipeType::createRecipeHolderType);
+			var generatedCategories = RVs.generateCategories(recipeType, RecipeType::createRecipeHolderType);
 
 			var categoryProvider = CategoryProviders.get(recipeType);
 
@@ -114,20 +113,12 @@ public class LycheeJEIPlugin implements IModPlugin {
 				recipes.stream().toList()));
 
 		try {
-			var recipes = KUtil.getRecipes(RecipeTypes.ANVIL_CRAFTING).stream().filter($ ->
-					!$.value().output().isEmpty() && !$.value().isSpecial() && !$.value().hideInRecipeViewer()).map($ -> {
-				var recipe = $.value();
-				NonNullList<Ingredient> ingredients = recipe.getIngredients();
-				List<ItemStack> right = ingredients.size() == 1 ? List.of() : Stream.of(ingredients.getLast().getItems())
-						.map(ItemStack::copy)
-						.peek(it -> it.setCount(recipe.materialCost()))
-						.toList();
-				return registry.getVanillaRecipeFactory().createAnvilRecipe(
-						List.of(recipe.getIngredients().getFirst().getItems()),
-						right,
-						List.of(recipe.output()),
-						$.id());
-			}).toList();
+			var recipes = KUtil.getRecipes(RecipeTypes.ANVIL_CRAFTING)
+					.stream()
+					.filter($ ->
+							!$.value().output().isEmpty() && !$.value().isSpecial() && !$.value().hideInRecipeViewer())
+					.map($ -> (IJeiAnvilRecipe) AnvilCraftingDisplay.of($))
+					.toList();
 			registry.addRecipes(mezz.jei.api.constants.RecipeTypes.ANVIL, recipes);
 		} catch (Throwable e) {
 			Lychee.LOGGER.error("Error when registering anvil crafting recipes", e);
@@ -170,7 +161,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 		final IDrawable element;
 
 		SlotType(AllGuiTextures element) {
-			this.element = elementMap.computeIfAbsent(element, ScreenElementWrapper::new);
+			this.element = elementMap.computeIfAbsent(element, ScreenElementWidget::new);
 		}
 	}
 }

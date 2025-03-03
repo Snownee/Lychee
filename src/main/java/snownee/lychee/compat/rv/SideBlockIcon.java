@@ -1,4 +1,4 @@
-package snownee.lychee.compat.jei;
+package snownee.lychee.compat.rv;
 
 import java.util.function.Supplier;
 
@@ -9,7 +9,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
-import snownee.lychee.compat.JEIREI;
 
 public class SideBlockIcon extends RenderElement {
 
@@ -30,7 +29,7 @@ public class SideBlockIcon extends RenderElement {
 		mainIcon.render(graphics, 0, 0);
 		ms.popPose();
 		GuiGameElement.of(blockProvider.get())
-				.lighting(JEIREI.SIDE_ICON_LIGHTING)
+				.lighting(RVs.SIDE_ICON_LIGHTING)
 				.scale(7)
 				.rotateBlock(30, 202.5, 0)
 				.at(x + 4, y + 2)

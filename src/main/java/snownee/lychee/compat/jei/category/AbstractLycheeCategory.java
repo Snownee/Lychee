@@ -5,14 +5,11 @@ import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.lychee.compat.JEIREI;
-import snownee.lychee.compat.jei.elements.InteractiveWidget;
-import snownee.lychee.util.ClientProxy;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -42,7 +39,7 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 
 	@Override
 	public Component getTitle() {
-		return JEIREI.makeTitle(getRecipeType().getUid());
+		return RVs.makeTitle(getRecipeType().getUid());
 	}
 
 	@Override
@@ -62,14 +59,6 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 
 	@Override
 	public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<T> recipeHolder, IFocusGroup focuses) {
-		InteractiveWidget widget = new InteractiveWidget(new ScreenRectangle(
-				infoRect.getX(),
-				infoRect.getY(),
-				infoRect.getWidth(),
-				infoRect.getHeight()));
-		widget.setOnClick((w, button) -> ClientProxy.postInfoBadgeClickEvent(recipeHolder.value(), recipeHolder.id(), button));
-		widget.setTooltipFunction($ -> JEIREI.getRecipeTooltip(recipeHolder.value()));
-		builder.addWidget(widget);
-		builder.addGuiEventListener(widget);
+		createInfoBadgeIfNeeded(builder, recipeHolder);
 	}
 }

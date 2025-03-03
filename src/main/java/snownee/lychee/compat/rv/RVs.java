@@ -1,10 +1,9 @@
-package snownee.lychee.compat;
+package snownee.lychee.compat.rv;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.function.Function;
 
 import org.joml.Quaternionf;
@@ -28,7 +27,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -37,15 +35,14 @@ import snownee.lychee.client.gui.CustomLightingSettings;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.util.CachedRenderingEntity;
 import snownee.lychee.util.CommonProxy;
-import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public final class JEIREI {
+// Recipe view utils
+public final class RVs {
 	public static final CachedRenderingEntity<PrimedTnt> TNT_ENTITY = CachedRenderingEntity.ofFactory(EntityType.TNT::create);
 	public static ILightingSettings BLOCK_LIGHTING = CustomLightingSettings.builder()
 			.firstLightRotation(-45, -45)
@@ -61,69 +58,14 @@ public final class JEIREI {
 			.build();
 
 	public static List<IngredientInfo> generateShapelessInputs(ILycheeRecipe<LycheeContext> recipe) {
-		boolean sized = false;
 		List<IngredientInfo> ingredients;
 		try {
 			ingredients = recipe.sizedIngredients().stream().map(IngredientInfo::new).toList();
-			sized = true;
 		} catch (Exception e) {
 			ingredients = recipe.getIngredients().stream().map(IngredientInfo::new).toList();
 		}
-		for (PostAction action : recipe.postActions()) {
-			PostActionRenderer.of(action).loadCatalystsInfo(action, recipe, ingredients);
-		}
-		var type = (LycheeRecipeType<?>) recipe.getType();
-		if (sized || !type.compactInputs) {
-			addIngredientTips(recipe, ingredients);
-			return ingredients;
-		}
-		List<IngredientInfo> newIngredients = Lists.newArrayList();
-		for (var ingredient : ingredients) {
-			IngredientInfo match = null;
-			boolean simpleA = CommonProxy.isSimpleIngredient(ingredient.ingredient);
-			for (var toCompare : newIngredients) {
-				boolean simpleB = CommonProxy.isSimpleIngredient(toCompare.ingredient);
-				if (simpleA != simpleB) {
-					continue;
-				}
-				if (ingredient.isCatalyst != toCompare.isCatalyst) {
-					continue;
-				}
-				if (!Objects.equals(toCompare.tooltips, ingredient.tooltips)) {
-					continue;
-				}
-				if (simpleA) {
-					if (toCompare.ingredient.getStackingIds().equals(ingredient.ingredient.getStackingIds())) {
-						match = toCompare;
-						break;
-					}
-				} else {
-					ItemStack[] itemsA = ingredient.ingredient.getItems();
-					ItemStack[] itemsB = toCompare.ingredient.getItems();
-					if (itemsA.length == 0 || itemsA.length != itemsB.length) {
-						continue;
-					}
-					boolean matchAll = true;
-					for (int i = 0; i < itemsA.length; i++) {
-						if (!ItemStack.isSameItemSameComponents(itemsA[i], itemsB[i])) {
-							matchAll = false;
-							break;
-						}
-					}
-					if (matchAll) {
-						match = toCompare;
-						break;
-					}
-				}
-			}
-			if (match == null) {
-				newIngredients.add(ingredient);
-			} else {
-				match.count += ingredient.count;
-			}
-		}
-		addIngredientTips(recipe, newIngredients);
-		return newIngredients;
+		addIngredientTips(recipe, ingredients);
+		return ingredients;
 	}
 
 	public static void addIngredientTips(ILycheeRecipe<LycheeContext> recipe, List<IngredientInfo> ingredients) {

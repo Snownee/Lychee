@@ -43,7 +43,8 @@
 	"client": [
 		"ClientPacketListenerMixin",
 		"ClientRecipeBookMixin",
-		"GameRendererAccess"
+		"GameRendererAccess",
+		"jei.AnvilRecipeCategoryMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1,

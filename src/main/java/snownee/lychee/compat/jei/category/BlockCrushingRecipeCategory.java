@@ -17,7 +17,7 @@ import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.JEIREI;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipeType;
@@ -58,8 +58,6 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 			double mouseY
 	) {
 		var recipe = recipeHolder.value();
-		drawInfoBadgeIfNeeded(guiGraphics, recipe, mouseX, mouseY);
-
 		var fallingBlock = getFallingBlock(recipe);
 		var landingBlock = getLandingBlock(recipe);
 
@@ -91,11 +89,11 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 				.scale(15)
 				.atLocal(0, ticks * 1.3 - 1.3, 0)
 				.rotateBlock(20, 225, 0)
-				.lighting(JEIREI.BLOCK_LIGHTING)
+				.lighting(RVs.BLOCK_LIGHTING)
 				.at(0, 0, 300)
 				.render(guiGraphics);
 		if (!landingBlock.isAir()) {
-			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 0).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).render(
+			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 0).rotateBlock(20, 225, 0).lighting(RVs.BLOCK_LIGHTING).render(
 					guiGraphics);
 		}
 		matrixStack.popPose();

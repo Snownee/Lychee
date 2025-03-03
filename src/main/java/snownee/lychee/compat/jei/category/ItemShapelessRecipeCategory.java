@@ -51,7 +51,6 @@ public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>>
 			double mouseX,
 			double mouseY
 	) {
-		drawInfoBadgeIfNeeded(graphics, recipeHolder.value(), mouseX, mouseY);
 		var matrixStack = graphics.pose();
 		matrixStack.pushPose();
 		matrixStack.translate(76, 16, 0);

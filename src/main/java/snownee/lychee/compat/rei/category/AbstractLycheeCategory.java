@@ -5,7 +5,7 @@ import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import snownee.lychee.compat.JEIREI;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -30,7 +30,7 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 
 	@Override
 	public Component getTitle() {
-		return JEIREI.makeTitle(getIdentifier());
+		return RVs.makeTitle(getIdentifier());
 	}
 
 	@Override

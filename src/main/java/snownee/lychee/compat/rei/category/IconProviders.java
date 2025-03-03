@@ -15,8 +15,8 @@ import net.minecraft.world.level.block.Blocks;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.rei.ScreenElementWrapper;
-import snownee.lychee.compat.rei.SideBlockIcon;
+import snownee.lychee.compat.rei.elements.ScreenElementWidget;
+import snownee.lychee.compat.rv.SideBlockIcon;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
@@ -25,14 +25,14 @@ public interface IconProviders {
 	Map<ResourceLocation, IconProvider> ALL = Maps.newHashMap();
 
 	IconProvider BLOCK_CRUSHING = register(RecipeTypes.BLOCK_CRUSHING, (recipes) -> EntryStacks.of(Items.ANVIL));
-	IconProvider BLOCK_EXPLODING = register(RecipeTypes.BLOCK_EXPLODING, (recipes) -> new ScreenElementWrapper(new SideBlockIcon(
+	IconProvider BLOCK_EXPLODING = register(RecipeTypes.BLOCK_EXPLODING, (recipes) -> new ScreenElementWidget(new SideBlockIcon(
 			GuiGameElement.of(Items.TNT),
 			Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection) recipes)))));
 	IconProvider BLOCK_INTERACTING = register(RecipeTypes.BLOCK_INTERACTING, (recipes) -> {
 		var mainIcon = recipes.stream()
 				.map(it -> it.value().getType())
 				.anyMatch(it -> it == RecipeTypes.BLOCK_INTERACTING) ? AllGuiTextures.RIGHT_CLICK : AllGuiTextures.LEFT_CLICK;
-		return new ScreenElementWrapper(new SideBlockIcon(
+		return new ScreenElementWidget(new SideBlockIcon(
 				mainIcon,
 				Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection) recipes))));
 	});
@@ -44,11 +44,11 @@ public interface IconProviders {
 
 	IconProvider ITEM_BURNING = register(
 			RecipeTypes.ITEM_BURNING,
-			(recipes) -> new ScreenElementWrapper(new SideBlockIcon(
+			(recipes) -> new ScreenElementWidget(new SideBlockIcon(
 					AllGuiTextures.JEI_DOWN_ARROW,
 					Suppliers.memoize(Blocks.FIRE::defaultBlockState))));
 
-	IconProvider ITEM_INSIDE = register(RecipeTypes.ITEM_INSIDE, (recipes) -> new ScreenElementWrapper(new SideBlockIcon(
+	IconProvider ITEM_INSIDE = register(RecipeTypes.ITEM_INSIDE, (recipes) -> new ScreenElementWidget(new SideBlockIcon(
 			AllGuiTextures.JEI_DOWN_ARROW,
 			Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection) recipes)))));
 

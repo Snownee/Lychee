@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.JEIREI;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
@@ -54,7 +54,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 		if (con == null) {
 			return Blocks.AIR.defaultBlockState();
 		}
-		return JEIREI.getMostUsedBlock(recipes).getFirst();
+		return RVs.getMostUsedBlock(recipes).getFirst();
 	}
 
 	public BlockPredicate getInputBlock(T recipe) {
@@ -82,7 +82,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
 		var recipe = display.recipe();
 		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
-		drawInfoBadgeIfNeeded(widgets, display, startPoint);
+		createInfoBadgeIfNeeded(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 			var matrixStack = graphics.pose();
 			matrixStack.pushPose();
@@ -106,7 +106,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 			GuiGameElement.of(state)
 					.rotateBlock(12.5, -22.5, 0)
 					.scale(15)
-					.lighting(JEIREI.BLOCK_LIGHTING)
+					.lighting(RVs.BLOCK_LIGHTING)
 					.atLocal(0, 0.2, 0)
 					.at(inputBlockRect.getX(), inputBlockRect.getY())
 					.render(graphics);
@@ -119,19 +119,19 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 
 		actionGroup(widgets, startPoint, recipe, contentWidth() - 34, y);
 
-		InteractiveWidget reactive;
+		InteractiveWidget widget;
 		var description = getMethodDescription(recipe);
 		if (description != null) {
-			reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, methodRect));
-			reactive.setTooltipFunction($ -> List.of(description));
-			widgets.add(reactive);
+			widget = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, methodRect));
+			widget.setTooltipFunction($ -> List.of(description));
+			widgets.add(widget);
 		}
 
 		if (needRenderInputBlock(recipe)) {
-			reactive = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, inputBlockRect));
-			reactive.setTooltipFunction($ -> BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe)));
-			reactive.setOnClick(($, button) -> clickBlock(getRenderingBlock(recipe), button));
-			widgets.add(reactive);
+			widget = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, inputBlockRect));
+			widget.setTooltipFunction($ -> BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe)));
+			widget.setOnClick(($, button) -> clickBlock(getRenderingBlock(recipe), button));
+			widgets.add(widget);
 		}
 
 		return widgets;
