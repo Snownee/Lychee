@@ -28,7 +28,6 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 			@Nullable LootContextParamSet contextParamSet
 	) {
 		super(name, clazz, contextParamSet);
-		compactInputs = true;
 	}
 
 	@Override

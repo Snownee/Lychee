@@ -100,7 +100,7 @@ public final class RVs {
 		return list;
 	}
 
-	public static <T extends BlockKeyableRecipe<?>> Pair<BlockState, Integer> getMostUsedBlock(Collection<RecipeHolder<? extends T>> recipes) {
+	public static <T extends BlockKeyableRecipe> Pair<BlockState, Integer> getMostUsedBlock(Collection<? extends RecipeHolder<? extends T>> recipes) {
 		var blockStateCount = new Object2IntOpenHashMap<Block>();
 		var blockPredicateMap = Maps.<Block, BlockPredicate>newHashMap();
 		for (var object : recipes) {

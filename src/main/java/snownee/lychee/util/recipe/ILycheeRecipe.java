@@ -161,7 +161,7 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	}
 
 	default List<BlockPredicate> getBlockInputs() {
-		if (this instanceof BlockKeyableRecipe<?> blockPredicateRecipe
+		if (this instanceof BlockKeyableRecipe blockPredicateRecipe
 				&& !BlockPredicateExtensions.isAny(blockPredicateRecipe.blockPredicate())) {
 			return List.of(blockPredicateRecipe.blockPredicate());
 		}

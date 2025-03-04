@@ -30,6 +30,7 @@ import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
 import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategoryProvider;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
@@ -38,7 +39,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
+public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends RvCategoryProvider<R> {
 
 	static <T> void slotGroup(
 			List<Widget> widgets,

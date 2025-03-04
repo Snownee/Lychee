@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.ToIntFunction;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +37,7 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends LycheeRecipeType<R> {
+public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends LycheeRecipeType<R> {
 
 	protected final Map<Block, List<RecipeHolder<R>>> recipesByBlock = Maps.newHashMap();
 	protected final List<RecipeHolder<R>> anyBlockRecipes = Lists.newLinkedList();
@@ -81,7 +80,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe<?>> extends Lyc
 	public Comparator<RecipeHolder<R>> comparator() {
 		return Comparator.comparing(
 				RecipeHolder::value,
-				Comparator.comparing((BlockKeyableRecipe<?> $) -> !BlockPredicateExtensions.isAny($.blockPredicate()))
+				Comparator.comparing((BlockKeyableRecipe $) -> !BlockPredicateExtensions.isAny($.blockPredicate()))
 						.thenComparingInt($ -> $.getIngredients().size())
 						.thenComparing($ -> !$.maxRepeats().isAny())
 						.thenComparing(Recipe::isSpecial)

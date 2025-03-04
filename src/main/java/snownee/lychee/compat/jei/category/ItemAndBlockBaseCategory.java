@@ -45,7 +45,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 		infoRect.setPosition(8, 32);
 	}
 
-	public static BlockState getIconBlock(Collection<RecipeHolder<? extends BlockKeyableRecipe<?>>> recipes) {
+	public static BlockState getIconBlock(Collection<RecipeHolder<? extends BlockKeyableRecipe>> recipes) {
 		var con = Minecraft.getInstance().getConnection();
 		if (con == null) {
 			return Blocks.AIR.defaultBlockState();
@@ -54,7 +54,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 	}
 
 	public BlockPredicate getInputBlock(T recipe) {
-		return ((BlockKeyableRecipe<?>) recipe).blockPredicate();
+		return ((BlockKeyableRecipe) recipe).blockPredicate();
 	}
 
 	public BlockState getRenderingBlock(T recipe) {

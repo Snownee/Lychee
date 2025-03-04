@@ -40,7 +40,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockInteractingRecipe> {
+public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
 
 	private static final Codec<SizedIngredient> OPTIONAL_SIZED_INGREDIENT_CODEC = ExtraCodecs.optionalEmptyMap(SizedIngredient.CODEC).xmap(
 			it -> it.orElse(SizedIngredient.EMPTY),
