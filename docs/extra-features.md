@@ -2,7 +2,7 @@
 
 ## YAML recipes
 
-You can now write any type of recipe in YAML format. All you need to do is to put the the file with `.yaml` extension in the `data/<namespace>/recipes` folder.
+You can now write any type of recipe in YAML format. All you need to do is to put the the file with `.yaml` extension in the `data/<namespace>/recipe` folder.
 
 ## `lychee:lightning_immune`
 
