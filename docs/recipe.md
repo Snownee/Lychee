@@ -776,14 +776,14 @@ Default behavior: none.
 
 !!! note "Format"
 
-    | Name       | Description                                                    | Type / Literal                                                 |
-    | ---------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
-    | type       | type                                                           | "lychee:crafting"                                              |
-    | pattern    | same as vanilla                                                |                                                                |
-    | key        | same as vanilla                                                |                                                                |
-    | result     | same as vanilla                                                | [ItemStack](general-types.md#itemstack)                        |
-    | group      | same as vanilla ^optional^                                     |                                                                |
-    | assembling | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
+    | Name       | Description                                                    | Type / Literal                                                        |
+    | ---------- | -------------------------------------------------------------- | --------------------------------------------------------------------- |
+    | type       | type                                                           | "lychee:crafting"                                                     |
+    | pattern    | same as vanilla                                                |                                                                       |
+    | key        | same as vanilla                                                |                                                                       |
+    | result     | same as vanilla                                                | [ItemStack](general-types.md#itemstack)(shorthand item not supported) |
+    | group      | same as vanilla ^optional^                                     |                                                                       |
+    | assembling | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]        |
 
 ??? example
 

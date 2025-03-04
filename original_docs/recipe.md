@@ -576,7 +576,7 @@ Default behavior: none.
     | type       | type                                                           | "lychee:crafting"                                              |
     | pattern    | same as vanilla                                                |                                                                |
     | key        | same as vanilla                                                |                                                                |
-    | result     | same as vanilla                                                | [ItemStack](general-types.md#itemstack)                        |
+    | result     | same as vanilla                                                | [ItemStack](general-types.md#itemstack)(shorthand item not supported)                        |
     | group      | same as vanilla ^optional^                                     |                                                                |
     | assembling | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
 
