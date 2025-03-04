@@ -36,7 +36,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockCrushingRecipe> {
+public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
 	public static final BlockPredicate ANVIL = BlockPredicate.Builder.block().of(BlockTags.ANVIL).build();
 
 	protected BlockPredicate fallingBlock;

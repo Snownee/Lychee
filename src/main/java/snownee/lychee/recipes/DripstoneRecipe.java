@@ -51,7 +51,7 @@ import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<DripstoneRecipe>, ChanceRecipe {
+public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe, ChanceRecipe {
 	protected final @NotNull BlockPredicate sourceBlock;
 
 	private float chance = 1;

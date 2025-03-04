@@ -34,6 +34,7 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.jei.LycheeJEIPlugin;
 import snownee.lychee.compat.jei.elements.InteractiveWidget;
 import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategoryProvider;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
@@ -43,7 +44,7 @@ import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
+public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends RvCategoryProvider<R> {
 	static void addBlockIngredients(IRecipeLayoutBuilder builder, ILycheeRecipe<LycheeContext> recipe) {
 		addBlockIngredients(builder, recipe.getBlockInputs(), RecipeIngredientRole.INPUT);
 		addBlockIngredients(builder, recipe.getBlockOutputs(), RecipeIngredientRole.OUTPUT);

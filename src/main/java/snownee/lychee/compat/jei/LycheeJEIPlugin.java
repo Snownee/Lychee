@@ -40,6 +40,7 @@ import snownee.lychee.compat.jei.category.WorkstationRegisters;
 import snownee.lychee.compat.jei.display.AnvilCraftingDisplay;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientRenderer;
+import snownee.lychee.compat.rv.RvPlugin;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
@@ -55,6 +56,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 	private final Multimap<AbstractLycheeCategory<?>, RecipeHolder<? extends ILycheeRecipe<LycheeContext>>> categories = LinkedHashMultimap.create();
 	public static IJeiRuntime runtime;
 	public static IJeiHelpers helpers;
+	private final RvPlugin rvPlugin = new RvPlugin();
 
 	public static IDrawable slot(SlotType slotType) {
 		return slotType.element;
@@ -67,6 +69,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
+		rvPlugin.init();
 		categories.clear();
 		for (var recipeType : RecipeTypes.ALL) {
 			if (!recipeType.hasStandaloneCategory) {

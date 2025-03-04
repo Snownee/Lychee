@@ -44,6 +44,7 @@ import snownee.lychee.compat.rei.elements.LycheeEntryWidget;
 import snownee.lychee.compat.rei.elements.ScreenElementWidget;
 import snownee.lychee.compat.rei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvPlugin;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -54,9 +55,11 @@ public class LycheeREIPlugin implements REIClientPlugin {
 	public static final EntryType<PostAction> POST_ACTION = EntryType.deferred(Lychee.id("post_action"));
 
 	private final Multimap<AbstractLycheeCategory<?>, RecipeHolder<? extends ILycheeRecipe<LycheeContext>>> categories = LinkedHashMultimap.create();
+	private final RvPlugin rvPlugin = new RvPlugin();
 
 	@Override
 	public void registerCategories(CategoryRegistry registry) {
+		rvPlugin.init();
 		categories.clear();
 		for (var recipeType : RecipeTypes.ALL) {
 			if (!recipeType.hasStandaloneCategory) {

@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -20,6 +21,7 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	public static final int HEIGHT = 59;
 
 	private final RecipeType<RecipeHolder<T>> type;
+	private RvCategory<T> rvCategory;
 	public IDrawable icon;
 
 	public AbstractLycheeCategory(RecipeType<RecipeHolder<T>> type, IDrawable icon) {
@@ -60,5 +62,10 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	@Override
 	public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<T> recipeHolder, IFocusGroup focuses) {
 		createInfoBadgeIfNeeded(builder, recipeHolder);
+	}
+
+	@Override
+	public RvCategory<T> rvCategory() {
+		return rvCategory;
 	}
 }

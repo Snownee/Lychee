@@ -20,7 +20,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockExplodingRecipe> {
+public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
 	protected final BlockPredicate blockPredicate;
 
 	public BlockExplodingRecipe(
