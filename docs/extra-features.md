@@ -30,3 +30,7 @@ This entity-type tag is used to make entity immune to lightning damage and to pr
 ## `lychee:lightning_fire_immune`
 
 This entity-type tag is used to prevent entity from starting fires when struck by lightning.
+
+## `lychee:fire_immune`
+
+This item tag is used to prevent item from being destroyed by fire or lava.

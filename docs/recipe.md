@@ -22,7 +22,7 @@ Recipes should be placed in `data/<namespace>/recipes/` folder, like normal data
     | ghost          | only show in JEI/REI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
     | hide_in_viewer | hide in JEI/REI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
     | group          | show this recipe in a new category in JEI/REI ^optional^                           | string (ResourceLocation)                                                                          |
-    | max_repeats    | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | int                                                                                                |
+    | max_repeats    | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | [IntBounds](general-types.md#intbounds)                                                            |
     |                | additional properties...                                                           |                                                                                                    |
 
 === "Fabric"
@@ -37,7 +37,7 @@ Recipes should be placed in `data/<namespace>/recipes/` folder, like normal data
     | ghost                  | only show in JEI/REI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
     | hide_in_viewer         | hide in JEI/REI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
     | group                  | show this recipe in a new category in JEI/REI ^optional^                           | string (ResourceLocation)                                                                          |
-    | max_repeats            | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | int                                                                                                |
+    | max_repeats            | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | [IntBounds](general-types.md#intbounds)                                                            |
     |                        | additional properties...                                                           |                                                                                                    |
 
 ## Recipe Types
@@ -219,7 +219,7 @@ Default behavior: none.
 
     Items such as netherite or nether star can't catch fire.
 
-    If you want to make an item fire-immune as well, you can tag it with `lychee:fire_immune`
+    Related tag: [`lychee:fire_immune`](extra-features.md#lycheefire_immune)
 
 ??? example
 
@@ -472,6 +472,10 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
         ]
     }
     ```
+
+!!! note
+    
+    Related tags: [``lychee:lightning_immune``](extra-features.md#lycheelightning_immune), [``lychee:lightning_fire_immune``](extra-features.md#lycheelightning_fire_immune)
 
 ### Item Exploding
 
