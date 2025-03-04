@@ -8,7 +8,7 @@
 
 ## Basic Format
 
-Recipes should be placed in `data/<namespace>/recipes/` folder, like normal data-driven recipes.
+Recipes should be placed in `data/<namespace>/recipe/` folder, like normal data-driven recipes.
 
 === "NeoForge"
 
@@ -576,7 +576,7 @@ Default behavior: none.
     | type       | type                                                           | "lychee:crafting"                                              |
     | pattern    | same as vanilla                                                |                                                                |
     | key        | same as vanilla                                                |                                                                |
-    | result     | same as vanilla                                                |                                                                |
+    | result     | same as vanilla                                                | [ItemStack](general-types.md#itemstack)                        |
     | group      | same as vanilla ^optional^                                     |                                                                |
     | assembling | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
 
