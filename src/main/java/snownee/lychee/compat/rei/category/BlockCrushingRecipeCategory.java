@@ -28,7 +28,6 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 
 	public static final Rect2i FALLING_BLOCK_RECT = new Rect2i(0, -35, 20, 35);
 	public static final Rect2i LANDING_BLOCK_RECT = new Rect2i(0, 0, 20, 20);
-	private final CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> categoryIdentifier;
 	private final Rect2i fallingBlockRect;
 	private final Rect2i landingBlockRect;
 
@@ -38,7 +37,6 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 			Rect2i fallingBlockRect,
 			Rect2i landingBlockRect) {
 		super(id, category);
-		this.categoryIdentifier = id;
 		this.fallingBlockRect = fallingBlockRect;
 		this.landingBlockRect = landingBlockRect;
 	}
@@ -152,7 +150,4 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 				Blocks.AIR.defaultBlockState(),
 				2000);
 	}
-
-	@Override
-	public CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> getCategoryIdentifier() {return categoryIdentifier;}
 }

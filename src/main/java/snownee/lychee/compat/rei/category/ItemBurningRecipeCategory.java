@@ -11,7 +11,6 @@ import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<ItemBurningRecipe> {
 
-
 	public ItemBurningRecipeCategory(
 			CategoryIdentifier<? extends LycheeDisplay<ItemBurningRecipe>> id,
 			RvCategory<ItemBurningRecipe> category) {
