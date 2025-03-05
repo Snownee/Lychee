@@ -11,7 +11,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.action.PlaceBlock;
-import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.jei.elements.DrawableSimpleItemStack;
 import snownee.lychee.compat.jei.elements.ScreenElementWidget;
 import snownee.lychee.compat.rv.RVs;
@@ -26,13 +25,13 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	public static final int HEIGHT = 59;
 
 	private final RecipeType<RecipeHolder<T>> type;
-	private RvCategory<T> rvCategory;
+	private final RvCategory<T> rvCategory;
 	public IDrawable icon;
 
 	public AbstractLycheeCategory(RecipeType<RecipeHolder<T>> type, RvCategory<T> category) {
-		this.rvCategory = category;
 		this.type = type;
-		icon = new ScreenElementWidget(RenderElement.of(category.icon()));
+		this.rvCategory = category;
+		icon = new ScreenElementWidget(category.icon());
 	}
 
 	@Override
