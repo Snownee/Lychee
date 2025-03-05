@@ -47,55 +47,6 @@ public class LycheeREIPlugin implements REIClientPlugin {
 
 	private final RvPlugin rvPlugin = new RvPlugin();
 
-	public static LycheeEntryWidget slot(Point startPoint, int x, int y, SlotType slotType) {
-		LycheeEntryWidget widget = new LycheeEntryWidget(new Point(startPoint.x + x + 1, startPoint.y + y + 1));
-		widget.background(slotType.element);
-		return widget;
-	}
-
-	@Override
-	public void registerDisplays(DisplayRegistry registry) {
-		categories.asMap().forEach((category, recipes) -> {
-			var displayRegister = DisplayRegisters.get(category.recipeType().categoryId);
-			displayRegister.consume(
-					registry,
-					(AbstractLycheeCategory) category,
-					(Collection) recipes);
-		});
-
-		try {
-			KUtil.getRecipes(RecipeTypes.ANVIL_CRAFTING).stream()
-					.filter(it ->
-							!it.value().output().isEmpty() &&
-									!it.value().isSpecial() && !it.value().hideInRecipeViewer())
-					.map(AnvilCraftingDisplay::new)
-					.forEach(registry::add);
-		} catch (Throwable e) {
-			Lychee.LOGGER.error("", e);
-		}
-
-		registry.registerVisibilityPredicate((DisplayCategory<?> category, Display display) -> {
-			if (display instanceof LycheeDisplay<?> lycheeDisplay && lycheeDisplay.recipe().hideInRecipeViewer()) {
-				return EventResult.interruptFalse();
-			}
-			return EventResult.pass();
-		});
-	}
-
-	public static Rectangle offsetRect(Point startPoint, Rect2i rect) {
-		return new Rectangle(startPoint.x + rect.getX(), startPoint.y + rect.getY(), rect.getWidth(), rect.getHeight());
-	}
-
-	public static Rectangle offsetRect(Point startPoint, Rect2i rect) {
-		return new Rectangle(startPoint.x + rect.getX(), startPoint.y + rect.getY(), rect.getWidth(), rect.getHeight());
-	}
-
-	public static LycheeEntryWidget slot(Point startPoint, int x, int y, SlotType slotType) {
-		LycheeEntryWidget widget = new LycheeEntryWidget(new Point(startPoint.x + x + 1, startPoint.y + y + 1));
-		widget.background(slotType.element);
-		return widget;
-	}
-
 	@Override
 	public void registerCategories(CategoryRegistry registry) {
 		rvPlugin.init();
@@ -176,6 +127,16 @@ public class LycheeREIPlugin implements REIClientPlugin {
 			}
 			return EventResult.pass();
 		});
+	}
+
+	public static Rectangle offsetRect(Point startPoint, Rect2i rect) {
+		return new Rectangle(startPoint.x + rect.getX(), startPoint.y + rect.getY(), rect.getWidth(), rect.getHeight());
+	}
+
+	public static LycheeEntryWidget slot(Point startPoint, int x, int y, SlotType slotType) {
+		LycheeEntryWidget widget = new LycheeEntryWidget(new Point(startPoint.x + x + 1, startPoint.y + y + 1));
+		widget.background(slotType.element);
+		return widget;
 	}
 
 	@Override

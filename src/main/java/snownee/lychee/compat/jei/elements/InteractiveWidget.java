@@ -7,22 +7,15 @@ import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 import mezz.jei.api.gui.builder.ITooltipBuilder;
-import mezz.jei.api.gui.inputs.IJeiGuiEventListener;
-import mezz.jei.api.gui.widgets.IRecipeWidget;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.navigation.ScreenPosition;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
 import snownee.kiwi.util.NotNullByDefault;
 
 @NotNullByDefault
-public class InteractiveWidget implements IRecipeWidget, IJeiGuiEventListener {
+public class InteractiveWidget extends WidgetWithBounds {
 
-	private final ScreenRectangle bounds;
-	private ScreenPosition point;
 	@Nullable
 	private Function<InteractiveWidget, @Nullable List<Component>> tooltip;
 	@Nullable
@@ -32,26 +25,7 @@ public class InteractiveWidget implements IRecipeWidget, IJeiGuiEventListener {
 	private boolean clearTooltip = true;
 
 	public InteractiveWidget(ScreenRectangle bounds) {
-		this.bounds = bounds;
-		point = bounds.position();
-	}
-
-	public static void produceClickSound() {
-		Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
-	}
-
-	@Override
-	public ScreenRectangle getArea() {
-		return bounds;
-	}
-
-	@Override
-	public ScreenPosition getPosition() {
-		return point;
-	}
-
-	public void setPosition(ScreenPosition position) {
-		this.point = position;
+		super(bounds);
 	}
 
 	public InteractiveWidget(ScreenRectangle bounds, boolean clearTooltip) {
@@ -70,7 +44,10 @@ public class InteractiveWidget implements IRecipeWidget, IJeiGuiEventListener {
 	}
 
 	@Override
-	public void drawWidget(GuiGraphics guiGraphics, double mouseX, double mouseY) {
+	public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
+		if (renderable != null) {
+			renderable.render(graphics, mouseX, mouseY, delta);
+		}
 	}
 
 	@Override
@@ -98,6 +75,10 @@ public class InteractiveWidget implements IRecipeWidget, IJeiGuiEventListener {
 		this.tooltip = tooltip;
 	}
 
+	public final boolean isClickable() {
+		return onClick != null;
+	}
+
 	@Nullable
 	public final BiConsumer<InteractiveWidget, Integer> getOnClick() {
 		return onClick;
@@ -107,13 +88,7 @@ public class InteractiveWidget implements IRecipeWidget, IJeiGuiEventListener {
 		this.onClick = onClick;
 	}
 
-	public final boolean isClickable() {
-		return onClick != null;
+	public void setRenderable(@Nullable Renderable renderable) {
+		this.renderable = renderable;
 	}
-
-	public boolean containsMouse(double mouseX, double mouseY) {
-		ScreenRectangle area = getArea();
-		return mouseX >= 0 && mouseY >= 0 && mouseX < area.width() && mouseY < area.height();
-	}
-
 }

@@ -13,6 +13,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.kiwi.util.codec.KCodecs;
+import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.codec.LycheeCodecs;
 
 public final class IngredientCollection {
@@ -71,7 +72,7 @@ public final class IngredientCollection {
 					list.add(ingredient.ingredient());
 				}
 			}
-			flattenedIngredients = NonNullList.copyOf(list);
+			flattenedIngredients = NonNullListAccess.construct(list, null);
 		}
 		return flattenedIngredients;
 	}

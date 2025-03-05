@@ -1,5 +1,7 @@
 package snownee.lychee.util.action;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -9,8 +11,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.GsonHelper;
+import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
@@ -21,12 +27,38 @@ import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostAction extends PostActionDisplay, ContextualPredicate, Contextual {
-	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatchMap(
-			PostAction::type,
-			PostActionType::codec
-	);
-
+	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatchMap(PostAction::type, PostActionType::codec);
 	Codec<PostAction> CODEC = MAP_CODEC.codec();
+	Codec<List<PostAction>> LIST_CODEC = KCodecs.compactList(CODEC);
+
+	StreamCodec<RegistryFriendlyByteBuf, PostAction> STREAM_CODEC = ByteBufCodecs.registry(LycheeRegistries.POST_ACTION.key()).dispatch(
+			PostAction::type,
+			PostActionType::streamCodec);
+	StreamCodec<RegistryFriendlyByteBuf, List<PostAction>> STREAM_LIST_CODEC = STREAM_CODEC.apply(original ->
+			// Error on Eclipse without the generic type (?)
+			new StreamCodec<RegistryFriendlyByteBuf, List<PostAction>>() {
+				@Override
+				public void encode(RegistryFriendlyByteBuf byteBuf, List<PostAction> list) {
+					var filtered = list.stream().filter(it -> !it.preventSync()).toList();
+					ByteBufCodecs.writeCount(byteBuf, filtered.size(), Integer.MAX_VALUE);
+					for (PostAction action : filtered) {
+						original.encode(byteBuf, action);
+					}
+				}
+
+				@Override
+				public List<PostAction> decode(RegistryFriendlyByteBuf byteBuf) {
+					var size = ByteBufCodecs.readCount(byteBuf, Integer.MAX_VALUE);
+					var list = new ArrayList<PostAction>(size);
+					for (int i = 0; i < size; i++) {
+						var action = original.decode(byteBuf);
+						if (!action.preventSync()) {
+							list.add(action);
+						}
+					}
+					return list;
+				}
+			});
 
 	PostActionCommonProperties commonProperties();
 

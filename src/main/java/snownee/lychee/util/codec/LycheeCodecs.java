@@ -16,7 +16,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 
 public final class LycheeCodecs {
-	private static final NonNullList<?> EMPTY_NON_NULL_LIST = NonNullList.copyOf(List.of());
+	private static final NonNullList<?> EMPTY_NON_NULL_LIST = NonNullList.create();
 
 	public static final Codec<ItemStack> PLAIN_ITEM_STACK_CODEC = Codec.withAlternative(
 			ItemStack.OPTIONAL_CODEC,
