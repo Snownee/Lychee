@@ -4,14 +4,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-import java.util.function.Function;
 
 import org.joml.Quaternionf;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
@@ -39,7 +36,6 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 // Recipe view utils
 public final class RVs {
@@ -134,31 +130,6 @@ public final class RVs {
 		Quaternionf quaternion = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
 		FUSED_TNT_LIGHTING.applyLighting();
 		TNT_ENTITY.render(graphics.pose(), x, y, 20, quaternion);
-	}
-
-	public static <T> ImmutableMap<T, List<RecipeHolder<? extends ILycheeRecipe<LycheeContext>>>> generateCategories(
-			LycheeRecipeType<? extends ILycheeRecipe<LycheeContext>> recipeType,
-			Function<ResourceLocation, T> categoryFactory) {
-		return recipeType
-				.inViewerRecipes()
-				.stream()
-				.reduce(
-						ImmutableMultimap.<ResourceLocation, RecipeHolder<? extends ILycheeRecipe<LycheeContext>>>builder(),
-						(map, recipeHolder) -> {
-							map.put(
-									ResourceLocation.parse(recipeHolder.value().group()),
-									recipeHolder
-							);
-							return map;
-						},
-						(map, ignored) -> map)
-				.build()
-				.asMap()
-				.entrySet()
-				.stream()
-				.collect(ImmutableMap.toImmutableMap(
-						entry -> categoryFactory.apply(composeCategoryIdentifier(recipeType.categoryId, entry.getKey())),
-						it -> List.copyOf(it.getValue())));
 	}
 
 	public static ResourceLocation composeCategoryIdentifier(ResourceLocation categoryId, ResourceLocation group) {
