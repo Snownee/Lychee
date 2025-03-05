@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.action.DropItem;
+import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.rv.RVs;
@@ -36,6 +37,7 @@ import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
@@ -108,17 +110,23 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 			PostAction action,
 			Map<EntryStack<ItemStack>, PostAction> itemMap
 	) {
-		if (action instanceof DropItem dropitem) {
-			var entry = EntryStacks.of(dropitem.stack());
-			entries.add(entry);
-			itemMap.put(entry, dropitem);
-		} else if (action instanceof CompoundAction compoundAction) {
-			compoundAction.getChildActions().filter(it -> !it.hidden()).forEach(child -> buildActionSlot(
-					entries,
-					child,
-					itemMap));
-		} else {
-			entries.add(EntryStack.of(LycheeREIPlugin.POST_ACTION, action));
+		switch (action) {
+			case DropItem dropitem -> {
+				var entry = EntryStacks.of(dropitem.stack());
+				entries.add(entry);
+				itemMap.put(entry, dropitem);
+			}
+			case CompoundAction compoundAction ->
+					compoundAction.getChildActions().filter(it -> !it.hidden()).forEach(child -> buildActionSlot(
+							entries,
+							child,
+							itemMap));
+			default -> {
+				if (action instanceof PlaceBlock placeBlock && BlockPredicateExtensions.anyBlockState(placeBlock.block()).isAir()) {
+					return;
+				}
+				entries.add(EntryStack.of(LycheeREIPlugin.POST_ACTION, action));
+			}
 		}
 	}
 

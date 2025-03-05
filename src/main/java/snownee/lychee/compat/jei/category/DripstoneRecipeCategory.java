@@ -1,5 +1,9 @@
 package snownee.lychee.compat.jei.category;
 
+import java.util.function.Supplier;
+
+import com.google.common.base.Suppliers;
+
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -11,6 +15,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
@@ -30,6 +35,11 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRecipe> {
 	private final Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
 	private final Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
+	protected Supplier<Rect2i> removeActionRect = Suppliers.memoize(() -> new Rect2i(
+			targetBlockRect.getX() + targetBlockRect.getWidth() - 4,
+			targetBlockRect.getY() + targetBlockRect.getHeight() - 8,
+			8,
+			8));
 
 	public DripstoneRecipeCategory(RecipeType<RecipeHolder<DripstoneRecipe>> recipeType, IDrawable icon) {
 		super(recipeType, icon);
@@ -104,7 +114,9 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 		DripstoneRecipe recipe = recipeHolder.value();
 		int x = (int) mouseX;
 		int y = (int) mouseY;
-		if (sourceBlockRect.contains(x, y)) {
+		if (removeActionRect.get().contains((int) mouseX, (int) mouseY)) {
+			tooltip.add(Component.translatable("postAction.lychee.place.consume"));
+		} else if (sourceBlockRect.contains(x, y)) {
 			BlockState sourceBlock = CommonProxy.getCycledItem(
 					BlockPredicateExtensions.getShowcaseBlockStates(recipe.sourceBlock()),
 					Blocks.AIR.defaultBlockState(),
@@ -147,6 +159,12 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 						BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 						Blocks.AIR.defaultBlockState(),
 						2000)));
+		AbstractLycheeCategory.addRemoveInput(
+				removeActionRect.get().getX(),
+				removeActionRect.get().getY(),
+				builder,
+				recipeHolder
+		);
 	}
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {
