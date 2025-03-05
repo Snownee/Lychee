@@ -27,7 +27,6 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -156,7 +155,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 								.fieldOf(ITEM_IN)
 								.forGetter(AnvilCraftingRecipe::getIngredients),
 						LycheeCodecs.ITEM_STACK_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
-						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
+						PostAction.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
 						ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),
 						ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1).forGetter(AnvilCraftingRecipe::materialCost))
 				.apply(instance, AnvilCraftingRecipe::new));
@@ -173,7 +172,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 				AnvilCraftingRecipe::getIngredients,
 				ItemStack.STREAM_CODEC,
 				AnvilCraftingRecipe::output,
-				PostActionType.STREAM_LIST_CODEC,
+				PostAction.STREAM_LIST_CODEC,
 				AnvilCraftingRecipe::assemblingActions,
 				ByteBufCodecs.VAR_INT,
 				AnvilCraftingRecipe::levelCost,

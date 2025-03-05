@@ -15,7 +15,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.codec.AliasOptionalFieldCodec;
 import snownee.lychee.util.codec.LycheeStreamCodecs;
 import snownee.lychee.util.contextual.ContextualHolder;
@@ -43,7 +42,7 @@ public record LycheeRecipeCommonProperties(
 			ContextualHolder.CODEC,
 			ContextualHolder.EMPTY,
 			"contextual");
-	public static final MapCodec<List<PostAction>> POST_ACTION_CODEC = PostActionType.LIST_CODEC.optionalFieldOf("post", List.of());
+	public static final MapCodec<List<PostAction>> POST_ACTION_CODEC = PostAction.LIST_CODEC.optionalFieldOf("post", List.of());
 	public static final MapCodec<LycheeRecipeCommonProperties> SIMPLE_MAP_CODEC = mapCodec(MinMaxBounds.Ints.ANY);
 
 	public static MapCodec<LycheeRecipeCommonProperties> mapCodec(MinMaxBounds.Ints defaultMaxRepeats) {
@@ -70,7 +69,7 @@ public record LycheeRecipeCommonProperties(
 					LycheeRecipeCommonProperties::group,
 					ByteBufCodecs.fromCodec(CONTEXTUAL_CODEC.codec()),
 					LycheeRecipeCommonProperties::conditions,
-					PostActionType.STREAM_LIST_CODEC,
+					PostAction.STREAM_LIST_CODEC,
 					LycheeRecipeCommonProperties::postActions,
 					ByteBufCodecs.fromCodec(MinMaxBounds.Ints.CODEC),
 					LycheeRecipeCommonProperties::maxRepeats,

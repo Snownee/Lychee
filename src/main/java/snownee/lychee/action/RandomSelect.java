@@ -176,7 +176,7 @@ public class RandomSelect implements CompoundAction, PostAction {
 
 	public record Entry(PostAction action, int weight) {
 		public static final Codec<Entry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-				PostActionType.MAP_CODEC.forGetter(Entry::action),
+				PostAction.MAP_CODEC.forGetter(Entry::action),
 				ExtraCodecs.POSITIVE_INT.optionalFieldOf("weight", 1).forGetter(Entry::weight)
 		).apply(instance, Entry::new));
 	}
