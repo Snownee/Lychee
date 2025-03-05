@@ -1,21 +1,20 @@
 package snownee.lychee.compat.jei.category;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.lychee.RecipeTypes;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.util.ClientProxy;
 
 @NotNullByDefault
 public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemInsideRecipe> {
 
-	public ItemInsideRecipeCategory(RecipeType<RecipeHolder<ItemInsideRecipe>> recipeType, IDrawable icon) {
-		super(recipeType, icon, RecipeTypes.ITEM_INSIDE);
+	public ItemInsideRecipeCategory(RecipeType<RecipeHolder<ItemInsideRecipe>> recipeType, RvCategory<ItemInsideRecipe> category) {
+		super(recipeType, category);
 		infoRect.setPosition(0, 25);
 		inputBlockRect.setX(80);
 		methodRect.setX(77);

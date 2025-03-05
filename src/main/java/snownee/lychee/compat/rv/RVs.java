@@ -166,4 +166,12 @@ public final class RVs {
 				categoryId.getNamespace(),
 				"%s/%s/%s".formatted(categoryId.getPath(), group.getNamespace(), group.getPath()));
 	}
+
+	public static BlockState getIconBlock(Collection<? extends RecipeHolder<? extends BlockKeyableRecipe>> recipes) {
+		var con = Minecraft.getInstance().getConnection();
+		if (con == null) {
+			return Blocks.AIR.defaultBlockState();
+		}
+		return getMostUsedBlock(recipes).getFirst();
+	}
 }

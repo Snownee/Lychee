@@ -16,6 +16,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.rei.elements.ScreenElementWidget;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.SideBlockIcon;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -28,14 +29,14 @@ public interface IconProviders {
 	IconProvider BLOCK_EXPLODING = register(
 			RecipeTypes.BLOCK_EXPLODING, (recipes) -> new ScreenElementWidget(new SideBlockIcon(
 			GuiGameElement.of(Items.TNT),
-			Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection) recipes)))));
+					Suppliers.memoize(() -> RVs.getIconBlock((Collection) recipes)))));
 	IconProvider BLOCK_INTERACTING = register(RecipeTypes.BLOCK_INTERACTING, (recipes) -> {
 		var mainIcon = recipes.stream()
 				.map(it -> it.value().getType())
 				.anyMatch(it -> it == RecipeTypes.BLOCK_INTERACTING) ? AllGuiTextures.RIGHT_CLICK : AllGuiTextures.LEFT_CLICK;
 		return new ScreenElementWidget(new SideBlockIcon(
 				mainIcon,
-				Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection) recipes))));
+				Suppliers.memoize(() -> RVs.getIconBlock((Collection) recipes))));
 	});
 
 	IconProvider DRIPSTONE = register(RecipeTypes.DRIPSTONE_DRIPPING, (recipes) -> EntryStacks.of(Items.POINTED_DRIPSTONE));
@@ -52,7 +53,7 @@ public interface IconProviders {
 	IconProvider ITEM_INSIDE = register(
 			RecipeTypes.ITEM_INSIDE, (recipes) -> new ScreenElementWidget(new SideBlockIcon(
 			AllGuiTextures.JEI_DOWN_ARROW,
-			Suppliers.memoize(() -> ItemAndBlockBaseCategory.getIconBlock((Collection) recipes)))));
+					Suppliers.memoize(() -> RVs.getIconBlock((Collection) recipes)))));
 
 	static <R extends ILycheeRecipe<LycheeContext>> IconProvider register(
 			LycheeRecipeType<R> recipeType,

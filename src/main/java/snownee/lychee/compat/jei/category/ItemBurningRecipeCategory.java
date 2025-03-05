@@ -1,21 +1,20 @@
 package snownee.lychee.compat.jei.category;
 
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.lychee.RecipeTypes;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 @NotNullByDefault
 public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<ItemBurningRecipe> {
 
-	public ItemBurningRecipeCategory(RecipeType<RecipeHolder<ItemBurningRecipe>> recipeType, IDrawable icon) {
-		super(recipeType, icon, RecipeTypes.ITEM_BURNING);
+	public ItemBurningRecipeCategory(RecipeType<RecipeHolder<ItemBurningRecipe>> recipeType, RvCategory<ItemBurningRecipe> category) {
+		super(recipeType, category);
 		methodRect.setX(27);
 	}
 

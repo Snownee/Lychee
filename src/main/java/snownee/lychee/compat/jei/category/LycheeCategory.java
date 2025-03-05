@@ -42,7 +42,6 @@ import snownee.lychee.util.action.PostActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends RvCategoryProvider<R> {
 	static void addBlockIngredients(IRecipeLayoutBuilder builder, ILycheeRecipe<LycheeContext> recipe) {
@@ -170,8 +169,6 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		builder.addWidget(widget);
 		builder.addGuiEventListener(widget);
 	}
-
-	LycheeRecipeType<? extends R> recipeType();
 
 	Rect2i infoRect();
 
