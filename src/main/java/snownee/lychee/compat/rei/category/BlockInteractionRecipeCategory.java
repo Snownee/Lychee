@@ -5,7 +5,6 @@ import java.util.List;
 import org.jetbrains.annotations.Nullable;
 
 import me.shedaniel.math.Point;
-import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.Util;
@@ -17,16 +16,15 @@ import net.minecraft.network.chat.Component;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 
 public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<BlockInteractingRecipe> {
 
-
 	public BlockInteractionRecipeCategory(
 			CategoryIdentifier<? extends LycheeDisplay<BlockInteractingRecipe>> id,
-			Renderer icon
-	) {
-		super(id, icon, RecipeTypes.BLOCK_INTERACTING);
+			RvCategory<BlockInteractingRecipe> category) {
+		super(id, category);
 		inputBlockRect.setX(inputBlockRect.getX() + 18);
 		methodRect.setX(methodRect.getX() + 18);
 		infoRect.setX(infoRect.getX() + 10);

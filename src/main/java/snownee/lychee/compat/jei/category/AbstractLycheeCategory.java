@@ -13,7 +13,6 @@ import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.compat.jei.elements.DrawableSimpleItemStack;
 import snownee.lychee.compat.jei.elements.ScreenElementWidget;
-import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -46,7 +45,7 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 
 	@Override
 	public Component getTitle() {
-		return RVs.makeTitle(getRecipeType().getUid());
+		return rvCategory.title();
 	}
 
 	@Override

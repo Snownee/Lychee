@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
-import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
@@ -16,31 +15,26 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
 import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRecipe> {
 
 	private final Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
 	private final Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
 
-	public DripstoneRecipeCategory(
-			CategoryIdentifier<? extends LycheeDisplay<DripstoneRecipe>> categoryIdentifier,
-			Renderer icon
-	) {
-		super(categoryIdentifier, icon);
+	public DripstoneRecipeCategory(CategoryIdentifier<? extends LycheeDisplay<DripstoneRecipe>> id, RvCategory<DripstoneRecipe> category) {
+		super(id, category);
 		infoRect.setX(-10);
 	}
-
 
 	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {
 		GuiGameElement.of(state)
@@ -117,10 +111,5 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 				Blocks.AIR.defaultBlockState(),
 				2000);
-	}
-
-	@Override
-	public LycheeRecipeType<? extends DripstoneRecipe> recipeType() {
-		return RecipeTypes.DRIPSTONE_DRIPPING;
 	}
 }

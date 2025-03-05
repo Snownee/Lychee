@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
-import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
@@ -24,25 +23,20 @@ import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
 import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
 
-	private final LycheeRecipeType<T> recipeType;
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
 
-	public ItemAndBlockBaseCategory(
-			CategoryIdentifier<? extends LycheeDisplay<T>> id,
-			Renderer icon,
-			LycheeRecipeType<T> recipeType) {
-		super(id, icon);
-		this.recipeType = recipeType;
+	public ItemAndBlockBaseCategory(CategoryIdentifier<? extends LycheeDisplay<T>> id, RvCategory<T> category) {
+		super(id, category);
 		infoRect.setPosition(8, 32);
 	}
 
@@ -132,10 +126,5 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 
 	protected void renderIngredientGroup(List<Widget> widgets, Point startPoint, T recipe, int y) {
 		ingredientGroup(widgets, startPoint, recipe, 12, 21);
-	}
-
-	@Override
-	public LycheeRecipeType<? extends T> recipeType() {
-		return recipeType;
 	}
 }
