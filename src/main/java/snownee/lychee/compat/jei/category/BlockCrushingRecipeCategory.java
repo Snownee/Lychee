@@ -10,6 +10,7 @@ import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,6 +30,11 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 
 	public static final Rect2i FALLING_BLOCK_RECT = new Rect2i(0, -35, 20, 35);
 	public static final Rect2i LANDING_BLOCK_RECT = new Rect2i(0, 0, 20, 20);
+	public static final Rect2i REMOVE_ACTION_RECT = new Rect2i(
+			LANDING_BLOCK_RECT.getX() + LANDING_BLOCK_RECT.getWidth() - 4,
+			LANDING_BLOCK_RECT.getY() + LANDING_BLOCK_RECT.getHeight() - 8,
+			8,
+			8);
 
 	public BlockCrushingRecipeCategory(RecipeType<RecipeHolder<BlockCrushingRecipe>> recipeType, IDrawable icon) {
 		super(recipeType, icon);
@@ -112,7 +118,9 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		var y = anyLandingBlock ? 45 : 36;
 		x = (int) mouseX - x;
 		y = (int) mouseY - y;
-		if (FALLING_BLOCK_RECT.contains(x, y)) {
+		if (REMOVE_ACTION_RECT.contains(x, y)) {
+			tooltip.add(Component.translatable("postAction.lychee.place.consume"));
+		} else if (FALLING_BLOCK_RECT.contains(x, y)) {
 			var fallingBlock = CommonProxy.getCycledItem(
 					BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 					Blocks.ANVIL.defaultBlockState(),
@@ -160,6 +168,11 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 							Blocks.AIR.defaultBlockState(),
 							2000)));
 		}
+		AbstractLycheeCategory.addRemoveInput(
+				x + REMOVE_ACTION_RECT.getX(),
+				y + REMOVE_ACTION_RECT.getY(),
+				builder,
+				recipeHolder);
 	}
 
 	private BlockState getFallingBlock(BlockCrushingRecipe recipe) {

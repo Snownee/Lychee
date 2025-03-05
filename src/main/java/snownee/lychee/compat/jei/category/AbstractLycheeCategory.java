@@ -7,8 +7,11 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
+import snownee.lychee.action.PlaceBlock;
+import snownee.lychee.compat.jei.elements.DrawableSimpleItemStack;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
@@ -67,5 +70,16 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	@Override
 	public RvCategory<T> rvCategory() {
 		return rvCategory;
+	}
+
+	protected static <T extends ILycheeRecipe<LycheeContext>> void addRemoveInput(
+			int x,
+			int y,
+			IRecipeExtrasBuilder builder,
+			RecipeHolder<T> recipeHolder) {
+		if (recipeHolder.value().postActions().stream().noneMatch(it -> it instanceof PlaceBlock placeBlock && placeBlock.hidden())) {
+			return;
+		}
+		builder.addDrawable(new DrawableSimpleItemStack(Items.BARRIER.getDefaultInstance(), x, y, 0.5F));
 	}
 }
