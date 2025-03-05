@@ -23,13 +23,13 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	public static final int HEIGHT = 59;
 
 	private final RecipeType<RecipeHolder<T>> type;
-	private RvCategory<T> rvCategory;
+	private final RvCategory<T> rvCategory;
 	public IDrawable icon;
 
 	public AbstractLycheeCategory(RecipeType<RecipeHolder<T>> type, RvCategory<T> category) {
-		this.rvCategory = category;
 		this.type = type;
-		icon = new ScreenElementWidget(RenderElement.of(category.icon()));
+		this.rvCategory = category;
+		icon = new ScreenElementWidget(category.icon());
 	}
 
 	@Override
