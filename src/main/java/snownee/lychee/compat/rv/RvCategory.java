@@ -7,14 +7,15 @@ import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class RvCategory<T extends ILycheeRecipe<?>> {
-	RvCategoryType<T> type;
-	ResourceLocation id;
-	List<RecipeHolder<T>> recipes = Lists.newArrayList();
-	ScreenElement icon;
+	public final RvCategoryType<T> type;
+	public final ResourceLocation id;
+	public final List<RecipeHolder<T>> recipes = Lists.newArrayList();
+	private RenderElement icon;
 
 	public RvCategory(RvCategoryType<?> type, ResourceLocation id) {
 		//noinspection unchecked
@@ -27,7 +28,14 @@ public class RvCategory<T extends ILycheeRecipe<?>> {
 		recipes.add((RecipeHolder<T>) recipe);
 	}
 
-	public List<ItemStack> workstations() {
-		return type.workstationProvider.apply(this);
+	public List<List<ItemStack>> workstations() {
+		return type.workstationProvider == null ? List.of() : type.workstationProvider.apply(this);
+	}
+
+	public RenderElement icon() {
+		if (icon == null) {
+			icon = type.iconProvider.apply(this).map(RenderElement::of, GuiGameElement::of);
+		}
+		return icon;
 	}
 }

@@ -1,18 +1,14 @@
 package snownee.lychee.compat.jei.category;
 
-import java.util.Collection;
-
 import org.jetbrains.annotations.Nullable;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
@@ -23,34 +19,24 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
+import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 @NotNullByDefault
 public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
 
-	private final LycheeRecipeType<T> recipeType;
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
 
-	public ItemAndBlockBaseCategory(RecipeType<RecipeHolder<T>> recipeType, IDrawable icon, LycheeRecipeType<T> vanillaRecipeType) {
-		super(recipeType, icon);
-		this.recipeType = vanillaRecipeType;
+	public ItemAndBlockBaseCategory(RecipeType<RecipeHolder<T>> recipeType, RvCategory<T> category) {
+		super(recipeType, category);
 		infoRect.setPosition(8, 32);
-	}
-
-	public static BlockState getIconBlock(Collection<RecipeHolder<? extends BlockKeyableRecipe>> recipes) {
-		var con = Minecraft.getInstance().getConnection();
-		if (con == null) {
-			return Blocks.AIR.defaultBlockState();
-		}
-		return RVs.getMostUsedBlock(recipes).getFirst();
 	}
 
 	public BlockPredicate getInputBlock(T recipe) {
@@ -154,10 +140,5 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 
 	protected void renderIngredientGroup(IRecipeLayoutBuilder builder, T recipe, int y) {
 		ingredientGroup(builder, recipe, 12, 21);
-	}
-
-	@Override
-	public LycheeRecipeType<? extends T> recipeType() {
-		return recipeType;
 	}
 }

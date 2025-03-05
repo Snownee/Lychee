@@ -1,6 +1,5 @@
 package snownee.lychee.compat.rei.category;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
@@ -14,11 +13,9 @@ import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
@@ -47,14 +44,6 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 		super(id, icon);
 		this.recipeType = recipeType;
 		infoRect.setPosition(8, 32);
-	}
-
-	public static BlockState getIconBlock(Collection<? extends RecipeHolder<? extends BlockKeyableRecipe>> recipes) {
-		var con = Minecraft.getInstance().getConnection();
-		if (con == null) {
-			return Blocks.AIR.defaultBlockState();
-		}
-		return RVs.getMostUsedBlock(recipes).getFirst();
 	}
 
 	public BlockPredicate getInputBlock(T recipe) {

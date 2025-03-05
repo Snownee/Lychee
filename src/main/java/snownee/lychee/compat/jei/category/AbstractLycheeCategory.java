@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
+import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.compat.jei.elements.ScreenElementWidget;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
@@ -24,9 +26,10 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	private RvCategory<T> rvCategory;
 	public IDrawable icon;
 
-	public AbstractLycheeCategory(RecipeType<RecipeHolder<T>> type, IDrawable icon) {
-		this.icon = icon;
+	public AbstractLycheeCategory(RecipeType<RecipeHolder<T>> type, RvCategory<T> category) {
+		this.rvCategory = category;
 		this.type = type;
+		icon = new ScreenElementWidget(RenderElement.of(category.icon()));
 	}
 
 	@Override
