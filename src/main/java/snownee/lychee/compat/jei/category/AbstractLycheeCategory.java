@@ -44,7 +44,7 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 
 	@Override
 	public Component getTitle() {
-		return RVs.makeTitle(getRecipeType().getUid());
+		return rvCategory.title();
 	}
 
 	@Override

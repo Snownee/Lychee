@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
-import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
@@ -14,15 +13,14 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
+import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.BlockCrushingRecipe;
-import snownee.lychee.recipes.BlockCrushingRecipeType;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
@@ -36,18 +34,19 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 
 	public BlockCrushingRecipeCategory(
 			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> id,
-			Renderer icon,
+			RvCategory<BlockCrushingRecipe> category,
 			Rect2i fallingBlockRect,
 			Rect2i landingBlockRect) {
-		super(id, icon);
+		super(id, category);
 		this.categoryIdentifier = id;
 		this.fallingBlockRect = fallingBlockRect;
 		this.landingBlockRect = landingBlockRect;
 	}
 
 	public BlockCrushingRecipeCategory(
-			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> categoryIdentifier, Renderer icon) {
-		this(categoryIdentifier, icon, FALLING_BLOCK_RECT, LANDING_BLOCK_RECT);
+			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> id,
+			RvCategory<BlockCrushingRecipe> category) {
+		this(id, category, FALLING_BLOCK_RECT, LANDING_BLOCK_RECT);
 	}
 
 	@Override
@@ -152,11 +151,6 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.landingBlock()),
 				Blocks.AIR.defaultBlockState(),
 				2000);
-	}
-
-	@Override
-	public BlockCrushingRecipeType recipeType() {
-		return RecipeTypes.BLOCK_CRUSHING;
 	}
 
 	@Override
