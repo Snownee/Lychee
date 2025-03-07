@@ -268,7 +268,7 @@ Default behavior: Item is consumed.
         "block_in": {
             "blocks": "water_cauldron",
             "state": {
-                "level": 3
+                "level": "3"
             }
         },
         "post": [
@@ -295,7 +295,7 @@ Default behavior: Item is consumed.
         "block_in": {
             "blocks": "water",
             "state": {
-                "level": 0
+                "level": "0"
             }
         },
         "post": [
@@ -571,14 +571,14 @@ Default behavior: none.
 
 !!! note "Format"
 
-    | Name       | Description                                                    | Type / Literal                                                 |
-    | ---------- | -------------------------------------------------------------- | -------------------------------------------------------------- |
-    | type       | type                                                           | "lychee:crafting"                                              |
-    | pattern    | same as vanilla                                                |                                                                |
-    | key        | same as vanilla                                                |                                                                |
-    | result     | same as vanilla                                                | [ItemStack](general-types.md#itemstack)(shorthand item not supported)                        |
-    | group      | same as vanilla ^optional^                                     |                                                                |
-    | assembling | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
+    | Name       | Description                                                    | Type / Literal                                                        |
+    | ---------- | -------------------------------------------------------------- | --------------------------------------------------------------------- |
+    | type       | type                                                           | "lychee:crafting"                                                     |
+    | pattern    | same as vanilla                                                |                                                                       |
+    | key        | same as vanilla                                                |                                                                       |
+    | result     | same as vanilla                                                | [ItemStack](general-types.md#itemstack)(shorthand item not supported) |
+    | group      | same as vanilla ^optional^                                     |                                                                       |
+    | assembling | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]        |
 
 ??? example
 

@@ -358,7 +358,7 @@ Default behavior: Item is consumed.
         block_in:
           blocks: water_cauldron
           state:
-            level: 3
+            level: '3'
         post:
         - type: drop_item
           id: water_bucket
@@ -377,7 +377,7 @@ Default behavior: Item is consumed.
             "block_in": {
                 "blocks": "water_cauldron",
                 "state": {
-                    "level": 3
+                    "level": "3"
                 }
             },
             "post": [
@@ -404,7 +404,7 @@ Default behavior: Item is consumed.
         block_in:
           blocks: water
           state:
-            level: 0
+            level: '0'
         post:
         - type: drop_item
           id: water_bucket
@@ -423,7 +423,7 @@ Default behavior: Item is consumed.
             "block_in": {
                 "blocks": "water",
                 "state": {
-                    "level": 0
+                    "level": "0"
                 }
             },
             "post": [

@@ -123,12 +123,12 @@ A BlockPredicate is a predicate of StateDefinition.
 
 !!! note "Format"
 
-    | Name  | Description                           | Type / Literal           |
-    | ----- | ------------------------------------- | ------------------------ |
-    | *key* | block property key and value pair     | string \| boolean \| int |
-    | *key* | block property key with ranged number | dictionary               |
-    | - min | minimum value                         | int                      |
-    | - max | maximum value                         | int                      |
+    | Name  | Description                           | Type / Literal |
+    | ----- | ------------------------------------- | -------------- |
+    | *key* | block property key and value pair     | string         |
+    | *key* | block property key with ranged number | dictionary     |
+    | - min | minimum value                         | string         |
+    | - max | maximum value                         | string         |
 
 ??? example
 
@@ -138,7 +138,7 @@ A BlockPredicate is a predicate of StateDefinition.
     {
         "blocks": "water",
         "state": {
-            "level": 0
+            "level": "0"
         }
     }
     ```
