@@ -2,7 +2,6 @@ package snownee.lychee.compat.jei.category;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -15,13 +14,12 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
+import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.BlockCrushingRecipe;
-import snownee.lychee.recipes.BlockCrushingRecipeType;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
@@ -36,8 +34,8 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 			8,
 			8);
 
-	public BlockCrushingRecipeCategory(RecipeType<RecipeHolder<BlockCrushingRecipe>> recipeType, IDrawable icon) {
-		super(recipeType, icon);
+	public BlockCrushingRecipeCategory(RecipeType<RecipeHolder<BlockCrushingRecipe>> recipeType, RvCategory<BlockCrushingRecipe> category) {
+		super(recipeType, category);
 	}
 
 	@Override
@@ -187,10 +185,5 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.landingBlock()),
 				Blocks.AIR.defaultBlockState(),
 				2000);
-	}
-
-	@Override
-	public BlockCrushingRecipeType recipeType() {
-		return RecipeTypes.BLOCK_CRUSHING;
 	}
 }

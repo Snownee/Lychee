@@ -15,6 +15,8 @@ import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.jei.elements.DrawableSimpleItemStack;
 import snownee.lychee.compat.jei.elements.InteractiveWidget;
 import snownee.lychee.util.ClientProxy;
+import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.compat.jei.elements.ScreenElementWidget;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
@@ -27,12 +29,13 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	public static final int HEIGHT = 59;
 
 	private final RecipeType<RecipeHolder<T>> type;
-	private RvCategory<T> rvCategory;
+	private final RvCategory<T> rvCategory;
 	public IDrawable icon;
 
-	public AbstractLycheeCategory(RecipeType<RecipeHolder<T>> type, IDrawable icon) {
-		this.icon = icon;
+	public AbstractLycheeCategory(RecipeType<RecipeHolder<T>> type, RvCategory<T> category) {
 		this.type = type;
+		this.rvCategory = category;
+		icon = new ScreenElementWidget(category.icon());
 	}
 
 	@Override
@@ -47,7 +50,7 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 
 	@Override
 	public Component getTitle() {
-		return RVs.makeTitle(getRecipeType().getUid());
+		return rvCategory.title();
 	}
 
 	@Override

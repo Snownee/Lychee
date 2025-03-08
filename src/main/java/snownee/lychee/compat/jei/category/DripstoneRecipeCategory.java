@@ -6,7 +6,6 @@ import com.google.common.base.Suppliers;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -21,15 +20,14 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
 import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 @NotNullByDefault
 public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRecipe> {
@@ -41,8 +39,8 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 			8,
 			8));
 
-	public DripstoneRecipeCategory(RecipeType<RecipeHolder<DripstoneRecipe>> recipeType, IDrawable icon) {
-		super(recipeType, icon);
+	public DripstoneRecipeCategory(RecipeType<RecipeHolder<DripstoneRecipe>> recipeType, RvCategory<DripstoneRecipe> category) {
+		super(recipeType, category);
 	}
 
 	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {
@@ -179,10 +177,5 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 				Blocks.AIR.defaultBlockState(),
 				2000);
-	}
-
-	@Override
-	public LycheeRecipeType<? extends DripstoneRecipe> recipeType() {
-		return RecipeTypes.DRIPSTONE_DRIPPING;
 	}
 }

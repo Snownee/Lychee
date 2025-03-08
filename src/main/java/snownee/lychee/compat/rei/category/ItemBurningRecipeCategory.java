@@ -1,23 +1,20 @@
 package snownee.lychee.compat.rei.category;
 
-import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<ItemBurningRecipe> {
 
-
 	public ItemBurningRecipeCategory(
 			CategoryIdentifier<? extends LycheeDisplay<ItemBurningRecipe>> id,
-			Renderer icon
-	) {
-		super(id, icon, RecipeTypes.ITEM_BURNING);
+			RvCategory<ItemBurningRecipe> category) {
+		super(id, category);
 		methodRect.setX(27);
 	}
 

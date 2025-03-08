@@ -27,10 +27,10 @@ import snownee.lychee.action.DropItem;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.client.gui.AllGuiTextures;
-import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategoryProvider;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.action.CompoundAction;
@@ -39,7 +39,6 @@ import snownee.lychee.util.action.PostActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends RvCategoryProvider<R> {
 
@@ -129,8 +128,6 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 			}
 		}
 	}
-
-	LycheeRecipeType<? extends R> recipeType();
 
 	Rect2i infoRect();
 

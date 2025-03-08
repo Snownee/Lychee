@@ -4,12 +4,11 @@ import java.util.List;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
-import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
-import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.util.ClientProxy;
 
@@ -17,9 +16,8 @@ public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemInsid
 
 	public ItemInsideRecipeCategory(
 			CategoryIdentifier<? extends LycheeDisplay<ItemInsideRecipe>> id,
-			Renderer icon
-	) {
-		super(id, icon, RecipeTypes.ITEM_INSIDE);
+			RvCategory<ItemInsideRecipe> category) {
+		super(id, category);
 		infoRect.setPosition(4, 25);
 		inputBlockRect.setX(80);
 		methodRect.setX(77);
