@@ -2,7 +2,6 @@ package snownee.lychee.client.gui;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.jozufozu.flywheel.core.model.ModelUtil;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
@@ -12,6 +11,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
+import net.createmod.ponder.render.VirtualRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -163,7 +163,7 @@ public class GuiGameElement {
 			this.blockModel = blockmodel;
 			this.modelData = ModelData.EMPTY;
 			if (ClientProxy.HAS_FLYWHEEL) {
-				this.modelData = ModelData.builder().with(ModelUtil.VIRTUAL_PROPERTY, true).build();
+				this.modelData = VirtualRenderHelper.VIRTUAL_DATA;
 			}
 		}
 
@@ -175,7 +175,9 @@ public class GuiGameElement {
 			Minecraft mc = Minecraft.getInstance();
 			BlockRenderDispatcher blockRenderer = mc.getBlockRenderer();
 			MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
-			RenderType renderType = blockState.getBlock() == Blocks.AIR ? Sheets.translucentCullBlockSheet() : ItemBlockRenderTypes.getRenderType(blockState, true);
+			RenderType renderType = blockState.getBlock() == Blocks.AIR ?
+					Sheets.translucentCullBlockSheet() :
+					ItemBlockRenderTypes.getRenderType(blockState, true);
 			VertexConsumer vb = buffer.getBuffer(renderType);
 
 			transformMatrix(matrixStack);
@@ -186,9 +188,18 @@ public class GuiGameElement {
 			cleanUpMatrix(matrixStack);
 		}
 
-		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, RenderType renderType, VertexConsumer vb, PoseStack ms) {
+		protected void renderModel(
+				BlockRenderDispatcher blockRenderer,
+				MultiBufferSource.BufferSource buffer,
+				RenderType renderType,
+				VertexConsumer vb,
+				PoseStack ms) {
 			Minecraft mc = Minecraft.getInstance();
-			int color = mc.getBlockColors().getColor(blockState, mc.level, mc.cameraEntity != null ? mc.cameraEntity.blockPosition() : null, 0);
+			int color = mc.getBlockColors().getColor(
+					blockState,
+					mc.level,
+					mc.cameraEntity != null ? mc.cameraEntity.blockPosition() : null,
+					0);
 			Color rgb = new Color(color == -1 ? this.color : color);
 			blockRenderer.getModelRenderer().renderModel(
 					ms.last(),
@@ -214,7 +225,12 @@ public class GuiGameElement {
 		}
 
 		@Override
-		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, RenderType renderType, VertexConsumer vb, PoseStack ms) {
+		protected void renderModel(
+				BlockRenderDispatcher blockRenderer,
+				MultiBufferSource.BufferSource buffer,
+				RenderType renderType,
+				VertexConsumer vb,
+				PoseStack ms) {
 			if (blockState.getBlock() instanceof FireBlock) {
 				Lighting.setupForFlatItems();
 				blockRenderer.renderSingleBlock(blockState, ms, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
@@ -225,12 +241,24 @@ public class GuiGameElement {
 
 			super.renderModel(blockRenderer, buffer, renderType, vb, ms);
 
-			if (blockState.getFluidState().isEmpty())
+			if (blockState.getFluidState().isEmpty()) {
 				return;
+			}
 
 			float min = 0.001F, max = 0.999F;
 			// LiquidBlockRenderer.MAX_FLUID_HEIGHT
-			FluidRenderer.renderFluidBox(blockState.getFluidState(), min, min, min, max, max * 0.8888889F, max, buffer, ms, LightTexture.FULL_BRIGHT, false);
+			FluidRenderer.renderFluidBox(
+					blockState.getFluidState(),
+					min,
+					min,
+					min,
+					max,
+					max * 0.8888889F,
+					max,
+					buffer,
+					ms,
+					LightTexture.FULL_BRIGHT,
+					false);
 			buffer.endBatch();
 		}
 	}
@@ -283,7 +311,15 @@ public class GuiGameElement {
 				Lighting.setupForFlatItems();
 			}
 
-			renderer.render(stack, ItemDisplayContext.GUI, false, matrixStack, buffer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, bakedModel);
+			renderer.render(
+					stack,
+					ItemDisplayContext.GUI,
+					false,
+					matrixStack,
+					buffer,
+					LightTexture.FULL_BRIGHT,
+					OverlayTexture.NO_OVERLAY,
+					bakedModel);
 			RenderSystem.disableDepthTest();
 			buffer.endBatch();
 
