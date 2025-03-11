@@ -22,9 +22,15 @@ public class InteractiveWidget extends WidgetWithBounds {
 	private BiConsumer<InteractiveWidget, Integer> onClick;
 	@Nullable
 	private Renderable renderable;
+	private boolean clearTooltip = true;
 
 	public InteractiveWidget(ScreenRectangle bounds) {
 		super(bounds);
+	}
+
+	public InteractiveWidget(ScreenRectangle bounds, boolean clearTooltip) {
+		super(bounds);
+		this.clearTooltip = clearTooltip;
 	}
 
 	@Override
@@ -49,6 +55,9 @@ public class InteractiveWidget extends WidgetWithBounds {
 		if (containsMouse(mouseX, mouseY)) {
 			@Nullable List<Component> lines = getTooltipLines();
 			if (lines != null) {
+				if (clearTooltip) {
+					tooltip.clear();
+				}
 				tooltip.addAll(lines);
 			}
 		}

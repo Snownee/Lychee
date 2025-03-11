@@ -1,6 +1,5 @@
 package snownee.lychee.compat.jei.category;
 
-import java.util.Collection;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
@@ -38,6 +37,11 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
+	protected Supplier<Rect2i> removeActionRect = Suppliers.memoize(() -> new Rect2i(
+			inputBlockRect.getX() + inputBlockRect.getWidth() - 4,
+			inputBlockRect.getY() + inputBlockRect.getHeight() - 8,
+			8,
+			8));
 
 	public ItemAndBlockBaseCategory(RecipeType<RecipeHolder<T>> recipeType, RvCategory<T> category) {
 		super(recipeType, category);
@@ -84,7 +88,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 						inputBlockRect.getHeight()),
 				() -> getRenderingBlock(recipeHolder.value())
 		));
-		AbstractLycheeCategory.addRemoveInput(
+		AbstractLycheeCategory.addRemoveInputBlock(
 				removeActionRect.get().getX(),
 				removeActionRect.get().getY(),
 				builder,
@@ -135,9 +139,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 			double mouseX,
 			double mouseY) {
 		var recipe = recipeHolder.value();
-		if (removeActionRect.get().contains((int) mouseX, (int) mouseY)) {
-			tooltip.add(Component.translatable("postAction.lychee.place.consume"));
-		} else if (needRenderInputBlock(recipe) && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
+		if (needRenderInputBlock(recipe) && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
 			tooltip.addAll(BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe)));
 		} else if (methodRect.contains((int) mouseX, (int) mouseY)) {
 			Component description = getMethodDescription(recipe);

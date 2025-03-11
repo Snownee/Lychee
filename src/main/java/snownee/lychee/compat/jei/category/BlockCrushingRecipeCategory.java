@@ -9,7 +9,6 @@ import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -116,9 +115,7 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		var y = anyLandingBlock ? 45 : 36;
 		x = (int) mouseX - x;
 		y = (int) mouseY - y;
-		if (REMOVE_ACTION_RECT.contains(x, y)) {
-			tooltip.add(Component.translatable("postAction.lychee.place.consume"));
-		} else if (FALLING_BLOCK_RECT.contains(x, y)) {
+		if (FALLING_BLOCK_RECT.contains(x, y)) {
 			var fallingBlock = CommonProxy.getCycledItem(
 					BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 					Blocks.ANVIL.defaultBlockState(),
@@ -166,7 +163,7 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 							Blocks.AIR.defaultBlockState(),
 							2000)));
 		}
-		AbstractLycheeCategory.addRemoveInput(
+		AbstractLycheeCategory.addRemoveInputBlock(
 				x + REMOVE_ACTION_RECT.getX(),
 				y + REMOVE_ACTION_RECT.getY(),
 				builder,

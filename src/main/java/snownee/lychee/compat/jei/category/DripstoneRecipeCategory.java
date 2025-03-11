@@ -14,7 +14,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
@@ -112,9 +111,7 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 		DripstoneRecipe recipe = recipeHolder.value();
 		int x = (int) mouseX;
 		int y = (int) mouseY;
-		if (removeActionRect.get().contains((int) mouseX, (int) mouseY)) {
-			tooltip.add(Component.translatable("postAction.lychee.place.consume"));
-		} else if (sourceBlockRect.contains(x, y)) {
+		if (sourceBlockRect.contains(x, y)) {
 			BlockState sourceBlock = CommonProxy.getCycledItem(
 					BlockPredicateExtensions.getShowcaseBlockStates(recipe.sourceBlock()),
 					Blocks.AIR.defaultBlockState(),
@@ -157,7 +154,7 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 						BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 						Blocks.AIR.defaultBlockState(),
 						2000)));
-		AbstractLycheeCategory.addRemoveInput(
+		AbstractLycheeCategory.addRemoveInputBlock(
 				removeActionRect.get().getX(),
 				removeActionRect.get().getY(),
 				builder,
