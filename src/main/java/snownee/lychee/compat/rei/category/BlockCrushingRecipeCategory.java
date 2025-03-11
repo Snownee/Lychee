@@ -47,7 +47,7 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		this.removeActionPosition =
 				Suppliers.memoize(() -> new Vector2i(
 						landingBlockRect.getX() + landingBlockRect.getWidth() - 4,
-						landingBlockRect.getY() + landingBlockRect.getHeight() - 8));
+						landingBlockRect.getY() + landingBlockRect.getHeight() - 4));
 	}
 
 	public BlockCrushingRecipeCategory(
