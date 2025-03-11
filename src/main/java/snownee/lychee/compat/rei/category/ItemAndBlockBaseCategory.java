@@ -39,7 +39,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
 	protected Supplier<Vector2i> removeActionPosition =
 			Suppliers.memoize(() -> new Vector2i(
-					inputBlockRect.getX() + inputBlockRect.getWidth(),
+					inputBlockRect.getX() + inputBlockRect.getWidth() - 4,
 					inputBlockRect.getY() + inputBlockRect.getHeight() - 4));
 
 	public ItemAndBlockBaseCategory(CategoryIdentifier<? extends LycheeDisplay<T>> id, RvCategory<T> category) {
