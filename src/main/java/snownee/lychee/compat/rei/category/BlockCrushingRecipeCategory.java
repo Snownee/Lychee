@@ -1,7 +1,11 @@
 package snownee.lychee.compat.rei.category;
 
 import java.util.List;
+import java.util.function.Supplier;
 
+import org.joml.Vector2i;
+
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 
 import me.shedaniel.math.Point;
@@ -30,6 +34,7 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 	public static final Rect2i LANDING_BLOCK_RECT = new Rect2i(0, 0, 20, 20);
 	private final Rect2i fallingBlockRect;
 	private final Rect2i landingBlockRect;
+	private final Supplier<Vector2i> removeActionPosition;
 
 	public BlockCrushingRecipeCategory(
 			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> id,
@@ -39,6 +44,10 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		super(id, category);
 		this.fallingBlockRect = fallingBlockRect;
 		this.landingBlockRect = landingBlockRect;
+		this.removeActionPosition =
+				Suppliers.memoize(() -> new Vector2i(
+						landingBlockRect.getX() + landingBlockRect.getWidth() - 4,
+						landingBlockRect.getY() + landingBlockRect.getHeight() - 8));
 	}
 
 	public BlockCrushingRecipeCategory(
@@ -62,7 +71,7 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
 
 		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
-		var recipe = display.recipe();
+		var recipe = display.recipe().value();
 		createInfoBadgeIfNeeded(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
 			var x = recipe.getIngredients().isEmpty() ? 41 : 77;
@@ -133,6 +142,12 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 			widget.setOnClick(($, button) -> clickBlock(getLandingBlock(recipe), button));
 			widgets.add(widget);
 		}
+
+		LycheeCategory.addRemoveInputBlock(
+				removeActionPosition.get().x + bounds.x,
+				removeActionPosition.get().y + bounds.y,
+				widgets,
+				recipe);
 
 		return widgets;
 	}

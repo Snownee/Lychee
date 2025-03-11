@@ -1,7 +1,11 @@
 package snownee.lychee.compat.rei.category;
 
 import java.util.List;
+import java.util.function.Supplier;
 
+import org.joml.Vector2i;
+
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 
 import me.shedaniel.math.Point;
@@ -30,6 +34,10 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 
 	private final Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
 	private final Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
+	protected Supplier<Vector2i> removeActionPosition =
+			Suppliers.memoize(() -> new Vector2i(
+					targetBlockRect.getX() + targetBlockRect.getWidth() - 4,
+					targetBlockRect.getY() + targetBlockRect.getHeight() - 8));
 
 	public DripstoneRecipeCategory(CategoryIdentifier<? extends LycheeDisplay<DripstoneRecipe>> id, RvCategory<DripstoneRecipe> category) {
 		super(id, category);
@@ -48,7 +56,7 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 	@Override
 	public List<Widget> setupDisplay(LycheeDisplay<DripstoneRecipe> display, Rectangle bounds) {
 		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
-		var recipe = display.recipe();
+		var recipe = display.recipe().value();
 		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
 		createInfoBadgeIfNeeded(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
@@ -95,6 +103,12 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 		widget.setTooltipFunction($ -> BlockPredicateExtensions.getTooltips(getTargetBlock(recipe), recipe.blockPredicate()));
 		widget.setOnClick(($, button) -> clickBlock(getTargetBlock(recipe), button));
 		widgets.add(widget);
+
+		LycheeCategory.addRemoveInputBlock(
+				removeActionPosition.get().x + bounds.x,
+				removeActionPosition.get().y + bounds.y,
+				widgets,
+				recipe);
 
 		return widgets;
 	}

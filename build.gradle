@@ -99,7 +99,7 @@ dependencies {
 
     modImplementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
 
-    compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
+    implementation "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
     compileOnly "me.shedaniel:REIPluginCompatibilities-forge-annotations:12.+"
 
 //    modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
