@@ -37,8 +37,8 @@ public class AnvilCraftingDisplay extends DefaultAnvilDisplay implements LycheeD
 	}
 
 	@Override
-	public AnvilCraftingRecipe recipe() {
-		return lycheeRecipe.value();
+	public RecipeHolder<AnvilCraftingRecipe> recipe() {
+		return lycheeRecipe;
 	}
 
 	@Override

@@ -1,23 +1,16 @@
 package snownee.lychee.compat.jei.category;
 
-import java.util.List;
-
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
-import snownee.lychee.action.PlaceBlock;
-import snownee.lychee.category.SpriteElement;
-import snownee.lychee.category.SpriteElementRenderer;
-import snownee.lychee.compat.jei.elements.InteractiveWidget;
 import snownee.lychee.compat.jei.elements.ScreenElementWidget;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
@@ -79,26 +72,5 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	@Override
 	public RvCategory<T> rvCategory() {
 		return rvCategory;
-	}
-
-	protected static <T extends ILycheeRecipe<LycheeContext>> void addRemoveInputBlock(
-			int x,
-			int y,
-			IRecipeExtrasBuilder builder,
-			RecipeHolder<T> recipeHolder) {
-		if (recipeHolder.value().postActions().stream().noneMatch(it -> it instanceof PlaceBlock placeBlock && placeBlock.hidden())) {
-			return;
-		}
-		var widget = new InteractiveWidget(new ScreenRectangle(x, y, 8, 8), true);
-		builder.addWidget(widget);
-		builder.addGuiEventListener(widget);
-		widget.setRenderable(new SpriteElementRenderer(
-				new SpriteElement(Lychee.id("rv/remove_block")),
-				widget.getPosition().x(),
-				widget.getPosition().y(),
-				100,
-				widget.getWidth(),
-				widget.getHeight()));
-		widget.setTooltipFunction(it -> List.of(Component.translatable("postAction.lychee.place.consume")));
 	}
 }

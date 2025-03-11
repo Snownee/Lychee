@@ -149,7 +149,7 @@ dependencies {
     annotationProcessor "maven.modrinth:kiwi:${project.kiwi_version}+neoforge"
     implementation "maven.modrinth:cloth-config:${project.cloth_config_version}+neoforge"
 
-    compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
+    implementation "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
     compileOnly "me.shedaniel:REIPluginCompatibilities-forge-annotations:12.+"
 
     implementation "mezz.jei:jei-${project.minecraft_version}-common-api:${project.jei_version}"

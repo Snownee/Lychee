@@ -23,9 +23,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.Lychee;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
+import snownee.lychee.category.SpriteElement;
+import snownee.lychee.category.SpriteElementRenderer;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
@@ -129,6 +132,26 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		}
 	}
 
+	static <T extends ILycheeRecipe<LycheeContext>> void addRemoveInputBlock(
+			int x,
+			int y,
+			List<Widget> widgets,
+			T recipe) {
+		if (recipe.postActions().stream().noneMatch(it -> it instanceof PlaceBlock placeBlock && placeBlock.hidden())) {
+			return;
+		}
+		var widget = new InteractiveWidget(new Rectangle(x, y, 8, 8));
+		widgets.add(widget);
+		widget.setRenderable(new SpriteElementRenderer(
+				new SpriteElement(Lychee.id("rv/remove_block")),
+				x,
+				y,
+				100,
+				widget.getBounds().width,
+				widget.getBounds().height));
+		widget.setTooltipFunction(it -> List.of(Component.translatable("postAction.lychee.place.consume")));
+	}
+
 	Rect2i infoRect();
 
 	default int contentWidth() {
@@ -136,7 +159,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 	}
 
 	static void createInfoBadgeIfNeeded(List<Widget> widgets, LycheeDisplay<?> display, Point startPoint, Rect2i rect) {
-		ILycheeRecipe<?> recipe = display.recipe();
+		var recipe = display.recipe().value();
 		if (recipe.conditions().conditions().isEmpty() && !recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
 			return;
 		}
@@ -144,7 +167,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		var widget = new InteractiveWidget(bounds);
 		widget.setTooltipFunction($ -> RVs.getRecipeTooltip(recipe));
 		widget.setOnClick(($, button) -> ClientProxy.postInfoBadgeClickEvent(
-				display.recipe(),
+				recipe,
 				display.getDisplayLocation().orElse(null),
 				button));
 		widget.setRenderable((graphics, mouseX, mouseY, delta) -> {

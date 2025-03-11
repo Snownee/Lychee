@@ -36,7 +36,7 @@ public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>>
 	@Override
 	public List<Widget> setupDisplay(LycheeDisplay<T> display, Rectangle bounds) {
 		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
-		var recipe = display.recipe();
+		var recipe = display.recipe().value();
 		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
 		createInfoBadgeIfNeeded(widgets, display, startPoint);
 		var xCenter = bounds.getCenterX();
