@@ -88,7 +88,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 						inputBlockRect.getHeight()),
 				() -> getRenderingBlock(recipeHolder.value())
 		));
-		AbstractLycheeCategory.addRemoveInput(
+		AbstractLycheeCategory.addRemoveInputBlock(
 				removeActionRect.get().getX(),
 				removeActionRect.get().getY(),
 				builder,
@@ -139,9 +139,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 			double mouseX,
 			double mouseY) {
 		var recipe = recipeHolder.value();
-		if (removeActionRect.get().contains((int) mouseX, (int) mouseY)) {
-			tooltip.add(Component.translatable("postAction.lychee.place.consume"));
-		} else if (needRenderInputBlock(recipe) && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
+		if (needRenderInputBlock(recipe) && inputBlockRect.contains((int) mouseX, (int) mouseY)) {
 			tooltip.addAll(BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe)));
 		} else if (methodRect.contains((int) mouseX, (int) mouseY)) {
 			Component description = getMethodDescription(recipe);

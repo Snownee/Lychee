@@ -27,6 +27,9 @@ public class InteractiveWidget implements IRecipeWidget, IJeiGuiEventListener {
 	private Function<InteractiveWidget, @Nullable List<Component>> tooltip;
 	@Nullable
 	private BiConsumer<InteractiveWidget, Integer> onClick;
+	@Nullable
+	private Renderable renderable;
+	private boolean clearTooltip = true;
 
 	public InteractiveWidget(ScreenRectangle bounds) {
 		this.bounds = bounds;
@@ -51,6 +54,11 @@ public class InteractiveWidget implements IRecipeWidget, IJeiGuiEventListener {
 		this.point = position;
 	}
 
+	public InteractiveWidget(ScreenRectangle bounds, boolean clearTooltip) {
+		super(bounds);
+		this.clearTooltip = clearTooltip;
+	}
+
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (isClickable() && containsMouse(mouseX, mouseY)) {
@@ -70,6 +78,9 @@ public class InteractiveWidget implements IRecipeWidget, IJeiGuiEventListener {
 		if (containsMouse(mouseX, mouseY)) {
 			@Nullable List<Component> lines = getTooltipLines();
 			if (lines != null) {
+				if (clearTooltip) {
+					tooltip.clear();
+				}
 				tooltip.addAll(lines);
 			}
 		}
