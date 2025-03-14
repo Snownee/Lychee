@@ -23,13 +23,13 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
-import snownee.kiwi.recipe_.SizedIngredient;
+import snownee.kiwi.recipe.SizedIngredient;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.BoundsExtensions;
+import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -90,7 +90,8 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 						LycheeCodecs.sizeLimit(KCodecs.compactList(OPTIONAL_SIZED_INGREDIENT_CODEC), 1, 2)
 								.fieldOf(ITEM_IN)
 								.forGetter(T::sizedIngredients),
-						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY).forGetter(T::blockPredicate))
+						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
+								.forGetter(T::blockPredicate))
 				.apply(instance, constructor));
 	}
 
@@ -113,7 +114,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return NonNullListAccess.construct(input.stream().map(SizedIngredient::ingredient).toList(), null);
+		return NonNullListExtensions.copyOf(input.stream().map(SizedIngredient::ingredient).toList());
 	}
 
 	@Override

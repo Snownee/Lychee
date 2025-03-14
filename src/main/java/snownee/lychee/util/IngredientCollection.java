@@ -11,9 +11,8 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import snownee.kiwi.recipe_.SizedIngredient;
+import snownee.kiwi.recipe.SizedIngredient;
 import snownee.kiwi.util.codec.KCodecs;
-import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.codec.LycheeCodecs;
 
 public final class IngredientCollection {
@@ -72,7 +71,7 @@ public final class IngredientCollection {
 					list.add(ingredient.ingredient());
 				}
 			}
-			flattenedIngredients = NonNullListAccess.construct(list, null);
+			flattenedIngredients = NonNullListExtensions.copyOf(list);
 		}
 		return flattenedIngredients;
 	}
