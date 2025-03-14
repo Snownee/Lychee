@@ -40,7 +40,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 	protected Supplier<Vector2i> removeActionPosition =
 			Suppliers.memoize(() -> new Vector2i(
 					inputBlockRect.getX() + inputBlockRect.getWidth() - 4,
-					inputBlockRect.getY() + inputBlockRect.getHeight() - 4));
+					inputBlockRect.getY() + inputBlockRect.getHeight() - 8));
 
 	public ItemAndBlockBaseCategory(CategoryIdentifier<? extends LycheeDisplay<T>> id, RvCategory<T> category) {
 		super(id, category);
@@ -125,8 +125,8 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 		}
 
 		LycheeCategory.addRemoveInputBlock(
-				removeActionPosition.get().x + bounds.x,
-				removeActionPosition.get().y + bounds.y,
+				removeActionPosition.get().x + startPoint.x,
+				removeActionPosition.get().y + startPoint.y,
 				widgets,
 				recipe);
 
