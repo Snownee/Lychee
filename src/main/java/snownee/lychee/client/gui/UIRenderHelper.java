@@ -18,7 +18,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
-import snownee.lychee.util.Color;
+import snownee.kiwi.util.Color;
 
 public class UIRenderHelper {
 

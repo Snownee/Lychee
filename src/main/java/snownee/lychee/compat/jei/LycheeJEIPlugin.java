@@ -25,7 +25,6 @@ import snownee.kiwi.util.KUtil;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.jei.category.CategoryProviders;
 import snownee.lychee.compat.jei.category.CraftingRecipeCategoryExtension;
 import snownee.lychee.compat.jei.display.AnvilCraftingDisplay;
@@ -34,6 +33,7 @@ import snownee.lychee.compat.jei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.compat.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.compat.rv.RvPlugin;
+import snownee.lychee.compat.rv.SlotType;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
@@ -43,13 +43,15 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 public class LycheeJEIPlugin implements IModPlugin {
 	public static final ResourceLocation ID = Lychee.id("main");
 	public static final IIngredientType<PostAction> POST_ACTION = () -> PostAction.class;
-	private static final Map<AllGuiTextures, IDrawable> elementMap = Maps.newIdentityHashMap();
+	private static final Map<SlotType, IDrawable> slotElements = Maps.toMap(
+			List.of(SlotType.values()),
+			$ -> new ScreenElementWidget($.sprite));
 	public static IJeiRuntime runtime;
 	public static IJeiHelpers helpers;
 	private final RvPlugin rvPlugin = new RvPlugin();
 
-	public static IDrawable slot(SlotType slotType) {
-		return slotType.element;
+	public static IDrawable slot(SlotType type) {
+		return slotElements.get(type);
 	}
 
 	@Override
@@ -131,15 +133,5 @@ public class LycheeJEIPlugin implements IModPlugin {
 					$.value() instanceof ILycheeRecipe<?> recipe && recipe.hideInRecipeViewer()).toList();
 			jeiRuntime.getRecipeManager().hideRecipes(mezz.jei.api.constants.RecipeTypes.CRAFTING, recipes);
 		});
-	}
-
-	public enum SlotType {
-		NORMAL(AllGuiTextures.JEI_SLOT), CHANCE(AllGuiTextures.JEI_CHANCE_SLOT), CATALYST(AllGuiTextures.JEI_CATALYST_SLOT);
-
-		final IDrawable element;
-
-		SlotType(AllGuiTextures element) {
-			this.element = elementMap.computeIfAbsent(element, ScreenElementWidget::new);
-		}
 	}
 }

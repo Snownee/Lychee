@@ -12,7 +12,7 @@ public class IngredientInfo {
 	public final Ingredient ingredient;
 	public List<Component> tooltips = List.of();
 	public int count = 1;
-	public boolean isCatalyst;
+	public SlotType type = SlotType.NORMAL;
 
 	public IngredientInfo(Ingredient ingredient) {
 		this.ingredient = ingredient;
@@ -30,7 +30,4 @@ public class IngredientInfo {
 		tooltips.add(line);
 	}
 
-	public enum Type {
-		NORMAL, AIR, ANY
-	}
 }

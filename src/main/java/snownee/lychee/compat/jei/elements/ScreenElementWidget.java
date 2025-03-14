@@ -3,7 +3,6 @@ package snownee.lychee.compat.jei.elements;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
 
@@ -12,8 +11,8 @@ public class ScreenElementWidget extends WidgetWithBounds {
 
 	private final ScreenElement element;
 
-	public ScreenElementWidget(AllGuiTextures element) {
-		super(new ScreenRectangle(0, 0, element.width, element.height));
+	public ScreenElementWidget(ScreenElement element) {
+		super(new ScreenRectangle(0, 0, 16, 16));
 		this.element = element;
 	}
 
