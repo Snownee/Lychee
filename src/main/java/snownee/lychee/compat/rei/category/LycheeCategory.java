@@ -148,7 +148,8 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 				y,
 				100,
 				widget.getBounds().width,
-				widget.getBounds().height));
+				widget.getBounds().height,
+				2));
 		widget.setTooltipFunction(it -> List.of(Component.translatable("postAction.lychee.place.consume")));
 	}
 
