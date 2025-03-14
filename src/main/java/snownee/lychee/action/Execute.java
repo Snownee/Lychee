@@ -27,7 +27,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Execute(PostActionCommonProperties commonProperties, String command, boolean repeat) implements PostAction {
 
-	public static final Execute DUMMY = new Execute(new PostActionCommonProperties(), "", false);
+	public static final Execute DUMMY = new Execute(PostActionCommonProperties.EMPTY, "", false);
 	public static final Component DEFAULT_NAME = Component.literal(Lychee.ID);
 
 	@Override
@@ -99,7 +99,7 @@ public record Execute(PostActionCommonProperties commonProperties, String comman
 					(it, value) -> it.writeBoolean(!value.conditions().conditions().isEmpty()),
 					it -> {
 						if (it.readBoolean()) {
-							return new Execute(new PostActionCommonProperties(), "", false);
+							return new Execute(PostActionCommonProperties.EMPTY, "", false);
 						}
 						return DUMMY;
 					}

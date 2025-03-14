@@ -8,7 +8,6 @@ import java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.collect.Lists;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -57,7 +56,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 	private float chance = 1;
 	protected final @NotNull BlockPredicate targetBlock;
 
-	protected DripstoneRecipe(
+	public DripstoneRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			@NotNull BlockPredicate sourceBlock,
 			@NotNull BlockPredicate targetBlock
@@ -107,7 +106,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		var check = (LocationCheck) LocationCheck.checkLocation(builder).build();
 		var exit = new Exit(new PostActionCommonProperties(
 				Optional.empty(),
-				new ContextualHolder(Lists.newArrayList(new Not(new Location(check)))),
+				new ContextualHolder(List.of(new Not(new Location(check)))),
 				true));
 		var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.jobs.offer(new Job(exit, 1));

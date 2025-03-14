@@ -51,7 +51,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 
 	protected final SizedIngredient input;
 
-	protected ItemBurningRecipe(LycheeRecipeCommonProperties commonProperties, SizedIngredient input) {
+	public ItemBurningRecipe(LycheeRecipeCommonProperties commonProperties, SizedIngredient input) {
 		super(commonProperties);
 		this.input = input;
 		onConstructed();

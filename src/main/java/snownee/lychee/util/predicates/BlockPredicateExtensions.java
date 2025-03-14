@@ -80,8 +80,7 @@ public class BlockPredicateExtensions {
 			BlockStateProperties.DRIPSTONE_THICKNESS
 	));
 
-	public static <T> DataResult<BlockPredicate> fromString(DynamicOps<T> ops, T input, boolean forTesting) {
-		String s = ops.getStringValue(input).result().orElseThrow();
+	public static <T> DataResult<BlockPredicate> fromString(String s, boolean forTesting) {
 		if ("*".equals(s)) {
 			return DataResult.success(ANY);
 		}
@@ -140,7 +139,9 @@ public class BlockPredicateExtensions {
 					public <T> DataResult<Pair<BlockPredicate, T>> decode(DynamicOps<T> ops, T input) {
 						var stringValue = ops.getStringValue(input);
 						if (stringValue.result().isPresent()) {
-							return fromString(ops, input, forTesting).flatMap(it -> DataResult.success(Pair.of(it, ops.empty())));
+							return fromString(stringValue.getOrThrow(), forTesting).flatMap(it -> DataResult.success(Pair.of(
+									it,
+									ops.empty())));
 						}
 						DataResult<Pair<BlockPredicate, T>> result = BlockPredicate.CODEC.decode(ops, input);
 						if (result.result().isPresent() && isAny(result.getOrThrow().getFirst())) {

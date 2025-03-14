@@ -21,3 +21,15 @@ ServerEvents.recipes(event => {
             id: diamond
     `).id('test:yaml_recipe')
 })
+
+ServerEvents.recipes(event => {
+	let lb = LycheeBuilder.create(event.jsonOps)
+	let javaRecipe = obj => event.custom(Lychee.toJSON(obj))
+	let $Chance = Java.loadClass('snownee.lychee.contextual.Chance')
+	javaRecipe(
+		lb.itemBurningRecipe(lb.sized('3x glass'))
+			.post(lb.dropItem('3x sand'))
+			.condition($Chance(0.5))
+	).id('test:java_recipe')
+	lb.teardown()
+})

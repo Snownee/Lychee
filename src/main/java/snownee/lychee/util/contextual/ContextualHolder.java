@@ -55,7 +55,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		this.overrideDesc = null;
 	}
 
-	private static ContextualHolder pack(List<ContextualConditionData<?>> holders) {
+	public static ContextualHolder pack(List<ContextualConditionData<?>> holders) {
 		if (holders.isEmpty()) {
 			return EMPTY;
 		}
@@ -89,7 +89,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		return conditions().stream().mapToInt(ContextualConditionDisplay::showingCount).sum();
 	}
 
-	private List<ContextualConditionData<?>> unpack() {
+	public List<ContextualConditionData<?>> unpack() {
 		List<ContextualConditionData<?>> list = Lists.newArrayListWithExpectedSize(conditions.size());
 		for (var i = 0; i < conditions.size(); i++) {
 			var condition = conditions.get(i);

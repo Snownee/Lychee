@@ -21,7 +21,7 @@ versionRange = "[1.21,1.21.2)"
 
 [[dependencies.lychee]]
 modId = "kiwi"
-versionRange = "[15.4, )"
+versionRange = "[15.4.1, )"
 
 [[dependencies.lychee]]
 modId = "jei"

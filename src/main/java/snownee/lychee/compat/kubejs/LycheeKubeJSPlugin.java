@@ -16,6 +16,7 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.action.CustomAction;
 import snownee.lychee.contextual.CustomCondition;
+import snownee.lychee.datagen.LycheeBuilder;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Reference;
@@ -70,6 +71,7 @@ public class LycheeKubeJSPlugin implements KubeJSPlugin {
 		bindings.add("LycheeLootContextParams", LycheeLootContextParams.class);
 		bindings.add("LycheeReference", Reference.class);
 		bindings.add("LycheeContextKey", LycheeContextKey.class);
+		bindings.add("LycheeBuilder", LycheeBuilder.class);
 	}
 
 	@Override

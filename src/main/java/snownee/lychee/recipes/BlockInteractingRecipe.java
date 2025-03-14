@@ -74,7 +74,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 	protected final List<SizedIngredient> input;
 	protected final BlockPredicate blockPredicate;
 
-	protected BlockInteractingRecipe(
+	public BlockInteractingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			List<SizedIngredient> input,
 			BlockPredicate blockPredicate) {

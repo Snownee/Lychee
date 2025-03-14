@@ -1,6 +1,5 @@
 package snownee.lychee.util.action;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
@@ -11,14 +10,15 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import snownee.lychee.util.contextual.ContextualHolder;
+import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PostActionCommonProperties {
+	public static final PostActionCommonProperties EMPTY = new PostActionCommonProperties(Optional.empty(), ContextualHolder.EMPTY, false);
 	public static final MapCodec<PostActionCommonProperties> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			Codec.STRING.optionalFieldOf("@path").forGetter(PostActionCommonProperties::getPath),
-			ContextualHolder.CODEC.optionalFieldOf("contextual", ContextualHolder.EMPTY)
-					.forGetter(PostActionCommonProperties::conditions),
-			Codec.BOOL.optionalFieldOf("hide", false).forGetter(PostActionCommonProperties::hidden)
+			LycheeRecipeCommonProperties.CONTEXTUAL_CODEC.forGetter(PostActionCommonProperties::conditions),
+			LycheeRecipeCommonProperties.HIDE_CODEC.forGetter(PostActionCommonProperties::hidden)
 	).apply(instance, PostActionCommonProperties::new));
 	private Optional<String> path;
 	private final ContextualHolder conditions;
@@ -28,12 +28,6 @@ public class PostActionCommonProperties {
 		this.path = path;
 		this.conditions = conditions;
 		this.hidden = hidden;
-	}
-
-	public PostActionCommonProperties() {
-		this.conditions = new ContextualHolder(List.of(), null, null);
-		this.path = Optional.empty();
-		this.hidden = false;
 	}
 
 	public ContextualHolder conditions() {
