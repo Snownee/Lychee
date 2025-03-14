@@ -28,8 +28,12 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
+import snownee.lychee.Lychee;
 import snownee.lychee.action.DropItem;
+import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
+import snownee.lychee.category.SpriteElement;
+import snownee.lychee.category.SpriteElementRenderer;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.jei.LycheeJEIPlugin;
 import snownee.lychee.compat.jei.elements.InteractiveWidget;
@@ -168,6 +172,27 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		});
 		builder.addWidget(widget);
 		builder.addGuiEventListener(widget);
+	}
+
+	static <T extends ILycheeRecipe<LycheeContext>> void addRemoveInputBlock(
+			int x,
+			int y,
+			IRecipeExtrasBuilder builder,
+			T recipe) {
+		if (recipe.postActions().stream().noneMatch(it -> it instanceof PlaceBlock placeBlock && placeBlock.hidden())) {
+			return;
+		}
+		var widget = new InteractiveWidget(new ScreenRectangle(x, y, 8, 8), true);
+		builder.addWidget(widget);
+		builder.addGuiEventListener(widget);
+		widget.setRenderable(new SpriteElementRenderer(
+				new SpriteElement(Lychee.id("rv/remove_block")),
+				x,
+				y,
+				100,
+				widget.getWidth(),
+				widget.getHeight()));
+		widget.setTooltipFunction(it -> List.of(Component.translatable("postAction.lychee.place.consume")));
 	}
 
 	Rect2i infoRect();

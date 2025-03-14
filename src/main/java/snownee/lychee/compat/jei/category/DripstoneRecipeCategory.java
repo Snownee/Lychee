@@ -1,5 +1,11 @@
 package snownee.lychee.compat.jei.category;
 
+import java.util.function.Supplier;
+
+import org.joml.Vector2i;
+
+import com.google.common.base.Suppliers;
+
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -28,6 +34,10 @@ import snownee.lychee.util.predicates.BlockPredicateExtensions;
 public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRecipe> {
 	private final Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
 	private final Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
+	protected Supplier<Vector2i> removeActionPosition =
+			Suppliers.memoize(() -> new Vector2i(
+					targetBlockRect.getX() + targetBlockRect.getWidth() - 4,
+					targetBlockRect.getY() + targetBlockRect.getHeight() - 8));
 
 	public DripstoneRecipeCategory(RecipeType<RecipeHolder<DripstoneRecipe>> recipeType, RvCategory<DripstoneRecipe> category) {
 		super(recipeType, category);
@@ -145,6 +155,12 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 						BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 						Blocks.AIR.defaultBlockState(),
 						2000)));
+		LycheeCategory.addRemoveInputBlock(
+				removeActionPosition.get().x(),
+				removeActionPosition.get().y(),
+				builder,
+				recipe
+		);
 	}
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {

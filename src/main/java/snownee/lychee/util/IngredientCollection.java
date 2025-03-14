@@ -71,7 +71,7 @@ public final class IngredientCollection {
 					list.add(ingredient.ingredient());
 				}
 			}
-			flattenedIngredients = NonNullList.copyOf(list);
+			flattenedIngredients = NonNullListExtensions.copyOf(list);
 		}
 		return flattenedIngredients;
 	}

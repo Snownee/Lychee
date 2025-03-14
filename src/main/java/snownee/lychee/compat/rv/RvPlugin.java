@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.Blocks;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
+import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -54,7 +55,7 @@ public class RvPlugin {
 		register(
 				RecipeTypes.BLOCK_EXPLODING, it -> {
 					it.iconProvider = category -> {
-						var mainIcon = AllGuiTextures.RIGHT_CLICK;
+						var mainIcon = GuiGameElement.of(Items.TNT.getDefaultInstance());
 						return Either.left(new SideBlockIcon(
 								mainIcon,
 								Suppliers.memoize(() -> RVs.getIconBlock(category.recipes))));
@@ -69,8 +70,11 @@ public class RvPlugin {
 		register(
 				RecipeTypes.BLOCK_INTERACTING, it -> {
 					it.iconProvider = category -> {
-						var mainIcon = category.recipes.stream().map($ -> $.value().getType()).anyMatch($ -> $ ==
-								RecipeTypes.BLOCK_INTERACTING) ? AllGuiTextures.RIGHT_CLICK : AllGuiTextures.LEFT_CLICK;
+						var mainIcon = category.recipes.stream()
+								.map($ -> $.value().getType())
+								.anyMatch($ -> $ == RecipeTypes.BLOCK_INTERACTING)
+								? AllGuiTextures.RIGHT_CLICK
+								: AllGuiTextures.LEFT_CLICK;
 						return Either.left(new SideBlockIcon(
 								mainIcon,
 								Suppliers.memoize(() -> RVs.getIconBlock(category.recipes))));

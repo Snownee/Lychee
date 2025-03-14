@@ -1,6 +1,11 @@
 package snownee.lychee.compat.jei.category;
 
+import java.util.function.Supplier;
+
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2i;
+
+import com.google.common.base.Suppliers;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
@@ -33,6 +38,10 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
+	protected Supplier<Vector2i> removeActionPosition =
+			Suppliers.memoize(() -> new Vector2i(
+					inputBlockRect.getX() + inputBlockRect.getWidth() - 4,
+					inputBlockRect.getY() + inputBlockRect.getHeight() - 8));
 
 	public ItemAndBlockBaseCategory(RecipeType<RecipeHolder<T>> recipeType, RvCategory<T> category) {
 		super(recipeType, category);
@@ -71,14 +80,21 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 	@Override
 	public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<T> recipeHolder, IFocusGroup focuses) {
 		super.createRecipeExtras(builder, recipeHolder, focuses);
+		var recipe = recipeHolder.value();
 		builder.addInputHandler(new BlockClickingInputHandler(
 				new ScreenRectangle(
 						inputBlockRect.getX(),
 						inputBlockRect.getY(),
 						inputBlockRect.getWidth(),
 						inputBlockRect.getHeight()),
-				() -> getRenderingBlock(recipeHolder.value())
+				() -> getRenderingBlock(recipe)
 		));
+		LycheeCategory.addRemoveInputBlock(
+				removeActionPosition.get().x(),
+				removeActionPosition.get().y(),
+				builder,
+				recipe
+		);
 	}
 
 	@Override

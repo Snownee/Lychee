@@ -1,5 +1,7 @@
 package snownee.lychee.compat.jei.category;
 
+import org.joml.Vector2i;
+
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -27,6 +29,9 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 
 	public static final Rect2i FALLING_BLOCK_RECT = new Rect2i(0, -35, 20, 35);
 	public static final Rect2i LANDING_BLOCK_RECT = new Rect2i(0, 0, 20, 20);
+	public static final Vector2i REMOVE_ACTION_POSITION = new Vector2i(
+			LANDING_BLOCK_RECT.getX() + LANDING_BLOCK_RECT.getWidth() - 4,
+			LANDING_BLOCK_RECT.getY() + LANDING_BLOCK_RECT.getHeight() - 8);
 
 	public BlockCrushingRecipeCategory(RecipeType<RecipeHolder<BlockCrushingRecipe>> recipeType, RvCategory<BlockCrushingRecipe> category) {
 		super(recipeType, category);
@@ -158,6 +163,11 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 							Blocks.AIR.defaultBlockState(),
 							2000)));
 		}
+		LycheeCategory.addRemoveInputBlock(
+				x + REMOVE_ACTION_POSITION.x(),
+				y + REMOVE_ACTION_POSITION.y(),
+				builder,
+				recipe);
 	}
 
 	private BlockState getFallingBlock(BlockCrushingRecipe recipe) {

@@ -26,10 +26,11 @@ public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemInsid
 	@Override
 	public List<Widget> setupDisplay(LycheeDisplay<ItemInsideRecipe> display, Rectangle bounds) {
 		List<Widget> widgets = super.setupDisplay(display, bounds);
-		if (display.recipe().time() > 0) {
+		var recipe = display.recipe().value();
+		if (recipe.time() > 0) {
 			widgets.add(Widgets.createLabel(
 					new Point(bounds.x + methodRect.getX() + 10, bounds.y + methodRect.getY() - 6),
-					ClientProxy.format("tip.lychee.sec", display.recipe().time())).color(0xFF666666, 0xFFBBBBBB).noShadow().centered());
+					ClientProxy.format("tip.lychee.sec", recipe.time())).color(0xFF666666, 0xFFBBBBBB).noShadow().centered());
 		}
 		return widgets;
 	}

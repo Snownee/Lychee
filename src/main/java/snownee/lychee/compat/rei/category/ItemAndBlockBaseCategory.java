@@ -1,9 +1,12 @@
 package snownee.lychee.compat.rei.category;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2i;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 
 import me.shedaniel.math.Point;
@@ -19,10 +22,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
+import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
@@ -34,6 +37,10 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
+	protected Supplier<Vector2i> removeActionPosition =
+			Suppliers.memoize(() -> new Vector2i(
+					inputBlockRect.getX() + inputBlockRect.getWidth() - 4,
+					inputBlockRect.getY() + inputBlockRect.getHeight() - 8));
 
 	public ItemAndBlockBaseCategory(CategoryIdentifier<? extends LycheeDisplay<T>> id, RvCategory<T> category) {
 		super(id, category);
@@ -63,7 +70,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 	@Override
 	public List<Widget> setupDisplay(LycheeDisplay<T> display, Rectangle bounds) {
 		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
-		var recipe = display.recipe();
+		var recipe = display.recipe().value();
 		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
 		createInfoBadgeIfNeeded(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
@@ -116,6 +123,12 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 			widget.setOnClick(($, button) -> clickBlock(getRenderingBlock(recipe), button));
 			widgets.add(widget);
 		}
+
+		LycheeCategory.addRemoveInputBlock(
+				removeActionPosition.get().x + startPoint.x,
+				removeActionPosition.get().y + startPoint.y,
+				widgets,
+				recipe);
 
 		return widgets;
 	}

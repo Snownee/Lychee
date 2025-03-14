@@ -2,7 +2,6 @@ package snownee.lychee.compat.rei.elements;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -23,7 +22,6 @@ import snownee.kiwi.util.NotNullByDefault;
 public class InteractiveWidget extends WidgetWithBounds {
 
 	private final Rectangle bounds;
-	private Point point;
 	@Nullable
 	private Function<InteractiveWidget, @Nullable List<Component>> tooltip;
 	@Nullable
@@ -33,15 +31,6 @@ public class InteractiveWidget extends WidgetWithBounds {
 
 	public InteractiveWidget(Rectangle bounds) {
 		this.bounds = bounds;
-		point = new Point(bounds.getCenterX(), bounds.getMaxY());
-	}
-
-	public final Point getPoint() {
-		return point;
-	}
-
-	public final void setPoint(Point point) {
-		this.point = Objects.requireNonNull(point);
 	}
 
 	@Override
@@ -49,7 +38,7 @@ public class InteractiveWidget extends WidgetWithBounds {
 		if (containsMouse(mouseX, mouseY)) {
 			@Nullable List<Component> tooltip = getTooltipLines();
 			if (tooltip != null) {
-				Tooltip.create(point, tooltip).queue();
+				Tooltip.create(new Point(mouseX, mouseY), tooltip).queue();
 			}
 		}
 		if (renderable != null) {

@@ -124,7 +124,7 @@ public class LycheeREIPlugin implements REIClientPlugin {
 		}
 
 		registry.registerVisibilityPredicate((DisplayCategory<?> category, Display display) -> {
-			if (display instanceof LycheeDisplay<?> lycheeDisplay && lycheeDisplay.recipe().hideInRecipeViewer()) {
+			if (display instanceof LycheeDisplay<?> lycheeDisplay && lycheeDisplay.recipe().value().hideInRecipeViewer()) {
 				return EventResult.interruptFalse();
 			}
 			return EventResult.pass();

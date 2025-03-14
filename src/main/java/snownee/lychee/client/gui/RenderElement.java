@@ -1,8 +1,9 @@
 package snownee.lychee.client.gui;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 
-public abstract class RenderElement implements ScreenElement {
+public abstract class RenderElement implements ScreenElement, Renderable {
 
 	public static final RenderElement EMPTY = new RenderElement() {
 		@Override
@@ -71,6 +72,11 @@ public abstract class RenderElement implements ScreenElement {
 	@Override
 	public void render(GuiGraphics graphics, int x, int y) {
 		this.at(x, y).render(graphics);
+	}
+
+	@Override
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		render(guiGraphics);
 	}
 
 	public static class SimpleRenderElement extends RenderElement {
