@@ -23,7 +23,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
-import snownee.kiwi.recipe_.SizedIngredient;
+import snownee.kiwi.recipe.SizedIngredient;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;

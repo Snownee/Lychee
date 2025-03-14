@@ -50,7 +50,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import snownee.kiwi.loader.Platform;
-import snownee.kiwi.recipe_.CustomIngredientSerializer;
+import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.kiwi.util.KEvent;
 import snownee.kiwi.util.KUtil;
 import snownee.lychee.Lychee;

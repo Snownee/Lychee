@@ -15,8 +15,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import snownee.kiwi.recipe_.CustomIngredient;
-import snownee.kiwi.recipe_.CustomIngredientSerializer;
+import snownee.kiwi.recipe.CustomIngredient;
+import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.lychee.Lychee;
 
 public class VisualOnlyComponentsIngredient implements CustomIngredient {
