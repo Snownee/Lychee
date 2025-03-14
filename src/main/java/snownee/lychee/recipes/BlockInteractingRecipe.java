@@ -29,6 +29,7 @@ import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.BoundsExtensions;
+import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -112,7 +113,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return NonNullList.copyOf(input.stream().map(SizedIngredient::ingredient).toList());
+		return NonNullListExtensions.copyOf(input.stream().map(SizedIngredient::ingredient).toList());
 	}
 
 	@Override

@@ -20,6 +20,7 @@ import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.RecipeContext;
+import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
@@ -69,7 +70,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return NonNullList.copyOf(List.of(input.ingredient()));
+		return NonNullListExtensions.copyOf(List.of(input.ingredient()));
 	}
 
 	@Override
