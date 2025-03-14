@@ -26,18 +26,16 @@ import net.minecraft.world.item.ItemStack;
 import snownee.kiwi.util.KUtil;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.client.gui.AllGuiTextures;
-import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.compat.rei.category.CategoryProviders;
 import snownee.lychee.compat.rei.category.LycheeCategory;
 import snownee.lychee.compat.rei.display.AnvilCraftingDisplay;
 import snownee.lychee.compat.rei.display.DisplayRegisters;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.LycheeEntryWidget;
-import snownee.lychee.compat.rei.elements.ScreenElementWidget;
 import snownee.lychee.compat.rei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.compat.rv.RvPlugin;
+import snownee.lychee.compat.rv.SlotType;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -137,24 +135,12 @@ public class LycheeREIPlugin implements REIClientPlugin {
 
 	public static LycheeEntryWidget slot(Point startPoint, int x, int y, SlotType slotType) {
 		LycheeEntryWidget widget = new LycheeEntryWidget(new Point(startPoint.x + x + 1, startPoint.y + y + 1));
-		widget.background(slotType.element);
+		widget.background(slotType.sprite);
 		return widget;
 	}
 
 	@Override
 	public void registerEntryTypes(EntryTypeRegistry registration) {
 		registration.register(POST_ACTION, new PostActionIngredientHelper());
-	}
-
-	public enum SlotType {
-		NORMAL(AllGuiTextures.JEI_SLOT),
-		CHANCE(AllGuiTextures.JEI_CHANCE_SLOT),
-		CATALYST(AllGuiTextures.JEI_CATALYST_SLOT);
-
-		final ScreenElement element;
-
-		SlotType(AllGuiTextures element) {
-			this.element = new ScreenElementWidget(element).element;
-		}
 	}
 }

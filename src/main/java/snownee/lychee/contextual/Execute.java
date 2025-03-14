@@ -32,6 +32,10 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 	public static final MinMaxBounds.Ints DEFAULT_RANGE = MinMaxBounds.Ints.atLeast(1);
 	public static final Execute DUMMY = new Execute("", DEFAULT_RANGE);
 
+	public Execute(String command) {
+		this(command, DEFAULT_RANGE);
+	}
+
 	@Override
 	public ContextualConditionType<Execute> type() {
 		return ContextualConditionType.EXECUTE;

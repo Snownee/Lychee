@@ -60,7 +60,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.action.CustomAction;
 import snownee.lychee.compat.recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.compat.recipe_api.VisualOnlyComponentsIngredient;
-import snownee.lychee.compat.rv.IngredientInfo;
+import snownee.lychee.compat.rv.IngredientType;
 import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
@@ -278,17 +278,17 @@ public class CommonProxy {
 		CUSTOM_CONDITION_EVENT.invoker().on(id, condition);
 	}
 
-	public static IngredientInfo.Type getIngredientType(Ingredient ingredient) {
+	public static IngredientType getIngredientType(Ingredient ingredient) {
 		var customIngredient = ingredient.getCustomIngredient();
 		if (customIngredient != null && Objects.equals(
 				NeoForgeRegistries.INGREDIENT_TYPES.getKey(customIngredient.getType()),
 				AlwaysTrueIngredient.ID)) {
-			return IngredientInfo.Type.ANY;
+			return IngredientType.ANY;
 		}
 		if (ingredient.isEmpty()) { // TODO not compatible with AIR_INGREDIENT!
-			return IngredientInfo.Type.AIR;
+			return IngredientType.AIR;
 		}
-		return IngredientInfo.Type.NORMAL;
+		return IngredientType.NORMAL;
 	}
 
 	public static ItemStack dispensePlacement(BlockSource pSource, ItemStack pStack, Direction direction) {

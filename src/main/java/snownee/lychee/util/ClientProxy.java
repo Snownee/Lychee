@@ -33,6 +33,7 @@ import snownee.lychee.client.action.CycleStatePropertyPostActionRenderer;
 import snownee.lychee.client.action.IfPostActionRenderer;
 import snownee.lychee.client.action.PlaceBlockPostActionRenderer;
 import snownee.lychee.compat.rv.IngredientInfo;
+import snownee.lychee.compat.rv.SlotType;
 import snownee.lychee.util.action.ItemBasedPostActionRenderer;
 import snownee.lychee.util.action.ItemStackPostActionRenderer;
 import snownee.lychee.util.action.PostActionRenderer;
@@ -128,7 +129,7 @@ public class ClientProxy {
 							var info = ingredients.get(i);
 							info.addTooltip(component);
 							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
-							info.isCatalyst = true;
+							info.type = SlotType.CATALYST;
 						});
 					}
 				});
@@ -145,13 +146,13 @@ public class ClientProxy {
 							return;
 						}
 						var mc = Minecraft.getInstance();
-						for (var ingredient : ingredients) {
-							if (!ingredient.tooltips.isEmpty()) {
+						for (var info : ingredients) {
+							if (!info.tooltips.isEmpty()) {
 								continue;
 							}
-							ingredient.addTooltip(((LycheeRecipeType) lycheeRecipeType).getPreventDefaultDescription(recipe));
-							action.conditions().appendToTooltips(ingredient.tooltips, mc.level, mc.player, 0);
-							ingredient.isCatalyst = true;
+							info.addTooltip(((LycheeRecipeType) lycheeRecipeType).getPreventDefaultDescription(recipe));
+							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
+							info.type = SlotType.CATALYST;
 						}
 					}
 				});

@@ -35,7 +35,7 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.util.Color;
+import snownee.kiwi.util.Color;
 import snownee.lychee.util.VecHelper;
 
 public class GuiGameElement {
