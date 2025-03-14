@@ -18,7 +18,7 @@ import net.minecraft.world.item.ItemStack;
 public final class LycheeCodecs {
 	private static final NonNullList<?> EMPTY_NON_NULL_LIST = NonNullList.create();
 
-	public static final Codec<ItemStack> PLAIN_ITEM_STACK_CODEC = Codec.withAlternative(
+	public static final Codec<ItemStack> ITEM_STACK_CODEC = Codec.withAlternative(
 			ItemStack.OPTIONAL_CODEC,
 			BuiltInRegistries.ITEM.holderByNameCodec().xmap(ItemStack::new, ItemStack::getItemHolder));
 
@@ -40,14 +40,14 @@ public final class LycheeCodecs {
 			}));
 
 	public static <T> Codec<NonNullList<T>> nonNullList(Codec<T> elementCodec) {
-		return Codec.withAlternative(NonNullList.codecOf(elementCodec), elementCodec, e -> NonNullList.copyOf(List.of(e)));
+		return Codec.withAlternative(NonNullList.codecOf(elementCodec), elementCodec, e -> NonNullList.of(null, e));
 	}
 
 	public static <T> Codec<NonNullList<T>> nonNullList(Codec<T> elementCodec, int minSize, int maxSize) {
 		return Codec.withAlternative(
 				sizeLimit(NonNullList.codecOf(elementCodec), minSize, maxSize),
 				elementCodec,
-				e -> NonNullList.copyOf(List.of(e)));
+				e -> NonNullList.of(null, e));
 	}
 
 	public static <T> NonNullList<T> emptyNonNullList() {

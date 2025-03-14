@@ -1,6 +1,7 @@
 package snownee.lychee.recipes;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +24,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.mixin.NonNullListAccess;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.codec.LycheeCodecs;
@@ -167,7 +169,8 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		public static final StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> STREAM_CODEC = StreamCodec.composite(
 				LycheeRecipeCommonProperties.STREAM_CODEC,
 				AnvilCraftingRecipe::commonProperties,
-				Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(2)).map(NonNullList::copyOf, Function.identity()),
+				Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(2))
+						.map(it -> NonNullListAccess.construct(it, null), Function.identity()),
 				AnvilCraftingRecipe::getIngredients,
 				ItemStack.STREAM_CODEC,
 				AnvilCraftingRecipe::output,
