@@ -81,9 +81,15 @@ public class BlockPredicateExtensions {
 	));
 
 	public static final Codec<BlockPredicate> CODEC_FOR_TESTING = codec(true);
+
+	private static <T extends Comparable<T>> String getNameByValue(Property<T> property, Object value) {
+		//noinspection unchecked
+		return property.getName((T) value);
+	}
 	public static final Codec<BlockPredicate> CODEC = codec(false);
 
-	public static DataResult<BlockPredicate> fromString(String s, boolean forTesting) {
+	public static <T> DataResult<BlockPredicate> fromString(DynamicOps<T> ops, T input, boolean forTesting) {
+		String s = ops.getStringValue(input).result().orElseThrow();
 		if ("*".equals(s)) {
 			return DataResult.success(ANY);
 		}
@@ -125,11 +131,6 @@ public class BlockPredicateExtensions {
 						Optional.ofNullable($.nbt()).map(NbtPredicate::new)
 				)
 		));
-	}
-
-	private static <T extends Comparable<T>> String getNameByValue(Property<T> property, Object value) {
-		//noinspection unchecked
-		return property.getName((T) value);
 	}
 
 	private static Codec<BlockPredicate> codec(boolean forTesting) {
