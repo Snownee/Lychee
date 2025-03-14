@@ -11,7 +11,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import snownee.kiwi.recipe.SizedIngredient;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.util.codec.LycheeCodecs;
 

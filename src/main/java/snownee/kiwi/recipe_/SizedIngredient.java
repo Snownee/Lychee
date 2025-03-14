@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -40,6 +41,35 @@ public final class SizedIngredient {
 
 	public static SizedIngredient of(TagKey<Item> tag, int count) {
 		return new SizedIngredient(Ingredient.of(tag), count);
+	}
+
+	private static MapCodec<Ingredient> makeIngredientMapCodec() {
+		// Dispatch codec for custom ingredient types, else fallback to vanilla ingredient codec.
+		return NeoForgeExtraCodecs.<IngredientType<?>, ICustomIngredient, Ingredient.Value>dispatchMapOrElse(
+						NeoForgeRegistries.INGREDIENT_TYPES.byNameCodec(),
+						ICustomIngredient::getType,
+						IngredientType::codec,
+						Ingredient.Value.MAP_CODEC)
+				.xmap(
+						either -> either.map(ICustomIngredient::toVanilla, v -> Ingredient.fromValues(Stream.of(v))), ingredient -> {
+							if (!ingredient.isCustom()) {
+								var values = ingredient.getValues();
+								if (values.length == 1) {
+									return Either.right(values[0]);
+								}
+								// Convert vanilla ingredients with 2+ values to a CompoundIngredient. Empty ingredients are not allowed here.
+								return Either.left(new CompoundIngredient(Stream.of(ingredient.getValues())
+										.map(v -> Ingredient.fromValues(Stream.of(v)))
+										.toList()));
+							}
+							return Either.left(ingredient.getCustomIngredient());
+						})
+				.validate(ingredient -> {
+					if (!ingredient.isCustom() && ingredient.getValues().length == 0) {
+						return DataResult.error(() -> "Cannot serialize empty ingredient using the map codec");
+					}
+					return DataResult.success(ingredient);
+				});
 	}
 
 	private final Ingredient ingredient;

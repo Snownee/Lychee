@@ -14,6 +14,7 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
+import snownee.lychee.util.NonNullListExtensions;
 
 public final class LycheeCodecs {
 	private static final NonNullList<?> EMPTY_NON_NULL_LIST = NonNullList.create();
@@ -40,14 +41,17 @@ public final class LycheeCodecs {
 			}));
 
 	public static <T> Codec<NonNullList<T>> nonNullList(Codec<T> elementCodec) {
-		return Codec.withAlternative(NonNullList.codecOf(elementCodec), elementCodec, e -> NonNullList.of(null, e));
+		return Codec.withAlternative(
+				NonNullListExtensions.codecOf(elementCodec),
+				elementCodec,
+				e -> NonNullListExtensions.copyOf(List.of(e)));
 	}
 
 	public static <T> Codec<NonNullList<T>> nonNullList(Codec<T> elementCodec, int minSize, int maxSize) {
 		return Codec.withAlternative(
-				sizeLimit(NonNullList.codecOf(elementCodec), minSize, maxSize),
+				sizeLimit(NonNullListExtensions.codecOf(elementCodec), minSize, maxSize),
 				elementCodec,
-				e -> NonNullList.of(null, e));
+				e -> NonNullListExtensions.copyOf(List.of(e)));
 	}
 
 	public static <T> NonNullList<T> emptyNonNullList() {
