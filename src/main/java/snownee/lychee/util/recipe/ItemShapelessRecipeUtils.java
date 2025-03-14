@@ -21,8 +21,9 @@ public class ItemShapelessRecipeUtils {
 		if (ingredients.isEmpty()) {
 			return true;
 		}
-		final var itemEntities = itemShapelessContext.itemEntities.stream().filter($ -> ingredients.anyMatch($.getItem())).limit(
-				MAX_INGREDIENTS).toList();
+		final var itemEntities = itemShapelessContext.itemEntities.stream()
+				.filter($ -> ingredients.anyMatch($.getItem()))
+				.limit(MAX_INGREDIENTS).toList();
 		final var items = itemEntities.stream().map(ItemEntity::getItem).toList();
 		final var amount = items.stream().mapToInt(ItemStack::getCount).toArray();
 		final var match = RecipeMatcher.findMatches(items, ingredients.flattenedIngredients(), amount);
