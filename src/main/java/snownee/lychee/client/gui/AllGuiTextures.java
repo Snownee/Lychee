@@ -31,10 +31,6 @@ public enum AllGuiTextures implements ScreenElement {
 		this(location, 0, 0, width, height);
 	}
 
-	AllGuiTextures(int startX, int startY) {
-		this("icons", startX * 16, startY * 16, 16, 16);
-	}
-
 	AllGuiTextures(String location, int startX, int startY, int width, int height) {
 		this(Lychee.ID, location, startX, startY, width, height);
 	}
