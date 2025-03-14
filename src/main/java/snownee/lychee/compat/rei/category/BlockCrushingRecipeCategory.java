@@ -47,7 +47,7 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		this.removeActionPosition =
 				Suppliers.memoize(() -> new Vector2i(
 						landingBlockRect.getX() + landingBlockRect.getWidth() - 4,
-						landingBlockRect.getY() + landingBlockRect.getHeight() - 4));
+						landingBlockRect.getY() + landingBlockRect.getHeight() - 8));
 	}
 
 	public BlockCrushingRecipeCategory(
@@ -144,8 +144,8 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		}
 
 		LycheeCategory.addRemoveInputBlock(
-				removeActionPosition.get().x + bounds.x,
-				removeActionPosition.get().y + bounds.y,
+				removeActionPosition.get().x + startPoint.x,
+				removeActionPosition.get().y + startPoint.y,
 				widgets,
 				recipe);
 

@@ -37,7 +37,7 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 	protected Supplier<Vector2i> removeActionPosition =
 			Suppliers.memoize(() -> new Vector2i(
 					targetBlockRect.getX() + targetBlockRect.getWidth() - 4,
-					targetBlockRect.getY() + targetBlockRect.getHeight() - 4));
+					targetBlockRect.getY() + targetBlockRect.getHeight() - 8));
 
 	public DripstoneRecipeCategory(CategoryIdentifier<? extends LycheeDisplay<DripstoneRecipe>> id, RvCategory<DripstoneRecipe> category) {
 		super(id, category);
@@ -105,8 +105,8 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 		widgets.add(widget);
 
 		LycheeCategory.addRemoveInputBlock(
-				removeActionPosition.get().x + bounds.x,
-				removeActionPosition.get().y + bounds.y,
+				removeActionPosition.get().x + startPoint.x,
+				removeActionPosition.get().y + startPoint.y,
 				widgets,
 				recipe);
 
