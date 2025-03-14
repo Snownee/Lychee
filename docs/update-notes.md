@@ -2,9 +2,12 @@
 
 ## 6.2
 
+- Added LycheeBuilder to generate recipes in data generators or KubeJS.
 - Now you can use bracketed item to specify an ItemStack with components, just like in the `give` command.
 - Now you can use bracketed block to specify a BlockPredicate with properties or nbt, just like in the `setblock` command.
 - Now you can see the comment and conditions of an anvil recipe in JEI.
+- Item burning recipe now use [SizedIngredient](general-types.md#sizedingredient) instead of [Ingredient](general-types.md#ingredient).
+- When you add a `place` action to break the block at the original position, it now shows a exclamation mark next to the block instead of a barrier item.
 
 ## 6.1
 

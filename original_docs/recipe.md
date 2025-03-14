@@ -210,10 +210,10 @@ Default behavior: none.
 
 !!! note "Format"
 
-    | Name    | Description    | Type / Literal                            |
-    | ------- | -------------- | ----------------------------------------- |
-    | type    | type           | "lychee:item_burning"                     |
-    | item_in | the burnt item | [Ingredient](general-types.md#ingredient) |
+    | Name    | Description    | Type / Literal                                      |
+    | ------- | -------------- | --------------------------------------------------- |
+    | type    | type           | "lychee:item_burning"                               |
+    | item_in | the burnt item | [SizedIngredient](general-types.md#sizedingredient) |
 
 !!! note
 

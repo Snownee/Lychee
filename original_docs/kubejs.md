@@ -3,9 +3,9 @@
 ## Adding YAML Recipes
 
 ```js
-ServerEvents.recipes(event => {
-    let yamlRecipe = yaml => event.custom(Lychee.toJSON(yaml))
-    yamlRecipe(`
+ServerEvents.recipes((event) => {
+  let yamlRecipe = (yaml) => event.custom(Lychee.toJSON(yaml))
+  yamlRecipe(`
     type: 'lychee:item_burning'
     item_in:
       item: grass_block
@@ -23,6 +23,29 @@ ServerEvents.recipes(event => {
     `).id('test:yaml_recipe')
 })
 ```
+
+## Adding Recipes in OOP Style
+
+[Reference](https://github.com/Snownee/Lychee/blob/1.21-neoforge/src/main/java/snownee/lychee/datagen/LycheeBuilder.java)
+
+```js
+ServerEvents.recipes((event) => {
+  let lb = LycheeBuilder.create(event.jsonOps)
+  let javaRecipe = (obj) => event.custom(Lychee.toJSON(obj))
+  let $Chance = Java.loadClass('snownee.lychee.contextual.Chance')
+  javaRecipe(
+    lb
+      .itemBurningRecipe(lb.sized('3x glass'))
+      .post(lb.dropItem('3x sand'))
+      .condition($Chance(0.5)),
+  ).id('test:java_recipe')
+  lb.teardown()
+})
+```
+
+## Adding JSON Recipes
+
+Please see [KubeJS Wiki](https://wiki.latvian.dev/books/kubejs/page/recipes#bkmrk-custom%2Fmodded-json-r).
 
 ## Custom Action
 
@@ -52,15 +75,15 @@ Then define the behavior of your custom action in KubeJS:
 
 ```js
 // startup script. will be executed when recipe is loaded
-LycheeEvents.customAction('example_log_action', event => {
-    let msg = event.data.custom_property
+LycheeEvents.customAction('example_log_action', (event) => {
+  let msg = event.data.custom_property
 
-    // use ProbeJS for more information about the parameters
-    event.applyFunc = (recipe, ctx, times) => {
-        console.log(msg)
-    }
-    // it is recommended to cancel the event to prevent the action from being modified by other codes
-    event.cancel()
+  // use ProbeJS for more information about the parameters
+  event.applyFunc = (recipe, ctx, times) => {
+    console.log(msg)
+  }
+  // it is recommended to cancel the event to prevent the action from being modified by other codes
+  event.cancel()
 })
 ```
 
@@ -89,21 +112,21 @@ Then define the behavior of your custom condition in KubeJS:
 
 ```js
 // startup script. will be executed when recipe is loaded
-LycheeEvents.customCondition('example_always_true_condition', event => {
-    // use ProbeJS for more information about the parameters
-    // here you need to return the repeat times that no greater than the given times, or 0 if the condition is not met
-    // in this case, the condition is always met
-    event.testFunc = (recipe, ctx, times) => times
+LycheeEvents.customCondition('example_always_true_condition', (event) => {
+  // use ProbeJS for more information about the parameters
+  // here you need to return the repeat times that no greater than the given times, or 0 if the condition is not met
+  // in this case, the condition is always met
+  event.testFunc = (recipe, ctx, times) => times
 
-    // this function is optional
-    // will be called when the condition is displayed in JEI/REI on the client side
-    // true    => checkmark
-    // false   => cross
-    // "default" => the default "-"
-    event.testInTooltipsFunc = () => true
+  // this function is optional
+  // will be called when the condition is displayed in JEI/REI on the client side
+  // true    => checkmark
+  // false   => cross
+  // "default" => the default "-"
+  event.testInTooltipsFunc = () => true
 
-    // it is recommended to cancel the event to prevent the action from being modified by other codes
-    event.cancel()
+  // it is recommended to cancel the event to prevent the action from being modified by other codes
+  event.cancel()
 })
 ```
 
@@ -113,9 +136,9 @@ You can execute code when clicking the info badge in JEI/REI:
 
 ```js
 // client script
-LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
-    console.log(event.recipeId)
-    console.log(event.button == 0) // 0 for left click, 1 for right click
+LycheeEvents.clickedInfoBadge('your:recipe_id', (event) => {
+  console.log(event.recipeId)
+  console.log(event.button == 0) // 0 for left click, 1 for right click
 })
 ```
 
@@ -126,38 +149,38 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
 === "Recipe"
 
     ```json
-	{
-		"type": "lychee:anvil_crafting",
-		"item_in": [
-			{
-				"item": "diamond_sword"
-			},
-			{
-				"item": "dirt"
-			}
-		],
-		"item_out": {
-			"id": "diamond_sword"
-		},
-		"level_cost": 1,
-		"material_cost": 1,
-		"assembling": [
-			{
-				"type": "custom",
-				"id": "repair_item",
-				"data": {
-					"durability": 1
-				}
-			}
-		],
-		"contextual": {
-			"type": "custom",
-			"id": "is_item_damaged",
-			"data": {
-				"target": "/item_in/0"
-			}
-		}
-	}
+    {
+    	"type": "lychee:anvil_crafting",
+    	"item_in": [
+    		{
+    			"item": "diamond_sword"
+    		},
+    		{
+    			"item": "dirt"
+    		}
+    	],
+    	"item_out": {
+    		"id": "diamond_sword"
+    	},
+    	"level_cost": 1,
+    	"material_cost": 1,
+    	"assembling": [
+    		{
+    			"type": "custom",
+    			"id": "repair_item",
+    			"data": {
+    				"durability": 1
+    			}
+    		}
+    	],
+    	"contextual": {
+    		"type": "custom",
+    		"id": "is_item_damaged",
+    		"data": {
+    			"target": "/item_in/0"
+    		}
+    	}
+    }
     ```
 
 === "Startup Script"
@@ -168,7 +191,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     	if (typeof components === "function") {
     		components = components();
     	}
-    
+
     	for (let entry of components.entrySet()) {
     		let type = entry.getKey();
     		let value = entry.getValue();
@@ -179,18 +202,18 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     }
 
     LycheeEvents.customAction('repair_item', event => {
-	    let durability = event.data.durability
-	    event.applyFunc = (recipe, ctx, times) => {
-	    	let input = ctx.getItem(0)
-	    	let material = ctx.getItem(1)
-	    	let output = ctx.getItem(2)
-	    	copyComponents(input, output)
-	    	let cost = 0
-	    	for (; cost < material.count && output.damaged; cost++) {
-	    		output.setDamageValue(output.damageValue - durability)
-	    	}
-	    	ctx.get(LycheeContextKey.ANVIL).materialCost = cost
-	    }
+        let durability = event.data.durability
+        event.applyFunc = (recipe, ctx, times) => {
+        	let input = ctx.getItem(0)
+        	let material = ctx.getItem(1)
+        	let output = ctx.getItem(2)
+        	copyComponents(input, output)
+        	let cost = 0
+        	for (; cost < material.count && output.damaged; cost++) {
+        		output.setDamageValue(output.damageValue - durability)
+        	}
+        	ctx.get(LycheeContextKey.ANVIL).materialCost = cost
+        }
     })
 
     LycheeEvents.customCondition('is_item_damaged', event => {
@@ -251,7 +274,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     	if (typeof components === "function") {
     		components = components();
     	}
-    
+
     	for (let entry of components.entrySet()) {
     		let type = entry.getKey();
     		let value = entry.getValue();
@@ -266,9 +289,9 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     let $Registries = Java.loadClass("net.minecraft.core.registries.Registries");
     let $TrimMaterials = Java.loadClass("net.minecraft.world.item.armortrim.TrimMaterials");
     let $TrimPatterns = Java.loadClass("net.minecraft.world.item.armortrim.TrimPatterns");
-    
+
     let trimPool = [$TrimPatterns.COAST, $TrimPatterns.SPIRE, $TrimPatterns.RIB, $TrimPatterns.SNOUT, $TrimPatterns.DUNE];
-    
+
     LycheeEvents.customAction("apply_random_trim", (event) => {
       event.applyFunc = (recipe, ctx, times) => {
         let input = ctx.getItem(0);
@@ -286,7 +309,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
         output.set($DataComponents.TRIM, new $ArmorTrim(material, pattern));
       };
     });
-    
+
     LycheeEvents.customCondition("is_item_trimmed", (event) => {
       let target = LycheeReference.fromJson(event.data, "target");
       event.testFunc = (recipe, ctx, times) => {
@@ -334,10 +357,10 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', event => {
     ```js
     let $DirectionPlane = Java.loadClass('net.minecraft.core.Direction$Plane')
     let $LootContextParams = Java.loadClass('net.minecraft.world.level.storage.loot.parameters.LootContextParams')
-    
+
     LycheeEvents.customCondition('neighbor_block_boost', event => {
     	let booster_block = event.data.booster_block
-    
+
     	event.testFunc = (recipe, ctx, times) => {
     		let params = ctx.get(LycheeContextKey.LOOT_PARAMS)
     		let item = params.get($LootContextParams.THIS_ENTITY)

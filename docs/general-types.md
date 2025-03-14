@@ -102,7 +102,11 @@ A BlockPredicate is a predicate of an in-world block. It can also be used to rep
     | nbt    | the block nbt ^optional^                                                                | string                                                |
     | state  | a map of block property names to values ^optional^                                      | [StatePropertiesPredicate](#statepropertiespredicate) |
 
-    As a shortcut you can use a string (an ID, or a tag with `#`) to represent a simple BlockPredicate.
+    As a shortcut you can also use a string (an ID, or a tag with `#`) to represent a simple BlockPredicate:
+
+    - `"stone"`
+    - `"minecraft:oak_log[axis=y]"`
+    - `"#wooden_stairs"`
 
 ??? example
 
@@ -195,6 +199,45 @@ Describes a inclusive range for doubles.
 ## ItemStack
 
 An ItemStack is an item with its count and components.
+
+=== "YAML"
+
+	```yaml
+	item: diamond
+	count: 3
+	components:
+	  item_name: ComponentTest
+	```
+
+=== "JSON"
+
+	```json
+	{
+	  "item": "diamond",
+	  "count": 3,
+	  "components": {
+	    "item_name": "ComponentTest"
+	  }
+	}
+	```
+
+or in shorthand form:
+
+=== "YAML"
+
+	```yaml
+	item: diamond[item_name=ComponentTest]
+	count: 3
+	```
+
+=== "JSON"
+
+	```json
+	{
+	  "item": "diamond[item_name=ComponentTest]",
+	  "count": 3
+	}
+	```
 
 ## JsonPointer
 

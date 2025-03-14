@@ -43,11 +43,10 @@ Having trouble creating recipe, or got an idea for Lychee? You can [join our Dis
 1. Make sure your recipe file is a valid JSON. You can use [this site](https://jsonlint.com/) to validate your JSON.
 2. Check if your recipe is shown in JEI / REI. If not, search the error output in logs for some helpful information.
 
-### Where are the CraftTweaker/KubeJS integrations?
+### CraftTweaker integration?
 
-There are no built-in integrations for adding recipes, which means you need to add recipes in JSON format. Here are some usages in their docs: [CraftTweaker](https://docs.blamejared.com/1.19/en/vanilla/api/recipe/manager/GenericRecipesManager#addJsonRecipe) / [KubeJS](https://wiki.latvian.dev/books/kubejs/page/recipes#bkmrk-custom%2Fmodded-json-r)
+There are no built-in integrations for adding recipes. You need to add recipes in JSON format. Here are some usages in their documentation: [CraftTweaker](https://docs.blamejared.com/1.21.1/en/vanilla/api/recipe/manager/GenericRecipesManager/#addjsonrecipe).
 
-There are some utility libraries from the community you may want to know:
+There is a utility library from the community you may want to know:
 
  - [LycheeTweaker for CraftTweaker](https://github.com/lyuxc-unknow/LycheeTweaker) by lyuxc-unknow
- - Lychee.JS for KubeJS by Quentin765 (No links, search in the KubeJS discord)

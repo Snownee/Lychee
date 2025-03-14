@@ -6,6 +6,7 @@ import re
 paths = ['docs/scripts', 'docs/stylesheets']
 
 for path in paths:
+    os.makedirs(path, exist_ok=True)
     for filename in os.listdir(path):
         with open(os.path.join(path, filename), 'r') as f:
             data = f.read()
