@@ -186,7 +186,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		builder.addWidget(widget);
 		builder.addGuiEventListener(widget);
 		widget.setRenderable(new SpriteElementRenderer(
-				new SpriteElement(Lychee.id("rv/remove_block")),
+				new SpriteElement(Lychee.id("exclamation_mark")),
 				x,
 				y,
 				100,
