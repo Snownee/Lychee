@@ -19,14 +19,14 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
 
-public final class KeyDispatchedMapCodec<K, V> extends MapCodec<Map<K, V>> {
+public final class KeyDispatchedMapMapCodec<K, V> extends MapCodec<Map<K, V>> {
 	private final Codec<K> keyCodec;
 	private final Function<? super V, ? extends DataResult<? extends K>> type;
 	private final Function<? super K, ? extends DataResult<? extends Decoder<? extends V>>> decoder;
 	private final Function<? super V, ? extends DataResult<? extends Encoder<V>>> encoder;
 	private final Keyable keys;
 
-	public KeyDispatchedMapCodec(
+	public KeyDispatchedMapMapCodec(
 			final Codec<K> keyCodec,
 			final Function<? super V, ? extends DataResult<? extends K>> type,
 			final Function<? super K, ? extends DataResult<? extends Decoder<? extends V>>> decoder,
@@ -42,7 +42,7 @@ public final class KeyDispatchedMapCodec<K, V> extends MapCodec<Map<K, V>> {
 	/**
 	 * Assumes codec(type(V)) is Codec<V>
 	 */
-	public KeyDispatchedMapCodec(
+	public KeyDispatchedMapMapCodec(
 			final Codec<K> keyCodec,
 			final Function<? super V, ? extends DataResult<? extends K>> type,
 			final Function<? super K, ? extends DataResult<? extends Codec<? extends V>>> codec,
