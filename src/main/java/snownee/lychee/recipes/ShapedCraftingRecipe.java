@@ -38,7 +38,6 @@ import snownee.lychee.mixin.recipes.crafting.ShapedRecipeAccess;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipePatternAccess;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
@@ -208,7 +207,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 		var k = 0;
 		for (var i = 0; i < getHeight(); i++) {
 			for (var j = 0; j < getWidth(); j++) {
-				if (itemStackHolders.get(k).getIgnoreConsumption()) {
+				if (itemStackHolders.get(k).getConsumption() == 0) {
 					items.set(container.width() * i + (craftingContext.mirror() ? getWidth() - j - 1 : j), context.getItem(k));
 				}
 				++k;
@@ -274,10 +273,10 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 	public static class Serializer implements LycheeRecipeSerializer<ShapedCraftingRecipe> {
 		public static final MapCodec<ShapedCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance ->
 				instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
 						RecipeSerializer.SHAPED_RECIPE.codec()
 								.forGetter(ShapedCraftingRecipe::shaped),
-						PostActionType.LIST_CODEC.optionalFieldOf("assembling", List.of())
+						PostAction.LIST_CODEC.optionalFieldOf("assembling", List.of())
 								.forGetter(ShapedCraftingRecipe::assemblingActions)
 				).apply(instance, ShapedCraftingRecipe::new));
 
@@ -293,7 +292,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 						ShapedCraftingRecipe::commonProperties,
 						ByteBufCodecs.fromCodecWithRegistries(RecipeSerializer.SHAPED_RECIPE.codec().codec()),
 						ShapedCraftingRecipe::shaped,
-						PostActionType.STREAM_LIST_CODEC,
+						PostAction.STREAM_LIST_CODEC,
 						ShapedCraftingRecipe::assemblingActions,
 						ShapedCraftingRecipe::new
 				);

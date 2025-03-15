@@ -6,32 +6,21 @@ import com.google.common.collect.Lists;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
-import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
-	private final LycheeRecipeType<T> recipeType;
 
-	public ItemShapelessRecipeCategory(
-			CategoryIdentifier<? extends LycheeDisplay<T>> id,
-			Renderer icon,
-			LycheeRecipeType<T> recipeType) {
-		super(id, icon);
-		this.recipeType = recipeType;
+	public ItemShapelessRecipeCategory(CategoryIdentifier<? extends LycheeDisplay<T>> id, RvCategory<T> category) {
+		super(id, category);
 		this.infoRect = new Rect2i(3, 25, 8, 8);
-	}
-
-	@Override
-	public LycheeRecipeType<? extends T> recipeType() {
-		return recipeType;
 	}
 
 	@Override
@@ -47,9 +36,9 @@ public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>>
 	@Override
 	public List<Widget> setupDisplay(LycheeDisplay<T> display, Rectangle bounds) {
 		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
-		var recipe = display.recipe();
+		var recipe = display.recipe().value();
 		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
-		drawInfoBadgeIfNeeded(widgets, display, startPoint);
+		createInfoBadgeIfNeeded(widgets, display, startPoint);
 		var xCenter = bounds.getCenterX();
 		var y = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9 ? 26 : 28;
 		ingredientGroup(widgets, startPoint, recipe, xCenter - 45 - startPoint.x, y);

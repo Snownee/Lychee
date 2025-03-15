@@ -99,8 +99,6 @@ dependencies {
 
     modImplementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
 
-//    modImplementation("io.github.tropheusj:milk-lib:${project.milk_lib_version}")
-
 //    modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
 }
 

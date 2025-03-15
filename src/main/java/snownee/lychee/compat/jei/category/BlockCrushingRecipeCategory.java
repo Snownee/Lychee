@@ -1,8 +1,9 @@
 package snownee.lychee.compat.jei.category;
 
+import org.joml.Vector2i;
+
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -14,13 +15,12 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
+import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.BlockCrushingRecipe;
-import snownee.lychee.recipes.BlockCrushingRecipeType;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
@@ -29,9 +29,12 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 
 	public static final Rect2i FALLING_BLOCK_RECT = new Rect2i(0, -35, 20, 35);
 	public static final Rect2i LANDING_BLOCK_RECT = new Rect2i(0, 0, 20, 20);
+	public static final Vector2i REMOVE_ACTION_POSITION = new Vector2i(
+			LANDING_BLOCK_RECT.getX() + LANDING_BLOCK_RECT.getWidth() - 4,
+			LANDING_BLOCK_RECT.getY() + LANDING_BLOCK_RECT.getHeight() - 8);
 
-	public BlockCrushingRecipeCategory(RecipeType<RecipeHolder<BlockCrushingRecipe>> recipeType, IDrawable icon) {
-		super(recipeType, icon);
+	public BlockCrushingRecipeCategory(RecipeType<RecipeHolder<BlockCrushingRecipe>> recipeType, RvCategory<BlockCrushingRecipe> category) {
+		super(recipeType, category);
 	}
 
 	@Override
@@ -58,8 +61,6 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 			double mouseY
 	) {
 		var recipe = recipeHolder.value();
-		drawInfoBadgeIfNeeded(guiGraphics, recipe, mouseX, mouseY);
-
 		var fallingBlock = getFallingBlock(recipe);
 		var landingBlock = getLandingBlock(recipe);
 
@@ -91,11 +92,11 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 				.scale(15)
 				.atLocal(0, ticks * 1.3 - 1.3, 0)
 				.rotateBlock(20, 225, 0)
-				.lighting(JEIREI.BLOCK_LIGHTING)
+				.lighting(RVs.BLOCK_LIGHTING)
 				.at(0, 0, 300)
 				.render(guiGraphics);
 		if (!landingBlock.isAir()) {
-			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 0).rotateBlock(20, 225, 0).lighting(JEIREI.BLOCK_LIGHTING).render(
+			GuiGameElement.of(landingBlock).scale(15).atLocal(0, 1, 0).rotateBlock(20, 225, 0).lighting(RVs.BLOCK_LIGHTING).render(
 					guiGraphics);
 		}
 		matrixStack.popPose();
@@ -162,6 +163,11 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 							Blocks.AIR.defaultBlockState(),
 							2000)));
 		}
+		LycheeCategory.addRemoveInputBlock(
+				x + REMOVE_ACTION_POSITION.x(),
+				y + REMOVE_ACTION_POSITION.y(),
+				builder,
+				recipe);
 	}
 
 	private BlockState getFallingBlock(BlockCrushingRecipe recipe) {
@@ -176,10 +182,5 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.landingBlock()),
 				Blocks.AIR.defaultBlockState(),
 				2000);
-	}
-
-	@Override
-	public BlockCrushingRecipeType recipeType() {
-		return RecipeTypes.BLOCK_CRUSHING;
 	}
 }

@@ -18,6 +18,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.Job;
@@ -136,6 +137,9 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	}
 
 	default int getRandomRepeats(int max, LycheeContext ctx) {
+		if (maxRepeats() == BoundsExtensions.ONE) {
+			return 1;
+		}
 		int times = Integer.MAX_VALUE;
 		if (!maxRepeats().isAny()) {
 			times = BoundsExtensions.random(maxRepeats(), ctx.get(LycheeContextKey.RANDOM));
@@ -157,7 +161,7 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	}
 
 	default List<BlockPredicate> getBlockInputs() {
-		if (this instanceof BlockKeyableRecipe<?> blockPredicateRecipe
+		if (this instanceof BlockKeyableRecipe blockPredicateRecipe
 				&& !BlockPredicateExtensions.isAny(blockPredicateRecipe.blockPredicate())) {
 			return List.of(blockPredicateRecipe.blockPredicate());
 		}
@@ -170,5 +174,9 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 				.map(PostAction::getOutputBlocks)
 				.flatMap(List::stream)
 				.toList();
+	}
+
+	default List<SizedIngredient> sizedIngredients() {
+		throw new UnsupportedOperationException();
 	}
 }

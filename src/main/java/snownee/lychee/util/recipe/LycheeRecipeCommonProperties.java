@@ -15,7 +15,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.codec.AliasOptionalFieldCodec;
 import snownee.lychee.util.codec.LycheeStreamCodecs;
 import snownee.lychee.util.contextual.ContextualHolder;
@@ -43,17 +42,20 @@ public record LycheeRecipeCommonProperties(
 			ContextualHolder.CODEC,
 			ContextualHolder.EMPTY,
 			"contextual");
-	public static final MapCodec<List<PostAction>> POST_ACTION_CODEC = PostActionType.LIST_CODEC.optionalFieldOf("post", List.of());
-	public static final MapCodec<MinMaxBounds.Ints> MAX_REPEATS_CODEC =
-			MinMaxBounds.Ints.CODEC.optionalFieldOf("max_repeats", MinMaxBounds.Ints.ANY);
-	public static final MapCodec<LycheeRecipeCommonProperties> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-			HIDE_IN_VIEWER_CODEC.forGetter(LycheeRecipeCommonProperties::hideInRecipeViewer),
-			GHOST_CODEC.forGetter(LycheeRecipeCommonProperties::ghost),
-			COMMENT_CODEC.forGetter(LycheeRecipeCommonProperties::comment),
-			GROUP_CODEC.forGetter(LycheeRecipeCommonProperties::group),
-			CONTEXTUAL_CODEC.forGetter(LycheeRecipeCommonProperties::conditions),
-			POST_ACTION_CODEC.forGetter(LycheeRecipeCommonProperties::postActions),
-			MAX_REPEATS_CODEC.forGetter(LycheeRecipeCommonProperties::maxRepeats)).apply(instance, LycheeRecipeCommonProperties::of));
+	public static final MapCodec<List<PostAction>> POST_ACTION_CODEC = PostAction.LIST_CODEC.optionalFieldOf("post", List.of());
+	public static final MapCodec<LycheeRecipeCommonProperties> SIMPLE_MAP_CODEC = mapCodec(MinMaxBounds.Ints.ANY);
+
+	public static MapCodec<LycheeRecipeCommonProperties> mapCodec(MinMaxBounds.Ints defaultMaxRepeats) {
+		return RecordCodecBuilder.mapCodec(instance -> instance.group(
+				HIDE_IN_VIEWER_CODEC.forGetter(LycheeRecipeCommonProperties::hideInRecipeViewer),
+				GHOST_CODEC.forGetter(LycheeRecipeCommonProperties::ghost),
+				COMMENT_CODEC.forGetter(LycheeRecipeCommonProperties::comment),
+				GROUP_CODEC.forGetter(LycheeRecipeCommonProperties::group),
+				CONTEXTUAL_CODEC.forGetter(LycheeRecipeCommonProperties::conditions),
+				POST_ACTION_CODEC.forGetter(LycheeRecipeCommonProperties::postActions),
+				MinMaxBounds.Ints.CODEC.optionalFieldOf("max_repeats", defaultMaxRepeats)
+						.forGetter(LycheeRecipeCommonProperties::maxRepeats)).apply(instance, LycheeRecipeCommonProperties::of));
+	}
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, LycheeRecipeCommonProperties> STREAM_CODEC =
 			LycheeStreamCodecs.composite(
@@ -67,7 +69,7 @@ public record LycheeRecipeCommonProperties(
 					LycheeRecipeCommonProperties::group,
 					ByteBufCodecs.fromCodec(CONTEXTUAL_CODEC.codec()),
 					LycheeRecipeCommonProperties::conditions,
-					PostActionType.STREAM_LIST_CODEC,
+					PostAction.STREAM_LIST_CODEC,
 					LycheeRecipeCommonProperties::postActions,
 					ByteBufCodecs.fromCodec(MinMaxBounds.Ints.CODEC),
 					LycheeRecipeCommonProperties::maxRepeats,

@@ -2,7 +2,7 @@
 	"required": true,
 	"package": "snownee.lychee.mixin",
 	"plugin": "snownee.lychee.mixin.MixinPlugin",
-	"compatibilityLevel": "JAVA_16",
+	"compatibilityLevel": "JAVA_21",
 	"refmap": "lychee.refmap.json",
 	"mixins": [
 		"ChunkMapAccess",
@@ -14,12 +14,17 @@
 		"IngredientAccess",
 		"ItemEntityAccess",
 		"ItemEntityMixin",
+		"LootContextParamMixin",
 		"LootContextParamSetsAccess",
 		"LootContextParamSetsMixin",
 		"NonNullListAccess",
 		"RecipeManagerMixin",
 		"ReloadableServerResourcesMixin",
 		"action.MarkerMixin",
+		"codec.Ingredient_ItemValueMixin",
+		"codec.Ingredient_TagValueMixin",
+		"codec.Ingredient_ValueMixin",
+		"codec.IngredientMixin",
 		"particles.PointedDripstoneBlockAccess",
 		"particles.PointedDripstoneBlockMixin",
 		"predicates.LocationCheckAccess",
@@ -43,7 +48,8 @@
 	"client": [
 		"ClientPacketListenerMixin",
 		"ClientRecipeBookMixin",
-		"GameRendererAccess"
+		"GameRendererAccess",
+		"jei.AnvilRecipeCategoryMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1,

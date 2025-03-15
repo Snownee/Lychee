@@ -9,7 +9,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
@@ -18,11 +17,10 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.kiwi.util.codec.KCodecs;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.mixin.NonNullListAccess;
-import snownee.lychee.util.codec.LycheeCodecs;
+import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
@@ -43,20 +41,15 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 
-	protected NonNullList<Ingredient> ingredients = NonNullList.create();
-
-	public LightningChannelingRecipe(LycheeRecipeCommonProperties commonProperties) {
-		super(commonProperties);
-		onConstructed();
-	}
+	protected IngredientCollection ingredients;
 
 	@SuppressWarnings("UnreachableCode")
 	public LightningChannelingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			final List<Ingredient> ingredients
+			final IngredientCollection ingredients
 	) {
 		super(commonProperties);
-		this.ingredients = NonNullListAccess.construct(ingredients, null);
+		this.ingredients = ingredients;
 		onConstructed();
 	}
 
@@ -77,14 +70,20 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return ingredients;
+		return ingredients.flattenedIngredients();
+	}
+
+	@Override
+	public List<SizedIngredient> sizedIngredients() {
+		return ingredients.ingredients();
 	}
 
 	public static class Serializer implements LycheeRecipeSerializer<LightningChannelingRecipe> {
 		public static final MapCodec<LightningChannelingRecipe> CODEC =
 				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC).optionalFieldOf(ITEM_IN, List.of())
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
+						IngredientCollection.CODEC
+								.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
 								.forGetter(it -> it.ingredients)
 				).apply(instance, LightningChannelingRecipe::new)));
 
@@ -98,8 +97,8 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						LightningChannelingRecipe::commonProperties,
-						ByteBufCodecs.fromCodecWithRegistries(KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)),
-						LightningChannelingRecipe::getIngredients,
+						IngredientCollection.STREAM_CODEC,
+						it -> it.ingredients,
 						LightningChannelingRecipe::new
 				);
 

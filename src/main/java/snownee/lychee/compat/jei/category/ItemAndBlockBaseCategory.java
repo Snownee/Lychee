@@ -1,18 +1,19 @@
 package snownee.lychee.compat.jei.category;
 
-import java.util.Collection;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2i;
+
+import com.google.common.base.Suppliers;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
@@ -23,38 +24,32 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
+import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 @NotNullByDefault
 public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
 
-	private final LycheeRecipeType<T> recipeType;
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
+	protected Supplier<Vector2i> removeActionPosition =
+			Suppliers.memoize(() -> new Vector2i(
+					inputBlockRect.getX() + inputBlockRect.getWidth() - 4,
+					inputBlockRect.getY() + inputBlockRect.getHeight() - 8));
 
-	public ItemAndBlockBaseCategory(RecipeType<RecipeHolder<T>> recipeType, IDrawable icon, LycheeRecipeType<T> vanillaRecipeType) {
-		super(recipeType, icon);
-		this.recipeType = vanillaRecipeType;
+	public ItemAndBlockBaseCategory(RecipeType<RecipeHolder<T>> recipeType, RvCategory<T> category) {
+		super(recipeType, category);
 		infoRect.setPosition(8, 32);
 	}
 
-	public static BlockState getIconBlock(Collection<RecipeHolder<? extends BlockKeyableRecipe<?>>> recipes) {
-		var con = Minecraft.getInstance().getConnection();
-		if (con == null) {
-			return Blocks.AIR.defaultBlockState();
-		}
-		return JEIREI.getMostUsedBlock(recipes).getFirst();
-	}
-
 	public BlockPredicate getInputBlock(T recipe) {
-		return ((BlockKeyableRecipe<?>) recipe).blockPredicate();
+		return ((BlockKeyableRecipe) recipe).blockPredicate();
 	}
 
 	public BlockState getRenderingBlock(T recipe) {
@@ -85,14 +80,21 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 	@Override
 	public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<T> recipeHolder, IFocusGroup focuses) {
 		super.createRecipeExtras(builder, recipeHolder, focuses);
+		var recipe = recipeHolder.value();
 		builder.addInputHandler(new BlockClickingInputHandler(
 				new ScreenRectangle(
 						inputBlockRect.getX(),
 						inputBlockRect.getY(),
 						inputBlockRect.getWidth(),
 						inputBlockRect.getHeight()),
-				() -> getRenderingBlock(recipeHolder.value())
+				() -> getRenderingBlock(recipe)
 		));
+		LycheeCategory.addRemoveInputBlock(
+				removeActionPosition.get().x(),
+				removeActionPosition.get().y(),
+				builder,
+				recipe
+		);
 	}
 
 	@Override
@@ -104,7 +106,6 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 			double mouseY
 	) {
 		var recipe = recipeHolder.value();
-		drawInfoBadgeIfNeeded(graphics, recipe, mouseX, mouseY);
 		var centerX = getWidth() / 2;
 		drawExtra(recipeHolder, graphics, mouseX, mouseY, centerX);
 
@@ -125,7 +126,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 		GuiGameElement.of(state)
 				.rotateBlock(12.5, 202.5, 0)
 				.scale(15)
-				.lighting(JEIREI.BLOCK_LIGHTING)
+				.lighting(RVs.BLOCK_LIGHTING)
 				.atLocal(0, 0.2, 0)
 				.at(inputBlockRect.getX(), inputBlockRect.getY())
 				.render(graphics);
@@ -155,10 +156,5 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 
 	protected void renderIngredientGroup(IRecipeLayoutBuilder builder, T recipe, int y) {
 		ingredientGroup(builder, recipe, 12, 21);
-	}
-
-	@Override
-	public LycheeRecipeType<? extends T> recipeType() {
-		return recipeType;
 	}
 }

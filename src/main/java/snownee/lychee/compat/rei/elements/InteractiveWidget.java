@@ -2,7 +2,6 @@ package snownee.lychee.compat.rei.elements;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -14,6 +13,7 @@ import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.gui.widgets.WidgetWithBounds;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import snownee.kiwi.util.NotNullByDefault;
@@ -22,23 +22,15 @@ import snownee.kiwi.util.NotNullByDefault;
 public class InteractiveWidget extends WidgetWithBounds {
 
 	private final Rectangle bounds;
-	private Point point;
 	@Nullable
 	private Function<InteractiveWidget, @Nullable List<Component>> tooltip;
 	@Nullable
 	private BiConsumer<InteractiveWidget, Integer> onClick;
+	@Nullable
+	private Renderable renderable;
 
 	public InteractiveWidget(Rectangle bounds) {
 		this.bounds = bounds;
-		point = new Point(bounds.getCenterX(), bounds.getMaxY());
-	}
-
-	public final Point getPoint() {
-		return point;
-	}
-
-	public final void setPoint(Point point) {
-		this.point = Objects.requireNonNull(point);
 	}
 
 	@Override
@@ -46,8 +38,11 @@ public class InteractiveWidget extends WidgetWithBounds {
 		if (containsMouse(mouseX, mouseY)) {
 			@Nullable List<Component> tooltip = getTooltipLines();
 			if (tooltip != null) {
-				Tooltip.create(point, tooltip).queue();
+				Tooltip.create(new Point(mouseX, mouseY), tooltip).queue();
 			}
+		}
+		if (renderable != null) {
+			renderable.render(graphics, mouseX, mouseY, delta);
 		}
 	}
 
@@ -109,5 +104,9 @@ public class InteractiveWidget extends WidgetWithBounds {
 
 	public final void setOnClick(@Nullable BiConsumer<InteractiveWidget, Integer> onClick) {
 		this.onClick = onClick;
+	}
+
+	public void setRenderable(@Nullable Renderable renderable) {
+		this.renderable = renderable;
 	}
 }

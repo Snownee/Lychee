@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 public class ExtendedItemStackHolder implements ItemStackHolder {
 	private final ItemStackHolder holder;
 
-	private boolean ignoreConsumption;
+	private int consumption = 1;
 
 	public ExtendedItemStackHolder(ItemStackHolder holder) {this.holder = holder;}
 
@@ -30,7 +30,7 @@ public class ExtendedItemStackHolder implements ItemStackHolder {
 		return holder;
 	}
 
-	public boolean getIgnoreConsumption() {return ignoreConsumption;}
+	public int getConsumption() {return consumption;}
 
-	public void setIgnoreConsumption(final boolean ignoreConsumption) {this.ignoreConsumption = ignoreConsumption;}
+	public void setConsumption(final int consumption) {this.consumption = consumption;}
 }

@@ -1,0 +1,92 @@
+{
+	"type": "lychee:block_interacting",
+	"item_in": {
+		"item": "iron_axe"
+	},
+	"block_in": "oak_log[axis=y]",
+	"if": [
+		{
+			"type": "direction",
+			"direction": "up"
+		}
+	],
+	"post": [
+		{
+			"type": "move_towards_face",
+			"factor": 2
+		},
+		{
+			"type": "drop_item",
+			"id": "diamond",
+			"if": {
+				"type": "chance",
+				"chance": 0.5
+			}
+		},
+		{
+			"type": "place",
+			"block": "stripped_oak_log[axis=y]"
+		},
+		{
+			"type": "damage_item",
+			"target": "/item_in"
+		},
+		{
+			"type": "random",
+			"if": {
+				"type": "chance",
+				"chance": 0.9
+			},
+			"rolls": {
+				"min": 3,
+				"max": 5
+			},
+			"entries": [
+				{
+					"type": "drop_item",
+					"id": "gold_ingot",
+					"if": {
+						"type": "weather",
+						"weather": "rain"
+					}
+				},
+				{
+					"type": "drop_item",
+					"id": "ender_pearl"
+				},
+				{
+					"weight": 2,
+					"type": "drop_item",
+					"id": "dirt"
+				}
+			]
+		},
+		{
+			"type": "if",
+			"if": {
+				"type": "chance",
+				"chance": 0.5
+			},
+			"then": [
+				{
+					"type": "drop_item",
+					"id": "gold_ingot",
+					"if": {
+						"type": "weather",
+						"weather": "rain"
+					}
+				},
+				{
+					"type": "drop_item",
+					"id": "ender_pearl"
+				}
+			],
+			"else": [
+				{
+					"type": "drop_item",
+					"id": "dirt"
+				}
+			]
+		}
+	]
+}

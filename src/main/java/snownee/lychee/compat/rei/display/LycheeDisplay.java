@@ -10,6 +10,7 @@ import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import snownee.lychee.util.action.PostActionDisplay;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -51,15 +52,15 @@ public interface LycheeDisplay<T extends ILycheeRecipe<?>> extends Display {
 		return ingredients;
 	}
 
-	T recipe();
+	RecipeHolder<T> recipe();
 
 	@Override
 	default List<EntryIngredient> getInputEntries() {
-		return getInputEntries(recipe());
+		return getInputEntries(recipe().value());
 	}
 
 	@Override
 	default List<EntryIngredient> getOutputEntries() {
-		return getOutputEntries(recipe());
+		return getOutputEntries(recipe().value());
 	}
 }

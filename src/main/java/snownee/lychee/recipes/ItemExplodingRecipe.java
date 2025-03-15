@@ -9,7 +9,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -19,11 +18,10 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.kiwi.util.codec.KCodecs;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.mixin.NonNullListAccess;
-import snownee.lychee.util.codec.LycheeCodecs;
+import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
@@ -45,19 +43,14 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 		RecipeTypes.ITEM_EXPLODING.process(itemEntities, context);
 	}
 
-	protected NonNullList<Ingredient> ingredients = NonNullList.create();
-
-	public ItemExplodingRecipe(LycheeRecipeCommonProperties commonProperties) {
-		super(commonProperties);
-		onConstructed();
-	}
+	protected IngredientCollection ingredients;
 
 	public ItemExplodingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			final List<Ingredient> ingredients
+			final IngredientCollection ingredients
 	) {
 		super(commonProperties);
-		this.ingredients = NonNullListAccess.construct(ingredients, null);
+		this.ingredients = ingredients;
 		onConstructed();
 	}
 
@@ -78,7 +71,12 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return ingredients;
+		return ingredients.flattenedIngredients();
+	}
+
+	@Override
+	public List<SizedIngredient> sizedIngredients() {
+		return ingredients.ingredients();
 	}
 
 	@Override
@@ -99,8 +97,9 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 	public static class Serializer implements LycheeRecipeSerializer<ItemExplodingRecipe> {
 		public static final MapCodec<ItemExplodingRecipe> CODEC =
 				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC).optionalFieldOf(ITEM_IN, List.of())
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
+						IngredientCollection.CODEC
+								.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
 								.forGetter(it -> it.ingredients)
 				).apply(instance, ItemExplodingRecipe::new)));
 
@@ -114,8 +113,8 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						ItemExplodingRecipe::commonProperties,
-						ByteBufCodecs.fromCodecWithRegistries(KCodecs.compactList(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC)),
-						ItemExplodingRecipe::getIngredients,
+						IngredientCollection.STREAM_CODEC,
+						it -> it.ingredients,
 						ItemExplodingRecipe::new
 				);
 

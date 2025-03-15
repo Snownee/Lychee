@@ -7,7 +7,9 @@ import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.plugin.common.displays.anvil.AnvilRecipe;
 import me.shedaniel.rei.plugin.common.displays.anvil.DefaultAnvilDisplay;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 
@@ -20,21 +22,23 @@ public class AnvilCraftingDisplay extends DefaultAnvilDisplay implements LycheeD
 		this.lycheeRecipe = recipeHolder;
 	}
 
-	private static AnvilRecipe makeRecipe(RecipeHolder<AnvilCraftingRecipe> recipe) {
-		var right = Stream.of(recipe.value().input().getSecond().getItems())
+	private static AnvilRecipe makeRecipe(RecipeHolder<AnvilCraftingRecipe> recipeHolder) {
+		var recipe = recipeHolder.value();
+		NonNullList<Ingredient> ingredients = recipe.getIngredients();
+		List<ItemStack> right = ingredients.size() == 1 ? List.of() : Stream.of(ingredients.getLast().getItems())
 				.map(ItemStack::copy)
-				.peek(it -> it.setCount(recipe.value().materialCost()))
+				.peek(it -> it.setCount(recipe.materialCost()))
 				.toList();
 		return new AnvilRecipe(
-				recipe.id(),
-				List.of(recipe.value().input().getFirst().getItems()),
+				recipeHolder.id(),
+				List.of(ingredients.getFirst().getItems()),
 				right,
-				List.of(recipe.value().getResultItem(Minecraft.getInstance().level.registryAccess())));
+				List.of(recipe.getResultItem(Minecraft.getInstance().level.registryAccess())));
 	}
 
 	@Override
-	public AnvilCraftingRecipe recipe() {
-		return lycheeRecipe.value();
+	public RecipeHolder<AnvilCraftingRecipe> recipe() {
+		return lycheeRecipe;
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package snownee.lychee.recipes;
 
+import java.util.List;
+
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.serialization.MapCodec;
@@ -7,7 +9,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -15,10 +16,11 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.RecipeContext;
-import snownee.lychee.util.codec.LycheeCodecs;
+import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
@@ -39,7 +41,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		RecipeTypes.ITEM_BURNING.findFirst(context, entity.level()).ifPresent(it -> {
 			context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(it.id()));
 			context.put(LycheeContextKey.RECIPE, it.value());
-			int times = it.value().getRandomRepeats(entity.getItem().getCount(), context);
+			int times = it.value().getRandomRepeats(entity.getItem().getCount() / it.value().input.count(), context);
 			var itemStackHolders = ItemStackHolderCollection.InWorld.of(entity);
 			context.put(LycheeContextKey.ITEM, itemStackHolders);
 			it.value().applyPostActions(context, times);
@@ -47,15 +49,15 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		});
 	}
 
-	protected final Ingredient input;
+	protected final SizedIngredient input;
 
-	protected ItemBurningRecipe(LycheeRecipeCommonProperties commonProperties, Ingredient input) {
+	protected ItemBurningRecipe(LycheeRecipeCommonProperties commonProperties, SizedIngredient input) {
 		super(commonProperties);
 		this.input = input;
 		onConstructed();
 	}
 
-	public Ingredient input() {
+	public SizedIngredient input() {
 		return input;
 	}
 
@@ -68,7 +70,12 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 
 	@Override
 	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return NonNullList.of(Ingredient.EMPTY, input);
+		return NonNullListExtensions.copyOf(List.of(input.ingredient()));
+	}
+
+	@Override
+	public List<SizedIngredient> sizedIngredients() {
+		return List.of(input);
 	}
 
 	@Override
@@ -84,9 +91,8 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	public static class Serializer implements LycheeRecipeSerializer<ItemBurningRecipe> {
 		public static final MapCodec<ItemBurningRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						LycheeCodecs.OPTIONAL_INGREDIENT_CODEC.optionalFieldOf(ITEM_IN, Ingredient.EMPTY)
-								.forGetter(ItemBurningRecipe::input)
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
+						SizedIngredient.CODEC.fieldOf(ITEM_IN).forGetter(ItemBurningRecipe::input)
 				).apply(instance, ItemBurningRecipe::new));
 
 		@Override
@@ -99,7 +105,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						ItemBurningRecipe::commonProperties,
-						ByteBufCodecs.fromCodecWithRegistries(LycheeCodecs.OPTIONAL_INGREDIENT_CODEC),
+						SizedIngredient.STREAM_CODEC,
 						ItemBurningRecipe::input,
 						ItemBurningRecipe::new
 				);

@@ -1,7 +1,6 @@
 package snownee.lychee.compat.jei.category;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
@@ -9,23 +8,16 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 @NotNullByDefault
 public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
-	private final LycheeRecipeType<T> recipeType;
 
-	public ItemShapelessRecipeCategory(RecipeType<RecipeHolder<T>> recipeType, IDrawable icon, LycheeRecipeType<T> lycheeRecipeType) {
-		super(recipeType, icon);
-		this.recipeType = lycheeRecipeType;
+	public ItemShapelessRecipeCategory(RecipeType<RecipeHolder<T>> recipeType, RvCategory<T> category) {
+		super(recipeType, category);
 		this.infoRect = new Rect2i(3, 25, 8, 8);
-	}
-
-	@Override
-	public LycheeRecipeType<? extends T> recipeType() {
-		return recipeType;
 	}
 
 	@Override
@@ -51,7 +43,6 @@ public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>>
 			double mouseX,
 			double mouseY
 	) {
-		drawInfoBadgeIfNeeded(graphics, recipeHolder.value(), mouseX, mouseY);
 		var matrixStack = graphics.pose();
 		matrixStack.pushPose();
 		matrixStack.translate(76, 16, 0);

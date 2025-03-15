@@ -14,14 +14,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import snownee.kiwi.recipe.EmptyRecipeInput;
 import snownee.lychee.LycheeRegistries;
-import snownee.lychee.util.codec.KeyDispatchedMapCodec;
+import snownee.lychee.util.codec.KeyDispatchedMapMapCodec;
 
 @SuppressWarnings("unchecked")
 public class LycheeContext extends EmptyRecipeInput {
 	private final Map<LycheeContextKey<?>, Object> context =
 			new Object2ObjectOpenHashMap<>(LycheeRegistries.CONTEXTUAL.size());
 	public static final Codec<LycheeContext> CODEC =
-			new KeyDispatchedMapCodec<LycheeContextKey<?>, Object>(
+			new KeyDispatchedMapMapCodec<LycheeContextKey<?>, Object>(
 					LycheeRegistries.CONTEXT.byNameCodec(),
 					it -> it instanceof KeyedContextValue<?> value
 							? DataResult.success(value.key())

@@ -47,7 +47,6 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 	public ItemInsideRecipeType(
 			String name, Class<ItemInsideRecipe> clazz, @Nullable LootContextParamSet contextParamSet) {
 		super(name, clazz, contextParamSet);
-		compactInputs = true;
 	}
 
 	@Override

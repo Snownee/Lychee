@@ -1,8 +1,13 @@
 package snownee.lychee.compat.jei.category;
 
+import java.util.function.Supplier;
+
+import org.joml.Vector2i;
+
+import com.google.common.base.Suppliers;
+
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
@@ -16,29 +21,32 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
+import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
 @NotNullByDefault
 public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRecipe> {
 	private final Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
 	private final Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
+	protected Supplier<Vector2i> removeActionPosition =
+			Suppliers.memoize(() -> new Vector2i(
+					targetBlockRect.getX() + targetBlockRect.getWidth() - 4,
+					targetBlockRect.getY() + targetBlockRect.getHeight() - 8));
 
-	public DripstoneRecipeCategory(RecipeType<RecipeHolder<DripstoneRecipe>> recipeType, IDrawable icon) {
-		super(recipeType, icon);
+	public DripstoneRecipeCategory(RecipeType<RecipeHolder<DripstoneRecipe>> recipeType, RvCategory<DripstoneRecipe> category) {
+		super(recipeType, category);
 	}
 
 	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {
 		GuiGameElement.of(state)
 				.scale(12)
-				.lighting(JEIREI.BLOCK_LIGHTING)
+				.lighting(RVs.BLOCK_LIGHTING)
 				.atLocal(localX, localY, localZ)
 				.rotateBlock(12.5, -22.5, 0)
 				.render(graphics);
@@ -60,7 +68,6 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 			double mouseX,
 			double mouseY) {
 		DripstoneRecipe recipe = recipeHolder.value();
-		drawInfoBadgeIfNeeded(graphics, recipe, mouseX, mouseY);
 		BlockState sourceBlock = CommonProxy.getCycledItem(
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.sourceBlock()),
 				Blocks.AIR.defaultBlockState(),
@@ -148,6 +155,12 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 						BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 						Blocks.AIR.defaultBlockState(),
 						2000)));
+		LycheeCategory.addRemoveInputBlock(
+				removeActionPosition.get().x(),
+				removeActionPosition.get().y(),
+				builder,
+				recipe
+		);
 	}
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {
@@ -162,10 +175,5 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 				Blocks.AIR.defaultBlockState(),
 				2000);
-	}
-
-	@Override
-	public LycheeRecipeType<? extends DripstoneRecipe> recipeType() {
-		return RecipeTypes.DRIPSTONE_DRIPPING;
 	}
 }

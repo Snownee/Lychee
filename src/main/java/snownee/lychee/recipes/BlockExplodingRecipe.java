@@ -20,7 +20,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe<BlockExplodingRecipe> {
+public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
 	protected final BlockPredicate blockPredicate;
 
 	public BlockExplodingRecipe(
@@ -55,8 +55,8 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 	public static class Serializer implements LycheeRecipeSerializer<BlockExplodingRecipe> {
 		public static final MapCodec<BlockExplodingRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.MAP_CODEC.forGetter(BlockExplodingRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
+						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(BlockExplodingRecipe::commonProperties),
+						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
 								.forGetter(BlockExplodingRecipe::blockPredicate)
 				).apply(instance, BlockExplodingRecipe::new));
 

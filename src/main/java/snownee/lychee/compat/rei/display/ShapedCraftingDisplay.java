@@ -17,8 +17,8 @@ public class ShapedCraftingDisplay extends DefaultShapedDisplay implements Lyche
 	}
 
 	@Override
-	public ShapedCraftingRecipe recipe() {
-		return recipe.value();
+	public RecipeHolder<ShapedCraftingRecipe> recipe() {
+		return recipe;
 	}
 
 	@Override

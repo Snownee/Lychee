@@ -16,7 +16,9 @@ import snownee.lychee.util.context.LycheeContextKey;
 
 public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemStackHolder> {
 
-	public static final ItemStackHolderCollection EMPTY = InWorld.of();
+	public static ItemStackHolderCollection empty() {
+		return InWorld.of();
+	}
 
 	public final List<ItemStack> stacksNeedHandle = Lists.newArrayList();
 
@@ -51,10 +53,10 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 		var result = 0;
 
 		for (final var holder : this) {
-			if (holder.getIgnoreConsumption() || holder.get().isEmpty()) {
+			if (holder.getConsumption() == 0 || holder.get().isEmpty()) {
 				continue;
 			}
-			var stack = holder.split(times);
+			var stack = holder.split(times * holder.getConsumption());
 			result += stack.getCount();
 		}
 

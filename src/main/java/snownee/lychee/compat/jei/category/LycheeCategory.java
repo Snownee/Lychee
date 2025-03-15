@@ -14,32 +14,40 @@ import mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient;
 import mezz.jei.api.gui.builder.IIngredientAcceptor;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IPlatformFluidHelper;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import snownee.lychee.Lychee;
 import snownee.lychee.action.DropItem;
+import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
+import snownee.lychee.category.SpriteElement;
+import snownee.lychee.category.SpriteElementRenderer;
 import snownee.lychee.client.gui.AllGuiTextures;
-import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.jei.LycheeJEIPlugin;
+import snownee.lychee.compat.jei.elements.InteractiveWidget;
+import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.compat.rv.RvCategoryProvider;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
+public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends RvCategoryProvider<R> {
 	static void addBlockIngredients(IRecipeLayoutBuilder builder, ILycheeRecipe<LycheeContext> recipe) {
 		addBlockIngredients(builder, recipe.getBlockInputs(), RecipeIngredientRole.INPUT);
 		addBlockIngredients(builder, recipe.getBlockOutputs(), RecipeIngredientRole.OUTPUT);
@@ -145,19 +153,47 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		}
 	}
 
-	static void drawInfoBadgeIfNeeded(GuiGraphics graphics, ILycheeRecipe<?> recipe, double mouseX, double mouseY, Rect2i rect) {
+	static void createInfoBadgeIfNeeded(IRecipeExtrasBuilder builder, RecipeHolder<? extends ILycheeRecipe<?>> recipeHolder, Rect2i rect) {
+		ILycheeRecipe<?> recipe = recipeHolder.value();
 		if (recipe.conditions().conditions().isEmpty() && !recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
 			return;
 		}
-		var matrixStack = graphics.pose();
-		matrixStack.pushPose();
-		matrixStack.translate(rect.getX(), rect.getY(), 0);
-		matrixStack.scale(.5F, .5F, .5F);
-		AllGuiTextures.INFO.render(graphics, 0, 0);
-		matrixStack.popPose();
+		ScreenRectangle bounds = new ScreenRectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+		InteractiveWidget widget = new InteractiveWidget(bounds);
+		widget.setOnClick((w, button) -> ClientProxy.postInfoBadgeClickEvent(recipeHolder.value(), recipeHolder.id(), button));
+		widget.setTooltipFunction($ -> RVs.getRecipeTooltip(recipeHolder.value()));
+		widget.setRenderable((graphics, mouseX, mouseY, delta) -> {
+			var matrixStack = graphics.pose();
+			matrixStack.pushPose();
+			matrixStack.translate(bounds.left(), bounds.top(), 0);
+			matrixStack.scale(.5F, .5F, .5F);
+			AllGuiTextures.INFO.render(graphics, 0, 0);
+			matrixStack.popPose();
+		});
+		builder.addWidget(widget);
+		builder.addGuiEventListener(widget);
 	}
 
-	LycheeRecipeType<? extends R> recipeType();
+	static <T extends ILycheeRecipe<LycheeContext>> void addRemoveInputBlock(
+			int x,
+			int y,
+			IRecipeExtrasBuilder builder,
+			T recipe) {
+		if (recipe.postActions().stream().noneMatch(it -> it instanceof PlaceBlock placeBlock && placeBlock.hidden())) {
+			return;
+		}
+		var widget = new InteractiveWidget(new ScreenRectangle(x, y, 8, 8), true);
+		builder.addWidget(widget);
+		builder.addGuiEventListener(widget);
+		widget.setRenderable(new SpriteElementRenderer(
+				new SpriteElement(Lychee.id("exclamation_mark")),
+				x,
+				y,
+				100,
+				widget.getWidth(),
+				widget.getHeight()));
+		widget.setTooltipFunction(it -> List.of(Component.translatable("postAction.lychee.place.consume")));
+	}
 
 	Rect2i infoRect();
 
@@ -165,8 +201,8 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return 120;
 	}
 
-	default void drawInfoBadgeIfNeeded(GuiGraphics graphics, ILycheeRecipe<?> recipe, double mouseX, double mouseY) {
-		drawInfoBadgeIfNeeded(graphics, recipe, mouseX, mouseY, infoRect());
+	default void createInfoBadgeIfNeeded(IRecipeExtrasBuilder builder, RecipeHolder<? extends ILycheeRecipe<?>> recipeHolder) {
+		createInfoBadgeIfNeeded(builder, recipeHolder, infoRect());
 	}
 
 	default void actionGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
@@ -180,7 +216,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> {
 	}
 
 	default void ingredientGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
-		var ingredients = JEIREI.generateShapelessInputs(recipe);
+		var ingredients = RVs.generateShapelessInputs(recipe);
 		slotGroup(
 				builder, x + 1, y + 1, 0, ingredients, (layout0, ingredient, i, x0, y0) -> {
 					var items = ingredient.ingredient.getItems();

@@ -5,8 +5,9 @@ import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import snownee.lychee.compat.JEIREI;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
+import snownee.lychee.compat.rei.elements.ScreenElementWidget;
+import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -16,11 +17,13 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	public static final int HEIGHT = 59;
 
 	private final CategoryIdentifier<? extends LycheeDisplay<T>> categoryIdentifier;
+	private final RvCategory<T> rvCategory;
 	public Renderer icon;
 
-	public AbstractLycheeCategory(CategoryIdentifier<? extends LycheeDisplay<T>> categoryIdentifier, Renderer icon) {
-		this.icon = icon;
-		this.categoryIdentifier = categoryIdentifier;
+	public AbstractLycheeCategory(CategoryIdentifier<? extends LycheeDisplay<T>> id, RvCategory<T> category) {
+		this.categoryIdentifier = id;
+		this.rvCategory = category;
+		icon = new ScreenElementWidget(category.icon());
 	}
 
 	@Override
@@ -30,7 +33,7 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 
 	@Override
 	public Component getTitle() {
-		return JEIREI.makeTitle(getIdentifier());
+		return rvCategory.title();
 	}
 
 	@Override
@@ -46,5 +49,10 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	@Override
 	public Rect2i infoRect() {
 		return infoRect;
+	}
+
+	@Override
+	public RvCategory<T> rvCategory() {
+		return rvCategory;
 	}
 }

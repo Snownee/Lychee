@@ -28,7 +28,7 @@ public class ItemShapelessContext {
 	public void setMatcher(@Nullable RecipeMatcher<ItemStack> matcher) {
 		this.matcher = matcher;
 		if (matcher == null) {
-			context.put(LycheeContextKey.ITEM, ItemStackHolderCollection.EMPTY);
+			context.put(LycheeContextKey.ITEM, ItemStackHolderCollection.empty());
 			return;
 		}
 		var entities = new ItemEntity[matcher.tests.size()];
