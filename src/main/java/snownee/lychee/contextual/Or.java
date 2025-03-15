@@ -7,10 +7,12 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import snownee.kiwi.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -76,10 +78,18 @@ public record Or(ContextualHolder conditions) implements ContextualCondition, Co
 								.fieldOf("contextual")
 								.forGetter(Or::conditions)
 						).apply(instance, Or::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, Or> STREAM_CODEC = ContextualHolder.STREAM_CODEC.map(
+				Or::new,
+				Or::conditions);
 
 		@Override
 		public MapCodec<Or> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, Or> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }
