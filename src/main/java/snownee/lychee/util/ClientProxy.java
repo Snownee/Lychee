@@ -41,7 +41,7 @@ import snownee.lychee.dripstone_dripping.client.ParticleFactories;
 
 public interface ClientProxy {
 	List<RecipeViewerWidgetClickListener> recipeViewerWidgetClickListeners = ObjectArrayList.of();
-	boolean HAS_FLYWHEEL = ModList.get().isLoaded("flywheel");
+	boolean HAS_PONDER = ModList.get().isLoaded("ponder");
 
 	static MutableComponent getDimensionDisplayName(ResourceKey<Level> dimension) {
 		String key = Util.makeDescriptionId("dimension", dimension.location());
