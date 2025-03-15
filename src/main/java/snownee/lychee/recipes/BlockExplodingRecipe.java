@@ -56,7 +56,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 		public static final MapCodec<BlockExplodingRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(BlockExplodingRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
+						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
 								.forGetter(BlockExplodingRecipe::blockPredicate)
 				).apply(instance, BlockExplodingRecipe::new));
 

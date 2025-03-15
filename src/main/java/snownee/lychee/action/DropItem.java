@@ -70,7 +70,7 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStack st
 		public static final MapCodec<DropItem> CODEC = RecordCodecBuilder.mapCodec(instance ->
 				instance.group(
 						PostActionCommonProperties.MAP_CODEC.forGetter(DropItem::commonProperties),
-						LycheeCodecs.FLAT_ITEM_STACK_CODEC.forGetter(it -> it.stack)
+						LycheeCodecs.NONEMPTY_ITEM_STACK_MAP_CODEC.forGetter(it -> it.stack)
 				).apply(instance, DropItem::new));
 
 		@Override

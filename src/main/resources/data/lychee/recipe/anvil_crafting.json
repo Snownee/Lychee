@@ -8,7 +8,9 @@
 			"item": "dirt"
 		}
 	],
-	"item_out": "diamond",
+	"item_out": {
+		"id": "diamond[item_name=ComponentTest]"
+	},
 	"level_cost": 10,
 	"material_cost": 2,
 	"post": [

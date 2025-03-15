@@ -185,8 +185,7 @@ public final class PlaceBlock implements PostAction {
 	public static class Type implements PostActionType<PlaceBlock> {
 		public static final MapCodec<PlaceBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(PlaceBlock::commonProperties),
-				BlockPredicateExtensions.CODEC.optionalFieldOf("block", BlockPredicateExtensions.ANY)
-						.forGetter(it -> it.block),
+				BlockPredicateExtensions.CODEC.optionalFieldOf("block", BlockPredicateExtensions.ANY).forGetter(it -> it.block),
 				LycheeCodecs.OFFSET_CODEC.forGetter(it -> it.offset)
 		).apply(instance, PlaceBlock::new));
 

@@ -22,6 +22,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.NonNullListExtensions;
@@ -151,10 +152,11 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	public static class Serializer implements LycheeRecipeSerializer<AnvilCraftingRecipe> {
 		public static final MapCodec<AnvilCraftingRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
-						LycheeCodecs.nonNullList(Ingredient.CODEC_NONEMPTY, 1, 2)
-								.fieldOf(ITEM_IN)
-								.forGetter(AnvilCraftingRecipe::getIngredients),
+								LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
+								LycheeCodecs.sizeLimit(KCodecs.compactList(Ingredient.CODEC_NONEMPTY), 1, 2)
+										.xmap(NonNullListExtensions::copyOf, Function.identity())
+										.fieldOf(ITEM_IN)
+										.forGetter(AnvilCraftingRecipe::getIngredients),
 								LycheeCodecs.ITEM_STACK_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
 								PostAction.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
 								ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),

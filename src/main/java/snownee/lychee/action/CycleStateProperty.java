@@ -100,6 +100,7 @@ public final class CycleStateProperty implements PostAction {
 				LycheeCodecs.OFFSET_CODEC.forGetter(it -> it.offset),
 				Codec.STRING.fieldOf("property").forGetter(it -> it.property)
 		).apply(instance, CycleStateProperty::new));
+
 		@Override
 		public @NotNull MapCodec<CycleStateProperty> codec() {
 			return CODEC;

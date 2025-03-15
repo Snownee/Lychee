@@ -136,7 +136,7 @@ public final class SetItem implements PostAction {
 	public static class Type implements PostActionType<SetItem> {
 		public static final MapCodec<SetItem> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(SetItem::commonProperties),
-				LycheeCodecs.FLAT_ITEM_STACK_CODEC.forGetter(SetItem::stack),
+				LycheeCodecs.ITEM_STACK_MAP_CODEC.forGetter(SetItem::stack),
 				Reference.CODEC.optionalFieldOf("target", Reference.DEFAULT).forGetter(SetItem::target)
 		).apply(instance, SetItem::new));
 

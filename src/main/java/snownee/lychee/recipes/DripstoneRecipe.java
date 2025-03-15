@@ -201,8 +201,8 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		public static final MapCodec<DripstoneRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(DripstoneRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC.fieldOf("source_block").forGetter(DripstoneRecipe::sourceBlock),
-						BlockPredicateExtensions.CODEC.fieldOf("target_block").forGetter(DripstoneRecipe::blockPredicate)
+						BlockPredicateExtensions.CODEC_FOR_TESTING.fieldOf("source_block").forGetter(DripstoneRecipe::sourceBlock),
+						BlockPredicateExtensions.CODEC_FOR_TESTING.fieldOf("target_block").forGetter(DripstoneRecipe::blockPredicate)
 				).apply(instance, DripstoneRecipe::new));
 
 		@Override

@@ -1,92 +1,92 @@
 {
-  "type": "lychee:block_interacting",
-  "item_in": {
-    "item": "iron_axe"
-  },
-  "block_in": "oak_log",
-  "contextual": [
-    {
-      "type": "direction",
-      "direction": "up"
-    }
-  ],
-  "post": [
-    {
-      "type": "move_towards_face",
-      "factor": 2
-    },
-    {
-      "type": "drop_item",
+	"type": "lychee:block_interacting",
+	"item_in": {
+		"item": "iron_axe"
+	},
+	"block_in": "oak_log[axis=y]",
+	"if": [
+		{
+			"type": "direction",
+			"direction": "up"
+		}
+	],
+	"post": [
+		{
+			"type": "move_towards_face",
+			"factor": 2
+		},
+		{
+			"type": "drop_item",
 			"id": "diamond",
-      "contextual": {
-        "type": "chance",
-        "chance": 0.5
-      }
-    },
-    {
-      "type": "place",
-      "block": "stripped_oak_log"
-    },
-    {
-      "type": "damage_item",
-      "target": "/item_in"
-    },
-    {
-      "type": "random",
-      "contextual": {
-        "type": "chance",
-        "chance": 0.9
-      },
-      "rolls": {
-        "min": 3,
-        "max": 5
-      },
-      "entries": [
-        {
-          "type": "drop_item",
+			"if": {
+				"type": "chance",
+				"chance": 0.5
+			}
+		},
+		{
+			"type": "place",
+			"block": "stripped_oak_log[axis=y]"
+		},
+		{
+			"type": "damage_item",
+			"target": "/item_in"
+		},
+		{
+			"type": "random",
+			"if": {
+				"type": "chance",
+				"chance": 0.9
+			},
+			"rolls": {
+				"min": 3,
+				"max": 5
+			},
+			"entries": [
+				{
+					"type": "drop_item",
 					"id": "gold_ingot",
-          "contextual": {
-            "type": "weather",
-            "weather": "rain"
-          }
-        },
-        {
-          "type": "drop_item",
+					"if": {
+						"type": "weather",
+						"weather": "rain"
+					}
+				},
+				{
+					"type": "drop_item",
 					"id": "ender_pearl"
-        },
-        {
-          "weight": 2,
-          "type": "drop_item",
+				},
+				{
+					"weight": 2,
+					"type": "drop_item",
 					"id": "dirt"
-        }
-      ]
-    },
-    {
-      "type": "if",
-      "contextual": {
-        "type": "chance",
-        "chance": 0.5
-      },
-      "then": [
-        {
-          "type": "drop_item",
+				}
+			]
+		},
+		{
+			"type": "if",
+			"if": {
+				"type": "chance",
+				"chance": 0.5
+			},
+			"then": [
+				{
+					"type": "drop_item",
 					"id": "gold_ingot",
-          "contextual": {
-            "type": "weather",
-            "weather": "rain"
-          }
-        },
-        {
-          "type": "drop_item",
+					"if": {
+						"type": "weather",
+						"weather": "rain"
+					}
+				},
+				{
+					"type": "drop_item",
 					"id": "ender_pearl"
-        }
-      ],
-      "else": [
-        {
-          "type": "drop_item",
+				}
+			],
+			"else": [
+				{
+					"type": "drop_item",
 					"id": "dirt"
-        }
-      ]
-    }
-  ]
+				}
+			]
+		}
+	]
 }
