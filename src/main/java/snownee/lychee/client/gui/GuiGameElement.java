@@ -162,7 +162,7 @@ public class GuiGameElement {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
 			this.blockModel = blockmodel;
 			this.modelData = ModelData.EMPTY;
-			if (ClientProxy.HAS_FLYWHEEL) {
+			if (ClientProxy.HAS_PONDER) {
 				this.modelData = VirtualRenderHelper.VIRTUAL_DATA;
 			}
 		}
