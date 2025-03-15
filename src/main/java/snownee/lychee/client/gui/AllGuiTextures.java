@@ -1,50 +1,36 @@
 package snownee.lychee.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
-import snownee.kiwi.util.Color;
 import snownee.lychee.Lychee;
+import snownee.lychee.ui.SpriteElement;
+import snownee.lychee.ui.SpriteElementRenderer;
 
-@Deprecated //TODO use sprites
 public enum AllGuiTextures implements ScreenElement {
-	// JEI
-	JEI_DOWN_ARROW(0, 21, 18, 14),
-	JEI_QUESTION_MARK(0, 178, 12, 16),
-	JEI_SHADOW(0, 56, 52, 11),
-	INFO(240, 0, 16, 16),
-	LEFT_CLICK(192, 0, 16, 16),
-	RIGHT_CLICK(224, 0, 16, 16);
+	DOWN_ARROW("down_arrow", 20, 20),
+	QUESTION_MARK("unknown", 12, 17), // 12, 16
+	SHADOW("shadow", 52, 13), // 52, 11
+	LIGHT_SHADOW("light_shadow", 52, 13),
+	INFO("info", 16, 16),
+	LEFT_CLICK("left_click", 16, 16),
+	RIGHT_CLICK("right_click", 16, 16);
 
-	public final ResourceLocation location;
+	private final SpriteElementRenderer renderer;
 	public final int width, height;
-	public final int startX, startY;
 
-	AllGuiTextures(int startX, int startY, int width, int height) {
-		this(Lychee.ID, "jei/widgets", startX, startY, width, height);
+	AllGuiTextures(String id, int width, int height) {
+		this(Lychee.id(id), width, height);
 	}
 
-	AllGuiTextures(String namespace, String location, int startX, int startY, int width, int height) {
-		this.location = ResourceLocation.fromNamespaceAndPath(namespace, "textures/gui/" + location + ".png");
+	AllGuiTextures(ResourceLocation id, int width, int height) {
+		this.renderer = new SpriteElementRenderer(new SpriteElement(id), 0, 0, 0, width, height, 1);
 		this.width = width;
 		this.height = height;
-		this.startX = startX;
-		this.startY = startY;
-	}
-
-	public void bind() {
-		RenderSystem.setShaderTexture(0, location);
 	}
 
 	@Override
 	public void render(GuiGraphics graphics, int x, int y) {
-		graphics.blit(location, x, y, startX, startY, width, height);
-	}
-
-	public void render(GuiGraphics graphics, int x, int y, Color c) {
-		bind();
-		UIRenderHelper.drawColoredTexture(graphics, c, x, y, startX, startY, width, height);
+		renderer.render(graphics, x, y);
 	}
 
 }

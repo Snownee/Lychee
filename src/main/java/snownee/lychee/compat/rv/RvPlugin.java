@@ -105,13 +105,13 @@ public class RvPlugin {
 		register(
 				RecipeTypes.ITEM_BURNING, it -> {
 					it.iconProvider = category -> Either.left(new SideBlockIcon(
-							AllGuiTextures.JEI_DOWN_ARROW,
+							AllGuiTextures.DOWN_ARROW,
 							Suppliers.memoize(Blocks.FIRE::defaultBlockState)));
 				});
 		register(
 				RecipeTypes.ITEM_INSIDE, it -> {
 					it.iconProvider = category -> Either.left(new SideBlockIcon(
-							AllGuiTextures.JEI_DOWN_ARROW,
+							AllGuiTextures.DOWN_ARROW,
 							Suppliers.memoize(() -> RVs.getIconBlock(category.recipes))));
 				});
 

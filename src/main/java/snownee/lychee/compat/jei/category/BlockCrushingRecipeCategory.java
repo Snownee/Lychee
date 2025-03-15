@@ -82,7 +82,7 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 			}
 			matrixStack.scale(shadow, shadow, shadow);
 			matrixStack.translate(-26, -5.5, 0);
-			AllGuiTextures.JEI_SHADOW.render(guiGraphics, 0, 0);
+			AllGuiTextures.SHADOW.render(guiGraphics, 0, 0);
 			matrixStack.popPose();
 		}
 
