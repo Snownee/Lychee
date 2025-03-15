@@ -8,7 +8,9 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.context.LycheeContext;
@@ -71,10 +73,18 @@ public record And(ContextualHolder conditions) implements ContextualCondition, C
 								.fieldOf("contextual")
 								.forGetter(And::conditions)
 				).apply(instance, And::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, And> STREAM_CODEC = ContextualHolder.STREAM_CODEC.map(
+				And::new,
+				And::conditions);
 
 		@Override
 		public MapCodec<And> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, And> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

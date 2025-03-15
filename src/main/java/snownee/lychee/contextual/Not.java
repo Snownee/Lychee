@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.MapCodec;
 
 import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.context.LycheeContext;
@@ -41,10 +43,18 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 
 	public static class Type implements ContextualConditionType<Not> {
 		public static final MapCodec<Not> CODEC = ContextualCondition.CODEC.xmap(Not::new, Not::condition).fieldOf("contextual");
+		public static final StreamCodec<RegistryFriendlyByteBuf, Not> STREAM_CODEC = ContextualCondition.STREAM_CODEC.map(
+				Not::new,
+				Not::condition);
 
 		@Override
 		public MapCodec<Not> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, Not> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

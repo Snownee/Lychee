@@ -6,8 +6,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -45,10 +49,16 @@ public record Chance(float chance) implements ContextualCondition {
 			}
 			return DataResult.success(f);
 		}).xmap(Chance::new, Chance::chance).fieldOf("chance");
+		public static final StreamCodec<ByteBuf, Chance> STREAM_CODEC = ByteBufCodecs.FLOAT.map(Chance::new, Chance::chance);
 
 		@Override
 		public MapCodec<Chance> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, Chance> streamCodec() {
+			return STREAM_CODEC.cast();
 		}
 	}
 }
