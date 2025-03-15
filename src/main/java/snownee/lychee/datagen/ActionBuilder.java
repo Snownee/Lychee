@@ -1,41 +1,65 @@
 package snownee.lychee.datagen;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.mojang.serialization.RecordBuilder;
 
+import dev.latvian.mods.rhino.util.HideFromJS;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceLocation;
+import snownee.kiwi.util.NotNullByDefault;
+import snownee.lychee.action.RandomSelect;
+import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionLike;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 
-public class ActionBuilder<R extends PostAction> extends ContextualBuilder<ActionBuilder<R>> implements PostActionLike {
-	private R action;
-	private @Nullable Boolean hidden;
+@NotNullByDefault
+public class ActionBuilder<T extends ActionBuilder<T, R>, R extends PostAction> extends ContextualBuilder<T> implements PostActionLike {
+	protected @Nullable R action;
+	protected @Nullable ResourceLocation icon;
+
+	public ActionBuilder() {}
 
 	public ActionBuilder(R action) {
 		this.action = action;
 	}
 
 	@Contract("-> this")
-	public ActionBuilder<R> hide() {
-		this.hidden = true;
-		return this;
+	public T hide() {
+		return icon(PostActionCommonProperties.HIDDEN);
+	}
+
+	@Contract("_ -> this")
+	public T icon(ResourceLocation icon) {
+		this.icon = icon;
+		return self();
+	}
+
+	public boolean isModified() {
+		return icon != null || !conditions.isEmpty();
 	}
 
 	public R build() {
-		if (hidden == null && conditions.isEmpty()) {
+		Objects.requireNonNull(action);
+		if (!isModified()) {
 			return action;
 		}
 		RegistryOps<Object> ops = Objects.requireNonNull(LycheeBuilder.registryOps.get());
 		RecordBuilder<Object> builder = ops.mapBuilder();
 		PostAction.MAP_CODEC.encode(action, ops, builder);
-		if (hidden != null) {
-			LycheeRecipeCommonProperties.HIDE_CODEC.encode(hidden, ops, builder);
-			hidden = null;
+		if (icon != null) {
+			PostActionCommonProperties.ICON_CODEC.encode(Optional.of(icon), ops, builder);
+			icon = null;
 		}
 		if (!conditions.isEmpty()) {
 			LycheeRecipeCommonProperties.CONTEXTUAL_CODEC.encode(contextualHolder(), ops, builder);
@@ -48,5 +72,52 @@ public class ActionBuilder<R extends PostAction> extends ContextualBuilder<Actio
 	@Override
 	public PostAction asAction() {
 		return build();
+	}
+
+	public static class RandomSelectBuilder extends ActionBuilder<RandomSelectBuilder, RandomSelect> {
+		private final List<RandomSelect.Entry> entries = Lists.newArrayList();
+		private int emptyWeight;
+		private MinMaxBounds.Ints rolls = BoundsExtensions.ONE;
+
+		@Contract("_, _ -> this")
+		public RandomSelectBuilder post(PostActionLike postAction, int weight) {
+			Preconditions.checkArgument(weight > 0, "Weight must be positive");
+			entries.add(new RandomSelect.Entry(postAction.asAction(), weight));
+			return self();
+		}
+
+		@Contract("_ -> this")
+		public RandomSelectBuilder emptyWeight(int emptyWeight) {
+			this.emptyWeight = emptyWeight;
+			return self();
+		}
+
+		@Contract("_ -> this")
+		@HideFromJS
+		public RandomSelectBuilder rolls(MinMaxBounds.Ints rolls) {
+			this.rolls = rolls;
+			return self();
+		}
+
+		@Contract("_ -> this")
+		public RandomSelectBuilder rolls(int rolls) {
+			return rolls(MinMaxBounds.Ints.exactly(rolls));
+		}
+
+		@Contract("_, _ -> this")
+		public RandomSelectBuilder rolls(int min, int max) {
+			return rolls(MinMaxBounds.Ints.between(min, max));
+		}
+
+		@Override
+		public RandomSelect build() {
+			action = new RandomSelect(PostActionCommonProperties.EMPTY, entries, emptyWeight, rolls);
+			return super.build();
+		}
+
+		@Override
+		public boolean isModified() {
+			return true;
+		}
 	}
 }

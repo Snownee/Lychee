@@ -1,11 +1,10 @@
 package snownee.lychee.contextual;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
 
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -33,12 +32,12 @@ public final class IsSneaking implements ContextualCondition {
 		public static final MapCodec<IsSneaking> CODEC = MapCodec.unit(INSTANCE);
 
 		@Override
-		public @NotNull MapCodec<IsSneaking> codec() {
+		public MapCodec<IsSneaking> codec() {
 			return CODEC;
 		}
 
 		@Override
-		public StreamCodec<? extends ByteBuf, IsSneaking> streamCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, IsSneaking> streamCodec() {
 			return StreamCodec.unit(INSTANCE);
 		}
 	}

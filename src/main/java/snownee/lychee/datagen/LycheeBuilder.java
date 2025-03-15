@@ -133,78 +133,84 @@ public interface LycheeBuilder {
 	}
 
 	@HideFromJS
-	default ActionBuilder<DropItem> dropItem(ItemLike item) {
+	default ActionBuilder<?, DropItem> dropItem(ItemLike item) {
 		return dropItem(item, 1);
 	}
 
-	default ActionBuilder<DropItem> dropItem(ItemLike item, int count) {
+	default ActionBuilder<?, DropItem> dropItem(ItemLike item, int count) {
 		return dropItem(new ItemStack(item, count));
 	}
 
-	default ActionBuilder<DropItem> dropItem(ItemStack itemStack) {
+	default ActionBuilder<?, DropItem> dropItem(ItemStack itemStack) {
 		return new ActionBuilder<>(new DropItem(PostActionCommonProperties.EMPTY, itemStack));
 	}
 
-	default ActionBuilder<PlaceBlock> place(Object block) {
+	default ActionBuilder<?, PlaceBlock> place(Object block) {
 		return place(block, BlockPos.ZERO);
 	}
 
-	default ActionBuilder<PlaceBlock> place(Object block, BlockPos offset) {
+	default ActionBuilder<?, PlaceBlock> place(Object block, BlockPos offset) {
 		return new ActionBuilder<>(new PlaceBlock(PostActionCommonProperties.EMPTY, block(block), offset));
 	}
 
-	default ActionBuilder<CycleStateProperty> cycleStateProperty(Object block, String property) {
+	default ActionBuilder<?, CycleStateProperty> cycleStateProperty(Object block, String property) {
 		return cycleStateProperty(block, property, BlockPos.ZERO);
 	}
 
-	default ActionBuilder<CycleStateProperty> cycleStateProperty(Object block, String property, BlockPos offset) {
+	default ActionBuilder<?, CycleStateProperty> cycleStateProperty(Object block, String property, BlockPos offset) {
 		return new ActionBuilder<>(new CycleStateProperty(PostActionCommonProperties.EMPTY, block(block), offset, property));
 	}
 
-	default ActionBuilder<MoveTowardsFace> moveTowardsFace(float factor) {
+	default ActionBuilder<?, MoveTowardsFace> moveTowardsFace(float factor) {
 		return new ActionBuilder<>(new MoveTowardsFace(PostActionCommonProperties.EMPTY, factor));
 	}
 
-	default ActionBuilder<Execute> execute(String command) {
+	default ActionBuilder<?, Execute> execute(String command) {
 		return new ActionBuilder<>(new Execute(PostActionCommonProperties.EMPTY, command, true));
 	}
 
-	default ActionBuilder<Execute> executeNoRepeat(String command) {
+	default ActionBuilder<?, Execute> executeNoRepeat(String command) {
 		return new ActionBuilder<>(new Execute(PostActionCommonProperties.EMPTY, command, false));
 	}
 
-	default ActionBuilder<Exit> exit() {
+	default ActionBuilder<?, Exit> exit() {
 		return new ActionBuilder<>(new Exit());
 	}
 
-	default ActionBuilder<If> ifAction(Collection<PostActionLike> successEntries, Collection<PostActionLike> failureEntries) {
+	default ActionBuilder<?, If> ifAction(
+			Collection<? extends PostActionLike> successEntries,
+			Collection<? extends PostActionLike> failureEntries) {
 		return new ActionBuilder<>(new If(
 				PostActionCommonProperties.EMPTY,
 				successEntries.stream().map(PostActionLike::asAction).toList(),
 				failureEntries.stream().map(PostActionLike::asAction).toList()));
 	}
 
-	default ActionBuilder<AddItemCooldown> addItemCooldown(float seconds) {
+	default ActionBuilder<?, AddItemCooldown> addItemCooldown(float seconds) {
 		return addItemCooldown(seconds, null);
 	}
 
-	default ActionBuilder<AddItemCooldown> addItemCooldown(float seconds, @Nullable Item item) {
+	default ActionBuilder<?, AddItemCooldown> addItemCooldown(float seconds, @Nullable Item item) {
 		return new ActionBuilder<>(new AddItemCooldown(PostActionCommonProperties.EMPTY, seconds, Optional.ofNullable(item)));
 	}
 
-	default ActionBuilder<PreventDefault> preventDefault() {
+	default ActionBuilder<?, PreventDefault> preventDefault() {
 		return new ActionBuilder<>(new PreventDefault());
 	}
 
-	default ActionBuilder<DropXp> dropXp(int amount) {
+	default ActionBuilder<?, DropXp> dropXp(int amount) {
 		return new ActionBuilder<>(new DropXp(PostActionCommonProperties.EMPTY, amount));
 	}
 
-	default ActionBuilder<AnvilDamageChance> anvilDamageChance(float chance) {
+	default ActionBuilder<?, AnvilDamageChance> anvilDamageChance(float chance) {
 		return new ActionBuilder<>(new AnvilDamageChance(PostActionCommonProperties.EMPTY, chance));
 	}
 
-	default ActionBuilder<Explode> explode(
+	default ActionBuilder.RandomSelectBuilder randomSelect() {
+		return new ActionBuilder.RandomSelectBuilder();
+	}
+
+	default ActionBuilder<?, Explode> explode(
 			Explosion.BlockInteraction blockInteraction,
 			BlockPos offset,
 			boolean fire,
@@ -213,19 +219,19 @@ public interface LycheeBuilder {
 		return new ActionBuilder<>(new Explode(PostActionCommonProperties.EMPTY, blockInteraction, offset, fire, radius, step));
 	}
 
-	default ActionBuilder<CustomAction> customAction(String id, JsonObject json, boolean repeatable) {
-		return new ActionBuilder<>(new CustomAction(PostActionCommonProperties.EMPTY, id, json, repeatable));
+	default ActionBuilder<?, CustomAction> customAction(String id, JsonObject json, boolean repeatable, boolean preventSync) {
+		return new ActionBuilder<>(new CustomAction(PostActionCommonProperties.EMPTY, id, json, repeatable, preventSync));
 	}
 
-	default ActionBuilder<DamageItem> damageItem(int damage, Reference target) {
+	default ActionBuilder<?, DamageItem> damageItem(int damage, Reference target) {
 		return new ActionBuilder<>(new DamageItem(PostActionCommonProperties.EMPTY, damage, target));
 	}
 
-	default ActionBuilder<SetItem> setItem(ItemStack itemStack, Reference target) {
+	default ActionBuilder<?, SetItem> setItem(ItemStack itemStack, Reference target) {
 		return new ActionBuilder<>(new SetItem(PostActionCommonProperties.EMPTY, itemStack, target));
 	}
 
-	default ActionBuilder<Delay> delay(float seconds) {
+	default ActionBuilder<?, Delay> delay(float seconds) {
 		return new ActionBuilder<>(new Delay(seconds));
 	}
 

@@ -13,3 +13,4 @@ post:
   - type: prevent_default
   - type: execute
     command: playsound minecraft:block.fire.extinguish record @s
+    icon: lychee:left_click

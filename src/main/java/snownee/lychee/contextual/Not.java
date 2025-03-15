@@ -1,6 +1,5 @@
 package snownee.lychee.contextual;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -44,7 +43,7 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 		public static final MapCodec<Not> CODEC = ContextualCondition.CODEC.xmap(Not::new, Not::condition).fieldOf("contextual");
 
 		@Override
-		public @NotNull MapCodec<Not> codec() {
+		public MapCodec<Not> codec() {
 			return CODEC;
 		}
 	}

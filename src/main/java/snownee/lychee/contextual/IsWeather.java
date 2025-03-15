@@ -3,7 +3,6 @@ package snownee.lychee.contextual;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Maps;
@@ -61,7 +60,7 @@ public record IsWeather(String id, Predicate<Level> predicate) implements Contex
 		public static final MapCodec<IsWeather> CODEC = Codec.stringResolver(IsWeather::id, IsWeather.REGISTRY::get).fieldOf("weather");
 
 		@Override
-		public @NotNull MapCodec<IsWeather> codec() {
+		public MapCodec<IsWeather> codec() {
 			return CODEC;
 		}
 	}

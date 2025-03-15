@@ -1,6 +1,9 @@
 package snownee.lychee.util.contextual;
 
 import net.minecraft.core.Registry;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.contextual.And;
@@ -60,5 +63,9 @@ public interface ContextualConditionType<T extends ContextualCondition> extends 
 	static <T extends ContextualConditionType<?>> T register(ResourceLocation location, T object) {
 		Registry.register(LycheeRegistries.CONTEXTUAL, location, object);
 		return object;
+	}
+
+	default StreamCodec<RegistryFriendlyByteBuf, T> streamCodec() {
+		return ByteBufCodecs.fromCodecWithRegistries(codec().codec());
 	}
 }

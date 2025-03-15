@@ -1,6 +1,5 @@
 package snownee.lychee.action;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -47,13 +46,13 @@ public record Exit(PostActionCommonProperties commonProperties) implements PostA
 		).apply(instance, Exit::new));
 
 		@Override
-		public @NotNull MapCodec<Exit> codec() {
+		public MapCodec<Exit> codec() {
 			return CODEC;
 		}
 
 		@Override
 		public StreamCodec<RegistryFriendlyByteBuf, Exit> streamCodec() {
-			return LycheeStreamCodecs.unit(CLIENT_DUMMY);
+			return LycheeStreamCodecs.uncheckedUnit(CLIENT_DUMMY);
 		}
 	}
 }

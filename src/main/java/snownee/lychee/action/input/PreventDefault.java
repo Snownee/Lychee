@@ -2,7 +2,6 @@ package snownee.lychee.action.input;
 
 import java.util.Objects;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -60,31 +59,19 @@ public final class PreventDefault implements PostAction {
 		return Objects.equals(this.commonProperties, that.commonProperties);
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(commonProperties);
-	}
-
-	@Override
-	public String toString() {
-		return "PreventDefault[" +
-				"commonProperties=" + commonProperties + ']';
-	}
-
-
 	public static class Type implements PostActionType<PreventDefault> {
 		public static final MapCodec<PreventDefault> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(PreventDefault::commonProperties)
 		).apply(instance, PreventDefault::new));
 
 		@Override
-		public @NotNull MapCodec<PreventDefault> codec() {
+		public MapCodec<PreventDefault> codec() {
 			return CODEC;
 		}
 
 		@Override
 		public StreamCodec<RegistryFriendlyByteBuf, PreventDefault> streamCodec() {
-			return LycheeStreamCodecs.unit(CLIENT_DUMMY);
+			return LycheeStreamCodecs.uncheckedUnit(CLIENT_DUMMY);
 		}
 	}
 }

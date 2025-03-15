@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -368,7 +367,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		).apply(instance, Location::new));
 
 		@Override
-		public @NotNull MapCodec<Location> codec() {
+		public MapCodec<Location> codec() {
 			return CODEC;
 		}
 	}

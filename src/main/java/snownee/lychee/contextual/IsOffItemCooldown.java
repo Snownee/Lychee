@@ -1,6 +1,5 @@
 package snownee.lychee.contextual;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -64,7 +63,7 @@ public record IsOffItemCooldown(Holder<Item> item) implements ContextualConditio
 				IsOffItemCooldown::item).fieldOf("item");
 
 		@Override
-		public @NotNull MapCodec<IsOffItemCooldown> codec() {
+		public MapCodec<IsOffItemCooldown> codec() {
 			return CODEC;
 		}
 	}

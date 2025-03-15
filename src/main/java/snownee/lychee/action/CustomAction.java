@@ -2,7 +2,6 @@ package snownee.lychee.action;
 
 import java.util.function.Function;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonObject;
@@ -11,8 +10,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
@@ -27,10 +25,11 @@ public class CustomAction implements PostAction {
 	public final String id;
 	public final JsonObject data;
 	public boolean repeatable;
+	public boolean preventSync;
 	@Nullable
 	public Apply applyFunc;
 
-	public CustomAction(PostActionCommonProperties commonProperties, String id, JsonObject json, boolean repeatable) {
+	public CustomAction(PostActionCommonProperties commonProperties, String id, JsonObject json, boolean repeatable, boolean preventSync) {
 		this.commonProperties = commonProperties;
 		this.id = id;
 		this.data = json;
@@ -51,7 +50,7 @@ public class CustomAction implements PostAction {
 
 	@Override
 	public boolean preventSync() {
-		return true;
+		return preventSync;
 	}
 
 	@Override
@@ -77,23 +76,14 @@ public class CustomAction implements PostAction {
 		return data;
 	}
 
+	@Override
+	public Component getDisplayName() {
+		return Component.translatable("recipeType.lychee.custom.%s".formatted(id));
+	}
+
 	@FunctionalInterface
 	public interface Apply {
 		void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times);
-	}
-
-	public record Data(String id, JsonObject data) {
-		public static final MapCodec<Data> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.STRING.fieldOf("id").forGetter(Data::id),
-				ExtraCodecs.JSON.comapFlatMap(
-						it -> {
-							try {
-								return DataResult.success(it.getAsJsonObject());
-							} catch (Exception e) {
-								return DataResult.error(e::getMessage);
-							}
-						}, Function.identity()).fieldOf("data").forGetter(Data::data)
-		).apply(instance, Data::new));
 	}
 
 	public static class Type implements PostActionType<CustomAction> {
@@ -108,17 +98,13 @@ public class CustomAction implements PostAction {
 								return DataResult.error(e::getMessage);
 							}
 						}, Function.identity()).optionalFieldOf("data", new JsonObject()).forGetter(CustomAction::data),
-				Codec.BOOL.optionalFieldOf("repeatable", true).forGetter(CustomAction::repeatable)
+				Codec.BOOL.optionalFieldOf("repeatable", true).forGetter(CustomAction::repeatable),
+				Codec.BOOL.optionalFieldOf("preventSync", false).forGetter(CustomAction::preventSync)
 		).apply(instance, CustomAction::new));
 
 		@Override
-		public @NotNull MapCodec<CustomAction> codec() {
+		public MapCodec<CustomAction> codec() {
 			return CODEC;
-		}
-
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, CustomAction> streamCodec() {
-			throw new UnsupportedOperationException();
 		}
 	}
 }

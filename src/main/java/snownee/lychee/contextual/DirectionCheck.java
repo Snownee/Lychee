@@ -4,7 +4,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Maps;
@@ -92,7 +91,7 @@ public class DirectionCheck implements ContextualCondition {
 		public static final MapCodec<DirectionCheck> CODEC = Codec.stringResolver($ -> $.name, LOOKUPS::get).fieldOf("direction");
 
 		@Override
-		public @NotNull MapCodec<DirectionCheck> codec() {
+		public MapCodec<DirectionCheck> codec() {
 			return CODEC;
 		}
 	}

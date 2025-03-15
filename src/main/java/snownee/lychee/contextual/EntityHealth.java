@@ -1,6 +1,5 @@
 package snownee.lychee.contextual;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -47,7 +46,7 @@ public record EntityHealth(Doubles range) implements ContextualCondition {
 		).apply(instance, EntityHealth::new));
 
 		@Override
-		public @NotNull MapCodec<EntityHealth> codec() {
+		public MapCodec<EntityHealth> codec() {
 			return CODEC;
 		}
 	}

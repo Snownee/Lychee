@@ -80,7 +80,7 @@ public class BlockPredicateExtensions {
 			BlockStateProperties.DRIPSTONE_THICKNESS
 	));
 
-	public static <T> DataResult<BlockPredicate> fromString(String s, boolean forTesting) {
+	public static DataResult<BlockPredicate> fromString(String s, boolean forTesting) {
 		if ("*".equals(s)) {
 			return DataResult.success(ANY);
 		}

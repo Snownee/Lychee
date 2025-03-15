@@ -1,6 +1,5 @@
 package snownee.lychee.action;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -11,6 +10,7 @@ import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -27,7 +27,6 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Execute(PostActionCommonProperties commonProperties, String command, boolean repeat) implements PostAction {
 
-	public static final Execute DUMMY = new Execute(PostActionCommonProperties.EMPTY, "", false);
 	public static final Component DEFAULT_NAME = Component.literal(Lychee.ID);
 
 	@Override
@@ -87,23 +86,21 @@ public record Execute(PostActionCommonProperties commonProperties, String comman
 						Codec.STRING.fieldOf("command").forGetter(Execute::command),
 						Codec.BOOL.optionalFieldOf("repeat", true).forGetter(Execute::repeat)
 				).apply(instance, Execute::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, Execute> STREAM_CODEC = StreamCodec.composite(
+				PostActionCommonProperties.STREAM_CODEC,
+				Execute::commonProperties,
+				ByteBufCodecs.BOOL,
+				Execute::repeat,
+				(properties, repeat) -> new Execute(properties, "", repeat));
 
 		@Override
-		public @NotNull MapCodec<Execute> codec() {
+		public MapCodec<Execute> codec() {
 			return CODEC;
 		}
 
 		@Override
 		public StreamCodec<RegistryFriendlyByteBuf, Execute> streamCodec() {
-			return StreamCodec.of(
-					(it, value) -> it.writeBoolean(!value.conditions().conditions().isEmpty()),
-					it -> {
-						if (it.readBoolean()) {
-							return new Execute(PostActionCommonProperties.EMPTY, "", false);
-						}
-						return DUMMY;
-					}
-			);
+			return STREAM_CODEC;
 		}
 	}
 }
