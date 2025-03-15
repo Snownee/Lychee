@@ -2,7 +2,6 @@ package snownee.lychee.action;
 
 import java.util.Optional;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -50,7 +49,7 @@ public record AddItemCooldown(PostActionCommonProperties commonProperties, float
 				).apply(instance, AddItemCooldown::new));
 
 		@Override
-		public @NotNull MapCodec<AddItemCooldown> codec() {
+		public MapCodec<AddItemCooldown> codec() {
 			return CODEC;
 		}
 	}

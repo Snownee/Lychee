@@ -1,6 +1,5 @@
 package snownee.lychee.action;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -46,7 +45,7 @@ public record AnvilDamageChance(PostActionCommonProperties commonProperties, flo
 				).apply(instance, AnvilDamageChance::new));
 
 		@Override
-		public @NotNull MapCodec<AnvilDamageChance> codec() {
+		public MapCodec<AnvilDamageChance> codec() {
 			return CODEC;
 		}
 	}

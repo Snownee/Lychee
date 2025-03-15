@@ -14,7 +14,10 @@ import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.kiwi.util.codec.KCodecs;
@@ -25,11 +28,11 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ContextualHolder implements ContextualPredicate, Iterable<ContextualCondition> {
-	public static final Component SECRET_COMPONENT = Component.translatable("contextual.lychee.secret").withStyle(
-			ChatFormatting.GRAY);
-	public static final Codec<ContextualHolder> CODEC = KCodecs.compactList(ContextualConditionData.CODEC.codec()).xmap(
-			ContextualHolder::pack,
-			ContextualHolder::unpack);
+	public static final Component SECRET_COMPONENT = Component.translatable("contextual.lychee.secret").withStyle(ChatFormatting.GRAY);
+	public static final Codec<ContextualHolder> CODEC = KCodecs.compactList(ContextualConditionData.CODEC.codec())
+			.xmap(ContextualHolder::pack, ContextualHolder::unpack);
+	public static final StreamCodec<RegistryFriendlyByteBuf, ContextualHolder> STREAM_CODEC = ContextualConditionData.STREAM_CODEC.apply(
+			ByteBufCodecs.list()).map(ContextualHolder::pack, ContextualHolder::unpack);
 
 	public static final ContextualHolder EMPTY = new ContextualHolder(List.of(), null, null);
 
@@ -39,11 +42,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 	@Nullable
 	private final Component[] overrideDesc;
 
-	public ContextualHolder(
-			List<ContextualCondition> conditions,
-			@Nullable BitSet secretFlags,
-			@Nullable Component[] overrideDesc
-	) {
+	public ContextualHolder(List<ContextualCondition> conditions, @Nullable BitSet secretFlags, @Nullable Component[] overrideDesc) {
 		this.conditions = Collections.unmodifiableList(conditions);
 		this.secretFlags = secretFlags;
 		this.overrideDesc = overrideDesc;
@@ -55,7 +54,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		this.overrideDesc = null;
 	}
 
-	private static ContextualHolder pack(List<ContextualConditionData<?>> holders) {
+	public static ContextualHolder pack(List<ContextualConditionData> holders) {
 		if (holders.isEmpty()) {
 			return EMPTY;
 		}
@@ -89,19 +88,17 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		return conditions().stream().mapToInt(ContextualConditionDisplay::showingCount).sum();
 	}
 
-	private List<ContextualConditionData<?>> unpack() {
-		List<ContextualConditionData<?>> list = Lists.newArrayListWithExpectedSize(conditions.size());
+	public List<ContextualConditionData> unpack() {
+		List<ContextualConditionData> list = Lists.newArrayListWithExpectedSize(conditions.size());
 		for (var i = 0; i < conditions.size(); i++) {
 			var condition = conditions.get(i);
 			var secret = isSecretCondition(i);
-			list.add(new ContextualConditionData<>(condition, secret, Optional.ofNullable(getOverridenDesc(i))));
+			list.add(new ContextualConditionData(condition, secret, Optional.ofNullable(getOverridenDesc(i))));
 		}
 		return list;
 	}
 
-	public void appendToTooltips(
-			List<Component> tooltips, @Nullable Level level, @Nullable Player player, int indent
-	) {
+	public void appendToTooltips(List<Component> tooltips, @Nullable Level level, @Nullable Player player, int indent) {
 		if (level == null) {
 			//TODO notify player that the condition is not available
 			return;
@@ -157,8 +154,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 						"Failed to check condition {} of recipe {}",
 						LycheeRegistries.CONTEXTUAL.getKey(condition.type()),
 						recipeContext == null ? ctx.get(LycheeContextKey.RECIPE) : recipeContext.id(),
-						e
-				);
+						e);
 				return 0;
 			}
 		}
@@ -174,9 +170,9 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 			return false;
 		}
 		final ContextualHolder that = (ContextualHolder) o;
-		return Objects.equal(conditions, that.conditions) &&
-				Objects.equal(secretFlags, that.secretFlags) &&
-				Objects.equal(overrideDesc, that.overrideDesc);
+		return Objects.equal(conditions, that.conditions) && Objects.equal(secretFlags, that.secretFlags) && Objects.equal(
+				overrideDesc,
+				that.overrideDesc);
 	}
 
 	@Override

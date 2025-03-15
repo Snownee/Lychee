@@ -2,7 +2,6 @@ package snownee.lychee.action;
 
 import java.util.Locale;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -112,7 +111,7 @@ public record Explode(
 		).apply(instance, Explode::new));
 
 		@Override
-		public @NotNull MapCodec<Explode> codec() {
+		public MapCodec<Explode> codec() {
 			return CODEC;
 		}
 	}

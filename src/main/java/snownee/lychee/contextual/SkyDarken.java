@@ -1,6 +1,5 @@
 package snownee.lychee.contextual;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -53,7 +52,7 @@ public record SkyDarken(MinMaxBounds.Ints value, boolean requireSkyLight, boolea
 		).apply(instance, SkyDarken::new));
 
 		@Override
-		public @NotNull MapCodec<SkyDarken> codec() {
+		public MapCodec<SkyDarken> codec() {
 			return CODEC;
 		}
 	}

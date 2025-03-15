@@ -2,7 +2,6 @@ package snownee.lychee.contextual;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -81,7 +80,7 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 		).apply(instance, IsDifficulty::new));
 
 		@Override
-		public @NotNull MapCodec<IsDifficulty> codec() {
+		public MapCodec<IsDifficulty> codec() {
 			return CODEC;
 		}
 	}

@@ -63,11 +63,11 @@ public record LycheeRecipeCommonProperties(
 					LycheeRecipeCommonProperties::hideInRecipeViewer,
 					ByteBufCodecs.BOOL,
 					LycheeRecipeCommonProperties::ghost,
-					ByteBufCodecs.fromCodec(COMMENT_CODEC.codec()),
+					ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8),
 					LycheeRecipeCommonProperties::comment,
 					ByteBufCodecs.STRING_UTF8,
 					LycheeRecipeCommonProperties::group,
-					ByteBufCodecs.fromCodec(CONTEXTUAL_CODEC.codec()),
+					ContextualHolder.STREAM_CODEC,
 					LycheeRecipeCommonProperties::conditions,
 					PostAction.STREAM_LIST_CODEC,
 					LycheeRecipeCommonProperties::postActions,
@@ -76,6 +76,7 @@ public record LycheeRecipeCommonProperties(
 					LycheeRecipeCommonProperties::new
 			);
 
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	private static LycheeRecipeCommonProperties of(
 			boolean hideInRecipeViewer,
 			boolean ghost,

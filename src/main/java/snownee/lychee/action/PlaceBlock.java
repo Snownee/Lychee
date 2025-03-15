@@ -2,9 +2,9 @@ package snownee.lychee.action;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -45,15 +45,17 @@ public final class PlaceBlock implements PostAction {
 	private final BlockPos offset;
 
 	public PlaceBlock(
-			PostActionCommonProperties commonProperties,
+			PostActionCommonProperties properties,
 			BlockPredicate block,
 			BlockPos offset) {
 		this.block = block;
 		this.offset = offset;
 		this.commonProperties = new PostActionCommonProperties(
-				commonProperties.getPath(),
-				commonProperties.conditions(),
-				commonProperties.hidden() || (BlockPredicateExtensions.anyBlockState(block).isAir() && offset.equals(BlockPos.ZERO)));
+				properties.conditions(), Optional.ofNullable(properties.icon()).or(() ->
+				(BlockPredicateExtensions.isAny(this.block) && this.offset.equals(BlockPos.ZERO)) ?
+						Optional.of(PostActionCommonProperties.HIDDEN) :
+						Optional.empty()), properties.getPath()
+		);
 	}
 
 	private static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {
@@ -190,7 +192,7 @@ public final class PlaceBlock implements PostAction {
 		).apply(instance, PlaceBlock::new));
 
 		@Override
-		public @NotNull MapCodec<PlaceBlock> codec() {
+		public MapCodec<PlaceBlock> codec() {
 			return CODEC;
 		}
 	}

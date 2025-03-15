@@ -1,6 +1,5 @@
 package snownee.lychee.contextual;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -46,7 +45,7 @@ public record FallDistance(Doubles range) implements ContextualCondition {
 		).apply(instance, FallDistance::new));
 
 		@Override
-		public @NotNull MapCodec<FallDistance> codec() {
+		public MapCodec<FallDistance> codec() {
 			return CODEC;
 		}
 	}

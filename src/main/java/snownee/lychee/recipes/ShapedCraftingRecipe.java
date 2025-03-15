@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.mojang.datafixers.util.Pair;
@@ -32,6 +30,7 @@ import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.context.CraftingContext;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipeAccess;
@@ -47,6 +46,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
+@NotNullByDefault
 public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements CraftingRecipe {
 	private static final Cache<CraftingInput, LycheeContext> CONTEXT_CACHE =
 			CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.SECONDS).build();
@@ -178,7 +178,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 
 
 	@Override
-	public @NotNull ItemStack assemble(CraftingInput container, HolderLookup.Provider provider) {
+	public ItemStack assemble(CraftingInput container, HolderLookup.Provider provider) {
 		var context = CONTEXT_CACHE.getIfPresent(container);
 		if (context == null) {
 			return ItemStack.EMPTY;
@@ -195,7 +195,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 	}
 
 	@Override
-	public @NotNull NonNullList<ItemStack> getRemainingItems(CraftingInput container) {
+	public NonNullList<ItemStack> getRemainingItems(CraftingInput container) {
 		var items = shaped.getRemainingItems(container);
 		var context = CONTEXT_CACHE.getIfPresent(container);
 		if (context == null) {
@@ -217,29 +217,29 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<ShapedCraftingRecipe> getSerializer() {
+	public RecipeSerializer<ShapedCraftingRecipe> getSerializer() {
 		return RecipeSerializers.CRAFTING;
 	}
 
 	@Override
-	public @NotNull RecipeType<? extends CraftingRecipe> getType() {
+	public RecipeType<? extends CraftingRecipe> getType() {
 		return RecipeType.CRAFTING;
 	}
 
 	@Override
-	public @NotNull CraftingBookCategory category() {
+	public CraftingBookCategory category() {
 		return shaped.category();
 	}
 
 	@Override
-	public @NotNull String getGroup() {return shaped.getGroup();}
+	public String getGroup() {return shaped.getGroup();}
 
-	@NotNull
+
 	@Override
 	public ItemStack getResultItem(final HolderLookup.Provider provider) {return shaped.getResultItem(provider);}
 
 	@Override
-	public @NotNull NonNullList<Ingredient> getIngredients() {return shaped.getIngredients();}
+	public NonNullList<Ingredient> getIngredients() {return shaped.getIngredients();}
 
 	@Override
 	public boolean showNotification() {return shaped.showNotification();}
@@ -260,7 +260,7 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 	public boolean isSpecial() {return shaped.isSpecial();}
 
 	@Override
-	public @NotNull ItemStack getToastSymbol() {return shaped.getToastSymbol();}
+	public ItemStack getToastSymbol() {return shaped.getToastSymbol();}
 
 	public List<PostAction> assemblingActions() {
 		return assemblingActions;
@@ -280,25 +280,24 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 								.forGetter(ShapedCraftingRecipe::assemblingActions)
 				).apply(instance, ShapedCraftingRecipe::new));
 
-		@Override
-		public @NotNull MapCodec<ShapedCraftingRecipe> codec() {
-			return CODEC;
-		}
-
-
 		public static final StreamCodec<RegistryFriendlyByteBuf, ShapedCraftingRecipe> STREAM_CODEC =
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						ShapedCraftingRecipe::commonProperties,
+						// Do NOT use RecipeSerializer.SHAPED_RECIPE.streamCodec(), missing data
 						ByteBufCodecs.fromCodecWithRegistries(RecipeSerializer.SHAPED_RECIPE.codec().codec()),
 						ShapedCraftingRecipe::shaped,
 						PostAction.STREAM_LIST_CODEC,
 						ShapedCraftingRecipe::assemblingActions,
-						ShapedCraftingRecipe::new
-				);
+						ShapedCraftingRecipe::new);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, ShapedCraftingRecipe> streamCodec() {
+		public MapCodec<ShapedCraftingRecipe> codec() {
+			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, ShapedCraftingRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

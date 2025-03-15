@@ -21,7 +21,7 @@ public enum PostActionIngredientRenderer implements EntryRenderer<PostAction> {
 		if (entry.isEmpty()) {
 			return;
 		}
-		PostActionRenderer.of(entry.getValue()).render(entry.getValue(), graphics, bounds.x, bounds.y);
+		PostActionRenderer.of(entry.getValue()).internalRender(entry.getValue(), graphics, bounds.x, bounds.y);
 	}
 
 	@Override

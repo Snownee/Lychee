@@ -2,7 +2,6 @@ package snownee.lychee.action;
 
 import java.util.function.Supplier;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Suppliers;
@@ -102,7 +101,7 @@ public final class CycleStateProperty implements PostAction {
 		).apply(instance, CycleStateProperty::new));
 
 		@Override
-		public @NotNull MapCodec<CycleStateProperty> codec() {
+		public MapCodec<CycleStateProperty> codec() {
 			return CODEC;
 		}
 	}

@@ -2,7 +2,6 @@ package snownee.lychee.contextual;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -79,7 +78,7 @@ public record Or(ContextualHolder conditions) implements ContextualCondition, Co
 						).apply(instance, Or::new));
 
 		@Override
-		public @NotNull MapCodec<Or> codec() {
+		public MapCodec<Or> codec() {
 			return CODEC;
 		}
 	}

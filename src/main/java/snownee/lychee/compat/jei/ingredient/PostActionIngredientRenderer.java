@@ -31,6 +31,6 @@ public enum PostActionIngredientRenderer implements IIngredientRenderer<PostActi
 
 	@Override
 	public void render(GuiGraphics graphics, PostAction action) {
-		PostActionRenderer.of(action).render(action, graphics, 0, 0);
+		PostActionRenderer.of(action).internalRender(action, graphics, 0, 0);
 	}
 }

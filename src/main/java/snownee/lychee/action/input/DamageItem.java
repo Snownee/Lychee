@@ -1,6 +1,5 @@
 package snownee.lychee.action.input;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
@@ -99,7 +98,7 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 				).apply(instance, DamageItem::new));
 
 		@Override
-		public @NotNull MapCodec<DamageItem> codec() {
+		public MapCodec<DamageItem> codec() {
 			return CODEC;
 		}
 	}
