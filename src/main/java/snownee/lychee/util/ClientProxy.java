@@ -18,6 +18,7 @@ import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
@@ -46,6 +47,7 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 @Mod(value = Lychee.ID, dist = Dist.CLIENT)
 public class ClientProxy {
 
+	public static final boolean HAS_PONDER = ModList.get().isLoaded("ponder");
 	private static final KEvent<RecipeViewerWidgetClickListener> RECIPE_VIEWER_WIDGET_CLICK_EVENT =
 			KEvent.createArrayBacked(
 					RecipeViewerWidgetClickListener.class, listeners -> (recipe, id, button) -> {
