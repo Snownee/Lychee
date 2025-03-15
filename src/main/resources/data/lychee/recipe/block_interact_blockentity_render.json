@@ -1,0 +1,13 @@
+{
+	"type": "lychee:block_interacting",
+	"item_in": {
+		"item": "create:andesite_alloy"
+	},
+	"block_in": "create:cogwheel",
+	"post": [
+		{
+			"type": "place",
+			"block": "create:shaft"
+		}
+	]
+}

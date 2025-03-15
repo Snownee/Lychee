@@ -48,6 +48,9 @@ repositories {
             includeGroup "com.github.rtyley"
         }
     }
+    maven { url = "https://maven.createmod.net" } // Create, Ponder, Flywheel
+    maven { url = "https://mvn.devos.one/snapshots" } // Registrate
+    maven { url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" } // ForgeConfigAPIPort
     flatDir { dir 'libs' }
 }
 
@@ -161,6 +164,12 @@ dependencies {
     jarJar(implementation("org.sinytra.forgified-fabric-api:fabric-particles-v1:4.0.2+824f924c19"))
 
     implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+
+//    implementation("com.simibubi.create:create-${minecraft_version}:6.0.3-48:slim") { transitive = false }
+    implementation("net.createmod.ponder:Ponder-NeoForge-${minecraft_version}:1.0.45")
+//    compileOnly("dev.engine-room.flywheel:flywheel-neoforge-api-${minecraft_version}:1.0.1")
+//    runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:1.0.1")
+//    implementation("com.tterrag.registrate:Registrate:MC1.21-1.3.0+62")
 }
 
 jar {
