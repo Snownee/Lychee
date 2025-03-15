@@ -12,11 +12,11 @@ import snownee.lychee.client.gui.ScreenElement;
 
 public class SideBlockIcon extends RenderElement {
 
-	private final ScreenElement mainIcon;
+	private final RenderElement mainIcon;
 	private final Supplier<BlockState> blockProvider;
 
 	public SideBlockIcon(ScreenElement mainIcon, Supplier<BlockState> blockProvider) {
-		this.mainIcon = mainIcon;
+		this.mainIcon = RenderElement.of(mainIcon).at(0, 0, 100);
 		this.blockProvider = blockProvider;
 	}
 
@@ -26,7 +26,7 @@ public class SideBlockIcon extends RenderElement {
 		ms.pushPose();
 		ms.translate(x, y, z);
 		ms.scale(.625F, .625F, .625F);
-		mainIcon.render(graphics, 0, 0);
+		mainIcon.render(graphics);
 		ms.popPose();
 		GuiGameElement.of(blockProvider.get())
 				.lighting(RVs.SIDE_ICON_LIGHTING)

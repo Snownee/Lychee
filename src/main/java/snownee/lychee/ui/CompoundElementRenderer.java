@@ -1,4 +1,4 @@
-package snownee.lychee.category;
+package snownee.lychee.ui;
 
 import net.minecraft.client.gui.GuiGraphics;
 import snownee.lychee.client.gui.RenderElement;

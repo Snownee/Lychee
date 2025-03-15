@@ -1,4 +1,4 @@
-package snownee.lychee.category;
+package snownee.lychee.ui;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

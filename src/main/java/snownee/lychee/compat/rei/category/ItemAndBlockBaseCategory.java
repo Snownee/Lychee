@@ -59,7 +59,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 	}
 
 	public void drawExtra(T recipe, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
-		AllGuiTextures.JEI_DOWN_ARROW.render(graphics, methodRect.getX(), methodRect.getY());
+		AllGuiTextures.DOWN_ARROW.render(graphics, methodRect.getX(), methodRect.getY());
 	}
 
 	@Nullable
@@ -81,7 +81,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 
 			var state = getRenderingBlock(recipe);
 			if (state.isAir()) {
-				AllGuiTextures.JEI_QUESTION_MARK.render(graphics, inputBlockRect.getX() + 4, inputBlockRect.getY() + 2);
+				AllGuiTextures.QUESTION_MARK.render(graphics, inputBlockRect.getX() + 4, inputBlockRect.getY() + 2);
 				matrixStack.popPose();
 				return;
 			}
@@ -89,7 +89,7 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 				matrixStack.pushPose();
 				matrixStack.translate(inputBlockRect.getX() + 11, inputBlockRect.getY() + 16, 0);
 				matrixStack.scale(.7F, .7F, .7F);
-				AllGuiTextures.JEI_SHADOW.render(graphics, -26, -5);
+				AllGuiTextures.SHADOW.render(graphics, -26, -5);
 				matrixStack.popPose();
 			}
 
