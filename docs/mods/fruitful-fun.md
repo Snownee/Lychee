@@ -106,4 +106,24 @@ This recipe type is [repeatable](concepts.md#repeatability).
 
 ### Bee Trait Check
 
+Checks if the bee has a specific trait.
+
+!!! note "Format"
+
+    | Name  | Description | Type / Literal              |
+    | ----- | ----------- | --------------------------- |
+    | type  | type        | "fruitfulfun:bee_has_trait" |
+    | trait | the trait   | string                      |
+
 ### Sky Darkness Check
+
+Checks the sky darken level.
+
+!!! note "Format"
+
+    | Name              | Description                                                        | Type / Literal                          |
+    | ----------------- | ------------------------------------------------------------------ | --------------------------------------- |
+    | type              | type                                                               | "fruitfulfun:sky_darken"                |
+    | value             | value                                                              | [IntBounds](general-types.md#intbounds) |
+    | require_sky_light | dimension must be a surface world (not like the nether) ^optional^ | boolean                                 |
+    | can_see_sky       | the location must be able to see the sky ^optional^                | boolean                                 |
