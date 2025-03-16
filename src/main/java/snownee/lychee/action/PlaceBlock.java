@@ -52,7 +52,12 @@ public final class PlaceBlock implements PostAction {
 		this.offset = offset;
 		this.commonProperties = new PostActionCommonProperties(
 				properties.conditions(), Optional.ofNullable(properties.icon()).or(() ->
-				(BlockPredicateExtensions.isAny(this.block) && this.offset.equals(BlockPos.ZERO)) ?
+				((this.offset.equals(BlockPos.ZERO)
+						&& BlockPredicateExtensions.isAny(this.block)
+						|| this.block.blocks()
+							.map(blocks -> blocks.stream().allMatch(it -> it.value() == Blocks.AIR))
+							.orElse(false))
+				) ?
 						Optional.of(PostActionCommonProperties.HIDDEN) :
 						Optional.empty()), properties.getPath()
 		);
