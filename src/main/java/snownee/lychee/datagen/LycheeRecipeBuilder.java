@@ -14,6 +14,7 @@ import com.google.common.collect.Maps;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.mojang.datafixers.util.Function3;
 
+import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -98,6 +99,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 	}
 
 	@Contract("_ -> this")
+	@HideFromJS
 	public T post(Collection<? extends PostActionLike> postActions) {
 		postActions.forEach(this::post);
 		return self();
@@ -237,7 +239,8 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 
 		@Contract("_ -> this")
-			public AnvilCrafting assembling(Collection<? extends PostActionLike> assemblingActions) {
+		@HideFromJS
+		public AnvilCrafting assembling(Collection<? extends PostActionLike> assemblingActions) {
 			assemblingActions.forEach(this::assembling);
 			return self();
 		}
@@ -378,7 +381,8 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 
 		@Contract("_ -> this")
-			public ShapedCrafting assembling(Collection<? extends PostActionLike> assemblingActions) {
+		@HideFromJS
+		public ShapedCrafting assembling(Collection<? extends PostActionLike> assemblingActions) {
 			assemblingActions.forEach(this::assembling);
 			return self();
 		}

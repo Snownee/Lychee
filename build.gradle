@@ -43,6 +43,14 @@ repositories {
             includeGroup "dev.latvian.mods"
         }
     }
+    maven {
+        // saps.dev Maven (KubeJS and Rhino)
+        url = "https://maven.saps.dev/minecraft"
+        content {
+            includeGroup "dev.latvian.mods"
+            includeGroup "dev.latvian.apps"
+        }
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -100,6 +108,8 @@ dependencies {
     modImplementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
 
     implementation 'com.google.errorprone:error_prone_annotations:2.36.0'
+
+    compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 
 //    modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
 }

@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JavaOps;
 
+import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -146,6 +147,7 @@ public interface LycheeBuilder {
 		return new LycheeRecipeBuilder.ShapedCrafting(category, result);
 	}
 
+	@HideFromJS
 	default ActionBuilder<DropItem> dropItem(ItemLike item) {
 		return dropItem(item, 1);
 	}
