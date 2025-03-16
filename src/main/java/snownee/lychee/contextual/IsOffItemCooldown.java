@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
 
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.kiwi.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -39,7 +39,7 @@ public record IsOffItemCooldown(Holder<Item> item) implements ContextualConditio
 	}
 
 	@Override
-	public TriState testForTooltips(Level level, @Nullable Player player) {
+	public net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
 		if (player == null) {
 			return TriState.DEFAULT;
 		}

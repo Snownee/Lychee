@@ -7,12 +7,12 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import snownee.kiwi.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -38,7 +38,7 @@ public record Or(ContextualHolder conditions) implements ContextualCondition, Co
 	}
 
 	@Override
-	public TriState testForTooltips(Level level, @Nullable Player player) {
+	public net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
 		boolean allFailed = true;
 		for (ContextualCondition condition : conditions) {
 			TriState result = condition.testForTooltips(level, player);

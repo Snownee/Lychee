@@ -1,9 +1,9 @@
 package snownee.lychee.compat.rv;
 
 import snownee.lychee.Lychee;
+import snownee.lychee.client.gui.ScreenElement;
 import snownee.lychee.ui.SpriteElement;
 import snownee.lychee.ui.SpriteElementRenderer;
-import snownee.lychee.client.gui.ScreenElement;
 
 public enum SlotType {
 	NORMAL("slot"),
