@@ -14,7 +14,6 @@ import com.google.common.collect.Maps;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.mojang.datafixers.util.Function3;
 
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
@@ -30,7 +29,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.ItemLike;
-import snownee.kiwi.recipe.SizedIngredient;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
@@ -99,7 +98,6 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 	}
 
 	@Contract("_ -> this")
-	@HideFromJS
 	public T post(Collection<? extends PostActionLike> postActions) {
 		postActions.forEach(this::post);
 		return self();
@@ -239,8 +237,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 
 		@Contract("_ -> this")
-		@HideFromJS
-		public AnvilCrafting assembling(Collection<? extends PostActionLike> assemblingActions) {
+			public AnvilCrafting assembling(Collection<? extends PostActionLike> assemblingActions) {
 			assemblingActions.forEach(this::assembling);
 			return self();
 		}
@@ -381,8 +378,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 
 		@Contract("_ -> this")
-		@HideFromJS
-		public ShapedCrafting assembling(Collection<? extends PostActionLike> assemblingActions) {
+			public ShapedCrafting assembling(Collection<? extends PostActionLike> assemblingActions) {
 			assemblingActions.forEach(this::assembling);
 			return self();
 		}

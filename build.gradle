@@ -99,6 +99,8 @@ dependencies {
 
     modImplementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
 
+    implementation 'com.google.errorprone:error_prone_annotations:2.36.0'
+
 //    modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
 }
 

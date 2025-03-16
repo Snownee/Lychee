@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JavaOps;
 
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -24,7 +23,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import snownee.kiwi.recipe.SizedIngredient;
+import snownee.kiwi.recipe_.SizedIngredient;
 import snownee.lychee.action.AddItemCooldown;
 import snownee.lychee.action.AnvilDamageChance;
 import snownee.lychee.action.CustomAction;
@@ -147,7 +146,6 @@ public interface LycheeBuilder {
 		return new LycheeRecipeBuilder.ShapedCrafting(category, result);
 	}
 
-	@HideFromJS
 	default ActionBuilder<DropItem> dropItem(ItemLike item) {
 		return dropItem(item, 1);
 	}
@@ -228,8 +226,8 @@ public interface LycheeBuilder {
 		return new ActionBuilder<>(new Explode(PostActionCommonProperties.EMPTY, blockInteraction, offset, fire, radius, step));
 	}
 
-	default ActionBuilder<CustomAction> customAction(String id, JsonObject json, boolean repeatable) {
-		return new ActionBuilder<>(new CustomAction(PostActionCommonProperties.EMPTY, id, json, repeatable));
+	default ActionBuilder<CustomAction> customAction(String id, JsonObject json, boolean repeatable, boolean preventDefault) {
+		return new ActionBuilder<>(new CustomAction(PostActionCommonProperties.EMPTY, id, json, repeatable, preventDefault));
 	}
 
 	default ActionBuilder<DamageItem> damageItem(int damage, Reference target) {

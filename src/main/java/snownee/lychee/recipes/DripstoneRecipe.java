@@ -55,11 +55,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 	protected final BlockPredicate targetBlock;
 	private float chance = 1;
 
-	public DripstoneRecipe(
-			LycheeRecipeCommonProperties commonProperties,
-			@NotNull BlockPredicate sourceBlock,
-			@NotNull BlockPredicate targetBlock
-	) {
+	public DripstoneRecipe(LycheeRecipeCommonProperties commonProperties, BlockPredicate sourceBlock, BlockPredicate targetBlock) {
 		super(commonProperties);
 		this.sourceBlock = sourceBlock;
 		this.targetBlock = targetBlock;
@@ -103,10 +99,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		var builder = new LocationPredicate.Builder();
 		((LocationPredicate$BuilderAccess) builder).setBlock(Optional.of(recipe.value().targetBlock));
 		var check = (LocationCheck) LocationCheck.checkLocation(builder).build();
-		var exit = new Exit(new PostActionCommonProperties(
-				Optional.empty(),
-				new ContextualHolder(List.of(new Not(new Location(check)))),
-				true));
+		var exit = new Exit(new PostActionCommonProperties(new ContextualHolder(List.of(new Not(new Location(check)))), Optional.empty()));
 		var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.jobs.offer(new Job(exit, 1));
 		actionContext.jobs.offer(new Job(new Delay(j / 20F), 1));
