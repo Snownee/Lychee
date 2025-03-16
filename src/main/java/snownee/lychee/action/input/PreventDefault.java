@@ -26,7 +26,7 @@ public final class PreventDefault implements PostAction {
 	public PreventDefault(PostActionCommonProperties commonProperties) {this.commonProperties = commonProperties;}
 
 	public PreventDefault() {
-		this(new PostActionCommonProperties());
+		this(PostActionCommonProperties.EMPTY);
 	}
 
 	@Override

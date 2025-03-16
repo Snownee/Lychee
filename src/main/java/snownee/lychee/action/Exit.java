@@ -22,7 +22,7 @@ public record Exit(PostActionCommonProperties commonProperties) implements PostA
 	public static final Exit CLIENT_DUMMY = new Exit();
 
 	public Exit() {
-		this(new PostActionCommonProperties());
+		this(PostActionCommonProperties.EMPTY);
 	}
 
 	@Override

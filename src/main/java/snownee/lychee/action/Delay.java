@@ -20,7 +20,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 public record Delay(PostActionCommonProperties commonProperties, float seconds) implements PostAction {
 
 	public Delay(float seconds) {
-		this(new PostActionCommonProperties(), seconds);
+		this(PostActionCommonProperties.EMPTY, seconds);
 	}
 
 	@Override
