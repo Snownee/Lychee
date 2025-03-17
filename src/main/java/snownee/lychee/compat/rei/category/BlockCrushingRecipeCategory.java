@@ -1,11 +1,9 @@
 package snownee.lychee.compat.rei.category;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.joml.Vector2i;
 
-import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 
 import me.shedaniel.math.Point;
@@ -34,7 +32,7 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 	public static final Rect2i LANDING_BLOCK_RECT = new Rect2i(0, 0, 20, 20);
 	private final Rect2i fallingBlockRect;
 	private final Rect2i landingBlockRect;
-	private final Supplier<Vector2i> removeActionPosition;
+	private final Vector2i removeActionPosition;
 
 	public BlockCrushingRecipeCategory(
 			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> id,
@@ -44,10 +42,9 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		super(id, category);
 		this.fallingBlockRect = fallingBlockRect;
 		this.landingBlockRect = landingBlockRect;
-		this.removeActionPosition =
-				Suppliers.memoize(() -> new Vector2i(
-						landingBlockRect.getX() + landingBlockRect.getWidth() - 4,
-						landingBlockRect.getY() + landingBlockRect.getHeight() - 8));
+		this.removeActionPosition = new Vector2i(
+				landingBlockRect.getX() + landingBlockRect.getWidth() - 4,
+				landingBlockRect.getY() + landingBlockRect.getHeight() - 8);
 	}
 
 	public BlockCrushingRecipeCategory(
@@ -130,6 +127,9 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		y = BlockPredicateExtensions.isAny(recipe.landingBlock()) ? 45 : 33;
 		fallingBlockRect.setPosition(x, y - 35);
 		landingBlockRect.setPosition(x, y);
+		removeActionPosition.set(
+				landingBlockRect.getX() + landingBlockRect.getWidth() - 4,
+				landingBlockRect.getY() + landingBlockRect.getHeight() - 8);
 
 		var widget = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, fallingBlockRect));
 		widget.setTooltipFunction($ -> BlockPredicateExtensions.getTooltips(getFallingBlock(recipe), recipe.blockPredicate()));
@@ -144,8 +144,8 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		}
 
 		LycheeCategory.addRemoveInputBlock(
-				removeActionPosition.get().x + startPoint.x,
-				removeActionPosition.get().y + startPoint.y,
+				removeActionPosition.x + startPoint.x,
+				removeActionPosition.y + startPoint.y,
 				widgets,
 				recipe);
 
