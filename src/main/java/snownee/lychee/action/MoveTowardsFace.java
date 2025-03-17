@@ -1,6 +1,5 @@
 package snownee.lychee.action;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -57,7 +56,7 @@ public record MoveTowardsFace(PostActionCommonProperties commonProperties, float
 		}
 
 		@Override
-		public @NotNull MapCodec<MoveTowardsFace> codec() {
+		public MapCodec<MoveTowardsFace> codec() {
 			return CODEC;
 		}
 	}

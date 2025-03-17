@@ -1,6 +1,5 @@
 package snownee.lychee.action;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -48,7 +47,7 @@ public record DropXp(PostActionCommonProperties commonProperties, int xp) implem
 				).apply(instance, DropXp::new));
 
 		@Override
-		public @NotNull MapCodec<DropXp> codec() {
+		public MapCodec<DropXp> codec() {
 			return CODEC;
 		}
 	}

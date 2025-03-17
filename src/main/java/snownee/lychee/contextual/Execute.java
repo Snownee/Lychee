@@ -1,7 +1,6 @@
 package snownee.lychee.contextual;
 
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.brigadier.ParseResults;
@@ -9,11 +8,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
@@ -21,6 +20,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import snownee.lychee.Lychee;
+import snownee.lychee.util.codec.LycheeStreamCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -31,6 +31,10 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 
 	public static final MinMaxBounds.Ints DEFAULT_RANGE = MinMaxBounds.Ints.atLeast(1);
 	public static final Execute DUMMY = new Execute("", DEFAULT_RANGE);
+
+	public Execute(String command) {
+		this(command, DEFAULT_RANGE);
+	}
 
 	@Override
 	public ContextualConditionType<Execute> type() {
@@ -86,13 +90,13 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 		).apply(instance, Execute::new));
 
 		@Override
-		public @NotNull MapCodec<Execute> codec() {
+		public MapCodec<Execute> codec() {
 			return CODEC;
 		}
 
 		@Override
-		public StreamCodec<? extends ByteBuf, Execute> streamCodec() {
-			return StreamCodec.unit(DUMMY);
+		public StreamCodec<RegistryFriendlyByteBuf, Execute> streamCodec() {
+			return LycheeStreamCodecs.uncheckedUnit(DUMMY);
 		}
 	}
 }

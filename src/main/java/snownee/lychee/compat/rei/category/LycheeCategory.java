@@ -27,14 +27,15 @@ import snownee.lychee.Lychee;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
-import snownee.lychee.category.SpriteElement;
-import snownee.lychee.category.SpriteElementRenderer;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.rei.LycheeREIPlugin;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategoryProvider;
+import snownee.lychee.compat.rv.SlotType;
+import snownee.lychee.ui.SpriteElement;
+import snownee.lychee.ui.SpriteElementRenderer;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
@@ -77,7 +78,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 				startPoint,
 				x,
 				y,
-				action.conditions().conditions().isEmpty() ? LycheeREIPlugin.SlotType.NORMAL : LycheeREIPlugin.SlotType.CHANCE);
+				action.conditions().conditions().isEmpty() ? SlotType.NORMAL : SlotType.CHANCE);
 		slot.markOutput();
 		List<EntryStack<?>> entries = Lists.newArrayList();
 		Map<EntryStack<ItemStack>, PostAction> itemMap = Maps.newHashMap();
@@ -148,7 +149,8 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 				y,
 				100,
 				widget.getBounds().width,
-				widget.getBounds().height));
+				widget.getBounds().height,
+				2));
 		widget.setTooltipFunction(it -> List.of(Component.translatable("postAction.lychee.place.consume")));
 	}
 
@@ -200,11 +202,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		slotGroup(
 				widgets, startPoint, x, y, ingredients, (widgets0, startPoint0, ingredient, x0, y0) -> {
 					var items = ingredient.ingredient.getItems();
-					var slot = LycheeREIPlugin.slot(
-							startPoint,
-							x0,
-							y0,
-							ingredient.isCatalyst ? LycheeREIPlugin.SlotType.CATALYST : LycheeREIPlugin.SlotType.NORMAL);
+					var slot = LycheeREIPlugin.slot(startPoint, x0, y0, ingredient.type);
 					slot.entries(EntryIngredients.ofItemStacks(Stream.of(items)
 							.map($ -> ingredient.count == 1 ? $ : $.copy())
 							.peek($ -> $.setCount(ingredient.count))

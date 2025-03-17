@@ -1,4 +1,4 @@
-package snownee.lychee.category;
+package snownee.lychee.ui;
 
 import java.util.List;
 

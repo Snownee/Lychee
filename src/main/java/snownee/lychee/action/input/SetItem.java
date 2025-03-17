@@ -2,11 +2,8 @@ package snownee.lychee.action.input;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -97,36 +94,6 @@ public final class SetItem implements PostAction {
 
 	public Reference target() {return target;}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		final SetItem setItem = (SetItem) o;
-		return Objects.equal(commonProperties, setItem.commonProperties) &&
-				Objects.equal(stack, setItem.stack) && Objects.equal(
-				target,
-				setItem.target
-		);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(commonProperties, stack, target);
-	}
-
-	@Override
-	public String toString() {
-		return MoreObjects.toStringHelper(this)
-				.add("commonProperties", commonProperties)
-				.add("stack", stack)
-				.add("target", target)
-				.toString();
-	}
-
 	//	@Override
 	//	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
 	//		setPath(pointer.toString());
@@ -141,7 +108,7 @@ public final class SetItem implements PostAction {
 		).apply(instance, SetItem::new));
 
 		@Override
-		public @NotNull MapCodec<SetItem> codec() {
+		public MapCodec<SetItem> codec() {
 			return CODEC;
 		}
 	}

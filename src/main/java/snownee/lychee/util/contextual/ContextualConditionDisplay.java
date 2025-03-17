@@ -5,13 +5,13 @@ import java.util.Locale;
 
 import org.jetbrains.annotations.Nullable;
 
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import snownee.kiwi.util.TriState;
 
 public interface ContextualConditionDisplay {
 	static void appendToTooltips(
@@ -26,7 +26,7 @@ public interface ContextualConditionDisplay {
 		tooltips.add(indentComponent);
 	}
 
-	default TriState testForTooltips(Level level, @Nullable Player player) {
+	default net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
 		return TriState.DEFAULT;
 	}
 

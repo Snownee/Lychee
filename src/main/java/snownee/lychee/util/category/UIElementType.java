@@ -3,7 +3,7 @@ package snownee.lychee.util.category;
 import net.minecraft.core.Registry;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
-import snownee.lychee.category.SpriteElement;
+import snownee.lychee.ui.SpriteElement;
 import snownee.lychee.util.SerializableType;
 
 public interface UIElementType<T extends UIElement> extends SerializableType<T> {

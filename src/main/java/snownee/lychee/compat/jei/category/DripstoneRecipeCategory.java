@@ -84,7 +84,7 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 			float shadow = 0.5F;
 			matrixStack.scale(shadow, shadow, shadow);
 			matrixStack.translate(-26, -5.5, 0);
-			AllGuiTextures.JEI_SHADOW.render(graphics, 0, 0);
+			AllGuiTextures.SHADOW.render(graphics, 0, 0);
 			matrixStack.popPose();
 		}
 

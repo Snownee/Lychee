@@ -32,6 +32,8 @@ import snownee.lychee.client.gui.CustomLightingSettings;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.util.CachedRenderingEntity;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.PostAction;
+import snownee.lychee.util.action.PostActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
@@ -60,14 +62,17 @@ public final class RVs {
 		} catch (Exception e) {
 			ingredients = recipe.getIngredients().stream().map(IngredientInfo::new).toList();
 		}
+		for (PostAction action : recipe.postActions()) {
+			PostActionRenderer.of(action).loadCatalystsInfo(action, recipe, ingredients);
+		}
 		addIngredientTips(recipe, ingredients);
 		return ingredients;
 	}
 
 	public static void addIngredientTips(ILycheeRecipe<LycheeContext> recipe, List<IngredientInfo> ingredients) {
 		for (IngredientInfo ingredient : ingredients) {
-			IngredientInfo.Type type = CommonProxy.getIngredientType(ingredient.ingredient);
-			if (type != IngredientInfo.Type.NORMAL) {
+			IngredientType type = CommonProxy.getIngredientType(ingredient.ingredient);
+			if (type != IngredientType.NORMAL) {
 				ingredient.addTooltip(Component.translatable("tip.lychee.ingredient." + type.name().toLowerCase(Locale.ROOT)));
 			}
 		}

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.DataResult;
@@ -136,7 +135,7 @@ public class If implements CompoundAction, PostAction {
 				);
 
 		@Override
-		public @NotNull MapCodec<If> codec() {
+		public MapCodec<If> codec() {
 			return CODEC;
 		}
 	}

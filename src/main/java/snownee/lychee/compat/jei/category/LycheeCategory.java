@@ -32,13 +32,14 @@ import snownee.lychee.Lychee;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
-import snownee.lychee.category.SpriteElement;
-import snownee.lychee.category.SpriteElementRenderer;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.jei.LycheeJEIPlugin;
 import snownee.lychee.compat.jei.elements.InteractiveWidget;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategoryProvider;
+import snownee.lychee.compat.rv.SlotType;
+import snownee.lychee.ui.SpriteElement;
+import snownee.lychee.ui.SpriteElementRenderer;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
@@ -119,10 +120,8 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 			}
 			tooltip.addAll(list);
 		});
-		slotBuilder.setBackground(
-				LycheeJEIPlugin.slot(action.conditions().conditions().isEmpty() ?
-						LycheeJEIPlugin.SlotType.NORMAL :
-						LycheeJEIPlugin.SlotType.CHANCE), -1, -1);
+		SlotType slotType = action.conditions().conditions().isEmpty() ? SlotType.NORMAL : SlotType.CHANCE;
+		slotBuilder.setBackground(LycheeJEIPlugin.slot(slotType), -1, -1);
 	}
 
 	static void buildActionSlot(
@@ -191,7 +190,8 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 				y,
 				100,
 				widget.getWidth(),
-				widget.getHeight()));
+				widget.getHeight(),
+				2));
 		widget.setTooltipFunction(it -> List.of(Component.translatable("postAction.lychee.place.consume")));
 	}
 
@@ -225,10 +225,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 							.map(it -> ingredient.count == 1 ? it : it.copy())
 							.peek(it -> it.setCount(ingredient.count))
 							.toList());
-					slotBuilder.setBackground(
-							LycheeJEIPlugin.slot(ingredient.isCatalyst ?
-									LycheeJEIPlugin.SlotType.CATALYST :
-									LycheeJEIPlugin.SlotType.NORMAL), -1, -1);
+					slotBuilder.setBackground(LycheeJEIPlugin.slot(ingredient.type), -1, -1);
 					if (!ingredient.tooltips.isEmpty()) {
 						slotBuilder.addRichTooltipCallback((stack, tooltip) -> tooltip.addAll(ingredient.tooltips));
 					}

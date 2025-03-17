@@ -28,6 +28,7 @@ public record LycheeRecipeCommonProperties(
 		List<PostAction> postActions,
 		MinMaxBounds.Ints maxRepeats) {
 
+	public static final MapCodec<Boolean> HIDE_CODEC = Codec.BOOL.optionalFieldOf("hide", false);
 	public static final MapCodec<Boolean> HIDE_IN_VIEWER_CODEC = Codec.BOOL.optionalFieldOf("hide_in_viewer", false);
 	public static final MapCodec<Boolean> GHOST_CODEC = Codec.BOOL.optionalFieldOf("ghost", false);
 	public static final MapCodec<Optional<String>> COMMENT_CODEC = Codec.STRING.optionalFieldOf("comment");
@@ -63,11 +64,11 @@ public record LycheeRecipeCommonProperties(
 					LycheeRecipeCommonProperties::hideInRecipeViewer,
 					ByteBufCodecs.BOOL,
 					LycheeRecipeCommonProperties::ghost,
-					ByteBufCodecs.fromCodec(COMMENT_CODEC.codec()),
+					ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8),
 					LycheeRecipeCommonProperties::comment,
 					ByteBufCodecs.STRING_UTF8,
 					LycheeRecipeCommonProperties::group,
-					ByteBufCodecs.fromCodec(CONTEXTUAL_CODEC.codec()),
+					ContextualHolder.STREAM_CODEC,
 					LycheeRecipeCommonProperties::conditions,
 					PostAction.STREAM_LIST_CODEC,
 					LycheeRecipeCommonProperties::postActions,
@@ -76,6 +77,7 @@ public record LycheeRecipeCommonProperties(
 					LycheeRecipeCommonProperties::new
 			);
 
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	private static LycheeRecipeCommonProperties of(
 			boolean hideInRecipeViewer,
 			boolean ghost,

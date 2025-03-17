@@ -4,13 +4,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.FluidPredicate;
@@ -30,7 +30,6 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
-import snownee.kiwi.util.TriState;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.mixin.predicates.LocationCheckAccess;
 import snownee.lychee.util.BoundsExtensions;
@@ -84,7 +83,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	}
 
 	@Override
-	public TriState testForTooltips(Level level, @Nullable Player player) {
+	public net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
 		if (player == null) {
 			return TriState.DEFAULT;
 		}
@@ -368,7 +367,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		).apply(instance, Location::new));
 
 		@Override
-		public @NotNull MapCodec<Location> codec() {
+		public MapCodec<Location> codec() {
 			return CODEC;
 		}
 	}

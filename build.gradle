@@ -43,6 +43,14 @@ repositories {
             includeGroup "dev.latvian.mods"
         }
     }
+    maven {
+        // saps.dev Maven (KubeJS and Rhino)
+        url = "https://maven.saps.dev/minecraft"
+        content {
+            includeGroup "dev.latvian.mods"
+            includeGroup "dev.latvian.apps"
+        }
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -99,6 +107,10 @@ dependencies {
 
     modImplementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
 
+    implementation 'com.google.errorprone:error_prone_annotations:2.36.0'
+
+    compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+
 //    modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
 }
 
@@ -152,12 +164,12 @@ java {
 
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    exclude '/data/lychee/recipes'
-    exclude '/data/lychee/predicates'
-    exclude '/data/lychee/lychee_fragments'
-    exclude '/data/lycheev'
-    exclude '/data/c'
-    exclude "/assets/${project.mod_id}/lang/en_us.existing.json"
+    exclude("/assets/${project.mod_id}/lang/en_us.existing.json")
+    exclude("/data/${project.mod_id}/lychee_fragment")
+    exclude("/data/${project.mod_id}/predicate")
+    exclude("/data/${project.mod_id}/recipe")
+    exclude("/snownee/${project.mod_id}/datagen/LycheeDataGen.class")
+    exclude("/snownee/${project.mod_id}/datagen/TestRecipeProvider.class")
 
     exclude '**/*.bat'
     from("LICENSE") {

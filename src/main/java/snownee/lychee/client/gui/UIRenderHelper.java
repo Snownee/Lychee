@@ -18,7 +18,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
-import snownee.lychee.util.Color;
+import snownee.kiwi.util.Color;
 
 public class UIRenderHelper {
 
@@ -108,42 +108,6 @@ public class UIRenderHelper {
 				tex_top,
 				sheet_width,
 				sheet_height
-		);
-	}
-
-	public static void drawStretched(
-			GuiGraphics graphics, int left, int top, int w, int h, int z,
-			AllGuiTextures tex) {
-		tex.bind();
-		drawTexturedQuad(
-				graphics.pose().last().pose(),
-				Color.WHITE,
-				left,
-				left + w,
-				top,
-				top + h,
-				z,
-				tex.startX / 256f,
-				(tex.startX + tex.width) / 256f,
-				tex.startY / 256f,
-				(tex.startY + tex.height) / 256f
-		);
-	}
-
-	public static void drawCropped(GuiGraphics graphics, int left, int top, int w, int h, int z, AllGuiTextures tex) {
-		tex.bind();
-		drawTexturedQuad(
-				graphics.pose().last().pose(),
-				Color.WHITE,
-				left,
-				left + w,
-				top,
-				top + h,
-				z,
-				tex.startX / 256f,
-				(tex.startX + w) / 256f,
-				tex.startY / 256f,
-				(tex.startY + h) / 256f
 		);
 	}
 

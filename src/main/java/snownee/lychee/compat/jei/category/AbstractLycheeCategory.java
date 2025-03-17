@@ -7,10 +7,8 @@ import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.lychee.Lychee;
 import snownee.lychee.compat.jei.elements.ScreenElementWidget;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
@@ -21,8 +19,6 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	protected Rect2i infoRect = new Rect2i(4, 25, 8, 8);
 	public static final int WIDTH = 119;
 	public static final int HEIGHT = 59;
-
-	private static final ResourceLocation REMOVE_BLOCK_SPRITE = Lychee.id("rv/remove_block");
 
 	private final RecipeType<RecipeHolder<T>> type;
 	private final RvCategory<T> rvCategory;

@@ -26,7 +26,7 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 	protected float chance = 1;
 	protected final BlockPredicate blockPredicate;
 
-	protected RandomBlockTickingRecipe(LycheeRecipeCommonProperties commonProperties, BlockPredicate blockPredicate) {
+	public RandomBlockTickingRecipe(LycheeRecipeCommonProperties commonProperties, BlockPredicate blockPredicate) {
 		super(commonProperties);
 		this.blockPredicate = blockPredicate;
 		onConstructed();

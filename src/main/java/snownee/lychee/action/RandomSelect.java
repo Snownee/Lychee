@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -54,6 +54,7 @@ public class RandomSelect implements CompoundAction, PostAction {
 		this.totalWeight = totalWeight;
 		this.emptyWeight = emptyWeight;
 		this.rolls = rolls;
+		Preconditions.checkArgument(totalWeight > 0, "Total weight must be positive");
 		canRepeat = entries.stream().allMatch(it -> it.action.repeatable());
 		hidden = commonProperties.hidden() || entries.stream().allMatch(it -> it.action.hidden());
 		preventSync = entries.stream().allMatch(it -> it.action.preventSync());
@@ -191,7 +192,7 @@ public class RandomSelect implements CompoundAction, PostAction {
 		).apply(instance, RandomSelect::new));
 
 		@Override
-		public @NotNull MapCodec<RandomSelect> codec() {
+		public MapCodec<RandomSelect> codec() {
 			return CODEC;
 		}
 	}

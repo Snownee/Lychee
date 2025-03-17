@@ -3,19 +3,18 @@ package snownee.lychee.contextual;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
+import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import snownee.kiwi.util.TriState;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
@@ -46,7 +45,7 @@ public record IsWeather(String id, Predicate<Level> predicate) implements Contex
 	}
 
 	@Override
-	public TriState testForTooltips(Level level, @Nullable Player player) {
+	public net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
 		return TriState.of(predicate.test(level));
 	}
 
@@ -61,7 +60,7 @@ public record IsWeather(String id, Predicate<Level> predicate) implements Contex
 		public static final MapCodec<IsWeather> CODEC = Codec.stringResolver(IsWeather::id, IsWeather.REGISTRY::get).fieldOf("weather");
 
 		@Override
-		public @NotNull MapCodec<IsWeather> codec() {
+		public MapCodec<IsWeather> codec() {
 			return CODEC;
 		}
 	}

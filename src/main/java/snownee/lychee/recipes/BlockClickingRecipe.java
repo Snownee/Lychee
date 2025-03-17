@@ -54,7 +54,7 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 	}
 
 
-	protected BlockClickingRecipe(
+	public BlockClickingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			List<SizedIngredient> input,
 			BlockPredicate blockPredicate

@@ -26,7 +26,7 @@ import snownee.lychee.util.contextual.ContextualPredicate;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public interface PostAction extends PostActionDisplay, ContextualPredicate, Contextual {
+public interface PostAction extends PostActionDisplay, PostActionLike, ContextualPredicate, Contextual {
 	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatchMap(PostAction::type, PostActionType::codec);
 	Codec<PostAction> CODEC = MAP_CODEC.codec();
 	Codec<List<PostAction>> LIST_CODEC = KCodecs.compactList(CODEC);
@@ -113,4 +113,9 @@ public interface PostAction extends PostActionDisplay, ContextualPredicate, Cont
 	}
 
 	default void validate(ILycheeRecipe<?> recipe) {}
+
+	@Override
+	default PostAction asAction() {
+		return this;
+	}
 }

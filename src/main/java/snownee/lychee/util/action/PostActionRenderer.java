@@ -13,6 +13,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.compat.rv.IngredientInfo;
@@ -23,11 +24,11 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostActionRenderer<T extends PostAction> {
 
-	Map<PostActionType<?>, PostActionRenderer<?>> RENDERERS = Maps.newHashMap();
-	PostActionRenderer<PostAction> DEFAULT = new PostActionRenderer<>() {
-	};
+	Map<PostActionType<?>, PostActionRenderer<?>> RENDERERS = Maps.newIdentityHashMap();
+	PostActionRenderer<PostAction> DEFAULT = new PostActionRenderer<>() {};
 
 	static <T extends PostAction> PostActionRenderer<T> of(PostAction action) {
+		//noinspection unchecked
 		return (PostActionRenderer<T>) Objects.requireNonNull(RENDERERS.getOrDefault(action.type(), DEFAULT));
 	}
 
@@ -44,22 +45,19 @@ public interface PostActionRenderer<T extends PostAction> {
 				index = i;
 			}
 		}
-		var list = randomSelect.entries.size() == 1 && randomSelect.emptyWeight == 0 ? Lists.newArrayList(
-				randomSelect.getDisplayName()) : PostActionRenderer.of(child).getBaseTooltips(child, player);
+		var list = randomSelect.entries.size() == 1 && randomSelect.emptyWeight == 0 ?
+				Lists.newArrayList(randomSelect.getDisplayName()) :
+				PostActionRenderer.of(child).getBaseTooltips(child, player);
 		if (index == -1) {
 			return list; //TODO nested actions?
 		}
 		if (randomSelect.entries.size() > 1 || randomSelect.emptyWeight > 0) {
 			var chance = CommonProxy.chance(randomSelect.entries.get(index).weight() / (float) randomSelect.totalWeight);
 			if (randomSelect.rolls == BoundsExtensions.ONE) {
-				list.add(Component.translatable("tip.lychee.randomChance.one", chance)
-						.withStyle(ChatFormatting.YELLOW));
+				list.add(Component.translatable("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
 			} else {
-				list.add(Component.translatable(
-						"tip.lychee.randomChance",
-						chance,
-						BoundsExtensions.getDescription(randomSelect.rolls)
-				).withStyle(ChatFormatting.YELLOW));
+				list.add(Component.translatable("tip.lychee.randomChance", chance, BoundsExtensions.getDescription(randomSelect.rolls))
+						.withStyle(ChatFormatting.YELLOW));
 			}
 		}
 		var c = randomSelect.conditions().showingCount() + child.conditions().showingCount();
@@ -70,6 +68,17 @@ public interface PostActionRenderer<T extends PostAction> {
 		randomSelect.conditions().appendToTooltips(list, mc.level, mc.player, 0);
 		child.conditions().appendToTooltips(list, mc.level, mc.player, 0);
 		return list;
+	}
+
+	default void internalRender(T action, GuiGraphics graphics, int x, int y) {
+		if (!action.hidden()) {
+			ResourceLocation sprite = action.commonProperties().icon();
+			if (sprite != null) {
+				graphics.blitSprite(sprite, x, y, 16, 16);
+				return;
+			}
+		}
+		render(action, graphics, x, y);
 	}
 
 	default void render(T action, GuiGraphics graphics, int x, int y) {
@@ -90,8 +99,5 @@ public interface PostActionRenderer<T extends PostAction> {
 		return list;
 	}
 
-	default void loadCatalystsInfo(
-			T action,
-			ILycheeRecipe<?> recipe,
-			List<IngredientInfo> ingredients) {}
+	default void loadCatalystsInfo(T action, ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {}
 }
