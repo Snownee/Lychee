@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.Ingredient;
-import snownee.kiwi.recipe_.SizedIngredient;
+import snownee.kiwi.recipe.SizedIngredient;
 
 public class IngredientInfo {
 	public final Ingredient ingredient;
