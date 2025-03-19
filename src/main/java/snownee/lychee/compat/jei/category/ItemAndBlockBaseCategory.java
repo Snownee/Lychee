@@ -12,7 +12,6 @@ import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -36,6 +35,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 @NotNullByDefault
 public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
 
+	private final boolean drawDownArrow;
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
 	protected Supplier<Vector2i> removeActionPosition =
@@ -43,9 +43,13 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 					inputBlockRect.getX() + inputBlockRect.getWidth() - 4,
 					inputBlockRect.getY() + inputBlockRect.getHeight() - 8));
 
-	public ItemAndBlockBaseCategory(RecipeType<RecipeHolder<T>> recipeType, RvCategory<T> category) {
-		super(recipeType, category);
-		infoRect.setPosition(8, 32);
+	public ItemAndBlockBaseCategory(RvCategory<T> category, boolean drawDownArrow) {
+		super(category);
+		this.drawDownArrow = drawDownArrow;
+	}
+
+	public ItemAndBlockBaseCategory(RvCategory<T> category) {
+		this(category, true);
 	}
 
 	public BlockPredicate getInputBlock(T recipe) {
@@ -74,7 +78,9 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 	}
 
 	public void drawExtra(RecipeHolder<T> recipeHolder, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
-		AllGuiTextures.DOWN_ARROW.render(graphics, methodRect.getX(), methodRect.getY());
+		if (drawDownArrow) {
+			AllGuiTextures.DOWN_ARROW.render(graphics, methodRect.getX(), methodRect.getY());
+		}
 	}
 
 	@Override

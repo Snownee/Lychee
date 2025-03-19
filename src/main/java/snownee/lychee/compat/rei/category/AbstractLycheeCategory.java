@@ -12,18 +12,14 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeContext>> implements DisplayCategory<LycheeDisplay<T>>, LycheeCategory<T> {
-	protected Rect2i infoRect = new Rect2i(4, 25, 8, 8);
-	public static final int WIDTH = 150;
-	public static final int HEIGHT = 59;
-
 	private final CategoryIdentifier<? extends LycheeDisplay<T>> categoryIdentifier;
 	private final RvCategory<T> rvCategory;
 	public Renderer icon;
 
-	public AbstractLycheeCategory(CategoryIdentifier<? extends LycheeDisplay<T>> id, RvCategory<T> category) {
-		this.categoryIdentifier = id;
+	public AbstractLycheeCategory(RvCategory<T> category) {
 		this.rvCategory = category;
-		icon = new ScreenElementWidget(category.icon());
+		this.categoryIdentifier = CategoryIdentifier.of(category.id);
+		this.icon = new ScreenElementWidget(category.icon());
 	}
 
 	@Override
@@ -42,13 +38,23 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 	}
 
 	@Override
+	public final int getDisplayWidth(LycheeDisplay<T> display) {
+		return contentWidth();
+	}
+
+	@Override
+	public final int contentWidth() {
+		return LycheeCategory.super.contentWidth();
+	}
+
+	@Override
 	public int getDisplayHeight() {
-		return HEIGHT + 8;
+		return rvCategory.type.height;
 	}
 
 	@Override
 	public Rect2i infoRect() {
-		return infoRect;
+		return rvCategory.type.infoRect;
 	}
 
 	@Override

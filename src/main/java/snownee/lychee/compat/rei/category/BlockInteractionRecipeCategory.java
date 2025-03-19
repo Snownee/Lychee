@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
-import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -15,19 +14,15 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
-import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 
 public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<BlockInteractingRecipe> {
 
-	public BlockInteractionRecipeCategory(
-			CategoryIdentifier<? extends LycheeDisplay<BlockInteractingRecipe>> id,
-			RvCategory<BlockInteractingRecipe> category) {
-		super(id, category);
+	public BlockInteractionRecipeCategory(RvCategory<BlockInteractingRecipe> category) {
+		super(category);
 		inputBlockRect.setX(inputBlockRect.getX() + 18);
 		methodRect.setX(methodRect.getX() + 18);
-		infoRect.setX(infoRect.getX() + 10);
 	}
 
 	@Override
@@ -61,9 +56,5 @@ public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<Blo
 	private KeyMapping getKeyMapping(BlockInteractingRecipe recipe) {
 		boolean click = recipe.getType() == RecipeTypes.BLOCK_CLICKING;
 		return click ? Minecraft.getInstance().options.keyAttack : Minecraft.getInstance().options.keyUse;
-	}
-
-	public int contentWidth() {
-		return super.contentWidth() + 20;
 	}
 }

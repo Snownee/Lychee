@@ -1,8 +1,6 @@
 package snownee.lychee.compat.jei.category;
 
-import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
@@ -13,8 +11,8 @@ import snownee.lychee.util.predicates.BlockPredicateExtensions;
 @NotNullByDefault
 public class ItemBurningRecipeCategory extends ItemAndBlockBaseCategory<ItemBurningRecipe> {
 
-	public ItemBurningRecipeCategory(RecipeType<RecipeHolder<ItemBurningRecipe>> recipeType, RvCategory<ItemBurningRecipe> category) {
-		super(recipeType, category);
+	public ItemBurningRecipeCategory(RvCategory<ItemBurningRecipe> category) {
+		super(category);
 		methodRect.setX(27);
 	}
 

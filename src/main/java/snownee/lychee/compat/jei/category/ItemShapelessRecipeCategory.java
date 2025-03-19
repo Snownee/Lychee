@@ -3,9 +3,7 @@ package snownee.lychee.compat.jei.category;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.compat.rv.RvCategory;
@@ -15,14 +13,8 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 @NotNullByDefault
 public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
 
-	public ItemShapelessRecipeCategory(RecipeType<RecipeHolder<T>> recipeType, RvCategory<T> category) {
-		super(recipeType, category);
-		this.infoRect = new Rect2i(3, 25, 8, 8);
-	}
-
-	@Override
-	public int contentWidth() {
-		return WIDTH + 50;
+	public ItemShapelessRecipeCategory(RvCategory<T> category) {
+		super(category);
 	}
 
 	@Override

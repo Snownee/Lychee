@@ -55,12 +55,11 @@ public class LycheeREIPlugin implements REIClientPlugin {
 				continue;
 			}
 
-			CategoryIdentifier<LycheeDisplay<ILycheeRecipe<LycheeContext>>> id = CategoryIdentifier.of(rvCategory.id);
 			//noinspection unchecked
-			var category = categoryProvider.get(id, (RvCategory<ILycheeRecipe<LycheeContext>>) rvCategory);
+			var category = categoryProvider.get((RvCategory<ILycheeRecipe<LycheeContext>>) rvCategory);
 			registry.add(category);
 			for (List<ItemStack> workstation : rvCategory.workstations()) {
-				registry.addWorkstations(id, EntryIngredients.ofItemStacks(workstation));
+				registry.addWorkstations(category.getCategoryIdentifier(), EntryIngredients.ofItemStacks(workstation));
 			}
 		}
 

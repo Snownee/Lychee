@@ -8,9 +8,7 @@ import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
-import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.Rect2i;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
@@ -18,19 +16,8 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ItemShapelessRecipeCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
 
-	public ItemShapelessRecipeCategory(CategoryIdentifier<? extends LycheeDisplay<T>> id, RvCategory<T> category) {
-		super(id, category);
-		this.infoRect = new Rect2i(3, 25, 8, 8);
-	}
-
-	@Override
-	public int getDisplayWidth(LycheeDisplay<T> display) {
-		return contentWidth();
-	}
-
-	@Override
-	public int contentWidth() {
-		return WIDTH + 20;
+	public ItemShapelessRecipeCategory(RvCategory<T> category) {
+		super(category);
 	}
 
 	@Override

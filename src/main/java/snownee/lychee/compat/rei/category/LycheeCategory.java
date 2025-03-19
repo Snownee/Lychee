@@ -157,7 +157,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 	Rect2i infoRect();
 
 	default int contentWidth() {
-		return 120;
+		return rvCategory().type.width;
 	}
 
 	static void createInfoBadgeIfNeeded(List<Widget> widgets, LycheeDisplay<?> display, Point startPoint, Rect2i rect) {

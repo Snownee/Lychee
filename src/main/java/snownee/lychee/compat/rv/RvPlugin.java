@@ -21,6 +21,10 @@ import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.compat.rv.category.IItemAndBlockBaseCategory;
+import snownee.lychee.compat.rv.category.IItemShapelessRecipeCategory;
+import snownee.lychee.compat.rv.element.InfoElementHelper;
+import snownee.lychee.compat.rv.element.SideBlockIcon;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -35,9 +39,10 @@ public class RvPlugin {
 
 	public void init() {
 		categoryTypes.clear();
-		Map<ResourceLocation, RvCategory<?>> categories = Maps.newHashMap();
+		var categories = Maps.<ResourceLocation, RvCategory<?>>newHashMap();
 		register(
 				RecipeTypes.BLOCK_CRUSHING, it -> {
+					it.width = RvCategoryType.WIDTH + 20;
 					it.iconProvider = category -> Either.right(Items.ANVIL.getDefaultInstance());
 					it.setSimpleWorkstationProvider(category -> category.recipes.stream()
 							.<BlockPredicate>mapMulti((recipe, consumer) -> {
@@ -54,6 +59,7 @@ public class RvPlugin {
 				});
 		register(
 				RecipeTypes.BLOCK_EXPLODING, it -> {
+					it.infoRect = IItemShapelessRecipeCategory.INFO_RECT;
 					it.iconProvider = category -> {
 						var mainIcon = GuiGameElement.of(Items.TNT.getDefaultInstance());
 						return Either.left(new SideBlockIcon(
@@ -69,31 +75,36 @@ public class RvPlugin {
 				});
 		register(
 				RecipeTypes.BLOCK_INTERACTING, it -> {
+					it.infoRect = InfoElementHelper.offsetRect(IItemAndBlockBaseCategory.INFO_RECT, 10, 0);
+					it.width = RvCategoryType.WIDER_WIDTH;
 					it.iconProvider = category -> {
 						var mainIcon = category.recipes.stream()
 								.map($ -> $.value().getType())
 								.anyMatch($ -> $ == RecipeTypes.BLOCK_INTERACTING)
 								? AllGuiTextures.RIGHT_CLICK
 								: AllGuiTextures.LEFT_CLICK;
-						return Either.left(new SideBlockIcon(
-								mainIcon,
-								Suppliers.memoize(() -> RVs.getIconBlock(category.recipes))));
+						return Either.left(new SideBlockIcon(mainIcon, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes))));
 					};
 				});
 		register(
 				RecipeTypes.DRIPSTONE_DRIPPING,
 				it -> {
+					it.infoRect = InfoElementHelper.offsetRect(it.infoRect, -10, 0);
 					it.iconProvider = category -> Either.right(Items.POINTED_DRIPSTONE.getDefaultInstance());
 					it.setSimpleWorkstationProvider(category -> List.of(Items.POINTED_DRIPSTONE.getDefaultInstance()));
 				});
 		register(
 				RecipeTypes.LIGHTNING_CHANNELING,
 				it -> {
+					it.width = RvCategoryType.WIDER_WIDTH;
+					it.infoRect = IItemShapelessRecipeCategory.INFO_RECT;
 					it.iconProvider = category -> Either.right(Items.LIGHTNING_ROD.getDefaultInstance());
 					it.setSimpleWorkstationProvider(category -> List.of(Items.LIGHTNING_ROD.getDefaultInstance()));
 				});
 		register(
 				RecipeTypes.ITEM_EXPLODING, it -> {
+					it.width = RvCategoryType.WIDER_WIDTH;
+					it.infoRect = IItemShapelessRecipeCategory.INFO_RECT;
 					it.iconProvider = category -> Either.right(Items.TNT.getDefaultInstance());
 					it.setSimpleWorkstationProvider(category -> CommonProxy.tagElements(
 									BuiltInRegistries.ITEM,
@@ -110,6 +121,8 @@ public class RvPlugin {
 				});
 		register(
 				RecipeTypes.ITEM_INSIDE, it -> {
+					it.width = RvCategoryType.WIDER_WIDTH;
+					it.infoRect = InfoElementHelper.getInfoRect(4, 25);
 					it.iconProvider = category -> Either.left(new SideBlockIcon(
 							AllGuiTextures.DOWN_ARROW,
 							Suppliers.memoize(() -> RVs.getIconBlock(category.recipes))));

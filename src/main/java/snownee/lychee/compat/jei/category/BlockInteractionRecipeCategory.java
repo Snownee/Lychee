@@ -3,7 +3,6 @@ package snownee.lychee.compat.jei.category;
 import org.jetbrains.annotations.Nullable;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.Util;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -20,13 +19,10 @@ import snownee.lychee.recipes.BlockInteractingRecipe;
 @NotNullByDefault
 public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<BlockInteractingRecipe> {
 
-	public BlockInteractionRecipeCategory(
-			RecipeType<RecipeHolder<BlockInteractingRecipe>> recipeType,
-			RvCategory<BlockInteractingRecipe> category) {
-		super(recipeType, category);
+	public BlockInteractionRecipeCategory(RvCategory<BlockInteractingRecipe> category) {
+		super(category);
 		inputBlockRect.setX(inputBlockRect.getX() + 18);
 		methodRect.setX(methodRect.getX() + 18);
-		infoRect.setX(infoRect.getX() + 10);
 	}
 
 	@Override

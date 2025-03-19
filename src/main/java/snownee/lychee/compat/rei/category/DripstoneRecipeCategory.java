@@ -12,7 +12,6 @@ import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
-import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.core.Direction;
@@ -31,17 +30,16 @@ import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRecipe> {
-
 	private final Rect2i sourceBlockRect = new Rect2i(23, 1, 16, 16);
 	private final Rect2i targetBlockRect = new Rect2i(23, 43, 16, 16);
+
 	protected Supplier<Vector2i> removeActionPosition =
 			Suppliers.memoize(() -> new Vector2i(
 					targetBlockRect.getX() + targetBlockRect.getWidth() - 4,
 					targetBlockRect.getY() + targetBlockRect.getHeight() - 8));
 
-	public DripstoneRecipeCategory(CategoryIdentifier<? extends LycheeDisplay<DripstoneRecipe>> id, RvCategory<DripstoneRecipe> category) {
-		super(id, category);
-		infoRect.setX(-10);
+	public DripstoneRecipeCategory(RvCategory<DripstoneRecipe> category) {
+		super(category);
 	}
 
 	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {

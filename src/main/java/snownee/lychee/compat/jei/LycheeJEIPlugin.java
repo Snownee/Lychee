@@ -61,7 +61,6 @@ public class LycheeJEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
-		var guiHelper = registry.getJeiHelpers().getGuiHelper();
 		rvPlugin.init();
 		for (RvCategory<?> rvCategory : rvPlugin.categories().values()) {
 			var categoryProvider = CategoryProviders.get(rvCategory.type.id);
@@ -71,12 +70,10 @@ public class LycheeJEIPlugin implements IModPlugin {
 			}
 
 			//noinspection unchecked
-			var category = categoryProvider.get(
-					RecipeType.createRecipeHolderType(rvCategory.id),
-					(RvCategory<ILycheeRecipe<LycheeContext>>) rvCategory,
-					guiHelper);
+			var category = categoryProvider.get((RvCategory<ILycheeRecipe<LycheeContext>>) rvCategory);
 			registry.addRecipeCategories(category);
 		}
+		CategoryProviders.clear();
 	}
 
 	@Override

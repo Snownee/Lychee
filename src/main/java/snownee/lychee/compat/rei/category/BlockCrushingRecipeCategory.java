@@ -2,15 +2,12 @@ package snownee.lychee.compat.rei.category;
 
 import java.util.List;
 
-import org.joml.Vector2i;
-
 import com.google.common.collect.Lists;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
-import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.world.level.block.Blocks;
@@ -22,52 +19,24 @@ import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategory;
+import snownee.lychee.compat.rv.category.IBlockCrushingRecipeCategory;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<BlockCrushingRecipe> {
+public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<BlockCrushingRecipe> implements IBlockCrushingRecipeCategory {
+	private final Rect2i fallingBlockRect = FALLING_BLOCK_RECT;
+	private final Rect2i landingBlockRect = LANDING_BLOCK_RECT;
 
-	public static final Rect2i FALLING_BLOCK_RECT = new Rect2i(0, -35, 20, 35);
-	public static final Rect2i LANDING_BLOCK_RECT = new Rect2i(0, 0, 20, 20);
-	private final Rect2i fallingBlockRect;
-	private final Rect2i landingBlockRect;
-	private final Vector2i removeActionPosition;
-
-	public BlockCrushingRecipeCategory(
-			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> id,
-			RvCategory<BlockCrushingRecipe> category,
-			Rect2i fallingBlockRect,
-			Rect2i landingBlockRect) {
-		super(id, category);
-		this.fallingBlockRect = fallingBlockRect;
-		this.landingBlockRect = landingBlockRect;
-		this.removeActionPosition = new Vector2i(
-				landingBlockRect.getX() + landingBlockRect.getWidth() - 4,
-				landingBlockRect.getY() + landingBlockRect.getHeight() - 8);
-	}
-
-	public BlockCrushingRecipeCategory(
-			CategoryIdentifier<? extends LycheeDisplay<BlockCrushingRecipe>> id,
-			RvCategory<BlockCrushingRecipe> category) {
-		this(id, category, FALLING_BLOCK_RECT, LANDING_BLOCK_RECT);
-	}
-
-	@Override
-	public int getDisplayWidth(LycheeDisplay<BlockCrushingRecipe> display) {
-		return contentWidth();
-	}
-
-	@Override
-	public int contentWidth() {
-		return WIDTH + 20;
+	public BlockCrushingRecipeCategory(RvCategory<BlockCrushingRecipe> category) {
+		super(category);
 	}
 
 	@Override
 	public List<Widget> setupDisplay(LycheeDisplay<BlockCrushingRecipe> display, Rectangle bounds) {
 		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
 
-		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
+		var startPoint = new Point(bounds.getX(), bounds.getY() + 4);
 		var recipe = display.recipe().value();
 		createInfoBadgeIfNeeded(widgets, display, startPoint);
 		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
@@ -127,9 +96,6 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		y = BlockPredicateExtensions.isAny(recipe.landingBlock()) ? 45 : 33;
 		fallingBlockRect.setPosition(x, y - 35);
 		landingBlockRect.setPosition(x, y);
-		removeActionPosition.set(
-				landingBlockRect.getX() + landingBlockRect.getWidth() - 4,
-				landingBlockRect.getY() + landingBlockRect.getHeight() - 8);
 
 		var widget = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, fallingBlockRect));
 		widget.setTooltipFunction($ -> BlockPredicateExtensions.getTooltips(getFallingBlock(recipe), recipe.blockPredicate()));
@@ -143,9 +109,10 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 			widgets.add(widget);
 		}
 
+		var removeActionPosition = getRemoveActionPosition();
 		LycheeCategory.addRemoveInputBlock(
-				removeActionPosition.x + startPoint.x,
-				removeActionPosition.y + startPoint.y,
+				removeActionPosition.x() + startPoint.x,
+				removeActionPosition.y() + startPoint.y,
 				widgets,
 				recipe);
 
@@ -164,5 +131,10 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.landingBlock()),
 				Blocks.AIR.defaultBlockState(),
 				2000);
+	}
+
+	@Override
+	public Rect2i landingBlockRect() {
+		return landingBlockRect;
 	}
 }

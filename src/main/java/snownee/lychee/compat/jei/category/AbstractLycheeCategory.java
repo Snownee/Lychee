@@ -16,17 +16,13 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 @NotNullByDefault
 public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeContext>> implements IRecipeCategory<RecipeHolder<T>>, LycheeCategory<T> {
-	protected Rect2i infoRect = new Rect2i(4, 25, 8, 8);
-	public static final int WIDTH = 119;
-	public static final int HEIGHT = 59;
-
 	private final RecipeType<RecipeHolder<T>> type;
 	private final RvCategory<T> rvCategory;
 	public IDrawable icon;
 
-	public AbstractLycheeCategory(RecipeType<RecipeHolder<T>> type, RvCategory<T> category) {
-		this.type = type;
+	public AbstractLycheeCategory(RvCategory<T> category) {
 		this.rvCategory = category;
+		this.type = RecipeType.createRecipeHolderType(category.id);
 		icon = new ScreenElementWidget(category.icon());
 	}
 
@@ -47,7 +43,7 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 
 	@Override
 	public Rect2i infoRect() {
-		return infoRect;
+		return rvCategory.type.infoRect;
 	}
 
 	@Override
@@ -57,7 +53,7 @@ public abstract class AbstractLycheeCategory<T extends ILycheeRecipe<LycheeConte
 
 	@Override
 	public int getHeight() {
-		return HEIGHT;
+		return rvCategory.type.height;
 	}
 
 	@Override

@@ -1,13 +1,10 @@
 package snownee.lychee.compat.jei.category;
 
-import org.joml.Vector2i;
-
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
@@ -20,26 +17,18 @@ import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategory;
+import snownee.lychee.compat.rv.category.IBlockCrushingRecipeCategory;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 @NotNullByDefault
-public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<BlockCrushingRecipe> {
+public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<BlockCrushingRecipe> implements IBlockCrushingRecipeCategory {
+	private final Rect2i fallingBlockRect = FALLING_BLOCK_RECT;
+	private final Rect2i landingBlockRect = LANDING_BLOCK_RECT;
 
-	public static final Rect2i FALLING_BLOCK_RECT = new Rect2i(0, -35, 20, 35);
-	public static final Rect2i LANDING_BLOCK_RECT = new Rect2i(0, 0, 20, 20);
-	public static final Vector2i REMOVE_ACTION_POSITION = new Vector2i(
-			LANDING_BLOCK_RECT.getX() + LANDING_BLOCK_RECT.getWidth() - 4,
-			LANDING_BLOCK_RECT.getY() + LANDING_BLOCK_RECT.getHeight() - 8);
-
-	public BlockCrushingRecipeCategory(RecipeType<RecipeHolder<BlockCrushingRecipe>> recipeType, RvCategory<BlockCrushingRecipe> category) {
-		super(recipeType, category);
-	}
-
-	@Override
-	public int contentWidth() {
-		return WIDTH + 50;
+	public BlockCrushingRecipeCategory(RvCategory<BlockCrushingRecipe> category) {
+		super(category);
 	}
 
 	@Override
@@ -115,13 +104,13 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		var y = anyLandingBlock ? 45 : 36;
 		x = (int) mouseX - x;
 		y = (int) mouseY - y;
-		if (FALLING_BLOCK_RECT.contains(x, y)) {
+		if (fallingBlockRect.contains(x, y)) {
 			var fallingBlock = CommonProxy.getCycledItem(
 					BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 					Blocks.ANVIL.defaultBlockState(),
 					2000);
 			tooltip.addAll(BlockPredicateExtensions.getTooltips(fallingBlock, recipe.blockPredicate()));
-		} else if (!anyLandingBlock && LANDING_BLOCK_RECT.contains(x, y)) {
+		} else if (!anyLandingBlock && landingBlockRect.contains(x, y)) {
 			var landingBlock = CommonProxy.getCycledItem(
 					BlockPredicateExtensions.getShowcaseBlockStates(recipe.landingBlock()),
 					Blocks.AIR.defaultBlockState(),
@@ -140,13 +129,13 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		var recipe = recipeHolder.value();
 		var x = recipe.getIngredients().isEmpty() ? 41 : 77;
 		var anyLandingBlock = BlockPredicateExtensions.isAny(recipe.landingBlock());
-		var y = anyLandingBlock ? 45 : 36;
+		var y = anyLandingBlock ? 45 : 33;
 		builder.addInputHandler(new BlockClickingInputHandler(
 				new ScreenRectangle(
-						x + FALLING_BLOCK_RECT.getX(),
-						y + FALLING_BLOCK_RECT.getY(),
-						FALLING_BLOCK_RECT.getWidth(),
-						FALLING_BLOCK_RECT.getHeight()),
+						x + fallingBlockRect.getX(),
+						y + fallingBlockRect.getY(),
+						fallingBlockRect.getWidth(),
+						fallingBlockRect.getHeight()),
 				() -> CommonProxy.getCycledItem(
 						BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 						Blocks.ANVIL.defaultBlockState(),
@@ -154,18 +143,20 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 		if (!anyLandingBlock) {
 			builder.addInputHandler(new BlockClickingInputHandler(
 					new ScreenRectangle(
-							x + LANDING_BLOCK_RECT.getX(),
-							y + LANDING_BLOCK_RECT.getY(),
-							LANDING_BLOCK_RECT.getWidth(),
-							LANDING_BLOCK_RECT.getHeight()),
+							x + landingBlockRect.getX(),
+							y + landingBlockRect.getY(),
+							landingBlockRect.getWidth(),
+							landingBlockRect.getHeight()),
 					() -> CommonProxy.getCycledItem(
 							BlockPredicateExtensions.getShowcaseBlockStates(recipe.landingBlock()),
 							Blocks.AIR.defaultBlockState(),
 							2000)));
 		}
+
+		var removeActionPosition = getRemoveActionPosition();
 		LycheeCategory.addRemoveInputBlock(
-				x + REMOVE_ACTION_POSITION.x(),
-				y + REMOVE_ACTION_POSITION.y(),
+				x + removeActionPosition.x(),
+				y + removeActionPosition.y(),
 				builder,
 				recipe);
 	}
@@ -182,5 +173,10 @@ public final class BlockCrushingRecipeCategory extends AbstractLycheeCategory<Bl
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.landingBlock()),
 				Blocks.AIR.defaultBlockState(),
 				2000);
+	}
+
+	@Override
+	public Rect2i landingBlockRect() {
+		return landingBlockRect;
 	}
 }

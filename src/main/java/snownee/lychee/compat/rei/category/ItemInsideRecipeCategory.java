@@ -6,7 +6,6 @@ import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
-import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.ItemInsideRecipe;
@@ -14,11 +13,8 @@ import snownee.lychee.util.ClientProxy;
 
 public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemInsideRecipe> {
 
-	public ItemInsideRecipeCategory(
-			CategoryIdentifier<? extends LycheeDisplay<ItemInsideRecipe>> id,
-			RvCategory<ItemInsideRecipe> category) {
-		super(id, category);
-		infoRect.setPosition(4, 25);
+	public ItemInsideRecipeCategory(RvCategory<ItemInsideRecipe> category) {
+		super(category);
 		inputBlockRect.setX(80);
 		methodRect.setX(77);
 	}
@@ -33,16 +29,6 @@ public class ItemInsideRecipeCategory extends ItemAndBlockBaseCategory<ItemInsid
 					ClientProxy.format("tip.lychee.sec", recipe.time())).color(0xFF666666, 0xFFBBBBBB).noShadow().centered());
 		}
 		return widgets;
-	}
-
-	@Override
-	public int getDisplayWidth(LycheeDisplay<ItemInsideRecipe> display) {
-		return contentWidth();
-	}
-
-	@Override
-	public int contentWidth() {
-		return WIDTH + 20;
 	}
 
 	@Override

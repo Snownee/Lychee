@@ -198,7 +198,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 	Rect2i infoRect();
 
 	default int contentWidth() {
-		return 120;
+		return rvCategory().type.width;
 	}
 
 	default void createInfoBadgeIfNeeded(IRecipeExtrasBuilder builder, RecipeHolder<? extends ILycheeRecipe<?>> recipeHolder) {

@@ -13,7 +13,6 @@ import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
-import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
@@ -35,6 +34,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
 
+	private final boolean drawDownArrow;
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
 	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
 	protected Supplier<Vector2i> removeActionPosition =
@@ -42,9 +42,13 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 					inputBlockRect.getX() + inputBlockRect.getWidth() - 4,
 					inputBlockRect.getY() + inputBlockRect.getHeight() - 8));
 
-	public ItemAndBlockBaseCategory(CategoryIdentifier<? extends LycheeDisplay<T>> id, RvCategory<T> category) {
-		super(id, category);
-		infoRect.setPosition(8, 32);
+	public ItemAndBlockBaseCategory(RvCategory<T> category, boolean drawDownArrow) {
+		super(category);
+		this.drawDownArrow = drawDownArrow;
+	}
+
+	public ItemAndBlockBaseCategory(RvCategory<T> category) {
+		this(category, true);
 	}
 
 	public BlockPredicate getInputBlock(T recipe) {
@@ -59,7 +63,9 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 	}
 
 	public void drawExtra(T recipe, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
-		AllGuiTextures.DOWN_ARROW.render(graphics, methodRect.getX(), methodRect.getY());
+		if (drawDownArrow) {
+			AllGuiTextures.DOWN_ARROW.render(graphics, methodRect.getX(), methodRect.getY());
+		}
 	}
 
 	@Nullable

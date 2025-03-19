@@ -11,7 +11,6 @@ import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.renderer.Rect2i;
@@ -39,8 +38,8 @@ public class DripstoneRecipeCategory extends AbstractLycheeCategory<DripstoneRec
 					targetBlockRect.getX() + targetBlockRect.getWidth() - 4,
 					targetBlockRect.getY() + targetBlockRect.getHeight() - 8));
 
-	public DripstoneRecipeCategory(RecipeType<RecipeHolder<DripstoneRecipe>> recipeType, RvCategory<DripstoneRecipe> category) {
-		super(recipeType, category);
+	public DripstoneRecipeCategory(RvCategory<DripstoneRecipe> category) {
+		super(category);
 	}
 
 	private static void drawBlock(BlockState state, GuiGraphics graphics, double localX, double localY, double localZ) {

@@ -1,4 +1,4 @@
-package snownee.lychee.compat.rv;
+package snownee.lychee.compat.rv.element;
 
 import java.util.function.Supplier;
 
@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.compat.rv.RVs;
 
 public class SideBlockIcon extends RenderElement {
 
