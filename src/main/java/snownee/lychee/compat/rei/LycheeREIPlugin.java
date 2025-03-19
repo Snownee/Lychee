@@ -62,6 +62,7 @@ public class LycheeREIPlugin implements REIClientPlugin {
 				registry.addWorkstations(category.getCategoryIdentifier(), EntryIngredients.ofItemStacks(workstation));
 			}
 		}
+		CategoryProviders.clear();
 
 		CategoryExtensionProvider<Display> extensionProvider = (display, category, lastView) -> {
 			if (display instanceof LycheeDisplay<?> lycheeDisplay) {

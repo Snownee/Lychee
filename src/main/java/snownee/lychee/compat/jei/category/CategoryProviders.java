@@ -22,7 +22,7 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 
 @NotNullByDefault
 public final class CategoryProviders {
-	public static final Map<ResourceLocation, CategoryProvider<?>> ALL = Maps.newHashMap();
+	private static Map<ResourceLocation, CategoryProvider<?>> ALL = Maps.newHashMap();
 
 	static {
 		register(RecipeTypes.BLOCK_CRUSHING, BlockCrushingRecipeCategory::new);
@@ -80,7 +80,7 @@ public final class CategoryProviders {
 	}
 
 	public static void clear() {
-		ALL.clear();
+		ALL = null;
 	}
 
 	@FunctionalInterface
