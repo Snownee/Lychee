@@ -24,6 +24,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.action.AddItemCooldown;
 import snownee.lychee.action.AnvilDamageChance;
@@ -36,6 +37,7 @@ import snownee.lychee.action.Execute;
 import snownee.lychee.action.Exit;
 import snownee.lychee.action.Explode;
 import snownee.lychee.action.If;
+import snownee.lychee.action.Move;
 import snownee.lychee.action.MoveTowardsFace;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.input.DamageItem;
@@ -158,11 +160,23 @@ public interface LycheeBuilder {
 	}
 
 	default ActionBuilder<?, CycleStateProperty> cycleStateProperty(Object block, String property, BlockPos offset) {
-		return new ActionBuilder<>(new CycleStateProperty(PostActionCommonProperties.EMPTY, block(block), offset, property));
+		return new ActionBuilder<>(new CycleStateProperty(PostActionCommonProperties.EMPTY, block(block), offset, property, false));
+	}
+
+	default ActionBuilder<?, CycleStateProperty> cycleStatePropertyReversed(Object block, String property) {
+		return cycleStatePropertyReversed(block, property, BlockPos.ZERO);
+	}
+
+	default ActionBuilder<?, CycleStateProperty> cycleStatePropertyReversed(Object block, String property, BlockPos offset) {
+		return new ActionBuilder<>(new CycleStateProperty(PostActionCommonProperties.EMPTY, block(block), offset, property, true));
 	}
 
 	default ActionBuilder<?, MoveTowardsFace> moveTowardsFace(float factor) {
 		return new ActionBuilder<>(new MoveTowardsFace(PostActionCommonProperties.EMPTY, factor));
+	}
+
+	default ActionBuilder<?, Move> move(Vec3 offset) {
+		return new ActionBuilder<>(new Move(PostActionCommonProperties.EMPTY, offset));
 	}
 
 	default ActionBuilder<?, Execute> execute(String command) {

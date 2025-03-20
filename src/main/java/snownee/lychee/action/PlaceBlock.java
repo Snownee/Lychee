@@ -39,23 +39,18 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public final class PlaceBlock implements PostAction {
-	private final PostActionCommonProperties commonProperties;
-	private final BlockPredicate block;
-	private final BlockPos offset;
+public record PlaceBlock(PostActionCommonProperties commonProperties, BlockPredicate block, BlockPos offset) implements PostAction {
 
-	public PlaceBlock(
-			PostActionCommonProperties properties,
-			BlockPredicate block,
-			BlockPos offset) {
+	public PlaceBlock(PostActionCommonProperties commonProperties, BlockPredicate block, BlockPos offset) {
 		this.block = block;
 		this.offset = offset;
 		this.commonProperties = new PostActionCommonProperties(
-				properties.conditions(), Optional.ofNullable(properties.icon()).or(() ->
-						(BlockPredicateExtensions.isAny(this.block) && this.offset.equals(BlockPos.ZERO)) ?
-								Optional.of(PostActionCommonProperties.HIDDEN) :
-								Optional.empty()), properties.getPath()
-		);
+				commonProperties.conditions(),
+				Optional.ofNullable(commonProperties.icon()).or(() -> (
+						BlockPredicateExtensions.isAny(this.block) && this.offset.equals(BlockPos.ZERO)) ?
+						Optional.of(PostActionCommonProperties.HIDDEN) :
+						Optional.empty()),
+				commonProperties.getPath());
 	}
 
 	private static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {
@@ -87,11 +82,6 @@ public final class PlaceBlock implements PostAction {
 	}
 
 	@Override
-	public PostActionCommonProperties commonProperties() {
-		return commonProperties;
-	}
-
-	@Override
 	public PostActionType<? extends PlaceBlock> type() {
 		return PostActionTypes.PLACE;
 	}
@@ -115,12 +105,8 @@ public final class PlaceBlock implements PostAction {
 			level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, blockPos, Block.getId(oldState));
 		}
 
-		var properties = block.properties()
-				.map(StatePropertiesPredicate::properties)
-				.stream()
-				.flatMap(Collection::stream)
-				.map(StatePropertiesPredicate.PropertyMatcher::name)
-				.collect(Collectors.toSet());
+		var properties = block.properties().map(StatePropertiesPredicate::properties).stream().flatMap(Collection::stream).map(
+				StatePropertiesPredicate.PropertyMatcher::name).collect(Collectors.toSet());
 		for (var entry : oldState.getValues().entrySet()) {
 			var property = entry.getKey();
 			if (properties.contains(property.getName()) || !state.hasProperty(property)) {
@@ -180,16 +166,11 @@ public final class PlaceBlock implements PostAction {
 		return false;
 	}
 
-	public BlockPredicate block() {return block;}
-
-	public BlockPos offset() {return offset;}
-
 	public static class Type implements PostActionType<PlaceBlock> {
 		public static final MapCodec<PlaceBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(PlaceBlock::commonProperties),
-				BlockPredicateExtensions.CODEC.optionalFieldOf("block", BlockPredicateExtensions.ANY).forGetter(it -> it.block),
-				LycheeCodecs.OFFSET_CODEC.forGetter(it -> it.offset)
-		).apply(instance, PlaceBlock::new));
+				BlockPredicateExtensions.CODEC.optionalFieldOf("block", BlockPredicateExtensions.ANY).forGetter(PlaceBlock::block),
+				LycheeCodecs.OFFSET_CODEC.forGetter(PlaceBlock::offset)).apply(instance, PlaceBlock::new));
 
 		@Override
 		public MapCodec<PlaceBlock> codec() {

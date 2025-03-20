@@ -1,5 +1,6 @@
 package snownee.lychee.action;
 
+import java.util.Collection;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +12,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -25,24 +27,21 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public final class CycleStateProperty implements PostAction {
-	public final String property;
-	private final Supplier<Property<?>> propertySupplier;
-	private final PostActionCommonProperties commonProperties;
-	private final BlockPredicate block;
-	private final BlockPos offset;
+public record CycleStateProperty(
+		PostActionCommonProperties commonProperties,
+		BlockPredicate block,
+		String propertyName,
+		Supplier<Property<?>> propertySupplier,
+		BlockPos offset,
+		boolean reversed) implements PostAction {
 
 	public CycleStateProperty(
 			PostActionCommonProperties commonProperties,
 			BlockPredicate block,
 			BlockPos offset,
-			String property
-	) {
-		this.property = property;
-		this.commonProperties = commonProperties;
-		this.block = block;
-		this.offset = offset;
-		this.propertySupplier = Suppliers.memoize(() -> findProperty(block, property));
+			String propertyName,
+			boolean reversed) {
+		this(commonProperties, block, propertyName, Suppliers.memoize(() -> findProperty(block, propertyName)), offset, reversed);
 	}
 
 	public static Property<?> findProperty(BlockPredicate blockPredicate, String name) {
@@ -56,21 +55,8 @@ public final class CycleStateProperty implements PostAction {
 	}
 
 	@Override
-	public PostActionCommonProperties commonProperties() {
-		return commonProperties;
-	}
-
-	@Override
 	public PostActionType<CycleStateProperty> type() {
 		return PostActionTypes.CYCLE_STATE_PROPERTY;
-	}
-
-	public BlockPredicate block() {
-		return block;
-	}
-
-	public BlockPos offset() {
-		return offset;
 	}
 
 	@Override
@@ -83,22 +69,38 @@ public final class CycleStateProperty implements PostAction {
 		blockPos = blockPos.offset(offset);
 		var level = context.level();
 		var oldState = level.getBlockState(blockPos);
-		var state = oldState.cycle(propertySupplier.get());
+		var state = reversed ? cycleReversed(oldState, property()) : oldState.cycle(property());
 		if (!level.setBlockAndUpdate(blockPos, state)) {
 			return;
 		}
 		level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(state));
 	}
 
-	public Property<?> property() {return propertySupplier.get();}
+	private static <T extends Comparable<T>> BlockState cycleReversed(BlockState oldState, Property<T> property) {
+		T value = oldState.getValue(property);
+		Collection<T> values = property.getPossibleValues();
+		T last = null;
+		for (var v : values) {
+			if (last != null && v == value) {
+				return oldState.setValue(property, last);
+			}
+			last = v;
+		}
+		return last == null ? oldState : oldState.setValue(property, last);
+	}
+
+	public Property<?> property() {
+		return propertySupplier.get();
+	}
 
 	public static class Type implements PostActionType<CycleStateProperty> {
 		public static final MapCodec<CycleStateProperty> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				PostActionCommonProperties.MAP_CODEC.forGetter(CycleStateProperty::commonProperties),
-				BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(it -> it.block),
-				LycheeCodecs.OFFSET_CODEC.forGetter(it -> it.offset),
-				Codec.STRING.fieldOf("property").forGetter(it -> it.property)
-		).apply(instance, CycleStateProperty::new));
+						PostActionCommonProperties.MAP_CODEC.forGetter(CycleStateProperty::commonProperties),
+						BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(CycleStateProperty::block),
+						LycheeCodecs.OFFSET_CODEC.forGetter(CycleStateProperty::offset),
+						Codec.STRING.fieldOf("property").forGetter(CycleStateProperty::propertyName),
+						Codec.BOOL.optionalFieldOf("reversed", false).forGetter(CycleStateProperty::reversed))
+				.apply(instance, CycleStateProperty::new));
 
 		@Override
 		public MapCodec<CycleStateProperty> codec() {
