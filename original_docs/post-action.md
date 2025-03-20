@@ -11,6 +11,7 @@ You can add post actions to a Lychee's recipe, and they will be executed after t
 | type | type                                                             | string                                                                                             |
 | if   | contextual conditions ^optional^                                 | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
 | hide | hide this action in JEI/REI ^optional^{ title="default: false" } | boolean                                                                                            |
+| icon | sprite icon location ^optional^                                  | string                                                                                             |
 |      | additional properties...                                         |                                                                                                    |
 
 ## Built-in Actions
