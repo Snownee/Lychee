@@ -17,7 +17,7 @@ import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record SkyDarken(MinMaxBounds.Ints value, boolean requireSkyLight, boolean canSeeSky) implements ContextualCondition {
+public record SkyDarken(MinMaxBounds.Ints value, boolean requireSkyLight) implements ContextualCondition {
 
 	@Override
 	public ContextualConditionType<SkyDarken> type() {
@@ -38,17 +38,13 @@ public record SkyDarken(MinMaxBounds.Ints value, boolean requireSkyLight, boolea
 		if (requireSkyLight && !level.dimensionType().hasSkyLight()) {
 			return false;
 		}
-		if (canSeeSky && !level.canSeeSky(pos)) {
-			return false;
-		}
 		return value.matches(level.getSkyDarken());
 	}
 
 	public static class Type implements ContextualConditionType<SkyDarken> {
 		public static final MapCodec<SkyDarken> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				MinMaxBounds.Ints.CODEC.fieldOf("value").forGetter(SkyDarken::value),
-				Codec.BOOL.optionalFieldOf("require_sky_light", false).forGetter(SkyDarken::requireSkyLight),
-				Codec.BOOL.optionalFieldOf("can_see_sky", false).forGetter(SkyDarken::canSeeSky)
+				Codec.BOOL.optionalFieldOf("require_sky_light", false).forGetter(SkyDarken::requireSkyLight)
 		).apply(instance, SkyDarken::new));
 
 		@Override

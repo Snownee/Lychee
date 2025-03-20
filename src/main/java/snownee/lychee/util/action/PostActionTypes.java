@@ -14,6 +14,7 @@ import snownee.lychee.action.Execute;
 import snownee.lychee.action.Exit;
 import snownee.lychee.action.Explode;
 import snownee.lychee.action.If;
+import snownee.lychee.action.Move;
 import snownee.lychee.action.MoveTowardsFace;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
@@ -51,6 +52,7 @@ public class PostActionTypes {
 			"move_towards_face",
 			new MoveTowardsFace.Type()
 	);
+	public static final PostActionType<Move> MOVE = register("move", new Move.Type());
 	public static final PostActionType<SetItem> SET_ITEM = register("set_item", new SetItem.Type());
 	public static final PostActionType<CustomAction> CUSTOM = register("custom", new CustomAction.Type());
 	public static final PostActionType<If> IF = register("if", new If.Type());

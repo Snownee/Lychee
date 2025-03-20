@@ -22,7 +22,6 @@
 		"action.MarkerMixin",
 		"particles.PointedDripstoneBlockAccess",
 		"particles.PointedDripstoneBlockMixin",
-		"predicates.LocationCheckAccess",
 		"predicates.LocationPredicate$BuilderAccess",
 		"predicates.PositionPredicateAccess",
 		"recipes.anvilcrafting.AnvilMenuMixin",
