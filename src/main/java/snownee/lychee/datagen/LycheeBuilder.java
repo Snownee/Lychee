@@ -24,6 +24,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.action.AddItemCooldown;
 import snownee.lychee.action.AnvilDamageChance;
@@ -36,6 +37,7 @@ import snownee.lychee.action.Execute;
 import snownee.lychee.action.Exit;
 import snownee.lychee.action.Explode;
 import snownee.lychee.action.If;
+import snownee.lychee.action.Move;
 import snownee.lychee.action.MoveTowardsFace;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.input.DamageItem;
@@ -52,21 +54,6 @@ import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public interface LycheeBuilder {
 	ThreadLocal<RegistryOps<Object>> registryOps = new ThreadLocal<>();
-
-	private static Ingredient parse(String s) {
-		ExtraCodecs.TagOrElementLocation id = ExtraCodecs.TAG_OR_ELEMENT_ID.decode(JavaOps.INSTANCE, s).getOrThrow().getFirst();
-		if (id.tag()) {
-			return Ingredient.of(TagKey.create(Registries.ITEM, id.id()));
-		} else {
-			return Ingredient.of(BuiltInRegistries.ITEM.get(id.id()));
-		}
-	}
-
-	static LycheeBuilder create(RegistryOps<?> registryOps) {
-		LycheeBuilder builder = new LycheeBuilder() {};
-		builder.setup(registryOps.withParent(JavaOps.INSTANCE));
-		return builder;
-	}
 
 	default void setup(HolderLookup.Provider wrapperLookup) {
 		setup(wrapperLookup.createSerializationContext(JavaOps.INSTANCE));
@@ -148,78 +135,96 @@ public interface LycheeBuilder {
 	}
 
 	@HideFromJS
-	default ActionBuilder<DropItem> dropItem(ItemLike item) {
+	default ActionBuilder<?, DropItem> dropItem(ItemLike item) {
 		return dropItem(item, 1);
 	}
 
-	default ActionBuilder<DropItem> dropItem(ItemLike item, int count) {
+	default ActionBuilder<?, DropItem> dropItem(ItemLike item, int count) {
 		return dropItem(new ItemStack(item, count));
 	}
 
-	default ActionBuilder<DropItem> dropItem(ItemStack itemStack) {
+	default ActionBuilder<?, DropItem> dropItem(ItemStack itemStack) {
 		return new ActionBuilder<>(new DropItem(PostActionCommonProperties.EMPTY, itemStack));
 	}
 
-	default ActionBuilder<PlaceBlock> place(Object block) {
+	default ActionBuilder<?, PlaceBlock> place(Object block) {
 		return place(block, BlockPos.ZERO);
 	}
 
-	default ActionBuilder<PlaceBlock> place(Object block, BlockPos offset) {
+	default ActionBuilder<?, PlaceBlock> place(Object block, BlockPos offset) {
 		return new ActionBuilder<>(new PlaceBlock(PostActionCommonProperties.EMPTY, block(block), offset));
 	}
 
-	default ActionBuilder<CycleStateProperty> cycleStateProperty(Object block, String property) {
+	default ActionBuilder<?, CycleStateProperty> cycleStateProperty(Object block, String property) {
 		return cycleStateProperty(block, property, BlockPos.ZERO);
 	}
 
-	default ActionBuilder<CycleStateProperty> cycleStateProperty(Object block, String property, BlockPos offset) {
-		return new ActionBuilder<>(new CycleStateProperty(PostActionCommonProperties.EMPTY, block(block), offset, property));
+	default ActionBuilder<?, CycleStateProperty> cycleStateProperty(Object block, String property, BlockPos offset) {
+		return new ActionBuilder<>(new CycleStateProperty(PostActionCommonProperties.EMPTY, block(block), offset, property, false));
 	}
 
-	default ActionBuilder<MoveTowardsFace> moveTowardsFace(float factor) {
+	default ActionBuilder<?, CycleStateProperty> cycleStatePropertyReversed(Object block, String property) {
+		return cycleStatePropertyReversed(block, property, BlockPos.ZERO);
+	}
+
+	default ActionBuilder<?, CycleStateProperty> cycleStatePropertyReversed(Object block, String property, BlockPos offset) {
+		return new ActionBuilder<>(new CycleStateProperty(PostActionCommonProperties.EMPTY, block(block), offset, property, true));
+	}
+
+	default ActionBuilder<?, MoveTowardsFace> moveTowardsFace(float factor) {
 		return new ActionBuilder<>(new MoveTowardsFace(PostActionCommonProperties.EMPTY, factor));
 	}
 
-	default ActionBuilder<Execute> execute(String command) {
+	default ActionBuilder<?, Move> move(Vec3 offset) {
+		return new ActionBuilder<>(new Move(PostActionCommonProperties.EMPTY, offset));
+	}
+
+	default ActionBuilder<?, Execute> execute(String command) {
 		return new ActionBuilder<>(new Execute(PostActionCommonProperties.EMPTY, command, true));
 	}
 
-	default ActionBuilder<Execute> executeNoRepeat(String command) {
+	default ActionBuilder<?, Execute> executeNoRepeat(String command) {
 		return new ActionBuilder<>(new Execute(PostActionCommonProperties.EMPTY, command, false));
 	}
 
-	default ActionBuilder<Exit> exit() {
+	default ActionBuilder<?, Exit> exit() {
 		return new ActionBuilder<>(new Exit());
 	}
 
-	default ActionBuilder<If> ifAction(Collection<PostActionLike> successEntries, Collection<PostActionLike> failureEntries) {
+	default ActionBuilder<?, If> ifAction(
+			Collection<? extends PostActionLike> successEntries,
+			Collection<? extends PostActionLike> failureEntries) {
 		return new ActionBuilder<>(new If(
 				PostActionCommonProperties.EMPTY,
 				successEntries.stream().map(PostActionLike::asAction).toList(),
 				failureEntries.stream().map(PostActionLike::asAction).toList()));
 	}
 
-	default ActionBuilder<AddItemCooldown> addItemCooldown(float seconds) {
+	default ActionBuilder<?, AddItemCooldown> addItemCooldown(float seconds) {
 		return addItemCooldown(seconds, null);
 	}
 
-	default ActionBuilder<AddItemCooldown> addItemCooldown(float seconds, @Nullable Item item) {
+	default ActionBuilder<?, AddItemCooldown> addItemCooldown(float seconds, @Nullable Item item) {
 		return new ActionBuilder<>(new AddItemCooldown(PostActionCommonProperties.EMPTY, seconds, Optional.ofNullable(item)));
 	}
 
-	default ActionBuilder<PreventDefault> preventDefault() {
+	default ActionBuilder<?, PreventDefault> preventDefault() {
 		return new ActionBuilder<>(new PreventDefault());
 	}
 
-	default ActionBuilder<DropXp> dropXp(int amount) {
+	default ActionBuilder<?, DropXp> dropXp(int amount) {
 		return new ActionBuilder<>(new DropXp(PostActionCommonProperties.EMPTY, amount));
 	}
 
-	default ActionBuilder<AnvilDamageChance> anvilDamageChance(float chance) {
+	default ActionBuilder<?, AnvilDamageChance> anvilDamageChance(float chance) {
 		return new ActionBuilder<>(new AnvilDamageChance(PostActionCommonProperties.EMPTY, chance));
 	}
 
-	default ActionBuilder<Explode> explode(
+	default ActionBuilder.RandomSelectBuilder randomSelect() {
+		return new ActionBuilder.RandomSelectBuilder();
+	}
+
+	default ActionBuilder<?, Explode> explode(
 			Explosion.BlockInteraction blockInteraction,
 			BlockPos offset,
 			boolean fire,
@@ -228,19 +233,19 @@ public interface LycheeBuilder {
 		return new ActionBuilder<>(new Explode(PostActionCommonProperties.EMPTY, blockInteraction, offset, fire, radius, step));
 	}
 
-	default ActionBuilder<CustomAction> customAction(String id, JsonObject json, boolean repeatable, boolean preventDefault) {
-		return new ActionBuilder<>(new CustomAction(PostActionCommonProperties.EMPTY, id, json, repeatable, preventDefault));
+	default ActionBuilder<?, CustomAction> customAction(String id, JsonObject json, boolean repeatable, boolean preventSync) {
+		return new ActionBuilder<>(new CustomAction(PostActionCommonProperties.EMPTY, id, json, repeatable, preventSync));
 	}
 
-	default ActionBuilder<DamageItem> damageItem(int damage, Reference target) {
+	default ActionBuilder<?, DamageItem> damageItem(int damage, Reference target) {
 		return new ActionBuilder<>(new DamageItem(PostActionCommonProperties.EMPTY, damage, target));
 	}
 
-	default ActionBuilder<SetItem> setItem(ItemStack itemStack, Reference target) {
+	default ActionBuilder<?, SetItem> setItem(ItemStack itemStack, Reference target) {
 		return new ActionBuilder<>(new SetItem(PostActionCommonProperties.EMPTY, itemStack, target));
 	}
 
-	default ActionBuilder<Delay> delay(float seconds) {
+	default ActionBuilder<?, Delay> delay(float seconds) {
 		return new ActionBuilder<>(new Delay(seconds));
 	}
 
@@ -281,5 +286,20 @@ public interface LycheeBuilder {
 			default -> throw new IllegalArgumentException("Invalid argument: " + o);
 		};
 		return new SizedIngredient(i, count);
+	}
+
+	private static Ingredient parse(String s) {
+		ExtraCodecs.TagOrElementLocation id = ExtraCodecs.TAG_OR_ELEMENT_ID.decode(JavaOps.INSTANCE, s).getOrThrow().getFirst();
+		if (id.tag()) {
+			return Ingredient.of(TagKey.create(Registries.ITEM, id.id()));
+		} else {
+			return Ingredient.of(BuiltInRegistries.ITEM.get(id.id()));
+		}
+	}
+
+	static LycheeBuilder create(RegistryOps<?> registryOps) {
+		LycheeBuilder builder = new LycheeBuilder() {};
+		builder.setup(registryOps.withParent(JavaOps.INSTANCE));
+		return builder;
 	}
 }
