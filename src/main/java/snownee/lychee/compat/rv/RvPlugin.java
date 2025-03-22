@@ -23,9 +23,11 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.rv.category.IItemAndBlockBaseCategory;
 import snownee.lychee.compat.rv.category.IItemShapelessRecipeCategory;
+import snownee.lychee.compat.rv.category.RvCategoryType;
 import snownee.lychee.compat.rv.element.InfoElementHelper;
 import snownee.lychee.compat.rv.element.SideBlockIcon;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.RectExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -75,7 +77,7 @@ public class RvPlugin {
 				});
 		register(
 				RecipeTypes.BLOCK_INTERACTING, it -> {
-					it.infoRect = InfoElementHelper.offsetRect(IItemAndBlockBaseCategory.INFO_RECT, 10, 0);
+					it.infoRect = RectExtensions.offsetRect(IItemAndBlockBaseCategory.INFO_RECT, 10, 0);
 					it.width = RvCategoryType.WIDER_WIDTH;
 					it.iconProvider = category -> {
 						var mainIcon = category.recipes.stream()
@@ -89,7 +91,7 @@ public class RvPlugin {
 		register(
 				RecipeTypes.DRIPSTONE_DRIPPING,
 				it -> {
-					it.infoRect = InfoElementHelper.offsetRect(it.infoRect, -10, 0);
+					it.infoRect = RectExtensions.offsetRect(it.infoRect, -10, 0);
 					it.iconProvider = category -> Either.right(Items.POINTED_DRIPSTONE.getDefaultInstance());
 					it.setSimpleWorkstationProvider(category -> List.of(Items.POINTED_DRIPSTONE.getDefaultInstance()));
 				});

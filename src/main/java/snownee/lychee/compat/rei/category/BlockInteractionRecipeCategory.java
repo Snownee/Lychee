@@ -16,13 +16,12 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.compat.rv.RvCategory;
 import snownee.lychee.recipes.BlockInteractingRecipe;
+import snownee.lychee.util.RectExtensions;
 
 public class BlockInteractionRecipeCategory extends ItemAndBlockBaseCategory<BlockInteractingRecipe> {
 
 	public BlockInteractionRecipeCategory(RvCategory<BlockInteractingRecipe> category) {
-		super(category);
-		inputBlockRect.setX(inputBlockRect.getX() + 18);
-		methodRect.setX(methodRect.getX() + 18);
+		super(category, RectExtensions.offsetRect(INPUT_BLOCK_RECT, 18, 0), RectExtensions.offsetRect(METHOD_RECT, 18, 0));
 	}
 
 	@Override

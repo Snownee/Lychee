@@ -26,13 +26,14 @@ import snownee.lychee.compat.rei.display.LycheeDisplay;
 import snownee.lychee.compat.rei.elements.InteractiveWidget;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategory;
+import snownee.lychee.compat.rv.category.IItemAndBlockBaseCategory;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
+public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> implements IItemAndBlockBaseCategory {
 
 	private final boolean drawDownArrow;
 	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
@@ -145,5 +146,15 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 
 	protected void renderIngredientGroup(List<Widget> widgets, Point startPoint, T recipe, int y) {
 		ingredientGroup(widgets, startPoint, recipe, 12, 21);
+	}
+
+	@Override
+	public Rect2i inputBlockRect() {
+		return inputBlockRect;
+	}
+
+	@Override
+	public Rect2i methodRect() {
+		return methodRect;
 	}
 }

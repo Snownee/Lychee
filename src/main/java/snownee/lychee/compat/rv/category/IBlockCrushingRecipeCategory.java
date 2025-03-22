@@ -6,7 +6,7 @@ import org.joml.Vector2ic;
 
 import net.minecraft.client.renderer.Rect2i;
 
-public interface IBlockCrushingRecipeCategory extends RenderRemoveInputBlockIcon {
+public interface IBlockCrushingRecipeCategory extends WithRemoveActionIcon {
 	Rect2i FALLING_BLOCK_RECT = new Rect2i(0, -35, 20, 35);
 	Rect2i LANDING_BLOCK_RECT = new Rect2i(0, 0, 20, 20);
 

@@ -1,11 +1,6 @@
 package snownee.lychee.compat.jei.category;
 
-import java.util.function.Supplier;
-
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector2i;
-
-import com.google.common.base.Suppliers;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
@@ -26,6 +21,7 @@ import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.jei.input.BlockClickingInputHandler;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategory;
+import snownee.lychee.compat.rv.category.IItemAndBlockBaseCategory;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -33,23 +29,25 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 @NotNullByDefault
-public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> {
+public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> implements IItemAndBlockBaseCategory {
 
 	private final boolean drawDownArrow;
-	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
-	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
-	protected Supplier<Vector2i> removeActionPosition =
-			Suppliers.memoize(() -> new Vector2i(
-					inputBlockRect.getX() + inputBlockRect.getWidth() - 4,
-					inputBlockRect.getY() + inputBlockRect.getHeight() - 8));
+	public final Rect2i inputBlockRect;
+	public final Rect2i methodRect;
 
-	public ItemAndBlockBaseCategory(RvCategory<T> category, boolean drawDownArrow) {
+	public ItemAndBlockBaseCategory(RvCategory<T> category, boolean drawDownArrow, Rect2i inputBlockRect, Rect2i methodRect) {
 		super(category);
 		this.drawDownArrow = drawDownArrow;
+		this.inputBlockRect = inputBlockRect;
+		this.methodRect = methodRect;
+	}
+
+	public ItemAndBlockBaseCategory(RvCategory<T> category, Rect2i inputBlockRect, Rect2i methodRect) {
+		this(category, true, inputBlockRect, methodRect);
 	}
 
 	public ItemAndBlockBaseCategory(RvCategory<T> category) {
-		this(category, true);
+		this(category, true, INPUT_BLOCK_RECT, METHOD_RECT);
 	}
 
 	public BlockPredicate getInputBlock(T recipe) {
@@ -95,9 +93,10 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 						inputBlockRect.getHeight()),
 				() -> getRenderingBlock(recipe)
 		));
+		var removeActionPosition = getRemoveActionPosition();
 		LycheeCategory.addRemoveInputBlock(
-				removeActionPosition.get().x(),
-				removeActionPosition.get().y(),
+				removeActionPosition.x(),
+				removeActionPosition.y(),
 				builder,
 				recipe
 		);
@@ -162,5 +161,15 @@ public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> ex
 
 	protected void renderIngredientGroup(IRecipeLayoutBuilder builder, T recipe, int y) {
 		ingredientGroup(builder, recipe, 12, 21);
+	}
+
+	@Override
+	public Rect2i inputBlockRect() {
+		return inputBlockRect;
+	}
+
+	@Override
+	public Rect2i methodRect() {
+		return methodRect;
 	}
 }

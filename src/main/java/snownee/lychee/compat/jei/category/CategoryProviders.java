@@ -8,14 +8,15 @@ import com.google.common.collect.Maps;
 
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategory;
+import snownee.lychee.compat.rv.category.IItemAndBlockBaseCategory;
 import snownee.lychee.recipes.ItemExplodingRecipe;
+import snownee.lychee.util.RectExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
@@ -29,11 +30,11 @@ public final class CategoryProviders {
 
 		register(
 				RecipeTypes.BLOCK_EXPLODING,
-				(category) -> new ItemAndBlockBaseCategory<>(category, false) {
-					{
-						inputBlockRect = new Rect2i(15, 30, 20, 20);
-					}
-				});
+				(category) -> new ItemAndBlockBaseCategory<>(
+						category,
+						false,
+						RectExtensions.square(15, 30, 20),
+						IItemAndBlockBaseCategory.METHOD_RECT));
 
 		register(
 				RecipeTypes.BLOCK_INTERACTING,

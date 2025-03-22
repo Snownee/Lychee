@@ -2,6 +2,6 @@ package snownee.lychee.compat.rv.category;
 
 import org.joml.Vector2ic;
 
-public interface RenderRemoveInputBlockIcon {
+public interface WithRemoveActionIcon {
 	Vector2ic getRemoveActionPosition();
 }
