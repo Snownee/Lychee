@@ -48,7 +48,7 @@ public class InteractiveRenderElement extends RenderElement implements GuiEventL
 
 	@Override
 	public void render(GuiGraphics graphics) {
-		renderable.apply(this).render(graphics, getX(), getY());
+		renderable.apply(this).render(graphics, x(), y());
 	}
 
 	public InteractiveRenderElement onTooltip(@Nullable Supplier<List<Component>> onTooltip) {

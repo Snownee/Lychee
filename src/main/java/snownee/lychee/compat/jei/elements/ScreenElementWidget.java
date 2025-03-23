@@ -17,7 +17,7 @@ public class ScreenElementWidget extends WidgetWithBounds {
 	}
 
 	public ScreenElementWidget(RenderElement element) {
-		super(new ScreenRectangle(0, 0, element.getWidth(), element.getHeight()));
+		super(new ScreenRectangle(0, 0, element.width(), element.height()));
 		this.element = element;
 	}
 

@@ -25,7 +25,7 @@ public class SideBlockIcon extends RenderElement {
 	public void render(GuiGraphics graphics) {
 		PoseStack ms = graphics.pose();
 		ms.pushPose();
-		ms.translate(x, y, z);
+		ms.translate(x(), y(), z);
 		ms.scale(.625F, .625F, .625F);
 		mainIcon.render(graphics);
 		ms.popPose();
@@ -33,8 +33,7 @@ public class SideBlockIcon extends RenderElement {
 				.lighting(RVs.SIDE_ICON_LIGHTING)
 				.scale(7)
 				.rotateBlock(30, 202.5, 0)
-				.at(x + 4, y + 2)
+				.at(x() + 4, y() + 2)
 				.render(graphics);
 	}
-
 }

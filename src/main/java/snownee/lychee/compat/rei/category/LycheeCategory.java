@@ -34,7 +34,6 @@ import snownee.lychee.compat.rei.elements.InteractiveWidget;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.RvCategoryProvider;
 import snownee.lychee.compat.rv.SlotType;
-import snownee.lychee.ui.SpriteElement;
 import snownee.lychee.ui.SpriteElementRenderer;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.action.CompoundAction;
@@ -144,7 +143,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		var widget = new InteractiveWidget(new Rectangle(x, y, 8, 8));
 		widgets.add(widget);
 		widget.setRenderable(new SpriteElementRenderer(
-				new SpriteElement(Lychee.id("exclamation_mark")),
+				Lychee.id("exclamation_mark"),
 				new Rect2i(x, y, widget.getBounds().width, widget.getBounds().height),
 				100,
 				2));

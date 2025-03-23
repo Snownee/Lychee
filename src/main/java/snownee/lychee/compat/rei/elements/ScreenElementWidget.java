@@ -26,8 +26,8 @@ public class ScreenElementWidget extends WidgetWithBounds {
 
 	public ScreenElementWidget(RenderElement element) {
 		this.element = element;
-		bounds.width = element.getWidth();
-		bounds.height = element.getHeight();
+		bounds.width = element.width();
+		bounds.height = element.height();
 	}
 
 	@Override

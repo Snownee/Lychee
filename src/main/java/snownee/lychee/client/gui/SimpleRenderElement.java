@@ -17,7 +17,7 @@ public class SimpleRenderElement extends RenderElement {
 		PoseStack pose = graphics.pose();
 		pose.pushPose();
 		pose.translate(0, 0, z);
-		renderable.render(graphics, getX(), getY());
+		renderable.render(graphics, x(), y());
 		pose.popPose();
 	}
 }

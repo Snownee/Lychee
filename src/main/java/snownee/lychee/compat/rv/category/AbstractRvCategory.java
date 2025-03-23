@@ -16,7 +16,6 @@ import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.rv.element.InfoElementHelper;
-import snownee.lychee.ui.SpriteElement;
 import snownee.lychee.ui.SpriteElementRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -46,8 +45,8 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 		widgetBuilder.addElement(
 				new InteractiveRenderElement(element ->
 						new SpriteElementRenderer(
-								new SpriteElement(Lychee.id("exclamation_mark")),
-								new Rect2i(position.x(), position.y(), element.getWidth(), element.getHeight()),
+								Lychee.id("exclamation_mark"),
+								new Rect2i(position.x(), position.y(), element.width(), element.height()),
 								100,
 								2)
 				).withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE));

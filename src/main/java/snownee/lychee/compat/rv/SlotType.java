@@ -3,7 +3,6 @@ package snownee.lychee.compat.rv;
 import net.minecraft.client.renderer.Rect2i;
 import snownee.lychee.Lychee;
 import snownee.lychee.client.gui.ScreenElement;
-import snownee.lychee.ui.SpriteElement;
 import snownee.lychee.ui.SpriteElementRenderer;
 
 public enum SlotType {
@@ -14,6 +13,6 @@ public enum SlotType {
 	public final ScreenElement sprite;
 
 	SlotType(String spriteId) {
-		this.sprite = new SpriteElementRenderer(new SpriteElement(Lychee.id(spriteId)), new Rect2i(0, 0, 18, 18), 0, 1);
+		this.sprite = new SpriteElementRenderer(Lychee.id(spriteId), new Rect2i(0, 0, 18, 18), 0, 1);
 	}
 }

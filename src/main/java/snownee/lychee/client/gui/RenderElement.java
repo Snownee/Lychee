@@ -47,23 +47,23 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 		return (T) this;
 	}
 
-	public int getWidth() {
+	public int width() {
 		return this.bounds.getWidth();
 	}
 
-	public int getHeight() {
+	public int height() {
 		return this.bounds.getHeight();
 	}
 
-	public int getX() {
+	public int x() {
 		return this.bounds.getX();
 	}
 
-	public int getY() {
+	public int y() {
 		return this.bounds.getY();
 	}
 
-	public int getZ() {
+	public int z() {
 		return z;
 	}
 
