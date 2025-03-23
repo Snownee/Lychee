@@ -81,17 +81,20 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 		var recipe = recipeHolder.value();
 
 		if (shouldRenderInputBlock(recipe)) {
-			builder.addElement(getInputBlockElement(recipe));
+			builder.addElement(getInputBlockElement(recipe).offset(position));
 		}
 
 		var methodElement = geMethodElement();
 		if (methodElement != RenderElement.EMPTY) {
-			builder.addElement(methodElement);
+			builder.addElement(methodElement.offset(position));
 		}
 
 		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {
-			var removeActionPosition = VectorExtensions.offset(inputBlockPosition, INPUT_BLOCK_SIZE.x() - 4, INPUT_BLOCK_SIZE.y() - 8);
-			AbstractRvCategory.addRemoveInputIcon(builder, removeActionPosition);
+			var removeActionPosition = VectorExtensions.offset(
+					inputBlockPosition,
+					position.x() + INPUT_BLOCK_SIZE.x() - 4,
+					position.y() + INPUT_BLOCK_SIZE.y() - 8);
+			AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition);
 		}
 	}
 

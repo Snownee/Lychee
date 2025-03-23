@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.joml.Vector2ic;
-
 import com.google.common.base.Suppliers;
 
 import net.minecraft.client.renderer.Rect2i;
@@ -41,15 +39,14 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 				.noneMatch(it -> it instanceof PlaceBlock placeBlock && placeBlock.hidden());
 	}
 
-	protected static void addRemoveInputIcon(RvCategoryWidgetBuilder widgetBuilder, Vector2ic position) {
-		widgetBuilder.addElement(
-				new InteractiveRenderElement(element ->
-						new SpriteElementRenderer(
-								Lychee.id("exclamation_mark"),
-								new Rect2i(position.x(), position.y(), element.width(), element.height()),
-								100,
-								2)
-				).withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE));
+	protected static RenderElement getRemoveInputIcon() {
+		return new InteractiveRenderElement(element ->
+				new SpriteElementRenderer(
+						Lychee.id("exclamation_mark"),
+						new Rect2i(element.x(), element.y(), element.width(), element.height()),
+						100,
+						2)
+		).withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE);
 	}
 
 	@Override

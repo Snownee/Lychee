@@ -2,12 +2,16 @@ package snownee.lychee.compat.rv.category;
 
 import org.joml.Vector2i;
 
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.compat.rv.element.InfoElementHelper;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 
 public class ItemShapelessRecipeCategory<R extends BlockKeyableRecipe> extends AbstractRvCategory<R> {
+	public static final Rect2i INFO_RECT = InfoElementHelper.getInfoRect(3, 25);
+
 	protected ItemShapelessRecipeCategory(
 			RvCategoryType<R> type,
 			ResourceLocation id,

@@ -42,6 +42,20 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 		return (T) this;
 	}
 
+	public <T extends RenderElement> T offset(int x, int y) {
+		this.bounds.setX(bounds.getX() + x);
+		this.bounds.setY(bounds.getY() + y);
+		//noinspection unchecked
+		return (T) this;
+	}
+
+	public <T extends RenderElement> T offset(Vector2ic position) {
+		this.bounds.setX(bounds.getX() + position.x());
+		this.bounds.setY(bounds.getY() + position.y());
+		//noinspection unchecked
+		return (T) this;
+	}
+
 	public <T extends RenderElement> T at(int x, int y, int z) {
 		this.at(x, y);
 		this.z = z;

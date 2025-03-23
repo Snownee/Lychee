@@ -19,8 +19,8 @@ import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
-import snownee.lychee.compat.rv.category.IItemShapelessRecipeCategory;
 import snownee.lychee.compat.rv.category.ItemAndBlockCategory;
+import snownee.lychee.compat.rv.category.ItemShapelessRecipeCategory;
 import snownee.lychee.compat.rv.category.RvCategory;
 import snownee.lychee.compat.rv.category.RvCategoryType;
 import snownee.lychee.compat.rv.element.InfoElementHelper;
@@ -56,7 +56,7 @@ public class RvPlugin {
 				});
 		register(
 				RecipeTypes.BLOCK_EXPLODING, it -> {
-					it.infoRect = IItemShapelessRecipeCategory.INFO_RECT;
+					it.infoRect = ItemShapelessRecipeCategory.INFO_RECT;
 					it.iconProvider = category -> {
 						var mainIcon = GuiGameElement.of(Items.TNT.getDefaultInstance());
 						return new SideBlockIcon(mainIcon, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
@@ -91,14 +91,14 @@ public class RvPlugin {
 				RecipeTypes.LIGHTNING_CHANNELING,
 				it -> {
 					it.width = RvCategoryType.WIDER_WIDTH;
-					it.infoRect = IItemShapelessRecipeCategory.INFO_RECT;
+					it.infoRect = ItemShapelessRecipeCategory.INFO_RECT;
 					it.iconProvider = category -> GuiGameElement.of(Items.LIGHTNING_ROD);
 					it.setSimpleWorkstationProvider(category -> List.of(Items.LIGHTNING_ROD.getDefaultInstance()));
 				});
 		register(
 				RecipeTypes.ITEM_EXPLODING, it -> {
 					it.width = RvCategoryType.WIDER_WIDTH;
-					it.infoRect = IItemShapelessRecipeCategory.INFO_RECT;
+					it.infoRect = ItemShapelessRecipeCategory.INFO_RECT;
 					it.iconProvider = category -> GuiGameElement.of(Items.TNT);
 					it.setSimpleWorkstationProvider(category -> CommonProxy.tagElements(
 									BuiltInRegistries.ITEM,
