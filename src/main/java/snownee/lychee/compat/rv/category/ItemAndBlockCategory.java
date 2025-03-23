@@ -20,6 +20,7 @@ import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.compat.rv.element.InfoElementHelper;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 
@@ -89,7 +90,7 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 		}
 
 		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {
-			var removeActionPosition = new Vector2i();
+			var removeActionPosition = VectorExtensions.offset(inputBlockPosition, INPUT_BLOCK_SIZE.x() - 4, INPUT_BLOCK_SIZE.y() - 8);
 			AbstractRvCategory.addRemoveInputIcon(builder, removeActionPosition);
 		}
 	}

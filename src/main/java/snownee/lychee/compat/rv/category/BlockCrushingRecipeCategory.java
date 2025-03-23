@@ -14,6 +14,7 @@ import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushingRecipe> {
@@ -35,7 +36,7 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder,RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2i position) {
+	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2i position) {
 		var recipe = recipeHolder.value();
 
 		var landingBlockIsAny = BlockPredicateExtensions.isAny(recipe.landingBlock());
@@ -108,7 +109,7 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 		}
 
 		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {
-			var removeActionPosition = new Vector2i(xOffset + LANDING_BLOCK_SIZE.x() - 4, yOffset + LANDING_BLOCK_SIZE.y() - 8);
+			var removeActionPosition = VectorExtensions.offset(LANDING_BLOCK_SIZE, xOffset - 4, yOffset - 8);
 			AbstractRvCategory.addRemoveInputIcon(builder, removeActionPosition);
 		}
 	}

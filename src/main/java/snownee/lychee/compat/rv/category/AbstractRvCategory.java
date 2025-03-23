@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.joml.Vector2i;
+import org.joml.Vector2ic;
 
 import com.google.common.base.Suppliers;
 
@@ -41,7 +41,7 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 				.noneMatch(it -> it instanceof PlaceBlock placeBlock && placeBlock.hidden());
 	}
 
-	protected static void addRemoveInputIcon(RvCategoryWidgetBuilder widgetBuilder, Vector2i position) {
+	protected static void addRemoveInputIcon(RvCategoryWidgetBuilder widgetBuilder, Vector2ic position) {
 		widgetBuilder.addElement(
 				new InteractiveRenderElement(element ->
 						new SpriteElementRenderer(
