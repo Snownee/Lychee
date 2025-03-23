@@ -2,22 +2,31 @@ package snownee.lychee.compat.rv.category;
 
 import java.util.List;
 
+import org.joml.Vector2i;
+
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.rv.RVHelper;
 import snownee.lychee.compat.rv.RVs;
+import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface RvCategory<R extends ILycheeRecipe<LycheeContext>> {
-	ResourceLocation id();
-
 	RvCategoryType<R> type();
 
-	RVHelper rvHelper();
+	RVCategoryHandler rvHandler();
+
+	ResourceLocation id();
+
+	List<RecipeHolder<R>> recipes();
+
+	default void addRecipe(RecipeHolder<R> recipeHolder) {
+		recipes().add(recipeHolder);
+	}
 
 	default int width() {
 		return type().width;
@@ -42,4 +51,8 @@ public interface RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 	default List<List<ItemStack>> workstations() {
 		return type().workstationProvider.get(this);
 	}
+
+	void configureLayout(RecipeHolder<R> recipeHolder, Vector2i position);
+
+	void configureDecorations(RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2i position);
 }

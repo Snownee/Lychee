@@ -145,11 +145,8 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		widgets.add(widget);
 		widget.setRenderable(new SpriteElementRenderer(
 				new SpriteElement(Lychee.id("exclamation_mark")),
-				x,
-				y,
+				new Rect2i(x, y, widget.getBounds().width, widget.getBounds().height),
 				100,
-				widget.getBounds().width,
-				widget.getBounds().height,
 				2));
 		widget.setTooltipFunction(it -> List.of(Component.translatable("postAction.lychee.place.consume")));
 	}

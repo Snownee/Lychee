@@ -7,7 +7,7 @@ import com.google.common.collect.Maps;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.resources.ResourceLocation;
-import snownee.lychee.compat.rv.RvCategory;
+import snownee.lychee.compat.rv.category.RvCategory;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
@@ -15,13 +15,13 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 public interface DisplayRegisters {
 	Map<ResourceLocation, DisplayRegister<?>> ALL = Maps.newHashMap();
 
-	DisplayRegister<ILycheeRecipe<?>> DEFAULT = (registry, id, category) -> {
-		for (var recipe : category.recipes) {
+	DisplayRegister<ILycheeRecipe<LycheeContext>> DEFAULT = (registry, id, category) -> {
+		for (var recipe : category.recipes()) {
 			registry.add(new SimpleLycheeDisplay<>(recipe, id));
 		}
 	};
 
-	static <R extends ILycheeRecipe<?>> DisplayRegister<R> get(ResourceLocation id) {
+	static <R extends ILycheeRecipe<LycheeContext>> DisplayRegister<R> get(ResourceLocation id) {
 		//noinspection unchecked
 		return (DisplayRegister<R>) ALL.getOrDefault(id, DEFAULT);
 	}
@@ -34,7 +34,7 @@ public interface DisplayRegisters {
 	}
 
 	@FunctionalInterface
-	interface DisplayRegister<R extends ILycheeRecipe<?>> {
+	interface DisplayRegister<R extends ILycheeRecipe<LycheeContext>> {
 		void consume(
 				DisplayRegistry registry,
 				CategoryIdentifier<? extends LycheeDisplay<R>> id,

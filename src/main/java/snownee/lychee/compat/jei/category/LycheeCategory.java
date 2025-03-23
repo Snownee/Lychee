@@ -90,13 +90,13 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 				if (index >= size) {
 					break;
 				}
-				layoutFunction.apply(builder, items.get(index), offset + index, x + j * 19, y + i * 19);
+				layoutFunction.apply(builder, items.get(index), x + j * 19, y + i * 19);
 				++index;
 			}
 		}
 	}
 
-	static void actionSlot(IRecipeLayoutBuilder builder, PostAction action, int index, int x, int y) {
+	static void actionSlot(IRecipeLayoutBuilder builder, PostAction action, int x, int y) {
 		var slotBuilder = builder.addSlot(RecipeIngredientRole.OUTPUT, x + 1, y + 1);
 		var itemMap = Maps.<ItemStack, PostAction>newIdentityHashMap();
 		buildActionSlot(builder, slotBuilder, action, itemMap);
@@ -186,11 +186,8 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		builder.addGuiEventListener(widget);
 		widget.setRenderable(new SpriteElementRenderer(
 				new SpriteElement(Lychee.id("exclamation_mark")),
-				x,
-				y,
+				new Rect2i(x, y, widget.getWidth(), widget.getHeight()),
 				100,
-				widget.getWidth(),
-				widget.getHeight(),
 				2));
 		widget.setTooltipFunction(it -> List.of(Component.translatable("postAction.lychee.place.consume")));
 	}
@@ -218,7 +215,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 	default void ingredientGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
 		var ingredients = RVs.generateShapelessInputs(recipe);
 		slotGroup(
-				builder, x + 1, y + 1, 0, ingredients, (layout0, ingredient, i, x0, y0) -> {
+				builder, x + 1, y + 1, 0, ingredients, (layout0, ingredient, x0, y0) -> {
 					var items = ingredient.ingredient.getItems();
 					var slotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, x0, y0);
 					slotBuilder.addItemStacks(Arrays.stream(items)
@@ -259,6 +256,6 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 
 	@FunctionalInterface
 	interface SlotLayoutFunction<T> {
-		void apply(IRecipeLayoutBuilder builder, T item, int index, int x, int y);
+		void apply(IRecipeLayoutBuilder builder, T item, int x, int y);
 	}
 }

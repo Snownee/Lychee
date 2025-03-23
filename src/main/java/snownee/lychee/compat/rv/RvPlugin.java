@@ -158,7 +158,7 @@ public class RvPlugin {
 	}
 
 	private <T extends ILycheeRecipe<LycheeContext>> void register(LycheeRecipeType<T> recipeType, Consumer<RvCategoryType<T>> consumer) {
-		var type = new RvCategoryType<T>(recipeType.categoryId);
+		var type = new RvCategoryType<T>(recipeType);
 		consumer.accept(type);
 		Preconditions.checkArgument(
 				categoryTypes.put(recipeType.categoryId, type) == null,

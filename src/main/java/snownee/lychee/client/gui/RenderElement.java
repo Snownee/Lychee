@@ -1,44 +1,42 @@
 package snownee.lychee.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.renderer.Rect2i;
 
 public abstract class RenderElement implements ScreenElement, Renderable {
 
 	public static final RenderElement EMPTY = new RenderElement() {
 		@Override
 		public void render(GuiGraphics graphics) {
+
 		}
 	};
+	protected Rect2i bounds = new Rect2i(0, 0, 16, 16);
+	protected int z = 0;
 
-	public static RenderElement of(ScreenElement renderable) {
+	public static RenderElement create(ScreenElement renderable) {
 		return new SimpleRenderElement(renderable);
 	}
-
-	protected int width = 16, height = 16;
-	protected float x = 0, y = 0, z = 0;
 	protected float alpha = 1f;
 
-	public <T extends RenderElement> T at(float x, float y) {
-		this.x = x;
-		this.y = y;
+	public <T extends RenderElement> T at(int x, int y) {
+		this.bounds.setX(x);
+		this.bounds.setY(y);
 		//noinspection unchecked
 		return (T) this;
 	}
 
-	public <T extends RenderElement> T at(float x, float y, float z) {
-		this.x = x;
-		this.y = y;
+	public <T extends RenderElement> T at(int x, int y, int z) {
+		this.at(x, y);
 		this.z = z;
 		//noinspection unchecked
 		return (T) this;
 	}
 
-	public <T extends RenderElement> T withBounds(int width, int height) {
-		this.width = width;
-		this.height = height;
+	public <T extends RenderElement> T withSize(int width, int height) {
+		this.bounds.setWidth(width);
+		this.bounds.setHeight(height);
 		//noinspection unchecked
 		return (T) this;
 	}
@@ -50,22 +48,22 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public int getWidth() {
-		return width;
+		return this.bounds.getWidth();
 	}
 
 	public int getHeight() {
-		return height;
+		return this.bounds.getHeight();
 	}
 
-	public float getX() {
-		return x;
+	public int getX() {
+		return this.bounds.getX();
 	}
 
-	public float getY() {
-		return y;
+	public int getY() {
+		return this.bounds.getY();
 	}
 
-	public float getZ() {
+	public int getZ() {
 		return z;
 	}
 
@@ -79,23 +77,5 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		render(guiGraphics);
-	}
-
-	public static class SimpleRenderElement extends RenderElement {
-
-		private final ScreenElement renderable;
-
-		public SimpleRenderElement(ScreenElement renderable) {
-			this.renderable = renderable;
-		}
-
-		@Override
-		public void render(GuiGraphics graphics) {
-			PoseStack pose = graphics.pose();
-			pose.pushPose();
-			pose.translate(0, 0, z);
-			renderable.render(graphics, (int) x, (int) y);
-			pose.popPose();
-		}
 	}
 }
