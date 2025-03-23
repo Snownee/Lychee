@@ -2,17 +2,12 @@ package snownee.lychee.compat.rv.category;
 
 import java.util.Optional;
 
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class RVCategoryHandler {
-	public @Nullable RvCategoryLayoutBuilder layoutBuilder = null;
-	public @Nullable RvCategoryWidgetBuilder widgetBuilder = null;
-
 	/**
 	 * @param stack         The stack to open
 	 * @param usageOrRecipe true for usage, false for recipes

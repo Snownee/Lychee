@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
@@ -24,7 +25,7 @@ public class RvCategoryType<T extends ILycheeRecipe<LycheeContext>> {
 	public int width = WIDTH;
 	public int height = HEIGHT;
 	public Rect2i infoRect = InfoElementHelper.getInfoRect(InfoElementHelper.INFO_RECT.getX(), InfoElementHelper.INFO_RECT.getY());
-	public IconProvider<T> iconProvider;
+	public @Nullable IconProvider<T> iconProvider;
 	public @NotNull WorkstationProvider<T> workstationProvider = category -> List.of();
 
 	public RvCategoryType(LycheeRecipeType<T> recipeType) {

@@ -11,7 +11,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.rv.RVs;
-import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -52,7 +51,7 @@ public interface RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return type().workstationProvider.get(this);
 	}
 
-	void configureLayout(RecipeHolder<R> recipeHolder, Vector2i position);
+	void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2i position);
 
-	void configureDecorations(RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2i position);
+	void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2i position);
 }

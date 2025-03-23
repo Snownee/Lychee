@@ -29,5 +29,4 @@ public class IngredientInfo {
 		}
 		tooltips.add(line);
 	}
-
 }
