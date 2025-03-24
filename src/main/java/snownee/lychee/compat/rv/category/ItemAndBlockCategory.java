@@ -8,7 +8,6 @@ import org.joml.Vector2ic;
 import com.google.common.base.Suppliers;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
@@ -18,14 +17,13 @@ import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.rv.RVs;
-import snownee.lychee.compat.rv.element.InfoElementHelper;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 
 public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends AbstractRvCategory<R> {
-	public static final Rect2i INFO_RECT = InfoElementHelper.getInfoRect(8, 32);
+	public static final Vector2ic INFO_POSITION = new Vector2i(8, 32);
 
 	protected static final Vector2ic INPUT_BLOCK_POSITION = new Vector2i(30, 35);
 	protected static final Vector2ic METHOD_POSITION = new Vector2i(30, 12);
@@ -79,6 +77,10 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 	@Override
 	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2i position) {
 		var recipe = recipeHolder.value();
+
+		if (needInfoIcon(recipe)) {
+			builder.addElement(getInfoIcon(recipeHolder).offset(position));
+		}
 
 		if (shouldRenderInputBlock(recipe)) {
 			builder.addElement(getInputBlockElement(recipe).offset(position));

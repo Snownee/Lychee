@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.joml.Vector2i;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
@@ -23,10 +25,9 @@ import snownee.lychee.compat.rv.category.ItemAndBlockCategory;
 import snownee.lychee.compat.rv.category.ItemShapelessRecipeCategory;
 import snownee.lychee.compat.rv.category.RvCategory;
 import snownee.lychee.compat.rv.category.RvCategoryType;
-import snownee.lychee.compat.rv.element.InfoElementHelper;
 import snownee.lychee.compat.rv.element.SideBlockIcon;
 import snownee.lychee.util.CommonProxy;
-import snownee.lychee.util.RectExtensions;
+import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -56,7 +57,7 @@ public class RvPlugin {
 				});
 		register(
 				RecipeTypes.BLOCK_EXPLODING, it -> {
-					it.infoRect = ItemShapelessRecipeCategory.INFO_RECT;
+					it.infoPosition = ItemShapelessRecipeCategory.INFO_POSITION;
 					it.iconProvider = category -> {
 						var mainIcon = GuiGameElement.of(Items.TNT.getDefaultInstance());
 						return new SideBlockIcon(mainIcon, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
@@ -69,7 +70,7 @@ public class RvPlugin {
 				});
 		register(
 				RecipeTypes.BLOCK_INTERACTING, type -> {
-					type.infoRect = RectExtensions.offsetRect(ItemAndBlockCategory.INFO_RECT, 10, 0);
+					type.infoPosition = VectorExtensions.offset(ItemAndBlockCategory.INFO_POSITION, 10, 0);
 					type.width = RvCategoryType.WIDER_WIDTH;
 					type.iconProvider = category -> {
 						var mainIcon = category.recipes().stream()
@@ -83,7 +84,7 @@ public class RvPlugin {
 		register(
 				RecipeTypes.DRIPSTONE_DRIPPING,
 				it -> {
-					it.infoRect = RectExtensions.offsetRect(it.infoRect, -10, 0);
+					it.infoPosition = VectorExtensions.offset(it.infoPosition, -10, 0);
 					it.iconProvider = category -> GuiGameElement.of(Items.POINTED_DRIPSTONE);
 					it.setSimpleWorkstationProvider(category -> List.of(Items.POINTED_DRIPSTONE.getDefaultInstance()));
 				});
@@ -91,14 +92,14 @@ public class RvPlugin {
 				RecipeTypes.LIGHTNING_CHANNELING,
 				it -> {
 					it.width = RvCategoryType.WIDER_WIDTH;
-					it.infoRect = ItemShapelessRecipeCategory.INFO_RECT;
+					it.infoPosition = ItemShapelessRecipeCategory.INFO_POSITION;
 					it.iconProvider = category -> GuiGameElement.of(Items.LIGHTNING_ROD);
 					it.setSimpleWorkstationProvider(category -> List.of(Items.LIGHTNING_ROD.getDefaultInstance()));
 				});
 		register(
 				RecipeTypes.ITEM_EXPLODING, it -> {
 					it.width = RvCategoryType.WIDER_WIDTH;
-					it.infoRect = ItemShapelessRecipeCategory.INFO_RECT;
+					it.infoPosition = ItemShapelessRecipeCategory.INFO_POSITION;
 					it.iconProvider = category -> GuiGameElement.of(Items.TNT);
 					it.setSimpleWorkstationProvider(category -> CommonProxy.tagElements(
 									BuiltInRegistries.ITEM,
@@ -115,7 +116,7 @@ public class RvPlugin {
 		register(
 				RecipeTypes.ITEM_INSIDE, it -> {
 					it.width = RvCategoryType.WIDER_WIDTH;
-					it.infoRect = InfoElementHelper.getInfoRect(4, 25);
+					it.infoPosition = new Vector2i(4, 25);
 					it.iconProvider = category ->
 							new SideBlockIcon(AllGuiTextures.DOWN_ARROW, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
 				});
@@ -148,7 +149,7 @@ public class RvPlugin {
 	}
 
 	private <T extends ILycheeRecipe<LycheeContext>> void register(LycheeRecipeType<T> recipeType, Consumer<RvCategoryType<T>> configurer) {
-		var type = new RvCategoryType<T>(recipeType);
+		var type = new RvCategoryType<T>(recipeType.categoryId);
 		configurer.accept(type);
 		Preconditions.checkArgument(
 				categoryTypes.put(recipeType.categoryId, type) == null,

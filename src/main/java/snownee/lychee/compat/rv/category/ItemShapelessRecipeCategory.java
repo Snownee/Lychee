@@ -1,16 +1,15 @@
 package snownee.lychee.compat.rv.category;
 
 import org.joml.Vector2i;
+import org.joml.Vector2ic;
 
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.rv.element.InfoElementHelper;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 
 public class ItemShapelessRecipeCategory<R extends BlockKeyableRecipe> extends AbstractRvCategory<R> {
-	public static final Rect2i INFO_RECT = InfoElementHelper.getInfoRect(3, 25);
+	public static final Vector2ic INFO_POSITION = new Vector2i(3, 25);
 
 	protected ItemShapelessRecipeCategory(
 			RvCategoryType<R> type,
@@ -34,6 +33,12 @@ public class ItemShapelessRecipeCategory<R extends BlockKeyableRecipe> extends A
 	@Override
 	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2i position) {
 		var centerX = position.x() + width() / 2;
+		var recipe = recipeHolder.value();
+
+		if (needInfoIcon(recipe)) {
+			builder.addElement(getInfoIcon(recipeHolder).offset(position));
+		}
+
 		builder.addElement(RenderElement.create((graphics, x, y) -> {
 			var stack = graphics.pose();
 			stack.pushPose();

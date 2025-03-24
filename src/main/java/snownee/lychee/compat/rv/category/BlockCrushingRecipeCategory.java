@@ -44,6 +44,10 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 		var xOffset = (recipe.getIngredients().isEmpty() ? 41 : 77) + position.x;
 		var yOffset = (landingBlockIsAny ? 45 : 33) + position.y;
 
+		if (needInfoIcon(recipe)) {
+			builder.addElement(getInfoIcon(recipeHolder).offset(position));
+		}
+
 		builder.addElement(RenderElement.create((graphics, x, y) -> {
 			var ticks = (System.currentTimeMillis() % 2000) / 1000F;
 			ticks = Math.min(1, ticks);

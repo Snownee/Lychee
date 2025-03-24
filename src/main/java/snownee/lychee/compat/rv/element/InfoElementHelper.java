@@ -1,15 +1,10 @@
 package snownee.lychee.compat.rv.element;
 
-import net.minecraft.client.renderer.Rect2i;
-import snownee.lychee.util.RectExtensions;
+import org.joml.Vector2i;
+import org.joml.Vector2ic;
 
 public interface InfoElementHelper {
-    int INFO_SIZE = 8;
+	int INFO_SIZE = 8;
 
-    Rect2i INFO_RECT = getInfoRect(4, 25);
-
-    static Rect2i getInfoRect(int x, int y) {
-        return RectExtensions.square(x, y, INFO_SIZE);
-    }
-
+	Vector2ic INFO_POSITION = new Vector2i(4, 25);
 }

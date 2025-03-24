@@ -3,8 +3,8 @@ package snownee.lychee.compat.rv.category;
 import java.util.List;
 
 import org.joml.Vector2i;
+import org.joml.Vector2ic;
 
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -35,8 +35,8 @@ public interface RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return type().height;
 	}
 
-	default Rect2i infoRect() {
-		return type().infoRect;
+	default Vector2ic infoPosition() {
+		return type().infoPosition;
 	}
 
 	default Component title() {
