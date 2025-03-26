@@ -54,14 +54,14 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 		this(type, id, rvHandler, INPUT_BLOCK_POSITION, METHOD_POSITION, INGREDIENT_POSITION);
 	}
 
-	protected static <R extends BlockKeyableRecipe> BlockState getRenderingBlock(R recipe) {
+	protected <R extends BlockKeyableRecipe> BlockState getRenderingBlock(R recipe) {
 		return CommonProxy.getCycledItem(
 				BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
 				Blocks.AIR.defaultBlockState(),
 				1000);
 	}
 
-	protected boolean shouldRenderInputBlock(R recipe) {
+	protected boolean shouldRenderInputBlockTooltip(R recipe) {
 		return !BlockPredicateExtensions.isAny(recipe.blockPredicate());
 	}
 
@@ -82,9 +82,7 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 			builder.addElement(getInfoIcon(recipeHolder).offset(position));
 		}
 
-		if (shouldRenderInputBlock(recipe)) {
-			builder.addElement(getInputBlockElement(recipe).offset(position));
-		}
+		builder.addElement(getInputBlockElement(recipe).offset(position));
 
 		var methodElement = geMethodElement();
 		if (methodElement != RenderElement.EMPTY) {
@@ -127,7 +125,7 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 				.at(inputBlockPosition)
 				.withSize(INPUT_BLOCK_SIZE);
 
-		return new InteractiveRenderElement((element) -> {
+		var result = new InteractiveRenderElement((element) -> {
 			var state = getRenderingBlock(recipe);
 			if (state.isAir()) {
 				return questionMarkElement.get();
@@ -139,8 +137,13 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 				}
 				blockElement.apply(state).render(graphics);
 			};
-		}).onTooltip(() -> BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), recipe.blockPredicate()))
-				.onClick(button ->
+		});
+
+		if (shouldRenderInputBlockTooltip(recipe)) {
+			result.onTooltip(() -> BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), recipe.blockPredicate()));
+		}
+
+		return result.onClick(button ->
 						rvHandler().buttonToUsageOrRecipe(button)
 								.ifPresent(usageOrRecipe -> rvHandler().openPage(getRenderingBlock(recipe), usageOrRecipe)))
 				.at(inputBlockPosition)

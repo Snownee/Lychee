@@ -10,4 +10,8 @@ public class VectorExtensions {
 	public static Vector2ic offset(Vector2ic vector, Vector2ic other) {
 		return new Vector2i(vector.x() + other.x(), vector.y() + other.y());
 	}
+
+	public static Vector2ic withX(Vector2ic vector, int x) {
+		return new Vector2i(x, vector.y());
+	}
 }
