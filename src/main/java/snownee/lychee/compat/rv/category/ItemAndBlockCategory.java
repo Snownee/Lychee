@@ -19,10 +19,12 @@ import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.rv.RVs;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.VectorExtensions;
+import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends AbstractRvCategory<R> {
+public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
 	public static final Vector2ic INFO_POSITION = new Vector2i(8, 32);
 
 	protected static final Vector2ic INPUT_BLOCK_POSITION = new Vector2i(30, 35);
@@ -54,15 +56,15 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 		this(type, id, rvHandler, INPUT_BLOCK_POSITION, METHOD_POSITION, INGREDIENT_POSITION);
 	}
 
-	protected <R extends BlockKeyableRecipe> BlockState getRenderingBlock(R recipe) {
+	protected BlockState getRenderingBlock(R recipe) {
 		return CommonProxy.getCycledItem(
-				BlockPredicateExtensions.getShowcaseBlockStates(recipe.blockPredicate()),
+				BlockPredicateExtensions.getShowcaseBlockStates(((BlockKeyableRecipe) recipe).blockPredicate()),
 				Blocks.AIR.defaultBlockState(),
 				1000);
 	}
 
 	protected boolean shouldRenderInputBlockTooltip(R recipe) {
-		return !BlockPredicateExtensions.isAny(recipe.blockPredicate());
+		return !BlockPredicateExtensions.isAny(((BlockKeyableRecipe) recipe).blockPredicate());
 	}
 
 	@Override
@@ -140,7 +142,9 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 		});
 
 		if (shouldRenderInputBlockTooltip(recipe)) {
-			result.onTooltip(() -> BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), recipe.blockPredicate()));
+			result.onTooltip(() -> BlockPredicateExtensions.getTooltips(
+					getRenderingBlock(recipe),
+					((BlockKeyableRecipe) recipe).blockPredicate()));
 		}
 
 		return result.onClick(button ->

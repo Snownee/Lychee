@@ -3,13 +3,12 @@ package snownee.lychee.compat.rv.category;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.lychee.recipes.BlockInteractingRecipe;
+import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.util.VectorExtensions;
-import snownee.lychee.util.recipe.BlockKeyableRecipe;
 
-public class ItemBuriningRecipeCategory extends ItemAndBlockCategory<BlockInteractingRecipe> {
+public class ItemBuriningRecipeCategory extends ItemAndBlockCategory<ItemBurningRecipe> {
 	public ItemBuriningRecipeCategory(
-			RvCategoryType<BlockInteractingRecipe> type,
+			RvCategoryType<ItemBurningRecipe> type,
 			ResourceLocation id,
 			RVCategoryHandler rvHandler
 	) {
@@ -17,12 +16,12 @@ public class ItemBuriningRecipeCategory extends ItemAndBlockCategory<BlockIntera
 	}
 
 	@Override
-	protected <R extends BlockKeyableRecipe> BlockState getRenderingBlock(R recipe) {
+	protected BlockState getRenderingBlock(ItemBurningRecipe recipe) {
 		return Blocks.FIRE.defaultBlockState();
 	}
 
 	@Override
-	protected boolean shouldRenderInputBlockTooltip(BlockInteractingRecipe recipe) {
+	protected boolean shouldRenderInputBlockTooltip(ItemBurningRecipe recipe) {
 		return false;
 	}
 }
