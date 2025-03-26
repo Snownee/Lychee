@@ -106,11 +106,19 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 
 	protected RenderElement getInputBlockElement(R recipe) {
 		var questionMarkElement = Suppliers.<RenderElement>memoize(() ->
-				RenderElement.create(AllGuiTextures.QUESTION_MARK)
-						.at(inputBlockPosition.x() + 4, inputBlockPosition.y() + 2));
-		var shadowElement = Suppliers.<RenderElement>memoize(() ->
-				RenderElement.create(AllGuiTextures.SHADOW)
-						.at(inputBlockPosition.x() + 11 - 26, inputBlockPosition.y() + 16 - 5));
+				RenderElement.create(AllGuiTextures.QUESTION_MARK).at(4, 2).offset(inputBlockPosition));
+
+		var shadowElement = Suppliers.<RenderElement>memoize(() -> {
+			var shadow = RenderElement.create(AllGuiTextures.SHADOW).offset(inputBlockPosition).at(11 - 26, 16 - 5);
+			return RenderElement.create((graphics, x, y) -> {
+				var matrixStack = graphics.pose();
+				matrixStack.pushPose();
+				matrixStack.scale(0.7F, 0.7F, 1F);
+				shadow.render(graphics);
+				matrixStack.popPose();
+			}).at(shadow.x(), shadow.y());
+		});
+
 		Function<BlockState, RenderElement> blockElement = (BlockState state) -> GuiGameElement.of(state)
 				.rotateBlock(12.5, 202.5, 0)
 				.scale(15)
@@ -118,6 +126,7 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 				.atLocal(0, 0.2, 0)
 				.at(inputBlockPosition)
 				.withSize(INPUT_BLOCK_SIZE);
+
 		return new InteractiveRenderElement((element) -> {
 			var state = getRenderingBlock(recipe);
 			if (state.isAir()) {
@@ -126,11 +135,7 @@ public class ItemAndBlockCategory<R extends BlockKeyableRecipe> extends Abstract
 
 			return (GuiGraphics graphics, int x, int y) -> {
 				if (state.getLightEmission() < 5) {
-					var matrixStack = graphics.pose();
-					matrixStack.pushPose();
-					matrixStack.scale(.7F, .7F, .7F);
 					shadowElement.get().render(graphics);
-					matrixStack.popPose();
 				}
 				blockElement.apply(state).render(graphics);
 			};

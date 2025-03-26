@@ -33,4 +33,7 @@ public enum AllGuiTextures implements ScreenElement {
 		renderer.render(graphics, x, y);
 	}
 
+	public void render(GuiGraphics graphics) {
+		renderer.render(graphics);
+	}
 }
