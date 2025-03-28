@@ -1,5 +1,6 @@
 package snownee.lychee.mixin.jei;
 
+import org.joml.Vector2i;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -10,19 +11,19 @@ import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
 import mezz.jei.library.plugins.vanilla.anvil.AnvilRecipeCategory;
-import net.minecraft.client.renderer.Rect2i;
-import snownee.lychee.compat.recipeviewer.jei.category.LycheeCategory;
+import snownee.lychee.compat.recipeviewer.category.AbstractRvCategory;
 import snownee.lychee.compat.recipeviewer.jei.display.AnvilCraftingDisplay;
+import snownee.lychee.compat.recipeviewer.jei.elements.RenderElementAdapter;
 
 @Mixin(value = AnvilRecipeCategory.class, remap = false)
 public class AnvilRecipeCategoryMixin {
 	@Unique
-	private Rect2i infoRect = new Rect2i(83, 18, 8, 8);
+	private final Vector2i lychee$infoPosition = new Vector2i(83, 1);
 
-	@Inject(method = "createRecipeExtras", at = @At("TAIL"))
+	@Inject(method = "createRecipeExtras*", at = @At("TAIL"))
 	private void onRecipeExtras(IRecipeExtrasBuilder builder, IJeiAnvilRecipe recipe, IFocusGroup focuses, CallbackInfo ci) {
-		if (recipe instanceof AnvilCraftingDisplay display) {
-			LycheeCategory.createInfoBadgeIfNeeded(builder, display.recipeHolder(), infoRect);
+		if (recipe instanceof AnvilCraftingDisplay display && AbstractRvCategory.needInfoIcon(display.recipeHolder().value())) {
+			builder.addWidget(new RenderElementAdapter(AbstractRvCategory.getInfoIcon(display.recipeHolder(), lychee$infoPosition)));
 		}
 	}
 }

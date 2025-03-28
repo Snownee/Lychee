@@ -26,7 +26,7 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 	}
 
 	@Override
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2i position) {
+	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2ic position) {
 		var recipe = recipeHolder.value();
 		var centerX = position.x() + width() / 2;
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
@@ -36,7 +36,7 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2i position) {
+	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2ic position) {
 		var recipe = recipeHolder.value();
 
 		var landingBlockIsAny = BlockPredicateExtensions.isAny(recipe.landingBlock());

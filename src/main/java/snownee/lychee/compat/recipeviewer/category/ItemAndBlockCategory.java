@@ -68,7 +68,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	}
 
 	@Override
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2i position) {
+	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2ic position) {
 		var recipe = recipeHolder.value();
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
 		var y = needSecondLine ? 26 : 28;
@@ -77,7 +77,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2i position) {
+	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2ic position) {
 		var recipe = recipeHolder.value();
 
 		if (needInfoIcon(recipe)) {

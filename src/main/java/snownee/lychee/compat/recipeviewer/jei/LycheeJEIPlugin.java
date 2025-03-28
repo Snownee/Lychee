@@ -25,13 +25,14 @@ import snownee.kiwi.util.KUtil;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RvCategory;
 import snownee.lychee.compat.recipeviewer.RvPlugin;
 import snownee.lychee.compat.recipeviewer.SlotType;
 import snownee.lychee.compat.recipeviewer.jei.category.CategoryProviders;
 import snownee.lychee.compat.recipeviewer.jei.category.CraftingRecipeCategoryExtension;
 import snownee.lychee.compat.recipeviewer.jei.display.AnvilCraftingDisplay;
-import snownee.lychee.compat.recipeviewer.jei.elements.ScreenElementWidget;
+import snownee.lychee.compat.recipeviewer.jei.elements.RenderElementAdapter;
 import snownee.lychee.compat.recipeviewer.jei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.compat.recipeviewer.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
@@ -45,7 +46,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 	public static final IIngredientType<PostAction> POST_ACTION = () -> PostAction.class;
 	private static final Map<SlotType, IDrawable> slotElements = Maps.toMap(
 			List.of(SlotType.values()),
-			$ -> new ScreenElementWidget($.sprite));
+			it -> new RenderElementAdapter(RenderElement.create(it.sprite)));
 	public static IJeiRuntime runtime;
 	public static IJeiHelpers helpers;
 	private final RvPlugin rvPlugin = new RvPlugin();

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import org.joml.Vector2ic;
+
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 
@@ -38,12 +40,12 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 		this.rvHandler = rvHandler;
 	}
 
-	protected static boolean needRemoveInputIcon(ILycheeRecipe<? extends LycheeContext> recipe) {
+	public static boolean needRemoveInputIcon(ILycheeRecipe<? extends LycheeContext> recipe) {
 		return recipe.postActions().stream()
 				.noneMatch(it -> it instanceof PlaceBlock placeBlock && placeBlock.hidden());
 	}
 
-	protected static RenderElement getRemoveInputIcon() {
+	public static RenderElement getRemoveInputIcon() {
 		return new InteractiveRenderElement(element ->
 				new SpriteElementRenderer(
 						Lychee.id("exclamation_mark"),
@@ -53,17 +55,21 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 		).withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE);
 	}
 
-	protected static boolean needInfoIcon(ILycheeRecipe<?> recipe) {
+	public static boolean needInfoIcon(ILycheeRecipe<?> recipe) {
 		return recipe.conditions().conditions().isEmpty() && !recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false);
 	}
 
-	protected RenderElement getInfoIcon(RecipeHolder<R> recipeHolder) {
+	public static <R extends ILycheeRecipe<LycheeContext>> RenderElement getInfoIcon(RecipeHolder<R> recipeHolder, Vector2ic infoPosition) {
 		var recipe = recipeHolder.value();
 		return new InteractiveRenderElement(AllGuiTextures.INFO)
 				.onTooltip(() -> RVs.getRecipeTooltip(recipe))
 				.onClick((button) -> ClientProxy.postInfoBadgeClickEvent(recipe, recipeHolder.id(), button))
 				.withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE)
-				.at(infoPosition());
+				.at(infoPosition);
+	}
+
+	public RenderElement getInfoIcon(RecipeHolder<R> recipeHolder) {
+		return getInfoIcon(recipeHolder, infoPosition());
 	}
 
 	@Override

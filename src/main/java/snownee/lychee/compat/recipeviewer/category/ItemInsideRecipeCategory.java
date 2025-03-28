@@ -1,6 +1,6 @@
 package snownee.lychee.compat.recipeviewer.category;
 
-import org.joml.Vector2i;
+import org.joml.Vector2ic;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -28,7 +28,7 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 	public void configureDecorations(
 			RvCategoryWidgetBuilder builder,
 			RecipeHolder<ItemInsideRecipe> recipeHolder,
-			Vector2i position
+			Vector2ic position
 	) {
 		super.configureDecorations(builder, recipeHolder, position);
 		var recipe = recipeHolder.value();

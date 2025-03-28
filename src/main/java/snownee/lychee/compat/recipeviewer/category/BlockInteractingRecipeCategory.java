@@ -34,7 +34,7 @@ public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockIn
 	public void configureDecorations(
 			RvCategoryWidgetBuilder builder,
 			RecipeHolder<BlockInteractingRecipe> recipeHolder,
-			Vector2i position
+			Vector2ic position
 	) {
 		super.configureDecorations(builder, recipeHolder, position);
 		builder.addElement(getMouseIcon(recipeHolder.value()));

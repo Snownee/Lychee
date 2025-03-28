@@ -5,41 +5,39 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
-import com.mojang.blaze3d.platform.InputConstants;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2ic;
 
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient;
+import com.google.common.collect.Maps;
+
 import mezz.jei.api.gui.builder.IIngredientAcceptor;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
+import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
-import mezz.jei.api.helpers.IPlatformFluidHelper;
+import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
+import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
-import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LiquidBlock;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import snownee.lychee.Lychee;
 import snownee.lychee.action.DropItem;
-import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
-import snownee.lychee.client.gui.AllGuiTextures;
+import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RVs;
-import snownee.lychee.compat.recipeviewer.RvCategoryProvider;
 import snownee.lychee.compat.recipeviewer.SlotType;
+import snownee.lychee.compat.recipeviewer.category.RvCategory;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryLayoutBuilder;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryWidgetBuilder;
 import snownee.lychee.compat.recipeviewer.jei.LycheeJEIPlugin;
-import snownee.lychee.compat.recipeviewer.jei.elements.InteractiveWidget;
-import snownee.lychee.ui.SpriteElementRenderer;
-import snownee.lychee.util.ClientProxy;
+import snownee.lychee.compat.recipeviewer.jei.elements.RenderElementAdapter;
+import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionRenderer;
@@ -47,13 +45,24 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends RvCategoryProvider<R> {
-	static void addBlockIngredients(IRecipeLayoutBuilder builder, ILycheeRecipe<LycheeContext> recipe) {
+public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements IRecipeCategory<RecipeHolder<R>> {
+	private final RvCategory<R> rvCategory;
+	private final RecipeType<RecipeHolder<R>> type;
+	private final IDrawable icon;
+
+
+	public RVCategoryAdapter(RvCategory<R> rvCategory) {
+		this.rvCategory = rvCategory;
+		this.type = RecipeType.createRecipeHolderType(rvCategory.id());
+		this.icon = new RenderElementAdapter(rvCategory.icon());
+	}
+
+	private static void addBlockIngredients(IRecipeLayoutBuilder builder, ILycheeRecipe<LycheeContext> recipe) {
 		addBlockIngredients(builder, recipe.getBlockInputs(), RecipeIngredientRole.INPUT);
 		addBlockIngredients(builder, recipe.getBlockOutputs(), RecipeIngredientRole.OUTPUT);
 	}
 
-	static void addBlockIngredients(IRecipeLayoutBuilder builder, Iterable<BlockPredicate> blocks, RecipeIngredientRole role) {
+	private static void addBlockIngredients(IRecipeLayoutBuilder builder, Iterable<BlockPredicate> blocks, RecipeIngredientRole role) {
 		for (BlockPredicate block : blocks) {
 			List<ItemStack> items = BlockPredicateExtensions.matchedItemStacks(block);
 			Set<Fluid> fluids = BlockPredicateExtensions.matchedFluids(block);
@@ -67,12 +76,10 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		}
 	}
 
-
-	static <T> void slotGroup(
+	private static <T> void slotGroup(
 			IRecipeLayoutBuilder builder,
 			int x,
 			int y,
-			int offset,
 			List<T> items,
 			SlotLayoutFunction<T> layoutFunction
 	) {
@@ -95,7 +102,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		}
 	}
 
-	static void actionSlot(IRecipeLayoutBuilder builder, PostAction action, int x, int y) {
+	private static void actionSlot(IRecipeLayoutBuilder builder, PostAction action, int x, int y) {
 		var slotBuilder = builder.addSlot(RecipeIngredientRole.OUTPUT, x + 1, y + 1);
 		var itemMap = Maps.<ItemStack, PostAction>newIdentityHashMap();
 		buildActionSlot(builder, slotBuilder, action, itemMap);
@@ -123,7 +130,7 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		slotBuilder.setBackground(LycheeJEIPlugin.slot(slotType), -1, -1);
 	}
 
-	static void buildActionSlot(
+	private static void buildActionSlot(
 			IRecipeLayoutBuilder builder,
 			IRecipeSlotBuilder slotBuilder,
 			PostAction action,
@@ -151,70 +158,34 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 		}
 	}
 
-	static void createInfoBadgeIfNeeded(IRecipeExtrasBuilder builder, RecipeHolder<? extends ILycheeRecipe<?>> recipeHolder, Rect2i rect) {
-		ILycheeRecipe<?> recipe = recipeHolder.value();
-		if (recipe.conditions().conditions().isEmpty() && !recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false)) {
-			return;
-		}
-		ScreenRectangle bounds = new ScreenRectangle(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
-		InteractiveWidget widget = new InteractiveWidget(bounds);
-		widget.setOnClick((w, button) -> ClientProxy.postInfoBadgeClickEvent(recipeHolder.value(), recipeHolder.id(), button));
-		widget.setTooltipFunction($ -> RVs.getRecipeTooltip(recipeHolder.value()));
-		widget.setRenderable((graphics, mouseX, mouseY, delta) -> {
-			var matrixStack = graphics.pose();
-			matrixStack.pushPose();
-			matrixStack.translate(bounds.left(), bounds.top(), 0);
-			matrixStack.scale(.5F, .5F, .5F);
-			AllGuiTextures.INFO.render(graphics, 0, 0);
-			matrixStack.popPose();
-		});
-		builder.addWidget(widget);
-		builder.addGuiEventListener(widget);
+	@Override
+	public RecipeType<RecipeHolder<R>> getRecipeType() {
+		return type;
 	}
 
-	static <T extends ILycheeRecipe<LycheeContext>> void addRemoveInputBlock(
-			int x,
-			int y,
-			IRecipeExtrasBuilder builder,
-			T recipe) {
-		if (recipe.postActions().stream().noneMatch(it -> it instanceof PlaceBlock placeBlock && placeBlock.hidden())) {
-			return;
-		}
-		var widget = new InteractiveWidget(new ScreenRectangle(x, y, 8, 8), true);
-		builder.addWidget(widget);
-		builder.addGuiEventListener(widget);
-		widget.setRenderable(new SpriteElementRenderer(
-				Lychee.id("exclamation_mark"),
-				new Rect2i(x, y, widget.getWidth(), widget.getHeight()),
-				100,
-				2));
-		widget.setTooltipFunction(it -> List.of(Component.translatable("postAction.lychee.place.consume")));
+	@Override
+	public @NotNull Component getTitle() {
+		return rvCategory.title();
 	}
 
-	Rect2i infoRect();
-
-	default int contentWidth() {
-		return rvCategory().type.width;
+	@Override
+	public @Nullable IDrawable getIcon() {
+		return icon;
 	}
 
-	default void createInfoBadgeIfNeeded(IRecipeExtrasBuilder builder, RecipeHolder<? extends ILycheeRecipe<?>> recipeHolder) {
-		createInfoBadgeIfNeeded(builder, recipeHolder, infoRect());
-	}
-
-	default void actionGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
+	private void actionGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
 		slotGroup(
 				builder,
 				x,
 				y,
-				10000,
 				recipe.postActions().stream().filter(it -> !it.hidden()).toList(),
-				LycheeCategory::actionSlot);
+				RVCategoryAdapter::actionSlot);
 	}
 
-	default void ingredientGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
+	private void ingredientGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
 		var ingredients = RVs.generateShapelessInputs(recipe);
 		slotGroup(
-				builder, x + 1, y + 1, 0, ingredients, (layout0, ingredient, x0, y0) -> {
+				builder, x + 1, y + 1, ingredients, (layout0, ingredient, x0, y0) -> {
 					var items = ingredient.ingredient.getItems();
 					var slotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, x0, y0);
 					slotBuilder.addItemStacks(Arrays.stream(items)
@@ -228,29 +199,37 @@ public interface LycheeCategory<R extends ILycheeRecipe<LycheeContext>> extends 
 				});
 	}
 
+	@Override
+	public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<R> recipeHolder, IFocusGroup focuses) {
+		var layoutBuilder = new RvCategoryLayoutBuilder() {
+			@Override
+			public void actionGroup(ILycheeRecipe<?> recipe, Vector2ic position) {
+				RVCategoryAdapter.this.actionGroup(builder, recipeHolder.value(), position.x(), position.y());
+			}
 
-	static boolean clickBlock(BlockState state, InputConstants.Key input) {
-		if (input.getType() != InputConstants.Type.MOUSE) {
-			return false;
-		}
-		if (state.is(Blocks.CHIPPED_ANVIL) || state.is(Blocks.DAMAGED_ANVIL)) {
-			state = Blocks.ANVIL.defaultBlockState();
-		}
-		var recipesGui = LycheeJEIPlugin.runtime.getRecipesGui();
-		var focusFactory = LycheeJEIPlugin.helpers.getFocusFactory();
-		var role = input.getValue() == 1 ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
-		var stack = state.getBlock().asItem().getDefaultInstance();
-		if (!stack.isEmpty()) {
-			recipesGui.show(focusFactory.createFocus(role, VanillaTypes.ITEM_STACK, stack));
-			return true;
-		} else if (state.getBlock() instanceof LiquidBlock) {
-			var fluidHelper = (IPlatformFluidHelper<IJeiFluidIngredient>) LycheeJEIPlugin.helpers.getPlatformFluidHelper();
-			recipesGui.show(focusFactory.createFocus(
-					role,
-					fluidHelper.getFluidIngredientType(),
-					fluidHelper.create(state.getFluidState().holder(), fluidHelper.bucketVolume())));
-		}
-		return false;
+			@Override
+			public void ingredientGroup(ILycheeRecipe<?> recipe, Vector2ic position) {
+				RVCategoryAdapter.this.ingredientGroup(builder, recipeHolder.value(), position.x(), position.y());
+			}
+		};
+		rvCategory.configureLayout(layoutBuilder, recipeHolder, VectorExtensions.ZERO);
+		addBlockIngredients(builder, recipeHolder.value());
+	}
+
+	@Override
+	public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<R> recipe, IFocusGroup focuses) {
+		IRecipeCategory.super.createRecipeExtras(builder, recipe, focuses);
+		var widgetBuilder = new RvCategoryWidgetBuilder() {
+			@Override
+			public void addElement(RenderElement element) {
+				var adapter = new RenderElementAdapter(element);
+				builder.addWidget(adapter);
+				if (element instanceof GuiEventListener) {
+					builder.addGuiEventListener(adapter);
+				}
+			}
+		};
+		rvCategory.configureDecorations(widgetBuilder, recipe, VectorExtensions.ZERO);
 	}
 
 	@FunctionalInterface

@@ -2,7 +2,7 @@ package snownee.lychee.compat.recipeviewer.category;
 
 import java.util.List;
 
-import org.joml.Vector2i;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2ic;
 
 import net.minecraft.network.chat.Component;
@@ -39,7 +39,7 @@ public interface RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return type().infoPosition;
 	}
 
-	default Component title() {
+	default @NotNull Component title() {
 		return RVs.makeTitle(id());
 	}
 
@@ -51,7 +51,7 @@ public interface RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return type().workstationProvider.get(this);
 	}
 
-	void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2i position);
+	void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2ic position);
 
-	void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2i position);
+	void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2ic position);
 }

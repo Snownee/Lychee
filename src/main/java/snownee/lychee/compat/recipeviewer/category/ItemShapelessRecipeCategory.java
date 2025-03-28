@@ -20,7 +20,7 @@ public class ItemShapelessRecipeCategory<R extends BlockKeyableRecipe> extends A
 	}
 
 	@Override
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2i position) {
+	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2ic position) {
 		var recipe = recipeHolder.value();
 		var centerX = position.x() + width() / 2;
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
@@ -30,7 +30,7 @@ public class ItemShapelessRecipeCategory<R extends BlockKeyableRecipe> extends A
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2i position) {
+	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2ic position) {
 		var centerX = position.x() + width() / 2;
 		var recipe = recipeHolder.value();
 

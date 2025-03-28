@@ -5,7 +5,10 @@ import java.util.Optional;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 
 public abstract class RVCategoryHandler {
 	/**
@@ -23,7 +26,17 @@ public abstract class RVCategoryHandler {
 		if (state.is(Blocks.CHIPPED_ANVIL) || state.is(Blocks.DAMAGED_ANVIL)) {
 			state = Blocks.ANVIL.defaultBlockState();
 		}
-		return openPage(state.getBlock(), usageOrRecipe);
+		if (state.getBlock() instanceof LiquidBlock) {
+			return openPage(state.getFluidState(), usageOrRecipe);
+		} else {
+			return openPage(state.getBlock(), usageOrRecipe);
+		}
+	}
+
+	public abstract boolean openPage(Fluid fluid, boolean usageOrRecipe);
+
+	public boolean openPage(FluidState state, boolean usageOrRecipe) {
+		return openPage(state.getType(), usageOrRecipe);
 	}
 
 	public Optional<Boolean> buttonToUsageOrRecipe(int button) {

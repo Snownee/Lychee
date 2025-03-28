@@ -49,7 +49,7 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	}
 
 	@Override
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2i position) {
+	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2ic position) {
 		var recipe = recipeHolder.value();
 		var centerX = position.x() + width() / 2;
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
@@ -58,7 +58,7 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2i position) {
+	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2ic position) {
 		var recipe = recipeHolder.value();
 
 		if (needInfoIcon(recipe)) {
