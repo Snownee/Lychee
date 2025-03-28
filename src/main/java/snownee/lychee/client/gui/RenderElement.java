@@ -16,7 +16,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 
 		}
 	};
-	protected Rect2i bounds = new Rect2i(0, 0, 16, 16);
+	public Rect2i bounds = new Rect2i(0, 0, 16, 16);
 	protected int z = 0;
 
 	public static RenderElement create(ScreenElement renderable) {
