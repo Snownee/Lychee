@@ -1,0 +1,160 @@
+package snownee.lychee.compat.recipeviewer.rei.category;
+
+import java.util.List;
+import java.util.function.Supplier;
+
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2i;
+
+import com.google.common.base.Suppliers;
+import com.google.common.collect.Lists;
+
+import me.shedaniel.math.Point;
+import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.gui.widgets.Widget;
+import me.shedaniel.rei.api.client.gui.widgets.Widgets;
+import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.client.gui.AllGuiTextures;
+import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.compat.recipeviewer.RVs;
+import snownee.lychee.compat.recipeviewer.RvCategory;
+import snownee.lychee.compat.recipeviewer.category.IItemAndBlockBaseCategory;
+import snownee.lychee.compat.recipeviewer.rei.LycheeREIPlugin;
+import snownee.lychee.compat.recipeviewer.rei.display.LycheeDisplay;
+import snownee.lychee.compat.recipeviewer.rei.elements.InteractiveWidget;
+import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.predicates.BlockPredicateExtensions;
+import snownee.lychee.util.recipe.BlockKeyableRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
+
+public class ItemAndBlockBaseCategory<T extends ILycheeRecipe<LycheeContext>> extends AbstractLycheeCategory<T> implements IItemAndBlockBaseCategory {
+
+	private final boolean drawDownArrow;
+	public Rect2i inputBlockRect = new Rect2i(30, 35, 20, 20);
+	public Rect2i methodRect = new Rect2i(30, 12, 20, 20);
+	protected Supplier<Vector2i> removeActionPosition =
+			Suppliers.memoize(() -> new Vector2i(
+					inputBlockRect.getX() + inputBlockRect.getWidth() - 4,
+					inputBlockRect.getY() + inputBlockRect.getHeight() - 8));
+
+	public ItemAndBlockBaseCategory(RvCategory<T> category, boolean drawDownArrow) {
+		super(category);
+		this.drawDownArrow = drawDownArrow;
+	}
+
+	public ItemAndBlockBaseCategory(RvCategory<T> category) {
+		this(category, true);
+	}
+
+	public BlockPredicate getInputBlock(T recipe) {
+		return ((BlockKeyableRecipe) recipe).blockPredicate();
+	}
+
+	public BlockState getRenderingBlock(T recipe) {
+		return CommonProxy.getCycledItem(
+				BlockPredicateExtensions.getShowcaseBlockStates(getInputBlock(recipe)),
+				Blocks.AIR.defaultBlockState(),
+				1000);
+	}
+
+	public void drawExtra(T recipe, GuiGraphics graphics, double mouseX, double mouseY, int centerX) {
+		if (drawDownArrow) {
+			AllGuiTextures.DOWN_ARROW.render(graphics, methodRect.getX(), methodRect.getY());
+		}
+	}
+
+	@Nullable
+	public Component getMethodDescription(T recipe) {
+		return null;
+	}
+
+	@Override
+	public List<Widget> setupDisplay(LycheeDisplay<T> display, Rectangle bounds) {
+		var startPoint = new Point(bounds.getCenterX() - contentWidth() / 2, bounds.getY() + 4);
+		var recipe = display.recipe().value();
+		var widgets = Lists.<Widget>newArrayList(Widgets.createRecipeBase(bounds));
+		createInfoBadgeIfNeeded(widgets, display, startPoint);
+		widgets.add(Widgets.createDrawableWidget((GuiGraphics graphics, int mouseX, int mouseY, float delta) -> {
+			var matrixStack = graphics.pose();
+			matrixStack.pushPose();
+			matrixStack.translate(startPoint.x, startPoint.y, 0);
+			drawExtra(recipe, graphics, mouseX, mouseY, bounds.getCenterX());
+
+			var state = getRenderingBlock(recipe);
+			if (state.isAir()) {
+				AllGuiTextures.QUESTION_MARK.render(graphics, inputBlockRect.getX() + 4, inputBlockRect.getY() + 2);
+				matrixStack.popPose();
+				return;
+			}
+			if (state.getLightEmission() < 5) {
+				matrixStack.pushPose();
+				matrixStack.translate(inputBlockRect.getX() + 11, inputBlockRect.getY() + 16, 0);
+				matrixStack.scale(.7F, .7F, .7F);
+				AllGuiTextures.SHADOW.render(graphics, -26, -5);
+				matrixStack.popPose();
+			}
+
+			GuiGameElement.of(state)
+					.rotateBlock(12.5, -22.5, 0)
+					.scale(15)
+					.lighting(RVs.BLOCK_LIGHTING)
+					.atLocal(0, 0.2, 0)
+					.at(inputBlockRect.getX(), inputBlockRect.getY())
+					.render(graphics);
+			matrixStack.popPose();
+		}));
+
+		var y = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9 ? 26 : 28;
+
+		renderIngredientGroup(widgets, startPoint, recipe, y);
+
+		actionGroup(widgets, startPoint, recipe, contentWidth() - 34, y);
+
+		InteractiveWidget widget;
+		var description = getMethodDescription(recipe);
+		if (description != null) {
+			widget = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, methodRect));
+			widget.setTooltipFunction($ -> List.of(description));
+			widgets.add(widget);
+		}
+
+		if (needRenderInputBlock(recipe)) {
+			widget = new InteractiveWidget(LycheeREIPlugin.offsetRect(startPoint, inputBlockRect));
+			widget.setTooltipFunction($ -> BlockPredicateExtensions.getTooltips(getRenderingBlock(recipe), getInputBlock(recipe)));
+			widget.setOnClick(($, button) -> clickBlock(getRenderingBlock(recipe), button));
+			widgets.add(widget);
+		}
+
+		LycheeCategory.addRemoveInputBlock(
+				removeActionPosition.get().x + startPoint.x,
+				removeActionPosition.get().y + startPoint.y,
+				widgets,
+				recipe);
+
+		return widgets;
+	}
+
+	protected boolean needRenderInputBlock(T recipe) {
+		return !BlockPredicateExtensions.isAny(getInputBlock(recipe));
+	}
+
+	protected void renderIngredientGroup(List<Widget> widgets, Point startPoint, T recipe, int y) {
+		ingredientGroup(widgets, startPoint, recipe, 12, 21);
+	}
+
+	@Override
+	public Rect2i inputBlockRect() {
+		return inputBlockRect;
+	}
+
+	@Override
+	public Rect2i methodRect() {
+		return methodRect;
+	}
+}

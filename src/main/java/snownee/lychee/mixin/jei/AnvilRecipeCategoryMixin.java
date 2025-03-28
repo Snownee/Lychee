@@ -11,8 +11,8 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
 import mezz.jei.library.plugins.vanilla.anvil.AnvilRecipeCategory;
 import net.minecraft.client.renderer.Rect2i;
-import snownee.lychee.compat.jei.category.LycheeCategory;
-import snownee.lychee.compat.jei.display.AnvilCraftingDisplay;
+import snownee.lychee.compat.recipeviewer.jei.category.LycheeCategory;
+import snownee.lychee.compat.recipeviewer.jei.display.AnvilCraftingDisplay;
 
 @Mixin(value = AnvilRecipeCategory.class, remap = false)
 public class AnvilRecipeCategoryMixin {
