@@ -11,30 +11,21 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-@FunctionalInterface
-public interface RvCategoryProvider<R extends ILycheeRecipe<LycheeContext>> {
-	static <R extends ILycheeRecipe<LycheeContext>> RvCategoryProvider<R> get(ResourceLocation id) {
-		//noinspection unchecked
-		return (RvCategoryProvider<R>) ALL.get(id);
-	}	Map<ResourceLocation, RvCategoryProvider<?>> ALL = new Reference2ReferenceOpenHashMap<>() {{
+public final class RvCategoryProviders {
+	public static final Map<ResourceLocation, RvCategoryProvider<?>> ALL = new Reference2ReferenceOpenHashMap<>();
+
+	static {
 		register(RecipeTypes.BLOCK_CRUSHING, BlockCrushingRecipeCategory::new);
-
 		register(RecipeTypes.BLOCK_EXPLODING, ItemAndBlockCategory::new);
-
 		register(RecipeTypes.BLOCK_INTERACTING, BlockInteractingRecipeCategory::new);
-
 		register(RecipeTypes.DRIPSTONE_DRIPPING, DripstoneRecipeCategory::new);
-
 		register(RecipeTypes.LIGHTNING_CHANNELING, ItemShapelessRecipeCategory::new);
-
 		register(RecipeTypes.ITEM_EXPLODING, ItemExplodingRecipeCategory::new);
-
 		register(RecipeTypes.ITEM_INSIDE, ItemInsideRecipeCategory::new);
-
 		register(RecipeTypes.ITEM_BURNING, ItemBuriningRecipeCategory::new);
-	}};
+	}
 
-	static <R extends ILycheeRecipe<LycheeContext>> RvCategoryProvider<R> register(
+	public static <R extends ILycheeRecipe<LycheeContext>> RvCategoryProvider<R> register(
 			LycheeRecipeType<R> recipeType,
 			SimpleRvCategoryProvider<R> provider) {
 		RvCategoryProvider<R> result = (type, rvHandler) ->
@@ -43,11 +34,17 @@ public interface RvCategoryProvider<R extends ILycheeRecipe<LycheeContext>> {
 		return result;
 	}
 
-	Function<ResourceLocation, RvCategory<R>> get(RvCategoryType<R> type, RVHelper rvHandler);
-
-	interface SimpleRvCategoryProvider<R extends ILycheeRecipe<LycheeContext>> {
-		RvCategory<R> get(RvCategoryType<R> type, ResourceLocation id, RVHelper rvHandler);
+	public static <R extends ILycheeRecipe<LycheeContext>> RvCategoryProvider<R> get(ResourceLocation id) {
+		//noinspection unchecked
+		return (RvCategoryProvider<R>) ALL.get(id);
 	}
 
+	@FunctionalInterface
+	public interface RvCategoryProvider<R extends ILycheeRecipe<LycheeContext>> {
+		Function<ResourceLocation, RvCategory<R>> get(RvCategoryType<R> type, RVHelper rvHandler);
+	}
 
+	public interface SimpleRvCategoryProvider<R extends ILycheeRecipe<LycheeContext>> {
+		RvCategory<R> get(RvCategoryType<R> type, ResourceLocation id, RVHelper rvHandler);
+	}
 }
