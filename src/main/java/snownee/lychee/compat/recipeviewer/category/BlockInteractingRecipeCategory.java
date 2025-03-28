@@ -8,6 +8,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.compat.recipeviewer.RVHelper;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.util.VectorExtensions;
 
@@ -20,7 +21,7 @@ public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockIn
 	public BlockInteractingRecipeCategory(
 			RvCategoryType<BlockInteractingRecipe> type,
 			ResourceLocation id,
-			RVCategoryHandler rvHandler
+			RVHelper rvHandler
 	) {
 		super(type, id, rvHandler, INPUT_BLOCK_POSITION, METHOD_POSITION, INGREDIENT_POSITION);
 	}

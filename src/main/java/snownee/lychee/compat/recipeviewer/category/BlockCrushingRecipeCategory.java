@@ -11,6 +11,7 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.compat.recipeviewer.RVHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
@@ -21,7 +22,7 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 	private static final Vector2ic FALLING_BLOCK_SIZE = new Vector2i(20, 35);
 	private static final Vector2ic LANDING_BLOCK_SIZE = new Vector2i(20, 20);
 
-	protected BlockCrushingRecipeCategory(RvCategoryType<BlockCrushingRecipe> type, ResourceLocation id, RVCategoryHandler rvHelper) {
+	protected BlockCrushingRecipeCategory(RvCategoryType<BlockCrushingRecipe> type, ResourceLocation id, RVHelper rvHelper) {
 		super(type, id, rvHelper);
 	}
 
@@ -41,8 +42,8 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 
 		var landingBlockIsAny = BlockPredicateExtensions.isAny(recipe.landingBlock());
 
-		var xOffset = (recipe.getIngredients().isEmpty() ? 41 : 77) + position.x;
-		var yOffset = (landingBlockIsAny ? 45 : 33) + position.y;
+		var xOffset = (recipe.getIngredients().isEmpty() ? 41 : 77) + position.x();
+		var yOffset = (landingBlockIsAny ? 45 : 33) + position.y();
 
 		if (needInfoIcon(recipe)) {
 			builder.addElement(getInfoIcon(recipeHolder).offset(position));
@@ -100,16 +101,16 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 				.<InteractiveRenderElement>at(fallingBlockPosition)
 				.<InteractiveRenderElement>withSize(FALLING_BLOCK_SIZE)
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(getFallingBlock(recipe), recipe.blockPredicate()))
-				.onClick(button -> rvHandler().buttonToUsageOrRecipe(button)
-						.ifPresent(usageOrRecipe -> rvHandler().openPage(getFallingBlock(recipe), usageOrRecipe))));
+				.onClick(button -> rvHelper().buttonToUsageOrRecipe(button)
+						.ifPresent(usageOrRecipe -> rvHelper().openPage(getFallingBlock(recipe), usageOrRecipe))));
 
 		if (!landingBlockIsAny) {
 			builder.addElement(new InteractiveRenderElement()
 					.<InteractiveRenderElement>at(landingBlockPosition)
 					.<InteractiveRenderElement>withSize(LANDING_BLOCK_SIZE)
 					.onTooltip(() -> BlockPredicateExtensions.getTooltips(getLandingBlock(recipe), recipe.landingBlock()))
-					.onClick(button -> rvHandler().buttonToUsageOrRecipe(button)
-							.ifPresent(usageOrRecipe -> rvHandler().openPage(getLandingBlock(recipe), usageOrRecipe))));
+					.onClick(button -> rvHelper().buttonToUsageOrRecipe(button)
+							.ifPresent(usageOrRecipe -> rvHelper().openPage(getLandingBlock(recipe), usageOrRecipe))));
 		}
 
 		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {

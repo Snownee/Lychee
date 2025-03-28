@@ -1,4 +1,4 @@
-package snownee.lychee.compat.recipeviewer.category;
+package snownee.lychee.compat.recipeviewer;
 
 import java.util.Optional;
 
@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 
-public abstract class RVCategoryHandler {
+public abstract class RVHelper {
 	/**
 	 * @param stack         The stack to open
 	 * @param usageOrRecipe true for usage, false for recipes

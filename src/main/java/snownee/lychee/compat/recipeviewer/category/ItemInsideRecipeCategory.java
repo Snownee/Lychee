@@ -4,6 +4,7 @@ import org.joml.Vector2ic;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import snownee.lychee.compat.recipeviewer.RVHelper;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.ui.TextElementRenderer;
 import snownee.lychee.util.ClientProxy;
@@ -13,7 +14,7 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 	public ItemInsideRecipeCategory(
 			RvCategoryType<ItemInsideRecipe> type,
 			ResourceLocation id,
-			RVCategoryHandler rvHandler
+			RVHelper rvHandler
 	) {
 		super(
 				type,

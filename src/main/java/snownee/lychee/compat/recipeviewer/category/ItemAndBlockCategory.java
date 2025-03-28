@@ -16,6 +16,7 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.compat.recipeviewer.RVHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.VectorExtensions;
@@ -41,7 +42,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	protected ItemAndBlockCategory(
 			RvCategoryType<R> type,
 			ResourceLocation id,
-			RVCategoryHandler rvHandler,
+			RVHelper rvHandler,
 			Vector2ic inputBlockPosition,
 			Vector2ic methodPosition,
 			Vector2ic ingredientPosition
@@ -52,7 +53,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		this.ingredientPosition = ingredientPosition;
 	}
 
-	public ItemAndBlockCategory(RvCategoryType<R> type, ResourceLocation id, RVCategoryHandler rvHandler) {
+	public ItemAndBlockCategory(RvCategoryType<R> type, ResourceLocation id, RVHelper rvHandler) {
 		this(type, id, rvHandler, INPUT_BLOCK_POSITION, METHOD_POSITION, INGREDIENT_POSITION);
 	}
 
@@ -148,8 +149,8 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		}
 
 		return result.onClick(button ->
-						rvHandler().buttonToUsageOrRecipe(button)
-								.ifPresent(usageOrRecipe -> rvHandler().openPage(getRenderingBlock(recipe), usageOrRecipe)))
+						rvHelper().buttonToUsageOrRecipe(button)
+								.ifPresent(usageOrRecipe -> rvHelper().openPage(getRenderingBlock(recipe), usageOrRecipe)))
 				.at(inputBlockPosition)
 				.withSize(INPUT_BLOCK_SIZE);
 	}

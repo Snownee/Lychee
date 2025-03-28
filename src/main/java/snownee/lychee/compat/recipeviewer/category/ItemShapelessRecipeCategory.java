@@ -6,15 +6,17 @@ import org.joml.Vector2ic;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.util.recipe.BlockKeyableRecipe;
+import snownee.lychee.compat.recipeviewer.RVHelper;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class ItemShapelessRecipeCategory<R extends BlockKeyableRecipe> extends AbstractRvCategory<R> {
+public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
 	public static final Vector2ic INFO_POSITION = new Vector2i(3, 25);
 
 	protected ItemShapelessRecipeCategory(
 			RvCategoryType<R> type,
 			ResourceLocation id,
-			RVCategoryHandler rvHandler
+			RVHelper rvHandler
 	) {
 		super(type, id, rvHandler);
 	}
@@ -44,6 +46,6 @@ public class ItemShapelessRecipeCategory<R extends BlockKeyableRecipe> extends A
 			stack.translate(x, y, 100);
 			icon().render(graphics);
 			stack.popPose();
-		}).at(centerX - 8, position.y + 19).withSize(24, 24));
+		}).at(centerX - 8, position.y() + 19).withSize(24, 24));
 	}
 }

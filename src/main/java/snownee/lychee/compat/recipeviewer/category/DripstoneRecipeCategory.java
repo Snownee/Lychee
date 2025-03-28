@@ -15,6 +15,7 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.compat.recipeviewer.RVHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.util.CommonProxy;
@@ -29,7 +30,7 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	protected DripstoneRecipeCategory(
 			RvCategoryType<DripstoneRecipe> type,
 			ResourceLocation id,
-			RVCategoryHandler rvHandler
+			RVHelper rvHandler
 	) {
 		super(type, id, rvHandler);
 	}
@@ -107,8 +108,8 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 				.rotateBlock(12.5, -22.5, 0);
 		return new InteractiveRenderElement((element) -> blockElement.get())
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(stateSupplier.get(), recipe.blockPredicate()))
-				.onClick(button -> rvHandler().buttonToUsageOrRecipe(button)
-						.ifPresent(usageOrRecipe -> rvHandler().openPage(stateSupplier.get(), usageOrRecipe)))
+				.onClick(button -> rvHelper().buttonToUsageOrRecipe(button)
+						.ifPresent(usageOrRecipe -> rvHelper().openPage(stateSupplier.get(), usageOrRecipe)))
 				.withSize(BLOCK_SIZE);
 	}
 }

@@ -26,18 +26,18 @@ import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RvCategory;
 import snownee.lychee.compat.recipeviewer.RvPlugin;
 import snownee.lychee.compat.recipeviewer.SlotType;
-import snownee.lychee.compat.recipeviewer.jei.category.CategoryProviders;
+import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.jei.category.CraftingRecipeCategoryExtension;
+import snownee.lychee.compat.recipeviewer.jei.category.JeiRVHelper;
+import snownee.lychee.compat.recipeviewer.jei.category.RVCategoryAdapter;
 import snownee.lychee.compat.recipeviewer.jei.display.AnvilCraftingDisplay;
 import snownee.lychee.compat.recipeviewer.jei.elements.RenderElementAdapter;
 import snownee.lychee.compat.recipeviewer.jei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.compat.recipeviewer.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 @NotNullByDefault
@@ -49,7 +49,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 			it -> new RenderElementAdapter(RenderElement.create(it.sprite)));
 	public static IJeiRuntime runtime;
 	public static IJeiHelpers helpers;
-	private final RvPlugin rvPlugin = new RvPlugin();
+	private final RvPlugin rvPlugin = new RvPlugin(JeiRVHelper.INSTANCE);
 
 	public static IDrawable slot(SlotType type) {
 		return slotElements.get(type);
@@ -63,18 +63,9 @@ public class LycheeJEIPlugin implements IModPlugin {
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
 		rvPlugin.init();
-		for (RvCategory<?> rvCategory : rvPlugin.categories().values()) {
-			var categoryProvider = CategoryProviders.get(rvCategory.type.id);
-			if (categoryProvider == null) {
-				Lychee.LOGGER.error("Missing category provider for {}", rvCategory.type.id);
-				continue;
-			}
-
-			//noinspection unchecked
-			var category = categoryProvider.get((RvCategory<ILycheeRecipe<LycheeContext>>) rvCategory);
-			registry.addRecipeCategories(category);
+		for (var rvCategory : rvPlugin.categories().values()) {
+			registry.addRecipeCategories(new RVCategoryAdapter<>(rvCategory));
 		}
-		CategoryProviders.clear();
 	}
 
 	@Override
@@ -87,7 +78,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 		helpers = registry.getJeiHelpers();
 		for (RvCategory<?> rvCategory : rvPlugin.categories().values()) {
 			//noinspection unchecked,rawtypes
-			registry.addRecipes((RecipeType) registry.getJeiHelpers().getRecipeType(rvCategory.id).orElseThrow(), rvCategory.recipes);
+			registry.addRecipes((RecipeType) registry.getJeiHelpers().getRecipeType(rvCategory.id()).orElseThrow(), rvCategory.recipes());
 		}
 
 		try {
@@ -116,7 +107,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
 		for (RvCategory<?> rvCategory : rvPlugin.categories().values()) {
-			RecipeType<?> recipeType = registry.getJeiHelpers().getRecipeType(rvCategory.id).orElseThrow();
+			RecipeType<?> recipeType = registry.getJeiHelpers().getRecipeType(rvCategory.id()).orElseThrow();
 			for (List<ItemStack> workstation : rvCategory.workstations()) {
 				registry.addRecipeCatalysts(recipeType, VanillaTypes.ITEM_STACK, workstation);
 			}

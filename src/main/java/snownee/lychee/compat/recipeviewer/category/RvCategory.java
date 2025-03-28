@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.compat.recipeviewer.RVHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -17,7 +18,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 public interface RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 	RvCategoryType<R> type();
 
-	RVCategoryHandler rvHandler();
+	RVHelper rvHelper();
 
 	ResourceLocation id();
 

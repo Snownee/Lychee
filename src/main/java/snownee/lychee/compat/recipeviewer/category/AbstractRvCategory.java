@@ -17,6 +17,7 @@ import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.compat.recipeviewer.RVHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.element.InfoElementHelper;
 import snownee.lychee.ui.SpriteElementRenderer;
@@ -26,18 +27,18 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>> implements RvCategory<R> {
 	private final RvCategoryType<R> type;
-	private final RVCategoryHandler rvHandler;
+	private final RVHelper rvHelper;
 
 	private final Supplier<RenderElement> iconSupplier;
 	private final ResourceLocation id;
 
 	private final List<RecipeHolder<R>> recipes = new ArrayList<>();
 
-	protected AbstractRvCategory(RvCategoryType<R> type, ResourceLocation id, RVCategoryHandler rvHandler) {
+	protected AbstractRvCategory(RvCategoryType<R> type, ResourceLocation id, RVHelper rvHelper) {
 		this.type = type;
 		this.id = id;
 		this.iconSupplier = Suppliers.memoize(() -> type.iconProvider.get(this));
-		this.rvHandler = rvHandler;
+		this.rvHelper = rvHelper;
 	}
 
 	public static boolean needRemoveInputIcon(ILycheeRecipe<? extends LycheeContext> recipe) {
@@ -59,7 +60,7 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 		return recipe.conditions().conditions().isEmpty() && !recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false);
 	}
 
-	public static <R extends ILycheeRecipe<LycheeContext>> RenderElement getInfoIcon(RecipeHolder<R> recipeHolder, Vector2ic infoPosition) {
+	public static <R extends ILycheeRecipe<?>> RenderElement getInfoIcon(RecipeHolder<R> recipeHolder, Vector2ic infoPosition) {
 		var recipe = recipeHolder.value();
 		return new InteractiveRenderElement(AllGuiTextures.INFO)
 				.onTooltip(() -> RVs.getRecipeTooltip(recipe))
@@ -83,8 +84,8 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 	}
 
 	@Override
-	public RVCategoryHandler rvHandler() {
-		return rvHandler;
+	public RVHelper rvHelper() {
+		return rvHelper;
 	}
 
 	@Override

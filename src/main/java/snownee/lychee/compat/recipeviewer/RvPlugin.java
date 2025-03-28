@@ -3,7 +3,6 @@ package snownee.lychee.compat.recipeviewer;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.joml.Vector2i;
 
@@ -16,6 +15,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
@@ -24,6 +24,7 @@ import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.recipeviewer.category.ItemAndBlockCategory;
 import snownee.lychee.compat.recipeviewer.category.ItemShapelessRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategory;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryProvider;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryType;
 import snownee.lychee.compat.recipeviewer.element.SideBlockIcon;
 import snownee.lychee.util.CommonProxy;
@@ -38,6 +39,10 @@ public class RvPlugin {
 	private final Map<ResourceLocation, RvCategoryType<?>> categoryTypes = Maps.newHashMap();
 	private ImmutableMap<ResourceLocation, RvCategory<?>> categories = ImmutableMap.of();
 	private final String name = STACK_WALKER.getCallerClass().getSimpleName();
+
+	private final RVHelper rvHelper;
+
+	public RvPlugin(RVHelper rvHelper) {this.rvHelper = rvHelper;}
 
 	public void init() {
 		categoryTypes.clear();
@@ -126,10 +131,13 @@ public class RvPlugin {
 				continue;
 			}
 
-			Function<ResourceLocation, RvCategory<?>> factory = $ -> new RvCategory<>(categoryTypes.get(recipeType.categoryId), $);
+			//noinspection unchecked
+			var factory = RvCategoryProvider.get(recipeType.categoryId)
+					.get((RvCategoryType<ILycheeRecipe<LycheeContext>>) categoryTypes.get(recipeType.categoryId), rvHelper);
 			for (var recipe : recipeType.inViewerRecipes()) {
 				var id = RVs.composeCategoryIdentifier(recipeType.categoryId, ResourceLocation.parse(recipe.value().group()));
-				categories.computeIfAbsent(id, factory).addRecipe(recipe);
+				//noinspection unchecked,rawtypes
+				categories.computeIfAbsent(id, factory).addRecipe((RecipeHolder) recipe);
 			}
 		}
 
@@ -144,8 +152,8 @@ public class RvPlugin {
 		categories.values().forEach(consumer);
 	}
 
-	public void registerWorkstations(RvCategoryProvider<?> category, Consumer<List<List<ItemStack>>> consumer) {
-		consumer.accept(category.rvCategory().workstations());
+	public void registerWorkstations(RvCategory<?> category, Consumer<List<List<ItemStack>>> consumer) {
+		consumer.accept(category.workstations());
 	}
 
 	private <T extends ILycheeRecipe<LycheeContext>> void register(LycheeRecipeType<T> recipeType, Consumer<RvCategoryType<T>> configurer) {
