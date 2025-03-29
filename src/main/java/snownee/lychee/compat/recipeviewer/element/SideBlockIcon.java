@@ -17,7 +17,7 @@ public class SideBlockIcon extends RenderElement {
 	private final Supplier<BlockState> blockProvider;
 
 	public SideBlockIcon(ScreenElement mainIcon, Supplier<BlockState> blockProvider) {
-		this.mainIcon = RenderElement.create(mainIcon).at(0, 0, 100);
+		this.mainIcon = RenderElement.create(mainIcon).atZ(100);
 		this.blockProvider = blockProvider;
 	}
 
@@ -26,6 +26,7 @@ public class SideBlockIcon extends RenderElement {
 		PoseStack ms = graphics.pose();
 		ms.pushPose();
 		ms.translate(x(), y(), z);
+		ms.pushPose();
 		ms.scale(.625F, .625F, .625F);
 		mainIcon.render(graphics);
 		ms.popPose();
@@ -33,7 +34,8 @@ public class SideBlockIcon extends RenderElement {
 				.lighting(RVs.SIDE_ICON_LIGHTING)
 				.scale(7)
 				.rotateBlock(30, 202.5, 0)
-				.at(x() + 4, y() + 2)
+				.at(4, 2)
 				.render(graphics);
+		ms.popPose();
 	}
 }

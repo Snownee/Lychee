@@ -19,7 +19,7 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 
 	public RenderElementAdapter(RenderElement element) {
 		this.element = element;
-		this.bounds = new ScreenRectangle(element.x(), element.y(), element.width(), element.height());
+		this.bounds = new ScreenRectangle(0, 0, element.width(), element.height());
 	}
 
 	@Override
@@ -42,7 +42,10 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 
 	@Override
 	public void drawWidget(GuiGraphics guiGraphics, double mouseX, double mouseY) {
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(bounds.left(), bounds.top(), 0);
 		element.render(guiGraphics);
+		guiGraphics.pose().popPose();
 	}
 
 	@Override

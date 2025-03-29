@@ -120,7 +120,7 @@ public class GuiGameElement {
 		}
 
 		protected void transformMatrix(PoseStack matrixStack) {
-			matrixStack.translate(x(), y(), z);
+			matrixStack.translate(x() + 3, y() + 13, z);
 			matrixStack.scale((float) scale, (float) scale, (float) scale);
 			matrixStack.translate(xLocal, yLocal, zLocal);
 			UIRenderHelper.flipForGuiRender(matrixStack);

@@ -19,7 +19,7 @@ public class RenderElementAdapter extends WidgetWithBounds {
 
 	public RenderElementAdapter(RenderElement element) {
 		this.element = element;
-		this.bounds = new Rectangle(element.x(), element.y(), element.width(), element.height());
+		this.bounds = new Rectangle(0, 0, element.width(), element.height());
 	}
 
 	@Override
@@ -48,6 +48,9 @@ public class RenderElementAdapter extends WidgetWithBounds {
 				Tooltip.create(new Point(mouseX, mouseY), tooltip).queue();
 			}
 		}
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(bounds.getX(), bounds.getY(), 0);
 		element.render(guiGraphics, mouseX, mouseY, partialTick);
+		guiGraphics.pose().popPose();
 	}
 }
