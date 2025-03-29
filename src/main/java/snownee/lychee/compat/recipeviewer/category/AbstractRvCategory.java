@@ -9,7 +9,6 @@ import org.joml.Vector2ic;
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.Lychee;
@@ -47,12 +46,9 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 	}
 
 	public static RenderElement getRemoveInputIcon() {
-		return new InteractiveRenderElement(element ->
-				new SpriteElementRenderer(
-						Lychee.id("exclamation_mark"),
-						new Rect2i(element.x(), element.y(), element.width(), element.height()),
-						100,
-						2)
+		return new InteractiveRenderElement((InteractiveRenderElement element) ->
+				new SpriteElementRenderer(Lychee.id("exclamation_mark"), 2)
+						.withSize(element.width(), element.height()).at(element.x(), element.y()).atZ(100)
 		).withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE);
 	}
 
@@ -62,10 +58,11 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 
 	public static <R extends ILycheeRecipe<?>> RenderElement getInfoIcon(RecipeHolder<R> recipeHolder, Vector2ic infoPosition) {
 		var recipe = recipeHolder.value();
-		return new InteractiveRenderElement(AllGuiTextures.INFO)
+		return new InteractiveRenderElement(new SpriteElementRenderer(AllGuiTextures.INFO.id, 1).<SpriteElementRenderer>withSize(
+				InfoElementHelper.INFO_SIZE))
 				.onTooltip(() -> RVs.getRecipeTooltip(recipe))
 				.onClick((button) -> ClientProxy.postInfoBadgeClickEvent(recipe, recipeHolder.id(), button))
-				.withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE)
+				.withSize(InfoElementHelper.INFO_SIZE)
 				.at(infoPosition);
 	}
 

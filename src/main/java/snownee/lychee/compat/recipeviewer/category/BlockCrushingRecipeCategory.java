@@ -49,31 +49,30 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 			builder.addElement(getInfoIcon(recipeHolder).offset(position));
 		}
 
-		builder.addElement(RenderElement.create((graphics, x, y) -> {
+		builder.addElement(RenderElement.create((graphics, element) -> {
 			var ticks = (System.currentTimeMillis() % 2000) / 1000F;
 			ticks = Math.min(1, ticks);
 			ticks = ticks * ticks * ticks * ticks;
 
 			var matrixStack = graphics.pose();
 			matrixStack.pushPose();
-			matrixStack.translate(x, y, 0);
 
 			var landingBlock = getLandingBlock(recipe);
 			if (landingBlock.getLightEmission() < 5) {
 				matrixStack.pushPose();
-				matrixStack.translate(x + 10.5, y + (landingBlockIsAny ? 1 : 16), 0);
+				matrixStack.translate(10.5, (landingBlockIsAny ? 1 : 16), 0);
 				var shadow = 0.6F;
 				if (landingBlockIsAny) {
 					shadow = 0.2F + ticks * 0.2F;
 				}
 				matrixStack.scale(shadow, shadow, shadow);
 				matrixStack.translate(-26, -5.5, 0);
-				AllGuiTextures.SHADOW.render(graphics, 0, 0);
+				AllGuiTextures.SHADOW.render(graphics);
 				matrixStack.popPose();
 			}
 
 			matrixStack.pushPose();
-			matrixStack.translate(x, y - 13, 0);
+			matrixStack.translate(0, -13, 0);
 			GuiGameElement.of(getFallingBlock(recipe))
 					.scale(15)
 					.atLocal(0, ticks * 1.3 - 1.3, 2)

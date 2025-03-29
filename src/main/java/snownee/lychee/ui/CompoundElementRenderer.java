@@ -20,15 +20,19 @@ public class CompoundElementRenderer extends RenderElement {
 		return this;
 	}
 
-	public CompoundElementRenderer add(RenderElement... element) {
-		Collections.addAll(elements, element);
+	public CompoundElementRenderer add(RenderElement... elements) {
+		Collections.addAll(this.elements, elements);
 		return this;
 	}
 
 	@Override
 	public void render(GuiGraphics graphics) {
+		var pose = graphics.pose();
+		pose.pushPose();
+		pose.translate(x(), y(), z());
 		for (RenderElement element : elements) {
 			element.render(graphics);
 		}
+		pose.popPose();
 	}
 }

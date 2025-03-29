@@ -123,7 +123,7 @@ public final class RVs {
 				.orElseGet(() -> Pair.of(Blocks.AIR.defaultBlockState(), 0));
 	}
 
-	public static void renderTnt(GuiGraphics graphics, float x, float y) {
+	public static void renderTnt(GuiGraphics graphics) {
 		PrimedTnt tnt = TNT_ENTITY.getEntity();
 		int fuse = 80 - tnt.tickCount % 80;
 		if (fuse >= 40) {
@@ -134,7 +134,7 @@ public final class RVs {
 		float toRad = 0.01745329251F;
 		Quaternionf quaternion = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
 		FUSED_TNT_LIGHTING.applyLighting();
-		TNT_ENTITY.render(graphics.pose(), x, y, 20, quaternion);
+		TNT_ENTITY.render(graphics.pose(), quaternion);
 	}
 
 	public static ResourceLocation composeCategoryIdentifier(ResourceLocation categoryId, ResourceLocation group) {

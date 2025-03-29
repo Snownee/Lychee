@@ -73,7 +73,7 @@ public class CachedRenderingEntity<T extends Entity> {
 		this.scale = scale;
 	}
 
-	public void render(PoseStack matrixStack, float x, float y, float z, Quaternionf rotation) {
+	public void render(PoseStack matrixStack, Quaternionf rotation) {
 		var mc = Minecraft.getInstance();
 		if (mc.player == null) {
 			return;
@@ -85,7 +85,7 @@ public class CachedRenderingEntity<T extends Entity> {
 		entity.setPosRaw(position.x(), position.y(), position.z());
 
 		matrixStack.pushPose();
-		matrixStack.translate(x, y, z);
+		matrixStack.translate(0, 0, 20);
 		matrixStack.scale(scale, scale, scale);
 
 		matrixStack.mulPose(rotation);

@@ -40,12 +40,12 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 			builder.addElement(getInfoIcon(recipeHolder).offset(position));
 		}
 
-		builder.addElement(RenderElement.create((graphics, x, y) -> {
+		builder.addElement(RenderElement.create((graphics, element) -> {
 			var stack = graphics.pose();
 			stack.pushPose();
-			stack.translate(x, y, 100);
+			stack.translate(0, 0, 100);
 			icon().render(graphics);
 			stack.popPose();
-		}).at(centerX - 8, position.y() + 19).withSize(24, 24));
+		}).at(centerX - 8, position.y() + 19).offset(position).withSize(24, 24));
 	}
 }

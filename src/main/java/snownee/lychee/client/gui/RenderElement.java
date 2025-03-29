@@ -1,5 +1,6 @@
 package snownee.lychee.client.gui;
 
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import org.joml.Vector2ic;
@@ -19,11 +20,15 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	public Rect2i bounds = new Rect2i(0, 0, 16, 16);
 	protected int z = 0;
 
-	public static RenderElement create(ScreenElement renderable) {
+	public static RenderElement create(BiConsumer<GuiGraphics, RenderElement> renderable) {
 		return new SimpleRenderElement(renderable);
 	}
 
 	public static RenderElement create(Function<RenderElement, ScreenElement> renderable) {
+		return new SimpleRenderElement(it -> (graphics, element) -> renderable.apply(element));
+	}
+
+	public static RenderElement create(ScreenElement renderable) {
 		return new SimpleRenderElement(renderable);
 	}
 
@@ -43,22 +48,19 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public <T extends RenderElement> T at(Vector2ic position) {
-		this.bounds.setX(position.x());
-		this.bounds.setY(position.y());
+		at(position.x(), position.y());
 		//noinspection unchecked
 		return (T) this;
 	}
 
 	public <T extends RenderElement> T offset(int x, int y) {
-		this.bounds.setX(bounds.getX() + x);
-		this.bounds.setY(bounds.getY() + y);
+		at(bounds.getX() + x, bounds.getY() + y);
 		//noinspection unchecked
 		return (T) this;
 	}
 
 	public <T extends RenderElement> T offset(Vector2ic position) {
-		this.bounds.setX(bounds.getX() + position.x());
-		this.bounds.setY(bounds.getY() + position.y());
+		offset(position.x(), position.y());
 		//noinspection unchecked
 		return (T) this;
 	}
@@ -85,15 +87,13 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public <T extends RenderElement> T withSize(Vector2ic size) {
-		this.bounds.setWidth(size.x());
-		this.bounds.setHeight(size.y());
+		withSize(size.x(), size.y());
 		//noinspection unchecked
 		return (T) this;
 	}
 
 	public <T extends RenderElement> T withSize(int size) {
-		this.bounds.setWidth(size);
-		this.bounds.setHeight(size);
+		withSize(size, size);
 		//noinspection unchecked
 		return (T) this;
 	}
@@ -124,9 +124,6 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 		return z;
 	}
 
-	public abstract void render(GuiGraphics graphics);
-
-	@Override
 	public void render(GuiGraphics graphics, int x, int y) {
 		this.at(x, y).render(graphics);
 	}

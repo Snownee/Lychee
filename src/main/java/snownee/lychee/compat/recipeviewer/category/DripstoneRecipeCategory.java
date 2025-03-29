@@ -66,10 +66,9 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 			builder.addElement(getInfoIcon(recipeHolder).offset(position));
 		}
 
-		builder.addElement(RenderElement.create((graphics, x, y) -> {
+		builder.addElement(RenderElement.create((graphics) -> {
 			var matrixStack = graphics.pose();
 			matrixStack.pushPose();
-			matrixStack.translate(x, y, 0);
 
 			var targetBlock = getTargetBlock(recipe);
 			if (targetBlock.getLightEmission() < 5) {
@@ -106,7 +105,7 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 				.scale(12)
 				.lighting(RVs.BLOCK_LIGHTING)
 				.rotateBlock(12.5, -22.5, 0);
-		return new InteractiveRenderElement((element) -> blockElement.get())
+		return new InteractiveRenderElement((InteractiveRenderElement element) -> blockElement.get())
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(stateSupplier.get(), recipe.blockPredicate()))
 				.onClick(button -> rvHelper().buttonToUsageOrRecipe(button)
 						.ifPresent(usageOrRecipe -> rvHelper().openPage(stateSupplier.get(), usageOrRecipe)))

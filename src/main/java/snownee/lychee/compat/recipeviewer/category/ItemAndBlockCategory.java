@@ -7,7 +7,6 @@ import org.joml.Vector2ic;
 
 import com.google.common.base.Suppliers;
 
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
@@ -109,9 +108,10 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		var questionMarkElement = Suppliers.<RenderElement>memoize(() ->
 				RenderElement.create(AllGuiTextures.QUESTION_MARK).at(4, 2).offset(inputBlockPosition));
 
+		var shadowPosition = new Vector2i(11 - 26, 16 - 5);
 		var shadowElement = Suppliers.<RenderElement>memoize(() -> {
-			var shadow = RenderElement.create(AllGuiTextures.SHADOW).offset(inputBlockPosition).at(11 - 26, 16 - 5);
-			return RenderElement.create((graphics, x, y) -> {
+			var shadow = RenderElement.create(AllGuiTextures.SHADOW).offset(inputBlockPosition).at(shadowPosition);
+			return RenderElement.create((graphics, element) -> {
 				var matrixStack = graphics.pose();
 				matrixStack.pushPose();
 				matrixStack.scale(0.7F, 0.7F, 1F);
@@ -124,7 +124,6 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 				.rotateBlock(12.5, 202.5, 0)
 				.scale(15)
 				.lighting(RVs.BLOCK_LIGHTING)
-				.atLocal(0, 0.2, 0)
 				.at(inputBlockPosition)
 				.withSize(INPUT_BLOCK_SIZE);
 
@@ -134,12 +133,12 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 				return questionMarkElement.get();
 			}
 
-			return (GuiGraphics graphics, int x, int y) -> {
+			return RenderElement.create((graphics, ignored) -> {
 				if (state.getLightEmission() < 5) {
 					shadowElement.get().render(graphics);
 				}
 				blockElement.apply(state).render(graphics);
-			};
+			});
 		});
 
 		if (shouldRenderInputBlockTooltip(recipe)) {

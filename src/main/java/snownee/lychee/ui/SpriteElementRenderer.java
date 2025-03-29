@@ -1,7 +1,6 @@
 package snownee.lychee.ui;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.client.gui.RenderElement;
 
@@ -9,10 +8,8 @@ public class SpriteElementRenderer extends RenderElement {
 	private final ResourceLocation id;
 	private final float scale;
 
-	public SpriteElementRenderer(ResourceLocation id, Rect2i bounds, int z, float scale) {
+	public SpriteElementRenderer(ResourceLocation id, float scale) {
 		this.id = id;
-		this.bounds = bounds;
-		this.z = z;
 		this.scale = scale;
 	}
 

@@ -173,6 +173,16 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		return icon;
 	}
 
+	@Override
+	public int getWidth() {
+		return rvCategory.width();
+	}
+
+	@Override
+	public int getHeight() {
+		return rvCategory.height();
+	}
+
 	private void actionGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
 		slotGroup(
 				builder,

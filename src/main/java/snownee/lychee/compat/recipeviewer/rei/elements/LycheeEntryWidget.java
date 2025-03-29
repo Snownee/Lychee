@@ -24,7 +24,10 @@ public class LycheeEntryWidget extends EntryWidget {
 			super.drawBackground(graphics, mouseX, mouseY, delta);
 		} else if (bg != null) {
 			Rectangle rect = getBounds();
-			bg.render(graphics, rect.x, rect.y);
+			graphics.pose().pushPose();
+			graphics.pose().translate(rect.x, rect.y, 0);
+			bg.render(graphics);
+			graphics.pose().popPose();
 		}
 	}
 

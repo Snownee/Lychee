@@ -78,7 +78,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 		helpers = registry.getJeiHelpers();
 		for (RvCategory<?> rvCategory : rvPlugin.categories().values()) {
 			//noinspection unchecked,rawtypes
-			registry.addRecipes((RecipeType) registry.getJeiHelpers().getRecipeType(rvCategory.id()).orElseThrow(), rvCategory.recipes());
+			registry.addRecipes((RecipeType) helpers.getRecipeType(rvCategory.id()).orElseThrow(), rvCategory.recipes());
 		}
 
 		try {

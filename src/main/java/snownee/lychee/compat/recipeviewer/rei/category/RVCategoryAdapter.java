@@ -157,6 +157,16 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		return icon;
 	}
 
+	@Override
+	public int getDisplayWidth(LycheeDisplay<R> display) {
+		return rvCategory.width();
+	}
+
+	@Override
+	public int getDisplayHeight() {
+		return rvCategory.height() + 8;
+	}
+
 	private void actionGroup(ImmutableList.Builder<Widget> widgets, Vector2ic startPoint, R recipe, int x, int y) {
 		slotGroup(
 				widgets,
