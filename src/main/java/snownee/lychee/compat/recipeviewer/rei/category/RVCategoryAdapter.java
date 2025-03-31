@@ -159,12 +159,12 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	@Override
 	public int getDisplayWidth(LycheeDisplay<R> display) {
-		return rvCategory.width();
+		return rvCategory.width() + 10;
 	}
 
 	@Override
 	public int getDisplayHeight() {
-		return rvCategory.height() + 8;
+		return rvCategory.height() + 6;
 	}
 
 	private void actionGroup(ImmutableList.Builder<Widget> widgets, Vector2fc startPoint, R recipe, float x, float y) {

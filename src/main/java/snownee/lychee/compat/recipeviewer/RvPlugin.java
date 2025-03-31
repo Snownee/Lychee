@@ -62,7 +62,7 @@ public class RvPlugin {
 				});
 		register(
 				RecipeTypes.BLOCK_EXPLODING, it -> {
-					it.infoPosition = ItemShapelessRecipeCategory.INFO_POSITION;
+					it.infoPosition = ItemAndBlockCategory.INFO_POSITION;
 					it.iconProvider = category -> {
 						var mainIcon = GuiGameElement.of(Items.TNT.getDefaultInstance());
 						return new SideBlockIcon(mainIcon, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
