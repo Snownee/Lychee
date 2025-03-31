@@ -44,7 +44,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public <T extends RenderElement> T at(Vector2fc position) {
-		at(position.x(), position.y());
+		this.position.set(position);
 		//noinspection unchecked
 		return (T) this;
 	}
@@ -56,7 +56,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public <T extends RenderElement> T offset(Vector2fc position) {
-		this.offset(position.x(), position.y());
+		this.position.add(position);
 		//noinspection unchecked
 		return (T) this;
 	}
@@ -82,7 +82,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public <T extends RenderElement> T withSize(Vector2ic size) {
-		withSize(size.x(), size.y());
+		this.size.set(size);
 		//noinspection unchecked
 		return (T) this;
 	}
@@ -108,11 +108,11 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public float x() {
-		return this.size.x();
+		return this.position.x();
 	}
 
 	public float y() {
-		return this.size.y();
+		return this.position.y();
 	}
 
 	public float z() {
