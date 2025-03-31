@@ -16,7 +16,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class RvCategoryType<T extends ILycheeRecipe<LycheeContext>> {
 	public static final int WIDTH = 120;
-	public static final int WIDER_WIDTH = WIDTH + 50;
+	public static final int WIDER_WIDTH = WIDTH + 20;
 	public static final int HEIGHT = 60;
 
 	public final ResourceLocation id;

@@ -21,6 +21,7 @@ import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.compat.recipeviewer.category.BlockInteractingRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.ItemAndBlockCategory;
 import snownee.lychee.compat.recipeviewer.category.ItemShapelessRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategory;
@@ -75,7 +76,7 @@ public class RvPlugin {
 				});
 		register(
 				RecipeTypes.BLOCK_INTERACTING, type -> {
-					type.infoPosition = VectorExtensions.offset(ItemAndBlockCategory.INFO_POSITION, 10, 0);
+					type.infoPosition = BlockInteractingRecipeCategory.INFO_POSITION;
 					type.width = RvCategoryType.WIDER_WIDTH;
 					type.iconProvider = category -> {
 						var mainIcon = category.recipes().stream()

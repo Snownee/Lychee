@@ -204,7 +204,7 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 	@Override
 	public List<Widget> setupDisplay(LycheeDisplay<R> display, Rectangle bounds) {
 		var widgets = ImmutableList.<Widget>builder();
-		var startPoint = new Vector2f(bounds.getCenterX() - (float) rvCategory.width() / 2, bounds.getY() + 4);
+		var startPoint = new Vector2f(bounds.getCenterX() - (float) rvCategory.width() / 2, bounds.getCenterY() - (float) rvCategory.height() / 2 + 1);
 		widgets.add(Widgets.createRecipeBase(bounds));
 
 		var layoutBuilder = new RvCategoryLayoutBuilder() {

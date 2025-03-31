@@ -18,6 +18,8 @@ public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockIn
 	private static final Vector2fc INPUT_BLOCK_POSITION = VectorExtensions.offset(ItemAndBlockCategory.INPUT_BLOCK_POSITION, 18, 0);
 	private static final Vector2fc METHOD_POSITION = VectorExtensions.offset(ItemAndBlockCategory.METHOD_POSITION, 18, 0);
 
+	public static final Vector2fc INFO_POSITION = VectorExtensions.offset(METHOD_POSITION, METHOD_SIZE, 4);
+
 	public BlockInteractingRecipeCategory(
 			RvCategoryType<BlockInteractingRecipe> type,
 			ResourceLocation id,

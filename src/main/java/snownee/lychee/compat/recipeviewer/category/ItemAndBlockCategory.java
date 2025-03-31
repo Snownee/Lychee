@@ -27,14 +27,14 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
-	public static final Vector2fc INFO_POSITION = new Vector2f(8, 32);
+	public static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(30, 35);
+	public static final Vector2fc METHOD_POSITION = new Vector2f(26, 12);
+	public static final Vector2fc INGREDIENT_POSITION = new Vector2f(12, 21);
 
-	protected static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(30, 35);
-	protected static final Vector2fc METHOD_POSITION = new Vector2f(26, 12);
-	protected static final Vector2fc INGREDIENT_POSITION = new Vector2f(12, 21);
+	public static final int INPUT_BLOCK_SIZE = 18;
+	public static final int METHOD_SIZE = 20;
 
-	protected static final int INPUT_BLOCK_SIZE = 18;
-	protected static final int METHOD_SIZE = 20;
+	public static final Vector2fc INFO_POSITION = VectorExtensions.offset(METHOD_POSITION, METHOD_SIZE, 4);
 
 	protected final Vector2fc inputBlockPosition;
 	protected final Vector2fc methodPosition;
