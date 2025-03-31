@@ -9,6 +9,7 @@ import org.joml.Vector2fc;
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.Lychee;
@@ -47,9 +48,10 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 
 	public static RenderElement getRemoveInputIcon() {
 		return new InteractiveRenderElement((InteractiveRenderElement element) ->
-				new SpriteElementRenderer(Lychee.id("exclamation_mark"), 2)
-						.withSize(element.width(), element.height()).at(element.x(), element.y()).atZ(100)
-		).withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE);
+				new SpriteElementRenderer(Lychee.id("exclamation_mark"), 1)
+						.withSize(element.width(), element.height()).atZ(100)
+		).onTooltip(() -> List.of(Component.translatable("postAction.lychee.place.consume")))
+				.withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE);
 	}
 
 	public static boolean needInfoIcon(ILycheeRecipe<?> recipe) {

@@ -1,12 +1,12 @@
 package snownee.lychee.compat.recipeviewer.category;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
-import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +19,7 @@ import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RVHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
+import snownee.lychee.ui.SpriteElementRenderer;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.context.LycheeContext;
@@ -110,28 +111,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		var questionMarkElement = Suppliers.<RenderElement>memoize(() ->
 				RenderElement.create(AllGuiTextures.QUESTION_MARK).at(4, 2));
 
-		var shadowElement = getShadowElement();
-
-		Function<BlockState, RenderElement> blockElement = (BlockState state) -> GuiGameElement.of(state)
-				.rotateBlock(12.5, 202.5, 0)
-				.scale(15)
-				.lighting(RVs.BLOCK_LIGHTING)
-				.withSize(INPUT_BLOCK_SIZE)
-				.at(-1, 4);
-
-		var result = new InteractiveRenderElement((element) -> {
-			var state = getRenderingBlock(recipe);
-			if (state.isAir()) {
-				return questionMarkElement.get();
-			}
-
-			return RenderElement.create((graphics, ignored) -> {
-				if (state.getLightEmission() < 5) {
-					shadowElement.get().render(graphics);
-				}
-				blockElement.apply(state).render(graphics);
-			});
-		});
+		var result = getBlockElementWithShadow(() -> getRenderingBlock(recipe), questionMarkElement);
 
 		if (shouldRenderInputBlockTooltip(recipe)) {
 			result.onTooltip(() -> BlockPredicateExtensions.getTooltips(
@@ -146,20 +126,36 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 				.withSize(INPUT_BLOCK_SIZE);
 	}
 
+	private @NotNull InteractiveRenderElement getBlockElementWithShadow(Supplier<BlockState> blockStateSupplier, final Supplier<RenderElement> questionMarkElement) {
+		var shadowElement = getShadowElement();
+
+		Function<BlockState, RenderElement> blockElement = (BlockState state) -> GuiGameElement.of(state)
+				.rotateBlock(12.5, 202.5, 0)
+				.scale(15)
+				.lighting(RVs.BLOCK_LIGHTING)
+				.withSize(INPUT_BLOCK_SIZE)
+				.at(-1, 4);
+
+		return new InteractiveRenderElement((element) -> {
+			var state = blockStateSupplier.get();
+			if (state.isAir()) {
+				return questionMarkElement.get();
+			}
+
+			return RenderElement.create((graphics, ignored) -> {
+				if (state.getLightEmission() < 5) {
+					shadowElement.get().render(graphics);
+				}
+				blockElement.apply(state).render(graphics);
+			});
+		});
+	}
+
 	private @NotNull Supplier<RenderElement> getShadowElement() {
 		var scale = 0.7F;
 		var shadowPosition = new Vector2f(
 				INPUT_BLOCK_SIZE / 2F - (52 /* Shadow sprite width */ * scale / 2) + 4F,
 				INPUT_BLOCK_SIZE - 13 /* Shadow sprite height */ * scale - 1F);
-		return Suppliers.memoize(() -> {
-			var shadow = RenderElement.create(AllGuiTextures.SHADOW).at(shadowPosition);
-			return RenderElement.create((graphics, element) -> {
-				var matrixStack = graphics.pose();
-				matrixStack.pushPose();
-				matrixStack.scale(scale, scale, 1F);
-				shadow.render(graphics);
-				matrixStack.popPose();
-			}).at(shadow.x(), shadow.y());
-		});
+		return Suppliers.memoize(() -> new SpriteElementRenderer(AllGuiTextures.SHADOW.id, 1F).withSize(36, 9).at(shadowPosition));
 	}
 }

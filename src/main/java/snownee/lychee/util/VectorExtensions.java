@@ -18,6 +18,10 @@ public class VectorExtensions {
 		return new Vector2f(vector.x() + x, vector.y());
 	}
 
+	public static Vector2fc offsetY(Vector2fc vector, float y) {
+		return new Vector2f(vector.x(), vector.y() + y);
+	}
+
 	public static Vector2f withX(Vector2fc vector, float x) {
 		return new Vector2f(x, vector.y());
 	}
