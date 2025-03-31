@@ -2,8 +2,6 @@ package snownee.lychee.compat.recipeviewer.category;
 
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
-import org.joml.Vector2i;
-import org.joml.Vector2ic;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -15,14 +13,15 @@ import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RVHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
+import snownee.lychee.compat.recipeviewer.element.InfoElementHelper;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushingRecipe> {
-	private static final Vector2ic FALLING_BLOCK_SIZE = new Vector2i(20, 35);
-	private static final Vector2ic LANDING_BLOCK_SIZE = new Vector2i(20, 20);
+	private static final int FALLING_BLOCK_HEIGHT = 35;
+	private static final int BLOCK_SIZE = 20;
 
 	protected BlockCrushingRecipeCategory(RvCategoryType<BlockCrushingRecipe> type, ResourceLocation id, RVHelper rvHelper) {
 		super(type, id, rvHelper);
@@ -41,11 +40,14 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 
 		var landingBlockIsAny = BlockPredicateExtensions.isAny(recipe.landingBlock());
 
-		var xOffset = (recipe.getIngredients().isEmpty() ? 41 : 77);
-		var yOffset = (landingBlockIsAny ? 45 : 33);
+		var xOffset = (recipe.getIngredients().isEmpty() ? 40 : 76);
+		var yOffset = (landingBlockIsAny ? 50 : 38);
+
+		var landingBlockPosition = new Vector2f(xOffset, 38);
+		var fallingBlockPosition = new Vector2f(xOffset, yOffset - FALLING_BLOCK_HEIGHT);
 
 		if (needInfoIcon(recipe)) {
-			builder.addElement(getInfoIcon(recipeHolder).offset(position));
+			builder.addElement(getInfoIcon(recipeHolder, infoPosition(fallingBlockPosition)).offset(position));
 		}
 
 		builder.addElement(RenderElement.create((graphics, element) -> {
@@ -92,13 +94,10 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 			matrixStack.popPose();
 		}).at(xOffset, yOffset).offset(position));
 
-		var fallingBlockPosition = new Vector2f(xOffset, yOffset - 35);
-		var landingBlockPosition = new Vector2f(xOffset, yOffset);
-
 		builder.addElement(new InteractiveRenderElement()
 				.at(fallingBlockPosition)
 				.offset(position)
-				.<InteractiveRenderElement>withSize(FALLING_BLOCK_SIZE)
+				.<InteractiveRenderElement>withSize(BLOCK_SIZE, FALLING_BLOCK_HEIGHT)
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(getFallingBlock(recipe), recipe.blockPredicate()))
 				.onClick(button -> rvHelper().buttonToUsageOrRecipe(button)
 						.ifPresent(usageOrRecipe -> rvHelper().openPage(getFallingBlock(recipe), usageOrRecipe))));
@@ -107,7 +106,7 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 			builder.addElement(new InteractiveRenderElement()
 					.at(landingBlockPosition)
 					.offset(position)
-					.<InteractiveRenderElement>withSize(LANDING_BLOCK_SIZE)
+					.<InteractiveRenderElement>withSize(BLOCK_SIZE)
 					.onTooltip(() -> BlockPredicateExtensions.getTooltips(getLandingBlock(recipe), recipe.landingBlock()))
 					.onClick(button -> rvHelper().buttonToUsageOrRecipe(button)
 							.ifPresent(usageOrRecipe -> rvHelper().openPage(getLandingBlock(recipe), usageOrRecipe))));
@@ -116,10 +115,14 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {
 			var removeActionPosition = VectorExtensions.offset(
 					landingBlockPosition,
-					LANDING_BLOCK_SIZE.x() - 4,
-					LANDING_BLOCK_SIZE.y() - 8);
+					BLOCK_SIZE - 4,
+					BLOCK_SIZE - 8);
 			builder.addElement(AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition).offset(position));
 		}
+	}
+
+	public Vector2fc infoPosition(Vector2fc fallingBlockPosition) {
+		return VectorExtensions.offset(fallingBlockPosition, BLOCK_SIZE, (FALLING_BLOCK_HEIGHT - InfoElementHelper.INFO_SIZE) / 2f);
 	}
 
 	private BlockState getFallingBlock(BlockCrushingRecipe recipe) {
