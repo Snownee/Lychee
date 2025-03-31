@@ -60,7 +60,7 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 
 	@Override
 	public void getTooltip(ITooltipBuilder tooltip, double mouseX, double mouseY) {
-		if (!(element instanceof InteractiveRenderElement interactive)) {
+		if (!(element instanceof InteractiveRenderElement interactive) || !interactive.containsMouse(mouseX, mouseY)) {
 			return;
 		}
 		var components = interactive.getTooltip();
