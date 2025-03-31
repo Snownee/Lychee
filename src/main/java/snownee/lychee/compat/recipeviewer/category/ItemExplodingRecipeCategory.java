@@ -25,6 +25,11 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 			Vector2fc position
 	) {
 		super.configureDecorations(builder, recipeHolder, position);
-		builder.addElement(RenderElement.create(RVs::renderTnt).at(89, 38).offset(position));
+		builder.addElement(RenderElement.create(RVs::renderTnt).at((float) width() / 2, 38).offset(position));
+	}
+
+	@Override
+	protected boolean needRenderIcon() {
+		return false;
 	}
 }

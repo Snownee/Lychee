@@ -31,11 +31,10 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 	@Override
 	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
-		var centerX = (float) width() / 2;
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
 		var y = needSecondLine ? 26 : 28;
-		builder.ingredientGroup(recipe, new Vector2f(centerX - 45, y));
-		builder.actionGroup(recipe, new Vector2f(centerX + 50, y));
+		builder.ingredientGroup(recipe, new Vector2f(27, y));
+		builder.actionGroup(recipe, new Vector2f(width() - 29, y));
 	}
 
 	@Override
@@ -46,12 +45,18 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 			builder.addElement(getInfoIcon(recipeHolder).offset(position));
 		}
 
-		builder.addElement(RenderElement.create((graphics, element) -> {
-			var stack = graphics.pose();
-			stack.pushPose();
-			stack.translate(0, 0, 100);
-			icon().render(graphics);
-			stack.popPose();
-		}).at(ICON_POSITION).offset(position).withSize(ICON_SIZE));
+		if (needRenderIcon()) {
+			builder.addElement(RenderElement.create((graphics, element) -> {
+				var stack = graphics.pose();
+				stack.pushPose();
+				stack.translate(0, 0, 100);
+				icon().render(graphics);
+				stack.popPose();
+			}).at(ICON_POSITION).offset(position).withSize(ICON_SIZE));
+		}
+	}
+
+	protected boolean needRenderIcon() {
+		return true;
 	}
 }
