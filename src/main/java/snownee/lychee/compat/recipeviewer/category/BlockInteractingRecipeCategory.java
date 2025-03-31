@@ -14,7 +14,7 @@ import snownee.lychee.util.VectorExtensions;
 
 public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockInteractingRecipe> {
 	private static final Vector2fc MOUSE_ICON_POSITION = new Vector2f(51, 15);
-	private static final Vector2fc INGREDIENT_POSITION = new Vector2f(22, 21);
+	private static final float INPUT_INGREDIENT_X = 22;
 	private static final Vector2fc INPUT_BLOCK_POSITION = VectorExtensions.offset(ItemAndBlockCategory.INPUT_BLOCK_POSITION, 18, 0);
 	private static final Vector2fc METHOD_POSITION = VectorExtensions.offset(ItemAndBlockCategory.METHOD_POSITION, 18, 0);
 
@@ -25,7 +25,7 @@ public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockIn
 			ResourceLocation id,
 			RVHelper rvHandler
 	) {
-		super(type, id, rvHandler, INPUT_BLOCK_POSITION, METHOD_POSITION, INGREDIENT_POSITION);
+		super(type, id, rvHandler, INPUT_BLOCK_POSITION, METHOD_POSITION, INPUT_INGREDIENT_X);
 	}
 
 	private RenderElement getMouseIcon(BlockInteractingRecipe recipe) {

@@ -1,0 +1,71 @@
+{
+	"type": "lychee:item_inside",
+	"item_in": [
+		{
+			"item": "coal"
+		},
+		{
+			"item": "coal"
+		},
+		{
+			"item": "coal"
+		},
+		{
+			"item": "coal"
+		},
+		{
+			"item": "coal"
+		},
+		{
+			"item": "coal"
+		},
+		{
+			"item": "coal"
+		},
+		{
+			"item": "coal"
+		},
+		{
+			"item": "coal"
+		}
+	],
+	"block_in": "water",
+	"post": [
+		{
+			"type": "drop_item",
+			"id": "diamond"
+		},
+		{
+			"type": "drop_item",
+			"id": "diamond"
+		},
+		{
+			"type": "drop_item",
+			"id": "diamond"
+		},
+		{
+			"type": "drop_item",
+			"id": "diamond"
+		},
+		{
+			"type": "drop_item",
+			"id": "diamond"
+		},
+		{
+			"type": "drop_item",
+			"id": "diamond"
+		},
+		{
+			"type": "drop_item",
+			"id": "diamond"
+		},
+		{
+			"type": "drop_item",
+			"id": "diamond"
+		},
+		{
+			"type": "drop_item",
+			"id": "diamond"
+		}
+	]
+}

@@ -13,7 +13,7 @@ public class ItemBuriningRecipeCategory extends ItemAndBlockCategory<ItemBurning
 			ResourceLocation id,
 			RVHelper rvHandler
 	) {
-		super(type, id, rvHandler, INPUT_BLOCK_POSITION, VectorExtensions.withX(METHOD_POSITION, 27), INGREDIENT_POSITION);
+		super(type, id, rvHandler, INPUT_BLOCK_POSITION, VectorExtensions.withX(METHOD_POSITION, 27), INPUT_INGREDIENT_X);
 	}
 
 	@Override

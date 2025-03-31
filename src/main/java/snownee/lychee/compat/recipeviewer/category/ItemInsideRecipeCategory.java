@@ -22,7 +22,7 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 				rvHandler,
 				VectorExtensions.withX(INPUT_BLOCK_POSITION, 80),
 				VectorExtensions.withX(METHOD_POSITION, 77),
-				VectorExtensions.withX(INGREDIENT_POSITION, 40));
+				27);
 	}
 
 	@Override
@@ -37,7 +37,10 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 			builder.addElement(new TextElementRenderer(ClientProxy.format("tip.lychee.sec", recipe.time()))
 					.color(0xFF666666)
 					.centered()
-					.shadow());
+					.shadow()
+					.at(position)
+					.offset(METHOD_POSITION)
+					.offset(10, -6));
 		}
 	}
 }

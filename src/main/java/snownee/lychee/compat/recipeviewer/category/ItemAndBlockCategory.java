@@ -29,7 +29,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
 	public static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(30, 35);
 	public static final Vector2fc METHOD_POSITION = new Vector2f(26, 12);
-	public static final Vector2fc INGREDIENT_POSITION = new Vector2f(12, 21);
+	public static final float INPUT_INGREDIENT_X = 12;
 
 	public static final int INPUT_BLOCK_SIZE = 18;
 	public static final int METHOD_SIZE = 20;
@@ -38,7 +38,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 
 	protected final Vector2fc inputBlockPosition;
 	protected final Vector2fc methodPosition;
-	protected final Vector2fc ingredientPosition;
+	protected final float inputIngredientX;
 
 	protected ItemAndBlockCategory(
 			RvCategoryType<R> type,
@@ -46,16 +46,16 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 			RVHelper rvHandler,
 			Vector2fc inputBlockPosition,
 			Vector2fc methodPosition,
-			Vector2fc ingredientPosition
+			float inputIngredientX
 	) {
 		super(type, id, rvHandler);
 		this.inputBlockPosition = inputBlockPosition;
 		this.methodPosition = methodPosition;
-		this.ingredientPosition = ingredientPosition;
+		this.inputIngredientX = inputIngredientX;
 	}
 
 	public ItemAndBlockCategory(RvCategoryType<R> type, ResourceLocation id, RVHelper rvHandler) {
-		this(type, id, rvHandler, INPUT_BLOCK_POSITION, METHOD_POSITION, INGREDIENT_POSITION);
+		this(type, id, rvHandler, INPUT_BLOCK_POSITION, METHOD_POSITION, INPUT_INGREDIENT_X);
 	}
 
 	protected BlockState getRenderingBlock(R recipe) {
@@ -74,7 +74,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		var recipe = recipeHolder.value();
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
 		var y = needSecondLine ? 26 : 28;
-		builder.ingredientGroup(recipe, ingredientPosition);
+		builder.ingredientGroup(recipe, new Vector2f(inputIngredientX, y));
 		builder.actionGroup(recipe, new Vector2f(width() - 29, y));
 	}
 
