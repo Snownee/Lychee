@@ -53,7 +53,7 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 	}
 
 	public static boolean needInfoIcon(ILycheeRecipe<?> recipe) {
-		return recipe.conditions().conditions().isEmpty() && !recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false);
+		return !recipe.conditions().conditions().isEmpty() || recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false);
 	}
 
 	public static <R extends ILycheeRecipe<?>> RenderElement getInfoIcon(RecipeHolder<R> recipeHolder, Vector2fc infoPosition) {
