@@ -67,5 +67,11 @@
 			"type": "drop_item",
 			"id": "diamond"
 		}
-	]
+	],
+	"contextual": {
+		"type": "location",
+		"predicate": {
+			"dimension": "overworld"
+		}
+	}
 }

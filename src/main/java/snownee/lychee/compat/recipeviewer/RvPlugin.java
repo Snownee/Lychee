@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import org.joml.Vector2f;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
@@ -23,6 +21,7 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.compat.recipeviewer.category.BlockInteractingRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.ItemAndBlockCategory;
+import snownee.lychee.compat.recipeviewer.category.ItemInsideRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.ItemShapelessRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryProviders;
@@ -122,7 +121,7 @@ public class RvPlugin {
 		register(
 				RecipeTypes.ITEM_INSIDE, it -> {
 					it.width = RvCategoryType.WIDER_WIDTH;
-					it.infoPosition = new Vector2f(4, 25);
+					it.infoPosition = ItemInsideRecipeCategory.INFO_POSITION;
 					it.iconProvider = category ->
 							new SideBlockIcon(AllGuiTextures.DOWN_ARROW, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
 				});
