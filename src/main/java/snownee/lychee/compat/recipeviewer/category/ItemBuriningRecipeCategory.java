@@ -10,7 +10,9 @@ import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.util.VectorExtensions;
 
 public class ItemBuriningRecipeCategory extends ItemAndBlockCategory<ItemBurningRecipe> {
-	private static final Vector2fc METHOD_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.METHOD_POSITION, 15);
+	private static final Vector2fc INPUT_BLOCK_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.INPUT_BLOCK_POSITION, 4);
+	private static final Vector2fc METHOD_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.METHOD_POSITION, 4);
+	private static final Vector2fc INFO_POSITION = VectorExtensions.offset(METHOD_POSITION, METHOD_SIZE, 4);
 
 	public ItemBuriningRecipeCategory(
 			RvCategoryType<ItemBurningRecipe> type,
@@ -31,7 +33,17 @@ public class ItemBuriningRecipeCategory extends ItemAndBlockCategory<ItemBurning
 	}
 
 	@Override
+	public Vector2fc inputBlockPosition() {
+		return INPUT_BLOCK_POSITION;
+	}
+
+	@Override
 	public Vector2fc methodPosition() {
 		return METHOD_POSITION;
+	}
+
+	@Override
+	public Vector2fc infoPosition() {
+		return INFO_POSITION;
 	}
 }
