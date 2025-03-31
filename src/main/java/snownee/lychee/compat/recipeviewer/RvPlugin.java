@@ -49,7 +49,7 @@ public class RvPlugin {
 		var categories = Maps.<ResourceLocation, RvCategory<?>>newHashMap();
 		register(
 				RecipeTypes.BLOCK_CRUSHING, type -> {
-					type.width = RvCategoryType.WIDTH + 20;
+					type.width = RvCategoryType.WIDER_WIDTH;
 					type.iconProvider = category -> GuiGameElement.of(Items.ANVIL);
 					type.setSimpleWorkstationProvider(category -> category.recipes().stream()
 							.map(it -> it.value().blockPredicate())

@@ -31,11 +31,8 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 	@Override
 	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
-		var centerX = (float) width() / 2;
-		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
-		var y = needSecondLine ? 26 : 28;
-		builder.ingredientGroup(recipe, new Vector2f(centerX - 45, y));
-		builder.actionGroup(recipe, new Vector2f(centerX + 50, y));
+		builder.ingredientGroup(recipe, new Vector2f(27, 28));
+		builder.actionGroup(recipe, new Vector2f(width() - 29, 28));
 	}
 
 	@Override
@@ -44,8 +41,8 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 
 		var landingBlockIsAny = BlockPredicateExtensions.isAny(recipe.landingBlock());
 
-		var xOffset = (recipe.getIngredients().isEmpty() ? 41 : 77) + position.x();
-		var yOffset = (landingBlockIsAny ? 45 : 33) + position.y();
+		var xOffset = (recipe.getIngredients().isEmpty() ? 41 : 77);
+		var yOffset = (landingBlockIsAny ? 45 : 33);
 
 		if (needInfoIcon(recipe)) {
 			builder.addElement(getInfoIcon(recipeHolder).offset(position));
@@ -93,13 +90,14 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 			matrixStack.popPose();
 
 			matrixStack.popPose();
-		}).at(xOffset, yOffset));
+		}).at(xOffset, yOffset).offset(position));
 
 		var fallingBlockPosition = new Vector2f(xOffset, yOffset - 35);
 		var landingBlockPosition = new Vector2f(xOffset, yOffset);
 
 		builder.addElement(new InteractiveRenderElement()
-				.<InteractiveRenderElement>at(fallingBlockPosition)
+				.at(fallingBlockPosition)
+				.offset(position)
 				.<InteractiveRenderElement>withSize(FALLING_BLOCK_SIZE)
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(getFallingBlock(recipe), recipe.blockPredicate()))
 				.onClick(button -> rvHelper().buttonToUsageOrRecipe(button)
@@ -107,7 +105,8 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 
 		if (!landingBlockIsAny) {
 			builder.addElement(new InteractiveRenderElement()
-					.<InteractiveRenderElement>at(landingBlockPosition)
+					.at(landingBlockPosition)
+					.offset(position)
 					.<InteractiveRenderElement>withSize(LANDING_BLOCK_SIZE)
 					.onTooltip(() -> BlockPredicateExtensions.getTooltips(getLandingBlock(recipe), recipe.landingBlock()))
 					.onClick(button -> rvHelper().buttonToUsageOrRecipe(button)
@@ -115,8 +114,11 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 		}
 
 		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {
-			var removeActionPosition = VectorExtensions.offset(landingBlockPosition, xOffset - 4, yOffset - 8);
-			builder.addElement(AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition));
+			var removeActionPosition = VectorExtensions.offset(
+					landingBlockPosition,
+					LANDING_BLOCK_SIZE.x() - 4,
+					LANDING_BLOCK_SIZE.y() - 8);
+			builder.addElement(AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition).offset(position));
 		}
 	}
 

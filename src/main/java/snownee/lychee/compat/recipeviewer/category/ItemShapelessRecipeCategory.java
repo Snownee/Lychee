@@ -31,10 +31,8 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 	@Override
 	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
-		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
-		var y = needSecondLine ? 26 : 28;
-		builder.ingredientGroup(recipe, new Vector2f(27, y));
-		builder.actionGroup(recipe, new Vector2f(width() - 29, y));
+		builder.ingredientGroup(recipe, new Vector2f(27, 28));
+		builder.actionGroup(recipe, new Vector2f(width() - 29, 28));
 	}
 
 	@Override
