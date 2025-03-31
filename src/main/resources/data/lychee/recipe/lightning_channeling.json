@@ -10,5 +10,11 @@
       "type": "drop_item",
 			"id": "copper_block"
     }
-  ]
+  ],
+	"contextual": {
+		"type": "location",
+		"predicate": {
+			"dimension": "overworld"
+		}
+	}
 }

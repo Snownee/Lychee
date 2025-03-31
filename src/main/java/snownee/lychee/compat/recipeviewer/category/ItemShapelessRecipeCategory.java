@@ -7,11 +7,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RVHelper;
+import snownee.lychee.compat.recipeviewer.element.InfoElementHelper;
+import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
-	public static final Vector2fc INFO_POSITION = new Vector2f(3, 25);
+	public static final int ICON_SIZE = 24;
+	public static final Vector2fc ICON_POSITION = new Vector2f((float) RvCategoryType.WIDER_WIDTH / 2 - 8, 19);
+	public static final Vector2fc INFO_POSITION = VectorExtensions.offset(
+			ICON_POSITION,
+			(float) InfoElementHelper.INFO_SIZE / 2,
+			-InfoElementHelper.INFO_SIZE);
 
 	protected ItemShapelessRecipeCategory(
 			RvCategoryType<R> type,
@@ -24,16 +31,15 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 	@Override
 	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
-		var centerX = position.x() + (float) width() / 2;
+		var centerX = (float) width() / 2;
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
-		var y = position.y() + (needSecondLine ? 26 : 28);
+		var y = needSecondLine ? 26 : 28;
 		builder.ingredientGroup(recipe, new Vector2f(centerX - 45, y));
 		builder.actionGroup(recipe, new Vector2f(centerX + 50, y));
 	}
 
 	@Override
 	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
-		var centerX = position.x() + (float) width() / 2;
 		var recipe = recipeHolder.value();
 
 		if (needInfoIcon(recipe)) {
@@ -46,6 +52,6 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 			stack.translate(0, 0, 100);
 			icon().render(graphics);
 			stack.popPose();
-		}).at(centerX - 8, position.y() + 19).offset(position).withSize(24, 24));
+		}).at(ICON_POSITION).offset(position).withSize(ICON_SIZE));
 	}
 }

@@ -31,9 +31,9 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 	@Override
 	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
-		var centerX = position.x() + (float) width() / 2;
+		var centerX = (float) width() / 2;
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
-		var y = position.y() + (needSecondLine ? 26 : 28);
+		var y = needSecondLine ? 26 : 28;
 		builder.ingredientGroup(recipe, new Vector2f(centerX - 45, y));
 		builder.actionGroup(recipe, new Vector2f(centerX + 50, y));
 	}
