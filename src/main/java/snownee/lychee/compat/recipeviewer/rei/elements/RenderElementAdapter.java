@@ -42,7 +42,7 @@ public class RenderElementAdapter extends WidgetWithBounds {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		if (element instanceof InteractiveRenderElement interactive && element.bounds.contains(mouseX, mouseY)) {
+		if (element instanceof InteractiveRenderElement interactive && element.containsMouse(mouseX, mouseY)) {
 			var tooltip = interactive.getTooltip();
 			if (tooltip != null) {
 				Tooltip.create(new Point(mouseX, mouseY), tooltip).queue();

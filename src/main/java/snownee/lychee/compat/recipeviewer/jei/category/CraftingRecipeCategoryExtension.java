@@ -2,8 +2,8 @@ package snownee.lychee.compat.recipeviewer.jei.category;
 
 import java.util.List;
 
-import org.joml.Vector2i;
-import org.joml.Vector2ic;
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
@@ -20,7 +20,7 @@ import snownee.lychee.recipes.ShapedCraftingRecipe;
 @NotNullByDefault
 public class CraftingRecipeCategoryExtension implements ICraftingCategoryExtension<ShapedCraftingRecipe> {
 
-	private static final Vector2ic INFO_POSITION = new Vector2i(67, 11);
+	private static final Vector2fc INFO_POSITION = new Vector2f(67, 11);
 
 	@Override
 	public int getWidth(RecipeHolder<ShapedCraftingRecipe> recipeHolder) {

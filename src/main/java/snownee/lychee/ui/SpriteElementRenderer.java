@@ -21,6 +21,6 @@ public class SpriteElementRenderer extends RenderElement {
 		int x = (int) (this.x() + xOff);
 		float yOff = (this.height() - height) / 2F;
 		int y = (int) (this.y() + yOff);
-		graphics.blitSprite(id, x, y, z, width, height);
+		graphics.blitSprite(id, x, y, (int) z, width, height);
 	}
 }

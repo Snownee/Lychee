@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.joml.Vector2ic;
+import org.joml.Vector2fc;
 
 import com.google.common.base.Strings;
 import com.google.common.base.Suppliers;
@@ -56,7 +56,7 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 		return recipe.conditions().conditions().isEmpty() && !recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false);
 	}
 
-	public static <R extends ILycheeRecipe<?>> RenderElement getInfoIcon(RecipeHolder<R> recipeHolder, Vector2ic infoPosition) {
+	public static <R extends ILycheeRecipe<?>> RenderElement getInfoIcon(RecipeHolder<R> recipeHolder, Vector2fc infoPosition) {
 		var recipe = recipeHolder.value();
 		return new InteractiveRenderElement(new SpriteElementRenderer(AllGuiTextures.INFO.id, 1).<SpriteElementRenderer>withSize(
 				InfoElementHelper.INFO_SIZE))

@@ -73,7 +73,7 @@ public class InteractiveRenderElement extends RenderElement implements GuiEventL
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (onClick != null && bounds.contains((int) mouseX, (int) mouseY)) {
+		if (onClick != null && containsMouse(mouseX, mouseY)) {
 			produceClickSound();
 			onClick.accept(button);
 			return true;

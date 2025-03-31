@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector2ic;
+import org.joml.Vector2fc;
 
 import com.google.common.collect.Maps;
 
@@ -78,8 +78,8 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	private static <T> void slotGroup(
 			IRecipeLayoutBuilder builder,
-			int x,
-			int y,
+			float x,
+			float y,
 			List<T> items,
 			SlotLayoutFunction<T> layoutFunction
 	) {
@@ -102,8 +102,8 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		}
 	}
 
-	private static void actionSlot(IRecipeLayoutBuilder builder, PostAction action, int x, int y) {
-		var slotBuilder = builder.addSlot(RecipeIngredientRole.OUTPUT, x + 1, y + 1);
+	private static void actionSlot(IRecipeLayoutBuilder builder, PostAction action, float x, float y) {
+		var slotBuilder = builder.addSlot(RecipeIngredientRole.OUTPUT, (int) (x + 1), (int) (y + 1));
 		var itemMap = Maps.<ItemStack, PostAction>newIdentityHashMap();
 		buildActionSlot(builder, slotBuilder, action, itemMap);
 		slotBuilder.addRichTooltipCallback((view, tooltip) -> {
@@ -183,7 +183,7 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		return rvCategory.height();
 	}
 
-	private void actionGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
+	private void actionGroup(IRecipeLayoutBuilder builder, R recipe, float x, float y) {
 		slotGroup(
 				builder,
 				x,
@@ -192,12 +192,12 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				RVCategoryAdapter::actionSlot);
 	}
 
-	private void ingredientGroup(IRecipeLayoutBuilder builder, R recipe, int x, int y) {
+	private void ingredientGroup(IRecipeLayoutBuilder builder, R recipe, float x, float y) {
 		var ingredients = RVs.generateShapelessInputs(recipe);
 		slotGroup(
 				builder, x + 1, y + 1, ingredients, (layout0, ingredient, x0, y0) -> {
 					var items = ingredient.ingredient.getItems();
-					var slotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, x0, y0);
+					var slotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, (int) x0, (int) y0);
 					slotBuilder.addItemStacks(Arrays.stream(items)
 							.map(it -> ingredient.count == 1 ? it : it.copy())
 							.peek(it -> it.setCount(ingredient.count))
@@ -213,12 +213,12 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 	public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<R> recipeHolder, IFocusGroup focuses) {
 		var layoutBuilder = new RvCategoryLayoutBuilder() {
 			@Override
-			public void actionGroup(ILycheeRecipe<?> recipe, Vector2ic position) {
+			public void actionGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
 				RVCategoryAdapter.this.actionGroup(builder, recipeHolder.value(), position.x(), position.y());
 			}
 
 			@Override
-			public void ingredientGroup(ILycheeRecipe<?> recipe, Vector2ic position) {
+			public void ingredientGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
 				RVCategoryAdapter.this.ingredientGroup(builder, recipeHolder.value(), position.x(), position.y());
 			}
 		};
@@ -244,6 +244,6 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	@FunctionalInterface
 	interface SlotLayoutFunction<T> {
-		void apply(IRecipeLayoutBuilder builder, T item, int x, int y);
+		void apply(IRecipeLayoutBuilder builder, T item, float x, float y);
 	}
 }

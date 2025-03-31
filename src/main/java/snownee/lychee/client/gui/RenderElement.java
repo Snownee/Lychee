@@ -3,11 +3,13 @@ package snownee.lychee.client.gui;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
+import org.joml.Vector2i;
 import org.joml.Vector2ic;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.renderer.Rect2i;
 
 public abstract class RenderElement implements ScreenElement, Renderable {
 
@@ -17,8 +19,9 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 
 		}
 	};
-	public Rect2i bounds = new Rect2i(0, 0, 16, 16);
-	protected int z = 0;
+	public Vector2f position = new Vector2f();
+	public Vector2i size = new Vector2i(16, 16);
+	protected float z = 0;
 
 	public static RenderElement create(BiConsumer<GuiGraphics, RenderElement> renderable) {
 		return new SimpleRenderElement(renderable);
@@ -34,45 +37,38 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 
 	protected float alpha = 1f;
 
-	public <T extends RenderElement> T bounds(Rect2i bounds) {
-		this.bounds = bounds;
+	public <T extends RenderElement> T at(float x, float y) {
+		this.position.set(x, y);
 		//noinspection unchecked
 		return (T) this;
 	}
 
-	public <T extends RenderElement> T at(int x, int y) {
-		this.bounds.setX(x);
-		this.bounds.setY(y);
-		//noinspection unchecked
-		return (T) this;
-	}
-
-	public <T extends RenderElement> T at(Vector2ic position) {
+	public <T extends RenderElement> T at(Vector2fc position) {
 		at(position.x(), position.y());
 		//noinspection unchecked
 		return (T) this;
 	}
 
-	public <T extends RenderElement> T offset(int x, int y) {
-		at(bounds.getX() + x, bounds.getY() + y);
+	public <T extends RenderElement> T offset(float x, float y) {
+		this.position.add(x, y);
 		//noinspection unchecked
 		return (T) this;
 	}
 
-	public <T extends RenderElement> T offset(Vector2ic position) {
-		offset(position.x(), position.y());
+	public <T extends RenderElement> T offset(Vector2fc position) {
+		this.offset(position.x(), position.y());
 		//noinspection unchecked
 		return (T) this;
 	}
 
-	public <T extends RenderElement> T at(int x, int y, int z) {
+	public <T extends RenderElement> T at(float x, float y, float z) {
 		this.at(x, y);
 		this.z = z;
 		//noinspection unchecked
 		return (T) this;
 	}
 
-	public <T extends RenderElement> T atZ(int z) {
+	public <T extends RenderElement> T atZ(float z) {
 		this.z = z;
 		//noinspection unchecked
 		return (T) this;
@@ -80,8 +76,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 
 
 	public <T extends RenderElement> T withSize(int width, int height) {
-		this.bounds.setWidth(width);
-		this.bounds.setHeight(height);
+		this.size.set(width, height);
 		//noinspection unchecked
 		return (T) this;
 	}
@@ -105,27 +100,34 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public int width() {
-		return this.bounds.getWidth();
+		return this.size.x();
 	}
 
 	public int height() {
-		return this.bounds.getHeight();
+		return this.size.y();
 	}
 
-	public int x() {
-		return this.bounds.getX();
+	public float x() {
+		return this.size.x();
 	}
 
-	public int y() {
-		return this.bounds.getY();
+	public float y() {
+		return this.size.y();
 	}
 
-	public int z() {
+	public float z() {
 		return z;
 	}
 
-	public void render(GuiGraphics graphics, int x, int y) {
-		this.at(x, y).render(graphics);
+	public boolean containsMouse(double mouseX, double mouseY) {
+		return mouseX >= x() && mouseY >= y() && mouseX <= x() + width() && mouseY <= y() + height();
+	}
+
+	public void render(GuiGraphics graphics, int offsetX, int offsetY) {
+		graphics.pose().pushPose();
+		graphics.pose().translate(offsetX, offsetY, 0);
+		render(graphics);
+		graphics.pose().popPose();
 	}
 
 	@Override

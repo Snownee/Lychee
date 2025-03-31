@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.joml.Vector2i;
-import org.joml.Vector2ic;
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -57,9 +57,9 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	static <T> void slotGroup(
 			ImmutableList.Builder<Widget> widgets,
-			Vector2ic startPoint,
-			int x,
-			int y,
+			Vector2fc startPoint,
+			float x,
+			float y,
 			List<T> items,
 			SlotLayoutFunction<T> layoutFunction
 	) {
@@ -76,13 +76,13 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				if (index >= size) {
 					break;
 				}
-				layoutFunction.apply(widgets, startPoint, items.get(index), x + j * 19, y + i * 19);
+				layoutFunction.apply(widgets, startPoint, items.get(index), (int) (x + j * 19), (int) (y + i * 19));
 				++index;
 			}
 		}
 	}
 
-	static void actionSlot(ImmutableList.Builder<Widget> widgets, Vector2ic startPoint, PostAction action, int x, int y) {
+	static void actionSlot(ImmutableList.Builder<Widget> widgets, Vector2fc startPoint, PostAction action, int x, int y) {
 		var slot = LycheeREIPlugin.slot(
 				startPoint,
 				x,
@@ -167,7 +167,7 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		return rvCategory.height() + 8;
 	}
 
-	private void actionGroup(ImmutableList.Builder<Widget> widgets, Vector2ic startPoint, R recipe, int x, int y) {
+	private void actionGroup(ImmutableList.Builder<Widget> widgets, Vector2fc startPoint, R recipe, float x, float y) {
 		slotGroup(
 				widgets,
 				startPoint,
@@ -177,7 +177,7 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				RVCategoryAdapter::actionSlot);
 	}
 
-	private void ingredientGroup(ImmutableList.Builder<Widget> widgets, Vector2ic startPoint, R recipe, int x, int y) {
+	private void ingredientGroup(ImmutableList.Builder<Widget> widgets, Vector2fc startPoint, R recipe, float x, float y) {
 		var ingredients = RVs.generateShapelessInputs(recipe);
 		slotGroup(
 				widgets, startPoint, x, y, ingredients, (widgets0, startPoint0, ingredient, x0, y0) -> {
@@ -204,17 +204,17 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 	@Override
 	public List<Widget> setupDisplay(LycheeDisplay<R> display, Rectangle bounds) {
 		var widgets = ImmutableList.<Widget>builder();
-		var startPoint = new Vector2i(bounds.getCenterX() - rvCategory.width() / 2, bounds.getY() + 4);
+		var startPoint = new Vector2f(bounds.getCenterX() - (float) rvCategory.width() / 2, bounds.getY() + 4);
 		widgets.add(Widgets.createRecipeBase(bounds));
 
 		var layoutBuilder = new RvCategoryLayoutBuilder() {
 			@Override
-			public void actionGroup(ILycheeRecipe<?> recipe, Vector2ic position) {
+			public void actionGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
 				RVCategoryAdapter.this.actionGroup(widgets, startPoint, (R) recipe, position.x(), position.y());
 			}
 
 			@Override
-			public void ingredientGroup(ILycheeRecipe<?> recipe, Vector2ic position) {
+			public void ingredientGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
 				RVCategoryAdapter.this.ingredientGroup(widgets, startPoint, (R) recipe, position.x(), position.y());
 			}
 		};
@@ -234,6 +234,6 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	@FunctionalInterface
 	interface SlotLayoutFunction<T> {
-		void apply(ImmutableList.Builder<Widget> widgets, Vector2ic startPoint, T item, int x, int y);
+		void apply(ImmutableList.Builder<Widget> widgets, Vector2fc startPoint, T item, int x, int y);
 	}
 }

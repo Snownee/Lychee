@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import org.joml.Vector2i;
+import org.joml.Vector2f;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
@@ -121,7 +121,7 @@ public class RvPlugin {
 		register(
 				RecipeTypes.ITEM_INSIDE, it -> {
 					it.width = RvCategoryType.WIDER_WIDTH;
-					it.infoPosition = new Vector2i(4, 25);
+					it.infoPosition = new Vector2f(4, 25);
 					it.iconProvider = category ->
 							new SideBlockIcon(AllGuiTextures.DOWN_ARROW, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
 				});

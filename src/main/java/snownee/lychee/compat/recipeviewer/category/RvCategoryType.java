@@ -5,7 +5,7 @@ import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector2ic;
+import org.joml.Vector2fc;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +22,7 @@ public class RvCategoryType<T extends ILycheeRecipe<LycheeContext>> {
 	public final ResourceLocation id;
 	public int width = WIDTH;
 	public int height = HEIGHT;
-	public Vector2ic infoPosition = InfoElementHelper.INFO_POSITION;
+	public Vector2fc infoPosition = InfoElementHelper.INFO_POSITION;
 	public @Nullable IconProvider<T> iconProvider;
 	public @NotNull WorkstationProvider<T> workstationProvider = category -> List.of();
 

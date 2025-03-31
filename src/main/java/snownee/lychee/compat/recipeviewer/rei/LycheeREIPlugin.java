@@ -2,8 +2,8 @@ package snownee.lychee.compat.recipeviewer.rei;
 
 import java.util.List;
 
-import org.joml.Vector2i;
-import org.joml.Vector2ic;
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
 
 import dev.architectury.event.EventResult;
 import me.shedaniel.math.Point;
@@ -49,7 +49,7 @@ public class LycheeREIPlugin implements REIClientPlugin {
 
 	private final RvPlugin rvPlugin = new RvPlugin(ReiRVHelper.INSTANCE);
 
-	public static LycheeEntryWidget slot(Vector2ic startPoint, int x, int y, SlotType slotType) {
+	public static LycheeEntryWidget slot(Vector2fc startPoint, int x, int y, SlotType slotType) {
 		LycheeEntryWidget widget = new LycheeEntryWidget(new Point(startPoint.x() + x + 1, startPoint.y() + y + 1));
 		widget.background(slotType.sprite);
 		return widget;
@@ -105,10 +105,10 @@ public class LycheeREIPlugin implements REIClientPlugin {
 					@Override
 					public List<Widget> setupDisplay(Display display, Rectangle bounds) {
 						List<Widget> widgets = lastView.setupDisplay(display, bounds);
-						Vector2ic infoPosition = null;
+						Vector2fc infoPosition = null;
 						for (Widget widget : widgets) {
 							if (widget instanceof Arrow arrow) {
-								infoPosition = new Vector2i(
+								infoPosition = new Vector2f(
 										arrow.getBounds().getCenterX() - bounds.getX() - 4,
 										Math.max(arrow.getY() - bounds.getY() - 9, 4));
 								break;

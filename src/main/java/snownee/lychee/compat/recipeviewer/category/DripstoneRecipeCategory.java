@@ -2,8 +2,8 @@ package snownee.lychee.compat.recipeviewer.category;
 
 import java.util.function.Supplier;
 
-import org.joml.Vector2i;
-import org.joml.Vector2ic;
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
 
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -24,8 +24,8 @@ import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe> {
 	private static final int BLOCK_SIZE = 16;
-	private static final Vector2ic SOURCE_BLOCK_POSITION = new Vector2i(22, 0);
-	private static final Vector2ic TARGET_BLOCK_POSITION = new Vector2i(22, 36);
+	private static final Vector2fc SOURCE_BLOCK_POSITION = new Vector2f(22, 0);
+	private static final Vector2fc TARGET_BLOCK_POSITION = new Vector2f(22, 36);
 
 	protected DripstoneRecipeCategory(
 			RvCategoryType<DripstoneRecipe> type,
@@ -50,16 +50,16 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	}
 
 	@Override
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2ic position) {
+	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
-		var centerX = position.x() + width() / 2;
+		var centerX = position.x() + (float) width() / 2;
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
 		var y = position.y() + (needSecondLine ? 26 : 28);
-		builder.actionGroup(recipe, new Vector2i(centerX - 24, y));
+		builder.actionGroup(recipe, new Vector2f(centerX - 24, y));
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2ic position) {
+	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
 
 		if (needInfoIcon(recipe)) {

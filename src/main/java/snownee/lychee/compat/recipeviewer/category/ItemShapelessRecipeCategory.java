@@ -1,7 +1,7 @@
 package snownee.lychee.compat.recipeviewer.category;
 
-import org.joml.Vector2i;
-import org.joml.Vector2ic;
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -11,7 +11,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
-	public static final Vector2ic INFO_POSITION = new Vector2i(3, 25);
+	public static final Vector2fc INFO_POSITION = new Vector2f(3, 25);
 
 	protected ItemShapelessRecipeCategory(
 			RvCategoryType<R> type,
@@ -22,18 +22,18 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 	}
 
 	@Override
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2ic position) {
+	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
-		var centerX = position.x() + width() / 2;
+		var centerX = position.x() + (float) width() / 2;
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
 		var y = position.y() + (needSecondLine ? 26 : 28);
-		builder.ingredientGroup(recipe, new Vector2i(centerX - 45, y));
-		builder.actionGroup(recipe, new Vector2i(centerX + 50, y));
+		builder.ingredientGroup(recipe, new Vector2f(centerX - 45, y));
+		builder.actionGroup(recipe, new Vector2f(centerX + 50, y));
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2ic position) {
-		var centerX = position.x() + width() / 2;
+	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
+		var centerX = position.x() + (float) width() / 2;
 		var recipe = recipeHolder.value();
 
 		if (needInfoIcon(recipe)) {

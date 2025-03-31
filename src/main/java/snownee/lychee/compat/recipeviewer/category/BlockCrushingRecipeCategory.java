@@ -1,5 +1,7 @@
 package snownee.lychee.compat.recipeviewer.category;
 
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
 
@@ -27,17 +29,17 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 	}
 
 	@Override
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2ic position) {
+	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
-		var centerX = position.x() + width() / 2;
+		var centerX = position.x() + (float) width() / 2;
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
 		var y = position.y() + (needSecondLine ? 26 : 28);
-		builder.ingredientGroup(recipe, new Vector2i(centerX - 45, y));
-		builder.actionGroup(recipe, new Vector2i(centerX + 50, y));
+		builder.ingredientGroup(recipe, new Vector2f(centerX - 45, y));
+		builder.actionGroup(recipe, new Vector2f(centerX + 50, y));
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2ic position) {
+	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
 
 		var landingBlockIsAny = BlockPredicateExtensions.isAny(recipe.landingBlock());
@@ -93,8 +95,8 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 			matrixStack.popPose();
 		}).at(xOffset, yOffset));
 
-		var fallingBlockPosition = new Vector2i(xOffset, yOffset - 35);
-		var landingBlockPosition = new Vector2i(xOffset, yOffset);
+		var fallingBlockPosition = new Vector2f(xOffset, yOffset - 35);
+		var landingBlockPosition = new Vector2f(xOffset, yOffset);
 
 		builder.addElement(new InteractiveRenderElement()
 				.<InteractiveRenderElement>at(fallingBlockPosition)
@@ -113,7 +115,7 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 		}
 
 		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {
-			var removeActionPosition = VectorExtensions.offset(LANDING_BLOCK_SIZE, xOffset - 4, yOffset - 8);
+			var removeActionPosition = VectorExtensions.offset(landingBlockPosition, xOffset - 4, yOffset - 8);
 			builder.addElement(AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition));
 		}
 	}

@@ -51,9 +51,9 @@ public class TextElementRenderer extends RenderElement {
 	@Override
 	public void render(GuiGraphics graphics) {
 		if (!centered) {
-			graphics.drawString(font, text, x(), y(), color, shadow);
+			graphics.drawString(font, text, (int) x(), (int) y(), color, shadow);
 		} else {
-			graphics.drawString(font, text, x() - font.width(text) / 2, y(), color, shadow);
+			graphics.drawString(font, text, (int) (x() - (float) font.width(text) / 2), (int) y(), color, shadow);
 		}
 	}
 }

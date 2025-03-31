@@ -8,7 +8,6 @@ import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
 import net.minecraft.client.Minecraft;
@@ -16,7 +15,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -27,8 +25,8 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.StairBlock;
@@ -169,26 +167,16 @@ public class GuiGameElement {
 			Minecraft mc = Minecraft.getInstance();
 			BlockRenderDispatcher blockRenderer = mc.getBlockRenderer();
 			MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
-			RenderType renderType = blockState.getBlock() == Blocks.AIR
-					? Sheets.translucentCullBlockSheet()
-					: ItemBlockRenderTypes.getRenderType(blockState, true);
-			VertexConsumer vb = buffer.getBuffer(renderType);
 
 			transformMatrix(matrixStack);
 
 			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
-			renderModel(blockRenderer, buffer, renderType, vb, matrixStack);
+			renderModel(blockRenderer, buffer, matrixStack);
 
 			cleanUpMatrix(matrixStack);
 		}
 
-		protected void renderModel(
-				BlockRenderDispatcher blockRenderer,
-				MultiBufferSource.BufferSource buffer,
-				RenderType renderType,
-				VertexConsumer vb,
-				PoseStack ms
-		) {
+		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {
 			Minecraft mc = Minecraft.getInstance();
 			int color = mc.getBlockColors().getColor(
 					blockState,
@@ -199,7 +187,9 @@ public class GuiGameElement {
 			Color rgb = new Color(color == -1 ? this.color : color);
 			blockRenderer.getModelRenderer().renderModel(
 					ms.last(),
-					vb,
+					buffer.getBuffer(blockState.getBlock() == Blocks.AIR ?
+							Sheets.translucentCullBlockSheet() :
+							ItemBlockRenderTypes.getRenderType(blockState, true)),
 					blockState,
 					blockModel,
 					rgb.getRedAsFloat(),
@@ -210,7 +200,6 @@ public class GuiGameElement {
 			);
 			buffer.endBatch();
 		}
-
 	}
 
 	public static class GuiBlockStateRenderBuilder extends GuiBlockModelRenderBuilder {
@@ -223,11 +212,9 @@ public class GuiGameElement {
 		protected void renderModel(
 				BlockRenderDispatcher blockRenderer,
 				MultiBufferSource.BufferSource buffer,
-				RenderType renderType,
-				VertexConsumer vb,
 				PoseStack ms
 		) {
-			if (blockState.getBlock() instanceof FireBlock) {
+			if (blockState.getBlock() instanceof BaseFireBlock) {
 				Lighting.setupForFlatItems();
 				blockRenderer.renderSingleBlock(
 						blockState,
@@ -241,7 +228,7 @@ public class GuiGameElement {
 				return;
 			}
 
-			super.renderModel(blockRenderer, buffer, renderType, vb, ms);
+			super.renderModel(blockRenderer, buffer, ms);
 
 			if (blockState.getFluidState().isEmpty()) {
 				return;

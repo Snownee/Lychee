@@ -2,9 +2,13 @@ package snownee.lychee.compat.recipeviewer.category;
 
 import java.util.function.Function;
 
+import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
 
+import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 
 import net.minecraft.resources.ResourceLocation;
@@ -25,26 +29,26 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
-	public static final Vector2ic INFO_POSITION = new Vector2i(8, 32);
+	public static final Vector2fc INFO_POSITION = new Vector2f(8, 32);
 
-	protected static final Vector2ic INPUT_BLOCK_POSITION = new Vector2i(30, 35);
-	protected static final Vector2ic METHOD_POSITION = new Vector2i(30, 12);
-	protected static final Vector2ic INGREDIENT_POSITION = new Vector2i(12, 21);
+	protected static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(30, 35);
+	protected static final Vector2fc METHOD_POSITION = new Vector2f(30, 12);
+	protected static final Vector2fc INGREDIENT_POSITION = new Vector2f(12, 21);
 
 	protected static final Vector2ic INPUT_BLOCK_SIZE = new Vector2i(20, 20);
 	protected static final Vector2ic METHOD_SIZE = new Vector2i(20, 20);
 
-	protected final Vector2ic inputBlockPosition;
-	protected final Vector2ic methodPosition;
-	protected final Vector2ic ingredientPosition;
+	protected final Vector2fc inputBlockPosition;
+	protected final Vector2fc methodPosition;
+	protected final Vector2fc ingredientPosition;
 
 	protected ItemAndBlockCategory(
 			RvCategoryType<R> type,
 			ResourceLocation id,
 			RVHelper rvHandler,
-			Vector2ic inputBlockPosition,
-			Vector2ic methodPosition,
-			Vector2ic ingredientPosition
+			Vector2fc inputBlockPosition,
+			Vector2fc methodPosition,
+			Vector2fc ingredientPosition
 	) {
 		super(type, id, rvHandler);
 		this.inputBlockPosition = inputBlockPosition;
@@ -68,16 +72,16 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	}
 
 	@Override
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2ic position) {
+	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
 		var needSecondLine = recipe.getIngredients().size() > 9 || recipe.conditions().showingCount() > 9;
 		var y = needSecondLine ? 26 : 28;
 		builder.ingredientGroup(recipe, ingredientPosition);
-		builder.actionGroup(recipe, new Vector2i(width() - 29, y));
+		builder.actionGroup(recipe, new Vector2f(width() - 29, y));
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2ic position) {
+	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
 
 		if (needInfoIcon(recipe)) {
@@ -108,17 +112,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		var questionMarkElement = Suppliers.<RenderElement>memoize(() ->
 				RenderElement.create(AllGuiTextures.QUESTION_MARK).at(4, 2).offset(inputBlockPosition));
 
-		var shadowPosition = new Vector2i(11 - 26, 16 - 5);
-		var shadowElement = Suppliers.<RenderElement>memoize(() -> {
-			var shadow = RenderElement.create(AllGuiTextures.SHADOW).offset(inputBlockPosition).at(shadowPosition);
-			return RenderElement.create((graphics, element) -> {
-				var matrixStack = graphics.pose();
-				matrixStack.pushPose();
-				matrixStack.scale(0.7F, 0.7F, 1F);
-				shadow.render(graphics);
-				matrixStack.popPose();
-			}).at(shadow.x(), shadow.y());
-		});
+		var shadowElement = getShadowElement();
 
 		Function<BlockState, RenderElement> blockElement = (BlockState state) -> GuiGameElement.of(state)
 				.rotateBlock(12.5, 202.5, 0)
@@ -152,5 +146,19 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 								.ifPresent(usageOrRecipe -> rvHelper().openPage(getRenderingBlock(recipe), usageOrRecipe)))
 				.at(inputBlockPosition)
 				.withSize(INPUT_BLOCK_SIZE);
+	}
+
+	private @NotNull Supplier<RenderElement> getShadowElement() {
+		var shadowPosition = new Vector2f((float) (11 - 18.2), (float) (16 - 3.5));
+		return Suppliers.memoize(() -> {
+			var shadow = RenderElement.create(AllGuiTextures.SHADOW).offset(inputBlockPosition).at(shadowPosition);
+			return RenderElement.create((graphics, element) -> {
+				var matrixStack = graphics.pose();
+				matrixStack.pushPose();
+				matrixStack.scale(0.7F, 0.7F, 1F);
+				shadow.render(graphics);
+				matrixStack.popPose();
+			}).at(shadow.x(), shadow.y());
+		});
 	}
 }
