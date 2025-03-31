@@ -5,8 +5,6 @@ import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
-import org.joml.Vector2i;
-import org.joml.Vector2ic;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -32,11 +30,11 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	public static final Vector2fc INFO_POSITION = new Vector2f(8, 32);
 
 	protected static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(30, 35);
-	protected static final Vector2fc METHOD_POSITION = new Vector2f(30, 12);
+	protected static final Vector2fc METHOD_POSITION = new Vector2f(26, 12);
 	protected static final Vector2fc INGREDIENT_POSITION = new Vector2f(12, 21);
 
-	protected static final Vector2ic INPUT_BLOCK_SIZE = new Vector2i(20, 20);
-	protected static final Vector2ic METHOD_SIZE = new Vector2i(20, 20);
+	protected static final int INPUT_BLOCK_SIZE = 18;
+	protected static final int METHOD_SIZE = 20;
 
 	protected final Vector2fc inputBlockPosition;
 	protected final Vector2fc methodPosition;
@@ -98,8 +96,8 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {
 			var removeActionPosition = VectorExtensions.offset(
 					inputBlockPosition,
-					position.x() + INPUT_BLOCK_SIZE.x() - 4,
-					position.y() + INPUT_BLOCK_SIZE.y() - 8);
+					position.x() + INPUT_BLOCK_SIZE - 4,
+					position.y() + INPUT_BLOCK_SIZE - 8);
 			AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition);
 		}
 	}
@@ -110,7 +108,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 
 	protected RenderElement getInputBlockElement(R recipe) {
 		var questionMarkElement = Suppliers.<RenderElement>memoize(() ->
-				RenderElement.create(AllGuiTextures.QUESTION_MARK).at(4, 2).offset(inputBlockPosition));
+				RenderElement.create(AllGuiTextures.QUESTION_MARK).at(4, 2));
 
 		var shadowElement = getShadowElement();
 
@@ -118,8 +116,8 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 				.rotateBlock(12.5, 202.5, 0)
 				.scale(15)
 				.lighting(RVs.BLOCK_LIGHTING)
-				.at(inputBlockPosition)
-				.withSize(INPUT_BLOCK_SIZE);
+				.withSize(INPUT_BLOCK_SIZE)
+				.at(-1, 4);
 
 		var result = new InteractiveRenderElement((element) -> {
 			var state = getRenderingBlock(recipe);
@@ -149,13 +147,16 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	}
 
 	private @NotNull Supplier<RenderElement> getShadowElement() {
-		var shadowPosition = new Vector2f((float) (11 - 18.2), (float) (16 - 3.5));
+		var scale = 0.7F;
+		var shadowPosition = new Vector2f(
+				INPUT_BLOCK_SIZE / 2F - (52 /* Shadow sprite width */ * scale / 2) + 4F,
+				INPUT_BLOCK_SIZE - 13 /* Shadow sprite height */ * scale - 1F);
 		return Suppliers.memoize(() -> {
-			var shadow = RenderElement.create(AllGuiTextures.SHADOW).offset(inputBlockPosition).at(shadowPosition);
+			var shadow = RenderElement.create(AllGuiTextures.SHADOW).at(shadowPosition);
 			return RenderElement.create((graphics, element) -> {
 				var matrixStack = graphics.pose();
 				matrixStack.pushPose();
-				matrixStack.scale(0.7F, 0.7F, 1F);
+				matrixStack.scale(scale, scale, 1F);
 				shadow.render(graphics);
 				matrixStack.popPose();
 			}).at(shadow.x(), shadow.y());
