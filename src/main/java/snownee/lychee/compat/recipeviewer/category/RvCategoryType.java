@@ -5,12 +5,10 @@ import java.util.function.Function;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector2fc;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.element.InfoElementHelper;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -22,7 +20,6 @@ public class RvCategoryType<T extends ILycheeRecipe<LycheeContext>> {
 	public final ResourceLocation id;
 	public int width = WIDTH;
 	public int height = HEIGHT;
-	public Vector2fc infoPosition = InfoElementHelper.INFO_POSITION;
 	public @Nullable IconProvider<T> iconProvider;
 	public @NotNull WorkstationProvider<T> workstationProvider = category -> List.of();
 

@@ -59,6 +59,11 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	}
 
 	@Override
+	public Vector2fc infoPosition() {
+		return INFO_POSITION;
+	}
+
+	@Override
 	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
 		var needSecondLine = recipe.conditions().showingCount() > 9;

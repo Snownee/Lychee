@@ -37,26 +37,12 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 
 	public static final Vector2fc INFO_POSITION = VectorExtensions.offset(METHOD_POSITION, METHOD_SIZE, 4);
 
-	protected final Vector2fc inputBlockPosition;
-	protected final Vector2fc methodPosition;
-	protected final float inputIngredientX;
-
 	protected ItemAndBlockCategory(
 			RvCategoryType<R> type,
 			ResourceLocation id,
-			RVHelper rvHandler,
-			Vector2fc inputBlockPosition,
-			Vector2fc methodPosition,
-			float inputIngredientX
+			RVHelper rvHandler
 	) {
 		super(type, id, rvHandler);
-		this.inputBlockPosition = inputBlockPosition;
-		this.methodPosition = methodPosition;
-		this.inputIngredientX = inputIngredientX;
-	}
-
-	public ItemAndBlockCategory(RvCategoryType<R> type, ResourceLocation id, RVHelper rvHandler) {
-		this(type, id, rvHandler, INPUT_BLOCK_POSITION, METHOD_POSITION, INPUT_INGREDIENT_X);
 	}
 
 	protected BlockState getRenderingBlock(R recipe) {
@@ -71,9 +57,26 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	}
 
 	@Override
+	public Vector2fc infoPosition() {
+		return INFO_POSITION;
+	}
+
+	public Vector2fc inputBlockPosition() {
+		return INPUT_BLOCK_POSITION;
+	}
+
+	public Vector2fc methodPosition() {
+		return METHOD_POSITION;
+	}
+
+	public float inputIngredientX() {
+		return INPUT_INGREDIENT_X;
+	}
+
+	@Override
 	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
-		builder.ingredientGroup(recipe, new Vector2f(inputIngredientX, 28));
+		builder.ingredientGroup(recipe, new Vector2f(inputIngredientX(), 28));
 		builder.actionGroup(recipe, new Vector2f(width() - 29, 28));
 	}
 
@@ -94,7 +97,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 
 		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {
 			var removeActionPosition = VectorExtensions.offset(
-					inputBlockPosition,
+					inputBlockPosition(),
 					position.x() + INPUT_BLOCK_SIZE - 4,
 					position.y() + INPUT_BLOCK_SIZE - 8);
 			AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition);
@@ -102,7 +105,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	}
 
 	protected RenderElement geMethodElement() {
-		return RenderElement.create(AllGuiTextures.DOWN_ARROW).at(methodPosition).withSize(METHOD_SIZE);
+		return RenderElement.create(AllGuiTextures.DOWN_ARROW).at(methodPosition()).withSize(METHOD_SIZE);
 	}
 
 	protected RenderElement getInputBlockElement(R recipe) {
@@ -120,11 +123,13 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		return result.onClick(button ->
 						rvHelper().buttonToUsageOrRecipe(button)
 								.ifPresent(usageOrRecipe -> rvHelper().openPage(getRenderingBlock(recipe), usageOrRecipe)))
-				.at(inputBlockPosition)
+				.at(inputBlockPosition())
 				.withSize(INPUT_BLOCK_SIZE);
 	}
 
-	private @NotNull InteractiveRenderElement getBlockElementWithShadow(Supplier<BlockState> blockStateSupplier, final Supplier<RenderElement> questionMarkElement) {
+	private @NotNull InteractiveRenderElement getBlockElementWithShadow(
+			Supplier<BlockState> blockStateSupplier,
+			final Supplier<RenderElement> questionMarkElement) {
 		var shadowElement = getShadowElement();
 
 		Function<BlockState, RenderElement> blockElement = (BlockState state) -> GuiGameElement.of(state)

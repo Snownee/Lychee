@@ -57,4 +57,9 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 	protected boolean needRenderIcon() {
 		return true;
 	}
+
+	@Override
+	public Vector2fc infoPosition() {
+		return INFO_POSITION;
+	}
 }

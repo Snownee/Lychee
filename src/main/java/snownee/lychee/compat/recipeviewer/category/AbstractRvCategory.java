@@ -96,4 +96,9 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 	public RenderElement icon() {
 		return iconSupplier.get();
 	}
+
+	@Override
+	public Vector2fc infoPosition() {
+		return InfoElementHelper.INFO_POSITION;
+	}
 }

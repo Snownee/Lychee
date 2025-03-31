@@ -36,9 +36,7 @@ public interface RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return type().height;
 	}
 
-	default Vector2fc infoPosition() {
-		return type().infoPosition;
-	}
+	Vector2fc infoPosition();
 
 	default @NotNull Component title() {
 		return RVs.makeTitle(id());

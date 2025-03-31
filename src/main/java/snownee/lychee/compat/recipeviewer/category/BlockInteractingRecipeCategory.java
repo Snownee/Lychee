@@ -26,7 +26,7 @@ public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockIn
 			ResourceLocation id,
 			RVHelper rvHandler
 	) {
-		super(type, id, rvHandler, INPUT_BLOCK_POSITION, METHOD_POSITION, INPUT_INGREDIENT_X);
+		super(type, id, rvHandler);
 	}
 
 	private RenderElement getMouseIcon(BlockInteractingRecipe recipe) {
@@ -42,5 +42,22 @@ public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockIn
 	) {
 		super.configureDecorations(builder, recipeHolder, position);
 		builder.addElement(getMouseIcon(recipeHolder.value()).offset(position));
+	}
+
+	@Override
+	public Vector2fc infoPosition() {
+		return INFO_POSITION;
+	}
+
+	public Vector2fc inputBlockPosition() {
+		return INPUT_BLOCK_POSITION;
+	}
+
+	public Vector2fc methodPosition() {
+		return METHOD_POSITION;
+	}
+
+	public float inputIngredientX() {
+		return INPUT_INGREDIENT_X;
 	}
 }

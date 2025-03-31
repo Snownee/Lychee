@@ -25,10 +25,7 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 		super(
 				type,
 				id,
-				rvHandler,
-				INPUT_BLOCK_POSITION,
-				METHOD_POSITION,
-				INPUT_INGREDIENT_X);
+				rvHandler);
 	}
 
 	@Override
@@ -45,8 +42,25 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 					.centered()
 					.shadow()
 					.at(position)
-					.offset(methodPosition)
+					.offset(methodPosition())
 					.offset(10, -6));
 		}
+	}
+
+	@Override
+	public Vector2fc infoPosition() {
+		return INFO_POSITION;
+	}
+
+	public Vector2fc inputBlockPosition() {
+		return INPUT_BLOCK_POSITION;
+	}
+
+	public Vector2fc methodPosition() {
+		return METHOD_POSITION;
+	}
+
+	public float inputIngredientX() {
+		return INPUT_INGREDIENT_X;
 	}
 }
