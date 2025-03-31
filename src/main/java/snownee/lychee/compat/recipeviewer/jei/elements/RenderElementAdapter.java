@@ -63,8 +63,12 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 		if (!(element instanceof InteractiveRenderElement interactive)) {
 			return;
 		}
+		var components = interactive.getTooltip();
+		if (components == null) {
+			return;
+		}
 		tooltip.clear();
-		tooltip.addAll(interactive.getTooltip());
+		tooltip.addAll(components);
 	}
 
 	@Override
