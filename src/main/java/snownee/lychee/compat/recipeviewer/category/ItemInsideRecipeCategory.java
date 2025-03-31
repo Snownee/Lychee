@@ -11,8 +11,9 @@ import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.VectorExtensions;
 
 public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRecipe> {
-	public static final Vector2fc INPUT_BLOCK_POSITION = VectorExtensions.withX(ItemAndBlockCategory.INPUT_BLOCK_POSITION, 76);
-	public static final Vector2fc METHOD_POSITION = VectorExtensions.withX(ItemAndBlockCategory.METHOD_POSITION, 72);
+	public static final Vector2fc INPUT_BLOCK_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.INPUT_BLOCK_POSITION, 46);
+	public static final Vector2fc METHOD_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.METHOD_POSITION, 46);
+	private static final float INPUT_INGREDIENT_X = 27;
 
 	public static final Vector2fc INFO_POSITION = VectorExtensions.offset(METHOD_POSITION, METHOD_SIZE, 4);
 
@@ -27,7 +28,7 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 				rvHandler,
 				INPUT_BLOCK_POSITION,
 				METHOD_POSITION,
-				27);
+				INPUT_INGREDIENT_X);
 	}
 
 	@Override
