@@ -19,12 +19,12 @@ import snownee.lychee.compat.recipeviewer.jei.elements.RenderElementAdapter;
 @Mixin(value = AnvilRecipeCategory.class, remap = false)
 public class AnvilRecipeCategoryMixin {
 	@Unique
-	private final Vector2fc lychee$infoPosition = new Vector2f(83, 1);
+	private final Vector2fc lychee$infoPosition = new Vector2f(83, 18);
 
 	@Inject(method = "createRecipeExtras*", at = @At("TAIL"))
 	private void onRecipeExtras(IRecipeExtrasBuilder builder, IJeiAnvilRecipe recipe, IFocusGroup focuses, CallbackInfo ci) {
 		if (recipe instanceof AnvilCraftingDisplay display && AbstractRvCategory.needInfoIcon(display.recipeHolder().value())) {
-			builder.addWidget(new RenderElementAdapter(AbstractRvCategory.getInfoIcon(display.recipeHolder(), lychee$infoPosition)));
+			builder.addWidget(new RenderElementAdapter(AbstractRvCategory.getRecipeInfoIcon(display.recipeHolder()).at(lychee$infoPosition)));
 		}
 	}
 }
