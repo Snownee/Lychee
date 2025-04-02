@@ -28,8 +28,8 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
-	public static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(22, 20);
-	public static final Vector2fc METHOD_POSITION = new Vector2f(26, 12);
+	public static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(22, 35);
+	public static final Vector2fc METHOD_POSITION = new Vector2f(INPUT_BLOCK_POSITION.x() - 4, 12);
 	public static final float INPUT_INGREDIENT_X = 12;
 
 	public static final int INPUT_BLOCK_SIZE = 18;

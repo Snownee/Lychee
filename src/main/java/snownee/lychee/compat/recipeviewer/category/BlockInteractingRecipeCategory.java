@@ -14,8 +14,8 @@ import snownee.lychee.util.VectorExtensions;
 public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockInteractingRecipe> {
 	private static final float INPUT_INGREDIENT_X = 22;
 
-	public static final Vector2fc INPUT_BLOCK_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.INPUT_BLOCK_POSITION, 46);
-	public static final Vector2fc METHOD_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.METHOD_POSITION, 46);
+	public static final Vector2fc INPUT_BLOCK_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.INPUT_BLOCK_POSITION, 54);
+	public static final Vector2fc METHOD_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.METHOD_POSITION, 54);
 	public static final int MOUSE_ICON_SIZE = 16;
 	public static final Vector2fc MOUSE_ICON_POSITION = VectorExtensions.offset(METHOD_POSITION, -MOUSE_ICON_SIZE + 2, 0);
 
