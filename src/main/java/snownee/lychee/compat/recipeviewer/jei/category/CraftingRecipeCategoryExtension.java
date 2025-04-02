@@ -39,7 +39,7 @@ public class CraftingRecipeCategoryExtension implements ICraftingCategoryExtensi
 			ICraftingGridHelper craftingGridHelper,
 			IFocusGroup focuses) {
 		if (AbstractRvCategory.needInfoIcon(recipeHolder.value())) {
-			builder.addWidget(new RenderElementAdapter(AbstractRvCategory.getInfoIcon(recipeHolder, INFO_POSITION)));
+			builder.addWidget(new RenderElementAdapter(AbstractRvCategory.getRecipeInfoIcon(recipeHolder).at(INFO_POSITION)));
 		}
 	}
 

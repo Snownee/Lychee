@@ -116,7 +116,9 @@ public class LycheeREIPlugin implements REIClientPlugin {
 						}
 						if (infoPosition != null && AbstractRvCategory.needInfoIcon(lycheeDisplay.recipe().value())) {
 							widgets.add(new RenderElementAdapter(
-									AbstractRvCategory.getInfoIcon(lycheeDisplay.recipe(), infoPosition).offset(bounds.x, bounds.y)));
+									AbstractRvCategory.getRecipeInfoIcon(lycheeDisplay.recipe())
+											.at(infoPosition)
+											.offset(bounds.x, bounds.y)));
 						}
 						return widgets;
 					}

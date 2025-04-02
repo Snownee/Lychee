@@ -47,7 +47,7 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 		var fallingBlockPosition = new Vector2f(xOffset, yOffset - FALLING_BLOCK_HEIGHT);
 
 		if (needInfoIcon(recipe)) {
-			builder.addElement(getInfoIcon(recipeHolder, infoPosition(fallingBlockPosition)).offset(position));
+			builder.addElement(getInfoIcon(recipeHolder).at(infoPosition(fallingBlockPosition)).offset(position));
 		}
 
 		builder.addElement(RenderElement.create((graphics, element) -> {

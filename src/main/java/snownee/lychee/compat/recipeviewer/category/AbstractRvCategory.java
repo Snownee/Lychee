@@ -58,18 +58,17 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 		return !recipe.conditions().conditions().isEmpty() || recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false);
 	}
 
-	public static <R extends ILycheeRecipe<?>> RenderElement getInfoIcon(RecipeHolder<R> recipeHolder, Vector2fc infoPosition) {
+	public static <R extends ILycheeRecipe<?>> RenderElement getRecipeInfoIcon(RecipeHolder<R> recipeHolder) {
 		var recipe = recipeHolder.value();
 		return new InteractiveRenderElement(new SpriteElementRenderer(AllGuiTextures.INFO.id, 1).<SpriteElementRenderer>withSize(
 				InfoElementHelper.INFO_SIZE))
 				.onTooltip(() -> RVs.getRecipeTooltip(recipe))
 				.onClick((button) -> ClientProxy.postInfoBadgeClickEvent(recipe, recipeHolder.id(), button))
-				.withSize(InfoElementHelper.INFO_SIZE)
-				.at(infoPosition);
+				.withSize(InfoElementHelper.INFO_SIZE);
 	}
 
 	public RenderElement getInfoIcon(RecipeHolder<R> recipeHolder) {
-		return getInfoIcon(recipeHolder, infoPosition());
+		return getRecipeInfoIcon(recipeHolder).at(infoPosition());
 	}
 
 	@Override
