@@ -44,8 +44,7 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 	}
 
 	public static boolean needRemoveInputIcon(ILycheeRecipe<? extends LycheeContext> recipe) {
-		return recipe.postActions().stream()
-				.anyMatch(it -> it instanceof PlaceBlock placeBlock && placeBlock.hidden());
+		return recipe.postActions().stream().anyMatch(it -> it instanceof PlaceBlock placeBlock && placeBlock.fancyDisplay());
 	}
 
 	public static RenderElement getRemoveInputIcon() {

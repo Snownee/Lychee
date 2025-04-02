@@ -2,7 +2,6 @@ package snownee.lychee.action;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +42,7 @@ public final class PlaceBlock implements PostAction {
 	private final PostActionCommonProperties commonProperties;
 	private final BlockPredicate block;
 	private final BlockPos offset;
+	private final boolean fancyDisplay;
 
 	public PlaceBlock(
 			PostActionCommonProperties properties,
@@ -50,12 +50,17 @@ public final class PlaceBlock implements PostAction {
 			BlockPos offset) {
 		this.block = block;
 		this.offset = offset;
-		this.commonProperties = new PostActionCommonProperties(
-				properties.conditions(), Optional.ofNullable(properties.icon()).or(() ->
-				(BlockPredicateExtensions.isAny(this.block) && this.offset.equals(BlockPos.ZERO)) ?
-						Optional.of(PostActionCommonProperties.HIDDEN) :
-						Optional.empty()), properties.getPath()
-		);
+		this.commonProperties = properties;
+		this.fancyDisplay = properties.icon() == null && BlockPredicateExtensions.isAny(block) && offset.equals(BlockPos.ZERO);
+	}
+
+	public boolean fancyDisplay() {
+		return fancyDisplay;
+	}
+
+	@Override
+	public boolean hidden() {
+		return fancyDisplay() || PostAction.super.hidden();
 	}
 
 	private static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {
