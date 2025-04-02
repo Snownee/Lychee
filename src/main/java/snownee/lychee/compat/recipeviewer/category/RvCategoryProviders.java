@@ -16,7 +16,7 @@ public final class RvCategoryProviders {
 
 	static {
 		register(RecipeTypes.BLOCK_CRUSHING, BlockCrushingRecipeCategory::new);
-		register(RecipeTypes.BLOCK_EXPLODING, ItemAndBlockCategory::new);
+		register(RecipeTypes.BLOCK_EXPLODING, BlockExplodingRecipeCategory::new);
 		register(RecipeTypes.BLOCK_INTERACTING, BlockInteractingRecipeCategory::new);
 		register(RecipeTypes.DRIPSTONE_DRIPPING, DripstoneRecipeCategory::new);
 		register(RecipeTypes.LIGHTNING_CHANNELING, ItemShapelessRecipeCategory::new);
