@@ -3,8 +3,6 @@ package snownee.lychee.compat.recipeviewer.category;
 import java.util.List;
 import java.util.function.Function;
 
-import org.jetbrains.annotations.Nullable;
-
 import com.google.common.collect.Lists;
 
 import net.minecraft.resources.ResourceLocation;
@@ -23,7 +21,7 @@ public class RvCategoryType<T extends ILycheeRecipe<LycheeContext>> {
 	public final ResourceLocation id;
 	public int width = WIDTH;
 	public int height = HEIGHT;
-	public @Nullable IconProvider<T> iconProvider;
+	public IconProvider<T> iconProvider;
 	public WorkstationProvider<T> workstationProvider = category -> List.of();
 
 	public RvCategoryType(ResourceLocation id) {

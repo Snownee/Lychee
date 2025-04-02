@@ -138,9 +138,10 @@ public class RvPlugin {
 		return categories;
 	}
 
-	private <T extends ILycheeRecipe<LycheeContext>> void register(LycheeRecipeType<T> recipeType, Consumer<RvCategoryType<T>> configurer) {
+	public <T extends ILycheeRecipe<LycheeContext>> void register(LycheeRecipeType<T> recipeType, Consumer<RvCategoryType<T>> configurer) {
 		var type = new RvCategoryType<T>(recipeType.categoryId);
 		configurer.accept(type);
+		Preconditions.checkNotNull(type.iconProvider, "Icon provider is null: %s", recipeType.categoryId);
 		Preconditions.checkArgument(
 				categoryTypes.put(recipeType.categoryId, type) == null,
 				"Duplicate category type: %s",
