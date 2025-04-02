@@ -6,6 +6,8 @@ import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.google.common.collect.Lists;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.client.gui.RenderElement;
@@ -28,7 +30,7 @@ public class RvCategoryType<T extends ILycheeRecipe<LycheeContext>> {
 	}
 
 	public void setSimpleWorkstationProvider(Function<RvCategory<T>, List<ItemStack>> workstationProvider) {
-		this.workstationProvider = category -> List.of(workstationProvider.apply(category));
+		this.workstationProvider = category -> Lists.transform(workstationProvider.apply(category), List::of);
 	}
 
 	@FunctionalInterface
