@@ -7,23 +7,25 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RVHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
+import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.compat.recipeviewer.element.InfoElementHelper;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
+@NotNullByDefault
 public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushingRecipe> {
 	private static final int FALLING_BLOCK_HEIGHT = 35;
 	private static final int BLOCK_SIZE = 20;
 
-	protected BlockCrushingRecipeCategory(RvCategoryType<BlockCrushingRecipe> type, ResourceLocation id, RVHelper rvHelper) {
+	protected BlockCrushingRecipeCategory(RvCategoryType<BlockCrushingRecipe> type, ResourceLocation id, RvHelper rvHelper) {
 		super(type, id, rvHelper);
 	}
 

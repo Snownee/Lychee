@@ -43,13 +43,13 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements DisplayCategory<LycheeDisplay<R>> {
+public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements DisplayCategory<LycheeDisplay<R>> {
 
 	private final RvCategory<R> rvCategory;
 	private final CategoryIdentifier<LycheeDisplay<R>> categoryIdentifier;
 	private final Renderer icon;
 
-	public RVCategoryAdapter(RvCategory<R> rvCategory) {
+	public RvCategoryAdapter(RvCategory<R> rvCategory) {
 		this.rvCategory = rvCategory;
 		this.categoryIdentifier = CategoryIdentifier.of(rvCategory.id());
 		this.icon = new RenderElementAdapter(rvCategory.icon());
@@ -174,7 +174,7 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				x,
 				y,
 				recipe.postActions().stream().filter(it -> !it.hidden()).toList(),
-				RVCategoryAdapter::actionSlot);
+				RvCategoryAdapter::actionSlot);
 	}
 
 	private void ingredientGroup(ImmutableList.Builder<Widget> widgets, Vector2fc startPoint, R recipe, float x, float y) {
@@ -210,12 +210,14 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		var layoutBuilder = new RvCategoryLayoutBuilder() {
 			@Override
 			public void actionGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
-				RVCategoryAdapter.this.actionGroup(widgets, startPoint, (R) recipe, position.x(), position.y());
+				//noinspection unchecked
+				RvCategoryAdapter.this.actionGroup(widgets, startPoint, (R) recipe, position.x(), position.y());
 			}
 
 			@Override
 			public void ingredientGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
-				RVCategoryAdapter.this.ingredientGroup(widgets, startPoint, (R) recipe, position.x(), position.y());
+				//noinspection unchecked
+				RvCategoryAdapter.this.ingredientGroup(widgets, startPoint, (R) recipe, position.x(), position.y());
 			}
 		};
 		rvCategory.configureLayout(layoutBuilder, display.recipe(), startPoint);

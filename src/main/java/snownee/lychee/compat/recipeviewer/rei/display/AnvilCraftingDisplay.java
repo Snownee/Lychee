@@ -1,6 +1,7 @@
 package snownee.lychee.compat.recipeviewer.rei.display;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
@@ -33,7 +34,7 @@ public class AnvilCraftingDisplay extends DefaultAnvilDisplay implements LycheeD
 				recipeHolder.id(),
 				List.of(ingredients.getFirst().getItems()),
 				right,
-				List.of(recipe.getResultItem(Minecraft.getInstance().level.registryAccess())));
+				List.of(recipe.getResultItem(Objects.requireNonNull(Minecraft.getInstance().level).registryAccess())));
 	}
 
 	@Override

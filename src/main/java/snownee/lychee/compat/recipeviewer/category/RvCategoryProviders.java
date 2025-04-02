@@ -6,7 +6,7 @@ import java.util.function.Function;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.compat.recipeviewer.RVHelper;
+import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
@@ -22,7 +22,7 @@ public final class RvCategoryProviders {
 		register(RecipeTypes.LIGHTNING_CHANNELING, ItemShapelessRecipeCategory::new);
 		register(RecipeTypes.ITEM_EXPLODING, ItemExplodingRecipeCategory::new);
 		register(RecipeTypes.ITEM_INSIDE, ItemInsideRecipeCategory::new);
-		register(RecipeTypes.ITEM_BURNING, ItemBuriningRecipeCategory::new);
+		register(RecipeTypes.ITEM_BURNING, ItemBurningRecipeCategory::new);
 	}
 
 	public static <R extends ILycheeRecipe<LycheeContext>> RvCategoryProvider<R> register(
@@ -41,10 +41,10 @@ public final class RvCategoryProviders {
 
 	@FunctionalInterface
 	public interface RvCategoryProvider<R extends ILycheeRecipe<LycheeContext>> {
-		Function<ResourceLocation, RvCategory<R>> get(RvCategoryType<R> type, RVHelper rvHandler);
+		Function<ResourceLocation, RvCategory<R>> get(RvCategoryType<R> type, RvHelper rvHandler);
 	}
 
 	public interface SimpleRvCategoryProvider<R extends ILycheeRecipe<LycheeContext>> {
-		RvCategory<R> get(RvCategoryType<R> type, ResourceLocation id, RVHelper rvHandler);
+		RvCategory<R> get(RvCategoryType<R> type, ResourceLocation id, RvHelper rvHandler);
 	}
 }

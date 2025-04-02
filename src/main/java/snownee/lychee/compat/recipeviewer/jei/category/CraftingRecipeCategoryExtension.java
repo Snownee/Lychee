@@ -1,6 +1,7 @@
 package snownee.lychee.compat.recipeviewer.jei.category;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -51,7 +52,7 @@ public class CraftingRecipeCategoryExtension implements ICraftingCategoryExtensi
 			IFocusGroup focuses) {
 		var craftingRecipe = recipeHolder.value();
 		var inputs = craftingRecipe.getIngredients().stream().map(ingredient -> List.of(ingredient.getItems())).toList();
-		var resultItem = craftingRecipe.getResultItem(Minecraft.getInstance().level.registryAccess());
+		var resultItem = craftingRecipe.getResultItem(Objects.requireNonNull(Minecraft.getInstance().level).registryAccess());
 
 		var width = getWidth(recipeHolder);
 		var height = getHeight(recipeHolder);

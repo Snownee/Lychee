@@ -31,8 +31,8 @@ import snownee.lychee.compat.recipeviewer.RvPlugin;
 import snownee.lychee.compat.recipeviewer.SlotType;
 import snownee.lychee.compat.recipeviewer.category.AbstractRvCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategory;
-import snownee.lychee.compat.recipeviewer.rei.category.RVCategoryAdapter;
-import snownee.lychee.compat.recipeviewer.rei.category.ReiRVHelper;
+import snownee.lychee.compat.recipeviewer.rei.category.RvCategoryAdapter;
+import snownee.lychee.compat.recipeviewer.rei.category.ReiRvHelper;
 import snownee.lychee.compat.recipeviewer.rei.display.AnvilCraftingDisplay;
 import snownee.lychee.compat.recipeviewer.rei.display.DisplayRegisters;
 import snownee.lychee.compat.recipeviewer.rei.display.LycheeDisplay;
@@ -47,7 +47,7 @@ public class LycheeREIPlugin implements REIClientPlugin {
 	public static final ResourceLocation ID = Lychee.id("main");
 	public static final EntryType<PostAction> POST_ACTION = EntryType.deferred(Lychee.id("post_action"));
 
-	private final RvPlugin rvPlugin = new RvPlugin(ReiRVHelper.INSTANCE);
+	private final RvPlugin rvPlugin = new RvPlugin(ReiRvHelper.INSTANCE);
 
 	public static LycheeEntryWidget slot(Vector2fc startPoint, int x, int y, SlotType slotType) {
 		LycheeEntryWidget widget = new LycheeEntryWidget(new Point(startPoint.x() + x + 1, startPoint.y() + y + 1));
@@ -87,7 +87,7 @@ public class LycheeREIPlugin implements REIClientPlugin {
 	public void registerCategories(CategoryRegistry registry) {
 		rvPlugin.init();
 		for (var rvCategory : rvPlugin.categories().values()) {
-			var category = new RVCategoryAdapter<>(rvCategory);
+			var category = new RvCategoryAdapter<>(rvCategory);
 			registry.add(category);
 			for (List<ItemStack> workstation : rvCategory.workstations()) {
 				registry.addWorkstations(category.getCategoryIdentifier(), EntryIngredients.ofItemStacks(workstation));

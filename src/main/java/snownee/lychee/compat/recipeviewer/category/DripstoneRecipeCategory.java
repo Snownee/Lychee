@@ -15,11 +15,12 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RVHelper;
+import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.ui.SpriteElementRenderer;
@@ -27,6 +28,7 @@ import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
+@NotNullByDefault
 public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe> {
 	private static final int BLOCK_SIZE = 16;
 	private static final int COLUMN_X = 16;
@@ -39,7 +41,7 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	protected DripstoneRecipeCategory(
 			RvCategoryType<DripstoneRecipe> type,
 			ResourceLocation id,
-			RVHelper rvHandler
+			RvHelper rvHandler
 	) {
 		super(type, id, rvHandler);
 	}

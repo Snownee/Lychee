@@ -35,9 +35,9 @@ public class RvPlugin {
 	private ImmutableMap<ResourceLocation, RvCategory<?>> categories = ImmutableMap.of();
 	private final String name = STACK_WALKER.getCallerClass().getSimpleName();
 
-	private final RVHelper rvHelper;
+	private final RvHelper rvHelper;
 
-	public RvPlugin(RVHelper rvHelper) {this.rvHelper = rvHelper;}
+	public RvPlugin(RvHelper rvHelper) {this.rvHelper = rvHelper;}
 
 	public void init() {
 		categoryTypes.clear();
@@ -136,14 +136,6 @@ public class RvPlugin {
 
 	public ImmutableMap<ResourceLocation, RvCategory<?>> categories() {
 		return categories;
-	}
-
-	public void registerCategories(Consumer<RvCategory<?>> consumer) {
-		categories.values().forEach(consumer);
-	}
-
-	public void registerWorkstations(RvCategory<?> category, Consumer<List<List<ItemStack>>> consumer) {
-		consumer.accept(category.workstations());
 	}
 
 	private <T extends ILycheeRecipe<LycheeContext>> void register(LycheeRecipeType<T> recipeType, Consumer<RvCategoryType<T>> configurer) {

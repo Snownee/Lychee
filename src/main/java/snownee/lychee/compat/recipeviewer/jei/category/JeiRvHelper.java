@@ -6,11 +6,11 @@ import mezz.jei.api.helpers.IPlatformFluidHelper;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
-import snownee.lychee.compat.recipeviewer.RVHelper;
+import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.compat.recipeviewer.jei.LycheeJEIPlugin;
 
-public class JeiRVHelper extends RVHelper {
-	public static final JeiRVHelper INSTANCE = new JeiRVHelper();
+public class JeiRvHelper extends RvHelper {
+	public static final JeiRvHelper INSTANCE = new JeiRvHelper();
 
 	@Override
 	public boolean openPage(ItemStack stack, boolean usageOrRecipe) {

@@ -13,11 +13,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RVHelper;
+import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.ui.SpriteElementRenderer;
 import snownee.lychee.util.CommonProxy;
@@ -27,6 +28,7 @@ import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
+@NotNullByDefault
 public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
 	public static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(22, 32);
 	public static final Vector2fc METHOD_POSITION = new Vector2f(INPUT_BLOCK_POSITION.x() - 4, 10);
@@ -40,7 +42,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	protected ItemAndBlockCategory(
 			RvCategoryType<R> type,
 			ResourceLocation id,
-			RVHelper rvHandler
+			RvHelper rvHandler
 	) {
 		super(type, id, rvHandler);
 	}

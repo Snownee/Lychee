@@ -12,29 +12,31 @@ import com.google.common.base.Suppliers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RVHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
+import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.compat.recipeviewer.element.InfoElementHelper;
 import snownee.lychee.ui.SpriteElementRenderer;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
+@NotNullByDefault
 public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>> implements RvCategory<R> {
 	private final RvCategoryType<R> type;
-	private final RVHelper rvHelper;
+	private final RvHelper rvHelper;
 
 	private final Supplier<RenderElement> iconSupplier;
 	private final ResourceLocation id;
 
 	private final List<RecipeHolder<R>> recipes = new ArrayList<>();
 
-	protected AbstractRvCategory(RvCategoryType<R> type, ResourceLocation id, RVHelper rvHelper) {
+	protected AbstractRvCategory(RvCategoryType<R> type, ResourceLocation id, RvHelper rvHelper) {
 		this.type = type;
 		this.id = id;
 		this.iconSupplier = Suppliers.memoize(() -> type.iconProvider.get(this));
@@ -82,7 +84,7 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 	}
 
 	@Override
-	public RVHelper rvHelper() {
+	public RvHelper rvHelper() {
 		return rvHelper;
 	}
 

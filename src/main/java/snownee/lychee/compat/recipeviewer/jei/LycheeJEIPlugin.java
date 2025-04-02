@@ -30,8 +30,8 @@ import snownee.lychee.compat.recipeviewer.RvPlugin;
 import snownee.lychee.compat.recipeviewer.SlotType;
 import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.jei.category.CraftingRecipeCategoryExtension;
-import snownee.lychee.compat.recipeviewer.jei.category.JeiRVHelper;
-import snownee.lychee.compat.recipeviewer.jei.category.RVCategoryAdapter;
+import snownee.lychee.compat.recipeviewer.jei.category.JeiRvHelper;
+import snownee.lychee.compat.recipeviewer.jei.category.RvCategoryAdapter;
 import snownee.lychee.compat.recipeviewer.jei.display.AnvilCraftingDisplay;
 import snownee.lychee.compat.recipeviewer.jei.elements.RenderElementAdapter;
 import snownee.lychee.compat.recipeviewer.jei.ingredient.PostActionIngredientHelper;
@@ -49,7 +49,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 			it -> new RenderElementAdapter(RenderElement.create(it.sprite)));
 	public static IJeiRuntime runtime;
 	public static IJeiHelpers helpers;
-	private final RvPlugin rvPlugin = new RvPlugin(JeiRVHelper.INSTANCE);
+	private final RvPlugin rvPlugin = new RvPlugin(JeiRvHelper.INSTANCE);
 
 	public static IDrawable slot(SlotType type) {
 		return slotElements.get(type);
@@ -64,7 +64,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 	public void registerCategories(IRecipeCategoryRegistration registry) {
 		rvPlugin.init();
 		for (var rvCategory : rvPlugin.categories().values()) {
-			registry.addRecipeCategories(new RVCategoryAdapter<>(rvCategory));
+			registry.addRecipeCategories(new RvCategoryAdapter<>(rvCategory));
 		}
 	}
 

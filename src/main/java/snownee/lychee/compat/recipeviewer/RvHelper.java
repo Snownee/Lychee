@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 
-public abstract class RVHelper {
+public abstract class RvHelper {
 	/**
 	 * @param stack         The stack to open
 	 * @param usageOrRecipe true for usage, false for recipes

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2fc;
 
@@ -27,6 +26,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.material.Fluid;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.client.gui.RenderElement;
@@ -45,13 +45,14 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements IRecipeCategory<RecipeHolder<R>> {
+@NotNullByDefault
+public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements IRecipeCategory<RecipeHolder<R>> {
 	private final RvCategory<R> rvCategory;
 	private final RecipeType<RecipeHolder<R>> type;
 	private final IDrawable icon;
 
 
-	public RVCategoryAdapter(RvCategory<R> rvCategory) {
+	public RvCategoryAdapter(RvCategory<R> rvCategory) {
 		this.rvCategory = rvCategory;
 		this.type = RecipeType.createRecipeHolderType(rvCategory.id());
 		this.icon = new RenderElementAdapter(rvCategory.icon());
@@ -164,7 +165,7 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 	}
 
 	@Override
-	public @NotNull Component getTitle() {
+	public Component getTitle() {
 		return rvCategory.title();
 	}
 
@@ -189,7 +190,7 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				x,
 				y,
 				recipe.postActions().stream().filter(it -> !it.hidden()).toList(),
-				RVCategoryAdapter::actionSlot);
+				RvCategoryAdapter::actionSlot);
 	}
 
 	private void ingredientGroup(IRecipeLayoutBuilder builder, R recipe, float x, float y) {
@@ -214,12 +215,12 @@ public class RVCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		var layoutBuilder = new RvCategoryLayoutBuilder() {
 			@Override
 			public void actionGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
-				RVCategoryAdapter.this.actionGroup(builder, recipeHolder.value(), position.x(), position.y());
+				RvCategoryAdapter.this.actionGroup(builder, recipeHolder.value(), position.x(), position.y());
 			}
 
 			@Override
 			public void ingredientGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
-				RVCategoryAdapter.this.ingredientGroup(builder, recipeHolder.value(), position.x(), position.y());
+				RvCategoryAdapter.this.ingredientGroup(builder, recipeHolder.value(), position.x(), position.y());
 			}
 		};
 		rvCategory.configureLayout(layoutBuilder, recipeHolder, VectorExtensions.ZERO);

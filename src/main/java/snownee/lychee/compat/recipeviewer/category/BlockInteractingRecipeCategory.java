@@ -8,15 +8,17 @@ import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RVHelper;
+import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.compat.recipeviewer.element.InfoElementHelper;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.util.VectorExtensions;
 
+@NotNullByDefault
 public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockInteractingRecipe> {
 	private static final float INPUT_INGREDIENT_X = 22;
 
@@ -28,7 +30,7 @@ public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockIn
 	public BlockInteractingRecipeCategory(
 			RvCategoryType<BlockInteractingRecipe> type,
 			ResourceLocation id,
-			RVHelper rvHandler
+			RvHelper rvHandler
 	) {
 		super(type, id, rvHandler);
 	}

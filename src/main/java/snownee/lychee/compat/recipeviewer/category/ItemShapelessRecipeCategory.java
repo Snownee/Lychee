@@ -5,13 +5,15 @@ import org.joml.Vector2fc;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RVHelper;
+import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.compat.recipeviewer.element.InfoElementHelper;
 import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
+@NotNullByDefault
 public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
 	public static final int ICON_SIZE = 24;
 	public static final Vector2fc ICON_POSITION = new Vector2f((float) RvCategoryType.WIDER_WIDTH / 2 - 8, 19);
@@ -23,7 +25,7 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 	protected ItemShapelessRecipeCategory(
 			RvCategoryType<R> type,
 			ResourceLocation id,
-			RVHelper rvHandler
+			RvHelper rvHandler
 	) {
 		super(type, id, rvHandler);
 	}

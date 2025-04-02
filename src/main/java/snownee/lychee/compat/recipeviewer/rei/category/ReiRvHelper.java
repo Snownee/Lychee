@@ -5,10 +5,10 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
-import snownee.lychee.compat.recipeviewer.RVHelper;
+import snownee.lychee.compat.recipeviewer.RvHelper;
 
-public class ReiRVHelper extends RVHelper {
-	public static final ReiRVHelper INSTANCE = new ReiRVHelper();
+public class ReiRvHelper extends RvHelper {
+	public static final ReiRvHelper INSTANCE = new ReiRvHelper();
 
 	@Override
 	public boolean openPage(ItemStack stack, boolean usageOrRecipe) {
