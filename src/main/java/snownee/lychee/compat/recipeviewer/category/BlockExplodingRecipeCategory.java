@@ -23,7 +23,7 @@ public class BlockExplodingRecipeCategory extends ItemAndBlockCategory<BlockExpl
 	}
 
 	@Override
-	protected RenderElement geMethodElement() {
+	protected RenderElement getMethodElement(BlockExplodingRecipe recipe) {
 		return RenderElement.EMPTY;
 	}
 

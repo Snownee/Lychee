@@ -28,8 +28,8 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
-	public static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(22, 35);
-	public static final Vector2fc METHOD_POSITION = new Vector2f(INPUT_BLOCK_POSITION.x() - 4, 12);
+	public static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(22, 32);
+	public static final Vector2fc METHOD_POSITION = new Vector2f(INPUT_BLOCK_POSITION.x() - 4, 10);
 	public static final float INPUT_INGREDIENT_X = 12;
 
 	public static final int INPUT_BLOCK_SIZE = 18;
@@ -90,7 +90,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 
 		builder.addElement(getInputBlockElement(recipe).offset(position));
 
-		var methodElement = geMethodElement();
+		var methodElement = getMethodElement(recipeHolder.value());
 		if (methodElement != RenderElement.EMPTY) {
 			builder.addElement(methodElement.offset(position));
 		}
@@ -104,7 +104,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		}
 	}
 
-	protected RenderElement geMethodElement() {
+	protected RenderElement getMethodElement(R recipe) {
 		return RenderElement.create(AllGuiTextures.DOWN_ARROW).at(methodPosition()).withSize(METHOD_SIZE);
 	}
 
