@@ -48,7 +48,7 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 
 	public static RenderElement getRemoveInputIcon() {
 		return new InteractiveRenderElement((InteractiveRenderElement element) ->
-				new SpriteElementRenderer(Lychee.id("exclamation_mark"), 1)
+				new SpriteElementRenderer(Lychee.id("exclamation_mark"), 2)
 						.withSize(element.width(), element.height()).atZ(100)
 		).onTooltip(() -> List.of(Component.translatable("postAction.lychee.place.consume")))
 				.withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE);
