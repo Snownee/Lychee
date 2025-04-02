@@ -40,9 +40,8 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 		var recipe = recipeHolder.value();
 		if (recipe.time() > 0) {
 			builder.addElement(new TextElementRenderer(ClientProxy.format("tip.lychee.sec", recipe.time()))
-					.color(0xFFFFFFFF)
+					.color(0x666666)
 					.centered()
-					.shadow()
 					.at(position)
 					.offset(methodPosition())
 					.offset(10, -8));
