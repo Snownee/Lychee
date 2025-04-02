@@ -40,7 +40,7 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 		var recipe = recipeHolder.value();
 
 		if (needInfoIcon(recipe)) {
-			builder.addElement(getRecipeInfoIcon(recipeHolder).offset(position));
+			builder.addElement(getInfoIcon(recipeHolder).offset(position));
 		}
 
 		if (needRenderIcon()) {

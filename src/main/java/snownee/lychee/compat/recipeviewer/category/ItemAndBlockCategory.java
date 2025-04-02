@@ -85,7 +85,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		var recipe = recipeHolder.value();
 
 		if (needInfoIcon(recipe)) {
-			builder.addElement(getRecipeInfoIcon(recipeHolder).offset(position));
+			builder.addElement(getInfoIcon(recipeHolder).offset(position));
 		}
 
 		builder.addElement(getInputBlockElement(recipe).offset(position));

@@ -76,7 +76,7 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 		var recipe = recipeHolder.value();
 
 		if (needInfoIcon(recipe)) {
-			builder.addElement(getRecipeInfoIcon(recipeHolder).offset(position));
+			builder.addElement(getInfoIcon(recipeHolder).offset(position));
 		}
 
 		builder.addElement(getBlockElement(recipe, () -> getSourceBlock(recipe)).at(SOURCE_BLOCK_POSITION).offset(position));
