@@ -32,7 +32,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	public static final Vector2fc METHOD_POSITION = new Vector2f(INPUT_BLOCK_POSITION.x() - 4, 10);
 	public static final float INPUT_INGREDIENT_X = 12;
 
-	public static final int INPUT_BLOCK_SIZE = 18;
+	public static final int BLOCK_SIZE = 18;
 	public static final int METHOD_SIZE = 20;
 
 	public static final Vector2fc INFO_POSITION = VectorExtensions.offset(METHOD_POSITION, METHOD_SIZE, 4);
@@ -98,8 +98,8 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {
 			var removeActionPosition = VectorExtensions.offset(
 					inputBlockPosition(),
-					INPUT_BLOCK_SIZE - 4,
-					INPUT_BLOCK_SIZE - 8);
+					BLOCK_SIZE - 4,
+					BLOCK_SIZE - 8);
 			builder.addElement(AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition).offset(position));
 		}
 	}
@@ -124,7 +124,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 						rvHelper().buttonToUsageOrRecipe(button)
 								.ifPresent(usageOrRecipe -> rvHelper().openPage(getRenderingBlock(recipe), usageOrRecipe)))
 				.at(inputBlockPosition())
-				.withSize(INPUT_BLOCK_SIZE);
+				.withSize(BLOCK_SIZE);
 	}
 
 	private @NotNull InteractiveRenderElement getBlockElementWithShadow(
@@ -136,7 +136,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 				.rotateBlock(12.5, 160, 0)
 				.scale(15)
 				.lighting(RVs.BLOCK_LIGHTING)
-				.withSize(INPUT_BLOCK_SIZE)
+				.withSize(BLOCK_SIZE)
 				.at(-1, 4);
 
 		return new InteractiveRenderElement((element) -> {
@@ -157,7 +157,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	private @NotNull Supplier<RenderElement> getShadowElement() {
 		var shadowWidth = 36;
 		var shadowHeight = 9;
-		var shadowPosition = new Vector2f(INPUT_BLOCK_SIZE / 2F - (shadowWidth / 2F), INPUT_BLOCK_SIZE - (shadowHeight / 2F));
+		var shadowPosition = new Vector2f((BLOCK_SIZE - shadowWidth) / 2F, BLOCK_SIZE - shadowHeight / 2F);
 		return Suppliers.memoize(() ->
 				new SpriteElementRenderer(AllGuiTextures.SHADOW.id, 1F).withSize(shadowWidth, shadowHeight).at(shadowPosition));
 	}

@@ -113,7 +113,9 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 
 		var result = getBlockElementWithShadow(() -> getTargetBlock(recipe), questionMarkElement);
 
-		return result.onClick(button ->
+		return result
+				.onTooltip(() -> BlockPredicateExtensions.getTooltips(getTargetBlock(recipe), recipe.blockPredicate()))
+				.onClick(button ->
 						rvHelper().buttonToUsageOrRecipe(button)
 								.ifPresent(usageOrRecipe -> rvHelper().openPage(getTargetBlock(recipe), usageOrRecipe)))
 				.at(TARGET_BLOCK_POSITION)
@@ -147,10 +149,10 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	}
 
 	private @NotNull Supplier<RenderElement> getShadowElement() {
-		var scale = 0.5F;
-		var shadowPosition = new Vector2f(
-				BLOCK_SIZE / 2F - (52 /* Shadow sprite width */ * scale / 2),
-				BLOCK_SIZE - 13 /* Shadow sprite height */ * scale - 1F);
-		return Suppliers.memoize(() -> new SpriteElementRenderer(AllGuiTextures.SHADOW.id, 1F).withSize(24, 3).at(shadowPosition));
+		var shadowWidth = 24;
+		var shadowHeight = 6;
+		var shadowPosition = new Vector2f((BLOCK_SIZE - shadowWidth) / 2F, BLOCK_SIZE - shadowHeight);
+		return Suppliers.memoize(() -> new SpriteElementRenderer(AllGuiTextures.SHADOW.id, 1F).withSize(shadowWidth, shadowHeight)
+				.at(shadowPosition));
 	}
 }
