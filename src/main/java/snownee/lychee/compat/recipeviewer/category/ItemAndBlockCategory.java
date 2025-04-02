@@ -28,7 +28,7 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extends AbstractRvCategory<R> {
-	public static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(30, 35);
+	public static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(22, 20);
 	public static final Vector2fc METHOD_POSITION = new Vector2f(26, 12);
 	public static final float INPUT_INGREDIENT_X = 12;
 
@@ -133,7 +133,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		var shadowElement = getShadowElement();
 
 		Function<BlockState, RenderElement> blockElement = (BlockState state) -> GuiGameElement.of(state)
-				.rotateBlock(12.5, 202.5, 0)
+				.rotateBlock(12.5, 160, 0)
 				.scale(15)
 				.lighting(RVs.BLOCK_LIGHTING)
 				.withSize(INPUT_BLOCK_SIZE)
@@ -155,10 +155,10 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	}
 
 	private @NotNull Supplier<RenderElement> getShadowElement() {
-		var scale = 0.7F;
-		var shadowPosition = new Vector2f(
-				INPUT_BLOCK_SIZE / 2F - (52 /* Shadow sprite width */ * scale / 2) + 4F,
-				INPUT_BLOCK_SIZE - 13 /* Shadow sprite height */ * scale - 1F);
-		return Suppliers.memoize(() -> new SpriteElementRenderer(AllGuiTextures.SHADOW.id, 1F).withSize(36, 9).at(shadowPosition));
+		var shadowWidth = 36;
+		var shadowHeight = 9;
+		var shadowPosition = new Vector2f(INPUT_BLOCK_SIZE / 2F - (shadowWidth / 2F), INPUT_BLOCK_SIZE - (shadowHeight / 2F));
+		return Suppliers.memoize(() ->
+				new SpriteElementRenderer(AllGuiTextures.SHADOW.id, 1F).withSize(shadowWidth, shadowHeight).at(shadowPosition));
 	}
 }
