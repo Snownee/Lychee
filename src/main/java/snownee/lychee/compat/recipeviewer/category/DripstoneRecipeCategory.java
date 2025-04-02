@@ -3,11 +3,8 @@ package snownee.lychee.compat.recipeviewer.category;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
-
-import com.google.common.base.Suppliers;
 
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -16,14 +13,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.util.NotNullByDefault;
-import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.compat.recipeviewer.RVs;
+import snownee.lychee.compat.recipeviewer.RvHelper;
+import snownee.lychee.compat.recipeviewer.element.ShadowElement;
 import snownee.lychee.recipes.DripstoneRecipe;
-import snownee.lychee.ui.SpriteElementRenderer;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -37,6 +33,7 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	private static final Vector2fc POINTED_DRIPSTONE_POSITION = VectorExtensions.offsetY(SOURCE_BLOCK_POSITION, 12 * 2);
 	public static final Vector2fc INFO_POSITION = VectorExtensions.offsetX(POINTED_DRIPSTONE_POSITION, BLOCK_SIZE);
 	private static final Vector2fc TARGET_BLOCK_POSITION = VectorExtensions.offsetY(SOURCE_BLOCK_POSITION, 12 * 3);
+	private final ShadowElement shadowElement = new ShadowElement(BLOCK_SIZE, 24, 6);
 
 	protected DripstoneRecipeCategory(
 			RvCategoryType<DripstoneRecipe> type,
@@ -101,7 +98,8 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 		Supplier<RenderElement> blockElement = () -> GuiGameElement.of(stateSupplier.get())
 				.scale(12)
 				.lighting(RVs.BLOCK_LIGHTING)
-				.rotateBlock(12.5, -22.5, 0);
+				.rotateBlock(12.5, -22.5, 0)
+				.at(-1, 2);
 		return new InteractiveRenderElement((InteractiveRenderElement element) -> blockElement.get())
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(stateSupplier.get(), recipe.blockPredicate()))
 				.onClick(button -> rvHelper().buttonToUsageOrRecipe(button)
@@ -110,10 +108,13 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	}
 
 	protected RenderElement getTargetBlockElement(DripstoneRecipe recipe) {
-		var questionMarkElement = Suppliers.<RenderElement>memoize(() ->
-				RenderElement.create(AllGuiTextures.QUESTION_MARK).at(4, 2));
-
-		var result = getBlockElementWithShadow(() -> getTargetBlock(recipe), questionMarkElement);
+		Function<BlockState, RenderElement> blockElement = blockState -> GuiGameElement.of(blockState)
+				.rotateBlock(12.5, -22.5, 0)
+				.scale(12)
+				.lighting(RVs.BLOCK_LIGHTING)
+				.withSize(BLOCK_SIZE)
+				.at(-1, 2);
+		var result = shadowElement.blockWithShadow(() -> getTargetBlock(recipe), blockElement);
 
 		return result
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(getTargetBlock(recipe), recipe.blockPredicate()))
@@ -122,39 +123,5 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 								.ifPresent(usageOrRecipe -> rvHelper().openPage(getTargetBlock(recipe), usageOrRecipe)))
 				.at(TARGET_BLOCK_POSITION)
 				.withSize(BLOCK_SIZE);
-	}
-
-	private @NotNull InteractiveRenderElement getBlockElementWithShadow(
-			Supplier<BlockState> blockStateSupplier,
-			final Supplier<RenderElement> questionMarkElement) {
-		var shadowElement = getShadowElement();
-
-		Function<BlockState, RenderElement> blockElement = (BlockState state) -> GuiGameElement.of(state)
-				.scale(12)
-				.lighting(RVs.BLOCK_LIGHTING)
-				.rotateBlock(12.5, -22.5, 0)
-				.withSize(BLOCK_SIZE);
-
-		return new InteractiveRenderElement((element) -> {
-			var state = blockStateSupplier.get();
-			if (state.isAir()) {
-				return questionMarkElement.get();
-			}
-
-			return RenderElement.create((graphics, ignored) -> {
-				if (state.getLightEmission() < 5) {
-					shadowElement.get().render(graphics);
-				}
-				blockElement.apply(state).render(graphics);
-			});
-		});
-	}
-
-	private @NotNull Supplier<RenderElement> getShadowElement() {
-		var shadowWidth = 24;
-		var shadowHeight = 6;
-		var shadowPosition = new Vector2f((BLOCK_SIZE - shadowWidth) / 2F, BLOCK_SIZE - shadowHeight);
-		return Suppliers.memoize(() -> new SpriteElementRenderer(AllGuiTextures.SHADOW.id, 1F).withSize(shadowWidth, shadowHeight)
-				.at(shadowPosition));
 	}
 }

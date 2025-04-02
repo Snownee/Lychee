@@ -1,8 +1,6 @@
-package snownee.lychee.compat.recipeviewer.rei.elements;
+package snownee.lychee.compat.recipeviewer.rei.element;
 
 import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
@@ -10,9 +8,11 @@ import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.gui.widgets.WidgetWithBounds;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 
+@NotNullByDefault
 public class RenderElementAdapter extends WidgetWithBounds {
 	private final RenderElement element;
 	private final Rectangle bounds;
@@ -23,7 +23,7 @@ public class RenderElementAdapter extends WidgetWithBounds {
 	}
 
 	@Override
-	public @NotNull List<? extends GuiEventListener> children() {
+	public List<? extends GuiEventListener> children() {
 		return List.of();
 	}
 

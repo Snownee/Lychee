@@ -1,6 +1,4 @@
-package snownee.lychee.compat.recipeviewer.jei.elements;
-
-import org.jetbrains.annotations.NotNull;
+package snownee.lychee.compat.recipeviewer.jei.element;
 
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -10,9 +8,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 
+@NotNullByDefault
 public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener, IDrawable {
 	private final RenderElement element;
 	private final ScreenRectangle bounds;
@@ -49,12 +49,12 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 	}
 
 	@Override
-	public @NotNull ScreenRectangle getArea() {
+	public ScreenRectangle getArea() {
 		return bounds;
 	}
 
 	@Override
-	public @NotNull ScreenPosition getPosition() {
+	public ScreenPosition getPosition() {
 		return bounds.position();
 	}
 

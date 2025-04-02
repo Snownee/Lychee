@@ -14,7 +14,7 @@ import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
 import mezz.jei.library.plugins.vanilla.anvil.AnvilRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.AbstractRvCategory;
 import snownee.lychee.compat.recipeviewer.jei.display.AnvilCraftingDisplay;
-import snownee.lychee.compat.recipeviewer.jei.elements.RenderElementAdapter;
+import snownee.lychee.compat.recipeviewer.jei.element.RenderElementAdapter;
 
 @Mixin(value = AnvilRecipeCategory.class, remap = false)
 public class AnvilRecipeCategoryMixin {

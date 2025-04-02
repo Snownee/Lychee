@@ -49,7 +49,7 @@ public class InteractiveRenderElement extends RenderElement implements GuiEventL
 	@Override
 	public void render(GuiGraphics graphics) {
 		graphics.pose().pushPose();
-		graphics.pose().translate(x(), y(), z);
+		graphics.pose().translate(x(), y(), z());
 		renderable.apply(this).render(graphics);
 		graphics.pose().popPose();
 	}

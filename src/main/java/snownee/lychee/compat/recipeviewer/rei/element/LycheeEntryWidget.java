@@ -1,4 +1,4 @@
-package snownee.lychee.compat.recipeviewer.rei.elements;
+package snownee.lychee.compat.recipeviewer.rei.element;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;

@@ -33,7 +33,7 @@ import snownee.lychee.compat.recipeviewer.jei.category.CraftingRecipeCategoryExt
 import snownee.lychee.compat.recipeviewer.jei.category.JeiRvHelper;
 import snownee.lychee.compat.recipeviewer.jei.category.RvCategoryAdapter;
 import snownee.lychee.compat.recipeviewer.jei.display.AnvilCraftingDisplay;
-import snownee.lychee.compat.recipeviewer.jei.elements.RenderElementAdapter;
+import snownee.lychee.compat.recipeviewer.jei.element.RenderElementAdapter;
 import snownee.lychee.compat.recipeviewer.jei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.compat.recipeviewer.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.recipes.ShapedCraftingRecipe;

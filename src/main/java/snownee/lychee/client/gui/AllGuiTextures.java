@@ -9,7 +9,7 @@ public enum AllGuiTextures implements ScreenElement {
 	DOWN_ARROW("down_arrow", 20, 20),
 	QUESTION_MARK("unknown", 12, 17), // 12, 16
 	SHADOW("shadow", 52, 13), // 52, 11
-	LIGHT_SHADOW("light_shadow", 52, 13),
+	LIGHT_SHADOW("light_shadow", 52, 13), //TODO make it more transparent
 	INFO("info", 16, 16),
 	LEFT_CLICK("left_click", 16, 16),
 	RIGHT_CLICK("right_click", 16, 16);

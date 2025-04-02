@@ -35,7 +35,7 @@ import snownee.lychee.compat.recipeviewer.category.RvCategoryLayoutBuilder;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryWidgetBuilder;
 import snownee.lychee.compat.recipeviewer.rei.LycheeREIPlugin;
 import snownee.lychee.compat.recipeviewer.rei.display.LycheeDisplay;
-import snownee.lychee.compat.recipeviewer.rei.elements.RenderElementAdapter;
+import snownee.lychee.compat.recipeviewer.rei.element.RenderElementAdapter;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionRenderer;

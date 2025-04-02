@@ -15,7 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.compat.recipeviewer.category.AbstractRvCategory;
-import snownee.lychee.compat.recipeviewer.jei.elements.RenderElementAdapter;
+import snownee.lychee.compat.recipeviewer.jei.element.RenderElementAdapter;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 
 @NotNullByDefault
