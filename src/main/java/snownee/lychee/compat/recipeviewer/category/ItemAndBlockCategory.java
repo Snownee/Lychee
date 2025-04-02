@@ -98,9 +98,9 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {
 			var removeActionPosition = VectorExtensions.offset(
 					inputBlockPosition(),
-					position.x() + INPUT_BLOCK_SIZE - 4,
-					position.y() + INPUT_BLOCK_SIZE - 8);
-			AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition);
+					INPUT_BLOCK_SIZE - 4,
+					INPUT_BLOCK_SIZE - 8);
+			builder.addElement(AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition).offset(position));
 		}
 	}
 
