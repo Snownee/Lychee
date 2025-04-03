@@ -9,15 +9,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AnvilBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.LycheeFallingBlockEntity;
@@ -64,29 +64,28 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 		return original.call(state);
 	}
 
-	@Inject(
+	@WrapOperation(
 			method = "causeFallDamage",
 			at = @At(
-					value = "INVOKE_ASSIGN",
-					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/tags/TagKey;)Z",
-					shift = At.Shift.AFTER))
-	private void lychee_customDamageAnvilChance(
-			float fallDistance,
-			float multiplier,
-			DamageSource source,
-			CallbackInfoReturnable<Boolean> cir,
-			@Local LocalBooleanRef bl) {
-		if (bl.get() && anvilDamageChance >= 0) {
+					value = "INVOKE",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;is(Lnet/minecraft/tags/TagKey;)Z"))
+	private boolean lychee_customDamageAnvilChance(
+			BlockState blockState,
+			TagKey<Block> tagKey,
+			Operation<Boolean> original) {
+		boolean bl = original.call(blockState, tagKey);
+		if (bl && anvilDamageChance >= 0) {
 			if (random.nextFloat() < anvilDamageChance) {
-				BlockState blockstate = AnvilBlock.damage(blockState);
-				if (blockstate == null) {
+				blockState = AnvilBlock.damage(blockState);
+				if (blockState == null) {
 					cancelDrop = true;
 				} else {
-					blockState = blockstate;
+					this.blockState = blockState;
 				}
 			}
-			bl.set(false);
+			bl = false;
 		}
+		return bl;
 	}
 
 	@Override
