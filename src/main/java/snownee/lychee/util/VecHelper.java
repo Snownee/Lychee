@@ -21,7 +21,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.mixin.GameRendererAccess;
+import snownee.lychee.mixin.client.GameRendererAccess;
 
 public class VecHelper {
 

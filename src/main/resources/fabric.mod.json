@@ -29,10 +29,10 @@
 			"snownee.lychee.datagen.LycheeDataGen"
 		],
 		"rei_client": [
-			"snownee.lychee.compat.rei.LycheeREIPlugin"
+			"snownee.lychee.compat.recipeviewer.rei.LycheeREIPlugin"
 		],
 		"jei_mod_plugin": [
-			"snownee.lychee.compat.jei.LycheeJEIPlugin"
+			"snownee.lychee.compat.recipeviewer.jei.LycheeJEIPlugin"
 		]
 	},
 	"mixins": [

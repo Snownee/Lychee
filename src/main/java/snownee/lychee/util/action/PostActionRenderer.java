@@ -16,7 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import snownee.lychee.action.RandomSelect;
-import snownee.lychee.compat.rv.IngredientInfo;
+import snownee.lychee.compat.recipeviewer.IngredientInfo;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
@@ -56,7 +56,7 @@ public interface PostActionRenderer<T extends PostAction> {
 			if (randomSelect.rolls == BoundsExtensions.ONE) {
 				list.add(Component.translatable("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
 			} else {
-				list.add(Component.translatable("tip.lychee.randomChance", chance, BoundsExtensions.getDescription(randomSelect.rolls))
+				list.add(Component.translatable("tip.lychee.randomChance", chance, BoundsExtensions.getPlainDescription(randomSelect.rolls))
 						.withStyle(ChatFormatting.YELLOW));
 			}
 		}

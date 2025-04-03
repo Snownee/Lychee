@@ -1,0 +1,50 @@
+package snownee.lychee.compat.recipeviewer.category;
+
+import java.util.Map;
+import java.util.function.Function;
+
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
+import net.minecraft.resources.ResourceLocation;
+import snownee.lychee.RecipeTypes;
+import snownee.lychee.compat.recipeviewer.RvHelper;
+import snownee.lychee.util.context.LycheeContext;
+import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
+
+public final class RvCategoryProviders {
+	public static final Map<ResourceLocation, RvCategoryProvider<?>> ALL = new Reference2ReferenceOpenHashMap<>();
+
+	static {
+		register(RecipeTypes.BLOCK_CRUSHING, BlockCrushingRecipeCategory::new);
+		register(RecipeTypes.BLOCK_EXPLODING, BlockExplodingRecipeCategory::new);
+		register(RecipeTypes.BLOCK_INTERACTING, BlockInteractingRecipeCategory::new);
+		register(RecipeTypes.DRIPSTONE_DRIPPING, DripstoneRecipeCategory::new);
+		register(RecipeTypes.LIGHTNING_CHANNELING, ItemShapelessRecipeCategory::new);
+		register(RecipeTypes.ITEM_EXPLODING, ItemExplodingRecipeCategory::new);
+		register(RecipeTypes.ITEM_INSIDE, ItemInsideRecipeCategory::new);
+		register(RecipeTypes.ITEM_BURNING, ItemBurningRecipeCategory::new);
+	}
+
+	public static <R extends ILycheeRecipe<LycheeContext>> RvCategoryProvider<R> register(
+			LycheeRecipeType<R> recipeType,
+			SimpleRvCategoryProvider<R> provider) {
+		RvCategoryProvider<R> result = (type, rvHandler) ->
+				id -> provider.get(type, id, rvHandler);
+		ALL.put(recipeType.categoryId, result);
+		return result;
+	}
+
+	public static <R extends ILycheeRecipe<LycheeContext>> RvCategoryProvider<R> get(ResourceLocation id) {
+		//noinspection unchecked
+		return (RvCategoryProvider<R>) ALL.get(id);
+	}
+
+	@FunctionalInterface
+	public interface RvCategoryProvider<R extends ILycheeRecipe<LycheeContext>> {
+		Function<ResourceLocation, RvCategory<R>> get(RvCategoryType<R> type, RvHelper rvHandler);
+	}
+
+	public interface SimpleRvCategoryProvider<R extends ILycheeRecipe<LycheeContext>> {
+		RvCategory<R> get(RvCategoryType<R> type, ResourceLocation id, RvHelper rvHandler);
+	}
+}
