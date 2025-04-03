@@ -29,15 +29,21 @@ import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public class RvPlugin {
+public class RvPlugin<Helper extends RvHelper> {
 	private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 	private final Map<ResourceLocation, RvCategoryType<?>> categoryTypes = Maps.newHashMap();
 	private ImmutableMap<ResourceLocation, RvCategory<?>> categories = ImmutableMap.of();
 	private final String name = STACK_WALKER.getCallerClass().getSimpleName();
 
-	private final RvHelper rvHelper;
+	private final Helper rvHelper;
 
-	public RvPlugin(RvHelper rvHelper) {this.rvHelper = rvHelper;}
+	public RvPlugin(Helper rvHelper) {
+		this.rvHelper = rvHelper;
+	}
+
+	public Helper helper() {
+		return rvHelper;
+	}
 
 	public void init() {
 		categoryTypes.clear();

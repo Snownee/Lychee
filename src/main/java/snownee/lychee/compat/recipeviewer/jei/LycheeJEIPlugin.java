@@ -8,7 +8,6 @@ import com.google.common.collect.Maps;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
@@ -47,9 +46,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 	private static final Map<SlotType, IDrawable> slotElements = Maps.toMap(
 			List.of(SlotType.values()),
 			it -> new RenderElementAdapter(RenderElement.create(it.sprite)));
-	public static IJeiRuntime runtime;
-	public static IJeiHelpers helpers;
-	private final RvPlugin rvPlugin = new RvPlugin(JeiRvHelper.INSTANCE);
+	private final RvPlugin<JeiRvHelper> rvPlugin = new RvPlugin<>(JeiRvHelper.INSTANCE);
 
 	public static IDrawable slot(SlotType type) {
 		return slotElements.get(type);
@@ -62,6 +59,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
+		rvPlugin.helper().setJeiHelpers(registry.getJeiHelpers());
 		rvPlugin.init();
 		for (var rvCategory : rvPlugin.categories().values()) {
 			registry.addRecipeCategories(new RvCategoryAdapter<>(rvCategory));
@@ -75,10 +73,9 @@ public class LycheeJEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerRecipes(IRecipeRegistration registry) {
-		helpers = registry.getJeiHelpers();
 		for (RvCategory<?> rvCategory : rvPlugin.categories().values()) {
 			//noinspection unchecked,rawtypes
-			registry.addRecipes((RecipeType) helpers.getRecipeType(rvCategory.id()).orElseThrow(), rvCategory.recipes());
+			registry.addRecipes((RecipeType) registry.getJeiHelpers().getRecipeType(rvCategory.id()).orElseThrow(), rvCategory.recipes());
 		}
 
 		try {
@@ -116,11 +113,17 @@ public class LycheeJEIPlugin implements IModPlugin {
 
 	@Override
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
-		runtime = jeiRuntime;
+		rvPlugin.helper().setRuntime(jeiRuntime);
 		Minecraft.getInstance().execute(() -> {
 			var recipes = KUtil.getRecipes(net.minecraft.world.item.crafting.RecipeType.CRAFTING).stream().filter($ ->
 					$.value() instanceof ILycheeRecipe<?> recipe && recipe.hideInRecipeViewer()).toList();
 			jeiRuntime.getRecipeManager().hideRecipes(mezz.jei.api.constants.RecipeTypes.CRAFTING, recipes);
 		});
+	}
+
+	@Override
+	public void onRuntimeUnavailable() {
+		rvPlugin.helper().setJeiHelpers(null);
+		rvPlugin.helper().setRuntime(null);
 	}
 }

@@ -51,19 +51,18 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 	private final RecipeType<RecipeHolder<R>> type;
 	private final IDrawable icon;
 
-
 	public RvCategoryAdapter(RvCategory<R> rvCategory) {
 		this.rvCategory = rvCategory;
 		this.type = RecipeType.createRecipeHolderType(rvCategory.id());
 		this.icon = new RenderElementAdapter(rvCategory.icon());
 	}
 
-	private static void addBlockIngredients(IRecipeLayoutBuilder builder, ILycheeRecipe<LycheeContext> recipe) {
+	private void addBlockIngredients(IRecipeLayoutBuilder builder, ILycheeRecipe<LycheeContext> recipe) {
 		addBlockIngredients(builder, recipe.getBlockInputs(), RecipeIngredientRole.INPUT);
 		addBlockIngredients(builder, recipe.getBlockOutputs(), RecipeIngredientRole.OUTPUT);
 	}
 
-	private static void addBlockIngredients(IRecipeLayoutBuilder builder, Iterable<BlockPredicate> blocks, RecipeIngredientRole role) {
+	private void addBlockIngredients(IRecipeLayoutBuilder builder, Iterable<BlockPredicate> blocks, RecipeIngredientRole role) {
 		for (BlockPredicate block : blocks) {
 			List<ItemStack> items = BlockPredicateExtensions.matchedItemStacks(block);
 			Set<Fluid> fluids = BlockPredicateExtensions.matchedFluids(block);
@@ -72,7 +71,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				acceptor.addItemStacks(items);
 				fluids.forEach(fluid -> acceptor.addFluidStack(
 						fluid,
-						LycheeJEIPlugin.helpers.getPlatformFluidHelper().bucketVolume()));
+						((JeiRvHelper) rvCategory.rvHelper()).jeiHelpers().getPlatformFluidHelper().bucketVolume()));
 			}
 		}
 	}
