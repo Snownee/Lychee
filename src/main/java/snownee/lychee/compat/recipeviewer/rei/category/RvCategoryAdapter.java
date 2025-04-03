@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
@@ -35,6 +36,7 @@ import snownee.lychee.compat.recipeviewer.category.RvCategoryWidgetBuilder;
 import snownee.lychee.compat.recipeviewer.rei.LycheeREIPlugin;
 import snownee.lychee.compat.recipeviewer.rei.display.LycheeDisplay;
 import snownee.lychee.compat.recipeviewer.rei.element.RenderElementAdapter;
+import snownee.lychee.ui.TextElementRenderer;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionRenderer;
@@ -220,6 +222,17 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		var widgetBuilder = new RvCategoryWidgetBuilder() {
 			@Override
 			public void addElement(RenderElement element) {
+				if (element instanceof TextElementRenderer text) {
+					Point point = new Point(text.x(), text.y());
+					var widget = Widgets.createLabel(point, text.text);
+					widget.shadow(text.shadow);
+					widget.color(text.lightModeColor, text.darkModeColor);
+					if (text.centered) {
+						widget.centered();
+					}
+					widgets.add(widget);
+					return;
+				}
 				var adapter = new RenderElementAdapter(element);
 				widgets.add(adapter);
 			}
