@@ -142,7 +142,7 @@ public class RandomSelect implements CompoundAction, PostAction {
 		if (entries.size() == 1 && emptyWeight == 0) {
 			return Component.literal("%s × %s".formatted(
 					entries.get(0).action.getDisplayName().getString(),
-					BoundsExtensions.getDescription(rolls).getString()
+					BoundsExtensions.getPlainDescription(rolls).getString()
 			));
 		}
 		return CommonProxy.getCycledItem(entries, entries.get(0), 1000).action.getDisplayName();

@@ -56,7 +56,7 @@ public interface PostActionRenderer<T extends PostAction> {
 			if (randomSelect.rolls == BoundsExtensions.ONE) {
 				list.add(Component.translatable("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
 			} else {
-				list.add(Component.translatable("tip.lychee.randomChance", chance, BoundsExtensions.getDescription(randomSelect.rolls))
+				list.add(Component.translatable("tip.lychee.randomChance", chance, BoundsExtensions.getPlainDescription(randomSelect.rolls))
 						.withStyle(ChatFormatting.YELLOW));
 			}
 		}

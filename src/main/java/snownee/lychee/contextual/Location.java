@@ -215,10 +215,11 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public void appendToTooltips(List<Component> tooltips, int indent, String key, Doubles value, TriState result) {
-			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(
-					key + "." + name,
-					BoundsExtensions.getDescription(value).withStyle(ChatFormatting.WHITE)
-			));
+			ContextualConditionDisplay.appendToTooltips(
+					tooltips,
+					result,
+					indent,
+					Component.translatable(key + "." + name, BoundsExtensions.getDescription(value)));
 		}
 	}
 
@@ -270,7 +271,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public void appendToTooltips(List<Component> tooltips, int indent, String key, LightPredicate value, TriState result) {
-			var displayName = BoundsExtensions.getDescription(value.composite()).withStyle(ChatFormatting.WHITE);
+			var displayName = BoundsExtensions.getDescription(value.composite());
 			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(key + "." + name, displayName));
 		}
 	}
