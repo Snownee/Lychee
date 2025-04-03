@@ -63,31 +63,28 @@ public final class PlaceBlock implements PostAction {
 		return fancyDisplay() || PostAction.super.hidden();
 	}
 
-	private static boolean destroyBlock(Level level, BlockPos pos, boolean drop) {
+	private static void destroyBlock(Level level, BlockPos pos, boolean drop) {
 		var blockstate = level.getBlockState(pos);
 		if (blockstate.isAir()) {
-			return false;
-		} else {
-			var fluidstate = level.getFluidState(pos);
-			if (!(blockstate.getBlock() instanceof BaseFireBlock)) {
-				level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(blockstate));
-			}
+			return;
+		}
+		var fluidstate = level.getFluidState(pos);
+		if (!(blockstate.getBlock() instanceof BaseFireBlock)) {
+			level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(blockstate));
+		}
 
-			if (drop) {
-				var blockentity = blockstate.hasBlockEntity() ? level.getBlockEntity(pos) : null;
-				Block.dropResources(blockstate, level, pos, blockentity, null, ItemStack.EMPTY);
-			}
+		if (drop) {
+			var blockentity = blockstate.hasBlockEntity() ? level.getBlockEntity(pos) : null;
+			Block.dropResources(blockstate, level, pos, blockentity, null, ItemStack.EMPTY);
+		}
 
-			var legacy = fluidstate.createLegacyBlock();
-			if (legacy == blockstate) {
-				legacy = Blocks.AIR.defaultBlockState();
-			}
-			var flag = level.setBlock(pos, legacy, 3, 512);
-			if (flag) {
-				level.gameEvent(null, GameEvent.BLOCK_DESTROY, pos);
-			}
-
-			return flag;
+		var legacy = fluidstate.createLegacyBlock();
+		if (legacy == blockstate) {
+			legacy = Blocks.AIR.defaultBlockState();
+		}
+		var flag = level.setBlock(pos, legacy, 3, 512);
+		if (flag) {
+			level.gameEvent(null, GameEvent.BLOCK_DESTROY, pos);
 		}
 	}
 
@@ -104,20 +101,20 @@ public final class PlaceBlock implements PostAction {
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
 		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var blockPos = lootParamsContext.getOrNull(LycheeLootContextParams.BLOCK_POS);
-		if (blockPos == null) {
-			blockPos = BlockPos.containing(lootParamsContext.get(LootContextParams.ORIGIN));
+		var pos = lootParamsContext.getOrNull(LycheeLootContextParams.BLOCK_POS);
+		if (pos == null) {
+			pos = BlockPos.containing(lootParamsContext.get(LootContextParams.ORIGIN));
 		}
-		blockPos = blockPos.offset(offset);
+		pos = pos.offset(offset);
 		var level = context.level();
-		var oldState = level.getBlockState(blockPos);
-		var state = BlockPredicateExtensions.anyBlockState(block);
-		if (state.isAir()) {
-			destroyBlock(level, blockPos, false);
+		var oldState = level.getBlockState(pos);
+		var blockState = BlockPredicateExtensions.anyBlockState(block);
+		if (blockState.isAir()) {
+			destroyBlock(level, pos, false);
 			return;
 		}
 		if (recipe instanceof BlockCrushingRecipe && !oldState.isAir()) {
-			level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, blockPos, Block.getId(oldState));
+			level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(oldState));
 		}
 
 		var properties = block.properties()
@@ -128,36 +125,37 @@ public final class PlaceBlock implements PostAction {
 				.collect(Collectors.toSet());
 		for (var entry : oldState.getValues().entrySet()) {
 			var property = entry.getKey();
-			if (properties.contains(property.getName()) || !state.hasProperty(property)) {
-				continue;
+			if (!properties.contains(property.getName())) {
+				//noinspection rawtypes,unchecked
+				blockState = blockState.trySetValue((Property) property, (Comparable) entry.getValue());
 			}
-			state = state.setValue((Property) property, (Comparable) entry.getValue());
 		}
-		if (state.hasProperty(BlockStateProperties.WATERLOGGED) && oldState.getFluidState().isSourceOfType(Fluids.WATER)) {
-			state = state.setValue(BlockStateProperties.WATERLOGGED, true);
+		if (oldState.getFluidState().isSourceOfType(Fluids.WATER)) {
+			blockState = blockState.trySetValue(BlockStateProperties.WATERLOGGED, true);
 		}
 
-		if (!level.setBlockAndUpdate(blockPos, state)) {
+		if (!level.setBlockAndUpdate(pos, blockState)) {
 			return;
 		}
 
+		setNbt:
 		if (block.nbt().isPresent()) {
-			var blockEntity = level.getBlockEntity(blockPos);
-			if (blockEntity != null) {
-				if (blockEntity.onlyOpCanSetNbt()) {
-					return;
-				}
-
-				var prevTag = blockEntity.saveWithoutMetadata(level.registryAccess());
-				var originalTag = prevTag.copy();
-				prevTag.merge(block.nbt().get().tag());
-				if (!prevTag.equals(originalTag)) {
-					blockEntity.loadWithComponents(prevTag, level.registryAccess());
-					blockEntity.setChanged();
-				}
+			var blockEntity = level.getBlockEntity(pos);
+			if (blockEntity == null || blockEntity.onlyOpCanSetNbt()) {
+				break setNbt;
 			}
+
+			var prevTag = blockEntity.saveWithoutMetadata(level.registryAccess());
+			var originalTag = prevTag.copy();
+			prevTag.merge(block.nbt().get().tag());
+			if (prevTag.equals(originalTag)) {
+				break setNbt;
+			}
+
+			blockEntity.loadWithComponents(prevTag, level.registryAccess());
+			blockEntity.setChanged();
 		}
-		level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(state));
+		level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(blockState));
 	}
 
 	@Override
@@ -185,15 +183,19 @@ public final class PlaceBlock implements PostAction {
 		return false;
 	}
 
-	public BlockPredicate block() {return block;}
+	public BlockPredicate block() {
+		return block;
+	}
 
-	public BlockPos offset() {return offset;}
+	public BlockPos offset() {
+		return offset;
+	}
 
 	public static class Type implements PostActionType<PlaceBlock> {
 		public static final MapCodec<PlaceBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(PlaceBlock::commonProperties),
-				BlockPredicateExtensions.CODEC.optionalFieldOf("block", BlockPredicateExtensions.ANY).forGetter(it -> it.block),
-				LycheeCodecs.OFFSET_CODEC.forGetter(it -> it.offset)
+				BlockPredicateExtensions.CODEC.optionalFieldOf("block", BlockPredicateExtensions.ANY).forGetter(PlaceBlock::block),
+				LycheeCodecs.OFFSET_CODEC.forGetter(PlaceBlock::offset)
 		).apply(instance, PlaceBlock::new));
 
 		@Override

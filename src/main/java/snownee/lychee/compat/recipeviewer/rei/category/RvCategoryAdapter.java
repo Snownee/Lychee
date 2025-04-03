@@ -25,7 +25,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.action.DropItem;
-import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RVs;
@@ -40,7 +39,6 @@ import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements DisplayCategory<LycheeDisplay<R>> {
@@ -133,12 +131,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 							entries,
 							child,
 							itemMap));
-			default -> {
-				if (action instanceof PlaceBlock placeBlock && BlockPredicateExtensions.anyBlockState(placeBlock.block()).isAir()) {
-					return;
-				}
-				entries.add(EntryStack.of(LycheeREIPlugin.POST_ACTION, action));
-			}
+			default -> entries.add(EntryStack.of(LycheeREIPlugin.POST_ACTION, action));
 		}
 	}
 
@@ -204,7 +197,9 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 	@Override
 	public List<Widget> setupDisplay(LycheeDisplay<R> display, Rectangle bounds) {
 		var widgets = ImmutableList.<Widget>builder();
-		var startPoint = new Vector2f(bounds.getCenterX() - (float) rvCategory.width() / 2, bounds.getCenterY() - (float) rvCategory.height() / 2 + 1);
+		var startPoint = new Vector2f(
+				bounds.getCenterX() - (float) rvCategory.width() / 2,
+				bounds.getCenterY() - (float) rvCategory.height() / 2 + 1);
 		widgets.add(Widgets.createRecipeBase(bounds));
 
 		var layoutBuilder = new RvCategoryLayoutBuilder() {
