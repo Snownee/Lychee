@@ -5,8 +5,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
+import me.shedaniel.rei.api.client.gui.widgets.TooltipContext;
 import me.shedaniel.rei.api.client.gui.widgets.Widget;
 import me.shedaniel.rei.api.client.gui.widgets.Widgets;
 import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
@@ -15,8 +17,10 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import me.shedaniel.rei.api.common.util.EntryStacks;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import snownee.lychee.action.DropItem;
@@ -59,8 +63,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 			float x,
 			float y,
 			List<T> items,
-			SlotLayoutFunction<T> layoutFunction
-	) {
+			SlotLayoutFunction<T> layoutFunction) {
 		var size = Math.min(items.size(), 9);
 		var gridX = (int) Math.ceil(Math.sqrt(size));
 		var gridY = (int) Math.ceil((float) size / gridX);
@@ -81,11 +84,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 	}
 
 	static void actionSlot(ImmutableList.Builder<Widget> widgets, Vector2fc startPoint, PostAction action, int x, int y) {
-		var slot = LycheeREIPlugin.slot(
-				startPoint,
-				x,
-				y,
-				action.conditions().conditions().isEmpty() ? SlotType.NORMAL : SlotType.CHANCE);
+		var slot = LycheeREIPlugin.slot(startPoint, x, y, action.conditions().conditions().isEmpty() ? SlotType.NORMAL : SlotType.CHANCE);
 		slot.markOutput();
 		List<EntryStack<?>> entries = Lists.newArrayList();
 		Map<EntryStack<ItemStack>, PostAction> itemMap = Maps.newHashMap();
@@ -115,23 +114,37 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		});
 	}
 
-	static void buildActionSlot(
-			List<EntryStack<?>> entries,
-			PostAction action,
-			Map<EntryStack<ItemStack>, PostAction> itemMap
-	) {
+	static void buildActionSlot(List<EntryStack<?>> entries, PostAction action, Map<EntryStack<ItemStack>, PostAction> itemMap) {
+		EntryStack<PostAction> entry = EntryStack.of(LycheeREIPlugin.POST_ACTION, action);
 		switch (action) {
 			case DropItem dropitem -> {
-				var entry = EntryStacks.of(dropitem.stack());
-				entries.add(entry);
-				itemMap.put(entry, dropitem);
+				var itemEntry = EntryStacks.of(dropitem.stack());
+				if (action.commonProperties().icon() != null) {
+					var originalRenderer = itemEntry.getRenderer();
+					itemEntry.withRenderer(new EntryRenderer<>() {
+						@Override
+						public void render(
+								EntryStack<ItemStack> entryStack,
+								GuiGraphics guiGraphics,
+								Rectangle rectangle,
+								int mx,
+								int my,
+								float delta) {
+							entry.getRenderer().render(entry, guiGraphics, rectangle, mx, my, delta);
+						}
+
+						@Override
+						public @Nullable Tooltip getTooltip(EntryStack<ItemStack> entryStack, TooltipContext tooltipContext) {
+							return originalRenderer.getTooltip(entryStack, tooltipContext);
+						}
+					});
+				}
+				entries.add(itemEntry);
+				itemMap.put(itemEntry, dropitem);
 			}
 			case CompoundAction compoundAction ->
-					compoundAction.getChildActions().filter(it -> !it.hidden()).forEach(child -> buildActionSlot(
-							entries,
-							child,
-							itemMap));
-			default -> entries.add(EntryStack.of(LycheeREIPlugin.POST_ACTION, action));
+					compoundAction.getChildActions().filter(it -> !it.hidden()).forEach(child -> buildActionSlot(entries, child, itemMap));
+			default -> entries.add(entry);
 		}
 	}
 

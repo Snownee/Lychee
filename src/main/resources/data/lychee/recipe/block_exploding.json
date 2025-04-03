@@ -4,7 +4,8 @@
   "post": [
     {
       "type": "drop_item",
-			"id": "diamond"
+			"id": "diamond",
+			"icon": "lychee:left_click"
     },
     {
       "type": "drop_item",
