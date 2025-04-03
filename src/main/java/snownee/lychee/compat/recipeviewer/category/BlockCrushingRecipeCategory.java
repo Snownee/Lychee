@@ -117,7 +117,7 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 			var removeActionPosition = VectorExtensions.offset(
 					landingBlockPosition,
 					BLOCK_SIZE - 4,
-					BLOCK_SIZE - 8);
+					BLOCK_SIZE - 10);
 			builder.addElement(AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition).offset(position));
 		}
 	}

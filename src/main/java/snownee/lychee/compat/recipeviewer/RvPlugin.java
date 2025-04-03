@@ -75,7 +75,7 @@ public class RvPlugin<Helper extends RvHelper> {
 				});
 		register(
 				RecipeTypes.BLOCK_INTERACTING, type -> {
-					type.width = RvCategoryType.WIDER_WIDTH;
+					type.width += 30;
 					type.iconProvider = category -> {
 						var mainIcon = category.recipes().stream()
 								.map(it -> it.value().getType())
