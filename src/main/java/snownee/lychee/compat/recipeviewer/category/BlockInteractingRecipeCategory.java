@@ -2,6 +2,7 @@ package snownee.lychee.compat.recipeviewer.category;
 
 import java.util.List;
 
+import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
 import net.minecraft.Util;
@@ -14,7 +15,6 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RvHelper;
-import snownee.lychee.compat.recipeviewer.element.InfoElementHelper;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.util.VectorExtensions;
 
@@ -22,10 +22,10 @@ import snownee.lychee.util.VectorExtensions;
 public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockInteractingRecipe> {
 	private static final float INPUT_INGREDIENT_X = 22;
 
-	public static final Vector2fc INPUT_BLOCK_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.INPUT_BLOCK_POSITION, 54);
-	public static final Vector2fc METHOD_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.METHOD_POSITION, 60);
+	public static final Vector2fc INPUT_BLOCK_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.INPUT_BLOCK_POSITION, 34);
+	public static final Vector2fc METHOD_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.METHOD_POSITION, 40);
 
-	public static final Vector2fc INFO_POSITION = VectorExtensions.offset(METHOD_POSITION, -InfoElementHelper.INFO_SIZE - 2, 4);
+	public static final Vector2fc INFO_POSITION = new Vector2f(INPUT_INGREDIENT_X - 4, 40);
 
 	public BlockInteractingRecipeCategory(
 			RvCategoryType<BlockInteractingRecipe> type,
