@@ -3,6 +3,7 @@ package snownee.lychee.util;
 import java.text.DecimalFormat;
 import java.util.Objects;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -15,6 +16,10 @@ public class BoundsExtensions {
 	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("##.##");
 
 	public static MutableComponent getDescription(MinMaxBounds<?> bounds) {
+		return getPlainDescription(bounds).withStyle(ChatFormatting.WHITE);
+	}
+
+	public static MutableComponent getPlainDescription(MinMaxBounds<?> bounds) {
 		if (bounds.isAny()) {
 			return Component.literal("*");
 		}

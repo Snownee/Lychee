@@ -40,9 +40,10 @@
 		"rei.DefaultCraftingDisplayMixin"
 	],
 	"client": [
-		"ClientPacketListenerMixin",
-		"ClientRecipeBookMixin",
-		"GameRendererAccess",
+		"client.ClientPacketListenerMixin",
+		"client.ClientRecipeBookMixin",
+		"client.GameRendererAccess",
+		"client.GuiGraphicsMixin",
 		"jei.AnvilRecipeCategoryMixin"
 	],
 	"injectors": {

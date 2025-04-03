@@ -2,7 +2,9 @@ accessWidener   v1  named
 accessible class net/minecraft/client/renderer/RenderType$CompositeState
 
 accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$PropertyMatcher
+accessible method net/minecraft/advancements/critereon/StatePropertiesPredicate$PropertyMatcher <init> (Ljava/lang/String;Lnet/minecraft/advancements/critereon/StatePropertiesPredicate$ValueMatcher;)V
 accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactMatcher
+accessible method net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactMatcher <init> (Ljava/lang/String;)V
 accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedMatcher
 
 accessible field net/minecraft/world/level/storage/loot/IntRange min Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;
@@ -21,3 +23,12 @@ accessible class net/minecraft/world/item/crafting/Ingredient$Value
 accessible field net/minecraft/world/level/block/DropperBlock DISPENSE_BEHAVIOUR Lnet/minecraft/core/dispenser/DispenseItemBehavior;
 
 accessible class net/minecraft/advancements/critereon/LocationPredicate$PositionPredicate
+
+accessible class net/minecraft/world/item/crafting/Ingredient$TagValue
+accessible method net/minecraft/world/item/crafting/Ingredient fromValues (Ljava/util/stream/Stream;)Lnet/minecraft/world/item/crafting/Ingredient;
+
+accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
+accessible class net/minecraft/client/renderer/RenderStateShard$ShaderStateShard
+accessible class net/minecraft/client/renderer/RenderStateShard$TransparencyStateShard
+accessible field net/minecraft/client/renderer/RenderStateShard POSITION_TEX_SHADER Lnet/minecraft/client/renderer/RenderStateShard$ShaderStateShard;
+accessible field net/minecraft/client/renderer/RenderStateShard TRANSLUCENT_TRANSPARENCY Lnet/minecraft/client/renderer/RenderStateShard$TransparencyStateShard;

@@ -1,22 +1,25 @@
 {
-  "type": "lychee:item_inside",
-  "item_in": {
-    "tag": "minecraft:logs"
-  },
-  "block_in": {
-    "blocks": ["minecraft:campfire"],
-    "state": {
+	"type": "lychee:item_inside",
+	"item_in": {
+		"tag": "minecraft:logs"
+	},
+	"block_in": {
+		"blocks": [
+			"minecraft:campfire"
+		],
+		"state": {
 			"lit": "true"
-    }
-  },
-  "post": [{
-      "type": "delay",
-		"s": 0.6
-    },
-    {
-      "type": "drop_item",
+		}
+	},
+	"post": [
+		{
+			"type": "delay",
+			"s": 0.6
+		},
+		{
+			"type": "drop_item",
 			"id": "minecraft:torch",
-      "count": 2
-    }
-  ]
+			"count": 2
+		}
+	]
 }

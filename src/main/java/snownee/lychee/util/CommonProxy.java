@@ -60,7 +60,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.action.CustomAction;
 import snownee.lychee.compat.recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.compat.recipe_api.VisualOnlyComponentsIngredient;
-import snownee.lychee.compat.rv.IngredientType;
+import snownee.lychee.compat.recipeviewer.IngredientType;
 import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;

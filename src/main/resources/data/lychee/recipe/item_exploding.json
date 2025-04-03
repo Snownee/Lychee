@@ -1,47 +1,76 @@
 {
-  "type": "lychee:item_exploding",
-  "item_in": [
-    {
-      "tag": "coals",
-			"count": 9
-    }
-  ],
-  "post": [
-    {
-      "type": "drop_item",
+	"type": "lychee:item_exploding",
+	"item_in": [
+		{
+			"tag": "coals"
+		},
+		{
+			"tag": "coals"
+		},
+		{
+			"tag": "coals"
+		},
+		{
+			"tag": "coals"
+		},
+		{
+			"tag": "coals"
+		},
+		{
+			"tag": "coals"
+		},
+		{
+			"tag": "coals"
+		},
+		{
+			"tag": "coals"
+		},
+		{
+			"tag": "coals"
+		}
+	],
+	"post": [
+		{
+			"type": "drop_item",
 			"id": "diamond"
-    },
-    {
-      "type": "drop_item",
+		},
+		{
+			"type": "drop_item",
 			"id": "diamond"
-    },
-    {
-      "type": "drop_item",
+		},
+		{
+			"type": "drop_item",
 			"id": "diamond"
-    },
-    {
-      "type": "drop_item",
+		},
+		{
+			"type": "drop_item",
 			"id": "diamond"
-    },
-    {
-      "type": "drop_item",
+		},
+		{
+			"type": "drop_item",
 			"id": "diamond"
-    },
-    {
-      "type": "drop_item",
+		},
+		{
+			"type": "drop_item",
 			"id": "diamond"
-    },
-    {
-      "type": "drop_item",
+		},
+		{
+			"type": "drop_item",
 			"id": "diamond"
-    },
-    {
-      "type": "drop_item",
+		},
+		{
+			"type": "drop_item",
 			"id": "diamond"
-    },
-    {
-      "type": "drop_item",
+		},
+		{
+			"type": "drop_item",
 			"id": "diamond"
-    }
-  ]
+		}
+	],
+	"contextual": {
+		"type": "location",
+		"predicate": {
+			"dimension": "overworld"
+		}
+	}
 }

@@ -1,6 +1,12 @@
 package snownee.lychee.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
+import org.joml.Vector2i;
+import org.joml.Vector2ic;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -10,35 +16,79 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	public static final RenderElement EMPTY = new RenderElement() {
 		@Override
 		public void render(GuiGraphics graphics) {
+
 		}
 	};
+	public Vector2f position = new Vector2f();
+	public Vector2i size = new Vector2i(16, 16);
+	protected float z = 0;
 
-	public static RenderElement of(ScreenElement renderable) {
+	public static RenderElement create(BiConsumer<GuiGraphics, RenderElement> renderable) {
 		return new SimpleRenderElement(renderable);
 	}
 
-	protected int width = 16, height = 16;
-	protected float x = 0, y = 0, z = 0;
+	public static RenderElement create(Function<RenderElement, ScreenElement> renderable) {
+		return new SimpleRenderElement(it -> (graphics, element) -> renderable.apply(element));
+	}
+
+	public static RenderElement create(ScreenElement renderable) {
+		return new SimpleRenderElement(renderable);
+	}
+
 	protected float alpha = 1f;
 
 	public <T extends RenderElement> T at(float x, float y) {
-		this.x = x;
-		this.y = y;
+		this.position.set(x, y);
+		//noinspection unchecked
+		return (T) this;
+	}
+
+	public <T extends RenderElement> T at(Vector2fc position) {
+		this.position.set(position);
+		//noinspection unchecked
+		return (T) this;
+	}
+
+	public <T extends RenderElement> T offset(float x, float y) {
+		this.position.add(x, y);
+		//noinspection unchecked
+		return (T) this;
+	}
+
+	public <T extends RenderElement> T offset(Vector2fc position) {
+		this.position.add(position);
 		//noinspection unchecked
 		return (T) this;
 	}
 
 	public <T extends RenderElement> T at(float x, float y, float z) {
-		this.x = x;
-		this.y = y;
+		this.at(x, y);
 		this.z = z;
 		//noinspection unchecked
 		return (T) this;
 	}
 
-	public <T extends RenderElement> T withBounds(int width, int height) {
-		this.width = width;
-		this.height = height;
+	public <T extends RenderElement> T atZ(float z) {
+		this.z = z;
+		//noinspection unchecked
+		return (T) this;
+	}
+
+
+	public <T extends RenderElement> T withSize(int width, int height) {
+		this.size.set(width, height);
+		//noinspection unchecked
+		return (T) this;
+	}
+
+	public <T extends RenderElement> T withSize(Vector2ic size) {
+		this.size.set(size);
+		//noinspection unchecked
+		return (T) this;
+	}
+
+	public <T extends RenderElement> T withSize(int size) {
+		withSize(size, size);
 		//noinspection unchecked
 		return (T) this;
 	}
@@ -49,53 +99,39 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 		return (T) this;
 	}
 
-	public int getWidth() {
-		return width;
+	public int width() {
+		return this.size.x();
 	}
 
-	public int getHeight() {
-		return height;
+	public int height() {
+		return this.size.y();
 	}
 
-	public float getX() {
-		return x;
+	public float x() {
+		return this.position.x();
 	}
 
-	public float getY() {
-		return y;
+	public float y() {
+		return this.position.y();
 	}
 
-	public float getZ() {
+	public float z() {
 		return z;
 	}
 
-	public abstract void render(GuiGraphics graphics);
+	public boolean containsMouse(double mouseX, double mouseY) {
+		return mouseX >= x() && mouseY >= y() && mouseX <= x() + width() && mouseY <= y() + height();
+	}
 
-	@Override
-	public void render(GuiGraphics graphics, int x, int y) {
-		this.at(x, y).render(graphics);
+	public void render(GuiGraphics graphics, int offsetX, int offsetY) {
+		graphics.pose().pushPose();
+		graphics.pose().translate(offsetX, offsetY, 0);
+		render(graphics);
+		graphics.pose().popPose();
 	}
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		render(guiGraphics);
-	}
-
-	public static class SimpleRenderElement extends RenderElement {
-
-		private final ScreenElement renderable;
-
-		public SimpleRenderElement(ScreenElement renderable) {
-			this.renderable = renderable;
-		}
-
-		@Override
-		public void render(GuiGraphics graphics) {
-			PoseStack pose = graphics.pose();
-			pose.pushPose();
-			pose.translate(0, 0, z);
-			renderable.render(graphics, (int) x, (int) y);
-			pose.popPose();
-		}
 	}
 }
