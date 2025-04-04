@@ -32,7 +32,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	public static void invoke(ItemEntity entity) {
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, entity.level());
-		final var lootParamsContext = context.getOrNull(LycheeContextKey.LOOT_PARAMS);
+		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 
 		lootParamsContext.setParam(LootContextParams.ORIGIN, entity.position());
 		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, entity);
@@ -61,7 +61,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 
 	@Override
 	public boolean matches(LycheeContext context, Level level) {
-		var lootParamsContext = context.getOrNull(LycheeContextKey.LOOT_PARAMS);
+		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 		ItemStack stack = ((ItemEntity) lootParamsContext.get(LootContextParams.THIS_ENTITY)).getItem();
 		return input.test(stack);
 	}

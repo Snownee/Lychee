@@ -46,8 +46,8 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 		var loop = 0;
 		final var excluded = Sets.newHashSet();
 		var level = context.level();
-		var itemShapelessContext = context.getOrNull(LycheeContextKey.ITEM_SHAPELESS);
-		final var actionContext = context.getOrNull(LycheeContextKey.ACTION);
+		var itemShapelessContext = context.get(LycheeContextKey.ITEM_SHAPELESS);
+		final var actionContext = context.get(LycheeContextKey.ACTION);
 		major:
 		while (true) {
 			var matched = false;
@@ -116,7 +116,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 		}
 		final var list = itemEntities.filter($ -> validItems.contains($.getItem())).collect(Collectors.toCollection(LinkedList::new));
 		context.put(LycheeContextKey.ITEM_SHAPELESS, new ItemShapelessContext(list, context));
-		context.getOrNull(LycheeContextKey.LOOT_PARAMS).validate(contextParamSet);
+		context.get(LycheeContextKey.LOOT_PARAMS).validate(contextParamSet);
 		process(this, recipes, context, null);
 	}
 }

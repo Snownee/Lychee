@@ -46,15 +46,16 @@ public class LycheeContext extends EmptyRecipeInput {
 	private Level level;
 
 	@Nullable
-	public <T> T getOrNull(LycheeContextKey<T> key) {
-		if (LycheeContextRequired.CONSTRUCTORS.containsKey(key)) {
-			return (T) this.context.computeIfAbsent(key, (it) -> LycheeContextRequired.CONSTRUCTORS.get(it).apply(this));
-		}
+	public <T> T getOrNull(LycheeContextKey.Optional<T> key) {
 		return (T) context.get(key);
 	}
 
 	public <T> T get(LycheeContextKey<T> key) {
-		return Objects.requireNonNull(getOrNull(key));
+		if (key.factory == null) {
+			return (T) Objects.requireNonNull(context.get(key));
+		} else {
+			return (T) Objects.requireNonNull(context.computeIfAbsent(key, it -> it.factory.apply(this)));
+		}
 	}
 
 	@Nullable
@@ -84,9 +85,9 @@ public class LycheeContext extends EmptyRecipeInput {
 
 	public Level level() {
 		if (level == null) {
-			level = getOrNull(LycheeContextKey.LEVEL);
+			level = get(LycheeContextKey.LEVEL);
 		}
-		return Objects.requireNonNull(level);
+		return level;
 	}
 
 	@Override
@@ -95,11 +96,11 @@ public class LycheeContext extends EmptyRecipeInput {
 	}
 
 	@Override
-	public ItemStack getItem(final int index) {
+	public ItemStack getItem(int index) {
 		return get(LycheeContextKey.ITEM).get(index).get();
 	}
 
-	public void setItem(final int index, final ItemStack stack) {
+	public void setItem(int index, ItemStack stack) {
 		get(LycheeContextKey.ITEM).replace(index, stack);
 	}
 }
