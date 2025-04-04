@@ -2,10 +2,10 @@ package snownee.lychee.util.codec;
 
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.datafixers.util.Unit;
 import com.mojang.serialization.Codec;
@@ -24,26 +24,27 @@ public final class KeyDispatchedMapMapCodec<K, V> extends MapCodec<Map<K, V>> {
 	private final Function<? super K, ? extends DataResult<? extends Decoder<? extends V>>> decoder;
 	private final Function<? super K, ? extends DataResult<? extends Encoder<V>>> encoder;
 	private final Keyable keys;
+	private final Supplier<Map<K, V>> mapFactory;
 
 	public KeyDispatchedMapMapCodec(
 			final Codec<K> keyCodec,
 			final Function<? super K, ? extends DataResult<? extends Decoder<? extends V>>> decoder,
 			final Function<? super K, ? extends DataResult<? extends Encoder<V>>> encoder,
-			final Keyable keys) {
+			final Keyable keys,
+			final Supplier<Map<K, V>> mapFactory) {
 		this.keyCodec = keyCodec;
 		this.decoder = decoder;
 		this.encoder = encoder;
 		this.keys = keys;
+		this.mapFactory = mapFactory;
 	}
 
 	public KeyDispatchedMapMapCodec(
 			final Codec<K> keyCodec,
 			final Function<? super K, DataResult<Codec<V>>> codec,
-			final Keyable keys) {
-		this.keyCodec = keyCodec;
-		this.decoder = codec;
-		this.encoder = codec;
-		this.keys = keys;
+			final Keyable keys,
+			final Supplier<Map<K, V>> mapFactory) {
+		this(keyCodec, codec, codec, keys, mapFactory);
 	}
 
 	@Override
@@ -61,9 +62,8 @@ public final class KeyDispatchedMapMapCodec<K, V> extends MapCodec<Map<K, V>> {
 
 	@Override
 	public <T> DataResult<Map<K, V>> decode(final DynamicOps<T> ops, final MapLike<T> input) {
-		final var read = ImmutableMap.<K, V>builder();
+		final var elements = mapFactory.get();
 		final var failed = ImmutableList.<T>builder();
-
 
 		final var result = keys(ops).reduce(
 				DataResult.success(Unit.INSTANCE, Lifecycle.stable()), (r, key) -> {
@@ -85,12 +85,11 @@ public final class KeyDispatchedMapMapCodec<K, V> extends MapCodec<Map<K, V>> {
 
 					return r.apply2stable(
 							(u, p) -> {
-								read.put(p.getFirst(), p.getSecond());
+								elements.put(p.getFirst(), p.getSecond());
 								return u;
 							}, entry);
 				}, (r1, r2) -> r1.apply2stable((u1, u2) -> u1, r2));
 
-		final Map<K, V> elements = read.build();
 		final T errors = ops.createList(failed.build().stream());
 
 		return result.map(unit -> elements).setPartial(elements).mapError(e -> e + " missed input: " + errors);
