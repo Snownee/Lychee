@@ -1,6 +1,9 @@
+clientOnly: false
 configs:
-- data: {}
-  target: snownee.lychee.LycheeConfig
+  - data: { }
+    target: snownee.lychee.LycheeConfig
 packets:
-- data: {}
-  target: snownee.lychee.network.SCustomLevelEventPacket
+  - data: { }
+    target: snownee.lychee.network.SCustomLevelEventPacket
+  - data: { }
+    target: snownee.lychee.network.SUpdateFallingBlockPacket

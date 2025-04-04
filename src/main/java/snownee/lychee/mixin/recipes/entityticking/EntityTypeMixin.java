@@ -6,21 +6,22 @@ import org.spongepowered.asm.mixin.Unique;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.recipes.EntityTickingRecipe;
 import snownee.lychee.util.LycheeEntityType;
 
 @Mixin(EntityType.class)
 public class EntityTypeMixin implements LycheeEntityType {
 	@Unique
-	private ImmutableList<EntityTickingRecipe> lychee$tickingRecipes = ImmutableList.of();
+	private ImmutableList<RecipeHolder<EntityTickingRecipe>> lychee$tickingRecipes = ImmutableList.of();
 
 	@Override
-	public ImmutableList<EntityTickingRecipe> lychee$tickingRecipes() {
+	public ImmutableList<RecipeHolder<EntityTickingRecipe>> lychee$tickingRecipes() {
 		return lychee$tickingRecipes;
 	}
 
 	@Override
-	public void lychee$setTickingRecipes(ImmutableList<EntityTickingRecipe> recipes) {
+	public void lychee$setTickingRecipes(ImmutableList<RecipeHolder<EntityTickingRecipe>> recipes) {
 		lychee$tickingRecipes = recipes;
 	}
 }

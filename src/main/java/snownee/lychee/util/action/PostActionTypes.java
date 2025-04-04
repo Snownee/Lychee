@@ -17,6 +17,7 @@ import snownee.lychee.action.If;
 import snownee.lychee.action.MoveTowardsFace;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
+import snownee.lychee.action.SetBlock;
 import snownee.lychee.action.input.DamageItem;
 import snownee.lychee.action.input.PreventDefault;
 import snownee.lychee.action.input.SetItem;
@@ -54,6 +55,7 @@ public class PostActionTypes {
 	public static final PostActionType<SetItem> SET_ITEM = register("set_item", new SetItem.Type());
 	public static final PostActionType<CustomAction> CUSTOM = register("custom", new CustomAction.Type());
 	public static final PostActionType<If> IF = register("if", new If.Type());
+	public static final PostActionType<SetBlock> SET_BLOCK = register("set_block", new SetBlock.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		Registry.register(LycheeRegistries.POST_ACTION, ResourceLocation.parse(name), t);

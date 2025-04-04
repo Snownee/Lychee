@@ -17,6 +17,8 @@ import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipeType;
 import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.recipes.DripstoneRecipeType;
+import snownee.lychee.recipes.EntityTickingRecipe;
+import snownee.lychee.recipes.EntityTickingRecipeType;
 import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.ItemInsideRecipe;
@@ -108,17 +110,20 @@ public final class RecipeTypes {
 				it.hasStandaloneCategory = false;
 			}
 	));
-	public static final DripstoneRecipeType DRIPSTONE_DRIPPING = register(
-			Util.make(
-					new DripstoneRecipeType(
-							"dripstone_dripping",
-							DripstoneRecipe.class,
-							LycheeLootContextParamSets.BLOCK_ONLY),
-					it -> {
-						it.extractChance = true;
-						it.requiresClient = true;
-					}
-			));
+	public static final DripstoneRecipeType DRIPSTONE_DRIPPING = register(Util.make(
+			new DripstoneRecipeType(
+					"dripstone_dripping",
+					DripstoneRecipe.class,
+					LycheeLootContextParamSets.BLOCK_ONLY),
+			it -> {
+				it.extractChance = true;
+				it.requiresClient = true;
+			}
+	));
+	public static final EntityTickingRecipeType ENTITY_TICKING = register(new EntityTickingRecipeType(
+			"entity_ticking",
+			EntityTickingRecipe.class,
+			null));
 
 	public static <T extends LycheeRecipeType<? extends ILycheeRecipe<LycheeContext>>> T register(T recipeType) {
 		ALL.add(recipeType);

@@ -9,6 +9,7 @@ import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.recipes.DripstoneRecipe;
+import snownee.lychee.recipes.EntityTickingRecipe;
 import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.ItemInsideRecipe;
@@ -63,6 +64,10 @@ public final class RecipeSerializers {
 	public static final RecipeSerializer<ShapedCraftingRecipe> CRAFTING = register(
 			"crafting",
 			new ShapedCraftingRecipe.Serializer()
+	);
+	public static final RecipeSerializer<EntityTickingRecipe> ENTITY_TICKING = register(
+			"entity_ticking",
+			new EntityTickingRecipe.Serializer()
 	);
 
 	public static <T extends RecipeSerializer<?>> T register(String id, T t) {
