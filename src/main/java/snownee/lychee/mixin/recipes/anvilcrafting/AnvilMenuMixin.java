@@ -26,7 +26,6 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.AnvilContext;
-import snownee.lychee.context.RecipeContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
@@ -71,7 +70,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		context.put(LycheeContextKey.LEVEL, player.level());
 		final var anvilContext = new AnvilContext(Pair.of(left, right), itemName);
 		context.put(LycheeContextKey.ANVIL, anvilContext);
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		final var lootParamsContext = context.getOrNull(LycheeContextKey.LOOT_PARAMS);
 		BlockPos pos = access.evaluate((level, pos0) -> pos0).orElseGet(player::blockPosition);
 		lootParamsContext.setParam(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
 		if (access != ContainerLevelAccess.NULL) {
@@ -86,14 +85,13 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 				ItemStackHolderCollection.Inventory.of(context, left.copy(), right.copy(), ItemStack.EMPTY)
 		);
 		RecipeTypes.ANVIL_CRAFTING.findFirst(context, player.level()).ifPresent(it -> {
-			context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(it.id()));
+			context.put(it);
 			final var output = it.value().assemble(context, player.level().registryAccess());
 			if (output.isEmpty()) {
 				resultSlots.setItem(0, ItemStack.EMPTY);
 				cost.set(0);
 				context = null;
 			} else {
-				context.put(LycheeContextKey.RECIPE, it.value());
 				resultSlots.setItem(0, output);
 				if (player.isCreative() || left.getCount() == 1) {
 					cost.set(anvilContext.getLevelCost());
@@ -118,7 +116,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		if (context.level().isClientSide) {
 			return;
 		}
-		var recipe = context.get(LycheeContextKey.RECIPE);
+		var recipe = context.getOrNull(LycheeContextKey.RECIPE);
 		if (recipe == null) {
 			return;
 		}
@@ -136,12 +134,12 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	private void lychee_preventDefault(Player player, ItemStack stack, CallbackInfo ci) {
 		if (onTakeCtx != null) {
 			for (int i = 0; i < 2; i++) {
-				if (onTakeCtx.get(LycheeContextKey.ITEM).get(i).getConsumption() == 0) {
-					inputSlots.setItem(i, onTakeCtx.get(LycheeContextKey.ITEM).get(i).get());
+				if (onTakeCtx.getOrNull(LycheeContextKey.ITEM).get(i).getConsumption() == 0) {
+					inputSlots.setItem(i, onTakeCtx.getOrNull(LycheeContextKey.ITEM).get(i).get());
 				}
 			}
 
-			boolean avoidDefault = onTakeCtx.get(LycheeContextKey.ACTION).avoidDefault;
+			boolean avoidDefault = onTakeCtx.getOrNull(LycheeContextKey.ACTION).avoidDefault;
 			onTakeCtx = null;
 			if (avoidDefault) {
 				access.execute((level, pos) -> level.levelEvent(LevelEvent.SOUND_ANVIL_USED, pos, 0));

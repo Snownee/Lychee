@@ -44,32 +44,34 @@ public final class LycheeContextRequired {
 	public static final Function<LycheeContext, ItemStackHolderCollection> ITEM =
 			register(LycheeContextKey.ITEM, it -> ItemStackHolderCollection.empty());
 
-	public static final Function<LycheeContext, ActionMarker> MARKER = register(LycheeContextKey.MARKER, it -> {
-		var level = it.level();
-		var marker = EntityType.MARKER.create(level);
-		var lootParamsContext = it.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParamsContext.getOrNull(LootContextParams.ORIGIN);
-		if (pos != null) {
-			marker.moveTo(pos);
-		}
-		marker.setCustomName(Component.literal(Lychee.ID));
-		level.addFreshEntity(marker);
-		var actionMarker = (ActionMarker) marker;
-		actionMarker.lychee$setData(new ActionData(it, 0));
-		return actionMarker;
-	});
+	public static final Function<LycheeContext, ActionMarker> MARKER = register(
+			LycheeContextKey.MARKER, it -> {
+				var level = it.level();
+				var marker = EntityType.MARKER.create(level);
+				var lootParamsContext = it.getOrNull(LycheeContextKey.LOOT_PARAMS);
+				var pos = lootParamsContext.getOrNull(LootContextParams.ORIGIN);
+				if (pos != null) {
+					marker.moveTo(pos);
+				}
+				marker.setCustomName(Component.literal(Lychee.ID));
+				level.addFreshEntity(marker);
+				var actionMarker = (ActionMarker) marker;
+				actionMarker.lychee$setData(new ActionData(it, 0));
+				return actionMarker;
+			});
 
 	public static final Function<LycheeContext, ? extends ILycheeRecipe<?>> RECIPE =
-			register(LycheeContextKey.RECIPE, it -> {
-				var id = it.get(LycheeContextKey.RECIPE_ID).id();
-				if (id != null) {
-					var holder = CommonProxy.recipe(id);
-					if (holder != null && holder.value() instanceof ILycheeRecipe<?> lycheeRecipe) {
-						return lycheeRecipe;
-					}
-				}
-				return null;
-			});
+			register(
+					LycheeContextKey.RECIPE, it -> {
+						var id = it.getOrNull(LycheeContextKey.RECIPE_ID);
+						if (id != null) {
+							var holder = CommonProxy.recipe(id);
+							if (holder != null && holder.value() instanceof ILycheeRecipe<?> lycheeRecipe) {
+								return lycheeRecipe;
+							}
+						}
+						return null;
+					});
 
 
 	public static <T> Function<LycheeContext, T> register(

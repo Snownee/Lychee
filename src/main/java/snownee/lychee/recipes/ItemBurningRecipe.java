@@ -19,7 +19,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.context.RecipeContext;
 import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -33,14 +32,13 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	public static void invoke(ItemEntity entity) {
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, entity.level());
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		final var lootParamsContext = context.getOrNull(LycheeContextKey.LOOT_PARAMS);
 
 		lootParamsContext.setParam(LootContextParams.ORIGIN, entity.position());
 		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, entity);
 		lootParamsContext.validate(RecipeTypes.ITEM_BURNING.contextParamSet);
 		RecipeTypes.ITEM_BURNING.findFirst(context, entity.level()).ifPresent(it -> {
-			context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(it.id()));
-			context.put(LycheeContextKey.RECIPE, it.value());
+			context.put(it);
 			int times = it.value().getRandomRepeats(entity.getItem().getCount() / it.value().input.count(), context);
 			var itemStackHolders = ItemStackHolderCollection.InWorld.of(entity);
 			context.put(LycheeContextKey.ITEM, itemStackHolders);
@@ -63,7 +61,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 
 	@Override
 	public boolean matches(LycheeContext context, Level level) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		var lootParamsContext = context.getOrNull(LycheeContextKey.LOOT_PARAMS);
 		ItemStack stack = ((ItemEntity) lootParamsContext.get(LootContextParams.THIS_ENTITY)).getItem();
 		return input.test(stack);
 	}
