@@ -79,4 +79,9 @@ public final class LycheeLootContextParamSets {
 			$ -> $.optional(LootContextParams.ORIGIN).optional(LootContextParams.THIS_ENTITY)
 	);
 
+	public static final LootContextParamSet ENTITY_TICKING =
+			LootContextParamSetsAccess.callRegister(
+					"lychee:entity_ticking",
+					$ -> $.required(LootContextParams.ORIGIN).required(LootContextParams.THIS_ENTITY)
+			);
 }

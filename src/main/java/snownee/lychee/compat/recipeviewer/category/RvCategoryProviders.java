@@ -3,6 +3,8 @@ package snownee.lychee.compat.recipeviewer.category;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.Nullable;
+
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.RecipeTypes;
@@ -34,6 +36,7 @@ public final class RvCategoryProviders {
 		return result;
 	}
 
+	@Nullable
 	public static <R extends ILycheeRecipe<LycheeContext>> RvCategoryProvider<R> get(ResourceLocation id) {
 		//noinspection unchecked
 		return (RvCategoryProvider<R>) ALL.get(id);

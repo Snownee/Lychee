@@ -127,9 +127,13 @@ public class RvPlugin<Helper extends RvHelper> {
 				continue;
 			}
 
+			var provider = RvCategoryProviders.get(recipeType.categoryId);
+			if (provider == null) {
+				continue;
+			}
+
 			//noinspection unchecked
-			var factory = RvCategoryProviders.get(recipeType.categoryId)
-					.get((RvCategoryType<ILycheeRecipe<LycheeContext>>) categoryTypes.get(recipeType.categoryId), rvHelper);
+			var factory = provider.get((RvCategoryType<ILycheeRecipe<LycheeContext>>) categoryTypes.get(recipeType.categoryId), rvHelper);
 			for (var recipe : recipeType.inViewerRecipes()) {
 				var id = RVs.composeCategoryIdentifier(recipeType.categoryId, ResourceLocation.parse(recipe.value().group()));
 				//noinspection unchecked,rawtypes

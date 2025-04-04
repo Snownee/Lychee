@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -26,6 +25,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
@@ -50,6 +50,7 @@ import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
+@NotNullByDefault
 public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe, ChanceRecipe {
 	protected final BlockPredicate sourceBlock;
 	protected final BlockPredicate targetBlock;
@@ -134,12 +135,12 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<DripstoneRecipe> getSerializer() {
+	public RecipeSerializer<DripstoneRecipe> getSerializer() {
 		return RecipeSerializers.DRIPSTONE_DRIPPING;
 	}
 
 	@Override
-	public @NotNull LycheeRecipeType<DripstoneRecipe> getType() {
+	public LycheeRecipeType<DripstoneRecipe> getType() {
 		return RecipeTypes.DRIPSTONE_DRIPPING;
 	}
 
@@ -197,11 +198,6 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 						BlockPredicateExtensions.CODEC_FOR_TESTING.fieldOf("target_block").forGetter(DripstoneRecipe::blockPredicate)
 				).apply(instance, DripstoneRecipe::new));
 
-		@Override
-		public @NotNull MapCodec<DripstoneRecipe> codec() {
-			return CODEC;
-		}
-
 		public static final StreamCodec<RegistryFriendlyByteBuf, DripstoneRecipe> STREAM_CODEC =
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
@@ -214,7 +210,12 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 				);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, DripstoneRecipe> streamCodec() {
+		public MapCodec<DripstoneRecipe> codec() {
+			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, DripstoneRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

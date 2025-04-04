@@ -1,0 +1,14 @@
+type: lychee:entity_ticking
+entity:
+  type: falling_block
+  nbt:
+    BlockState:
+      Name: minecraft:gravel
+  movement:
+    fall_distance:
+      min: 5
+post:
+  type: set_block
+  block: iron_block
+#  type: execute
+#  command: data modify entity @s BlockState.Name set value "minecraft:iron_block"

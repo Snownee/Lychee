@@ -84,9 +84,6 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	@Override
 	public boolean matches(final LycheeContext context, final Level level) {
 		final var anvilContext = context.get(LycheeContextKey.ANVIL);
-		if (anvilContext == null) {
-			return false;
-		}
 		if (ingredients.size() == 2 && anvilContext.input().getSecond().getCount() < materialCost) {
 			return false;
 		}

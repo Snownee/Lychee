@@ -1,0 +1,12 @@
+type: lychee:entity_ticking
+entity:
+  type: falling_block
+  nbt:
+    BlockState:
+      Name: minecraft:iron_block
+  movement:
+    fall_distance:
+      min: 5
+post:
+  type: execute
+  command: particle minecraft:firework ~ ~ ~ 0 0 0 0.05 3 force
