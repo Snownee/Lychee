@@ -65,6 +65,7 @@ public interface ContextualConditionType<T extends ContextualCondition> extends 
 		return object;
 	}
 
+	@Override
 	default StreamCodec<RegistryFriendlyByteBuf, T> streamCodec() {
 		return ByteBufCodecs.fromCodecWithRegistries(codec().codec());
 	}

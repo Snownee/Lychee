@@ -141,6 +141,7 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		return false;
 	}
 
+	@Override
 	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		for (var condition : conditions) {
 			try {
@@ -149,11 +150,11 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 					break;
 				}
 			} catch (Throwable e) {
-				var recipeContext = ctx.get(LycheeContextKey.RECIPE_ID);
+				var recipeId = ctx.getOrNull(LycheeContextKey.RECIPE_ID);
 				Lychee.LOGGER.error(
 						"Failed to check condition {} of recipe {}",
 						LycheeRegistries.CONTEXTUAL.getKey(condition.type()),
-						recipeContext == null ? ctx.get(LycheeContextKey.RECIPE) : recipeContext.id(),
+						recipeId == null ? ctx.getOrNull(LycheeContextKey.RECIPE) : recipeId,
 						e);
 				return 0;
 			}

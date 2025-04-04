@@ -32,6 +32,8 @@
 		"recipes.crafting.ShapedRecipeAccess",
 		"recipes.crafting.ShapedRecipePatternAccess",
 		"recipes.crafting.TransientCraftingContainerAccess",
+		"recipes.entityticking.EntityMixin",
+		"recipes.entityticking.EntityTypeMixin",
 		"recipes.itemburing.ItemEntityHurtMixin",
 		"recipes.itemexploding.ExplosionMixin",
 		"recipes.iteminside.EntityMixin",

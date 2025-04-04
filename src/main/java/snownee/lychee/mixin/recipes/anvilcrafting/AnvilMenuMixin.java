@@ -26,7 +26,6 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.AnvilContext;
-import snownee.lychee.context.RecipeContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
@@ -86,14 +85,13 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 				ItemStackHolderCollection.Inventory.of(context, left.copy(), right.copy(), ItemStack.EMPTY)
 		);
 		RecipeTypes.ANVIL_CRAFTING.findFirst(context, player.level()).ifPresent(it -> {
-			context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(it.id()));
+			context.put(it);
 			final var output = it.value().assemble(context, player.level().registryAccess());
 			if (output.isEmpty()) {
 				resultSlots.setItem(0, ItemStack.EMPTY);
 				cost.set(0);
 				context = null;
 			} else {
-				context.put(LycheeContextKey.RECIPE, it.value());
 				resultSlots.setItem(0, output);
 				if (player.isCreative() || left.getCount() == 1) {
 					cost.set(anvilContext.getLevelCost());
@@ -118,7 +116,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		if (context.level().isClientSide) {
 			return;
 		}
-		var recipe = context.get(LycheeContextKey.RECIPE);
+		var recipe = context.getOrNull(LycheeContextKey.RECIPE);
 		if (recipe == null) {
 			return;
 		}

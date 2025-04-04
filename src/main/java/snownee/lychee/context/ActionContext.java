@@ -2,22 +2,35 @@ package snownee.lychee.context;
 
 import java.util.Queue;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.google.common.collect.Queues;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import snownee.lychee.Lychee;
 import snownee.lychee.util.action.Job;
-import snownee.lychee.util.context.KeyedContextValue;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.context.LycheeContextSerializer;
 
-public class ActionContext implements KeyedContextValue<ActionContext> {
+public class ActionContext {
+	public static final Codec<ActionContext> CODEC = RecordCodecBuilder.create(instance ->
+			instance.group(
+					Codec.BOOL.optionalFieldOf("avoid_default", false).forGetter(it -> it.avoidDefault),
+					Codec.INT.fieldOf("state")
+							.flatXmap(
+									it -> {
+										try {
+											return DataResult.success(State.values()[it]);
+										} catch (Throwable t) {
+											return DataResult.error(t::getMessage);
+										}
+									}, it -> DataResult.success(it.ordinal()))
+							.forGetter(it -> it.state),
+					Codec.list(Job.CODEC).fieldOf("jobs").<Queue<Job>>xmap(
+							Queues::newLinkedBlockingQueue,
+							it -> it.stream().toList()
+					).orElse(Queues.newLinkedBlockingQueue()).forGetter(it -> it.jobs)
+			).apply(instance, ActionContext::new));
+
 	public boolean avoidDefault = false;
 	public State state = State.RUNNING;
 	public Queue<Job> jobs = Queues.newLinkedBlockingQueue();
@@ -35,11 +48,6 @@ public class ActionContext implements KeyedContextValue<ActionContext> {
 		avoidDefault = false;
 		state = State.RUNNING;
 		jobs.clear();
-	}
-
-	@Override
-	public LycheeContextKey<ActionContext> key() {
-		return LycheeContextKey.ACTION;
 	}
 
 	public enum State {
@@ -62,32 +70,6 @@ public class ActionContext implements KeyedContextValue<ActionContext> {
 
 		if (state == State.RUNNING || jobs.isEmpty()) {
 			state = State.STOPPED;
-		}
-	}
-
-
-	public static final class Serializer implements LycheeContextSerializer<ActionContext> {
-		public static final MapCodec<ActionContext> CODEC = RecordCodecBuilder.mapCodec(instance ->
-				instance.group(
-						Codec.BOOL.optionalFieldOf("avoid_default", false).forGetter(it -> it.avoidDefault),
-						Codec.INT.fieldOf("state")
-								.flatXmap(it -> {
-									try {
-										return DataResult.success(State.values()[it]);
-									} catch (Throwable t) {
-										return DataResult.error(t::getMessage);
-									}
-								}, it -> DataResult.success(it.ordinal()))
-								.forGetter(it -> it.state),
-						Codec.list(Job.CODEC).fieldOf("jobs").<Queue<Job>>xmap(
-								Queues::newLinkedBlockingQueue,
-								it -> it.stream().toList()
-						).orElse(Queues.newLinkedBlockingQueue()).forGetter(it -> it.jobs)
-				).apply(instance, ActionContext::new));
-
-		@Override
-		public @NotNull MapCodec<ActionContext> codec() {
-			return CODEC;
 		}
 	}
 }

@@ -28,7 +28,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
-import snownee.lychee.context.RecipeContext;
 import snownee.lychee.contextual.Chance;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
@@ -58,8 +57,8 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 			var iterator = recipe.value().conditions().iterator();
 			if (iterator.hasNext()) {
 				final var condition = iterator.next();
-				if (condition instanceof Chance chance && recipe.value() instanceof ChanceRecipe chanceRecipe) {
-					chanceRecipe.setChance(chance.chance());
+				if (condition instanceof Chance(float chance) && recipe.value() instanceof ChanceRecipe chanceRecipe) {
+					chanceRecipe.setChance(chance);
 				}
 			}
 			if (BlockPredicateExtensions.isAny(recipe.value().blockPredicate())) {
@@ -132,11 +131,9 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 
 		final Iterable<RecipeHolder<R>> iterable = mergeAnyBlockRecipes(recipes);
 		for (final var recipeHolder : iterable) {
-
 			if (tryMatch(recipeHolder, level, context).isPresent()) {
-				context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipeHolder.id()));
+				context.put(recipeHolder);
 				R recipe = recipeHolder.value();
-				context.put(LycheeContextKey.RECIPE, recipe);
 				if (!level.isClientSide && recipe.tickOrApply(context)) {
 					if (recipe.sizedIngredients().size() == 1) {
 						itemContext.get(1).setConsumption(0);
@@ -199,8 +196,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 				}
 			}
 			if (tryMatch(recipe, level, context).isPresent()) {
-				context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
-				context.put(LycheeContextKey.RECIPE, recipe.value());
+				context.put(recipe);
 				recipe.value().applyPostActions(context, 1);
 				return recipe;
 			}

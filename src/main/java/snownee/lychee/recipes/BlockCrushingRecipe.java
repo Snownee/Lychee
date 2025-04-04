@@ -15,6 +15,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -22,9 +23,11 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.RecipeMatcher;
 import snownee.lychee.util.context.LycheeContext;
@@ -74,8 +77,9 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		if (!BlockPredicateExtensions.isAny(landingBlock) && !BlockPredicateExtensions.matches(landingBlock, context)) {
 			return false;
 		}
-		final var fallingBlockEntityContext = context.get(LycheeContextKey.FALLING_BLOCK_ENTITY);
-		if (!matchesFallingBlock(fallingBlockEntityContext.getBlockState(), fallingBlockEntityContext.blockData)) {
+		LootParamsContext lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		final var entity = (FallingBlockEntity) lootParams.get(LootContextParams.THIS_ENTITY);
+		if (!matchesFallingBlock(entity.getBlockState(), entity.blockData)) {
 			return false;
 		}
 		if (ingredients.isEmpty()) {
