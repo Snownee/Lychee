@@ -15,7 +15,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.Lychee;
 import snownee.lychee.context.ItemShapelessContext;
-import snownee.lychee.context.RecipeContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 
@@ -46,7 +45,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 		}
 		final var list = itemEntities.filter($ -> validItems.contains($.getItem())).collect(Collectors.toCollection(LinkedList::new));
 		context.put(LycheeContextKey.ITEM_SHAPELESS, new ItemShapelessContext(list, context));
-		context.get(LycheeContextKey.LOOT_PARAMS).validate(contextParamSet);
+		context.getOrNull(LycheeContextKey.LOOT_PARAMS).validate(contextParamSet);
 		process(this, recipes, context, null);
 	}
 
@@ -60,8 +59,8 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 		var loop = 0;
 		final var excluded = Sets.newHashSet();
 		var level = context.level();
-		var itemShapelessContext = context.get(LycheeContextKey.ITEM_SHAPELESS);
-		final var actionContext = context.get(LycheeContextKey.ACTION);
+		var itemShapelessContext = context.getOrNull(LycheeContextKey.ITEM_SHAPELESS);
+		final var actionContext = context.getOrNull(LycheeContextKey.ACTION);
 		major:
 		while (true) {
 			var matched = false;
@@ -80,8 +79,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 							excluded.add(recipe);
 							continue;
 						}
-						context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
-						context.put(LycheeContextKey.RECIPE, recipe.value());
+						context.put(recipe);
 						matchedAny = matched = true;
 						var times = 1;
 						final var matcher = itemShapelessContext.getMatcher();
@@ -97,7 +95,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 						}
 						match.get().value().applyPostActions(context, times);
 						if (matcher.isPresent()) {
-							itemShapelessContext.totalItems -= context.get(LycheeContextKey.ITEM).postApply(
+							itemShapelessContext.totalItems -= context.getOrNull(LycheeContextKey.ITEM).postApply(
 									!actionContext.avoidDefault,
 									times);
 						}

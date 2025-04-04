@@ -21,33 +21,29 @@ import com.mojang.serialization.RecordBuilder;
 
 public final class KeyDispatchedMapMapCodec<K, V> extends MapCodec<Map<K, V>> {
 	private final Codec<K> keyCodec;
-	private final Function<? super V, ? extends DataResult<? extends K>> type;
 	private final Function<? super K, ? extends DataResult<? extends Decoder<? extends V>>> decoder;
-	private final Function<? super V, ? extends DataResult<? extends Encoder<V>>> encoder;
+	private final Function<? super K, ? extends DataResult<? extends Encoder<V>>> encoder;
 	private final Keyable keys;
 
 	public KeyDispatchedMapMapCodec(
 			final Codec<K> keyCodec,
-			final Function<? super V, ? extends DataResult<? extends K>> type,
 			final Function<? super K, ? extends DataResult<? extends Decoder<? extends V>>> decoder,
-			final Function<? super V, ? extends DataResult<? extends Encoder<V>>> encoder,
+			final Function<? super K, ? extends DataResult<? extends Encoder<V>>> encoder,
 			final Keyable keys) {
 		this.keyCodec = keyCodec;
-		this.type = type;
 		this.decoder = decoder;
 		this.encoder = encoder;
 		this.keys = keys;
 	}
 
-	/**
-	 * Assumes codec(type(V)) is Codec<V>
-	 */
 	public KeyDispatchedMapMapCodec(
 			final Codec<K> keyCodec,
-			final Function<? super V, ? extends DataResult<? extends K>> type,
-			final Function<? super K, ? extends DataResult<? extends Codec<? extends V>>> codec,
+			final Function<? super K, DataResult<Codec<V>>> codec,
 			final Keyable keys) {
-		this(keyCodec, type, codec, v -> getCodec(type, codec, v), keys);
+		this.keyCodec = keyCodec;
+		this.decoder = codec;
+		this.encoder = codec;
+		this.keys = keys;
 	}
 
 	@Override
@@ -69,26 +65,30 @@ public final class KeyDispatchedMapMapCodec<K, V> extends MapCodec<Map<K, V>> {
 		final var failed = ImmutableList.<T>builder();
 
 
-		final var result = keys(ops).reduce(DataResult.success(Unit.INSTANCE, Lifecycle.stable()), (r, key) -> {
-			final var parsedKey = keyCodec.parse(ops, key);
-			var rawValue = input.get(key);
-			// No key in the map
-			if (rawValue == null) {
-				return r;
-			}
-			final var valueResult =
-					decoder.apply(parsedKey.getOrThrow((err) -> new IllegalStateException(String.format("Failed get key from %s", key))))
-							.getOrThrow((err) -> new IllegalStateException(String.format("Failed get codec for %s", rawValue)))
-							.parse(ops, rawValue);
+		final var result = keys(ops).reduce(
+				DataResult.success(Unit.INSTANCE, Lifecycle.stable()), (r, key) -> {
+					final var parsedKey = keyCodec.parse(ops, key);
+					var rawValue = input.get(key);
+					// No key in the map
+					if (rawValue == null) {
+						return r;
+					}
+					final var valueResult =
+							decoder.apply(parsedKey.getOrThrow((err) -> new IllegalStateException(String.format(
+											"Failed get key from %s",
+											key))))
+									.getOrThrow((err) -> new IllegalStateException(String.format("Failed get codec for %s", rawValue)))
+									.parse(ops, rawValue);
 
-			final var entry = parsedKey.apply2stable(Pair::of, valueResult);
-			entry.error().ifPresent(e -> failed.add(key));
+					final var entry = parsedKey.apply2stable(Pair::of, valueResult);
+					entry.error().ifPresent(e -> failed.add(key));
 
-			return r.apply2stable((u, p) -> {
-				read.put(p.getFirst(), p.getSecond());
-				return u;
-			}, entry);
-		}, (r1, r2) -> r1.apply2stable((u1, u2) -> u1, r2));
+					return r.apply2stable(
+							(u, p) -> {
+								read.put(p.getFirst(), p.getSecond());
+								return u;
+							}, entry);
+				}, (r1, r2) -> r1.apply2stable((u1, u2) -> u1, r2));
 
 		final Map<K, V> elements = read.build();
 		final T errors = ops.createList(failed.build().stream());
@@ -107,7 +107,7 @@ public final class KeyDispatchedMapMapCodec<K, V> extends MapCodec<Map<K, V>> {
 			var value = input.get(parsedKey);
 			prefix.add(
 					key,
-					encoder.apply(value)
+					encoder.apply(parsedKey)
 							.getOrThrow((err) -> new IllegalStateException(String.format("Failed get codec for %s", key)))
 							.encodeStart(ops, value));
 		});
@@ -116,6 +116,6 @@ public final class KeyDispatchedMapMapCodec<K, V> extends MapCodec<Map<K, V>> {
 
 	@Override
 	public String toString() {
-		return "KeyDispatchMapCodec[" + keyCodec.toString() + " " + type + " " + decoder + "]";
+		return "KeyDispatchMapCodec[" + keyCodec.toString() + " " + decoder + "]";
 	}
 }

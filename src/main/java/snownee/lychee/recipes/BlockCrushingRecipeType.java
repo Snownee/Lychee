@@ -21,7 +21,6 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.context.ItemShapelessContext;
-import snownee.lychee.context.RecipeContext;
 import snownee.lychee.network.SCustomLevelEventPacket;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.LycheeFallingBlockEntity;
@@ -65,17 +64,16 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		context.put(LycheeContextKey.LEVEL, entity.level());
 		final var itemShapelessContext = new ItemShapelessContext(itemEntities, context);
 		context.put(LycheeContextKey.ITEM_SHAPELESS, itemShapelessContext);
-		context.put(LycheeContextKey.FALLING_BLOCK_ENTITY, entity);
 		final var matcher = itemShapelessContext.getMatcher();
 
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		final var lootParamsContext = context.getOrNull(LycheeContextKey.LOOT_PARAMS);
 		lootParamsContext.setParam(LootContextParams.ORIGIN, entity.position());
 		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, entity);
 		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, landingBlock);
 		lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, pos);
 		lootParamsContext.validate(contextParamSet);
 
-		final var actionContext = context.get(LycheeContextKey.ACTION);
+		final var actionContext = context.getOrNull(LycheeContextKey.ACTION);
 
 		var matchedAny = false;
 		var loop = 0;
@@ -92,8 +90,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 					if (match.isPresent()) {
 						matchedAny = matched = true;
 						var times = 1;
-						context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
-						context.put(LycheeContextKey.RECIPE, recipe.value());
+						context.put(recipe);
 						if (matcher.map(it -> it.inputUsed.length > 0).orElse(false)) {
 							final var inputUsed = matcher.get().inputUsed;
 							//System.out.println(Arrays.toString(context.match));
@@ -110,7 +107,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 							((LycheeFallingBlockEntity) entity).lychee$cancelDrop();
 						}
 						final var alreadySentParticles = Sets.newHashSet();
-						final var itemContext = context.get(LycheeContextKey.ITEM);
+						final var itemContext = context.getOrNull(LycheeContextKey.ITEM);
 						for (final var holder : itemContext) {
 							if (holder.getConsumption() > 0 && !holder.get().isEmpty()) {
 								if (holder.holder() instanceof ItemStackHolder.Entity entityHolder &&

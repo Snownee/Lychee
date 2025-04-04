@@ -1,9 +1,9 @@
 package snownee.lychee.util.context;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -11,46 +11,53 @@ import com.mojang.serialization.DataResult;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.kiwi.recipe.EmptyRecipeInput;
+import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.codec.KeyDispatchedMapMapCodec;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
+@NotNullByDefault
 @SuppressWarnings("unchecked")
 public class LycheeContext extends EmptyRecipeInput {
-	private final Map<LycheeContextKey<?>, Object> context =
-			new Object2ObjectOpenHashMap<>(LycheeRegistries.CONTEXTUAL.size());
+	private final Map<LycheeContextKey<?>, Object> context = new Object2ObjectOpenHashMap<>(10);
 	public static final Codec<LycheeContext> CODEC =
-			new KeyDispatchedMapMapCodec<LycheeContextKey<?>, Object>(
+			new KeyDispatchedMapMapCodec<>(
 					LycheeRegistries.CONTEXT.byNameCodec(),
-					it -> it instanceof KeyedContextValue<?> value
-							? DataResult.success(value.key())
-							: DataResult.error(() -> "Can't determine key of " + it + " that isn't LycheeContextValue"),
 					it -> {
 						final var key = LycheeRegistries.CONTEXT.getKey(it);
 						final var serializer = LycheeRegistries.CONTEXT_SERIALIZER.get(key);
-						if (serializer != null) {
-							return DataResult.success(serializer.codec().codec());
+						if (serializer == null) {
+							return DataResult.error(() -> it + " isn't serializable");
 						}
-						return DataResult.error(() -> it + " isn't serializable");
+						return DataResult.success((Codec<Object>) serializer);
 					},
 					LycheeRegistries.CONTEXT_SERIALIZER
-			).codec().xmap(it -> {
-				final var context = new LycheeContext();
-				context.putAll(it);
-				return context;
-			}, LycheeContext::asMap);
+			).codec().xmap(
+					it -> {
+						final var context = new LycheeContext();
+						context.putAll(it);
+						return context;
+					}, LycheeContext::asMap);
 
 	@Nullable
 	private Level level;
 
-	public <T> T get(LycheeContextKey<T> type) {
-		if (LycheeContextRequired.CONSTRUCTORS.containsKey(type)) {
-			return (T) this.context.computeIfAbsent(type, (it) -> LycheeContextRequired.CONSTRUCTORS.get(it).apply(this));
+	@Nullable
+	public <T> T getOrNull(LycheeContextKey<T> key) {
+		if (LycheeContextRequired.CONSTRUCTORS.containsKey(key)) {
+			return (T) this.context.computeIfAbsent(key, (it) -> LycheeContextRequired.CONSTRUCTORS.get(it).apply(this));
 		}
-		return (T) context.get(type);
+		return (T) context.get(key);
 	}
 
+	public <T> T get(LycheeContextKey<T> key) {
+		return Objects.requireNonNull(getOrNull(key));
+	}
+
+	@Nullable
 	public <T> T put(LycheeContextKey<T> key, T value) {
 		if (key == LycheeContextKey.LEVEL) {
 			level = (Level) value;
@@ -58,8 +65,17 @@ public class LycheeContext extends EmptyRecipeInput {
 		return (T) context.put(key, value);
 	}
 
-	public void putAll(Map<? extends LycheeContextKey<?>, ?> map) {
+	public void put(RecipeHolder<? extends ILycheeRecipe<?>> recipeHolder) {
+		put(LycheeContextKey.RECIPE, recipeHolder.value());
+		put(LycheeContextKey.RECIPE_ID, recipeHolder.id());
+	}
+
+	public void putAll(Map<LycheeContextKey<?>, ?> map) {
 		context.putAll(map);
+	}
+
+	public void removeAllExcept(Collection<LycheeContextKey<?>> keys) {
+		context.keySet().removeIf(key -> !keys.contains(key));
 	}
 
 	public Map<LycheeContextKey<?>, Object> asMap() {
@@ -68,7 +84,7 @@ public class LycheeContext extends EmptyRecipeInput {
 
 	public Level level() {
 		if (level == null) {
-			level = get(LycheeContextKey.LEVEL);
+			level = getOrNull(LycheeContextKey.LEVEL);
 		}
 		return Objects.requireNonNull(level);
 	}
@@ -79,7 +95,7 @@ public class LycheeContext extends EmptyRecipeInput {
 	}
 
 	@Override
-	public @NotNull ItemStack getItem(final int index) {
+	public ItemStack getItem(final int index) {
 		return get(LycheeContextKey.ITEM).get(index).get();
 	}
 

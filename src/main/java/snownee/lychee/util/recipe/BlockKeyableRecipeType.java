@@ -28,7 +28,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
-import snownee.lychee.context.RecipeContext;
 import snownee.lychee.contextual.Chance;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
@@ -113,7 +112,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
 			return Optional.empty();
 		}
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		final var lootParamsContext = context.getOrNull(LycheeContextKey.LOOT_PARAMS);
 		lootParamsContext.setParam(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
 		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, player);
 		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, blockstate);
@@ -127,16 +126,14 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 				LycheeContextKey.ITEM,
 				ItemStackHolderCollection.Inventory.of(context, stack, otherStack)
 		);
-		final var itemContext = context.get(LycheeContextKey.ITEM);
-		final var actionContext = context.get(LycheeContextKey.ACTION);
+		final var itemContext = context.getOrNull(LycheeContextKey.ITEM);
+		final var actionContext = context.getOrNull(LycheeContextKey.ACTION);
 
 		final Iterable<RecipeHolder<R>> iterable = mergeAnyBlockRecipes(recipes);
 		for (final var recipeHolder : iterable) {
-
 			if (tryMatch(recipeHolder, level, context).isPresent()) {
-				context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipeHolder.id()));
+				context.put(recipeHolder);
 				R recipe = recipeHolder.value();
-				context.put(LycheeContextKey.RECIPE, recipe);
 				if (!level.isClientSide && recipe.tickOrApply(context)) {
 					if (recipe.sizedIngredients().size() == 1) {
 						itemContext.get(1).setConsumption(0);
@@ -194,13 +191,12 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 		for (final var recipe : iterable) {
 			if (extractChance) {
 				var chance = (ChanceRecipe) recipe.value();
-				if (chance.getChance() != 1 && chance.getChance() <= context.get(LycheeContextKey.RANDOM).nextFloat()) {
+				if (chance.getChance() != 1 && chance.getChance() <= context.getOrNull(LycheeContextKey.RANDOM).nextFloat()) {
 					continue;
 				}
 			}
 			if (tryMatch(recipe, level, context).isPresent()) {
-				context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
-				context.put(LycheeContextKey.RECIPE, recipe.value());
+				context.put(recipe);
 				recipe.value().applyPostActions(context, 1);
 				return recipe;
 			}
