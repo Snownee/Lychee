@@ -70,7 +70,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		context.put(LycheeContextKey.LEVEL, player.level());
 		final var anvilContext = new AnvilContext(Pair.of(left, right), itemName);
 		context.put(LycheeContextKey.ANVIL, anvilContext);
-		final var lootParamsContext = context.getOrNull(LycheeContextKey.LOOT_PARAMS);
+		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 		BlockPos pos = access.evaluate((level, pos0) -> pos0).orElseGet(player::blockPosition);
 		lootParamsContext.setParam(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
 		if (access != ContainerLevelAccess.NULL) {
@@ -134,12 +134,12 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	private void lychee_preventDefault(Player player, ItemStack stack, CallbackInfo ci) {
 		if (onTakeCtx != null) {
 			for (int i = 0; i < 2; i++) {
-				if (onTakeCtx.getOrNull(LycheeContextKey.ITEM).get(i).getConsumption() == 0) {
-					inputSlots.setItem(i, onTakeCtx.getOrNull(LycheeContextKey.ITEM).get(i).get());
+				if (onTakeCtx.get(LycheeContextKey.ITEM).get(i).getConsumption() == 0) {
+					inputSlots.setItem(i, onTakeCtx.get(LycheeContextKey.ITEM).get(i).get());
 				}
 			}
 
-			boolean avoidDefault = onTakeCtx.getOrNull(LycheeContextKey.ACTION).avoidDefault;
+			boolean avoidDefault = onTakeCtx.get(LycheeContextKey.ACTION).avoidDefault;
 			onTakeCtx = null;
 			if (avoidDefault) {
 				access.execute((level, pos) -> level.levelEvent(LevelEvent.SOUND_ANVIL_USED, pos, 0));

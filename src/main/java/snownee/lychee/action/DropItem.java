@@ -46,7 +46,7 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStack st
 		}
 		var stack = getPath().isEmpty() ? this.stack.copy() : ItemStack.parseOptional(
 				level.registryAccess(),
-				CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON).json())));
+				CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON))));
 		stack.setCount(stack.getCount() * times);
 		if (recipe != null && recipe.getType() == RecipeTypes.BLOCK_EXPLODING) {
 			context.get(LycheeContextKey.ITEM).stacksNeedHandle.add(stack);
