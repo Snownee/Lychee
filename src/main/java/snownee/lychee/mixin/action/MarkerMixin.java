@@ -24,10 +24,12 @@ public class MarkerMixin implements ActionMarker {
 	@Nullable
 	private ActionData lychee$data;
 
+	@Override
 	public ActionData lychee$getData() {
 		return lychee$data;
 	}
 
+	@Override
 	public void lychee$setData(final ActionData lychee$data) {
 		this.lychee$data = lychee$data;
 	}
@@ -67,6 +69,7 @@ public class MarkerMixin implements ActionMarker {
 			lychee$self().discard();
 		}
 		var context = lychee$data.getContext().get();
+		context.put(LycheeContextKey.LEVEL, lychee$self().level());
 		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
 		lootParamsContext.setParam(LootContextParams.ORIGIN, lychee$self().position());
 		lootParamsContext.validate(LycheeLootContextParamSets.ALL);
