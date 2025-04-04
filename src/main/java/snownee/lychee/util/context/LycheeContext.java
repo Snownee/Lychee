@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
@@ -22,7 +22,6 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 @NotNullByDefault
 @SuppressWarnings("unchecked")
 public class LycheeContext extends EmptyRecipeInput {
-	private final Map<LycheeContextKey<?>, Object> context = new Object2ObjectOpenHashMap<>(10);
 	public static final Codec<LycheeContext> CODEC =
 			new KeyDispatchedMapMapCodec<>(
 					LycheeRegistries.CONTEXT.byNameCodec(),
@@ -34,16 +33,21 @@ public class LycheeContext extends EmptyRecipeInput {
 						}
 						return DataResult.success((Codec<Object>) serializer);
 					},
-					LycheeRegistries.CONTEXT_SERIALIZER
-			).codec().xmap(
-					it -> {
-						final var context = new LycheeContext();
-						context.putAll(it);
-						return context;
-					}, LycheeContext::asMap);
+					LycheeRegistries.CONTEXT_SERIALIZER,
+					() -> new Reference2ReferenceOpenHashMap<>(LycheeRegistries.CONTEXT.size())
+			).codec().xmap(LycheeContext::new, LycheeContext::asMap);
+	private final Map<LycheeContextKey<?>, Object> context;
 
 	@Nullable
 	private Level level;
+
+	public LycheeContext() {
+		this(new Reference2ReferenceOpenHashMap<>(LycheeRegistries.CONTEXT.size()));
+	}
+
+	public LycheeContext(Map<LycheeContextKey<?>, Object> context) {
+		this.context = context;
+	}
 
 	@Nullable
 	public <T> T getOrNull(LycheeContextKey.Optional<T> key) {
