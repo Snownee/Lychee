@@ -123,10 +123,6 @@ public class RvPlugin<Helper extends RvHelper> {
 				});
 
 		for (var recipeType : RecipeTypes.ALL) {
-			if (!recipeType.hasStandaloneCategory) {
-				continue;
-			}
-
 			var provider = RvCategoryProviders.get(recipeType.categoryId);
 			if (provider == null) {
 				continue;

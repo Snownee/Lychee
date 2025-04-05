@@ -22,17 +22,17 @@ import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public interface PostActionRenderer<T extends PostAction> {
+public interface ActionRenderer<T extends PostAction> {
 
-	Map<PostActionType<?>, PostActionRenderer<?>> RENDERERS = Maps.newIdentityHashMap();
-	PostActionRenderer<PostAction> DEFAULT = new PostActionRenderer<>() {};
+	Map<PostActionType<?>, ActionRenderer<?>> RENDERERS = Maps.newIdentityHashMap();
+	ActionRenderer<PostAction> DEFAULT = new ActionRenderer<>() {};
 
-	static <T extends PostAction> PostActionRenderer<T> of(PostAction action) {
+	static <T extends PostAction> ActionRenderer<T> of(PostAction action) {
 		//noinspection unchecked
-		return (PostActionRenderer<T>) Objects.requireNonNull(RENDERERS.getOrDefault(action.type(), DEFAULT));
+		return (ActionRenderer<T>) Objects.requireNonNull(RENDERERS.getOrDefault(action.type(), DEFAULT));
 	}
 
-	static <T extends PostAction> void register(PostActionType<T> type, PostActionRenderer<T> renderer) {
+	static <T extends PostAction> void register(PostActionType<T> type, ActionRenderer<T> renderer) {
 		Objects.requireNonNull(type);
 		Objects.requireNonNull(renderer);
 		RENDERERS.put(type, renderer);
@@ -47,7 +47,7 @@ public interface PostActionRenderer<T extends PostAction> {
 		}
 		var list = randomSelect.entries.size() == 1 && randomSelect.emptyWeight == 0 ?
 				Lists.newArrayList(randomSelect.getDisplayName()) :
-				PostActionRenderer.of(child).getBaseTooltips(child, player);
+				ActionRenderer.of(child).getBaseTooltips(child, player);
 		if (index == -1) {
 			return list; //TODO nested actions?
 		}

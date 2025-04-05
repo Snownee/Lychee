@@ -31,8 +31,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.client.gui.CustomLightingSettings;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
@@ -63,7 +63,7 @@ public final class RVs {
 			ingredients = recipe.getIngredients().stream().map(IngredientInfo::new).toList();
 		}
 		for (PostAction action : recipe.postActions()) {
-			PostActionRenderer.of(action).loadCatalystsInfo(action, recipe, ingredients);
+			ActionRenderer.of(action).loadCatalystsInfo(action, recipe, ingredients);
 		}
 		addIngredientTips(recipe, ingredients);
 		return ingredients;

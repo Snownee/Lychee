@@ -1,5 +1,6 @@
 package snownee.lychee.recipes;
 
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -64,7 +65,12 @@ public class EntityTickingRecipe extends LycheeRecipe<LycheeContext> {
 		public static final MapCodec<EntityTickingRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(EntityTickingRecipe::commonProperties),
-						EntityPredicate.CODEC.fieldOf("entity").forGetter(EntityTickingRecipe::predicate),
+						EntityPredicate.CODEC.fieldOf("entity").validate(it -> {
+							if (it.entityType().isEmpty() || it.entityType().get().types().size() == 0) {
+								return DataResult.error(() -> "EntityPredicate must have at least one entity type");
+							}
+							return DataResult.success(it);
+						}).forGetter(EntityTickingRecipe::predicate),
 						ExtraCodecs.POSITIVE_INT.optionalFieldOf("interval", 1).forGetter(EntityTickingRecipe::interval)
 				).apply(instance, EntityTickingRecipe::new));
 

@@ -1,8 +1,17 @@
 package snownee.lychee.compat.recipeviewer.rei.category;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer;
@@ -20,9 +29,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector2f;
-import org.joml.Vector2fc;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.client.gui.RenderElement;
@@ -35,15 +41,11 @@ import snownee.lychee.compat.recipeviewer.rei.LycheeREIPlugin;
 import snownee.lychee.compat.recipeviewer.rei.display.LycheeDisplay;
 import snownee.lychee.compat.recipeviewer.rei.element.RenderElementAdapter;
 import snownee.lychee.ui.TextElementRenderer;
+import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements DisplayCategory<LycheeDisplay<R>> {
 
@@ -105,9 +107,9 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 			List<Component> list;
 			var player = Minecraft.getInstance().player;
 			if (action instanceof RandomSelect randomSelect) {
-				list = PostActionRenderer.getTooltipsFromRandom(randomSelect, (PostAction) raw, player);
+				list = ActionRenderer.getTooltipsFromRandom(randomSelect, (PostAction) raw, player);
 			} else {
-				list = PostActionRenderer.of(action).getTooltips(action, player);
+				list = ActionRenderer.of(action).getTooltips(action, player);
 			}
 			tooltip.entries().addAll(list.stream().map(Tooltip::entry).toList());
 			return tooltip;

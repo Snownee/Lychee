@@ -1,5 +1,7 @@
 package snownee.lychee.action;
 
+import java.util.List;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -7,10 +9,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.NbtPredicate;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.LycheeRegistries;
 import snownee.lychee.network.SUpdateFallingBlockPacket;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -38,6 +44,28 @@ public record SetBlock(PostActionCommonProperties commonProperties, BlockPredica
 				new SUpdateFallingBlockPacket(fbe).send(fbe);
 			}
 		}
+	}
+
+	@Override
+	public Component getDisplayName() {
+		var blockState = BlockPredicateExtensions.anyBlockState(block);
+		var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(type()));
+		return Component.translatable(key, blockState.getBlock().getName());
+	}
+
+	@Override
+	public List<ItemStack> getOutputItems() {
+		return BlockPredicateExtensions.matchedItemStacks(block);
+	}
+
+	@Override
+	public List<BlockPredicate> getOutputBlocks() {
+		return BlockPredicateExtensions.isAny(block) ? List.of() : List.of(block);
+	}
+
+	@Override
+	public boolean repeatable() {
+		return false;
 	}
 
 	public static class Type implements PostActionType<SetBlock> {
