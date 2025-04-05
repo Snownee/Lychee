@@ -1,0 +1,5 @@
+type: lychee:category_metadata
+category: lychee:item_inside/minecraft/test
+icon:
+  type: item
+  id: apple

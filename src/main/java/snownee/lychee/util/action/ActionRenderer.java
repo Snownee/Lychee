@@ -3,6 +3,7 @@ package snownee.lychee.util.action;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -15,17 +16,105 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
+import snownee.lychee.LycheeRegistries;
+import snownee.lychee.action.DropItem;
+import snownee.lychee.action.DropXp;
+import snownee.lychee.action.Execute;
+import snownee.lychee.action.Explode;
+import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
+import snownee.lychee.action.SetBlock;
+import snownee.lychee.action.input.DamageItem;
+import snownee.lychee.action.input.PreventDefault;
+import snownee.lychee.action.input.SetItem;
+import snownee.lychee.client.action.IfActionRenderer;
 import snownee.lychee.compat.recipeviewer.IngredientInfo;
+import snownee.lychee.compat.recipeviewer.SlotType;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public interface ActionRenderer<T extends PostAction> {
 
 	Map<PostActionType<?>, ActionRenderer<?>> RENDERERS = Maps.newIdentityHashMap();
 	ActionRenderer<PostAction> DEFAULT = new ActionRenderer<>() {};
+
+	static void init() {
+		register(
+				PostActionTypes.DROP_ITEM,
+				(ItemStackActionRenderer<DropItem>) DropItem::stack
+		);
+		register(
+				PostActionTypes.SET_ITEM,
+				(ItemStackActionRenderer<SetItem>) SetItem::stack
+		);
+		register(
+				PostActionTypes.DROP_XP,
+				(ItemBasedActionRenderer<DropXp>) action -> Items.EXPERIENCE_BOTTLE.getDefaultInstance()
+		);
+		register(
+				PostActionTypes.EXECUTE,
+				(ItemBasedActionRenderer<Execute>) action -> Items.COMMAND_BLOCK.getDefaultInstance()
+		);
+		register(
+				PostActionTypes.EXPLODE,
+				(ItemBasedActionRenderer<Explode>) action -> Items.TNT.getDefaultInstance()
+		);
+		register(PostActionTypes.IF, new IfActionRenderer());
+		register(PostActionTypes.PLACE, BlockBasedActionRenderer.fromPredicate(PlaceBlock::block));
+		register(PostActionTypes.SET_BLOCK, BlockBasedActionRenderer.fromPredicate(SetBlock::block));
+		register(
+				PostActionTypes.CYCLE_STATE_PROPERTY, new BlockBasedActionRenderer<>(it -> {
+					var blockStates = BlockPredicateExtensions.getShowcaseBlockStates(it.block(), Set.of(it.property()));
+					return CommonProxy.getCycledItem(blockStates, Blocks.AIR.defaultBlockState(), 1000);
+				}));
+		register(
+				PostActionTypes.DAMAGE_ITEM, new ActionRenderer<>() {
+					@Override
+					public void loadCatalystsInfo(
+							DamageItem action,
+							final ILycheeRecipe<?> recipe,
+							final List<IngredientInfo> ingredients) {
+						var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(action.type()));
+						var component = Component.translatable(key, action.damage()).withStyle(ChatFormatting.YELLOW);
+						var mc = Minecraft.getInstance();
+						recipe.getItemIndexes(action.target()).forEach(i -> {
+							var info = ingredients.get(i);
+							info.addTooltip(component);
+							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
+							info.type = SlotType.CATALYST;
+						});
+					}
+				});
+		register(
+				PostActionTypes.PREVENT_DEFAULT, new ActionRenderer<>() {
+					@Override
+					public void loadCatalystsInfo(
+							PreventDefault action,
+							final ILycheeRecipe<?> recipe,
+							final List<IngredientInfo> ingredients) {
+						if (recipe == null ||
+								!(recipe.getType() instanceof LycheeRecipeType<?> lycheeRecipeType) ||
+								!lycheeRecipeType.canPreventConsumeInputs) {
+							return;
+						}
+						var mc = Minecraft.getInstance();
+						for (var info : ingredients) {
+							if (!info.tooltips.isEmpty()) {
+								continue;
+							}
+							info.addTooltip(((LycheeRecipeType) lycheeRecipeType).getPreventDefaultDescription(recipe));
+							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
+							info.type = SlotType.CATALYST;
+						}
+					}
+				});
+	}
 
 	static <T extends PostAction> ActionRenderer<T> of(PostAction action) {
 		//noinspection unchecked

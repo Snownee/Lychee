@@ -7,9 +7,9 @@ import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.category.UIElementType;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualConditionType;
+import snownee.lychee.util.ui.UIElementType;
 
 public final class LycheeRegistries {
 	public static final MappedRegistry<ContextualConditionType<?>> CONTEXTUAL = register("contextual");

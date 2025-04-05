@@ -70,6 +70,7 @@ import snownee.lychee.util.context.LycheeContextSerializers;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.ui.UIElementType;
 
 @Mod(Lychee.ID)
 public class CommonProxy {
@@ -359,6 +360,7 @@ public class CommonProxy {
 							DripstoneParticleService.DRIPSTONE_SPLASH
 					);
 				});
+		event.register(LycheeRegistries.UI_ELEMENT.key(), helper -> Objects.requireNonNull(UIElementType.BLOCK));
 	}
 
 	public interface CustomActionListener {

@@ -1,5 +1,6 @@
 package snownee.lychee.compat.recipeviewer.category;
 
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
@@ -24,9 +25,10 @@ public class BlockExplodingRecipeCategory extends ItemAndBlockCategory<BlockExpl
 		super(type, id, rvHandler);
 	}
 
+	@Nullable
 	@Override
 	protected RenderElement getMethodElement(BlockExplodingRecipe recipe) {
-		return RenderElement.EMPTY;
+		return null;
 	}
 
 	@Override

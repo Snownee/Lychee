@@ -8,6 +8,8 @@ import com.google.common.collect.Sets;
 import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeType;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
@@ -31,6 +33,7 @@ import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.ItemShapelessRecipeType;
 import snownee.lychee.util.recipe.LycheeRecipeType;
+import snownee.lychee.util.ui.CategoryMetadata;
 
 public final class RecipeTypes {
 
@@ -40,6 +43,7 @@ public final class RecipeTypes {
 	}
 
 	public static final Set<LycheeRecipeType<? extends ILycheeRecipe<LycheeContext>>> ALL = Sets.newLinkedHashSet();
+	public static final RecipeType<CategoryMetadata> CATEGORY_METADATA = register("category_metadata");
 	public static final LycheeRecipeType<ItemBurningRecipe> ITEM_BURNING =
 			register(new LycheeRecipeType<>("item_burning", ItemBurningRecipe.class, null));
 	public static final ItemInsideRecipeType ITEM_INSIDE = register(Util.make(
@@ -56,7 +60,7 @@ public final class RecipeTypes {
 							"block_interacting",
 							BlockInteractingRecipe.class,
 							LycheeLootContextParamSets.BLOCK_INTERACTION),
-					(it) -> {
+					it -> {
 						it.requiresClient = true;
 						it.canPreventConsumeInputs = true;
 					}
@@ -67,7 +71,7 @@ public final class RecipeTypes {
 							"block_clicking",
 							BlockClickingRecipe.class,
 							LycheeLootContextParamSets.BLOCK_INTERACTION),
-					(it) -> {
+					it -> {
 						it.requiresClient = true;
 						it.categoryId = BLOCK_INTERACTING.categoryId;
 						it.canPreventConsumeInputs = true;
@@ -129,6 +133,18 @@ public final class RecipeTypes {
 	public static void buildCache() {
 		ALL.forEach(LycheeRecipeType::refreshCache);
 		ALL.forEach(LycheeRecipeType::updateEmptyState);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends RecipeType<?>> T register(String name) {
+		ResourceLocation id = Lychee.id(name);
+		return (T) Registry.register(
+				BuiltInRegistries.RECIPE_TYPE, id, new RecipeType<>() {
+					@Override
+					public String toString() {
+						return id.toString();
+					}
+				});
 	}
 
 }

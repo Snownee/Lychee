@@ -51,14 +51,17 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 		return INFO_POSITION;
 	}
 
+	@Override
 	public Vector2fc inputBlockPosition() {
 		return INPUT_BLOCK_POSITION;
 	}
 
+	@Override
 	public Vector2fc methodPosition() {
 		return METHOD_POSITION;
 	}
 
+	@Override
 	public float inputIngredientX() {
 		return INPUT_INGREDIENT_X;
 	}

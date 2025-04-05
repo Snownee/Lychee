@@ -1,18 +1,19 @@
 package snownee.lychee.compat.recipeviewer.element;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2f;
+
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector2f;
 import snownee.kiwi.loader.Platform;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.ui.SpriteElementRenderer;
-
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class ShadowElement {
 	private final int blockSize;
@@ -34,7 +35,7 @@ public class ShadowElement {
 		}
 		var shadowOffset = new Vector2f((blockSize - shadowWidth) / 2F, blockSize - shadowHeight / 2F);
 		ResourceLocation id = light ? AllGuiTextures.LIGHT_SHADOW.id : AllGuiTextures.SHADOW.id;
-		shadow = new SpriteElementRenderer(id, 1F).withSize(shadowWidth, shadowHeight).at(shadowOffset);
+		shadow = new SpriteElementRenderer(id).withSize(shadowWidth, shadowHeight).at(shadowOffset);
 		if (light) {
 			lightShadow = shadow;
 		} else {

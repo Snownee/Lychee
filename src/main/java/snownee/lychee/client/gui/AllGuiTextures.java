@@ -24,7 +24,7 @@ public enum AllGuiTextures implements ScreenElement {
 
 	AllGuiTextures(ResourceLocation id, int width, int height) {
 		this.id = id;
-		this.renderer = new SpriteElementRenderer(id, 1).withSize(width, height);
+		this.renderer = new SpriteElementRenderer(id).withSize(width, height);
 		this.width = width;
 		this.height = height;
 	}

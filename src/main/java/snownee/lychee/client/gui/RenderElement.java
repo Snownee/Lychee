@@ -10,17 +10,20 @@ import org.joml.Vector2ic;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
+import snownee.lychee.util.ui.UIElementCommonProperties;
 
 public abstract class RenderElement implements ScreenElement, Renderable {
 
-	public static final RenderElement EMPTY = new RenderElement() {
-		@Override
-		public void render(GuiGraphics graphics) {
+	public Vector2i size = new Vector2i(UIElementCommonProperties.DEFAULT_SIZE, UIElementCommonProperties.DEFAULT_SIZE);
 
-		}
-	};
 	public Vector2f position = new Vector2f();
-	public Vector2i size = new Vector2i(16, 16);
+
+	public static RenderElement empty() {
+		return new RenderElement() {
+			@Override
+			public void render(GuiGraphics graphics) {}
+		};
+	}
 	protected float z = 0;
 
 	public static RenderElement create(BiConsumer<GuiGraphics, RenderElement> renderable) {
