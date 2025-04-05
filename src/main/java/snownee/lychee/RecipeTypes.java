@@ -73,11 +73,10 @@ public final class RecipeTypes {
 						it.canPreventConsumeInputs = true;
 					}
 			));
-	public static final LycheeRecipeType<AnvilCraftingRecipe> ANVIL_CRAFTING =
-			register(Util.make(
-					new LycheeRecipeType<>("anvil_crafting", AnvilCraftingRecipe.class, null),
-					it -> it.hasStandaloneCategory = false
-			));
+	public static final LycheeRecipeType<AnvilCraftingRecipe> ANVIL_CRAFTING = register(new LycheeRecipeType<>(
+			"anvil_crafting",
+			AnvilCraftingRecipe.class,
+			null));
 	public static final BlockCrushingRecipeType BLOCK_CRUSHING = register(new BlockCrushingRecipeType(
 			"block_crushing",
 			BlockCrushingRecipe.class,
@@ -105,10 +104,7 @@ public final class RecipeTypes {
 					RandomBlockTickingRecipe.class,
 					LycheeLootContextParamSets.BLOCK_ONLY
 			),
-			it -> {
-				it.extractChance = true;
-				it.hasStandaloneCategory = false;
-			}
+			it -> it.extractChance = true
 	));
 	public static final DripstoneRecipeType DRIPSTONE_DRIPPING = register(Util.make(
 			new DripstoneRecipeType(

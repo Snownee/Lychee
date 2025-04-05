@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TooltipFlag;
 
-public interface ItemStackPostActionRenderer<T extends PostAction> extends ItemBasedPostActionRenderer<T> {
+public interface ItemStackActionRenderer<T extends PostAction> extends ItemBasedActionRenderer<T> {
 
 	@Override
 	default List<Component> getBaseTooltips(T action, @Nullable Player player) {

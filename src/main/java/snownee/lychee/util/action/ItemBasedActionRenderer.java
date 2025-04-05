@@ -4,7 +4,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.client.gui.GuiGameElement;
 
-public interface ItemBasedPostActionRenderer<T extends PostAction> extends PostActionRenderer<T> {
+public interface ItemBasedActionRenderer<T extends PostAction> extends ActionRenderer<T> {
 
 	ItemStack getItem(T action);
 

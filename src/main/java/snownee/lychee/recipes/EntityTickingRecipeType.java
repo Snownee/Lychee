@@ -67,7 +67,7 @@ public class EntityTickingRecipeType extends LycheeRecipeType<EntityTickingRecip
 		lootParams.setParam(LootContextParams.ORIGIN, entity.position());
 		for (RecipeHolder<EntityTickingRecipe> recipeHolder : recipes) {
 			EntityTickingRecipe recipe = recipeHolder.value();
-			if (recipe.interval() > 1 && entity.tickCount % recipe.interval() != 0) {
+			if (recipe.interval() > 1 && (entity.tickCount + 1) % recipe.interval() != 0) {
 				continue;
 			}
 			if (recipe.withoutTypePredicate().matches(level, entity.position(), entity) && recipe.test(recipe, context, 1) > 0 &&

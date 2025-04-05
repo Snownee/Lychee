@@ -9,9 +9,9 @@ import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import snownee.lychee.action.If;
-import snownee.lychee.util.action.PostActionRenderer;
+import snownee.lychee.util.action.ActionRenderer;
 
-public class IfPostActionRenderer implements PostActionRenderer<If> {
+public class IfActionRenderer implements ActionRenderer<If> {
 
 	@Override
 	public List<Component> getTooltips(If action, @Nullable Player player) {

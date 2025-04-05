@@ -32,7 +32,6 @@ public class LycheeRecipeType<T extends ILycheeRecipe<LycheeContext>> implements
 	protected List<RecipeHolder<T>> recipes;
 	public boolean requiresClient;
 	public boolean canPreventConsumeInputs;
-	public boolean hasStandaloneCategory = true;
 
 	private boolean empty = true;
 

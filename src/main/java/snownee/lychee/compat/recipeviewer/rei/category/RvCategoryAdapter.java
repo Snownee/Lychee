@@ -43,7 +43,7 @@ import snownee.lychee.compat.recipeviewer.rei.element.RenderElementAdapter;
 import snownee.lychee.ui.TextElementRenderer;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionRenderer;
+import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -107,9 +107,9 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 			List<Component> list;
 			var player = Minecraft.getInstance().player;
 			if (action instanceof RandomSelect randomSelect) {
-				list = PostActionRenderer.getTooltipsFromRandom(randomSelect, (PostAction) raw, player);
+				list = ActionRenderer.getTooltipsFromRandom(randomSelect, (PostAction) raw, player);
 			} else {
-				list = PostActionRenderer.of(action).getTooltips(action, player);
+				list = ActionRenderer.of(action).getTooltips(action, player);
 			}
 			tooltip.entries().addAll(list.stream().map(Tooltip::entry).toList());
 			return tooltip;

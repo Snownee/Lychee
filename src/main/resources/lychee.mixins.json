@@ -34,7 +34,7 @@
 		"recipes.crafting.TransientCraftingContainerAccess",
 		"recipes.entityticking.EntityMixin",
 		"recipes.entityticking.EntityTypeMixin",
-		"recipes.entityticking.FallingBlockEntityMixin",
+		"recipes.entityticking.ServerLevelMixin",
 		"recipes.itemburing.ItemEntityHurtMixin",
 		"recipes.itemexploding.ExplosionMixin",
 		"recipes.iteminside.EntityMixin",

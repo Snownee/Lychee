@@ -2,6 +2,7 @@ package snownee.lychee.util;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -17,26 +18,29 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.DropXp;
 import snownee.lychee.action.Execute;
 import snownee.lychee.action.Explode;
+import snownee.lychee.action.PlaceBlock;
+import snownee.lychee.action.SetBlock;
 import snownee.lychee.action.input.DamageItem;
 import snownee.lychee.action.input.PreventDefault;
 import snownee.lychee.action.input.SetItem;
-import snownee.lychee.client.action.CycleStatePropertyPostActionRenderer;
-import snownee.lychee.client.action.IfPostActionRenderer;
-import snownee.lychee.client.action.PlaceBlockPostActionRenderer;
+import snownee.lychee.client.action.IfActionRenderer;
 import snownee.lychee.compat.recipeviewer.IngredientInfo;
 import snownee.lychee.compat.recipeviewer.SlotType;
-import snownee.lychee.util.action.ItemBasedPostActionRenderer;
-import snownee.lychee.util.action.ItemStackPostActionRenderer;
-import snownee.lychee.util.action.PostActionRenderer;
+import snownee.lychee.util.action.ActionRenderer;
+import snownee.lychee.util.action.BlockBasedActionRenderer;
+import snownee.lychee.util.action.ItemBasedActionRenderer;
+import snownee.lychee.util.action.ItemStackActionRenderer;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.particles.dripstone.client.ParticleFactories;
+import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
@@ -89,31 +93,36 @@ public class ClientProxy implements ClientModInitializer {
 				ParticleFactories.Splash::new
 		);
 
-		PostActionRenderer.register(
+		ActionRenderer.register(
 				PostActionTypes.DROP_ITEM,
-				(ItemStackPostActionRenderer<DropItem>) DropItem::stack
+				(ItemStackActionRenderer<DropItem>) DropItem::stack
 		);
-		PostActionRenderer.register(
+		ActionRenderer.register(
 				PostActionTypes.SET_ITEM,
-				(ItemStackPostActionRenderer<SetItem>) SetItem::stack
+				(ItemStackActionRenderer<SetItem>) SetItem::stack
 		);
-		PostActionRenderer.register(
+		ActionRenderer.register(
 				PostActionTypes.DROP_XP,
-				(ItemBasedPostActionRenderer<DropXp>) action -> Items.EXPERIENCE_BOTTLE.getDefaultInstance()
+				(ItemBasedActionRenderer<DropXp>) action -> Items.EXPERIENCE_BOTTLE.getDefaultInstance()
 		);
-		PostActionRenderer.register(
+		ActionRenderer.register(
 				PostActionTypes.EXECUTE,
-				(ItemBasedPostActionRenderer<Execute>) action -> Items.COMMAND_BLOCK.getDefaultInstance()
+				(ItemBasedActionRenderer<Execute>) action -> Items.COMMAND_BLOCK.getDefaultInstance()
 		);
-		PostActionRenderer.register(
+		ActionRenderer.register(
 				PostActionTypes.EXPLODE,
-				(ItemBasedPostActionRenderer<Explode>) action -> Items.TNT.getDefaultInstance()
+				(ItemBasedActionRenderer<Explode>) action -> Items.TNT.getDefaultInstance()
 		);
-		PostActionRenderer.register(PostActionTypes.IF, new IfPostActionRenderer());
-		PostActionRenderer.register(PostActionTypes.PLACE, new PlaceBlockPostActionRenderer());
-		PostActionRenderer.register(PostActionTypes.CYCLE_STATE_PROPERTY, new CycleStatePropertyPostActionRenderer());
-		PostActionRenderer.register(
-				PostActionTypes.DAMAGE_ITEM, new PostActionRenderer<>() {
+		ActionRenderer.register(PostActionTypes.IF, new IfActionRenderer());
+		ActionRenderer.register(PostActionTypes.PLACE, BlockBasedActionRenderer.fromPredicate(PlaceBlock::block));
+		ActionRenderer.register(PostActionTypes.SET_BLOCK, BlockBasedActionRenderer.fromPredicate(SetBlock::block));
+		ActionRenderer.register(
+				PostActionTypes.CYCLE_STATE_PROPERTY, new BlockBasedActionRenderer<>(it -> {
+					var blockStates = BlockPredicateExtensions.getShowcaseBlockStates(it.block(), Set.of(it.property()));
+					return CommonProxy.getCycledItem(blockStates, Blocks.AIR.defaultBlockState(), 1000);
+				}));
+		ActionRenderer.register(
+				PostActionTypes.DAMAGE_ITEM, new ActionRenderer<>() {
 					@Override
 					public void loadCatalystsInfo(
 							DamageItem action,
@@ -130,8 +139,8 @@ public class ClientProxy implements ClientModInitializer {
 						});
 					}
 				});
-		PostActionRenderer.register(
-				PostActionTypes.PREVENT_DEFAULT, new PostActionRenderer<>() {
+		ActionRenderer.register(
+				PostActionTypes.PREVENT_DEFAULT, new ActionRenderer<>() {
 					@Override
 					public void loadCatalystsInfo(
 							PreventDefault action,

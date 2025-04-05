@@ -10,7 +10,7 @@ import me.shedaniel.rei.api.common.entry.EntryStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.PostActionRenderer;
+import snownee.lychee.util.action.ActionRenderer;
 
 public enum PostActionIngredientRenderer implements EntryRenderer<PostAction> {
 
@@ -21,12 +21,12 @@ public enum PostActionIngredientRenderer implements EntryRenderer<PostAction> {
 		if (entry.isEmpty()) {
 			return;
 		}
-		PostActionRenderer.of(entry.getValue()).internalRender(entry.getValue(), graphics, bounds.x, bounds.y);
+		ActionRenderer.of(entry.getValue()).internalRender(entry.getValue(), graphics, bounds.x, bounds.y);
 	}
 
 	@Override
 	public @Nullable Tooltip getTooltip(EntryStack<PostAction> entry, TooltipContext context) {
-		return Tooltip.create(PostActionRenderer.of(entry.getValue()).getTooltips(entry.getValue(), Minecraft.getInstance().player));
+		return Tooltip.create(ActionRenderer.of(entry.getValue()).getTooltips(entry.getValue(), Minecraft.getInstance().player));
 	}
 
 }

@@ -18,8 +18,8 @@ public class EntityMixin implements LycheeEntity {
 	@Unique
 	private @Nullable LycheeContext lychee$context;
 
-	@Inject(method = "baseTick", at = @At("HEAD"))
-	public void lychee_baseTick(CallbackInfo ci) {
+	@Inject(method = "rideTick", at = @At("RETURN"))
+	public void lychee_rideTick(CallbackInfo ci) {
 		Entity entity = (Entity) (Object) this;
 		RecipeTypes.ENTITY_TICKING.process(entity, ((LycheeEntityType) entity.getType()).lychee$tickingRecipes());
 	}
