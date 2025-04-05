@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2fc;
 
 import com.google.common.base.Strings;
@@ -11,6 +12,7 @@ import com.google.common.base.Suppliers;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
@@ -25,16 +27,17 @@ import snownee.lychee.ui.SpriteElementRenderer;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.ui.CategoryMetadata;
+import snownee.lychee.util.ui.ElementRenderer;
 
 @NotNullByDefault
 public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>> implements RvCategory<R> {
 	private final RvCategoryType<R> type;
 	private final RvHelper rvHelper;
-
-	private final Supplier<RenderElement> iconSupplier;
 	private final ResourceLocation id;
-
 	private final List<RecipeHolder<R>> recipes = new ArrayList<>();
+	private Supplier<RenderElement> iconSupplier;
+	private @Nullable List<List<ItemStack>> workstations;
 
 	protected AbstractRvCategory(RvCategoryType<R> type, ResourceLocation id, RvHelper rvHelper) {
 		this.type = type;
@@ -61,7 +64,7 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 
 	public static <R extends ILycheeRecipe<?>> RenderElement getRecipeInfoIcon(RecipeHolder<R> recipeHolder) {
 		var recipe = recipeHolder.value();
-		return new InteractiveRenderElement(new SpriteElementRenderer(AllGuiTextures.INFO.id, 1).<SpriteElementRenderer>withSize(
+		return new InteractiveRenderElement(new SpriteElementRenderer(AllGuiTextures.INFO.id).<SpriteElementRenderer>withSize(
 				InfoElementHelper.INFO_SIZE))
 				.onTooltip(() -> RVs.getRecipeTooltip(recipe))
 				.onClick((button) -> ClientProxy.postInfoBadgeClickEvent(recipe, recipeHolder.id(), button))
@@ -98,7 +101,18 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 	}
 
 	@Override
+	public List<List<ItemStack>> workstations() {
+		return workstations == null ? type().workstationProvider.get(this) : workstations;
+	}
+
+	@Override
 	public Vector2fc infoPosition() {
 		return InfoElementHelper.INFO_POSITION;
+	}
+
+	@Override
+	public void setMetadata(CategoryMetadata metadata) {
+		metadata.icon().map(ElementRenderer::of).ifPresent(it -> iconSupplier = () -> it);
+		metadata.workstations().ifPresent(it -> workstations = it);
 	}
 }

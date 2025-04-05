@@ -12,6 +12,6 @@ public enum SlotType {
 	public final ScreenElement sprite;
 
 	SlotType(String spriteId) {
-		this.sprite = new SpriteElementRenderer(Lychee.id(spriteId), 1).withSize(18);
+		this.sprite = new SpriteElementRenderer(Lychee.id(spriteId)).withSize(18);
 	}
 }

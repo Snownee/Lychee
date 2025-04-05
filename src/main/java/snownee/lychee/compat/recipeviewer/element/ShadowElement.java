@@ -35,7 +35,7 @@ public class ShadowElement {
 		}
 		var shadowOffset = new Vector2f((blockSize - shadowWidth) / 2F, blockSize - shadowHeight / 2F);
 		ResourceLocation id = light ? AllGuiTextures.LIGHT_SHADOW.id : AllGuiTextures.SHADOW.id;
-		shadow = new SpriteElementRenderer(id, 1F).withSize(shadowWidth, shadowHeight).at(shadowOffset);
+		shadow = new SpriteElementRenderer(id).withSize(shadowWidth, shadowHeight).at(shadowOffset);
 		if (light) {
 			lightShadow = shadow;
 		} else {

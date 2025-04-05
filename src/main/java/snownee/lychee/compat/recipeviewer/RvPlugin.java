@@ -3,6 +3,7 @@ package snownee.lychee.compat.recipeviewer;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
@@ -15,6 +16,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
+import snownee.kiwi.util.KUtil;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
@@ -28,6 +30,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
+import snownee.lychee.util.ui.CategoryMetadata;
 
 public class RvPlugin<Helper extends RvHelper> {
 	private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
@@ -122,6 +125,8 @@ public class RvPlugin<Helper extends RvHelper> {
 							Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
 				});
 
+		List<RecipeHolder<CategoryMetadata>> metadataList = KUtil.getRecipes(RecipeTypes.CATEGORY_METADATA);
+
 		for (var recipeType : RecipeTypes.ALL) {
 			var provider = RvCategoryProviders.get(recipeType.categoryId);
 			if (provider == null) {
@@ -129,7 +134,19 @@ public class RvPlugin<Helper extends RvHelper> {
 			}
 
 			//noinspection unchecked
-			var factory = provider.get((RvCategoryType<ILycheeRecipe<LycheeContext>>) categoryTypes.get(recipeType.categoryId), rvHelper);
+			var factory = provider.get((RvCategoryType<ILycheeRecipe<LycheeContext>>) categoryTypes.get(recipeType.categoryId), rvHelper)
+					.andThen(it -> {
+						String id = it.id().toString();
+						for (RecipeHolder<CategoryMetadata> metadata : metadataList) {
+							for (Pattern pattern : metadata.value().categoryPattern()) {
+								if (pattern.matcher(id).matches()) {
+									it.setMetadata(metadata.value());
+									return it;
+								}
+							}
+						}
+						return it;
+					});
 			for (var recipe : recipeType.inViewerRecipes()) {
 				var id = RVs.composeCategoryIdentifier(recipeType.categoryId, ResourceLocation.parse(recipe.value().group()));
 				//noinspection unchecked,rawtypes

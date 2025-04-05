@@ -62,7 +62,7 @@ import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.util.action.PostActionTypes;
-import snownee.lychee.util.category.UIElementType;
+import snownee.lychee.util.ui.UIElementType;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.context.LycheeContextSerializers;
 import snownee.lychee.util.contextual.ContextualConditionType;

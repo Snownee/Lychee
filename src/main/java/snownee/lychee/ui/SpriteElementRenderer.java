@@ -9,6 +9,10 @@ public class SpriteElementRenderer extends RenderElement {
 	private final ResourceLocation id;
 	private final float scale;
 
+	public SpriteElementRenderer(ResourceLocation id) {
+		this(id, 1F);
+	}
+
 	public SpriteElementRenderer(ResourceLocation id, float scale) {
 		this.id = id;
 		this.scale = scale;
@@ -25,5 +29,9 @@ public class SpriteElementRenderer extends RenderElement {
 		((LycheeGuiGraphics) graphics).lychee$setRenderType(LycheeGuiGraphics::guiTextured);
 		graphics.blitSprite(id, x, y, (int) z(), width, height);
 		((LycheeGuiGraphics) graphics).lychee$setRenderType(null);
+	}
+
+	public static SpriteElementRenderer create(SpriteElement element) {
+		return new SpriteElementRenderer(element.id(), element.scale());
 	}
 }

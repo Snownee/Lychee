@@ -17,8 +17,13 @@ import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.recipes.RandomBlockTickingRecipe;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
+import snownee.lychee.util.ui.CategoryMetadata;
 
 public final class RecipeSerializers {
+	public static final RecipeSerializer<CategoryMetadata> CATEGORY_METADATA = register(
+			"category_metadata",
+			new CategoryMetadata.Serializer()
+	);
 	public static final LycheeRecipeSerializer<ItemBurningRecipe> ITEM_BURNING = register(
 			"item_burning",
 			new ItemBurningRecipe.Serializer()
@@ -27,8 +32,10 @@ public final class RecipeSerializers {
 			"item_inside",
 			new ItemInsideRecipe.Serializer()
 	);
-	public static final LycheeRecipeSerializer<BlockInteractingRecipe> BLOCK_INTERACTING =
-			register("block_interacting", new BlockInteractingRecipe.Serializer());
+	public static final LycheeRecipeSerializer<BlockInteractingRecipe> BLOCK_INTERACTING = register(
+			"block_interacting",
+			new BlockInteractingRecipe.Serializer()
+	);
 	public static final LycheeRecipeSerializer<BlockClickingRecipe> BLOCK_CLICKING = register(
 			"block_clicking",
 			new BlockClickingRecipe.Serializer()
@@ -70,9 +77,8 @@ public final class RecipeSerializers {
 			new EntityTickingRecipe.Serializer()
 	);
 
-	public static <T extends RecipeSerializer<?>> T register(String id, T t) {
-		Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Lychee.id(id), t);
-		return t;
+	public static <T extends RecipeSerializer<?>> T register(String id, T serializer) {
+		return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Lychee.id(id), serializer);
 	}
 
 }

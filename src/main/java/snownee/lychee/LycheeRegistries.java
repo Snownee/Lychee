@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.resources.ResourceKey;
 import snownee.lychee.util.action.PostActionType;
-import snownee.lychee.util.category.UIElementType;
+import snownee.lychee.util.ui.UIElementType;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualConditionType;
 

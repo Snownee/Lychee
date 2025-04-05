@@ -2,6 +2,7 @@ package snownee.lychee.compat.recipeviewer.category;
 
 import java.util.function.Function;
 
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
@@ -89,7 +90,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		builder.addElement(getInputBlockElement(recipe).offset(position));
 
 		var methodElement = getMethodElement(recipeHolder.value());
-		if (methodElement != RenderElement.EMPTY) {
+		if (methodElement != null) {
 			builder.addElement(methodElement.offset(position));
 		}
 
@@ -102,6 +103,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		}
 	}
 
+	@Nullable
 	protected RenderElement getMethodElement(R recipe) {
 		return RenderElement.create(AllGuiTextures.DOWN_ARROW).at(methodPosition()).withSize(METHOD_SIZE);
 	}
