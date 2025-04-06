@@ -1,5 +1,7 @@
 package snownee.lychee.util.context;
 
+import java.util.Objects;
+
 import com.mojang.serialization.Codec;
 
 import net.minecraft.core.Registry;
@@ -21,6 +23,6 @@ public interface LycheeContextSerializers {
 	}
 
 	static <T> Codec<T> register(LycheeContextKey<T> key, Codec<T> codec) {
-		return register(LycheeRegistries.CONTEXT.getKey(key), codec);
+		return register(Objects.requireNonNull(LycheeRegistries.CONTEXT.getKey(key)), codec);
 	}
 }

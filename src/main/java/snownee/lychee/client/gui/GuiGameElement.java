@@ -275,6 +275,7 @@ public class GuiGameElement {
 			cleanUpMatrix(matrixStack);
 		}
 
+		@Override
 		protected void transformMatrix(PoseStack matrixStack) {
 			matrixStack.translate(x(), y(), z);
 			matrixStack.translate(xLocal * scale, yLocal * scale, zLocal * scale);

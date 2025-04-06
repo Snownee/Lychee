@@ -164,7 +164,7 @@ public class CommonProxy implements ModInitializer {
 			return fallback;
 		}
 		if (list.size() == 1) {
-			return list.get(0);
+			return list.getFirst();
 		}
 		var index = (System.currentTimeMillis() / interval) % list.size();
 		return list.get(Math.toIntExact(index));

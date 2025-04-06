@@ -6,6 +6,7 @@ import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonElement;
+import com.mojang.serialization.Codec;
 
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
@@ -59,9 +60,12 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	public static final LycheeContextKey.Optional<ActionMarker> MARKER = opt(
 			"marker", it -> {
 				var level = it.level();
+				if (level.isClientSide) {
+					return null;
+				}
 				var marker = new Marker(EntityType.MARKER, level);
-				var lootParamsContext = it.get(LycheeContextKey.LOOT_PARAMS);
-				var pos = lootParamsContext.getOrNull(LootContextParams.ORIGIN);
+				var lootParams = it.get(LycheeContextKey.LOOT_PARAMS);
+				var pos = lootParams.getOrNull(LootContextParams.ORIGIN);
 				if (pos != null) {
 					marker.moveTo(pos);
 				}
@@ -107,6 +111,12 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 
 	public static <T> LycheeContextKey.Required<T> req(String name, @Nullable Function<LycheeContext, T> factory) {
 		return register(new LycheeContextKey.Required<>(Lychee.id(name), factory));
+	}
+
+	public @Nullable Codec<T> codec() {
+		var key = LycheeRegistries.CONTEXT.getKey(this);
+		//noinspection unchecked
+		return (Codec<T>) LycheeRegistries.CONTEXT_SERIALIZER.get(key);
 	}
 
 	public static final class Required<T> extends LycheeContextKey<T> {

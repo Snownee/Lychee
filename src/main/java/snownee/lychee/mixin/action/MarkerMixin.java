@@ -7,8 +7,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.mojang.serialization.DataResult;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Marker;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.Lychee;
@@ -25,6 +28,7 @@ public class MarkerMixin implements ActionMarker {
 	private ActionData lychee$data;
 
 	@Override
+	@Nullable
 	public ActionData lychee$getData() {
 		return lychee$data;
 	}
@@ -36,14 +40,20 @@ public class MarkerMixin implements ActionMarker {
 
 	@Inject(at = @At("HEAD"), method = "tick")
 	private void lychee_tick(CallbackInfo ci) {
-		if (lychee$data == null || lychee$data.getContext().isEmpty()) {
+		if (lychee$data == null) {
+			return;
+		}
+		if (lychee$self().tickCount > 5 * 60 * 20) {
+			lychee$self().discard();
 			return;
 		}
 		if (lychee$data.consumeDelayedTicks() > 0) {
 			return;
 		}
 
-		var context = lychee$data.getContext().get();
+		var context = lychee$data.getContext();
+		// When `readAdditionalSaveData` is called, the level can be null
+		context.put(LycheeContextKey.LEVEL, lychee$self().level());
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.state = ActionContext.State.RUNNING;
 		actionContext.run(context);
@@ -54,39 +64,40 @@ public class MarkerMixin implements ActionMarker {
 
 	@Inject(at = @At("HEAD"), method = "readAdditionalSaveData")
 	private void lychee_readAdditionalSaveData(CompoundTag compoundTag, CallbackInfo ci) {
-		if (!compoundTag.contains("lychee:action")) {
+		if (!compoundTag.contains("lychee")) {
 			return;
 		}
-		final var tag = compoundTag.getCompound("lychee:action");
-		lychee$data = ActionData.CODEC
-				.parse(NbtOps.INSTANCE, tag)
-				.getOrThrow((err) -> {
-					Lychee.LOGGER.debug("Load Lychee action data from marker failed from tag: " + tag);
-					lychee$self().discard();
-					return new IllegalStateException("Load Lychee action data from marker failed with error: " + err);
-				});
-		if (lychee$data.getContext().isEmpty()) {
+		final var tag = compoundTag.getCompound("lychee");
+		DataResult<ActionData> result = ActionData.CODEC.parse(NbtOps.INSTANCE, tag);
+		if (result.isError()) {
+			Lychee.LOGGER.error("Load Lychee action data: {} -> {}", tag, result.error().orElseThrow().message());
+			lychee$self().discard();
+			return;
+		}
+		lychee$data = result.getOrThrow();
+		var context = lychee$data.getContext();
+		context.put(LycheeContextKey.MARKER, this);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		lootParams.setParam(LootContextParams.ORIGIN, lychee$self().position());
+		try {
+			lootParams.validate(LycheeLootContextParamSets.ALL);
+		} catch (IllegalArgumentException e) {
+			Lychee.LOGGER.error("Load Lychee action data: {} -> {}", tag, e.getMessage());
 			lychee$self().discard();
 		}
-		var context = lychee$data.getContext().get();
-		context.put(LycheeContextKey.LEVEL, lychee$self().level());
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, lychee$self().position());
-		lootParamsContext.validate(LycheeLootContextParamSets.ALL);
 	}
 
 	@Inject(at = @At("HEAD"), method = "addAdditionalSaveData")
 	private void lychee_addAdditionalSaveData(CompoundTag compoundTag, CallbackInfo ci) {
-		if (lychee$data == null || lychee$data.getContext().isEmpty()) {
+		if (lychee$data == null) {
 			return;
 		}
 
-		compoundTag.put(
-				"lychee:action",
-				ActionData.CODEC.encodeStart(NbtOps.INSTANCE, lychee$data).getOrThrow((err) -> {
-					Lychee.LOGGER.debug("Save Lychee action data to marker failed from data: {}", lychee$data);
-					return new IllegalStateException("Save Lychee action data to marker failed with error: " + err);
-				})
-		);
+		DataResult<Tag> result = ActionData.CODEC.encodeStart(NbtOps.INSTANCE, lychee$data);
+		if (result.isSuccess()) {
+			compoundTag.put("lychee", result.getOrThrow());
+		} else {
+			Lychee.LOGGER.error("{}: {}", lychee$data, result.error().orElseThrow().message());
+		}
 	}
 }

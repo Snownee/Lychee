@@ -51,7 +51,7 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 
 			itemStack.hurtAndBreak(
 					damage,
-					(ServerLevel) context.get(LycheeContextKey.LEVEL),
+					(ServerLevel) context.level(),
 					thisEntity instanceof ServerPlayer player ? player : null, (it) -> {
 						if (thisEntity instanceof LivingEntity livingEntity) {
 							EquipmentSlot hand = null;

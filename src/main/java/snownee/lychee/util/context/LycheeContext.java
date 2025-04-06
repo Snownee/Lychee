@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -18,15 +19,13 @@ import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.codec.KeyDispatchedMapMapCodec;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-
 @SuppressWarnings("unchecked")
 public class LycheeContext extends EmptyRecipeInput {
 	public static final Codec<LycheeContext> CODEC =
 			new KeyDispatchedMapMapCodec<>(
 					LycheeRegistries.CONTEXT.byNameCodec(),
 					it -> {
-						final var key = LycheeRegistries.CONTEXT.getKey(it);
-						final var serializer = LycheeRegistries.CONTEXT_SERIALIZER.get(key);
+						var serializer = it.codec();
 						if (serializer == null) {
 							return DataResult.error(() -> it + " isn't serializable");
 						}
@@ -34,11 +33,10 @@ public class LycheeContext extends EmptyRecipeInput {
 					},
 					LycheeRegistries.CONTEXT_SERIALIZER,
 					() -> new Reference2ReferenceOpenHashMap<>(LycheeRegistries.CONTEXT.size())
-			).codec().xmap(LycheeContext::new, LycheeContext::asMap);
-	private final Map<LycheeContextKey<?>, Object> context;
+			).codec().xmap(LycheeContext::new, LycheeContext::serializableContext);
 
-	@Nullable
-	private Level level;
+	private final Map<LycheeContextKey<?>, Object> context;
+	private @Nullable Level level;
 
 	public LycheeContext() {
 		this(new Reference2ReferenceOpenHashMap<>(LycheeRegistries.CONTEXT.size()));
@@ -74,16 +72,15 @@ public class LycheeContext extends EmptyRecipeInput {
 		put(LycheeContextKey.RECIPE_ID, recipeHolder.id());
 	}
 
-	public void putAll(Map<LycheeContextKey<?>, ?> map) {
-		context.putAll(map);
-	}
-
 	public void removeAllExcept(Collection<LycheeContextKey<?>> keys) {
 		context.keySet().removeIf(key -> !keys.contains(key));
 	}
 
-	public Map<LycheeContextKey<?>, Object> asMap() {
-		return Map.copyOf(context);
+	public Map<LycheeContextKey<?>, Object> serializableContext() {
+		return Map.ofEntries(context.entrySet()
+				.stream()
+				.filter(entry -> entry.getValue() != null && entry.getKey().codec() != null)
+				.toArray(Map.Entry[]::new));
 	}
 
 	public Level level() {
@@ -105,5 +102,13 @@ public class LycheeContext extends EmptyRecipeInput {
 
 	public void setItem(int index, ItemStack stack) {
 		get(LycheeContextKey.ITEM).replace(index, stack);
+	}
+
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.append("context", context)
+				.append("level", level)
+				.toString();
 	}
 }

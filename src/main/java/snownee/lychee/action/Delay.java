@@ -8,6 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
+import snownee.lychee.Lychee;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -33,7 +34,11 @@ public record Delay(PostActionCommonProperties commonProperties, float seconds) 
 		var actionContext = context.get(LycheeContextKey.ACTION);
 		var actionMarker = context.get(LycheeContextKey.MARKER);
 		var actionData = actionMarker.lychee$getData();
-		context.put(LycheeContextKey.RECIPE, recipe);
+//		context.put(LycheeContextKey.RECIPE, recipe);
+		if (actionData == null) {
+			Lychee.LOGGER.error("Delay action called without data: {}", context);
+			return;
+		}
 		actionData.addDelayedTicks((int) (seconds * 20));
 		actionContext.state = ActionContext.State.PAUSED;
 	}
