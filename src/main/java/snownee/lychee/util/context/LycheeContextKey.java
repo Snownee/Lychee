@@ -6,6 +6,7 @@ import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonElement;
+import com.mojang.serialization.Codec;
 
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
@@ -31,12 +32,33 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 @SuppressWarnings("StaticInitializerReferencesSubClass")
 public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Required, LycheeContextKey.Optional {
+	public static final LycheeContextKey.Optional<ActionMarker> MARKER = opt(
+			"marker", it -> {
+				var level = it.level();
+				if (level.isClientSide) {
+					return null;
+				}
+				var marker = new Marker(EntityType.MARKER, level);
+				var lootParams = it.get(LycheeContextKey.LOOT_PARAMS);
+				var pos = lootParams.getOrNull(LootContextParams.ORIGIN);
+				if (pos != null) {
+					marker.moveTo(pos);
+				}
+				marker.setCustomName(Component.literal(Lychee.ID));
+				level.addFreshEntity(marker);
+				var actionMarker = (ActionMarker) marker;
+				actionMarker.lychee$setData(new ActionData(it, 0));
+				return actionMarker;
+			});
+	public final ResourceLocation id;
+
 	public static final LycheeContextKey.Required<Level> LEVEL = req("level");
 	public static final LycheeContextKey.Required<RandomSource> RANDOM = req("random", it -> it.level().random);
 	public static final LycheeContextKey.Required<LootParamsContext> LOOT_PARAMS = req(
 			"loot_params",
 			it -> new LootParamsContext(it, new IdentityHashMap<>()));
 	public static final LycheeContextKey.Required<ActionContext> ACTION = req("action", it -> new ActionContext());
+
 	public static final LycheeContextKey.Optional<ResourceLocation> RECIPE_ID = opt("recipe_id");
 	public static final LycheeContextKey.Optional<ILycheeRecipe<?>> RECIPE = opt(
 			"recipe", it -> {
@@ -49,34 +71,25 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 				}
 				return null;
 			});
+
 	public static final LycheeContextKey.Optional<ItemStackHolderCollection> ITEM = opt("item", it -> ItemStackHolderCollection.empty());
-	public static final LycheeContextKey.Optional<ActionMarker> MARKER = opt(
-			"marker", it -> {
-				var level = it.level();
-				var marker = new Marker(EntityType.MARKER, level);
-				var lootParamsContext = it.get(LycheeContextKey.LOOT_PARAMS);
-				var pos = lootParamsContext.getOrNull(LootContextParams.ORIGIN);
-				if (pos != null) {
-					marker.moveTo(pos);
-				}
-				marker.setCustomName(Component.literal(Lychee.ID));
-				level.addFreshEntity(marker);
-				var actionMarker = (ActionMarker) marker;
-				actionMarker.lychee$setData(new ActionData(it, 0));
-				return actionMarker;
-			});
+	@Nullable
+	public final Function<LycheeContext, T> factory;
 	public static final LycheeContextKey.Optional<JsonElement> JSON = opt("data");
+
 	public static final LycheeContextKey.Optional<AnvilContext> ANVIL = opt("anvil");
 	public static final LycheeContextKey.Optional<ItemShapelessContext> ITEM_SHAPELESS = opt("item_shapeless");
 	public static final LycheeContextKey.Optional<CraftingContext> CRAFTING = opt("crafting");
 	public static final LycheeContextKey.Optional<BlockState> DRIPSTONE_SOURCE = opt("dripstone_root");
-	public final ResourceLocation id;
-	@Nullable
-	public final Function<LycheeContext, T> factory;
 
 	protected LycheeContextKey(ResourceLocation id, @Nullable Function<LycheeContext, T> factory) {
 		this.id = id;
 		this.factory = factory;
+	}
+
+	@Override
+	public String toString() {
+		return id.toString();
 	}
 
 	private static <T extends LycheeContextKey<?>> T register(T object) {
@@ -100,9 +113,10 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 		return register(new LycheeContextKey.Required<>(Lychee.id(name), factory));
 	}
 
-	@Override
-	public String toString() {
-		return id.toString();
+	public @Nullable Codec<T> codec() {
+		var key = LycheeRegistries.CONTEXT.getKey(this);
+		//noinspection unchecked
+		return (Codec<T>) LycheeRegistries.CONTEXT_SERIALIZER.get(key);
 	}
 
 	public static final class Required<T> extends LycheeContextKey<T> {
