@@ -2,17 +2,16 @@ package snownee.lychee.compat.recipeviewer.category;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.Map;
 
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2fc;
+import org.joml.Vector2ic;
 
 import com.google.common.base.Strings;
-import com.google.common.base.Suppliers;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
@@ -29,21 +28,21 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.ui.CategoryMetadata;
 import snownee.lychee.util.ui.ElementRenderer;
+import snownee.lychee.util.ui.UIElement;
 
 @NotNullByDefault
 public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>> implements RvCategory<R> {
 	private final RvCategoryType<R> type;
 	private final RvHelper rvHelper;
 	private final ResourceLocation id;
+	protected final RecipeHolder<CategoryMetadata> metadata;
 	private final List<RecipeHolder<R>> recipes = new ArrayList<>();
-	private Supplier<RenderElement> iconSupplier;
-	private @Nullable List<List<ItemStack>> workstations;
 
 	protected AbstractRvCategory(RvCategoryType<R> type, ResourceLocation id, RvHelper rvHelper) {
 		this.type = type;
 		this.id = id;
-		this.iconSupplier = Suppliers.memoize(() -> type.iconProvider.get(this));
 		this.rvHelper = rvHelper;
+		this.metadata = rvHelper.getMetadata(this);
 	}
 
 	public static boolean needRemoveInputIcon(ILycheeRecipe<? extends LycheeContext> recipe) {
@@ -64,8 +63,8 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 
 	public static <R extends ILycheeRecipe<?>> RenderElement getRecipeInfoIcon(RecipeHolder<R> recipeHolder) {
 		var recipe = recipeHolder.value();
-		return new InteractiveRenderElement(new SpriteElementRenderer(AllGuiTextures.INFO.id).<SpriteElementRenderer>withSize(
-				InfoElementHelper.INFO_SIZE))
+		return InteractiveRenderElement.create(new SpriteElementRenderer(AllGuiTextures.INFO.id).<SpriteElementRenderer>withSize(
+						InfoElementHelper.INFO_SIZE))
 				.onTooltip(() -> RVs.getRecipeTooltip(recipe))
 				.onClick((button) -> ClientProxy.postInfoBadgeClickEvent(recipe, recipeHolder.id(), button))
 				.withSize(InfoElementHelper.INFO_SIZE);
@@ -97,12 +96,24 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 
 	@Override
 	public RenderElement icon() {
-		return iconSupplier.get();
+		return metadata.value().icon().map(ElementRenderer::of).orElseGet(RvCategory.super::icon);
 	}
 
 	@Override
-	public List<List<ItemStack>> workstations() {
-		return workstations == null ? type().workstationProvider.get(this) : workstations;
+	public List<Ingredient> workstations() {
+		return metadata.value().workstation().orElseGet(RvCategory.super::workstations);
+	}
+
+	@Override
+	public int width() {
+		Vector2ic size = metadata.value().size().orElse(null);
+		return size == null ? RvCategory.super.width() : size.x();
+	}
+
+	@Override
+	public int height() {
+		Vector2ic size = metadata.value().size().orElse(null);
+		return size == null ? RvCategory.super.height() : size.y();
 	}
 
 	@Override
@@ -111,8 +122,15 @@ public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>>
 	}
 
 	@Override
-	public void setMetadata(CategoryMetadata metadata) {
-		metadata.icon().map(ElementRenderer::of).ifPresent(it -> iconSupplier = () -> it);
-		metadata.workstations().ifPresent(it -> workstations = it);
+	public boolean renderDefault() {
+		return metadata.value().renderDefault();
+	}
+
+	@Override
+	public void configureCustomDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
+		List<UIElement> extra = metadata.value().elements().orElse(Map.of()).getOrDefault("extra", List.of());
+		for (UIElement element : extra) {
+			builder.addElement(ElementRenderer.of(element).offset(position));
+		}
 	}
 }

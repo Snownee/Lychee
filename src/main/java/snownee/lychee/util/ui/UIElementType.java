@@ -14,9 +14,9 @@ import snownee.lychee.ui.SpriteElement;
 import snownee.lychee.util.SerializableType;
 
 public interface UIElementType<T extends UIElement> extends SerializableType<T> {
-	UIElementType<SpriteElement> SPRITE = register("sprite", SpriteElement.CODEC);
-	UIElementType<ItemElement> ITEM = register("item", ItemElement.CODEC);
-	UIElementType<BlockElement> BLOCK = register("block", BlockElement.CODEC);
+	UIElementType<SpriteElement> SPRITE = register("sprite", SpriteElement.CODEC, SpriteElement.STREAM_CODEC);
+	UIElementType<ItemElement> ITEM = register("item", ItemElement.CODEC, ItemElement.STREAM_CODEC);
+	UIElementType<BlockElement> BLOCK = register("block", BlockElement.CODEC, BlockElement.STREAM_CODEC);
 
 	static <T extends UIElement> UIElementType<T> register(String name, MapCodec<T> codec) {
 		return register(name, () -> codec);

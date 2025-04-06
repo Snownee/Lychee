@@ -38,7 +38,7 @@ public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockIn
 	@Override
 	protected RenderElement getMethodElement(BlockInteractingRecipe recipe) {
 		var icon = recipe.getType() == RecipeTypes.BLOCK_CLICKING ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
-		return new InteractiveRenderElement(icon)
+		return InteractiveRenderElement.create(icon)
 				.onTooltip(() -> List.of(Component.translatable(Util.makeDescriptionId(
 						"tip",
 						BuiltInRegistries.RECIPE_SERIALIZER.getKey(recipe.getSerializer())))))

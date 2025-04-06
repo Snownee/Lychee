@@ -37,7 +37,7 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2fc position) {
+	public void configureDefaultDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
 
 		var landingBlockIsAny = BlockPredicateExtensions.isAny(recipe.landingBlock());

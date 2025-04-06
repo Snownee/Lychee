@@ -99,7 +99,6 @@ public final class LycheeCodecs {
 
 	public static final Codec<ItemStack> ITEM_STACK_CODEC = NONEMPTY_ITEM_STACK_MAP_CODEC.codec();
 
-
 	public static final MapCodec<BlockPos> OFFSET_CODEC = RecordCodecBuilder.mapCodec(posInstance -> posInstance.group(
 			Codec.INT.optionalFieldOf("offsetX", 0).forGetter(Vec3i::getX),
 			Codec.INT.optionalFieldOf("offsetY", 0).forGetter(Vec3i::getY),

@@ -23,7 +23,7 @@ import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.util.KUtil;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
@@ -89,8 +89,8 @@ public class LycheeREIPlugin implements REIClientPlugin {
 		for (var rvCategory : rvPlugin.categories().values()) {
 			var category = new RvCategoryAdapter<>(rvCategory);
 			registry.add(category);
-			for (List<ItemStack> workstation : rvCategory.workstations()) {
-				registry.addWorkstations(category.getCategoryIdentifier(), EntryIngredients.ofItemStacks(workstation));
+			for (Ingredient ingredient : rvCategory.workstations()) {
+				registry.addWorkstations(category.getCategoryIdentifier(), EntryIngredients.ofIngredient(ingredient));
 			}
 		}
 

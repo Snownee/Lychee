@@ -45,9 +45,9 @@ import snownee.lychee.compat.recipeviewer.jei.LycheeJEIPlugin;
 import snownee.lychee.compat.recipeviewer.jei.element.RenderElementAdapter;
 import snownee.lychee.compat.recipeviewer.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.util.VectorExtensions;
+import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -239,7 +239,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				RvCategoryAdapter.this.ingredientGroup(builder, recipeHolder.value(), position.x(), position.y());
 			}
 		};
-		rvCategory.configureLayout(layoutBuilder, recipeHolder, VectorExtensions.ZERO);
+		rvCategory.configureLayout(layoutBuilder, recipeHolder, VectorExtensions.ZERO2F);
 		addBlockIngredients(builder, recipeHolder.value());
 	}
 
@@ -256,7 +256,10 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				}
 			}
 		};
-		rvCategory.configureDecorations(widgetBuilder, recipe, VectorExtensions.ZERO);
+		if (rvCategory.renderDefault()) {
+			rvCategory.configureDefaultDecorations(widgetBuilder, recipe, VectorExtensions.ZERO2F);
+		}
+		rvCategory.configureCustomDecorations(widgetBuilder, recipe, VectorExtensions.ZERO2F);
 	}
 
 	@FunctionalInterface

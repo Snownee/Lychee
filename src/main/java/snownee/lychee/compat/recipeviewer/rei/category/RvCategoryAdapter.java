@@ -41,9 +41,9 @@ import snownee.lychee.compat.recipeviewer.rei.LycheeREIPlugin;
 import snownee.lychee.compat.recipeviewer.rei.display.LycheeDisplay;
 import snownee.lychee.compat.recipeviewer.rei.element.RenderElementAdapter;
 import snownee.lychee.ui.TextElementRenderer;
+import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -250,7 +250,10 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				widgets.add(adapter);
 			}
 		};
-		rvCategory.configureDecorations(widgetBuilder, display.recipe(), startPoint);
+		if (rvCategory.renderDefault()) {
+			rvCategory.configureDefaultDecorations(widgetBuilder, display.recipe(), startPoint);
+		}
+		rvCategory.configureCustomDecorations(widgetBuilder, display.recipe(), startPoint);
 
 		return widgets.build();
 	}

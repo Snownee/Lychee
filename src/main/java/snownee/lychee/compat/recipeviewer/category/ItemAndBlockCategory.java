@@ -80,7 +80,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
+	public void configureDefaultDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
 
 		if (needInfoIcon(recipe)) {

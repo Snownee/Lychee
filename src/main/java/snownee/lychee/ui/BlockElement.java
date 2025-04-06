@@ -4,6 +4,8 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.ui.UIElement;
@@ -16,6 +18,12 @@ public record BlockElement(UIElementCommonProperties commonProperties, BlockPred
 			UIElementCommonProperties.CODEC.forGetter(BlockElement::commonProperties),
 			BlockPredicateExtensions.CODEC_FOR_TESTING.fieldOf("block").forGetter(BlockElement::block)
 	).apply(i, BlockElement::new));
+	public static final StreamCodec<RegistryFriendlyByteBuf, BlockElement> STREAM_CODEC = StreamCodec.composite(
+			UIElementCommonProperties.STREAM_CODEC,
+			BlockElement::commonProperties,
+			BlockPredicate.STREAM_CODEC,
+			BlockElement::block,
+			BlockElement::new);
 
 	@Override
 	public UIElementType<?> type() {

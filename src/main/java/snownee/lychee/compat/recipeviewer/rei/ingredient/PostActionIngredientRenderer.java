@@ -9,8 +9,8 @@ import me.shedaniel.rei.api.client.gui.widgets.TooltipContext;
 import me.shedaniel.rei.api.common.entry.EntryStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.ActionRenderer;
+import snownee.lychee.util.action.PostAction;
 
 public enum PostActionIngredientRenderer implements EntryRenderer<PostAction> {
 

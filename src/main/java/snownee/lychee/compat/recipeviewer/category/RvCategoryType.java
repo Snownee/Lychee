@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.util.context.LycheeContext;
@@ -29,7 +30,7 @@ public class RvCategoryType<T extends ILycheeRecipe<LycheeContext>> {
 	}
 
 	public void setSimpleWorkstationProvider(Function<RvCategory<T>, List<ItemStack>> workstationProvider) {
-		this.workstationProvider = category -> Lists.transform(workstationProvider.apply(category), List::of);
+		this.workstationProvider = category -> Lists.transform(workstationProvider.apply(category), Ingredient::of);
 	}
 
 	@FunctionalInterface
@@ -39,6 +40,6 @@ public class RvCategoryType<T extends ILycheeRecipe<LycheeContext>> {
 
 	@FunctionalInterface
 	public interface WorkstationProvider<T extends ILycheeRecipe<LycheeContext>> {
-		List<List<ItemStack>> get(RvCategory<T> category);
+		List<Ingredient> get(RvCategory<T> category);
 	}
 }

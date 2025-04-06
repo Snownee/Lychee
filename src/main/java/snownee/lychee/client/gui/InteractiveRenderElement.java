@@ -14,20 +14,29 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import snownee.kiwi.util.NotNullByDefault;
+import snownee.lychee.util.VectorExtensions;
 
 @NotNullByDefault
 public class InteractiveRenderElement extends RenderElement implements GuiEventListener {
 	private final @Nullable Function<InteractiveRenderElement, ScreenElement> renderable;
-	private @Nullable Supplier<@Nullable List<Component>> onTooltip = null;
-	private @Nullable Consumer<Integer> onClick = null;
+	private @Nullable Supplier<@Nullable List<Component>> onTooltip;
+	private @Nullable Consumer<Integer> onClick;
 	private boolean focused;
 
 	public InteractiveRenderElement(Function<InteractiveRenderElement, ScreenElement> renderable) {
 		this.renderable = renderable;
 	}
 
-	public InteractiveRenderElement(ScreenElement renderable) {
-		this((ignored) -> renderable);
+	public static InteractiveRenderElement create(ScreenElement element) {
+		if (element instanceof InteractiveRenderElement interactiveElement) {
+			return interactiveElement;
+		}
+		InteractiveRenderElement interactiveElement = new InteractiveRenderElement(ignored -> element);
+		if (element instanceof RenderElement renderElement) {
+			interactiveElement.at(renderElement.position).withSize(renderElement.size);
+			renderElement.at(VectorExtensions.ZERO3F);
+		}
+		return interactiveElement;
 	}
 
 	public InteractiveRenderElement() {

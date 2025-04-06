@@ -47,7 +47,7 @@ public class ShadowElement {
 	public InteractiveRenderElement blockWithShadow(
 			Supplier<BlockState> blockStateSupplier,
 			Function<BlockState, RenderElement> blockElement) {
-		return new InteractiveRenderElement(graphics -> {
+		return InteractiveRenderElement.create(graphics -> {
 			if (!Platform.isProduction() && Screen.hasControlDown()) {
 				new SpriteElementRenderer(AllGuiTextures.INFO.id, 0.25F).atZ(1000).render(graphics);
 			}

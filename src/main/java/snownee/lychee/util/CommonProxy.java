@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.collect.Streams;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -20,7 +19,6 @@ import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -62,12 +60,12 @@ import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.util.action.PostActionTypes;
-import snownee.lychee.util.ui.UIElementType;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.context.LycheeContextSerializers;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.ui.UIElementType;
 
 @Mod(Lychee.ID)
 public class CommonProxy implements ModInitializer {
@@ -221,23 +219,8 @@ public class CommonProxy implements ModInitializer {
 		return v;
 	}
 
-	public static <T> List<T> tagElements(Registry<T> registry, TagKey<T> tag) {
-		return Streams.stream(registry.getTagOrEmpty(tag)).map(Holder::value).toList();
-	}
-
 	public static boolean isSimpleIngredient(Ingredient ingredient) {
 		return !ingredient.requiresTesting();
-	}
-
-	public static void itemstackToJson(ItemStack stack, JsonObject jsonObject) {
-		jsonObject.addProperty("item", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
-		if (!stack.getComponents().isEmpty()) {
-			// TODO
-			jsonObject.addProperty("nbt", stack.getComponents().toString());
-		}
-		if (stack.getCount() > 1) {
-			jsonObject.addProperty("count", stack.getCount());
-		}
 	}
 
 	public static JsonObject tagToJson(CompoundTag tag) {

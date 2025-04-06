@@ -6,7 +6,6 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import mezz.jei.api.IModPlugin;
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.recipe.RecipeType;
@@ -19,7 +18,7 @@ import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.util.KUtil;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
@@ -105,8 +104,8 @@ public class LycheeJEIPlugin implements IModPlugin {
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
 		for (RvCategory<?> rvCategory : rvPlugin.categories().values()) {
 			RecipeType<?> recipeType = registry.getJeiHelpers().getRecipeType(rvCategory.id()).orElseThrow();
-			for (List<ItemStack> workstation : rvCategory.workstations()) {
-				registry.addRecipeCatalysts(recipeType, VanillaTypes.ITEM_STACK, workstation);
+			for (Ingredient ingredient : rvCategory.workstations()) {
+				registry.addRecipeCatalysts(recipeType, ingredient.getItems());
 			}
 		}
 	}
