@@ -8,11 +8,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.action.PostAction;
 
-@NotNullByDefault
+
 public enum PostActionIngredientRenderer implements IIngredientRenderer<PostAction> {
 
 	INSTANCE;

@@ -3,7 +3,6 @@ package snownee.lychee.util.render;
 import java.util.Objects;
 import java.util.function.Function;
 
-import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -21,7 +20,7 @@ public class CachedRenderingEntity<T extends Entity> {
 	protected float scale = 15;
 	private Function<Level, T> factory;
 
-	protected CachedRenderingEntity(@NotNull T entity) {
+	protected CachedRenderingEntity(T entity) {
 		setEntity(entity);
 	}
 
@@ -29,7 +28,7 @@ public class CachedRenderingEntity<T extends Entity> {
 		this.factory = factory;
 	}
 
-	public static <T extends Entity> CachedRenderingEntity<T> of(@NotNull T entity) {
+	public static <T extends Entity> CachedRenderingEntity<T> of(T entity) {
 		return new CachedRenderingEntity<>(entity);
 	}
 
@@ -53,7 +52,7 @@ public class CachedRenderingEntity<T extends Entity> {
 		return entity;
 	}
 
-	public void setEntity(@NotNull T entity) {
+	public void setEntity(T entity) {
 		this.entity = entity;
 		this.factory = null;
 		((EntityAccess) entity).callSetLevel(null);

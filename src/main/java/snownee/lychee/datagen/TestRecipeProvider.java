@@ -11,11 +11,10 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.tags.ItemTags;
 import snownee.kiwi.recipe.SizedIngredient;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
 import snownee.lychee.contextual.SkyDarken;
 
-@NotNullByDefault
+
 public class TestRecipeProvider extends FabricRecipeProvider implements LycheeBuilder {
 	public TestRecipeProvider(
 			FabricDataOutput output,

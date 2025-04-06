@@ -10,6 +10,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
@@ -33,6 +34,7 @@ import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.ItemShapelessRecipeType;
 import snownee.lychee.util.recipe.LycheeRecipeType;
+import snownee.lychee.util.ui.BlankRecipe;
 import snownee.lychee.util.ui.CategoryMetadata;
 
 public final class RecipeTypes {
@@ -43,7 +45,13 @@ public final class RecipeTypes {
 	}
 
 	public static final Set<LycheeRecipeType<? extends ILycheeRecipe<LycheeContext>>> ALL = Sets.newLinkedHashSet();
+
 	public static final RecipeType<CategoryMetadata> CATEGORY_METADATA = register("category_metadata");
+	public static final LycheeRecipeType<BlankRecipe> BLANK = register(new LycheeRecipeType<>(
+			"blank",
+			BlankRecipe.class,
+			LootContextParamSets.EMPTY));
+
 	public static final LycheeRecipeType<ItemBurningRecipe> ITEM_BURNING =
 			register(new LycheeRecipeType<>("item_burning", ItemBurningRecipe.class, null));
 	public static final ItemInsideRecipeType ITEM_INSIDE = register(Util.make(

@@ -1,24 +1,15 @@
 package snownee.lychee.recipes;
 
-import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.IngredientCollection;
@@ -90,23 +81,18 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 
 
 	@Override
-	public @NotNull RecipeSerializer<ItemInsideRecipe> getSerializer() {
+	public LycheeRecipeSerializer<ItemInsideRecipe> getSerializer() {
 		return RecipeSerializers.ITEM_INSIDE;
 	}
 
 	@Override
-	public @NotNull RecipeType<ItemInsideRecipe> getType() {
+	public ItemInsideRecipeType getType() {
 		return RecipeTypes.ITEM_INSIDE;
 	}
 
 	@Override
-	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return ingredients.flattenedIngredients();
-	}
-
-	@Override
-	public List<SizedIngredient> sizedIngredients() {
-		return ingredients.ingredients();
+	public IngredientCollection ingredientCollection() {
+		return ingredients;
 	}
 
 	public static class Serializer implements LycheeRecipeSerializer<ItemInsideRecipe> {
@@ -117,15 +103,8 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 				ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("time", 0).forGetter(ItemInsideRecipe::time),
 				IngredientCollection.codec(1, Integer.MAX_VALUE)
 						.fieldOf(ITEM_IN)
-						.forGetter(it -> it.ingredients)
+						.forGetter(ItemInsideRecipe::ingredientCollection)
 		).apply(instance, ItemInsideRecipe::new)));
-
-		@Override
-		public @NotNull MapCodec<ItemInsideRecipe> codec() {
-			return CODEC;
-		}
-
-
 		public static final StreamCodec<RegistryFriendlyByteBuf, ItemInsideRecipe> STREAM_CODEC =
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
@@ -135,12 +114,17 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 						ByteBufCodecs.VAR_INT,
 						ItemInsideRecipe::time,
 						IngredientCollection.STREAM_CODEC,
-						it -> it.ingredients,
+						ItemInsideRecipe::ingredientCollection,
 						ItemInsideRecipe::new
 				);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, ItemInsideRecipe> streamCodec() {
+		public MapCodec<ItemInsideRecipe> codec() {
+			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, ItemInsideRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

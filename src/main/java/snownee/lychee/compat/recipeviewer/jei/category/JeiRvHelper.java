@@ -13,10 +13,9 @@ import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.compat.recipeviewer.RvHelper;
 
-@NotNullByDefault
+
 public class JeiRvHelper extends RvHelper {
 	public static final JeiRvHelper INSTANCE = new JeiRvHelper();
 	private @Nullable IJeiRuntime runtime;

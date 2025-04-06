@@ -4,10 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.RenderElement;
 
-@NotNullByDefault
+
 public class TextElementRenderer extends RenderElement {
 	public final Component text;
 	public Font font;

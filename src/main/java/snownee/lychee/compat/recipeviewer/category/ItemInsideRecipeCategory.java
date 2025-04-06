@@ -4,14 +4,13 @@ import org.joml.Vector2fc;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.ui.TextElementRenderer;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.VectorExtensions;
 
-@NotNullByDefault
+
 public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRecipe> {
 	public static final Vector2fc INPUT_BLOCK_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.INPUT_BLOCK_POSITION, 54);
 	public static final Vector2fc METHOD_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.METHOD_POSITION, 54);

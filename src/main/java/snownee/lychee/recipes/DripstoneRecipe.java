@@ -18,14 +18,12 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
@@ -50,7 +48,7 @@ import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-@NotNullByDefault
+
 public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe, ChanceRecipe {
 	protected final BlockPredicate sourceBlock;
 	protected final BlockPredicate targetBlock;
@@ -135,7 +133,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 	}
 
 	@Override
-	public RecipeSerializer<DripstoneRecipe> getSerializer() {
+	public LycheeRecipeSerializer<DripstoneRecipe> getSerializer() {
 		return RecipeSerializers.DRIPSTONE_DRIPPING;
 	}
 

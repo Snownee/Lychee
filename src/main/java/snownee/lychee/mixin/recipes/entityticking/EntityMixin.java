@@ -25,6 +25,7 @@ public class EntityMixin implements LycheeEntity {
 	}
 
 	@Override
+	@Nullable
 	public LycheeContext lychee$getContext() {
 		return lychee$context;
 	}

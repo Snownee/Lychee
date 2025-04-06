@@ -17,12 +17,17 @@ import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.recipes.RandomBlockTickingRecipe;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
+import snownee.lychee.util.ui.BlankRecipe;
 import snownee.lychee.util.ui.CategoryMetadata;
 
 public final class RecipeSerializers {
 	public static final RecipeSerializer<CategoryMetadata> CATEGORY_METADATA = register(
 			"category_metadata",
 			new CategoryMetadata.Serializer()
+	);
+	public static final LycheeRecipeSerializer<BlankRecipe> BLANK = register(
+			"blank",
+			new BlankRecipe.Serializer()
 	);
 	public static final LycheeRecipeSerializer<ItemBurningRecipe> ITEM_BURNING = register(
 			"item_burning",
@@ -72,7 +77,7 @@ public final class RecipeSerializers {
 			"crafting",
 			new ShapedCraftingRecipe.Serializer()
 	);
-	public static final RecipeSerializer<EntityTickingRecipe> ENTITY_TICKING = register(
+	public static final LycheeRecipeSerializer<EntityTickingRecipe> ENTITY_TICKING = register(
 			"entity_ticking",
 			new EntityTickingRecipe.Serializer()
 	);

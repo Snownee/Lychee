@@ -179,6 +179,8 @@ jar {
     exclude("/data/${project.mod_id}/recipe")
     exclude("/snownee/${project.mod_id}/datagen/LycheeDataGen.class")
     exclude("/snownee/${project.mod_id}/datagen/TestRecipeProvider.class")
+
+    exclude '**/*.py'
     manifest {
         attributes([
                 "Implementation-Title"    : project.name,

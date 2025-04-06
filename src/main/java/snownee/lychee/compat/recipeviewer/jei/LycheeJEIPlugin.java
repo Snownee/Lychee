@@ -22,7 +22,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.util.KUtil;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.RenderElement;
@@ -42,7 +41,6 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 @REIPluginCompatIgnore
 @JeiPlugin
-@NotNullByDefault
 public class LycheeJEIPlugin implements IModPlugin {
 	public static final ResourceLocation ID = Lychee.id("main");
 	public static final IIngredientType<PostAction> POST_ACTION = () -> PostAction.class;

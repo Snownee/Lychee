@@ -13,10 +13,9 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.util.VectorExtensions;
 
-@NotNullByDefault
+
 public class InteractiveRenderElement extends RenderElement implements GuiEventListener {
 	private final @Nullable Function<InteractiveRenderElement, ScreenElement> renderable;
 	private @Nullable Supplier<@Nullable List<Component>> onTooltip;

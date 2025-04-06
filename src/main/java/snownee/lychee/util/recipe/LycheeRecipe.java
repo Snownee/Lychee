@@ -13,4 +13,10 @@ public abstract class LycheeRecipe<C extends RecipeInput> implements ILycheeReci
 	public LycheeRecipeCommonProperties commonProperties() {
 		return commonProperties;
 	}
+
+	@Override
+	public abstract LycheeRecipeType<?> getType();
+
+	@Override
+	public abstract LycheeRecipeSerializer<?> getSerializer();
 }

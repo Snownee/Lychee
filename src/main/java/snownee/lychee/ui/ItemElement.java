@@ -6,13 +6,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.ui.UIElement;
 import snownee.lychee.util.ui.UIElementCommonProperties;
 import snownee.lychee.util.ui.UIElementType;
 
-@NotNullByDefault
+
 public record ItemElement(UIElementCommonProperties commonProperties, ItemStack itemStack) implements UIElement {
 	public static final MapCodec<ItemElement> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
 			UIElementCommonProperties.CODEC.forGetter(ItemElement::commonProperties),

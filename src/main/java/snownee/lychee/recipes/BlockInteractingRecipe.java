@@ -3,8 +3,6 @@ package snownee.lychee.recipes;
 import java.util.List;
 import java.util.Optional;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.mojang.datafixers.util.Function3;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -20,7 +18,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import snownee.kiwi.recipe.SizedIngredient;
@@ -112,17 +109,17 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 	}
 
 	@Override
-	public @NotNull NonNullList<Ingredient> getIngredients() {
+	public NonNullList<Ingredient> getIngredients() {
 		return NonNullListExtensions.copyOf(input.stream().map(SizedIngredient::ingredient).toList());
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<? extends BlockInteractingRecipe> getSerializer() {
+	public LycheeRecipeSerializer<? extends BlockInteractingRecipe> getSerializer() {
 		return RecipeSerializers.BLOCK_INTERACTING;
 	}
 
 	@Override
-	public @NotNull BlockKeyableRecipeType<? extends BlockInteractingRecipe> getType() {
+	public BlockKeyableRecipeType<? extends BlockInteractingRecipe> getType() {
 		return RecipeTypes.BLOCK_INTERACTING;
 	}
 
@@ -130,7 +127,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		public static MapCodec<BlockInteractingRecipe> CODEC = BlockInteractingRecipe.codec(BlockInteractingRecipe::new);
 
 		@Override
-		public @NotNull MapCodec<BlockInteractingRecipe> codec() {
+		public MapCodec<BlockInteractingRecipe> codec() {
 			return CODEC;
 		}
 
@@ -144,7 +141,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 				BlockInteractingRecipe::new);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, BlockInteractingRecipe> streamCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, BlockInteractingRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

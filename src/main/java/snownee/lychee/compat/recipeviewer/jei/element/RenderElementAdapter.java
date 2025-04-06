@@ -8,11 +8,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 
-@NotNullByDefault
+
 public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener, IDrawable {
 	private final RenderElement element;
 	private final ScreenRectangle bounds;

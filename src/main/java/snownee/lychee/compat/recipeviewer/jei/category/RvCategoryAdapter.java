@@ -32,7 +32,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.material.Fluid;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.client.gui.RenderElement;
@@ -52,7 +51,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-@NotNullByDefault
+
 public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements IRecipeCategory<RecipeHolder<R>> {
 	private final RvCategory<R> rvCategory;
 	private final RecipeType<RecipeHolder<R>> type;

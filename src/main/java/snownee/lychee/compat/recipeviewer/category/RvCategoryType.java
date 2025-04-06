@@ -8,12 +8,11 @@ import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-@NotNullByDefault
+
 public class RvCategoryType<T extends ILycheeRecipe<LycheeContext>> {
 	public static final int WIDTH = 120;
 	public static final int WIDER_WIDTH = WIDTH + 50;

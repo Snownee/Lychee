@@ -14,12 +14,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import snownee.kiwi.recipe.EmptyRecipeInput;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.codec.KeyDispatchedMapMapCodec;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-@NotNullByDefault
+
 @SuppressWarnings("unchecked")
 public class LycheeContext extends EmptyRecipeInput {
 	public static final Codec<LycheeContext> CODEC =
