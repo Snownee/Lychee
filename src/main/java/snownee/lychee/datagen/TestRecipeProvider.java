@@ -35,7 +35,7 @@ public class TestRecipeProvider extends FabricRecipeProvider implements LycheeBu
 				.chance(0.5F)
 				.post(delay(0.5F))
 				.post(place("stone", new BlockPos(0, 2, 0))
-						.condition(new SkyDarken(MinMaxBounds.Ints.ANY, false, true)))
+						.condition(new SkyDarken(MinMaxBounds.Ints.ANY, true)))
 				.export(Lychee.id("datagen_1"), exporter);
 	}
 }

@@ -31,10 +31,10 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
-import snownee.lychee.mixin.predicates.LocationCheckAccess;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.RegistryEntryDisplay;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -360,7 +360,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	public static class Type implements ContextualConditionType<Location> {
 		private static final MapCodec<LocationCheck> LOCATION_CHECK_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				LocationPredicate.CODEC.optionalFieldOf("predicate").forGetter(LocationCheck::predicate),
-				LocationCheckAccess.getOffsetCodec().forGetter(LocationCheck::offset)
+				LycheeCodecs.OFFSET_CODEC.forGetter(LocationCheck::offset)
 		).apply(instance, LocationCheck::new));
 
 		public static final MapCodec<Location> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
