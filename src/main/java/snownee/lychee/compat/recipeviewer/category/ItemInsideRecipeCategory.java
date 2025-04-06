@@ -30,12 +30,12 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 	}
 
 	@Override
-	public void configureDecorations(
+	public void configureDefaultDecorations(
 			RvCategoryWidgetBuilder builder,
 			RecipeHolder<ItemInsideRecipe> recipeHolder,
 			Vector2fc position
 	) {
-		super.configureDecorations(builder, recipeHolder, position);
+		super.configureDefaultDecorations(builder, recipeHolder, position);
 		var recipe = recipeHolder.value();
 		if (recipe.time() > 0) {
 			builder.addElement(new TextElementRenderer(ClientProxy.format("tip.lychee.sec", recipe.time()))

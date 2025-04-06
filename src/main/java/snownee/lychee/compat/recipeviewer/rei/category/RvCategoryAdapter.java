@@ -250,7 +250,10 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				widgets.add(adapter);
 			}
 		};
-		rvCategory.configureDecorations(widgetBuilder, display.recipe(), startPoint);
+		if (rvCategory.renderDefault()) {
+			rvCategory.configureDefaultDecorations(widgetBuilder, display.recipe(), startPoint);
+		}
+		rvCategory.configureCustomDecorations(widgetBuilder, display.recipe(), startPoint);
 
 		return widgets.build();
 	}

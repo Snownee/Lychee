@@ -71,7 +71,7 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2fc position) {
+	public void configureDefaultDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
 
 		if (needInfoIcon(recipe)) {

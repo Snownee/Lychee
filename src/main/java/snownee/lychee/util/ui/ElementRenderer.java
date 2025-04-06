@@ -1,11 +1,14 @@
 package snownee.lychee.util.ui;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
 import com.google.common.collect.Maps;
 
+import net.minecraft.network.chat.Component;
 import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.ui.SpriteElementRenderer;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -29,8 +32,12 @@ public interface ElementRenderer {
 			renderElement = ((Function<UIElement, RenderElement>) function).apply(element);
 		}
 		UIElementCommonProperties properties = element.commonProperties();
-		renderElement.at(properties.x(), properties.y(), properties.z());
-		renderElement.withSize(properties.width(), properties.height());
+		if (properties.tooltip().isPresent()) {
+			InteractiveRenderElement interactiveElement = InteractiveRenderElement.create(renderElement);
+			List<Component> tooltip = properties.tooltip().get();
+			renderElement = interactiveElement.onTooltip(() -> tooltip);
+		}
+		renderElement.at(properties.pos()).withSize(properties.size()).withAlpha(properties.opacity());
 		return renderElement;
 	}
 

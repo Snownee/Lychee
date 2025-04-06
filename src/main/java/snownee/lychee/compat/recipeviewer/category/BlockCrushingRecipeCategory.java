@@ -1,11 +1,12 @@
 package snownee.lychee.compat.recipeviewer.category;
 
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.joml.Vector2f;
-import org.joml.Vector2fc;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
@@ -36,7 +37,7 @@ public class BlockCrushingRecipeCategory extends AbstractRvCategory<BlockCrushin
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2fc position) {
+	public void configureDefaultDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<BlockCrushingRecipe> recipeHolder, Vector2fc position) {
 		var recipe = recipeHolder.value();
 
 		var landingBlockIsAny = BlockPredicateExtensions.isAny(recipe.landingBlock());

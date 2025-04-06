@@ -3,21 +3,17 @@ package snownee.lychee.compat.recipeviewer;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
-import snownee.kiwi.util.KUtil;
-import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
@@ -25,12 +21,10 @@ import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryProviders;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryType;
 import snownee.lychee.compat.recipeviewer.element.SideBlockIcon;
-import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
-import snownee.lychee.util.ui.CategoryMetadata;
 
 public class RvPlugin<Helper extends RvHelper> {
 	private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
@@ -50,6 +44,7 @@ public class RvPlugin<Helper extends RvHelper> {
 
 	public void init() {
 		categoryTypes.clear();
+		rvHelper.init();
 		var categories = Maps.<ResourceLocation, RvCategory<?>>newHashMap();
 		register(
 				RecipeTypes.BLOCK_CRUSHING, type -> {
@@ -67,14 +62,10 @@ public class RvPlugin<Helper extends RvHelper> {
 		register(
 				RecipeTypes.BLOCK_EXPLODING, it -> {
 					it.iconProvider = category -> {
-						var mainIcon = GuiGameElement.of(Items.TNT.getDefaultInstance());
+						var mainIcon = GuiGameElement.of(Items.TNT);
 						return new SideBlockIcon(mainIcon, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
 					};
-					it.setSimpleWorkstationProvider(category ->
-							CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)
-									.stream()
-									.map(ItemStack::new)
-									.toList());
+					it.setSimpleWorkstationProvider(category -> List.of(Items.TNT.getDefaultInstance()));
 				});
 		register(
 				RecipeTypes.BLOCK_INTERACTING, type -> {
@@ -105,12 +96,7 @@ public class RvPlugin<Helper extends RvHelper> {
 				RecipeTypes.ITEM_EXPLODING, it -> {
 					it.width = RvCategoryType.WIDER_WIDTH;
 					it.iconProvider = category -> GuiGameElement.of(Items.TNT);
-					it.setSimpleWorkstationProvider(category -> CommonProxy.tagElements(
-									BuiltInRegistries.ITEM,
-									LycheeTags.ITEM_EXPLODING_CATALYSTS)
-							.stream()
-							.map(ItemStack::new)
-							.toList());
+					it.setSimpleWorkstationProvider(category -> List.of(Items.TNT.getDefaultInstance()));
 				});
 		register(
 				RecipeTypes.ITEM_BURNING, it -> {
@@ -125,8 +111,6 @@ public class RvPlugin<Helper extends RvHelper> {
 							Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
 				});
 
-		List<RecipeHolder<CategoryMetadata>> metadataList = KUtil.getRecipes(RecipeTypes.CATEGORY_METADATA);
-
 		for (var recipeType : RecipeTypes.ALL) {
 			var provider = RvCategoryProviders.get(recipeType.categoryId);
 			if (provider == null) {
@@ -134,19 +118,7 @@ public class RvPlugin<Helper extends RvHelper> {
 			}
 
 			//noinspection unchecked
-			var factory = provider.get((RvCategoryType<ILycheeRecipe<LycheeContext>>) categoryTypes.get(recipeType.categoryId), rvHelper)
-					.andThen(it -> {
-						String id = it.id().toString();
-						for (RecipeHolder<CategoryMetadata> metadata : metadataList) {
-							for (Pattern pattern : metadata.value().categoryPattern()) {
-								if (pattern.matcher(id).matches()) {
-									it.setMetadata(metadata.value());
-									return it;
-								}
-							}
-						}
-						return it;
-					});
+			var factory = provider.get((RvCategoryType<ILycheeRecipe<LycheeContext>>) categoryTypes.get(recipeType.categoryId), rvHelper);
 			for (var recipe : recipeType.inViewerRecipes()) {
 				var id = RVs.composeCategoryIdentifier(recipeType.categoryId, ResourceLocation.parse(recipe.value().group()));
 				//noinspection unchecked,rawtypes

@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.collect.Streams;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -16,7 +15,6 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -224,23 +222,8 @@ public class CommonProxy {
 		return v;
 	}
 
-	public static <T> List<T> tagElements(Registry<T> registry, TagKey<T> tag) {
-		return Streams.stream(registry.getTagOrEmpty(tag)).map(Holder::value).toList();
-	}
-
 	public static boolean isSimpleIngredient(Ingredient ingredient) {
 		return ingredient.isSimple();
-	}
-
-	public static void itemstackToJson(ItemStack stack, JsonObject jsonObject) {
-		jsonObject.addProperty("item", BuiltInRegistries.ITEM.getKey(stack.getItem()).toString());
-		if (!stack.getComponents().isEmpty()) {
-			// TODO
-			jsonObject.addProperty("nbt", stack.getComponents().toString());
-		}
-		if (stack.getCount() > 1) {
-			jsonObject.addProperty("count", stack.getCount());
-		}
 	}
 
 	public static JsonObject tagToJson(CompoundTag tag) {

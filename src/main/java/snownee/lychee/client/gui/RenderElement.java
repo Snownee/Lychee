@@ -7,6 +7,7 @@ import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
+import org.joml.Vector3fc;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -14,16 +15,15 @@ import snownee.lychee.util.ui.UIElementCommonProperties;
 
 public abstract class RenderElement implements ScreenElement, Renderable {
 
-	public Vector2i size = new Vector2i(UIElementCommonProperties.DEFAULT_SIZE, UIElementCommonProperties.DEFAULT_SIZE);
-
-	public Vector2f position = new Vector2f();
-
 	public static RenderElement empty() {
 		return new RenderElement() {
 			@Override
 			public void render(GuiGraphics graphics) {}
 		};
 	}
+
+	public Vector2f position = new Vector2f();
+	public Vector2i size = new Vector2i(UIElementCommonProperties.DEFAULT_SIZE);
 	protected float z = 0;
 
 	public static RenderElement create(BiConsumer<GuiGraphics, RenderElement> renderable) {
@@ -47,9 +47,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public <T extends RenderElement> T at(Vector2fc position) {
-		this.position.set(position);
-		//noinspection unchecked
-		return (T) this;
+		return at(position.x(), position.y());
 	}
 
 	public <T extends RenderElement> T offset(float x, float y) {
@@ -59,9 +57,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public <T extends RenderElement> T offset(Vector2fc position) {
-		this.position.add(position);
-		//noinspection unchecked
-		return (T) this;
+		return offset(position.x(), position.y());
 	}
 
 	public <T extends RenderElement> T at(float x, float y, float z) {
@@ -69,6 +65,10 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 		this.z = z;
 		//noinspection unchecked
 		return (T) this;
+	}
+
+	public <T extends RenderElement> T at(Vector3fc position) {
+		return at(position.x(), position.y(), position.z());
 	}
 
 	public <T extends RenderElement> T atZ(float z) {
@@ -85,9 +85,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public <T extends RenderElement> T withSize(Vector2ic size) {
-		this.size.set(size);
-		//noinspection unchecked
-		return (T) this;
+		return withSize(size.x(), size.y());
 	}
 
 	public <T extends RenderElement> T withSize(int size) {
