@@ -14,7 +14,6 @@ public record Job(PostAction action, int times) {
 					Codec.INT.fieldOf("times").forGetter(Job::times)
 			).apply(instance, Job::new));
 
-
 	public void apply(LycheeContext context) {
 		var recipe = context.getOrNull(LycheeContextKey.RECIPE);
 		var times = action.test(recipe, context, this.times);

@@ -40,7 +40,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 			final LycheeRecipeType<T> recipeType,
 			final Iterable<RecipeHolder<T>> recipes,
 			final LycheeContext context,
-			final Predicate<RecipeHolder<T>> predicate
+			final @Nullable Predicate<RecipeHolder<T>> predicate
 	) {
 		var matchedAny = false;
 		var loop = 0;
@@ -82,7 +82,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 						}
 						match.get().value().applyPostActions(context, times);
 						if (matcher.isPresent()) {
-							itemShapelessContext.totalItems -= context.getOrNull(LycheeContextKey.ITEM).postApply(
+							itemShapelessContext.totalItems -= context.get(LycheeContextKey.ITEM).postApply(
 									!actionContext.avoidDefault,
 									times);
 						}

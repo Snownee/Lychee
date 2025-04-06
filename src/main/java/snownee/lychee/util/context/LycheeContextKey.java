@@ -102,7 +102,7 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	}
 
 	public static <T> LycheeContextKey.Optional<T> opt(String name, @Nullable Function<LycheeContext, T> factory) {
-		return register(new LycheeContextKey.Optional<>(Lychee.id(name), factory));
+		return register(new LycheeContextKey.Optional<>(ResourceLocation.parse(name), factory));
 	}
 
 	public static <T> LycheeContextKey.Required<T> req(String name) {
@@ -110,7 +110,7 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	}
 
 	public static <T> LycheeContextKey.Required<T> req(String name, @Nullable Function<LycheeContext, T> factory) {
-		return register(new LycheeContextKey.Required<>(Lychee.id(name), factory));
+		return register(new LycheeContextKey.Required<>(ResourceLocation.parse(name), factory));
 	}
 
 	public @Nullable Codec<T> codec() {

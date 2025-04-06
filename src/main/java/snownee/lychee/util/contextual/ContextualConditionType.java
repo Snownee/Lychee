@@ -8,7 +8,6 @@ import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.contextual.And;
 import snownee.lychee.contextual.Chance;
-import snownee.lychee.contextual.CheckParam;
 import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.contextual.DirectionCheck;
 import snownee.lychee.contextual.EntityHealth;
@@ -21,6 +20,7 @@ import snownee.lychee.contextual.IsWeather;
 import snownee.lychee.contextual.Location;
 import snownee.lychee.contextual.Not;
 import snownee.lychee.contextual.Or;
+import snownee.lychee.contextual.Param;
 import snownee.lychee.contextual.SkyDarken;
 import snownee.lychee.contextual.Time;
 import snownee.lychee.util.SerializableType;
@@ -47,8 +47,7 @@ public interface ContextualConditionType<T extends ContextualCondition> extends 
 			register("is_sneaking", new IsSneaking.Type());
 	ContextualConditionType<DirectionCheck> DIRECTION =
 			register("direction", new DirectionCheck.Type());
-	ContextualConditionType<CheckParam> CHECK_PARAM =
-			register("check_param", new CheckParam.Type());
+	ContextualConditionType<Param> PARAM = register("param", new Param.Type());
 	ContextualConditionType<IsOffItemCooldown> IS_OFF_ITEM_COOLDOWN =
 			register("is_off_item_cooldown", new IsOffItemCooldown.Type());
 	ContextualConditionType<SkyDarken> SKY_DARKEN = register("sky_darken", new SkyDarken.Type());
