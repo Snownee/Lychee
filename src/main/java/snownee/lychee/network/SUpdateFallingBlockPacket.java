@@ -18,11 +18,10 @@ import snownee.kiwi.network.KPacketSender;
 import snownee.kiwi.network.KiwiPacket;
 import snownee.kiwi.network.PayloadContext;
 import snownee.kiwi.network.PlayPacketHandler;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
 
 @KiwiPacket
-@NotNullByDefault
+
 public record SUpdateFallingBlockPacket(
 		int entityId, BlockState blockState, Optional<CompoundTag> blockData) implements CustomPacketPayload {
 	public static final Type<CSetCosmeticPacket> TYPE = new Type<>(Lychee.id("update_falling_block"));

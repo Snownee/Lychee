@@ -13,7 +13,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.Lychee;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.client.gui.AllGuiTextures;
@@ -30,7 +29,7 @@ import snownee.lychee.util.ui.CategoryMetadata;
 import snownee.lychee.util.ui.ElementRenderer;
 import snownee.lychee.util.ui.UIElement;
 
-@NotNullByDefault
+
 public abstract class AbstractRvCategory<R extends ILycheeRecipe<LycheeContext>> implements RvCategory<R> {
 	private final RvCategoryType<R> type;
 	private final RvHelper rvHelper;

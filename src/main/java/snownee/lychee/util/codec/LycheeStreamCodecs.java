@@ -5,9 +5,8 @@ import java.util.function.Function;
 import com.mojang.datafixers.util.Function7;
 
 import net.minecraft.network.codec.StreamCodec;
-import snownee.kiwi.util.NotNullByDefault;
 
-@NotNullByDefault
+
 public interface LycheeStreamCodecs {
 	static <B, V> StreamCodec<B, V> uncheckedUnit(V object) {
 		return new StreamCodec<>() {

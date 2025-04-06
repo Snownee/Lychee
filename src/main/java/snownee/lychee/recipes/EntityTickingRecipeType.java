@@ -17,7 +17,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.util.LycheeEntity;
 import snownee.lychee.util.LycheeEntityType;
@@ -25,7 +24,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-@NotNullByDefault
+
 public class EntityTickingRecipeType extends LycheeRecipeType<EntityTickingRecipe> {
 	private static final Set<LycheeContextKey<?>> PRESERVED_KEYS = Set.of(LycheeContextKey.LEVEL, LycheeContextKey.LOOT_PARAMS);
 

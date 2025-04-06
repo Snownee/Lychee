@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.Blocks;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
+import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryProviders;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryType;
@@ -46,13 +47,14 @@ public class RvPlugin<Helper extends RvHelper> {
 		categoryTypes.clear();
 		rvHelper.init();
 		var categories = Maps.<ResourceLocation, RvCategory<?>>newHashMap();
+		register(RecipeTypes.BLANK, it -> it.iconProvider = category -> RenderElement.empty());
 		register(
-				RecipeTypes.BLOCK_CRUSHING, type -> {
-					type.width = RvCategoryType.WIDER_WIDTH;
-					type.iconProvider = category -> GuiGameElement.of(Items.ANVIL);
-					type.setSimpleWorkstationProvider(category -> category.recipes().stream()
-							.map(it -> it.value().blockPredicate())
-							.filter(it -> !BlockPredicateExtensions.isAny(it))
+				RecipeTypes.BLOCK_CRUSHING, it -> {
+					it.width = RvCategoryType.WIDER_WIDTH;
+					it.iconProvider = category -> GuiGameElement.of(Items.ANVIL);
+					it.setSimpleWorkstationProvider(category -> category.recipes().stream()
+							.map($ -> $.value().blockPredicate())
+							.filter($ -> !BlockPredicateExtensions.isAny($))
 							.distinct()
 							.flatMap($ -> BlockPredicateExtensions.matchedBlocks($).stream())
 							.distinct()
@@ -72,8 +74,8 @@ public class RvPlugin<Helper extends RvHelper> {
 					type.width += 30;
 					type.iconProvider = category -> {
 						var mainIcon = category.recipes().stream()
-								.map(it -> it.value().getType())
-								.anyMatch(it -> it == RecipeTypes.BLOCK_INTERACTING)
+								.map($ -> $.value().getType())
+								.anyMatch($ -> $ == RecipeTypes.BLOCK_INTERACTING)
 								? AllGuiTextures.RIGHT_CLICK
 								: AllGuiTextures.LEFT_CLICK;
 						return new SideBlockIcon(mainIcon, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));

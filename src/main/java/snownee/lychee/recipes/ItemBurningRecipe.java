@@ -2,8 +2,6 @@ package snownee.lychee.recipes;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -13,7 +11,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.kiwi.recipe.SizedIngredient;
@@ -67,7 +64,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public @NotNull NonNullList<Ingredient> getIngredients() {
+	public NonNullList<Ingredient> getIngredients() {
 		return NonNullListExtensions.copyOf(List.of(input.ingredient()));
 	}
 
@@ -77,12 +74,12 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<ItemBurningRecipe> getSerializer() {
+	public LycheeRecipeSerializer<ItemBurningRecipe> getSerializer() {
 		return RecipeSerializers.ITEM_BURNING;
 	}
 
 	@Override
-	public @NotNull LycheeRecipeType<ItemBurningRecipe> getType() {
+	public LycheeRecipeType<ItemBurningRecipe> getType() {
 		return RecipeTypes.ITEM_BURNING;
 	}
 
@@ -94,7 +91,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 				).apply(instance, ItemBurningRecipe::new));
 
 		@Override
-		public @NotNull MapCodec<ItemBurningRecipe> codec() {
+		public MapCodec<ItemBurningRecipe> codec() {
 			return CODEC;
 		}
 
@@ -109,7 +106,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 				);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, ItemBurningRecipe> streamCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, ItemBurningRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

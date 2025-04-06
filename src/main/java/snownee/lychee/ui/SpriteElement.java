@@ -8,12 +8,11 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.util.ui.UIElement;
 import snownee.lychee.util.ui.UIElementCommonProperties;
 import snownee.lychee.util.ui.UIElementType;
 
-@NotNullByDefault
+
 public record SpriteElement(UIElementCommonProperties commonProperties, ResourceLocation id, float scale) implements UIElement {
 	public static final MapCodec<SpriteElement> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
 			UIElementCommonProperties.CODEC.forGetter(SpriteElement::commonProperties),

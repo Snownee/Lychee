@@ -9,9 +9,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.context.LycheeContext;
@@ -20,7 +18,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-@NotNullByDefault
+
 public class EntityTickingRecipe extends LycheeRecipe<LycheeContext> {
 	private final EntityPredicate predicate;
 	private final EntityPredicate withoutTypePredicate;
@@ -52,7 +50,7 @@ public class EntityTickingRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public RecipeSerializer<EntityTickingRecipe> getSerializer() {
+	public LycheeRecipeSerializer<EntityTickingRecipe> getSerializer() {
 		return RecipeSerializers.ENTITY_TICKING;
 	}
 

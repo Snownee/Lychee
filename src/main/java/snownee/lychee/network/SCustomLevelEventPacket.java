@@ -1,6 +1,5 @@
 package snownee.lychee.network;
 
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import net.minecraft.client.Minecraft;
@@ -33,7 +32,7 @@ public record SCustomLevelEventPacket(ItemStack stack, Vector3f pos) implements 
 	}
 
 	@Override
-	public @NotNull Type<? extends CustomPacketPayload> type() {
+	public Type<? extends CustomPacketPayload> type() {
 		return TYPE;
 	}
 

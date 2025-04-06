@@ -8,11 +8,10 @@ import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
 import me.shedaniel.rei.api.client.gui.widgets.WidgetWithBounds;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 
-@NotNullByDefault
+
 public class RenderElementAdapter extends WidgetWithBounds {
 	private final RenderElement element;
 	private final Rectangle bounds;

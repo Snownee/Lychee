@@ -11,10 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 
-@NotNullByDefault
+
 public record AnvilCraftingDisplay(
 		RecipeHolder<AnvilCraftingRecipe> recipeHolder,
 		List<ItemStack> left,

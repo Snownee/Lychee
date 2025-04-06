@@ -171,7 +171,7 @@ jar {
     exclude("/snownee/${project.mod_id}/datagen/LycheeDataGen.class")
     exclude("/snownee/${project.mod_id}/datagen/TestRecipeProvider.class")
 
-    exclude '**/*.bat'
+    exclude '**/*.py'
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}" }
     }

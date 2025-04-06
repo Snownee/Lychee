@@ -13,12 +13,11 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.compat.recipeviewer.category.AbstractRvCategory;
 import snownee.lychee.compat.recipeviewer.jei.element.RenderElementAdapter;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 
-@NotNullByDefault
+
 public class CraftingRecipeCategoryExtension implements ICraftingCategoryExtension<ShapedCraftingRecipe> {
 
 	private static final Vector2fc INFO_POSITION = new Vector2f(67, 11);

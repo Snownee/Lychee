@@ -8,13 +8,12 @@ import mezz.jei.api.ingredients.IIngredientHelper;
 import mezz.jei.api.ingredients.IIngredientType;
 import mezz.jei.api.ingredients.subtypes.UidContext;
 import net.minecraft.resources.ResourceLocation;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.compat.recipeviewer.jei.LycheeJEIPlugin;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
 
-@NotNullByDefault
+
 public class PostActionIngredientHelper implements IIngredientHelper<PostAction> {
 
 	@Override

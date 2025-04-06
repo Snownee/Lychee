@@ -26,14 +26,13 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.kiwi.recipe.EmptyRecipeInput;
 import snownee.kiwi.recipe.SimpleRecipe;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.VectorExtensions;
 
-@NotNullByDefault
+
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class CategoryMetadata extends SimpleRecipe<EmptyRecipeInput> {
 	public static final RecipeHolder<CategoryMetadata> EMPTY = new RecipeHolder<>(
@@ -125,7 +124,7 @@ public class CategoryMetadata extends SimpleRecipe<EmptyRecipeInput> {
 		return renderDefault;
 	}
 
-	@NotNullByDefault
+	
 	public static class Serializer implements RecipeSerializer<CategoryMetadata> {
 		public static final MapCodec<CategoryMetadata> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				ExtraCodecs.nonEmptyList(KCodecs.compactList(ExtraCodecs.NON_EMPTY_STRING))

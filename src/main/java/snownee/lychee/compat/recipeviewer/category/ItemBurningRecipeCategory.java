@@ -5,12 +5,11 @@ import org.joml.Vector2fc;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.util.VectorExtensions;
 
-@NotNullByDefault
+
 public class ItemBurningRecipeCategory extends ItemAndBlockCategory<ItemBurningRecipe> {
 	private static final Vector2fc INPUT_BLOCK_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.INPUT_BLOCK_POSITION, 12);
 	private static final Vector2fc METHOD_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.METHOD_POSITION, 12);
