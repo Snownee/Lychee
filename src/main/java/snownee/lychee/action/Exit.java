@@ -12,15 +12,11 @@ import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
-import snownee.lychee.util.codec.LycheeStreamCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Exit(PostActionCommonProperties commonProperties) implements PostAction {
-
-	public static final Exit CLIENT_DUMMY = new Exit();
-
 	public Exit() {
 		this(PostActionCommonProperties.EMPTY);
 	}
@@ -44,6 +40,9 @@ public record Exit(PostActionCommonProperties commonProperties) implements PostA
 		public static final MapCodec<Exit> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(Exit::commonProperties)
 		).apply(instance, Exit::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, Exit> STREAM_CODEC = PostActionCommonProperties.STREAM_CODEC.map(
+				Exit::new,
+				Exit::commonProperties);
 
 		@Override
 		public MapCodec<Exit> codec() {
@@ -52,7 +51,7 @@ public record Exit(PostActionCommonProperties commonProperties) implements PostA
 
 		@Override
 		public StreamCodec<RegistryFriendlyByteBuf, Exit> streamCodec() {
-			return LycheeStreamCodecs.uncheckedUnit(CLIENT_DUMMY);
+			return STREAM_CODEC;
 		}
 	}
 }

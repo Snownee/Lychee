@@ -7,7 +7,9 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -71,10 +73,21 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStack st
 						PostActionCommonProperties.MAP_CODEC.forGetter(DropItem::commonProperties),
 						LycheeCodecs.NONEMPTY_ITEM_STACK_MAP_CODEC.forGetter(it -> it.stack)
 				).apply(instance, DropItem::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, DropItem> STREAM_CODEC = StreamCodec.composite(
+				PostActionCommonProperties.STREAM_CODEC,
+				DropItem::commonProperties,
+				ItemStack.STREAM_CODEC,
+				DropItem::stack,
+				DropItem::new);
 
 		@Override
 		public MapCodec<DropItem> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, DropItem> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

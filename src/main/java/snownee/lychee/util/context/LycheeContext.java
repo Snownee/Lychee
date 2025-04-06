@@ -46,6 +46,13 @@ public class LycheeContext extends EmptyRecipeInput {
 		this.context = context;
 	}
 
+	public boolean has(LycheeContextKey<?> key, boolean createIfAbsent) {
+		if (createIfAbsent && key.factory != null) {
+			context.computeIfAbsent(key, it -> it.factory.apply(this));
+		}
+		return context.get(key) != null;
+	}
+
 	@Nullable
 	public <T> T getOrNull(LycheeContextKey.Optional<T> key) {
 		return (T) context.get(key);

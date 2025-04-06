@@ -78,7 +78,7 @@ public class CustomCondition implements ContextualCondition {
 	}
 
 	public static class Type implements ContextualConditionType<CustomCondition> {
-		// TODO 需要测试能不能用
+		// TODO 需要测试
 		public static final MapCodec<CustomCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				Codec.STRING.fieldOf("id").forGetter(CustomCondition::id),
 				ExtraCodecs.JSON.comapFlatMap(it -> {

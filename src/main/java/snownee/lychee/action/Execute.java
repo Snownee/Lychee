@@ -10,7 +10,6 @@ import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -89,9 +88,7 @@ public record Execute(PostActionCommonProperties commonProperties, String comman
 		public static final StreamCodec<RegistryFriendlyByteBuf, Execute> STREAM_CODEC = StreamCodec.composite(
 				PostActionCommonProperties.STREAM_CODEC,
 				Execute::commonProperties,
-				ByteBufCodecs.BOOL,
-				Execute::repeat,
-				(properties, repeat) -> new Execute(properties, "", repeat));
+				properties -> new Execute(properties, "", false));
 
 		@Override
 		public MapCodec<Execute> codec() {

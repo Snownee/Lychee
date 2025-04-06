@@ -76,6 +76,9 @@ public class MarkerMixin implements ActionMarker {
 		}
 		lychee$data = result.getOrThrow();
 		var context = lychee$data.getContext();
+		if (context.has(LycheeContextKey.RECIPE_ID, false)) {
+			context.has(LycheeContextKey.RECIPE, true);
+		}
 		context.put(LycheeContextKey.MARKER, this);
 		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		lootParams.setParam(LootContextParams.ORIGIN, lychee$self().position());

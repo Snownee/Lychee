@@ -8,10 +8,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
@@ -45,7 +49,7 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 		int size = difficulties.size();
 		if (size == 1) {
 			return Component.translatable(
-					key, difficulties.get(0).getDisplayName().copy().withStyle(ChatFormatting.WHITE));
+					key, difficulties.getFirst().getDisplayName().copy().withStyle(ChatFormatting.WHITE));
 		} else {
 			key += ".more";
 
@@ -53,18 +57,14 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 					.map(it -> it.getDisplayName().copy().withStyle(ChatFormatting.WHITE))
 					.toList();
 
-			var component = Component.empty().append(components.get(0));
+			var component = Component.empty().append(components.getFirst());
 
 			for (int i = 1; i < size - 1; i++) {
 				component.append(", ");
 				component.append(components.get(i));
 			}
 
-			return Component.translatable(
-					key,
-					component,
-					components.get(size - 1)
-			);
+			return Component.translatable(key, component, components.get(size - 1));
 		}
 	}
 
@@ -79,9 +79,21 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 						.forGetter(IsDifficulty::difficulties)
 		).apply(instance, IsDifficulty::new));
 
+		public static final StreamCodec<ByteBuf, Difficulty> DIFFICULTY_STREAM_CODEC = ByteBufCodecs.idMapper(
+				Difficulty.BY_ID,
+				Difficulty::getId);
+
+		public static final StreamCodec<ByteBuf, IsDifficulty> STREAM_CODEC =
+				DIFFICULTY_STREAM_CODEC.apply(ByteBufCodecs.list()).map(IsDifficulty::new, IsDifficulty::difficulties);
+
 		@Override
 		public MapCodec<IsDifficulty> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, IsDifficulty> streamCodec() {
+			return STREAM_CODEC.cast();
 		}
 	}
 }

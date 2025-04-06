@@ -34,3 +34,5 @@ accessible field net/minecraft/client/renderer/RenderStateShard POSITION_TEX_SHA
 accessible field net/minecraft/client/renderer/RenderStateShard TRANSLUCENT_TRANSPARENCY Lnet/minecraft/client/renderer/RenderStateShard$TransparencyStateShard;
 
 accessible field net/minecraft/world/entity/item/FallingBlockEntity blockState Lnet/minecraft/world/level/block/state/BlockState;
+
+accessible field net/minecraft/world/Difficulty BY_ID Ljava/util/function/IntFunction;

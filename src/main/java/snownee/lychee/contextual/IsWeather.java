@@ -9,10 +9,14 @@ import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
+import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.context.LycheeContext;
@@ -58,10 +62,18 @@ public record IsWeather(String id, Predicate<Level> predicate) implements Contex
 
 	public static class Type implements ContextualConditionType<IsWeather> {
 		public static final MapCodec<IsWeather> CODEC = Codec.stringResolver(IsWeather::id, IsWeather.REGISTRY::get).fieldOf("weather");
+		public static final StreamCodec<ByteBuf, IsWeather> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(
+				IsWeather.REGISTRY::get,
+				IsWeather::id);
 
 		@Override
 		public MapCodec<IsWeather> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, IsWeather> streamCodec() {
+			return STREAM_CODEC.cast();
 		}
 	}
 }
