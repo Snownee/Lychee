@@ -37,13 +37,12 @@ import snownee.lychee.action.RandomSelect;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.SlotType;
-import snownee.lychee.compat.recipeviewer.category.RvCategory;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryLayoutBuilder;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryWidgetBuilder;
 import snownee.lychee.compat.recipeviewer.jei.LycheeJEIPlugin;
 import snownee.lychee.compat.recipeviewer.jei.element.RenderElementAdapter;
 import snownee.lychee.compat.recipeviewer.jei.ingredient.PostActionIngredientRenderer;
-import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
@@ -53,14 +52,14 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 
 public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements IRecipeCategory<RecipeHolder<R>> {
-	private final RvCategory<R> rvCategory;
+	private final RvCategoryInstance<R> instance;
 	private final RecipeType<RecipeHolder<R>> type;
 	private final IDrawable icon;
 
-	public RvCategoryAdapter(RvCategory<R> rvCategory) {
-		this.rvCategory = rvCategory;
-		this.type = RecipeType.createRecipeHolderType(rvCategory.id());
-		this.icon = new RenderElementAdapter(rvCategory.icon());
+	public RvCategoryAdapter(RvCategoryInstance<R> instance) {
+		this.instance = instance;
+		this.type = RecipeType.createRecipeHolderType(instance.id());
+		this.icon = new RenderElementAdapter(instance.icon());
 	}
 
 	private void addBlockIngredients(IRecipeLayoutBuilder builder, ILycheeRecipe<LycheeContext> recipe) {
@@ -77,7 +76,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				acceptor.addItemStacks(items);
 				fluids.forEach(fluid -> acceptor.addFluidStack(
 						fluid,
-						((JeiRvHelper) rvCategory.rvHelper()).jeiHelpers().getPlatformFluidHelper().bucketVolume()));
+						((JeiRvHelper) instance.helper()).jeiHelpers().getPlatformFluidHelper().bucketVolume()));
 			}
 		}
 	}
@@ -148,7 +147,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 								@Override
 								public void getTooltip(ITooltipBuilder tooltip, ItemStack ingredient, TooltipFlag tooltipFlag) {
-									IIngredientManager ingredientManager = ((JeiRvHelper) rvCategory.rvHelper()).jeiHelpers()
+									IIngredientManager ingredientManager = ((JeiRvHelper) instance.helper()).jeiHelpers()
 											.getIngredientManager();
 									ingredientManager.getIngredientRenderer(ingredient).getTooltip(tooltip, ingredient, tooltipFlag);
 								}
@@ -186,7 +185,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	@Override
 	public Component getTitle() {
-		return rvCategory.title();
+		return instance.title();
 	}
 
 	@Override
@@ -196,12 +195,12 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	@Override
 	public int getWidth() {
-		return rvCategory.width();
+		return instance.width();
 	}
 
 	@Override
 	public int getHeight() {
-		return rvCategory.height();
+		return instance.height();
 	}
 
 	private void actionGroup(IRecipeLayoutBuilder builder, R recipe, float x, float y) {
@@ -227,7 +226,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<R> recipeHolder, IFocusGroup focuses) {
-		var layoutBuilder = new RvCategoryLayoutBuilder() {
+		var layoutBuilder = new RvCategoryLayoutBuilder(instance) {
 			@Override
 			public void actionGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
 				RvCategoryAdapter.this.actionGroup(builder, recipeHolder.value(), position.x(), position.y());
@@ -238,14 +237,14 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				RvCategoryAdapter.this.ingredientGroup(builder, recipeHolder.value(), position.x(), position.y());
 			}
 		};
-		rvCategory.configureLayout(layoutBuilder, recipeHolder, VectorExtensions.ZERO2F);
+		instance.type().configureLayout(layoutBuilder, recipeHolder);
 		addBlockIngredients(builder, recipeHolder.value());
 	}
 
 	@Override
 	public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<R> recipe, IFocusGroup focuses) {
 		IRecipeCategory.super.createRecipeExtras(builder, recipe, focuses);
-		var widgetBuilder = new RvCategoryWidgetBuilder() {
+		var widgetBuilder = new RvCategoryWidgetBuilder(instance) {
 			@Override
 			public void addElement(RenderElement element) {
 				var adapter = new RenderElementAdapter(element);
@@ -255,10 +254,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				}
 			}
 		};
-		if (rvCategory.renderDefault()) {
-			rvCategory.configureDefaultDecorations(widgetBuilder, recipe, VectorExtensions.ZERO2F);
-		}
-		rvCategory.configureCustomDecorations(widgetBuilder, recipe, VectorExtensions.ZERO2F);
+		instance.configureDecorations(widgetBuilder, recipe);
 	}
 
 	@FunctionalInterface

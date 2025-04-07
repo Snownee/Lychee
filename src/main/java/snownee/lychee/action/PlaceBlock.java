@@ -177,7 +177,7 @@ public record PlaceBlock(
 	public static class Type implements PostActionType<PlaceBlock> {
 		public static final MapCodec<PlaceBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(PlaceBlock::commonProperties),
-				BlockPredicateExtensions.CODEC.optionalFieldOf("block", BlockPredicateExtensions.ANY).forGetter(PlaceBlock::block),
+				BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(PlaceBlock::block),
 				LycheeCodecs.OFFSET_CODEC.forGetter(PlaceBlock::offset)).apply(instance, PlaceBlock::new));
 
 		public static final StreamCodec<RegistryFriendlyByteBuf, PlaceBlock> STREAM_CODEC = StreamCodec.composite(

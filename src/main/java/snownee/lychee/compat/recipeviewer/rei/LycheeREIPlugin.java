@@ -29,8 +29,8 @@ import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.compat.recipeviewer.RvPlugin;
 import snownee.lychee.compat.recipeviewer.SlotType;
-import snownee.lychee.compat.recipeviewer.category.AbstractRvCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategory;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.rei.category.ReiRvHelper;
 import snownee.lychee.compat.recipeviewer.rei.category.RvCategoryAdapter;
 import snownee.lychee.compat.recipeviewer.rei.display.AnvilCraftingDisplay;
@@ -57,11 +57,11 @@ public class LycheeREIPlugin implements REIClientPlugin {
 
 	@Override
 	public void registerDisplays(DisplayRegistry registry) {
-		for (RvCategory<?> rvCategory : rvPlugin.categories().values()) {
-			var displayRegister = DisplayRegisters.get(rvCategory.type().id);
-			var id = CategoryIdentifier.<LycheeDisplay<ILycheeRecipe<LycheeContext>>>of(rvCategory.id());
+		for (RvCategoryInstance<?> instance : rvPlugin.categories().values()) {
+			var displayRegister = DisplayRegisters.get(instance.type().id);
+			var id = CategoryIdentifier.<LycheeDisplay<ILycheeRecipe<LycheeContext>>>of(instance.id());
 			//noinspection unchecked
-			displayRegister.consume(registry, id, (RvCategory<ILycheeRecipe<LycheeContext>>) rvCategory);
+			displayRegister.consume(registry, id, (RvCategoryInstance<ILycheeRecipe<LycheeContext>>) instance);
 		}
 
 		try {
@@ -114,11 +114,10 @@ public class LycheeREIPlugin implements REIClientPlugin {
 								break;
 							}
 						}
-						if (infoPosition != null && AbstractRvCategory.needInfoIcon(lycheeDisplay.recipe().value())) {
+						if (infoPosition != null && RvCategory.needInfo(lycheeDisplay.recipe().value())) {
 							widgets.add(new RenderElementAdapter(
-									AbstractRvCategory.getRecipeInfoIcon(lycheeDisplay.recipe())
-											.at(infoPosition)
-											.offset(bounds.x, bounds.y)));
+									RvCategory.infoIcon(lycheeDisplay.recipe()).at(infoPosition),
+									bounds.getLocation()));
 						}
 						return widgets;
 					}

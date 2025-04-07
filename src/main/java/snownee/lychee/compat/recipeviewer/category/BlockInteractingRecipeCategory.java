@@ -8,12 +8,9 @@ import org.joml.Vector2fc;
 import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.InteractiveRenderElement;
-import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.util.VectorExtensions;
 
@@ -26,27 +23,24 @@ public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockIn
 
 	public static final Vector2fc INFO_POSITION = new Vector2f(INPUT_INGREDIENT_X - 4, 40);
 
-	public BlockInteractingRecipeCategory(
-			RvCategoryType<BlockInteractingRecipe> type,
-			ResourceLocation id,
-			RvHelper rvHandler
-	) {
-		super(type, id, rvHandler);
+	@Override
+	public void setupDecorations(DecorationMapBuilder<BlockInteractingRecipe> mapBuilder) {
+		super.setupDecorations(mapBuilder);
+		mapBuilder.put(
+				"method", (builder, recipeHolder) -> {
+					var recipe = recipeHolder.value();
+					var icon = recipe.getType() == RecipeTypes.BLOCK_CLICKING ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
+					builder.addElement(InteractiveRenderElement.create(icon)
+							.onTooltip(() -> List.of(Component.translatable(Util.makeDescriptionId(
+									"tip",
+									BuiltInRegistries.RECIPE_SERIALIZER.getKey(recipe.getSerializer())))))
+							.withSize(16)
+							.at(methodPosition()));
+				});
 	}
 
 	@Override
-	protected RenderElement getMethodElement(BlockInteractingRecipe recipe) {
-		var icon = recipe.getType() == RecipeTypes.BLOCK_CLICKING ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
-		return InteractiveRenderElement.create(icon)
-				.onTooltip(() -> List.of(Component.translatable(Util.makeDescriptionId(
-						"tip",
-						BuiltInRegistries.RECIPE_SERIALIZER.getKey(recipe.getSerializer())))))
-				.withSize(16)
-				.at(methodPosition());
-	}
-
-	@Override
-	public Vector2fc infoPosition() {
+	public Vector2fc infoPosition(BlockInteractingRecipe recipe) {
 		return INFO_POSITION;
 	}
 

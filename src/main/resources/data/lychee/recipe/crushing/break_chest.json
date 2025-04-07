@@ -2,7 +2,8 @@
   "type": "lychee:block_crushing",
   "landing_block": "chest",
   "post": {
-		"type": "place"
+		"type": "place",
+		"block": "*"
   },
   "contextual": {
     "type": "fall_distance",

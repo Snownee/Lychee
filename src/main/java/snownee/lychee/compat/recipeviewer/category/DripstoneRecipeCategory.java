@@ -6,8 +6,8 @@ import java.util.function.Supplier;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
+import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
@@ -23,8 +23,7 @@ import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
-
-public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe> {
+public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 	private static final int BLOCK_SIZE = 16;
 	private static final int COLUMN_X = 16;
 	private static final Vector2fc SOURCE_BLOCK_POSITION = new Vector2f(COLUMN_X, 4);
@@ -32,15 +31,7 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	private static final Vector2fc POINTED_DRIPSTONE_POSITION = VectorExtensions.offsetY(SOURCE_BLOCK_POSITION, 12 * 2);
 	public static final Vector2fc INFO_POSITION = VectorExtensions.offsetX(POINTED_DRIPSTONE_POSITION, BLOCK_SIZE);
 	private static final Vector2fc TARGET_BLOCK_POSITION = VectorExtensions.offsetY(SOURCE_BLOCK_POSITION, 12 * 3);
-	private final ShadowElement shadowElement = new ShadowElement(BLOCK_SIZE, 24, 6);
-
-	protected DripstoneRecipeCategory(
-			RvCategoryType<DripstoneRecipe> type,
-			ResourceLocation id,
-			RvHelper rvHandler
-	) {
-		super(type, id, rvHandler);
-	}
+	private static final ShadowElement SHADOW_ELEMENT = new ShadowElement(BLOCK_SIZE, 24, 6);
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {
 		return CommonProxy.getCycledItem(
@@ -57,69 +48,79 @@ public class DripstoneRecipeCategory extends AbstractRvCategory<DripstoneRecipe>
 	}
 
 	@Override
-	public Vector2fc infoPosition() {
+	public Vector2fc infoPosition(DripstoneRecipe recipe) {
 		return INFO_POSITION;
 	}
 
 	@Override
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2fc position) {
+	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder) {
 		var recipe = recipeHolder.value();
 		var needSecondLine = recipe.conditions().showingCount() > 9;
 		var y = (needSecondLine ? 26 : 28);
-		builder.actionGroup(recipe, new Vector2f(width() - 29, y));
+		builder.actionGroup(recipe, new Vector2f(builder.width() - 29, y));
 	}
 
 	@Override
-	public void configureDefaultDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder, Vector2fc position) {
-		var recipe = recipeHolder.value();
+	public void setupDecorations(DecorationMapBuilder<DripstoneRecipe> mapBuilder) {
+		mapBuilder.info(this::infoPosition);
+		mapBuilder.consumeBlockInput($ -> VectorExtensions.offset(TARGET_BLOCK_POSITION, BLOCK_SIZE - 4, BLOCK_SIZE - 8));
 
-		if (needInfoIcon(recipe)) {
-			builder.addElement(getInfoIcon(recipeHolder).offset(position));
-		}
+		mapBuilder.put(
+				"source_block", (builder, recipeHolder) -> {
+					var recipe = recipeHolder.value();
+					builder.addElement(getBlockElement(() -> getSourceBlock(recipe), recipe.sourceBlock(), builder.helper())
+							.at(SOURCE_BLOCK_POSITION)
+							.withSize(BLOCK_SIZE));
+				});
 
-		builder.addElement(getBlockElement(recipe, () -> getSourceBlock(recipe)).at(SOURCE_BLOCK_POSITION).offset(position));
-		builder.addElement(getBlockElement(recipe, Blocks.DRIPSTONE_BLOCK::defaultBlockState).at(DRIPSTONE_POSITION).offset(position));
-		builder.addElement(getBlockElement(
-				recipe,
-				() -> Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN)
-		).at(POINTED_DRIPSTONE_POSITION).offset(position));
-		builder.addElement(getTargetBlockElement(recipe).offset(position));
+		mapBuilder.put(
+				"dripstone_block", (builder, recipeHolder) -> {
+					builder.addElement(
+							getBlockElement(Blocks.DRIPSTONE_BLOCK::defaultBlockState, BlockPredicateExtensions.ANY, builder.helper())
+									.at(DRIPSTONE_POSITION)
+									.withSize(BLOCK_SIZE));
+					BlockState blockState = Blocks.POINTED_DRIPSTONE.defaultBlockState().setValue(
+							PointedDripstoneBlock.TIP_DIRECTION,
+							Direction.DOWN);
+					builder.addElement(
+							getBlockElement(() -> blockState, BlockPredicateExtensions.ANY, builder.helper())
+									.at(POINTED_DRIPSTONE_POSITION)
+									.withSize(BLOCK_SIZE));
+				});
 
-		if (AbstractRvCategory.needRemoveInputIcon(recipe)) {
-			var removeActionPosition = VectorExtensions.offset(TARGET_BLOCK_POSITION, BLOCK_SIZE - 4, BLOCK_SIZE - 8);
-			builder.addElement(AbstractRvCategory.getRemoveInputIcon().at(removeActionPosition).offset(position));
-		}
+		mapBuilder.put(
+				"target_block",
+				(builder, recipeHolder) -> builder.addElement(
+						getTargetBlockElement(recipeHolder.value(), builder.helper())));
 	}
 
-	protected RenderElement getBlockElement(
-			DripstoneRecipe recipe,
-			Supplier<BlockState> stateSupplier) {
+	protected RenderElement getBlockElement(Supplier<BlockState> stateSupplier, BlockPredicate predicate, RvHelper helper) {
 		Supplier<RenderElement> blockElement = () -> GuiGameElement.of(stateSupplier.get())
 				.scale(12)
 				.lighting(RVs.BLOCK_LIGHTING)
 				.rotateBlock(12.5, -22.5, 0)
 				.at(-1, 2);
 		return new InteractiveRenderElement((InteractiveRenderElement element) -> blockElement.get())
-				.onTooltip(() -> BlockPredicateExtensions.getTooltips(stateSupplier.get(), recipe.blockPredicate()))
-				.onClick(button -> rvHelper().buttonToUsageOrRecipe(button)
-						.ifPresent(usageOrRecipe -> rvHelper().openPage(stateSupplier.get(), usageOrRecipe)))
+				.onTooltip(() -> BlockPredicateExtensions.getTooltips(stateSupplier.get(), predicate))
+				.onClick(button -> helper.buttonToUsageOrRecipe(button)
+						.ifPresent(usageOrRecipe -> helper.openPage(stateSupplier.get(), usageOrRecipe)))
 				.withSize(BLOCK_SIZE);
 	}
 
-	protected RenderElement getTargetBlockElement(DripstoneRecipe recipe) {
+	protected RenderElement getTargetBlockElement(DripstoneRecipe recipe, RvHelper helper) {
 		Function<BlockState, RenderElement> blockElement = blockState -> GuiGameElement.of(blockState)
 				.rotateBlock(12.5, -22.5, 0)
 				.scale(12)
 				.lighting(RVs.BLOCK_LIGHTING)
 				.withSize(BLOCK_SIZE)
 				.at(-1, 2);
-		var result = shadowElement.blockWithShadow(() -> getTargetBlock(recipe), blockElement);
+		var result = SHADOW_ELEMENT.blockWithShadow(() -> getTargetBlock(recipe), blockElement);
 
 		return result
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(getTargetBlock(recipe), recipe.blockPredicate()))
 				.onClick(button ->
-						rvHelper().buttonToUsageOrRecipe(button)
-								.ifPresent(usageOrRecipe -> rvHelper().openPage(getTargetBlock(recipe), usageOrRecipe)))
+						helper.buttonToUsageOrRecipe(button)
+								.ifPresent(usageOrRecipe -> helper.openPage(getTargetBlock(recipe), usageOrRecipe)))
 				.at(TARGET_BLOCK_POSITION)
 				.withSize(BLOCK_SIZE);
 	}

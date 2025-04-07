@@ -2,6 +2,11 @@ package snownee.lychee.compat.recipeviewer.rei.element;
 
 import java.util.List;
 
+import org.joml.Vector2f;
+import org.joml.Vector2fc;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
@@ -15,10 +20,26 @@ import snownee.lychee.client.gui.RenderElement;
 public class RenderElementAdapter extends WidgetWithBounds {
 	private final RenderElement element;
 	private final Rectangle bounds;
+	private final Vector2f startPoint;
 
 	public RenderElementAdapter(RenderElement element) {
 		this.element = element;
-		this.bounds = new Rectangle(0, 0, element.width(), element.height());
+		this.bounds = new Rectangle(element.x(), element.y(), element.width(), element.height());
+		this.startPoint = new Vector2f(0, 0);
+	}
+
+	public RenderElementAdapter(RenderElement element, Point startPoint) {
+		this(element);
+		this.startPoint.set(startPoint.x, startPoint.y);
+		bounds.x += startPoint.x;
+		bounds.y += startPoint.y;
+	}
+
+	public RenderElementAdapter(RenderElement element, Vector2fc startPoint) {
+		this(element);
+		this.startPoint.set(startPoint);
+		bounds.x += (int) startPoint.x();
+		bounds.y += (int) startPoint.y();
 	}
 
 	@Override
@@ -31,7 +52,9 @@ public class RenderElementAdapter extends WidgetWithBounds {
 		if (!(element instanceof GuiEventListener listener)) {
 			return false;
 		}
-		return listener.mouseClicked(mouseX, mouseY, button);
+		double relMouseX = mouseX - startPoint.x();
+		double relMouseY = mouseY - startPoint.y();
+		return listener.mouseClicked(relMouseX, relMouseY, button);
 	}
 
 	@Override
@@ -41,15 +64,18 @@ public class RenderElementAdapter extends WidgetWithBounds {
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		if (element instanceof InteractiveRenderElement interactive && element.containsMouse(mouseX, mouseY)) {
+		float relMouseX = mouseX - startPoint.x();
+		float relMouseY = mouseY - startPoint.y();
+		if (element instanceof InteractiveRenderElement interactive && element.containsMouse(relMouseX, relMouseY)) {
 			var tooltip = interactive.getTooltip();
 			if (tooltip != null) {
-				Tooltip.create(new Point(mouseX, mouseY), tooltip).queue();
+				Tooltip.create(tooltip).queue();
 			}
 		}
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(bounds.getX(), bounds.getY(), 0);
-		element.render(guiGraphics, mouseX, mouseY, partialTick);
-		guiGraphics.pose().popPose();
+		PoseStack pose = guiGraphics.pose();
+		pose.pushPose();
+		pose.translate(bounds.x - element.x(), bounds.y - element.y(), 0);
+		element.render(guiGraphics, (int) relMouseX, (int) relMouseY, partialTick);
+		pose.popPose();
 	}
 }

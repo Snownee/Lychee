@@ -34,7 +34,7 @@ import snownee.lychee.action.RandomSelect;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.SlotType;
-import snownee.lychee.compat.recipeviewer.category.RvCategory;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryLayoutBuilder;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryWidgetBuilder;
 import snownee.lychee.compat.recipeviewer.rei.LycheeREIPlugin;
@@ -49,14 +49,14 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements DisplayCategory<LycheeDisplay<R>> {
 
-	private final RvCategory<R> rvCategory;
+	private final RvCategoryInstance<R> instance;
 	private final CategoryIdentifier<LycheeDisplay<R>> categoryIdentifier;
 	private final Renderer icon;
 
-	public RvCategoryAdapter(RvCategory<R> rvCategory) {
-		this.rvCategory = rvCategory;
-		this.categoryIdentifier = CategoryIdentifier.of(rvCategory.id());
-		this.icon = new RenderElementAdapter(rvCategory.icon());
+	public RvCategoryAdapter(RvCategoryInstance<R> instance) {
+		this.instance = instance;
+		this.categoryIdentifier = CategoryIdentifier.of(instance.id());
+		this.icon = new RenderElementAdapter(instance.icon());
 	}
 
 	static <T> void slotGroup(
@@ -157,7 +157,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	@Override
 	public Component getTitle() {
-		return rvCategory.title();
+		return instance.title();
 	}
 
 	@Override
@@ -167,12 +167,12 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	@Override
 	public int getDisplayWidth(LycheeDisplay<R> display) {
-		return rvCategory.width() + 10;
+		return instance.width() + 10;
 	}
 
 	@Override
 	public int getDisplayHeight() {
-		return rvCategory.height() + 6;
+		return instance.height() + 6;
 	}
 
 	private void actionGroup(ImmutableList.Builder<Widget> widgets, Vector2fc startPoint, R recipe, float x, float y) {
@@ -213,11 +213,11 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 	public List<Widget> setupDisplay(LycheeDisplay<R> display, Rectangle bounds) {
 		var widgets = ImmutableList.<Widget>builder();
 		var startPoint = new Vector2f(
-				bounds.getCenterX() - (float) rvCategory.width() / 2,
-				bounds.getCenterY() - (float) rvCategory.height() / 2 + 1);
+				bounds.getCenterX() - (float) instance.width() / 2,
+				bounds.getCenterY() - (float) instance.height() / 2 + 1);
 		widgets.add(Widgets.createRecipeBase(bounds));
 
-		var layoutBuilder = new RvCategoryLayoutBuilder() {
+		var layoutBuilder = new RvCategoryLayoutBuilder(instance) {
 			@Override
 			public void actionGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
 				//noinspection unchecked
@@ -230,12 +230,13 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				RvCategoryAdapter.this.ingredientGroup(widgets, startPoint, (R) recipe, position.x(), position.y());
 			}
 		};
-		rvCategory.configureLayout(layoutBuilder, display.recipe(), startPoint);
+		instance.type().configureLayout(layoutBuilder, display.recipe());
 
-		var widgetBuilder = new RvCategoryWidgetBuilder() {
+		var widgetBuilder = new RvCategoryWidgetBuilder(instance) {
 			@Override
 			public void addElement(RenderElement element) {
 				if (element instanceof TextElementRenderer text) {
+					text.offset(startPoint);
 					Point point = new Point(text.x(), text.y());
 					var widget = Widgets.createLabel(point, text.text);
 					widget.shadow(text.shadow);
@@ -246,15 +247,10 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 					widgets.add(widget);
 					return;
 				}
-				var adapter = new RenderElementAdapter(element);
-				widgets.add(adapter);
+				widgets.add(new RenderElementAdapter(element, startPoint));
 			}
 		};
-		if (rvCategory.renderDefault()) {
-			rvCategory.configureDefaultDecorations(widgetBuilder, display.recipe(), startPoint);
-		}
-		rvCategory.configureCustomDecorations(widgetBuilder, display.recipe(), startPoint);
-
+		instance.configureDecorations(widgetBuilder, display.recipe());
 		return widgets.build();
 	}
 

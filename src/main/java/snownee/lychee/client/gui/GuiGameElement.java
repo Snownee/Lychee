@@ -154,9 +154,9 @@ public class GuiGameElement {
 		protected BakedModel blockModel;
 		protected BlockState blockState;
 
-		public GuiBlockModelRenderBuilder(BakedModel blockmodel, @Nullable BlockState blockState) {
+		public GuiBlockModelRenderBuilder(BakedModel bakedModel, @Nullable BlockState blockState) {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
-			this.blockModel = blockmodel;
+			this.blockModel = bakedModel;
 		}
 
 		@Override
