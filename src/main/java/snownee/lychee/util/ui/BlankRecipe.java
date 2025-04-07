@@ -20,7 +20,7 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 public class BlankRecipe extends LycheeRecipe<LycheeContext> {
 	protected IngredientCollection ingredients;
 
-	protected BlankRecipe(LycheeRecipeCommonProperties commonProperties, IngredientCollection ingredients) {
+	public BlankRecipe(LycheeRecipeCommonProperties commonProperties, IngredientCollection ingredients) {
 		super(commonProperties);
 		this.ingredients = ingredients;
 		onConstructed();

@@ -8,6 +8,10 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -41,16 +45,28 @@ public record AddItemCooldown(PostActionCommonProperties commonProperties, float
 	}
 
 	public static class Type implements PostActionType<AddItemCooldown> {
-		public static final MapCodec<AddItemCooldown> CODEC = RecordCodecBuilder.mapCodec(instance ->
-				instance.group(
-						PostActionCommonProperties.MAP_CODEC.forGetter(AddItemCooldown::commonProperties),
-						ExtraCodecs.POSITIVE_FLOAT.fieldOf("s").forGetter(AddItemCooldown::seconds),
-						BuiltInRegistries.ITEM.byNameCodec().optionalFieldOf("item").forGetter(AddItemCooldown::item)
-				).apply(instance, AddItemCooldown::new));
+		public static final MapCodec<AddItemCooldown> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+				PostActionCommonProperties.MAP_CODEC.forGetter(AddItemCooldown::commonProperties),
+				ExtraCodecs.POSITIVE_FLOAT.fieldOf("s").forGetter(AddItemCooldown::seconds),
+				BuiltInRegistries.ITEM.byNameCodec().optionalFieldOf("item").forGetter(AddItemCooldown::item)
+		).apply(i, AddItemCooldown::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, AddItemCooldown> STREAM_CODEC = StreamCodec.composite(
+				PostActionCommonProperties.STREAM_CODEC,
+				AddItemCooldown::commonProperties,
+				ByteBufCodecs.FLOAT,
+				AddItemCooldown::seconds,
+				ByteBufCodecs.optional(ByteBufCodecs.registry(Registries.ITEM)),
+				AddItemCooldown::item,
+				AddItemCooldown::new);
 
 		@Override
 		public MapCodec<AddItemCooldown> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, AddItemCooldown> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

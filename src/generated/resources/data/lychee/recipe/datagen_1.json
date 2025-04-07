@@ -24,7 +24,7 @@
       "if": [
         {
           "type": "minecraft:sky_darken",
-          "can_see_sky": true,
+          "require_sky_light": true,
           "value": {}
         }
       ],

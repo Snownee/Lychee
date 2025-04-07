@@ -36,3 +36,5 @@ accessible field net/minecraft/client/renderer/RenderStateShard TRANSLUCENT_TRAN
 accessible field net/minecraft/world/entity/item/FallingBlockEntity blockState Lnet/minecraft/world/level/block/state/BlockState;
 
 accessible field net/minecraft/world/Difficulty BY_ID Ljava/util/function/IntFunction;
+
+accessible method net/minecraft/advancements/critereon/MinMaxBounds$Ints <init> (Ljava/util/Optional;Ljava/util/Optional;)V

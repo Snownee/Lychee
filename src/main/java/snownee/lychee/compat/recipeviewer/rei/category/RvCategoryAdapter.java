@@ -120,7 +120,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		EntryStack<PostAction> entry = EntryStack.of(LycheeREIPlugin.POST_ACTION, action);
 		switch (action) {
 			case DropItem dropitem -> {
-				var itemEntry = EntryStacks.of(dropitem.stack());
+				var itemEntry = EntryStacks.of(dropitem.itemStack());
 				if (action.commonProperties().icon() != null) {
 					var originalRenderer = itemEntry.getRenderer();
 					itemEntry.withRenderer(new EntryRenderer<>() {

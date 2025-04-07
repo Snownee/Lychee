@@ -28,7 +28,6 @@ public record LycheeRecipeCommonProperties(
 		List<PostAction> postActions,
 		MinMaxBounds.Ints maxRepeats) {
 
-	public static final MapCodec<Boolean> HIDE_CODEC = Codec.BOOL.optionalFieldOf("hide", false);
 	public static final MapCodec<Boolean> HIDE_IN_VIEWER_CODEC = Codec.BOOL.optionalFieldOf("hide_in_viewer", false);
 	public static final MapCodec<Boolean> GHOST_CODEC = Codec.BOOL.optionalFieldOf("ghost", false);
 	public static final MapCodec<Optional<String>> COMMENT_CODEC = Codec.STRING.optionalFieldOf("comment");

@@ -16,8 +16,8 @@ public class IfActionRenderer implements ActionRenderer<If> {
 	@Override
 	public List<Component> getTooltips(If action, @Nullable Player player) {
 		List<Component> list = getBaseTooltips(action, player);
-		action.getConsequenceTooltips(list, action.successEntries, "tip.lychee.ifSuccess");
-		action.getConsequenceTooltips(list, action.failureEntries, "tip.lychee.ifFailure");
+		action.getConsequenceTooltips(list, action.successEntries(), "tip.lychee.ifSuccess");
+		action.getConsequenceTooltips(list, action.failureEntries(), "tip.lychee.ifFailure");
 		return list;
 	}
 

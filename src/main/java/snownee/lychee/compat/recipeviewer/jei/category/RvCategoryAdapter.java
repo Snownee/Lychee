@@ -137,7 +137,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 			Map<ItemStack, PostAction> itemMap) {
 		switch (action) {
 			case DropItem dropItem -> {
-				slotBuilder.addItemStack(dropItem.stack());
+				slotBuilder.addItemStack(dropItem.itemStack());
 				if (action.commonProperties().icon() != null) {
 					slotBuilder.setCustomRenderer(
 							VanillaTypes.ITEM_STACK, new IIngredientRenderer<>() {
@@ -160,7 +160,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 								}
 							});
 				}
-				itemMap.put(dropItem.stack(), dropItem);
+				itemMap.put(dropItem.itemStack(), dropItem);
 			}
 			case CompoundAction compoundAction -> {
 				compoundAction.getChildActions().filter(it -> !it.hidden()).forEach(child -> buildActionSlot(
