@@ -12,6 +12,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -101,10 +104,27 @@ public record CycleStateProperty(
 						Codec.STRING.fieldOf("property").forGetter(CycleStateProperty::propertyName),
 						Codec.BOOL.optionalFieldOf("reversed", false).forGetter(CycleStateProperty::reversed))
 				.apply(instance, CycleStateProperty::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, CycleStateProperty> STREAM_CODEC = StreamCodec.composite(
+				PostActionCommonProperties.STREAM_CODEC,
+				CycleStateProperty::commonProperties,
+				BlockPredicate.STREAM_CODEC,
+				CycleStateProperty::block,
+				BlockPos.STREAM_CODEC,
+				CycleStateProperty::offset,
+				ByteBufCodecs.STRING_UTF8,
+				CycleStateProperty::propertyName,
+				ByteBufCodecs.BOOL,
+				CycleStateProperty::reversed,
+				CycleStateProperty::new);
 
 		@Override
 		public MapCodec<CycleStateProperty> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, CycleStateProperty> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

@@ -9,7 +9,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.NbtPredicate;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.item.ItemStack;
@@ -73,10 +75,21 @@ public record SetBlock(PostActionCommonProperties commonProperties, BlockPredica
 				PostActionCommonProperties.MAP_CODEC.forGetter(SetBlock::commonProperties),
 				BlockPredicateExtensions.CODEC.optionalFieldOf("block", BlockPredicateExtensions.ANY).forGetter(SetBlock::block)
 		).apply(instance, SetBlock::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, SetBlock> STREAM_CODEC = StreamCodec.composite(
+				PostActionCommonProperties.STREAM_CODEC,
+				SetBlock::commonProperties,
+				BlockPredicate.STREAM_CODEC,
+				SetBlock::block,
+				SetBlock::new);
 
 		@Override
 		public MapCodec<SetBlock> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, SetBlock> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

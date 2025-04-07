@@ -47,11 +47,11 @@ public interface ActionRenderer<T extends PostAction> {
 	static void init() {
 		register(
 				PostActionTypes.DROP_ITEM,
-				(ItemStackActionRenderer<DropItem>) DropItem::stack
+				(ItemStackActionRenderer<DropItem>) DropItem::itemStack
 		);
 		register(
 				PostActionTypes.SET_ITEM,
-				(ItemStackActionRenderer<SetItem>) SetItem::stack
+				(ItemStackActionRenderer<SetItem>) SetItem::itemStack
 		);
 		register(
 				PostActionTypes.DROP_XP,
@@ -98,8 +98,7 @@ public interface ActionRenderer<T extends PostAction> {
 							PreventDefault action,
 							final ILycheeRecipe<?> recipe,
 							final List<IngredientInfo> ingredients) {
-						if (recipe == null ||
-								!(recipe.getType() instanceof LycheeRecipeType<?> lycheeRecipeType) ||
+						if (!(recipe.getType() instanceof LycheeRecipeType<?> lycheeRecipeType) ||
 								!lycheeRecipeType.canPreventConsumeInputs) {
 							return;
 						}
@@ -129,23 +128,26 @@ public interface ActionRenderer<T extends PostAction> {
 
 	static List<Component> getTooltipsFromRandom(RandomSelect randomSelect, PostAction child, @Nullable Player player) {
 		var index = -1;
-		for (int i = 0; i < randomSelect.entries.size(); i++) {
-			if (randomSelect.entries.get(i).action().equals(child)) {
+		for (int i = 0; i < randomSelect.entries().size(); i++) {
+			if (randomSelect.entries().get(i).action().equals(child)) {
 				index = i;
 			}
 		}
-		var list = randomSelect.entries.size() == 1 && randomSelect.emptyWeight == 0 ?
+		var list = randomSelect.entries().size() == 1 && randomSelect.emptyWeight() == 0 ?
 				Lists.newArrayList(randomSelect.getDisplayName()) :
 				ActionRenderer.of(child).getBaseTooltips(child, player);
 		if (index == -1) {
 			return list; //TODO nested actions?
 		}
-		if (randomSelect.entries.size() > 1 || randomSelect.emptyWeight > 0) {
-			var chance = CommonProxy.chance(randomSelect.entries.get(index).weight() / (float) randomSelect.totalWeight);
-			if (randomSelect.rolls == BoundsExtensions.ONE) {
+		if (randomSelect.entries().size() > 1 || randomSelect.emptyWeight() > 0) {
+			var chance = CommonProxy.chance(randomSelect.entries().get(index).weight() / (float) randomSelect.totalWeight());
+			if (randomSelect.rolls() == BoundsExtensions.ONE) {
 				list.add(Component.translatable("tip.lychee.randomChance.one", chance).withStyle(ChatFormatting.YELLOW));
 			} else {
-				list.add(Component.translatable("tip.lychee.randomChance", chance, BoundsExtensions.getPlainDescription(randomSelect.rolls))
+				list.add(Component.translatable(
+								"tip.lychee.randomChance",
+								chance,
+								BoundsExtensions.getPlainDescription(randomSelect.rolls()))
 						.withStyle(ChatFormatting.YELLOW));
 			}
 		}

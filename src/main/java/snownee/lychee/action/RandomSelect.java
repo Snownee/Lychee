@@ -14,7 +14,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
@@ -32,46 +35,31 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public class RandomSelect implements CompoundAction, PostAction {
-	public final List<Entry> entries;
-	private final PostActionCommonProperties commonProperties;
-	public final MinMaxBounds.Ints rolls;
-	public final boolean canRepeat;
-	public final boolean hidden;
-	public final boolean preventSync;
-	public final int totalWeight;
-	public final int emptyWeight;
-
+public record RandomSelect(
+		PostActionCommonProperties commonProperties,
+		List<Entry> entries,
+		int totalWeight,
+		int emptyWeight,
+		MinMaxBounds.Ints rolls,
+		boolean canRepeat,
+		boolean hidden,
+		boolean preventSync
+) implements CompoundAction, PostAction {
 	public RandomSelect(
 			PostActionCommonProperties commonProperties,
 			List<Entry> entries,
-			int totalWeight,
 			int emptyWeight,
-			MinMaxBounds.Ints rolls
-	) {
-		this.commonProperties = commonProperties;
-		this.entries = entries;
-		this.totalWeight = totalWeight;
-		this.emptyWeight = emptyWeight;
-		this.rolls = rolls;
+			MinMaxBounds.Ints rolls) {
+		this(
+				commonProperties,
+				entries,
+				entries.stream().mapToInt(it -> it.weight).sum() + emptyWeight,
+				emptyWeight,
+				rolls,
+				entries.stream().allMatch(it -> it.action().repeatable()),
+				commonProperties.hidden() || entries.stream().allMatch(it -> it.action().hidden()),
+				entries.stream().allMatch(it -> it.action().preventSync()));
 		Preconditions.checkArgument(totalWeight > 0, "Total weight must be positive");
-		canRepeat = entries.stream().allMatch(it -> it.action.repeatable());
-		hidden = commonProperties.hidden() || entries.stream().allMatch(it -> it.action.hidden());
-		preventSync = entries.stream().allMatch(it -> it.action.preventSync());
-	}
-
-	public RandomSelect(
-			PostActionCommonProperties commonProperties,
-			List<Entry> entries,
-			int emptyWeight,
-			MinMaxBounds.Ints rolls
-	) {
-		this(commonProperties, entries, entries.stream().mapToInt(it -> it.weight).sum() + emptyWeight, emptyWeight, rolls);
-	}
-
-	@Override
-	public PostActionCommonProperties commonProperties() {
-		return commonProperties;
 	}
 
 	@Override
@@ -141,30 +129,15 @@ public class RandomSelect implements CompoundAction, PostAction {
 	public Component getDisplayName() {
 		if (entries.size() == 1 && emptyWeight == 0) {
 			return Component.literal("%s × %s".formatted(
-					entries.get(0).action.getDisplayName().getString(),
+					entries.getFirst().action.getDisplayName().getString(),
 					BoundsExtensions.getPlainDescription(rolls).getString()
 			));
 		}
-		return CommonProxy.getCycledItem(entries, entries.get(0), 1000).action.getDisplayName();
+		return CommonProxy.getCycledItem(entries, entries.getFirst(), 1000).action.getDisplayName();
 	}
 
 	@Override
-	public boolean repeatable() {
-		return canRepeat;
-	}
-
-	@Override
-	public boolean hidden() {
-		return hidden;
-	}
-
-	@Override
-	public boolean preventSync() {
-		return preventSync;
-	}
-
-	@Override
-	public void getUsedPointers(ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
+	public void getUsedPointers(@Nullable ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {
 		for (var entry : entries) {
 			entry.action.getUsedPointers(recipe, consumer);
 		}
@@ -180,20 +153,42 @@ public class RandomSelect implements CompoundAction, PostAction {
 				PostAction.MAP_CODEC.forGetter(Entry::action),
 				ExtraCodecs.POSITIVE_INT.optionalFieldOf("weight", 1).forGetter(Entry::weight)
 		).apply(instance, Entry::new));
+
+		public static final StreamCodec<RegistryFriendlyByteBuf, Entry> STREAM_CODEC = StreamCodec.composite(
+				PostAction.STREAM_CODEC,
+				Entry::action,
+				ByteBufCodecs.VAR_INT,
+				Entry::weight,
+				Entry::new);
 	}
 
 	public static class Type implements PostActionType<RandomSelect> {
 		public static final MapCodec<RandomSelect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(RandomSelect::commonProperties),
-				ExtraCodecs.nonEmptyList(KCodecs.compactList(Entry.CODEC)).fieldOf("entries").forGetter(it -> it.entries),
+				ExtraCodecs.nonEmptyList(KCodecs.compactList(Entry.CODEC)).fieldOf("entries").forGetter(RandomSelect::entries),
 				ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("empty_weight", 0)
-						.forGetter(it -> it.emptyWeight),
-				MinMaxBounds.Ints.CODEC.optionalFieldOf("rolls", BoundsExtensions.ONE).forGetter(it -> it.rolls)
+						.forGetter(RandomSelect::emptyWeight),
+				MinMaxBounds.Ints.CODEC.optionalFieldOf("rolls", BoundsExtensions.ONE).forGetter(RandomSelect::rolls)
 		).apply(instance, RandomSelect::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, RandomSelect> STREAM_CODEC = StreamCodec.composite(
+				PostActionCommonProperties.STREAM_CODEC,
+				RandomSelect::commonProperties,
+				Entry.STREAM_CODEC.apply(ByteBufCodecs.list()),
+				RandomSelect::entries,
+				ByteBufCodecs.VAR_INT,
+				RandomSelect::emptyWeight,
+				BoundsExtensions.INT_STREAM_CODEC,
+				RandomSelect::rolls,
+				RandomSelect::new);
 
 		@Override
 		public MapCodec<RandomSelect> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, RandomSelect> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

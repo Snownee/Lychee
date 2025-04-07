@@ -1,7 +1,5 @@
 package snownee.lychee.action.input;
 
-import java.util.Objects;
-
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -18,12 +16,9 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public final class PreventDefault implements PostAction {
+public record PreventDefault(PostActionCommonProperties commonProperties) implements PostAction {
 
 	public static final PreventDefault CLIENT_DUMMY = new PreventDefault();
-	private final PostActionCommonProperties commonProperties;
-
-	public PreventDefault(PostActionCommonProperties commonProperties) {this.commonProperties = commonProperties;}
 
 	public PreventDefault() {
 		this(PostActionCommonProperties.EMPTY);
@@ -42,21 +37,6 @@ public final class PreventDefault implements PostAction {
 	@Override
 	public boolean hidden() {
 		return true;
-	}
-
-	@Override
-	public PostActionCommonProperties commonProperties() {return commonProperties;}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) {
-			return true;
-		}
-		if (obj == null || obj.getClass() != this.getClass()) {
-			return false;
-		}
-		var that = (PreventDefault) obj;
-		return Objects.equals(this.commonProperties, that.commonProperties);
 	}
 
 	public static class Type implements PostActionType<PreventDefault> {

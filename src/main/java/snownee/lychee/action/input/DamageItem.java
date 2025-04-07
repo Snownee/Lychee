@@ -7,6 +7,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -96,10 +99,23 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 						Codec.INT.optionalFieldOf("damage", 1).forGetter(DamageItem::damage),
 						Reference.CODEC.optionalFieldOf("target", Reference.DEFAULT).forGetter(DamageItem::target)
 				).apply(instance, DamageItem::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, DamageItem> STREAM_CODEC = StreamCodec.composite(
+				PostActionCommonProperties.STREAM_CODEC,
+				DamageItem::commonProperties,
+				ByteBufCodecs.VAR_INT,
+				DamageItem::damage,
+				Reference.STREAM_CODEC,
+				DamageItem::target,
+				DamageItem::new);
 
 		@Override
 		public MapCodec<DamageItem> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, DamageItem> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

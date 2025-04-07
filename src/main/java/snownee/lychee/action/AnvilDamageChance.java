@@ -6,6 +6,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.util.LycheeFallingBlockEntity;
 import snownee.lychee.util.action.PostAction;
@@ -43,10 +46,21 @@ public record AnvilDamageChance(PostActionCommonProperties commonProperties, flo
 						PostActionCommonProperties.MAP_CODEC.forGetter(AnvilDamageChance::commonProperties),
 						Codec.floatRange(0, 1).fieldOf("chance").forGetter(AnvilDamageChance::chance)
 				).apply(instance, AnvilDamageChance::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, AnvilDamageChance> STREAM_CODEC = StreamCodec.composite(
+				PostActionCommonProperties.STREAM_CODEC,
+				AnvilDamageChance::commonProperties,
+				ByteBufCodecs.FLOAT,
+				AnvilDamageChance::chance,
+				AnvilDamageChance::new);
 
 		@Override
 		public MapCodec<AnvilDamageChance> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, AnvilDamageChance> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }
