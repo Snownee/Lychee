@@ -14,7 +14,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import snownee.kiwi.util.KUtil;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.compat.recipeviewer.category.RvCategory;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.util.ui.CategoryMetadata;
 
 public abstract class RvHelper {
@@ -24,7 +24,7 @@ public abstract class RvHelper {
 		metadataList = KUtil.getRecipes(RecipeTypes.CATEGORY_METADATA);
 	}
 
-	public RecipeHolder<CategoryMetadata> getMetadata(RvCategory<?> category) {
+	public RecipeHolder<CategoryMetadata> getMetadata(RvCategoryInstance<?> category) {
 		String id = category.id().toString();
 		for (RecipeHolder<CategoryMetadata> metadata : metadataList) {
 			for (Pattern pattern : metadata.value().categoryPattern()) {

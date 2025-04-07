@@ -2,9 +2,6 @@ package snownee.lychee.compat.recipeviewer.category;
 
 import org.joml.Vector2fc;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.ui.TextElementRenderer;
 import snownee.lychee.util.ClientProxy;
@@ -17,36 +14,20 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 	public static final Vector2fc INFO_POSITION = VectorExtensions.offset(METHOD_POSITION, METHOD_SIZE, 4);
 	private static final float INPUT_INGREDIENT_X = 27;
 
-	public ItemInsideRecipeCategory(
-			RvCategoryType<ItemInsideRecipe> type,
-			ResourceLocation id,
-			RvHelper rvHandler
-	) {
-		super(
-				type,
-				id,
-				rvHandler);
+	@Override
+	public void setupDecorations(DecorationMapBuilder<ItemInsideRecipe> mapBuilder) {
+		super.setupDecorations(mapBuilder);
+		mapBuilder.condition("time", $ -> $.time() > 0);
+		mapBuilder.put(
+				"time", (builder, recipeHolder) -> {
+					builder.addElement(new TextElementRenderer(ClientProxy.format("tip.lychee.sec", recipeHolder.value().time())).centered()
+							.offset(methodPosition())
+							.offset(10, -8));
+				});
 	}
 
 	@Override
-	public void configureDefaultDecorations(
-			RvCategoryWidgetBuilder builder,
-			RecipeHolder<ItemInsideRecipe> recipeHolder,
-			Vector2fc position
-	) {
-		super.configureDefaultDecorations(builder, recipeHolder, position);
-		var recipe = recipeHolder.value();
-		if (recipe.time() > 0) {
-			builder.addElement(new TextElementRenderer(ClientProxy.format("tip.lychee.sec", recipe.time()))
-					.centered()
-					.at(position)
-					.offset(methodPosition())
-					.offset(10, -8));
-		}
-	}
-
-	@Override
-	public Vector2fc infoPosition() {
+	public Vector2fc infoPosition(ItemInsideRecipe recipe) {
 		return INFO_POSITION;
 	}
 

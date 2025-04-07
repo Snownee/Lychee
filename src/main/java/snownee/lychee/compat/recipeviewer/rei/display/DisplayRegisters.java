@@ -7,7 +7,7 @@ import com.google.common.collect.Maps;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import net.minecraft.resources.ResourceLocation;
-import snownee.lychee.compat.recipeviewer.category.RvCategory;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeType;
@@ -38,6 +38,6 @@ public interface DisplayRegisters {
 		void consume(
 				DisplayRegistry registry,
 				CategoryIdentifier<? extends LycheeDisplay<R>> id,
-				RvCategory<R> category);
+				RvCategoryInstance<R> category);
 	}
 }

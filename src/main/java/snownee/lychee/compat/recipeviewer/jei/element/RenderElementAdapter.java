@@ -1,5 +1,7 @@
 package snownee.lychee.compat.recipeviewer.jei.element;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.inputs.IJeiGuiEventListener;
@@ -41,10 +43,11 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 
 	@Override
 	public void drawWidget(GuiGraphics guiGraphics, double mouseX, double mouseY) {
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(bounds.left(), bounds.top(), 0);
+		PoseStack pose = guiGraphics.pose();
+		pose.pushPose();
+		pose.translate(bounds.left(), bounds.top(), 0);
 		element.render(guiGraphics);
-		guiGraphics.pose().popPose();
+		pose.popPose();
 	}
 
 	@Override

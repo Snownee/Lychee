@@ -18,9 +18,17 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.compat.recipeviewer.category.BlockCrushingRecipeCategory;
+import snownee.lychee.compat.recipeviewer.category.BlockExplodingRecipeCategory;
+import snownee.lychee.compat.recipeviewer.category.BlockInteractingRecipeCategory;
+import snownee.lychee.compat.recipeviewer.category.DripstoneRecipeCategory;
+import snownee.lychee.compat.recipeviewer.category.ItemBurningRecipeCategory;
+import snownee.lychee.compat.recipeviewer.category.ItemExplodingRecipeCategory;
+import snownee.lychee.compat.recipeviewer.category.ItemInsideRecipeCategory;
+import snownee.lychee.compat.recipeviewer.category.ItemShapelessRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategory;
-import snownee.lychee.compat.recipeviewer.category.RvCategoryProviders;
-import snownee.lychee.compat.recipeviewer.category.RvCategoryType;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryInstanceProviders;
 import snownee.lychee.compat.recipeviewer.element.SideBlockIcon;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -29,8 +37,8 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class RvPlugin<Helper extends RvHelper> {
 	private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
-	private final Map<ResourceLocation, RvCategoryType<?>> categoryTypes = Maps.newHashMap();
-	private ImmutableMap<ResourceLocation, RvCategory<?>> categories = ImmutableMap.of();
+	private final Map<ResourceLocation, RvCategory<?>> categoryTypes = Maps.newHashMap();
+	private ImmutableMap<ResourceLocation, RvCategoryInstance<?>> categories = ImmutableMap.of();
 	private final String name = STACK_WALKER.getCallerClass().getSimpleName();
 
 	private final Helper rvHelper;
@@ -46,11 +54,16 @@ public class RvPlugin<Helper extends RvHelper> {
 	public void init() {
 		categoryTypes.clear();
 		rvHelper.init();
-		var categories = Maps.<ResourceLocation, RvCategory<?>>newHashMap();
-		register(RecipeTypes.BLANK, it -> it.iconProvider = category -> RenderElement.empty());
+		var categories = Maps.<ResourceLocation, RvCategoryInstance<?>>newHashMap();
 		register(
-				RecipeTypes.BLOCK_CRUSHING, it -> {
-					it.width = RvCategoryType.WIDER_WIDTH;
+				RecipeTypes.BLANK,
+				new RvCategory<>(),
+				it -> it.iconProvider = category -> RenderElement.empty());
+		register(
+				RecipeTypes.BLOCK_CRUSHING,
+				new BlockCrushingRecipeCategory(),
+				it -> {
+					it.width = RvCategory.WIDER_WIDTH;
 					it.iconProvider = category -> GuiGameElement.of(Items.ANVIL);
 					it.setSimpleWorkstationProvider(category -> category.recipes().stream()
 							.map($ -> $.value().blockPredicate())
@@ -62,7 +75,9 @@ public class RvPlugin<Helper extends RvHelper> {
 							.toList());
 				});
 		register(
-				RecipeTypes.BLOCK_EXPLODING, it -> {
+				RecipeTypes.BLOCK_EXPLODING,
+				new BlockExplodingRecipeCategory(),
+				it -> {
 					it.iconProvider = category -> {
 						var mainIcon = GuiGameElement.of(Items.TNT);
 						return new SideBlockIcon(mainIcon, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
@@ -70,7 +85,9 @@ public class RvPlugin<Helper extends RvHelper> {
 					it.setSimpleWorkstationProvider(category -> List.of(Items.TNT.getDefaultInstance()));
 				});
 		register(
-				RecipeTypes.BLOCK_INTERACTING, type -> {
+				RecipeTypes.BLOCK_INTERACTING,
+				new BlockInteractingRecipeCategory(),
+				type -> {
 					type.width += 30;
 					type.iconProvider = category -> {
 						var mainIcon = category.recipes().stream()
@@ -83,44 +100,57 @@ public class RvPlugin<Helper extends RvHelper> {
 				});
 		register(
 				RecipeTypes.DRIPSTONE_DRIPPING,
+				new DripstoneRecipeCategory(),
 				it -> {
 					it.iconProvider = category -> GuiGameElement.of(Items.POINTED_DRIPSTONE);
 					it.setSimpleWorkstationProvider(category -> List.of(Items.POINTED_DRIPSTONE.getDefaultInstance()));
 				});
 		register(
 				RecipeTypes.LIGHTNING_CHANNELING,
+				new ItemShapelessRecipeCategory<>(),
 				it -> {
-					it.width = RvCategoryType.WIDER_WIDTH;
+					it.width = RvCategory.WIDER_WIDTH;
 					it.iconProvider = category -> GuiGameElement.of(Items.LIGHTNING_ROD);
 					it.setSimpleWorkstationProvider(category -> List.of(Items.LIGHTNING_ROD.getDefaultInstance()));
 				});
 		register(
-				RecipeTypes.ITEM_EXPLODING, it -> {
-					it.width = RvCategoryType.WIDER_WIDTH;
+				RecipeTypes.ITEM_EXPLODING,
+				new ItemExplodingRecipeCategory(),
+				it -> {
+					it.width = RvCategory.WIDER_WIDTH;
 					it.iconProvider = category -> GuiGameElement.of(Items.TNT);
 					it.setSimpleWorkstationProvider(category -> List.of(Items.TNT.getDefaultInstance()));
 				});
 		register(
-				RecipeTypes.ITEM_BURNING, it -> {
+				RecipeTypes.ITEM_BURNING,
+				new ItemBurningRecipeCategory(),
+				it -> {
 					it.iconProvider = category ->
 							new SideBlockIcon(AllGuiTextures.DOWN_ARROW, Suppliers.memoize(Blocks.FIRE::defaultBlockState));
 				});
 		register(
-				RecipeTypes.ITEM_INSIDE, it -> {
-					it.width = RvCategoryType.WIDER_WIDTH;
+				RecipeTypes.ITEM_INSIDE,
+				new ItemInsideRecipeCategory(),
+				it -> {
+					it.width = RvCategory.WIDER_WIDTH;
 					it.iconProvider = category -> new SideBlockIcon(
 							AllGuiTextures.DOWN_ARROW,
 							Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
 				});
 
 		for (var recipeType : RecipeTypes.ALL) {
-			var provider = RvCategoryProviders.get(recipeType.categoryId);
+			//noinspection unchecked
+			RvCategory<ILycheeRecipe<LycheeContext>> category = (RvCategory<ILycheeRecipe<LycheeContext>>) categoryTypes.get(recipeType.categoryId);
+			if (category == null) {
+				continue;
+			}
+
+			var provider = RvCategoryInstanceProviders.get(recipeType.categoryId);
 			if (provider == null) {
 				continue;
 			}
 
-			//noinspection unchecked
-			var factory = provider.get((RvCategoryType<ILycheeRecipe<LycheeContext>>) categoryTypes.get(recipeType.categoryId), rvHelper);
+			var factory = provider.get(category, rvHelper);
 			for (var recipe : recipeType.inViewerRecipes()) {
 				var id = RVs.composeCategoryIdentifier(recipeType.categoryId, ResourceLocation.parse(recipe.value().group()));
 				//noinspection unchecked,rawtypes
@@ -131,18 +161,22 @@ public class RvPlugin<Helper extends RvHelper> {
 		this.categories = ImmutableMap.copyOf(categories);
 	}
 
-	public ImmutableMap<ResourceLocation, RvCategory<?>> categories() {
+	public ImmutableMap<ResourceLocation, RvCategoryInstance<?>> categories() {
 		return categories;
 	}
 
-	public <T extends ILycheeRecipe<LycheeContext>> void register(LycheeRecipeType<T> recipeType, Consumer<RvCategoryType<T>> configurer) {
-		var type = new RvCategoryType<T>(recipeType.categoryId);
-		configurer.accept(type);
-		Preconditions.checkNotNull(type.iconProvider, "Icon provider is null: %s", recipeType.categoryId);
+	public <R extends ILycheeRecipe<LycheeContext>, T extends RvCategory<R>> void register(
+			LycheeRecipeType<R> recipeType,
+			T category,
+			Consumer<T> configurer) {
+		category.id = recipeType.categoryId;
+		configurer.accept(category);
+		Preconditions.checkNotNull(category.iconProvider, "Icon provider is null: %s", category.id);
+		category.init();
 		Preconditions.checkArgument(
-				categoryTypes.put(recipeType.categoryId, type) == null,
+				categoryTypes.put(category.id, category) == null,
 				"Duplicate category type: %s",
-				recipeType.categoryId);
+				category.id);
 	}
 
 	@Override

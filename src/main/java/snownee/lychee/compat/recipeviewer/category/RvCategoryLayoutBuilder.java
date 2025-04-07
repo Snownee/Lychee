@@ -4,8 +4,12 @@ import org.joml.Vector2fc;
 
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public interface RvCategoryLayoutBuilder {
-	void actionGroup(ILycheeRecipe<?> recipe, Vector2fc position);
+public abstract class RvCategoryLayoutBuilder extends RvCategoryBuilder {
+	protected RvCategoryLayoutBuilder(RvCategoryInstance<?> category) {
+		super(category);
+	}
 
-	void ingredientGroup(ILycheeRecipe<?> recipe, Vector2fc position);
+	public abstract void actionGroup(ILycheeRecipe<?> recipe, Vector2fc position);
+
+	public abstract void ingredientGroup(ILycheeRecipe<?> recipe, Vector2fc position);
 }

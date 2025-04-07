@@ -13,7 +13,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import snownee.lychee.compat.recipeviewer.category.AbstractRvCategory;
+import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.jei.element.RenderElementAdapter;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 
@@ -38,8 +38,8 @@ public class CraftingRecipeCategoryExtension implements ICraftingCategoryExtensi
 			IRecipeExtrasBuilder builder,
 			ICraftingGridHelper craftingGridHelper,
 			IFocusGroup focuses) {
-		if (AbstractRvCategory.needInfoIcon(recipeHolder.value())) {
-			builder.addWidget(new RenderElementAdapter(AbstractRvCategory.getRecipeInfoIcon(recipeHolder).at(INFO_POSITION)));
+		if (RvCategory.needInfo(recipeHolder.value())) {
+			builder.addWidget(new RenderElementAdapter(RvCategory.infoIcon(recipeHolder).at(INFO_POSITION)));
 		}
 	}
 

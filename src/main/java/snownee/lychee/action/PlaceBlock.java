@@ -12,7 +12,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
@@ -38,20 +40,18 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public final class PlaceBlock implements PostAction {
-	private final PostActionCommonProperties commonProperties;
-	private final BlockPredicate block;
-	private final BlockPos offset;
-	private final boolean fancyDisplay;
+public record PlaceBlock(
+		PostActionCommonProperties commonProperties,
+		BlockPredicate block,
+		BlockPos offset,
+		boolean fancyDisplay) implements PostAction {
 
-	public PlaceBlock(
-			PostActionCommonProperties properties,
-			BlockPredicate block,
-			BlockPos offset) {
-		this.block = block;
-		this.offset = offset;
-		this.commonProperties = properties;
-		this.fancyDisplay = properties.icon() == null && BlockPredicateExtensions.isAny(block) && offset.equals(BlockPos.ZERO);
+	public PlaceBlock(PostActionCommonProperties properties, BlockPredicate block, BlockPos offset) {
+		this(
+				properties,
+				block,
+				offset,
+				properties.icon() == null && BlockPredicateExtensions.isAny(block) && offset.equals(BlockPos.ZERO));
 	}
 
 	private static void destroyBlock(Level level, BlockPos pos, boolean drop) {
@@ -77,20 +77,6 @@ public final class PlaceBlock implements PostAction {
 		if (flag) {
 			level.gameEvent(null, GameEvent.BLOCK_DESTROY, pos);
 		}
-	}
-
-	public boolean fancyDisplay() {
-		return fancyDisplay;
-	}
-
-	@Override
-	public boolean hidden() {
-		return fancyDisplay() || PostAction.super.hidden();
-	}
-
-	@Override
-	public PostActionCommonProperties commonProperties() {
-		return commonProperties;
 	}
 
 	@Override
@@ -179,28 +165,38 @@ public final class PlaceBlock implements PostAction {
 	}
 
 	@Override
+	public boolean hidden() {
+		return fancyDisplay() || PostAction.super.hidden();
+	}
+
+	@Override
 	public boolean repeatable() {
 		return false;
-	}
-
-	public BlockPredicate block() {
-		return block;
-	}
-
-	public BlockPos offset() {
-		return offset;
 	}
 
 	public static class Type implements PostActionType<PlaceBlock> {
 		public static final MapCodec<PlaceBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(PlaceBlock::commonProperties),
-				BlockPredicateExtensions.CODEC.optionalFieldOf("block", BlockPredicateExtensions.ANY).forGetter(PlaceBlock::block),
-				LycheeCodecs.OFFSET_CODEC.forGetter(PlaceBlock::offset)
-		).apply(instance, PlaceBlock::new));
+				BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(PlaceBlock::block),
+				LycheeCodecs.OFFSET_CODEC.forGetter(PlaceBlock::offset)).apply(instance, PlaceBlock::new));
+
+		public static final StreamCodec<RegistryFriendlyByteBuf, PlaceBlock> STREAM_CODEC = StreamCodec.composite(
+				PostActionCommonProperties.STREAM_CODEC,
+				PlaceBlock::commonProperties,
+				BlockPredicate.STREAM_CODEC,
+				PlaceBlock::block,
+				BlockPos.STREAM_CODEC,
+				PlaceBlock::offset,
+				PlaceBlock::new);
 
 		@Override
 		public MapCodec<PlaceBlock> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, PlaceBlock> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

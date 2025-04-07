@@ -124,7 +124,6 @@ public class CategoryMetadata extends SimpleRecipe<EmptyRecipeInput> {
 		return renderDefault;
 	}
 
-	
 	public static class Serializer implements RecipeSerializer<CategoryMetadata> {
 		public static final MapCodec<CategoryMetadata> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				ExtraCodecs.nonEmptyList(KCodecs.compactList(ExtraCodecs.NON_EMPTY_STRING))

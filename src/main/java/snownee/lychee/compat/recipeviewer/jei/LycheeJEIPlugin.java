@@ -27,7 +27,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RvPlugin;
 import snownee.lychee.compat.recipeviewer.SlotType;
-import snownee.lychee.compat.recipeviewer.category.RvCategory;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.jei.category.CraftingRecipeCategoryExtension;
 import snownee.lychee.compat.recipeviewer.jei.category.JeiRvHelper;
 import snownee.lychee.compat.recipeviewer.jei.category.RvCategoryAdapter;
@@ -74,9 +74,9 @@ public class LycheeJEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerRecipes(IRecipeRegistration registry) {
-		for (RvCategory<?> rvCategory : rvPlugin.categories().values()) {
+		for (RvCategoryInstance<?> instance : rvPlugin.categories().values()) {
 			//noinspection unchecked,rawtypes
-			registry.addRecipes((RecipeType) registry.getJeiHelpers().getRecipeType(rvCategory.id()).orElseThrow(), rvCategory.recipes());
+			registry.addRecipes((RecipeType) registry.getJeiHelpers().getRecipeType(instance.id()).orElseThrow(), instance.recipes());
 		}
 
 		try {
@@ -104,9 +104,9 @@ public class LycheeJEIPlugin implements IModPlugin {
 
 	@Override
 	public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
-		for (RvCategory<?> rvCategory : rvPlugin.categories().values()) {
-			RecipeType<?> recipeType = registry.getJeiHelpers().getRecipeType(rvCategory.id()).orElseThrow();
-			for (Ingredient ingredient : rvCategory.workstations()) {
+		for (RvCategoryInstance<?> instance : rvPlugin.categories().values()) {
+			RecipeType<?> recipeType = registry.getJeiHelpers().getRecipeType(instance.id()).orElseThrow();
+			for (Ingredient ingredient : instance.workstations()) {
 				registry.addRecipeCatalysts(recipeType, ingredient.getItems());
 			}
 		}

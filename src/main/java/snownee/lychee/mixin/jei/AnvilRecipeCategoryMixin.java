@@ -12,7 +12,7 @@ import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
 import mezz.jei.library.plugins.vanilla.anvil.AnvilRecipeCategory;
-import snownee.lychee.compat.recipeviewer.category.AbstractRvCategory;
+import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.jei.display.AnvilCraftingDisplay;
 import snownee.lychee.compat.recipeviewer.jei.element.RenderElementAdapter;
 
@@ -23,8 +23,8 @@ public class AnvilRecipeCategoryMixin {
 
 	@Inject(method = "createRecipeExtras*", at = @At("TAIL"))
 	private void onRecipeExtras(IRecipeExtrasBuilder builder, IJeiAnvilRecipe recipe, IFocusGroup focuses, CallbackInfo ci) {
-		if (recipe instanceof AnvilCraftingDisplay display && AbstractRvCategory.needInfoIcon(display.recipeHolder().value())) {
-			builder.addWidget(new RenderElementAdapter(AbstractRvCategory.getRecipeInfoIcon(display.recipeHolder()).at(lychee$infoPosition)));
+		if (recipe instanceof AnvilCraftingDisplay display && RvCategory.needInfo(display.recipeHolder().value())) {
+			builder.addWidget(new RenderElementAdapter(RvCategory.infoIcon(display.recipeHolder()).at(lychee$infoPosition)));
 		}
 	}
 }

@@ -158,9 +158,9 @@ public class GuiGameElement {
 		protected BlockState blockState;
 		private ModelData modelData;
 
-		public GuiBlockModelRenderBuilder(BakedModel blockmodel, @Nullable BlockState blockState) {
+		public GuiBlockModelRenderBuilder(BakedModel bakedModel, @Nullable BlockState blockState) {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
-			this.blockModel = blockmodel;
+			this.blockModel = bakedModel;
 			this.modelData = ModelData.EMPTY;
 			if (ClientProxy.HAS_PONDER) {
 				this.modelData = VirtualRenderHelper.VIRTUAL_DATA;

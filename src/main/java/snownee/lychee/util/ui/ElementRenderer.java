@@ -10,6 +10,9 @@ import net.minecraft.network.chat.Component;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.ui.BlockElement;
+import snownee.lychee.ui.GameElementRenderer;
+import snownee.lychee.ui.ItemElement;
 import snownee.lychee.ui.SpriteElementRenderer;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
@@ -18,8 +21,10 @@ public interface ElementRenderer {
 
 	static void init() {
 		ElementRenderer.register(UIElementType.SPRITE, SpriteElementRenderer::create);
-		ElementRenderer.register(UIElementType.ITEM, it -> GuiGameElement.of(it.itemStack()));
-		ElementRenderer.register(UIElementType.BLOCK, it -> GuiGameElement.of(BlockPredicateExtensions.anyBlockState(it.block())));
+		ElementRenderer.register(UIElementType.ITEM, (GameElementRenderer<ItemElement>) it -> GuiGameElement.of(it.itemStack()));
+		ElementRenderer.register(
+				UIElementType.BLOCK,
+				(GameElementRenderer<BlockElement>) it -> GuiGameElement.of(BlockPredicateExtensions.anyBlockState(it.block())));
 	}
 
 	static RenderElement of(UIElement element) {
