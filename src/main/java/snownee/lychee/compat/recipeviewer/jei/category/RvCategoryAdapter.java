@@ -211,12 +211,18 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		var ingredients = RVs.generateShapelessInputs(recipe);
 		slotGroup(
 				builder, x + 1, y + 1, ingredients, (layout0, ingredient, x0, y0) -> {
-					var items = ingredient.ingredient.getItems();
 					var slotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, (int) x0, (int) y0);
-					slotBuilder.addItemStacks(Arrays.stream(items)
-							.map(it -> ingredient.count == 1 ? it : it.copy())
-							.peek(it -> it.setCount(ingredient.count))
-							.toList());
+					if (ingredient.ingredient.isEmpty()) {
+						if (!ingredient.tooltips.isEmpty()) {
+							slotBuilder.addIngredient(LycheeJEIPlugin.POST_ACTION, PostActionIngredientRenderer.INGREDIENT_HACK_DUMMY);
+						}
+					} else if (ingredient.count == 1) {
+						slotBuilder.addIngredients(ingredient.ingredient);
+					} else {
+						slotBuilder.addItemStacks(Arrays.stream(ingredient.ingredient.getItems())
+								.map(it -> it.copyWithCount(ingredient.count))
+								.toList());
+					}
 					slotBuilder.setBackground(LycheeJEIPlugin.slot(ingredient.type), -1, -1);
 					if (!ingredient.tooltips.isEmpty()) {
 						slotBuilder.addRichTooltipCallback((stack, tooltip) -> tooltip.addAll(ingredient.tooltips));

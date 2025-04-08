@@ -15,8 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import snownee.lychee.util.VectorExtensions;
 
-
-public class InteractiveRenderElement extends RenderElement implements GuiEventListener {
+public class InteractiveRenderElement extends RenderElement implements WrapperRenderElement, GuiEventListener {
 	private final @Nullable Function<InteractiveRenderElement, ScreenElement> renderable;
 	private @Nullable Supplier<@Nullable List<Component>> onTooltip;
 	private @Nullable IntPredicate onClick;
@@ -85,6 +84,10 @@ public class InteractiveRenderElement extends RenderElement implements GuiEventL
 		return onTooltip.get();
 	}
 
+	public @Nullable IntPredicate getOnClick() {
+		return onClick;
+	}
+
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (onClick != null && containsMouse(mouseX, mouseY)) {
@@ -92,5 +95,10 @@ public class InteractiveRenderElement extends RenderElement implements GuiEventL
 			return onClick.test(button);
 		}
 		return false;
+	}
+
+	@Override
+	public @Nullable ScreenElement getWrappedElement() {
+		return renderable == null ? null : renderable.apply(this);
 	}
 }
