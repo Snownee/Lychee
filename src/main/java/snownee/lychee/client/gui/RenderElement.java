@@ -34,8 +34,8 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 		return new SimpleRenderElement(it -> (graphics, element) -> renderable.apply(element));
 	}
 
-	public static RenderElement create(ScreenElement renderable) {
-		return new SimpleRenderElement(renderable);
+	public static InteractiveRenderElement create(ScreenElement element) {
+		return InteractiveRenderElement.create(element);
 	}
 
 	protected float alpha = 1f;

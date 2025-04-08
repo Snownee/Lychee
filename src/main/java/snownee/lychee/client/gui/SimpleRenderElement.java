@@ -19,15 +19,11 @@ public class SimpleRenderElement extends RenderElement {
 		this.renderable = ignored -> renderable;
 	}
 
-	public SimpleRenderElement(ScreenElement renderable) {
-		this.renderable = ignored -> (graphics, element) -> renderable.render(graphics);
-	}
-
 	@Override
 	public void render(GuiGraphics graphics) {
 		PoseStack pose = graphics.pose();
 		pose.pushPose();
-		pose.translate(x(), y(), z);
+		pose.translate(x(), y(), z());
 		renderable.apply(this).accept(graphics, this);
 		pose.popPose();
 	}

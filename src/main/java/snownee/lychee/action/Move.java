@@ -33,24 +33,23 @@ public record Move(PostActionCommonProperties commonProperties, Vec3 offset, Str
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
 		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		Vec3 offset = this.offset;
-		with:
 		if (!with.isEmpty()) {
 			BlockState blockState = lootParams.getOrNull(LootContextParams.BLOCK_STATE);
 			if (blockState == null) {
-				break with;
+				return;
 			}
 			var property = blockState.getBlock().getStateDefinition().getProperty(with);
 			if (!(property instanceof DirectionProperty directionProperty)) {
-				break with;
+				return;
 			}
 			Direction direction = blockState.getValue(directionProperty);
 			offset = switch (direction) {
 				case DOWN -> offset.xRot(Mth.PI);
 				case UP -> offset;
 				case NORTH -> offset.xRot(Mth.HALF_PI);
-				case SOUTH -> offset.xRot(-Mth.HALF_PI);
-				case WEST -> offset.zRot(-Mth.HALF_PI);
-				case EAST -> offset.zRot(Mth.HALF_PI);
+				case SOUTH -> offset.xRot(Mth.HALF_PI).yRot(Mth.PI);
+				case WEST -> offset.xRot(Mth.HALF_PI).yRot(Mth.HALF_PI);
+				case EAST -> offset.xRot(Mth.HALF_PI).yRot(-Mth.HALF_PI);
 			};
 		}
 		var pos = lootParams.get(LootContextParams.ORIGIN);

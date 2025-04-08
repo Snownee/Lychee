@@ -2,6 +2,7 @@ package snownee.lychee.compat.recipeviewer.rei.category;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.IntPredicate;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
@@ -14,6 +15,7 @@ import com.google.common.collect.Maps;
 
 import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
+import me.shedaniel.rei.api.client.REIRuntime;
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer;
 import me.shedaniel.rei.api.client.gui.Renderer;
 import me.shedaniel.rei.api.client.gui.widgets.Tooltip;
@@ -31,7 +33,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.RandomSelect;
+import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.client.gui.WrapperRenderElement;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.SlotType;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
@@ -189,22 +194,16 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		var ingredients = RVs.generateShapelessInputs(recipe);
 		slotGroup(
 				widgets, startPoint, x, y, ingredients, (widgets0, startPoint0, ingredient, x0, y0) -> {
-					var items = ingredient.ingredient.getItems();
 					var slot = LycheeREIPlugin.slot(startPoint, x0, y0, ingredient.type);
-					slot.entries(EntryIngredients.ofItemStacks(Stream.of(items)
-							.map($ -> ingredient.count == 1 ? $ : $.copy())
-							.peek($ -> $.setCount(ingredient.count))
-							.toList()));
-					slot.markInput();
-					if (!ingredient.tooltips.isEmpty()) {
-						slot.tooltipProcessor(tooltip -> {
-							if (tooltip == null) {
-								tooltip = Tooltip.create();
-							}
-							ingredient.tooltips.forEach(tooltip::add);
-							return tooltip;
-						});
+					if (ingredient.count == 1) {
+						slot.entries(EntryIngredients.ofIngredient(ingredient.ingredient));
+					} else {
+						slot.entries(EntryIngredients.ofItemStacks(Stream.of(ingredient.ingredient.getItems())
+								.map($ -> $.copyWithCount(ingredient.count))
+								.toList()));
 					}
+					slot.markInput();
+					slot.setExtraTooltips(ingredient.tooltips);
 					widgets.add(slot);
 				});
 	}
@@ -233,14 +232,37 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		var widgetBuilder = new RvCategoryWidgetBuilder<>(instance, display.recipe()) {
 			@Override
 			public void addElement(RenderElement element) {
-				if (element instanceof TextElementRenderer text) {
+				ScreenElement unwrapped = WrapperRenderElement.unwrap(element);
+				if (unwrapped instanceof TextElementRenderer text) {
 					text.offset(startPoint);
-					Point point = new Point(text.x(), text.y());
-					var widget = Widgets.createLabel(point, text.text);
+					Point point = new Point(element.x(), element.y());
+					var widget = Widgets.createLabel(point, REIRuntime.getInstance().isDarkThemeEnabled() ? text.darkText : text.text);
+					if (text.text != text.darkText) {
+						widget.setOnRender((graphics, label) -> {
+							Component msg = REIRuntime.getInstance().isDarkThemeEnabled() ? text.darkText : text.text;
+							if (msg != label.getMessage()) {
+								label.setMessage(msg);
+							}
+						});
+					}
 					widget.shadow(text.shadow);
 					widget.color(text.lightModeColor, text.darkModeColor);
 					if (text.centered) {
 						widget.centered();
+					}
+					if (element instanceof InteractiveRenderElement interactive) {
+						widget.setTooltipFunction(it -> {
+							List<Component> tooltip = interactive.getTooltip();
+							if (tooltip == null) {
+								return null;
+							}
+							return tooltip.toArray(Component[]::new);
+						});
+						IntPredicate onClick = interactive.getOnClick();
+						if (onClick != null) {
+							widget.clickable();
+							widget.setOnClick(it -> onClick.test(0));
+						}
 					}
 					widgets.add(widget);
 					return;
