@@ -1,12 +1,13 @@
 package snownee.lychee.compat.recipeviewer.category;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2ic;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.minecraft.resources.ResourceLocation;
@@ -17,15 +18,17 @@ import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.ui.CategoryMetadata;
+import snownee.lychee.util.ui.CategoryModifier;
 import snownee.lychee.util.ui.ElementRenderer;
 import snownee.lychee.util.ui.UIElement;
 
 public class RvCategoryInstanceImpl<R extends ILycheeRecipe<LycheeContext>> implements RvCategoryInstance<R> {
-	protected final RecipeHolder<CategoryMetadata> metadata;
 	private final RvCategory<R> type;
 	private final RvHelper helper;
 	private final ResourceLocation id;
-	private final List<RecipeHolder<R>> recipes = new ArrayList<>();
+	protected final RecipeHolder<CategoryMetadata> metadata;
+	protected final List<RecipeHolder<CategoryModifier>> modifiers;
+	private final List<RecipeHolder<R>> recipes = Lists.newArrayList();
 	private final Map<String, RvCategoryDecoration<R>> decorations = Maps.newLinkedHashMap();
 	private final Map<String, Predicate<R>> conditions = Maps.newLinkedHashMap();
 
@@ -33,10 +36,11 @@ public class RvCategoryInstanceImpl<R extends ILycheeRecipe<LycheeContext>> impl
 		this.type = type;
 		this.id = id;
 		this.helper = helper;
-		this.metadata = helper.getMetadata(this);
+		metadata = helper.getMetadata(this);
+		modifiers = helper.getModifiers(this);
 		decorations.putAll(type.decorations);
 		conditions.putAll(type.conditions);
-		processDecorations();
+		processDecorations(metadata().elements().orElse(null), decorations);
 	}
 
 	@Override
@@ -60,30 +64,40 @@ public class RvCategoryInstanceImpl<R extends ILycheeRecipe<LycheeContext>> impl
 	}
 
 	@Override
+	public CategoryMetadata metadata() {
+		return metadata.value();
+	}
+
+	@Override
+	public List<RecipeHolder<CategoryModifier>> modifiers() {
+		return modifiers;
+	}
+
+	@Override
 	public RenderElement icon() {
-		return metadata.value().icon().map(ElementRenderer::of).orElseGet(RvCategoryInstance.super::icon);
+		return metadata().icon().map(ElementRenderer::of).orElseGet(RvCategoryInstance.super::icon);
 	}
 
 	@Override
 	public List<Ingredient> workstations() {
-		return metadata.value().workstation().orElseGet(RvCategoryInstance.super::workstations);
+		return metadata().workstation().orElseGet(RvCategoryInstance.super::workstations);
 	}
 
 	@Override
 	public int width() {
-		Vector2ic size = metadata.value().size().orElse(null);
+		Vector2ic size = metadata().size().orElse(null);
 		return size == null ? RvCategoryInstance.super.width() : size.x();
 	}
 
 	@Override
 	public int height() {
-		Vector2ic size = metadata.value().size().orElse(null);
+		Vector2ic size = metadata().size().orElse(null);
 		return size == null ? RvCategoryInstance.super.height() : size.y();
 	}
 
 	@Override
 	public boolean renderDefault() {
-		return metadata.value().renderDefault();
+		return metadata().renderDefault();
 	}
 
 	@Override
@@ -97,14 +111,13 @@ public class RvCategoryInstanceImpl<R extends ILycheeRecipe<LycheeContext>> impl
 	}
 
 	@Override
-	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder) {
-		boolean renderDefault = renderDefault();
-		for (Map.Entry<String, RvCategoryDecoration<R>> entry : decorations.entrySet()) {
+	public void configureDecorations(RvCategoryWidgetBuilder<R> builder, RecipeHolder<R> recipeHolder) {
+		for (Map.Entry<String, RvCategoryDecoration<R>> entry : builder.decorations().entrySet()) {
 			String key = entry.getKey();
-			if (!renderDefault && type.decorations.containsKey(key)) {
+			if (!builder.renderDefault() && type.decorations.containsKey(key)) {
 				continue;
 			}
-			Predicate<R> condition = conditions.get(key);
+			Predicate<R> condition = builder.condition(key);
 			if (condition != null && !condition.test(recipeHolder.value())) {
 				continue;
 			}
@@ -112,13 +125,18 @@ public class RvCategoryInstanceImpl<R extends ILycheeRecipe<LycheeContext>> impl
 		}
 	}
 
-	private void processDecorations() {
-		for (Map.Entry<String, List<UIElement>> entry : metadata.value().elements().orElse(Map.of()).entrySet()) {
+	public static <R extends ILycheeRecipe<LycheeContext>> void processDecorations(
+			@Nullable Map<String, List<UIElement>> uiElements,
+			Map<String, RvCategoryDecoration<R>> decorations) {
+		if (uiElements == null) {
+			return;
+		}
+		for (Map.Entry<String, List<UIElement>> entry : uiElements.entrySet()) {
 			String key = entry.getKey();
 			List<UIElement> elements = entry.getValue();
 			RvCategoryDecoration<R> decoration = (builder, recipeHolder) -> {
 				for (UIElement element : elements) {
-					builder.addElement(ElementRenderer.of(element));
+					builder.addElement(ElementRenderer.of(element, recipeHolder));
 				}
 			};
 			decorations.put(key, decoration);

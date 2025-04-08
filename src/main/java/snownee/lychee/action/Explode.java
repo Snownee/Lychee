@@ -95,7 +95,7 @@ public record Explode(
 	public static class Type implements PostActionType<Explode> {
 		public static final MapCodec<Explode> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(Explode::commonProperties),
-				Codec.STRING.comapFlatMap(
+				ExtraCodecs.NON_EMPTY_STRING.comapFlatMap(
 						it -> switch (it) {
 							case "none", "keep" -> DataResult.success(BlockInteraction.KEEP);
 							case "break", "destroy_with_decay" -> DataResult.success(BlockInteraction.DESTROY_WITH_DECAY);

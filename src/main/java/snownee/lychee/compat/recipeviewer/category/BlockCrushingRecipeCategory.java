@@ -74,8 +74,7 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 									BLOCK_SIZE,
 									FALLING_BLOCK_HEIGHT)
 							.onTooltip(() -> BlockPredicateExtensions.getTooltips(getFallingBlock(recipe), recipe.blockPredicate()))
-							.onClick(button -> helper.buttonToUsageOrRecipe(button)
-									.ifPresent(usageOrRecipe -> helper.openPage(getFallingBlock(recipe), usageOrRecipe))));
+							.onClick(helper.lookupBlock(() -> getFallingBlock(recipe))));
 				});
 
 		mapBuilder.condition("landing_block", $ -> !landingBlockIsAny($));
@@ -101,8 +100,7 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 					builder.addElement(new InteractiveRenderElement().at(landingBlockPosition)
 							.<InteractiveRenderElement>withSize(BLOCK_SIZE)
 							.onTooltip(() -> BlockPredicateExtensions.getTooltips(getLandingBlock(recipe), recipe.landingBlock()))
-							.onClick(button -> helper.buttonToUsageOrRecipe(button)
-									.ifPresent(usageOrRecipe -> helper.openPage(getLandingBlock(recipe), usageOrRecipe))));
+							.onClick(helper.lookupBlock(() -> getLandingBlock(recipe))));
 				});
 	}
 

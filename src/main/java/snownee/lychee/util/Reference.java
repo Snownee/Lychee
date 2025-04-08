@@ -1,18 +1,16 @@
 package snownee.lychee.util;
 
-import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.GsonHelper;
+import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.util.json.JsonPointer;
 
 public abstract class Reference {
-	public static final Codec<Reference> CODEC = Codec.STRING.xmap(Reference::create, Object::toString);
-	@SuppressWarnings("StaticInitializerReferencesSubClass")
-	public static final Reference DEFAULT = new Constant("default");
+	public static final Codec<Reference> CODEC = ExtraCodecs.NON_EMPTY_STRING.xmap(Reference::create, Object::toString);
+	public static final StreamCodec<ByteBuf, Reference> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(Reference::create, Object::toString);
 
 	public static Reference create(String value) {
 		if ("default".equals(value)) {
@@ -24,10 +22,6 @@ public abstract class Reference {
 		return new Constant(value);
 	}
 
-	public static Reference fromJson(JsonObject parent, String key) {
-		return create(GsonHelper.getAsString(parent, key, "default"));
-	}
-
 	public boolean isPointer() {
 		return getClass() == Pointer.class;
 	}
@@ -35,7 +29,9 @@ public abstract class Reference {
 	public JsonPointer getPointer() {
 		return ((Pointer) this).pointer;
 	}
-	public static final StreamCodec<ByteBuf, Reference> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(Reference::create, Object::toString);
+
+	@SuppressWarnings("StaticInitializerReferencesSubClass")
+	public static final Reference DEFAULT = new Constant("default");
 
 	public static class Pointer extends Reference {
 		private final JsonPointer pointer;

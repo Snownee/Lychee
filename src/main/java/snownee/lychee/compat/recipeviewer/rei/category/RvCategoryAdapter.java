@@ -217,22 +217,20 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				bounds.getCenterY() - (float) instance.height() / 2 + 1);
 		widgets.add(Widgets.createRecipeBase(bounds));
 
-		var layoutBuilder = new RvCategoryLayoutBuilder.Wrapped(instance) {
+		var layoutBuilder = new RvCategoryLayoutBuilder.Wrapped<>(instance, display.recipe()) {
 			@Override
-			protected void _actionGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
-				//noinspection unchecked
-				RvCategoryAdapter.this.actionGroup(widgets, startPoint, (R) recipe, position.x(), position.y());
+			protected void _actionGroup(R recipe, Vector2fc position) {
+				RvCategoryAdapter.this.actionGroup(widgets, startPoint, recipe, position.x(), position.y());
 			}
 
 			@Override
-			protected void _ingredientGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
-				//noinspection unchecked
-				RvCategoryAdapter.this.ingredientGroup(widgets, startPoint, (R) recipe, position.x(), position.y());
+			protected void _ingredientGroup(R recipe, Vector2fc position) {
+				RvCategoryAdapter.this.ingredientGroup(widgets, startPoint, recipe, position.x(), position.y());
 			}
 		};
 		instance.type().configureLayout(layoutBuilder, display.recipe());
 
-		var widgetBuilder = new RvCategoryWidgetBuilder(instance) {
+		var widgetBuilder = new RvCategoryWidgetBuilder<>(instance, display.recipe()) {
 			@Override
 			public void addElement(RenderElement element) {
 				if (element instanceof TextElementRenderer text) {

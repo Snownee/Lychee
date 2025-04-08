@@ -1,8 +1,8 @@
 package snownee.lychee.client.gui;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +19,7 @@ import snownee.lychee.util.VectorExtensions;
 public class InteractiveRenderElement extends RenderElement implements GuiEventListener {
 	private final @Nullable Function<InteractiveRenderElement, ScreenElement> renderable;
 	private @Nullable Supplier<@Nullable List<Component>> onTooltip;
-	private @Nullable Consumer<Integer> onClick;
+	private @Nullable IntPredicate onClick;
 	private boolean focused;
 
 	public InteractiveRenderElement(Function<InteractiveRenderElement, ScreenElement> renderable) {
@@ -72,7 +72,7 @@ public class InteractiveRenderElement extends RenderElement implements GuiEventL
 		return this;
 	}
 
-	public InteractiveRenderElement onClick(@Nullable Consumer<Integer> onClick) {
+	public InteractiveRenderElement onClick(@Nullable IntPredicate onClick) {
 		this.onClick = onClick;
 		return this;
 	}
@@ -89,8 +89,7 @@ public class InteractiveRenderElement extends RenderElement implements GuiEventL
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
 		if (onClick != null && containsMouse(mouseX, mouseY)) {
 			produceClickSound();
-			onClick.accept(button);
-			return true;
+			return onClick.test(button);
 		}
 		return false;
 	}

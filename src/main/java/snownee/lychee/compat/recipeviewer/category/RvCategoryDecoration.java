@@ -9,5 +9,5 @@ public interface RvCategoryDecoration<R extends ILycheeRecipe<LycheeContext>> {
 	RvCategoryDecoration<BlockExplodingRecipe> NOTHING = (builder, recipeHolder) -> {
 	};
 
-	void setup(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder);
+	void setup(RvCategoryWidgetBuilder<R> builder, RecipeHolder<R> recipeHolder);
 }
