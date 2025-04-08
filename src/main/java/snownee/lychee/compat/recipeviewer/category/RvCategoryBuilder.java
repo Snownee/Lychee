@@ -3,25 +3,29 @@ package snownee.lychee.compat.recipeviewer.category;
 import snownee.lychee.compat.recipeviewer.RvHelper;
 
 public abstract class RvCategoryBuilder {
-	private final RvCategoryInstance<?> category;
+	private final RvCategoryInstance<?> instance;
 
-	protected RvCategoryBuilder(RvCategoryInstance<?> category) {
-		this.category = category;
+	protected RvCategoryBuilder(RvCategoryInstance<?> instance) {
+		this.instance = instance;
 	}
 
-	public RvCategoryInstance<?> category() {
-		return category;
+	public RvCategoryInstance<?> instance() {
+		return instance;
+	}
+
+	public RvCategory<?> type() {
+		return instance().type();
 	}
 
 	public RvHelper helper() {
-		return category().helper();
+		return instance().helper();
 	}
 
 	public int width() {
-		return category().width();
+		return instance().width();
 	}
 
 	public int height() {
-		return category().height();
+		return instance().height();
 	}
 }

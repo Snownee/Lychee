@@ -217,15 +217,15 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 				bounds.getCenterY() - (float) instance.height() / 2 + 1);
 		widgets.add(Widgets.createRecipeBase(bounds));
 
-		var layoutBuilder = new RvCategoryLayoutBuilder(instance) {
+		var layoutBuilder = new RvCategoryLayoutBuilder.Wrapped(instance) {
 			@Override
-			public void actionGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
+			protected void _actionGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
 				//noinspection unchecked
 				RvCategoryAdapter.this.actionGroup(widgets, startPoint, (R) recipe, position.x(), position.y());
 			}
 
 			@Override
-			public void ingredientGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
+			protected void _ingredientGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
 				//noinspection unchecked
 				RvCategoryAdapter.this.ingredientGroup(widgets, startPoint, (R) recipe, position.x(), position.y());
 			}
