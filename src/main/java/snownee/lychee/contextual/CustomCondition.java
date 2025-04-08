@@ -6,7 +6,6 @@ import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonObject;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -80,14 +79,15 @@ public class CustomCondition implements ContextualCondition {
 	public static class Type implements ContextualConditionType<CustomCondition> {
 		// TODO 需要测试
 		public static final MapCodec<CustomCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.STRING.fieldOf("id").forGetter(CustomCondition::id),
-				ExtraCodecs.JSON.comapFlatMap(it -> {
-					try {
-						return DataResult.success(it.getAsJsonObject());
-					} catch (Exception e) {
-						return DataResult.error(e::getMessage);
-					}
-				}, Function.identity()).optionalFieldOf("data", new JsonObject()).forGetter(CustomCondition::data)
+				ExtraCodecs.NON_EMPTY_STRING.fieldOf("id").forGetter(CustomCondition::id),
+				ExtraCodecs.JSON.comapFlatMap(
+						it -> {
+							try {
+								return DataResult.success(it.getAsJsonObject());
+							} catch (Exception e) {
+								return DataResult.error(e::getMessage);
+							}
+						}, Function.identity()).optionalFieldOf("data", new JsonObject()).forGetter(CustomCondition::data)
 		).apply(instance, CustomCondition::new));
 
 		@Override

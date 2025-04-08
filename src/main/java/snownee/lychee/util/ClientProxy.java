@@ -2,22 +2,16 @@ package snownee.lychee.util;
 
 import java.text.MessageFormat;
 
-import org.jetbrains.annotations.Nullable;
-
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.item.crafting.Recipe;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.particles.dripstone.client.ParticleFactories;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.ui.ElementRenderer;
 
 public class ClientProxy implements ClientModInitializer {
@@ -41,17 +35,12 @@ public class ClientProxy implements ClientModInitializer {
 		}
 	}
 
-	public static void registerInfoBadgeClickListener(RecipeViewerWidgetClickListener listener) {
+	public static void registerWidgetClickListener(RecipeViewerWidgetClickListener listener) {
 		RECIPE_VIEWER_WIDGET_CLICK_EVENT.register(listener);
 	}
 
-	public static boolean postInfoBadgeClickEvent(ILycheeRecipe<?> recipe, @Nullable ResourceLocation id, int button) {
+	public static boolean postWidgetClickEvent(Recipe<?> recipe, String id, int button) {
 		return RECIPE_VIEWER_WIDGET_CLICK_EVENT.invoker().onClick(recipe, id, button);
-	}
-
-	public static void drawCenteredStringNoShadow(GuiGraphics graphics, Font font, Component text, int x, int y, int color) {
-		FormattedCharSequence formattedCharSequence = text.getVisualOrderText();
-		graphics.drawString(font, formattedCharSequence, x - font.width(formattedCharSequence) / 2, y, color, false);
 	}
 
 	@Override
@@ -75,6 +64,6 @@ public class ClientProxy implements ClientModInitializer {
 
 	@FunctionalInterface
 	public interface RecipeViewerWidgetClickListener {
-		boolean onClick(ILycheeRecipe<?> recipe, @Nullable ResourceLocation id, int button);
+		boolean onClick(Recipe<?> recipe, String id, int button);
 	}
 }

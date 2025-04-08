@@ -16,16 +16,23 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.util.VectorExtensions;
 
-public record UIElementCommonProperties(Vector3fc pos, Vector2ic size, Optional<List<Component>> tooltip, float opacity) {
+public record UIElementCommonProperties(
+		Vector3fc pos,
+		Vector2ic size,
+		Optional<List<Component>> tooltip,
+		Optional<String> onClick,
+		float opacity) {
 	public static final Vector2ic DEFAULT_SIZE = new Vector2i(16);
 
 	public static final MapCodec<UIElementCommonProperties> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
 			VectorExtensions.CODEC3F.optionalFieldOf("pos", VectorExtensions.ZERO3F).forGetter(UIElementCommonProperties::pos),
 			VectorExtensions.CODEC2I.optionalFieldOf("size", DEFAULT_SIZE).forGetter(UIElementCommonProperties::size),
 			KCodecs.compactList(ComponentSerialization.CODEC).optionalFieldOf("tooltip").forGetter(UIElementCommonProperties::tooltip),
+			ExtraCodecs.NON_EMPTY_STRING.optionalFieldOf("on_click").forGetter(UIElementCommonProperties::onClick),
 			Codec.floatRange(0, 1).optionalFieldOf("opacity", 1F).forGetter(UIElementCommonProperties::opacity)
 	).apply(i, UIElementCommonProperties::new));
 
@@ -36,6 +43,8 @@ public record UIElementCommonProperties(Vector3fc pos, Vector2ic size, Optional<
 			UIElementCommonProperties::size,
 			ByteBufCodecs.optional(ComponentSerialization.TRUSTED_STREAM_CODEC.apply(ByteBufCodecs.list())),
 			UIElementCommonProperties::tooltip,
+			ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8),
+			UIElementCommonProperties::onClick,
 			ByteBufCodecs.FLOAT,
 			UIElementCommonProperties::opacity,
 			UIElementCommonProperties::new);

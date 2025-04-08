@@ -53,7 +53,7 @@ public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 	}
 
 	@Override
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<DripstoneRecipe> recipeHolder) {
+	public void configureLayout(RvCategoryLayoutBuilder<DripstoneRecipe> builder, RecipeHolder<DripstoneRecipe> recipeHolder) {
 		var recipe = recipeHolder.value();
 		var needSecondLine = recipe.conditions().showingCount() > 9;
 		var y = (needSecondLine ? 26 : 28);
@@ -102,8 +102,7 @@ public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 				.at(-1, 2);
 		return new InteractiveRenderElement((InteractiveRenderElement element) -> blockElement.get())
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(stateSupplier.get(), predicate))
-				.onClick(button -> helper.buttonToUsageOrRecipe(button)
-						.ifPresent(usageOrRecipe -> helper.openPage(stateSupplier.get(), usageOrRecipe)))
+				.onClick(helper.lookupBlock(stateSupplier))
 				.withSize(BLOCK_SIZE);
 	}
 
@@ -118,9 +117,7 @@ public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 
 		return result
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(getTargetBlock(recipe), recipe.blockPredicate()))
-				.onClick(button ->
-						helper.buttonToUsageOrRecipe(button)
-								.ifPresent(usageOrRecipe -> helper.openPage(getTargetBlock(recipe), usageOrRecipe)))
+				.onClick(helper.lookupBlock(() -> getTargetBlock(recipe)))
 				.at(TARGET_BLOCK_POSITION)
 				.withSize(BLOCK_SIZE);
 	}

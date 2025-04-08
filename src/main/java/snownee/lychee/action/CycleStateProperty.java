@@ -15,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -96,7 +97,7 @@ public record CycleStateProperty(
 						PostActionCommonProperties.MAP_CODEC.forGetter(CycleStateProperty::commonProperties),
 						BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(CycleStateProperty::block),
 						LycheeCodecs.OFFSET_CODEC.forGetter(CycleStateProperty::offset),
-						Codec.STRING.fieldOf("property").forGetter(CycleStateProperty::propertyName),
+						ExtraCodecs.NON_EMPTY_STRING.fieldOf("property").forGetter(CycleStateProperty::propertyName),
 						Codec.BOOL.optionalFieldOf("reversed", false).forGetter(CycleStateProperty::reversed))
 				.apply(instance, CycleStateProperty::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, CycleStateProperty> STREAM_CODEC = StreamCodec.composite(

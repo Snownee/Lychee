@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.collect.Maps;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
@@ -14,6 +17,8 @@ import snownee.lychee.ui.BlockElement;
 import snownee.lychee.ui.GameElementRenderer;
 import snownee.lychee.ui.ItemElement;
 import snownee.lychee.ui.SpriteElementRenderer;
+import snownee.lychee.ui.TextElementRenderer;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public interface ElementRenderer {
@@ -25,9 +30,14 @@ public interface ElementRenderer {
 		ElementRenderer.register(
 				UIElementType.BLOCK,
 				(GameElementRenderer<BlockElement>) it -> GuiGameElement.of(BlockPredicateExtensions.anyBlockState(it.block())));
+		ElementRenderer.register(UIElementType.TEXT, TextElementRenderer::create);
 	}
 
 	static RenderElement of(UIElement element) {
+		return of(element, null);
+	}
+
+	static RenderElement of(UIElement element, @Nullable RecipeHolder<?> recipeHolder) {
 		RenderElement renderElement;
 		Function<? extends UIElement, ? extends RenderElement> function = FACTORIES.get(element.type());
 		if (function == null) {
@@ -41,6 +51,11 @@ public interface ElementRenderer {
 			InteractiveRenderElement interactiveElement = InteractiveRenderElement.create(renderElement);
 			List<Component> tooltip = properties.tooltip().get();
 			renderElement = interactiveElement.onTooltip(() -> tooltip);
+		}
+		String id = properties.onClick().orElse(null);
+		if (recipeHolder != null && id != null) {
+			InteractiveRenderElement interactiveElement = InteractiveRenderElement.create(renderElement);
+			renderElement = interactiveElement.onClick(btn -> ClientProxy.postWidgetClickEvent(recipeHolder.value(), id, btn));
 		}
 		renderElement.at(properties.pos()).withSize(properties.size()).withAlpha(properties.opacity());
 		return renderElement;

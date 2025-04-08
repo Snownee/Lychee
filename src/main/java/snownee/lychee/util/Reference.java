@@ -5,10 +5,11 @@ import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.util.json.JsonPointer;
 
 public abstract class Reference {
-	public static final Codec<Reference> CODEC = Codec.STRING.xmap(Reference::create, Object::toString);
+	public static final Codec<Reference> CODEC = ExtraCodecs.NON_EMPTY_STRING.xmap(Reference::create, Object::toString);
 	public static final StreamCodec<ByteBuf, Reference> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.map(Reference::create, Object::toString);
 
 	public static Reference create(String value) {

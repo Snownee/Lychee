@@ -291,13 +291,14 @@ public class BlockPredicateExtensions {
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	public static List<Component> getTooltips(BlockState blockState, BlockPredicate predicate) {
-		if (blockState.isAir()) {
-			return List.of();
+		if (isAny(predicate)) {
+			if (blockState.isAir()) {
+				return List.of(Component.translatable("tip.lychee.anyBlock"));
+			} else {
+				return List.of();
+			}
 		}
 		final var list = Lists.<Component>newArrayList(blockState.getBlock().getName());
-		if (isAny(predicate)) {
-			return list;
-		}
 		final var matchers = predicate.properties().map(StatePropertiesPredicate::properties);
 		if (matchers.isPresent()) {
 			for (final var matcher : matchers.get()) {

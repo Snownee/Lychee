@@ -13,6 +13,8 @@ import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.ui.CategoryMetadata;
+import snownee.lychee.util.ui.CategoryModifier;
 
 
 public interface RvCategoryInstance<R extends ILycheeRecipe<LycheeContext>> {
@@ -40,6 +42,10 @@ public interface RvCategoryInstance<R extends ILycheeRecipe<LycheeContext>> {
 		return RVs.makeTitle(id());
 	}
 
+	CategoryMetadata metadata();
+
+	List<RecipeHolder<CategoryModifier>> modifiers();
+
 	default RenderElement icon() {
 		return type().iconProvider.get(this);
 	}
@@ -56,5 +62,5 @@ public interface RvCategoryInstance<R extends ILycheeRecipe<LycheeContext>> {
 
 	Map<String, Predicate<R>> conditions();
 
-	void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder);
+	void configureDecorations(RvCategoryWidgetBuilder<R> builder, RecipeHolder<R> recipeHolder);
 }

@@ -36,6 +36,7 @@ import snownee.lychee.util.recipe.ItemShapelessRecipeType;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 import snownee.lychee.util.ui.BlankRecipe;
 import snownee.lychee.util.ui.CategoryMetadata;
+import snownee.lychee.util.ui.CategoryModifier;
 
 public final class RecipeTypes {
 
@@ -47,6 +48,7 @@ public final class RecipeTypes {
 	public static final Set<LycheeRecipeType<? extends ILycheeRecipe<LycheeContext>>> ALL = Sets.newLinkedHashSet();
 
 	public static final RecipeType<CategoryMetadata> CATEGORY_METADATA = register("category_metadata");
+	public static final RecipeType<CategoryModifier> CATEGORY_MODIFIER = register("category_modifier");
 	public static final LycheeRecipeType<BlankRecipe> BLANK = register(new LycheeRecipeType<>(
 			"blank",
 			BlankRecipe.class,

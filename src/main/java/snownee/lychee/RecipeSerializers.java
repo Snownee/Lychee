@@ -19,11 +19,16 @@ import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.ui.BlankRecipe;
 import snownee.lychee.util.ui.CategoryMetadata;
+import snownee.lychee.util.ui.CategoryModifier;
 
 public final class RecipeSerializers {
 	public static final RecipeSerializer<CategoryMetadata> CATEGORY_METADATA = register(
 			"category_metadata",
 			new CategoryMetadata.Serializer()
+	);
+	public static final RecipeSerializer<CategoryModifier> CATEGORY_MODIFIER = register(
+			"category_modifier",
+			new CategoryModifier.Serializer()
 	);
 	public static final LycheeRecipeSerializer<BlankRecipe> BLANK = register(
 			"blank",

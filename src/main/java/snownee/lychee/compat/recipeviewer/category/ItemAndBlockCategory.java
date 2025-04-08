@@ -51,7 +51,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	}
 
 	@Override
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder) {
+	public void configureLayout(RvCategoryLayoutBuilder<R> builder, RecipeHolder<R> recipeHolder) {
 		var recipe = recipeHolder.value();
 		builder.ingredientGroup(recipe, new Vector2f(inputIngredientX(), 28));
 		builder.actionGroup(recipe, new Vector2f(builder.width() - 29, 28));
@@ -88,7 +88,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	}
 
 	protected boolean shouldRenderInputBlockTooltip(R recipe) {
-		return !BlockPredicateExtensions.isAny(((BlockKeyableRecipe) recipe).blockPredicate());
+		return true;
 	}
 
 	protected InteractiveRenderElement getInputBlockElement(
@@ -109,9 +109,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 					((BlockKeyableRecipe) recipe).blockPredicate()));
 		}
 
-		return result.onClick(button ->
-						helper.buttonToUsageOrRecipe(button)
-								.ifPresent(usageOrRecipe -> helper.openPage(getRenderingBlock(recipe), usageOrRecipe)))
+		return result.onClick(helper.lookupBlock(() -> getRenderingBlock(recipe)))
 				.at(inputBlockPosition)
 				.withSize(BLOCK_SIZE);
 	}

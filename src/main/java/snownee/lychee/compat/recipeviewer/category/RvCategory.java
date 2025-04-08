@@ -75,7 +75,7 @@ public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 		this.conditions = conditions.buildKeepingLast();
 	}
 
-	public void configureLayout(RvCategoryLayoutBuilder builder, RecipeHolder<R> recipeHolder) {
+	public void configureLayout(RvCategoryLayoutBuilder<R> builder, RecipeHolder<R> recipeHolder) {
 		var recipe = recipeHolder.value();
 		builder.ingredientGroup(recipe, new Vector2f(27, 28));
 		builder.actionGroup(recipe, new Vector2f(builder.width() - 29, 28));
@@ -118,7 +118,7 @@ public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return InteractiveRenderElement.create(new SpriteElementRenderer(AllGuiTextures.INFO.id).<SpriteElementRenderer>withSize(
 						InfoElementHelper.INFO_SIZE))
 				.onTooltip(() -> RVs.getRecipeTooltip(recipe))
-				.onClick((button) -> ClientProxy.postInfoBadgeClickEvent(recipe, recipeHolder.id(), button))
+				.onClick(button -> ClientProxy.postWidgetClickEvent(recipeHolder.value(), recipeHolder.id().toString(), button))
 				.withSize(InfoElementHelper.INFO_SIZE);
 	}
 }

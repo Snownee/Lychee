@@ -89,7 +89,7 @@ public class CustomAction implements PostAction {
 	public static class Type implements PostActionType<CustomAction> {
 		public static final MapCodec<CustomAction> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(CustomAction::commonProperties),
-				Codec.STRING.fieldOf("id").forGetter(CustomAction::id),
+				ExtraCodecs.NON_EMPTY_STRING.fieldOf("id").forGetter(CustomAction::id),
 				ExtraCodecs.JSON.comapFlatMap(
 						it -> {
 							try {
