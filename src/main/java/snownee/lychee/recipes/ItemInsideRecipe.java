@@ -58,8 +58,8 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 
 	@Override
 	public boolean tickOrApply(LycheeContext context) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var counter = (LycheeCounter) lootParamsContext.get(LootContextParams.THIS_ENTITY);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		var counter = (LycheeCounter) lootParams.get(LootContextParams.THIS_ENTITY);
 		if (counter.lychee$getCount() >= time) {
 			counter.lychee$setRecipeId(null);
 			return true;

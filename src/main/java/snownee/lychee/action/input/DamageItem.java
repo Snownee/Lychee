@@ -36,8 +36,8 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
 		var indexes = recipe.getItemIndexes(target);
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var thisEntity = lootParamsContext.get(LootContextParams.THIS_ENTITY);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		var thisEntity = lootParams.get(LootContextParams.THIS_ENTITY);
 		var itemStackHolders = context.get(LycheeContextKey.ITEM);
 		for (var index : indexes) {
 			var stackHolder = itemStackHolders.get(index);

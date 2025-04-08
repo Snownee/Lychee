@@ -66,12 +66,12 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		context.put(LycheeContextKey.ITEM_SHAPELESS, itemShapelessContext);
 		final var matcher = itemShapelessContext.getMatcher();
 
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, entity.position());
-		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, entity);
-		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, landingBlock);
-		lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, pos);
-		lootParamsContext.validate(contextParamSet);
+		final var lootParams = context.initLootParams(this);
+		lootParams.set(LootContextParams.ORIGIN, entity.position());
+		lootParams.set(LootContextParams.THIS_ENTITY, entity);
+		lootParams.set(LootContextParams.BLOCK_STATE, landingBlock);
+		lootParams.set(LycheeLootContextParams.BLOCK_POS, pos);
+		lootParams.validate();
 
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 

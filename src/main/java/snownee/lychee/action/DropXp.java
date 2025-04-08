@@ -32,8 +32,8 @@ public record DropXp(PostActionCommonProperties commonProperties, int xp) implem
 
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParamsContext.get(LootContextParams.ORIGIN);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParams.get(LootContextParams.ORIGIN);
 		ExperienceOrb.award((ServerLevel) context.level(), pos, xp * times);
 	}
 

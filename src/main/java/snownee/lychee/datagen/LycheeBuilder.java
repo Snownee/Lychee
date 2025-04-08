@@ -186,7 +186,11 @@ public interface LycheeBuilder {
 	}
 
 	default ActionBuilder<?, Move> move(Vec3 offset) {
-		return new ActionBuilder<>(new Move(PostActionCommonProperties.EMPTY, offset));
+		return new ActionBuilder<>(new Move(PostActionCommonProperties.EMPTY, offset, ""));
+	}
+
+	default ActionBuilder<?, Move> move(Vec3 offset, String with) {
+		return new ActionBuilder<>(new Move(PostActionCommonProperties.EMPTY, offset, with));
 	}
 
 	default ActionBuilder<?, Execute> execute(String command) {

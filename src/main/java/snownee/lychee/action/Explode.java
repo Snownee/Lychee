@@ -80,10 +80,10 @@ public record Explode(
 
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParamsContext.getOrNull(LootContextParams.ORIGIN).add(Vec3.atLowerCornerOf(offset));
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParams.get(LootContextParams.ORIGIN).add(Vec3.atLowerCornerOf(offset));
 		var boundedRadius = Math.min(radius + step * (Mth.sqrt(times) - 1), radius * 4);
-		explode(context.level(), lootParamsContext.get(LootContextParams.THIS_ENTITY), pos, boundedRadius);
+		explode(context.level(), lootParams.get(LootContextParams.THIS_ENTITY), pos, boundedRadius);
 	}
 
 	@Override

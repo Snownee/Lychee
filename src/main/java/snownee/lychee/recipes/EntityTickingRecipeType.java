@@ -56,14 +56,18 @@ public class EntityTickingRecipeType extends LycheeRecipeType<EntityTickingRecip
 		ServerLevel level = (ServerLevel) entity.level();
 		LycheeEntity lycheeEntity = (LycheeEntity) entity;
 		LycheeContext context = lycheeEntity.lychee$getContext();
+		LootParamsContext lootParams;
 		if (context == null) {
 			context = new LycheeContext();
 			context.put(LycheeContextKey.LEVEL, level);
 			lycheeEntity.lychee$setContext(context);
+			lootParams = context.initLootParams(this);
+		} else {
+			lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		}
-		LootParamsContext lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParams.setParam(LootContextParams.THIS_ENTITY, entity);
-		lootParams.setParam(LootContextParams.ORIGIN, entity.position());
+		lootParams.set(LootContextParams.THIS_ENTITY, entity);
+		lootParams.set(LootContextParams.ORIGIN, entity.position());
+		lootParams.validate();
 		for (RecipeHolder<EntityTickingRecipe> recipeHolder : recipes) {
 			EntityTickingRecipe recipe = recipeHolder.value();
 			if (recipe.interval() > 1 && (entity.tickCount + 1) % recipe.interval() != 0) {

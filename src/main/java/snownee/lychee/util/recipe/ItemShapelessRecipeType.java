@@ -36,6 +36,19 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 		validItems.refreshCache(recipes);
 	}
 
+	public void process(
+			final Stream<ItemEntity> itemEntities,
+			final LycheeContext context
+	) {
+		if (isEmpty()) {
+			return;
+		}
+		final var list = itemEntities.filter($ -> validItems.contains($.getItem())).collect(Collectors.toCollection(LinkedList::new));
+		context.put(LycheeContextKey.ITEM_SHAPELESS, new ItemShapelessContext(list, context));
+		context.get(LycheeContextKey.LOOT_PARAMS).validate();
+		process(this, recipes, context, null);
+	}
+
 	public static <T extends ILycheeRecipe<LycheeContext>> void process(
 			final LycheeRecipeType<T> recipeType,
 			final Iterable<RecipeHolder<T>> recipes,
@@ -105,18 +118,5 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 		if (matchedAny) {
 			itemShapelessContext.itemEntities.forEach(it -> it.setItem(it.getItem())); //sync item amount
 		}
-	}
-
-	public void process(
-			final Stream<ItemEntity> itemEntities,
-			final LycheeContext context
-	) {
-		if (isEmpty()) {
-			return;
-		}
-		final var list = itemEntities.filter($ -> validItems.contains($.getItem())).collect(Collectors.toCollection(LinkedList::new));
-		context.put(LycheeContextKey.ITEM_SHAPELESS, new ItemShapelessContext(list, context));
-		context.get(LycheeContextKey.LOOT_PARAMS).validate(contextParamSet);
-		process(this, recipes, context, null);
 	}
 }

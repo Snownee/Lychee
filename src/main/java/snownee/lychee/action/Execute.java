@@ -41,12 +41,12 @@ public record Execute(PostActionCommonProperties commonProperties, String comman
 		if (!repeat) {
 			times = 1;
 		}
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParamsContext.getOrNull(LootContextParams.ORIGIN);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParams.getOrNull(LootContextParams.ORIGIN);
 		if (pos == null) {
 			pos = Vec3.ZERO;
 		}
-		var entity = lootParamsContext.getOrNull(LootContextParams.THIS_ENTITY);
+		var entity = lootParams.getOrNull(LootContextParams.THIS_ENTITY);
 		var rotation = Vec2.ZERO;
 		var displayName = DEFAULT_NAME;
 		var name = Lychee.ID;

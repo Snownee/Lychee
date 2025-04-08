@@ -199,12 +199,12 @@ public class BlockPredicateExtensions {
 	 * Optimized without get block state and block entity calls. And needn't pos loaded.
 	 */
 	public static boolean matches(BlockPredicate predicate, LycheeContext context) {
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		final var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		return unsafeMatches(
 				context.level(),
 				predicate,
-				lootParamsContext.get(LootContextParams.BLOCK_STATE),
-				() -> lootParamsContext.getOrNull(LootContextParams.BLOCK_ENTITY)
+				lootParams.get(LootContextParams.BLOCK_STATE),
+				() -> lootParams.getOrNull(LootContextParams.BLOCK_ENTITY)
 		);
 	}
 

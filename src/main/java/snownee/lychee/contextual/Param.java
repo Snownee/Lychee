@@ -1,5 +1,7 @@
 package snownee.lychee.contextual;
 
+import java.util.Map;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -50,8 +52,12 @@ public record Param(Holder<LycheeContextKey<?>> key, boolean create, String loot
 		if (!loot.isEmpty()) {
 			boolean found = false;
 			var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
-			lootParams.initBlockEntityParam();
-			for (LootContextParam<?> param : lootParams.params().keySet()) {
+			lootParams.initAll();
+			for (Map.Entry<LootContextParam<?>, @Nullable Object> entry : lootParams.params().entrySet()) {
+				if (entry.getValue() == null) {
+					continue;
+				}
+				LootContextParam<?> param = entry.getKey();
 				if (loot.equals(param.getName().getPath()) || loot.equals(param.getName().toString())) {
 					found = true;
 					break;

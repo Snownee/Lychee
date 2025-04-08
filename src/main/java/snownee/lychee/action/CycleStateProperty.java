@@ -18,7 +18,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -64,19 +63,15 @@ public record CycleStateProperty(
 
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var blockPos = lootParamsContext.getOrNull(LycheeLootContextParams.BLOCK_POS);
-		if (blockPos == null) {
-			blockPos = BlockPos.containing(lootParamsContext.get(LootContextParams.ORIGIN));
-		}
-		blockPos = blockPos.offset(offset);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParams.get(LycheeLootContextParams.BLOCK_POS).offset(offset);
 		var level = context.level();
-		var oldState = level.getBlockState(blockPos);
+		var oldState = level.getBlockState(pos);
 		var state = reversed ? cycleReversed(oldState, property()) : oldState.cycle(property());
-		if (!level.setBlockAndUpdate(blockPos, state)) {
+		if (!level.setBlockAndUpdate(pos, state)) {
 			return;
 		}
-		level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(state));
+		level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
 	}
 
 	private static <T extends Comparable<T>> BlockState cycleReversed(BlockState oldState, Property<T> property) {

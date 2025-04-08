@@ -31,9 +31,9 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 				.map(ItemEntity.class::cast);
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, new Vec3(x, y, z));
-		lootParamsContext.setParam(LootContextParams.EXPLOSION_RADIUS, radius);
+		var lootParams = context.initLootParams(RecipeTypes.ITEM_EXPLODING);
+		lootParams.set(LootContextParams.ORIGIN, new Vec3(x, y, z));
+		lootParams.set(LootContextParams.EXPLOSION_RADIUS, radius);
 		RecipeTypes.ITEM_EXPLODING.process(itemEntities, context);
 	}
 

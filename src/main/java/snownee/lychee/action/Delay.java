@@ -34,7 +34,6 @@ public record Delay(PostActionCommonProperties commonProperties, float seconds) 
 		var actionContext = context.get(LycheeContextKey.ACTION);
 		var actionMarker = context.get(LycheeContextKey.MARKER);
 		var actionData = actionMarker.lychee$getData();
-//		context.put(LycheeContextKey.RECIPE, recipe);
 		if (actionData == null) {
 			Lychee.LOGGER.error("Delay action called without data: {}", context);
 			return;

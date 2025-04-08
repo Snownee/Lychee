@@ -15,7 +15,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.entity.Marker;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.Lychee;
-import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.action.ActionData;
 import snownee.lychee.util.action.ActionMarker;
@@ -81,9 +80,9 @@ public class MarkerMixin implements ActionMarker {
 		}
 		context.put(LycheeContextKey.MARKER, this);
 		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParams.setParam(LootContextParams.ORIGIN, lychee$self().position());
+		lootParams.set(LootContextParams.ORIGIN, lychee$self().position());
 		try {
-			lootParams.validate(LycheeLootContextParamSets.ALL);
+			lootParams.validate();
 		} catch (IllegalArgumentException e) {
 			Lychee.LOGGER.error("Load Lychee action data: {} -> {}", tag, e.getMessage());
 			lychee$self().discard();

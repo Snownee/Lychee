@@ -47,9 +47,9 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 		if (command.isEmpty() || level.isClientSide) {
 			return 0;
 		}
-		final var lootParamsContext = ctx.get(LycheeContextKey.LOOT_PARAMS);
-		final var pos = lootParamsContext.get(LootContextParams.ORIGIN);
-		final var entity = lootParamsContext.getOrNull(LootContextParams.THIS_ENTITY);
+		final var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
+		final var pos = lootParams.get(LootContextParams.ORIGIN);
+		final var entity = lootParams.getOrNull(LootContextParams.THIS_ENTITY);
 		var rotation = Vec2.ZERO;
 		var displayName = snownee.lychee.action.Execute.DEFAULT_NAME;
 		var name = Lychee.ID;

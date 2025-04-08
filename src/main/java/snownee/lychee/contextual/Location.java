@@ -70,15 +70,15 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	@Override
 	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		final var level = ctx.level();
-		final var lootParamsContext = ctx.get(LycheeContextKey.LOOT_PARAMS);
+		final var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
 		if (level.isClientSide) {
 			return testClient(
 					level,
-					lootParamsContext.getOrNull(LycheeLootContextParams.BLOCK_POS),
-					lootParamsContext.getOrNull(LootContextParams.ORIGIN)
+					lootParams.get(LycheeLootContextParams.BLOCK_POS),
+					lootParams.get(LootContextParams.ORIGIN)
 			).get() ? times : 0;
 		} else {
-			return check.test(lootParamsContext.asLootContext()) ? times : 0;
+			return check.test(lootParams.asLootContext()) ? times : 0;
 		}
 	}
 
