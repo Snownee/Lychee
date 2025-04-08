@@ -1,6 +1,8 @@
 package snownee.lychee.compat.recipeviewer.category;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -49,6 +51,10 @@ public interface RvCategoryInstance<R extends ILycheeRecipe<LycheeContext>> {
 	default boolean renderDefault() {
 		return true;
 	}
+
+	Map<String, RvCategoryDecoration<R>> decorations();
+
+	Map<String, Predicate<R>> conditions();
 
 	void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder);
 }

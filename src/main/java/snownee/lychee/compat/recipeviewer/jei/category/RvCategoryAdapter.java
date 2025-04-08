@@ -226,14 +226,14 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	@Override
 	public void setRecipe(IRecipeLayoutBuilder builder, RecipeHolder<R> recipeHolder, IFocusGroup focuses) {
-		var layoutBuilder = new RvCategoryLayoutBuilder(instance) {
+		var layoutBuilder = new RvCategoryLayoutBuilder.Wrapped(instance) {
 			@Override
-			public void actionGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
+			protected void _actionGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
 				RvCategoryAdapter.this.actionGroup(builder, recipeHolder.value(), position.x(), position.y());
 			}
 
 			@Override
-			public void ingredientGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
+			protected void _ingredientGroup(ILycheeRecipe<?> recipe, Vector2fc position) {
 				RvCategoryAdapter.this.ingredientGroup(builder, recipeHolder.value(), position.x(), position.y());
 			}
 		};

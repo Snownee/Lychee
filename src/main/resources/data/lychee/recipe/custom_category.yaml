@@ -13,3 +13,4 @@ elements:
     id: apple
     pos: [ 40, 20 ]
     tooltip: Test
+  action_group: [ ]

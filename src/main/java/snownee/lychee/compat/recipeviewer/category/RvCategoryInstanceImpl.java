@@ -87,6 +87,16 @@ public class RvCategoryInstanceImpl<R extends ILycheeRecipe<LycheeContext>> impl
 	}
 
 	@Override
+	public Map<String, RvCategoryDecoration<R>> decorations() {
+		return decorations;
+	}
+
+	@Override
+	public Map<String, Predicate<R>> conditions() {
+		return conditions;
+	}
+
+	@Override
 	public void configureDecorations(RvCategoryWidgetBuilder builder, RecipeHolder<R> recipeHolder) {
 		boolean renderDefault = renderDefault();
 		for (Map.Entry<String, RvCategoryDecoration<R>> entry : decorations.entrySet()) {
