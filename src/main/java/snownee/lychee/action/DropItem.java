@@ -37,13 +37,13 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStack it
 
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParamsContext.get(LootContextParams.ORIGIN);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParams.get(LootContextParams.ORIGIN);
 		var level = context.level();
 		if (recipe instanceof BlockCrushingRecipe) {
-			var state = lootParamsContext.get(LootContextParams.BLOCK_STATE);
+			var state = lootParams.get(LootContextParams.BLOCK_STATE);
 			if (state.is(LycheeTags.EXTEND_BOX)) {
-				pos = Vec3.atCenterOf(lootParamsContext.get(LycheeLootContextParams.BLOCK_POS));
+				pos = Vec3.atCenterOf(lootParams.get(LycheeLootContextParams.BLOCK_POS));
 			}
 		}
 		var stack = getPath().isEmpty() ? this.itemStack.copy() : ItemStack.parseOptional(

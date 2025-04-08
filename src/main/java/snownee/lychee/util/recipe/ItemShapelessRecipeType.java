@@ -45,7 +45,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 		}
 		final var list = itemEntities.filter($ -> validItems.contains($.getItem())).collect(Collectors.toCollection(LinkedList::new));
 		context.put(LycheeContextKey.ITEM_SHAPELESS, new ItemShapelessContext(list, context));
-		context.get(LycheeContextKey.LOOT_PARAMS).validate(contextParamSet);
+		context.get(LycheeContextKey.LOOT_PARAMS).validate();
 		process(this, recipes, context, null);
 	}
 

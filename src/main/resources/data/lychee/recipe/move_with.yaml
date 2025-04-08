@@ -1,0 +1,14 @@
+type: lychee:block_interacting
+block_in:
+  blocks: piston
+item_in:
+  item: diamond
+if:
+  - type: direction
+    direction: forward
+post:
+  - type: move
+    offset: [ 0, 1, 0 ]
+    with: facing
+  - type: place
+    block: iron_block

@@ -28,8 +28,8 @@ public record AnvilDamageChance(PostActionCommonProperties commonProperties, flo
 
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var entity = lootParamsContext.get(LootContextParams.THIS_ENTITY);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		var entity = lootParams.get(LootContextParams.THIS_ENTITY);
 		if (entity instanceof LycheeFallingBlockEntity fallingBlockEntity) {
 			fallingBlockEntity.lychee$anvilDamageChance(chance);
 		}

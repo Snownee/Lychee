@@ -80,14 +80,14 @@ public abstract class ExplosionMixin {
 		}
 		contextRef.set(new LycheeContext());
 		contextRef.get().put(LycheeContextKey.LEVEL, level);
-		var lootParamsContext = contextRef.get().get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
-		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, state);
+		var lootParams = contextRef.get().get(LycheeContextKey.LOOT_PARAMS);
+		lootParams.set(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
+		lootParams.set(LootContextParams.BLOCK_STATE, state);
 		var blockEntity = state.hasBlockEntity() ? level.getBlockEntity(blockPos) : null;
-		lootParamsContext.setParam(LootContextParams.BLOCK_ENTITY, blockEntity);
-		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, source);
+		lootParams.set(LootContextParams.BLOCK_ENTITY, blockEntity);
+		lootParams.set(LootContextParams.THIS_ENTITY, source);
 		if (blockInteraction == Explosion.BlockInteraction.DESTROY_WITH_DECAY) {
-			lootParamsContext.setParam(LootContextParams.EXPLOSION_RADIUS, radius);
+			lootParams.set(LootContextParams.EXPLOSION_RADIUS, radius);
 		}
 		stateRef.set(state);
 		currentDropsRef.set(Lists.newArrayList());
@@ -131,8 +131,8 @@ public abstract class ExplosionMixin {
 		if (context == null) {
 			return;
 		}
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.validate(RecipeTypes.BLOCK_EXPLODING.contextParamSet);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		lootParams.validate();
 		var itemHolders = ItemStackHolderCollection.InWorld.of();
 		context.put(LycheeContextKey.ITEM, itemHolders);
 		var state = stateRef.get();

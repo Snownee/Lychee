@@ -146,10 +146,10 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 			pair = CraftingContext.CONTAINER_WORLD_LOCATOR.get(input.getClass()).apply(input);
 		} catch (ExecutionException ignored) {
 		}
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		final var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		if (pair != null) {
-			lootParamsContext.setParam(LootContextParams.ORIGIN, pair.getFirst());
-			lootParamsContext.setParam(LootContextParams.THIS_ENTITY, pair.getSecond());
+			lootParams.set(LootContextParams.ORIGIN, pair.getFirst());
+			lootParams.set(LootContextParams.THIS_ENTITY, pair.getSecond());
 		}
 
 		CONTEXT_CACHE.put(input, context);

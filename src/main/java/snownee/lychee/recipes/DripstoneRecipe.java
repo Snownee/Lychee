@@ -24,7 +24,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
@@ -82,12 +81,12 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
 		context.put(LycheeContextKey.DRIPSTONE_SOURCE, sourceBlock);
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, targetBlock);
+		var lootParams = context.initLootParams(RecipeTypes.DRIPSTONE_DRIPPING);
+		lootParams.set(LootContextParams.BLOCK_STATE, targetBlock);
 		var origin = new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.99, targetPos.getZ() + 0.5);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, origin);
-		lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, targetPos);
-		lootParamsContext.validate(LycheeLootContextParamSets.BLOCK_ONLY);
+		lootParams.set(LootContextParams.ORIGIN, origin);
+		lootParams.set(LycheeLootContextParams.BLOCK_POS, targetPos);
+		lootParams.validate();
 		var recipe = RecipeTypes.DRIPSTONE_DRIPPING.process(level, targetBlock, context);
 		if (recipe == null) {
 			return false;
@@ -112,13 +111,13 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 			return false;
 		}
 
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 
 		return BlockPredicateExtensions.unsafeMatches(
 				level,
 				sourceBlock,
 				context.get(LycheeContextKey.DRIPSTONE_SOURCE),
-				() -> level.getBlockEntity(lootParamsContext.get(LycheeLootContextParams.BLOCK_POS))
+				() -> level.getBlockEntity(lootParams.get(LycheeLootContextParams.BLOCK_POS))
 		);
 	}
 

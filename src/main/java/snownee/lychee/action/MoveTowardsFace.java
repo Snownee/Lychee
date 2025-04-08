@@ -6,7 +6,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -29,14 +28,10 @@ public record MoveTowardsFace(PostActionCommonProperties commonProperties, float
 
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var blockPos = lootParamsContext.getOrNull(LycheeLootContextParams.BLOCK_POS);
-		if (blockPos == null) {
-			blockPos = BlockPos.containing(lootParamsContext.get(LootContextParams.ORIGIN));
-		}
-		var vector = new Vec3(lootParamsContext.get(LycheeLootContextParams.DIRECTION).step()).scale(factor);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, vector.add(Vec3.atCenterOf(blockPos)));
-		lootParamsContext.removeParam(LycheeLootContextParams.BLOCK_POS);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParams.get(LootContextParams.ORIGIN);
+		var vector = new Vec3(lootParams.get(LycheeLootContextParams.DIRECTION).step()).scale(factor);
+		lootParams.set(LootContextParams.ORIGIN, pos.add(vector));
 	}
 
 	@Override

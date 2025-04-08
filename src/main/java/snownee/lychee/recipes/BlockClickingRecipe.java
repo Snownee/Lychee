@@ -44,8 +44,8 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 		final var vec = Vec3.atCenterOf(pos);
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LycheeLootContextParams.DIRECTION, direction);
+		final var lootParams = context.initLootParams(RecipeTypes.BLOCK_CLICKING);
+		lootParams.set(LycheeLootContextParams.DIRECTION, direction);
 		final var result = RecipeTypes.BLOCK_CLICKING.process(player, hand, pos, vec, context);
 		return result.map(it -> InteractionResult.SUCCESS).orElse(InteractionResult.PASS);
 	}

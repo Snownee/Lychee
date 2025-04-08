@@ -115,14 +115,14 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 
 		@Override
 		public int postApply(boolean consumeInputs, int times) {
-			final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+			final var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 			final var level = context.level();
-			final var entity = lootParamsContext.getOrNull(LootContextParams.THIS_ENTITY);
+			final var entity = lootParams.getOrNull(LootContextParams.THIS_ENTITY);
 			Player player = null;
 			if (entity instanceof Player playerEntity) {
 				player = playerEntity;
 			}
-			final var pos = lootParamsContext.getOrNull(LootContextParams.ORIGIN);
+			final var pos = lootParams.getOrNull(LootContextParams.ORIGIN);
 
 			for (ItemStack stack : stacksNeedHandle) {
 				if (player != null) {

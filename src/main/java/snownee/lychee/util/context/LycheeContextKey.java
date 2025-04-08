@@ -1,6 +1,5 @@
 package snownee.lychee.util.context;
 
-import java.util.IdentityHashMap;
 import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
@@ -18,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.Lychee;
+import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.context.AnvilContext;
@@ -40,7 +40,7 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	public static final LycheeContextKey.Required<RandomSource> RANDOM = req("random", it -> it.level().random);
 	public static final LycheeContextKey.Required<LootParamsContext> LOOT_PARAMS = req(
 			"loot_params",
-			it -> new LootParamsContext(it, new IdentityHashMap<>()));
+			it -> new LootParamsContext(it.level(), LycheeLootContextParamSets.ALL));
 	public static final LycheeContextKey.Required<ActionContext> ACTION = req("action", it -> new ActionContext());
 
 	public static final LycheeContextKey.Optional<ResourceLocation> RECIPE_ID = opt("recipe_id");

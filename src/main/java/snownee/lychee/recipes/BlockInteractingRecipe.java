@@ -59,8 +59,8 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		}
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LycheeLootContextParams.DIRECTION, hitResult.getDirection());
+		final var lootParams = context.initLootParams(RecipeTypes.BLOCK_INTERACTING);
+		lootParams.set(LycheeLootContextParams.DIRECTION, hitResult.getDirection());
 		final var result = RecipeTypes.BLOCK_INTERACTING.process(player, hand, hitResult.getBlockPos(), hitResult.getLocation(), context);
 		return result.map(it -> {
 			player.swing(hand, true);

@@ -70,15 +70,15 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		context.put(LycheeContextKey.LEVEL, player.level());
 		final var anvilContext = new AnvilContext(Pair.of(left, right), itemName);
 		context.put(LycheeContextKey.ANVIL, anvilContext);
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		final var lootParams = context.initLootParams(RecipeTypes.ANVIL_CRAFTING);
 		BlockPos pos = access.evaluate((level, pos0) -> pos0).orElseGet(player::blockPosition);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
+		lootParams.set(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
 		if (access != ContainerLevelAccess.NULL) {
-			lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, pos);
-			lootParamsContext.setParam(LootContextParams.BLOCK_STATE, player.level().getBlockState(pos));
+			lootParams.set(LycheeLootContextParams.BLOCK_POS, pos);
+			lootParams.set(LootContextParams.BLOCK_STATE, player.level().getBlockState(pos));
 		}
-		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, player);
-		lootParamsContext.validate(RecipeTypes.ANVIL_CRAFTING.contextParamSet);
+		lootParams.set(LootContextParams.THIS_ENTITY, player);
+		lootParams.validate();
 		// why use copy(): vanilla will modify the originals
 		context.put(
 				LycheeContextKey.ITEM,

@@ -112,12 +112,12 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
 			return Optional.empty();
 		}
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
-		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, player);
-		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, blockstate);
-		lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, pos);
-		lootParamsContext.validate(contextParamSet);
+		final var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		lootParams.set(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
+		lootParams.set(LootContextParams.THIS_ENTITY, player);
+		lootParams.set(LootContextParams.BLOCK_STATE, blockstate);
+		lootParams.set(LycheeLootContextParams.BLOCK_POS, pos);
+		lootParams.validate();
 		final var stack = player.getItemInHand(hand);
 		final var otherStack = player.getItemInHand(
 				hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);

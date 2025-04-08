@@ -14,10 +14,13 @@ import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.kiwi.recipe.EmptyRecipeInput;
 import snownee.lychee.LycheeRegistries;
+import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.util.codec.KeyDispatchedMapMapCodec;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 @SuppressWarnings("unchecked")
 public class LycheeContext extends EmptyRecipeInput {
@@ -77,6 +80,16 @@ public class LycheeContext extends EmptyRecipeInput {
 	public void put(RecipeHolder<? extends ILycheeRecipe<?>> recipeHolder) {
 		put(LycheeContextKey.RECIPE, recipeHolder.value());
 		put(LycheeContextKey.RECIPE_ID, recipeHolder.id());
+	}
+
+	public LootParamsContext initLootParams(LycheeRecipeType<?> recipeType) {
+		return initLootParams(recipeType.contextParamSet);
+	}
+
+	public LootParamsContext initLootParams(LootContextParamSet paramSet) {
+		LootParamsContext lootParams = new LootParamsContext(level(), paramSet);
+		put(LycheeContextKey.LOOT_PARAMS, lootParams);
+		return lootParams;
 	}
 
 	public void removeAllExcept(Collection<LycheeContextKey<?>> keys) {

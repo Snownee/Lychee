@@ -35,18 +35,18 @@ public class BlockStateMixin {
 
 	@Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
 	private void randomTick(ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource, CallbackInfo ci) {
-		@SuppressWarnings("DataFlowIssue") var state = (BlockState) (Object) this;
+		@SuppressWarnings("DataFlowIssue") var blockState = (BlockState) (Object) this;
 
-		var block = (RandomlyTickable) state.getBlock();
-		if (block.lychee$isTickable(state)) {
+		var block = (RandomlyTickable) blockState.getBlock();
+		if (block.lychee$isTickable(blockState)) {
 			var context = new LycheeContext();
 			context.put(LycheeContextKey.LEVEL, serverLevel);
 			context.put(LycheeContextKey.RANDOM, randomSource);
-			var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-			lootParamsContext.setParam(LootContextParams.BLOCK_STATE, state);
-			lootParamsContext.setParam(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
-			lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, blockPos);
-			final var recipe = RecipeTypes.RANDOM_BLOCK_TICKING.process(serverLevel, state, context);
+			var lootParams = context.initLootParams(RecipeTypes.RANDOM_BLOCK_TICKING);
+			lootParams.set(LootContextParams.BLOCK_STATE, blockState);
+			lootParams.set(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
+			lootParams.set(LycheeLootContextParams.BLOCK_POS, blockPos);
+			final var recipe = RecipeTypes.RANDOM_BLOCK_TICKING.process(serverLevel, blockState, context);
 			if (recipe != null && context.get(LycheeContextKey.ACTION).avoidDefault) {
 				ci.cancel();
 			}

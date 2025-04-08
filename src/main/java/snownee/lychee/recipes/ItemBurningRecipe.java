@@ -29,11 +29,10 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	public static void invoke(ItemEntity entity) {
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, entity.level());
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-
-		lootParamsContext.setParam(LootContextParams.ORIGIN, entity.position());
-		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, entity);
-		lootParamsContext.validate(RecipeTypes.ITEM_BURNING.contextParamSet);
+		final var lootParams = context.initLootParams(RecipeTypes.ITEM_BURNING);
+		lootParams.set(LootContextParams.ORIGIN, entity.position());
+		lootParams.set(LootContextParams.THIS_ENTITY, entity);
+		lootParams.validate();
 		RecipeTypes.ITEM_BURNING.findFirst(context, entity.level()).ifPresent(it -> {
 			context.put(it);
 			int times = it.value().getRandomRepeats(entity.getItem().getCount() / it.value().input.count(), context);
@@ -58,8 +57,8 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 
 	@Override
 	public boolean matches(LycheeContext context, Level level) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		ItemStack stack = ((ItemEntity) lootParamsContext.get(LootContextParams.THIS_ENTITY)).getItem();
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		ItemStack stack = ((ItemEntity) lootParams.get(LootContextParams.THIS_ENTITY)).getItem();
 		return input.test(stack);
 	}
 

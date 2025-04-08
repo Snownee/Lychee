@@ -28,9 +28,9 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 		var itemEntities = entities.stream().filter(it -> it instanceof ItemEntity).map(ItemEntity.class::cast);
 		var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, lightningBolt.level());
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, lightningBolt.position());
-		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, lightningBolt);
+		var lootParams = context.initLootParams(RecipeTypes.LIGHTNING_CHANNELING);
+		lootParams.set(LootContextParams.ORIGIN, lightningBolt.position());
+		lootParams.set(LootContextParams.THIS_ENTITY, lightningBolt);
 		RecipeTypes.LIGHTNING_CHANNELING.process(itemEntities, context);
 	}
 
