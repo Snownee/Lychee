@@ -20,12 +20,12 @@ public class SpriteElementRenderer extends RenderElement {
 
 	@Override
 	public void render(GuiGraphics graphics) {
-		int width = (int) (width() * scale);
-		int height = (int) (height() * scale);
-		float xOff = (width() - width) / 2F;
-		int x = (int) (x() + xOff);
-		float yOff = (height() - height) / 2F;
-		int y = (int) (y() + yOff);
+		int width = Math.round(width() * scale);
+		int height = Math.round(height() * scale);
+		float xOff = (width() - width) * 0.5F;
+		int x = Math.round(x() + xOff);
+		float yOff = (height() - height) * 0.5F;
+		int y = Math.round(y() + yOff);
 		((LycheeGuiGraphics) graphics).lychee$setRenderType(LycheeGuiGraphics::guiTextured);
 		graphics.blitSprite(id, x, y, (int) z(), width, height);
 		((LycheeGuiGraphics) graphics).lychee$setRenderType(null);

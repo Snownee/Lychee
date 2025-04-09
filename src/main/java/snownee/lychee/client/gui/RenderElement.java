@@ -11,6 +11,9 @@ import org.joml.Vector3fc;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.util.FastColor;
+import snownee.kiwi.loader.Platform;
 import snownee.lychee.util.ui.UIElementCommonProperties;
 
 public abstract class RenderElement implements ScreenElement, Renderable {
@@ -134,5 +137,20 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		render(guiGraphics);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends RenderElement> T debugOutline(GuiGraphics graphics, int color) {
+		if (!Platform.isProduction() && !Screen.hasControlDown()) {
+			return (T) this;
+		}
+		if (FastColor.ARGB32.alpha(color) == 0) {
+			color |= 0x88000000;
+		}
+		graphics.pose().pushPose();
+		graphics.pose().translate(0, 0, 1000);
+		graphics.renderOutline(Math.round(x()), Math.round(y()), width(), height(), color);
+		graphics.pose().popPose();
+		return (T) this;
 	}
 }

@@ -10,11 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.DoubleTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -126,7 +121,8 @@ public class VecHelper {
 	}
 
 	public static Vec3 offsetRandomly(Vec3 vec, RandomSource r, float radius) {
-		return new Vec3(vec.x + (r.nextFloat() - .5f) * 2 * radius, vec.y + (r.nextFloat() - .5f) * 2 * radius,
+		return new Vec3(
+				vec.x + (r.nextFloat() - .5f) * 2 * radius, vec.y + (r.nextFloat() - .5f) * 2 * radius,
 				vec.z + (r.nextFloat() - .5f) * 2 * radius
 		);
 	}
@@ -138,41 +134,6 @@ public class VecHelper {
 
 	public static Vec3 axisAlingedPlaneOf(Direction face) {
 		return axisAlingedPlaneOf(Vec3.atLowerCornerOf(face.getNormal()));
-	}
-
-	public static ListTag writeNBT(Vec3 vec) {
-		ListTag listnbt = new ListTag();
-		listnbt.add(DoubleTag.valueOf(vec.x));
-		listnbt.add(DoubleTag.valueOf(vec.y));
-		listnbt.add(DoubleTag.valueOf(vec.z));
-		return listnbt;
-	}
-
-	public static CompoundTag writeNBTCompound(Vec3 vec) {
-		CompoundTag compoundTag = new CompoundTag();
-		compoundTag.put("V", writeNBT(vec));
-		return compoundTag;
-	}
-
-	public static Vec3 readNBT(ListTag list) {
-		if (list.isEmpty()) {
-			return Vec3.ZERO;
-		}
-		return new Vec3(list.getDouble(0), list.getDouble(1), list.getDouble(2));
-	}
-
-	public static Vec3 readNBTCompound(CompoundTag nbt) {
-		return readNBT(nbt.getList("V", Tag.TAG_DOUBLE));
-	}
-
-	public static void write(Vec3 vec, FriendlyByteBuf buffer) {
-		buffer.writeDouble(vec.x);
-		buffer.writeDouble(vec.y);
-		buffer.writeDouble(vec.z);
-	}
-
-	public static Vec3 read(FriendlyByteBuf buffer) {
-		return new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
 	}
 
 	public static Vec3 voxelSpace(double x, double y, double z) {
@@ -218,7 +179,8 @@ public class VecHelper {
 	}
 
 	public static Vec3 clampComponentWise(Vec3 vec, float maxLength) {
-		return new Vec3(Mth.clamp(vec.x, -maxLength, maxLength), Mth.clamp(vec.y, -maxLength, maxLength),
+		return new Vec3(
+				Mth.clamp(vec.x, -maxLength, maxLength), Mth.clamp(vec.y, -maxLength, maxLength),
 				Mth.clamp(vec.z, -maxLength, maxLength)
 		);
 	}
@@ -270,7 +232,8 @@ public class VecHelper {
 		Quaternionf camera_rotation_conj = new Quaternionf(ari.rotation());
 		camera_rotation_conj.conjugate();
 
-		Vector3f result3f = new Vector3f((float) (camera_pos.x - target.x), (float) (camera_pos.y - target.y),
+		Vector3f result3f = new Vector3f(
+				(float) (camera_pos.x - target.x), (float) (camera_pos.y - target.y),
 				(float) (camera_pos.z - target.z)
 		);
 		result3f.rotate(camera_rotation_conj);
@@ -297,7 +260,8 @@ public class VecHelper {
 				q1.conjugate();
 				result3f.rotate(q1);
 
-				Vector3f bob_translation = new Vector3f((Mth.sin(f1 * (float) Math.PI) * f2 * 0.5F),
+				Vector3f bob_translation = new Vector3f(
+						(Mth.sin(f1 * (float) Math.PI) * f2 * 0.5F),
 						(-Math.abs(Mth.cos(f1 * (float) Math.PI) * f2)), 0.0f
 				);
 				bob_translation.y = -bob_translation.y(); // this is weird but hey, if it works

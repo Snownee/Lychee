@@ -25,7 +25,7 @@ import snownee.lychee.compat.recipeviewer.category.DripstoneRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.ItemBurningRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.ItemExplodingRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.ItemInsideRecipeCategory;
-import snownee.lychee.compat.recipeviewer.category.ItemShapelessRecipeCategory;
+import snownee.lychee.compat.recipeviewer.category.LightningChannelingRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstanceProviders;
@@ -64,7 +64,7 @@ public class RvPlugin<Helper extends RvHelper> {
 				new BlockCrushingRecipeCategory(),
 				it -> {
 					it.width = RvCategory.WIDER_WIDTH;
-					it.iconProvider = category -> GuiGameElement.of(Items.ANVIL);
+					it.iconProvider = category -> BlockCrushingRecipeCategory.icon(GuiGameElement.of(Items.ANVIL));
 					it.setSimpleWorkstationProvider(category -> category.recipes().stream()
 							.map($ -> $.value().blockPredicate())
 							.filter($ -> !BlockPredicateExtensions.isAny($))
@@ -107,7 +107,7 @@ public class RvPlugin<Helper extends RvHelper> {
 				});
 		register(
 				RecipeTypes.LIGHTNING_CHANNELING,
-				new ItemShapelessRecipeCategory<>(),
+				new LightningChannelingRecipeCategory(),
 				it -> {
 					it.width = RvCategory.WIDER_WIDTH;
 					it.iconProvider = category -> GuiGameElement.of(Items.LIGHTNING_ROD);

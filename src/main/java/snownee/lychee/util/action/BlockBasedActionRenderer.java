@@ -6,6 +6,7 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
@@ -21,6 +22,11 @@ public record BlockBasedActionRenderer<T extends PostAction>(Function<T, BlockSt
 			GuiGameElement.of(Items.BARRIER).render(graphics, x, y);
 			return;
 		}
-		GuiGameElement.of(blockState).rotateBlock(30, 225, 0).scale(10).render(graphics, x, y);
+		GuiGameElement.of(blockState)
+				.withRotationOffset(Vec3.ZERO)
+				.rotateBlock(30, 225, 0)
+				.scale(10)
+				.at(x + 3, y + 3)
+				.render(graphics);
 	}
 }

@@ -23,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
@@ -41,7 +42,9 @@ import snownee.lychee.util.render.CachedRenderingEntity;
 
 // Recipe view utils
 public final class RVs {
-	public static final CachedRenderingEntity<PrimedTnt> TNT_ENTITY = CachedRenderingEntity.ofFactory(EntityType.TNT::create);
+	public static final CachedRenderingEntity<PrimedTnt> TNT = CachedRenderingEntity.ofFactory(EntityType.TNT::create);
+	public static final CachedRenderingEntity<LightningBolt> LIGHTNING_BOLT = CachedRenderingEntity.ofFactory(EntityType.LIGHTNING_BOLT::create);
+
 	public static ILightingSettings BLOCK_LIGHTING = CustomLightingSettings.builder()
 			.firstLightRotation(-45, -45)
 			.secondLightRotation(15, -60)
@@ -50,7 +53,7 @@ public final class RVs {
 			.firstLightRotation(-30, -60)
 			.secondLightRotation(30, -60)
 			.build();
-	public static ILightingSettings FUSED_TNT_LIGHTING = CustomLightingSettings.builder()
+	public static ILightingSettings ENTITY_LIGHTING = CustomLightingSettings.builder()
 			.firstLightRotation(-120, 20)
 			.secondLightRotation(200, 45)
 			.build();
@@ -124,17 +127,34 @@ public final class RVs {
 	}
 
 	public static void renderTnt(GuiGraphics graphics) {
-		PrimedTnt tnt = TNT_ENTITY.getEntity();
+		PrimedTnt tnt = TNT.getEntity();
 		int fuse = 80 - tnt.tickCount % 80;
 		if (fuse >= 40) {
 			return;
 		}
-		TNT_ENTITY.earlySetLevel();
+		TNT.earlySetLevel();
 		tnt.setFuse(fuse);
 		float toRad = 0.01745329251F;
 		Quaternionf quaternion = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
-		FUSED_TNT_LIGHTING.applyLighting();
-		TNT_ENTITY.render(graphics.pose(), quaternion);
+		ENTITY_LIGHTING.applyLighting();
+		TNT.render(graphics.pose(), quaternion);
+	}
+
+	public static void renderLightning(GuiGraphics graphics, float x, float y) {
+		LightningBolt entity = LIGHTNING_BOLT.getEntity();
+		int time = entity.tickCount % 80;
+		if (time > 7) {
+			return;
+		}
+		float toRad = 0.01745329251F;
+		Quaternionf quaternion = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
+		if (time % 3 == 0) {
+			entity.seed = entity.tickCount;
+		}
+		ENTITY_LIGHTING.applyLighting();
+		LIGHTNING_BOLT.setScale(2);
+		LIGHTNING_BOLT.getTranslation().set(x, y, 20);
+		LIGHTNING_BOLT.render(graphics.pose(), quaternion);
 	}
 
 	public static ResourceLocation composeCategoryIdentifier(ResourceLocation categoryId, ResourceLocation group) {

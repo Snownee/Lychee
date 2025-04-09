@@ -46,14 +46,14 @@ public class GuiGameElement {
 		return new GuiItemRenderBuilder(itemProvider);
 	}
 
-	public static GuiRenderBuilder of(BlockState state) {
-		if (state.getRenderShape() != RenderShape.MODEL && state.getFluidState().isEmpty()) {
-			return GuiGameElement.of(state.getBlock());
+	public static GuiRenderBuilder of(BlockState blockState) {
+		if (blockState.getRenderShape() != RenderShape.MODEL && blockState.getFluidState().isEmpty()) {
+			return new GuiBlockStateRenderBuilder(blockState, GuiGameElement.of(blockState.getBlock()));
 		}
-		if (state.getBlock() instanceof StairBlock) {
-			state = state.setValue(StairBlock.FACING, state.getValue(StairBlock.FACING).getOpposite());
+		if (blockState.getBlock() instanceof StairBlock) {
+			blockState = blockState.setValue(StairBlock.FACING, blockState.getValue(StairBlock.FACING).getOpposite());
 		}
-		return new GuiBlockStateRenderBuilder(state);
+		return new GuiBlockStateRenderBuilder(blockState);
 	}
 
 	public static GuiRenderBuilder of(Fluid fluid) {
@@ -118,11 +118,15 @@ public class GuiGameElement {
 		}
 
 		protected void transformMatrix(PoseStack matrixStack) {
-			matrixStack.translate(x() + 3, y() + 13, z);
-			matrixStack.scale((float) scale, (float) scale, (float) scale);
+			float scale = (float) this.scale;
+			matrixStack.translate(x(), y() + scale, z());
+			matrixStack.scale(scale, scale, scale);
 			matrixStack.translate(xLocal, yLocal, zLocal);
 			UIRenderHelper.flipForGuiRender(matrixStack);
 			matrixStack.translate(rotationOffset.x, rotationOffset.y, rotationOffset.z);
+
+//			matrixStack.mulPose(Axis.YP.rotationDegrees((float) Util.getMillis() / 20));
+
 			matrixStack.mulPose(Axis.ZP.rotationDegrees((float) zRot));
 			matrixStack.mulPose(Axis.XP.rotationDegrees((float) xRot));
 			matrixStack.mulPose(Axis.YP.rotationDegrees((float) yRot));
@@ -157,6 +161,7 @@ public class GuiGameElement {
 		public GuiBlockModelRenderBuilder(BakedModel bakedModel, @Nullable BlockState blockState) {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
 			this.blockModel = bakedModel;
+			withRotationOffset(VecHelper.getCenterOf(BlockPos.ZERO));
 		}
 
 		@Override
@@ -203,9 +208,23 @@ public class GuiGameElement {
 	}
 
 	public static class GuiBlockStateRenderBuilder extends GuiBlockModelRenderBuilder {
+		private final @Nullable GuiRenderBuilder override;
 
-		public GuiBlockStateRenderBuilder(BlockState blockstate) {
-			super(Minecraft.getInstance().getBlockRenderer().getBlockModel(blockstate), blockstate);
+		public GuiBlockStateRenderBuilder(BlockState blockState) {
+			this(blockState, null);
+		}
+
+		public GuiBlockStateRenderBuilder(BlockState blockState, @Nullable GuiRenderBuilder override) {
+			super(Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState), blockState);
+			this.override = override;
+		}
+
+		@Override
+		public void render(GuiGraphics graphics) {
+			if (override != null) {
+				override.atLocal(xLocal, yLocal, zLocal).at(position).offset(-3, -3).render(graphics);
+			}
+			super.render(graphics);
 		}
 
 		@Override
@@ -277,7 +296,7 @@ public class GuiGameElement {
 
 		@Override
 		protected void transformMatrix(PoseStack matrixStack) {
-			matrixStack.translate(x(), y(), z);
+			matrixStack.translate(x(), y(), z());
 			matrixStack.translate(xLocal * scale, yLocal * scale, zLocal * scale);
 			UIRenderHelper.flipForGuiRender(matrixStack);
 		}

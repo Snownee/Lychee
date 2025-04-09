@@ -33,9 +33,8 @@ public class ShadowElement {
 		if (shadow != null) {
 			return shadow;
 		}
-		var shadowOffset = new Vector2f((blockSize - shadowWidth) / 2F, blockSize - shadowHeight / 2F);
 		ResourceLocation id = light ? AllGuiTextures.LIGHT_SHADOW.id : AllGuiTextures.SHADOW.id;
-		shadow = new SpriteElementRenderer(id).withSize(shadowWidth, shadowHeight).at(shadowOffset);
+		shadow = new SpriteElementRenderer(id).withSize(shadowWidth, shadowHeight);
 		if (light) {
 			lightShadow = shadow;
 		} else {
@@ -48,21 +47,28 @@ public class ShadowElement {
 			Supplier<BlockState> blockStateSupplier,
 			Function<BlockState, RenderElement> blockElement) {
 		return InteractiveRenderElement.create(graphics -> {
-			if (!Platform.isProduction() && Screen.hasControlDown()) {
-				new SpriteElementRenderer(AllGuiTextures.INFO.id, 0.25F).atZ(1000).render(graphics);
-			}
 			var blockState = blockStateSupplier.get();
 			if (blockState.isAir()) {
 				RenderElement.create(AllGuiTextures.QUESTION_MARK).at(2, 2).render(graphics);
 				return;
 			}
+			RenderElement element = blockElement.apply(blockState);
+			float x = element.position.x + blockSize * 0.5F - shadowWidth * 0.5F;
+			float y = element.position.y + blockSize - shadowHeight * 0.4F;
+			var shadowPosition = new Vector2f(x, y);
+			if (!Platform.isProduction() && Screen.hasControlDown()) {
+				graphics.pose().pushPose();
+				graphics.pose().translate(0, 0, 1000);
+				graphics.renderOutline((int) element.x(), (int) element.y(), blockSize, blockSize, 0x88FF0000);
+				graphics.pose().popPose();
+			}
 			int lightEmission = blockState.getLightEmission();
 			if (lightEmission < 5) {
-				get(false).render(graphics);
+				get(false).at(shadowPosition).debugOutline(graphics, 0x00FF00).render(graphics);
 			} else if (lightEmission > 7) {
-				get(true).render(graphics);
+				get(true).at(shadowPosition).debugOutline(graphics, 0x00FF00).render(graphics);
 			}
-			blockElement.apply(blockState).render(graphics);
+			element.render(graphics);
 		});
 	}
 }
