@@ -24,14 +24,14 @@ import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
-	private static final int BLOCK_SIZE = 16;
+	private static final int BLOCK_SIZE = 12;
 	private static final int COLUMN_X = 16;
 	private static final Vector2fc SOURCE_BLOCK_POSITION = new Vector2f(COLUMN_X, 4);
-	private static final Vector2fc DRIPSTONE_POSITION = VectorExtensions.offsetY(SOURCE_BLOCK_POSITION, 12);
-	private static final Vector2fc POINTED_DRIPSTONE_POSITION = VectorExtensions.offsetY(SOURCE_BLOCK_POSITION, 12 * 2);
+	private static final Vector2fc DRIPSTONE_POSITION = VectorExtensions.offsetY(SOURCE_BLOCK_POSITION, BLOCK_SIZE);
+	private static final Vector2fc POINTED_DRIPSTONE_POSITION = VectorExtensions.offsetY(SOURCE_BLOCK_POSITION, BLOCK_SIZE * 2);
 	public static final Vector2fc INFO_POSITION = VectorExtensions.offsetX(POINTED_DRIPSTONE_POSITION, BLOCK_SIZE);
-	private static final Vector2fc TARGET_BLOCK_POSITION = VectorExtensions.offsetY(SOURCE_BLOCK_POSITION, 12 * 3);
-	private static final ShadowElement SHADOW_ELEMENT = new ShadowElement(BLOCK_SIZE, 24, 6);
+	private static final Vector2fc TARGET_BLOCK_POSITION = VectorExtensions.offsetY(SOURCE_BLOCK_POSITION, BLOCK_SIZE * 3);
+	private final ShadowElement shadowElement = new ShadowElement(BLOCK_SIZE, 24, 8);
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {
 		return CommonProxy.getCycledItem(
@@ -96,10 +96,9 @@ public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 
 	protected RenderElement getBlockElement(Supplier<BlockState> stateSupplier, BlockPredicate predicate, RvHelper helper) {
 		Supplier<RenderElement> blockElement = () -> GuiGameElement.of(stateSupplier.get())
-				.scale(12)
+				.scale(BLOCK_SIZE)
 				.lighting(RVs.BLOCK_LIGHTING)
-				.rotateBlock(12.5, -22.5, 0)
-				.at(-1, 2);
+				.rotateBlock(12.5, -22.5, 0);
 		return new InteractiveRenderElement((InteractiveRenderElement element) -> blockElement.get())
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(stateSupplier.get(), predicate))
 				.onClick(helper.lookupBlock(stateSupplier))
@@ -109,11 +108,10 @@ public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 	protected RenderElement getTargetBlockElement(DripstoneRecipe recipe, RvHelper helper) {
 		Function<BlockState, RenderElement> blockElement = blockState -> GuiGameElement.of(blockState)
 				.rotateBlock(12.5, -22.5, 0)
-				.scale(12)
+				.scale(BLOCK_SIZE)
 				.lighting(RVs.BLOCK_LIGHTING)
-				.withSize(BLOCK_SIZE)
-				.at(-1, 2);
-		var result = SHADOW_ELEMENT.blockWithShadow(() -> getTargetBlock(recipe), blockElement);
+				.withSize(BLOCK_SIZE);
+		var result = shadowElement.blockWithShadow(() -> getTargetBlock(recipe), blockElement);
 
 		return result
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(getTargetBlock(recipe), recipe.blockPredicate()))

@@ -26,10 +26,12 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 	public static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(22, 32);
 	public static final Vector2fc METHOD_POSITION = new Vector2f(INPUT_BLOCK_POSITION.x() - 4, 10);
 	public static final float INPUT_INGREDIENT_X = 12;
-	public static final int BLOCK_SIZE = 18;
+
+	public static final int BLOCK_SIZE = 14;
 	public static final int METHOD_SIZE = 20;
+
 	public static final Vector2fc INFO_POSITION = VectorExtensions.offset(METHOD_POSITION, METHOD_SIZE, 4);
-	private static final ShadowElement SHADOW_ELEMENT = new ShadowElement(BLOCK_SIZE, 36, 9);
+	private final ShadowElement shadowElement = new ShadowElement(BLOCK_SIZE, 36, 9);
 
 	public Vector2fc inputBlockPosition() {
 		return INPUT_BLOCK_POSITION;
@@ -97,9 +99,8 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 				.rotateBlock(12.5, 160, 0)
 				.scale(15)
 				.lighting(RVs.BLOCK_LIGHTING)
-				.withSize(BLOCK_SIZE)
-				.at(-1, 4);
-		var result = SHADOW_ELEMENT.blockWithShadow(() -> getRenderingBlock(recipe), blockElement);
+				.withSize(BLOCK_SIZE);
+		var result = shadowElement.blockWithShadow(() -> getRenderingBlock(recipe), blockElement);
 
 		if (shouldRenderInputBlockTooltip(recipe)) {
 			result.onTooltip(() -> BlockPredicateExtensions.getTooltips(

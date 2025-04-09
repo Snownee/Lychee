@@ -19,7 +19,6 @@ public final class LycheeTags {
 
 	public static final TagKey<EntityType<?>> LIGHTING_FIRE_IMMUNE = entityTag("lightning_fire_immune");
 
-
 	public static TagKey<EntityType<?>> entityTag(String path) {
 		return tag(Registries.ENTITY_TYPE, path);
 	}

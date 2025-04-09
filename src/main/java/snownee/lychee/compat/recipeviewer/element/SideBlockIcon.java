@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
@@ -25,16 +26,17 @@ public class SideBlockIcon extends RenderElement {
 	public void render(GuiGraphics graphics) {
 		PoseStack ms = graphics.pose();
 		ms.pushPose();
-		ms.translate(x(), y(), z);
+		ms.translate(x(), y(), z());
 		ms.pushPose();
 		ms.scale(.625F, .625F, .625F);
 		mainIcon.render(graphics);
 		ms.popPose();
 		GuiGameElement.of(blockProvider.get())
 				.lighting(RVs.SIDE_ICON_LIGHTING)
+				.withRotationOffset(Vec3.ZERO)
 				.scale(7)
 				.rotateBlock(30, 202.5, 0)
-				.at(4, 2)
+				.at(7, 7)
 				.render(graphics);
 		ms.popPose();
 	}

@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -18,6 +19,7 @@ public class CachedRenderingEntity<T extends Entity> {
 
 	protected T entity;
 	protected float scale = 15;
+	protected Vector3f translation = new Vector3f(0, 0, 20);
 	private Function<Level, T> factory;
 
 	protected CachedRenderingEntity(T entity) {
@@ -58,10 +60,9 @@ public class CachedRenderingEntity<T extends Entity> {
 		((EntityAccess) entity).callSetLevel(null);
 	}
 
-	public T earlySetLevel() {
+	public void earlySetLevel() {
 		ensureEntity();
 		((EntityAccess) entity).callSetLevel(Objects.requireNonNull(Minecraft.getInstance().level));
-		return entity;
 	}
 
 	public float getScale() {
@@ -72,19 +73,23 @@ public class CachedRenderingEntity<T extends Entity> {
 		this.scale = scale;
 	}
 
+	public Vector3f getTranslation() {
+		return translation;
+	}
+
 	public void render(PoseStack matrixStack, Quaternionf rotation) {
 		var mc = Minecraft.getInstance();
-		if (mc.player == null) {
+		if (mc.level == null) {
 			return;
 		}
 		ensureEntity();
 		((EntityAccess) entity).callSetLevel(mc.level);
-		entity.tickCount = mc.player.tickCount;
-		var position = mc.player.position();
+		entity.tickCount = (int) (mc.level.getGameTime() % 240000L);
+		var position = mc.gameRenderer.getMainCamera().getPosition();
 		entity.setPosRaw(position.x(), position.y(), position.z());
 
 		matrixStack.pushPose();
-		matrixStack.translate(0, 0, 20);
+		matrixStack.translate(translation.x, translation.y, translation.z);
 		matrixStack.scale(scale, scale, scale);
 
 		matrixStack.mulPose(rotation);

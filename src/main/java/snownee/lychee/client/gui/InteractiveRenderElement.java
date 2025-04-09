@@ -6,6 +6,8 @@ import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,6 +22,7 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 	private @Nullable Supplier<@Nullable List<Component>> onTooltip;
 	private @Nullable IntPredicate onClick;
 	private boolean focused;
+	private boolean withScissors;
 
 	public InteractiveRenderElement(Function<InteractiveRenderElement, ScreenElement> renderable) {
 		this.renderable = renderable;
@@ -60,10 +63,24 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 		if (renderable == null) {
 			return;
 		}
+		boolean withScissors = this.withScissors;
+		if (withScissors) {
+			Matrix4f matrix = graphics.pose().last().pose();
+			Vector3f topLeft = matrix.transformPosition(new Vector3f());
+			Vector3f bottomRight = matrix.transformPosition(new Vector3f(size.x(), size.y(), 0));
+			graphics.enableScissor(
+					(int) topLeft.x(),
+					(int) topLeft.y(),
+					(int) bottomRight.x(),
+					(int) bottomRight.y());
+		}
 		graphics.pose().pushPose();
 		graphics.pose().translate(x(), y(), z());
 		renderable.apply(this).render(graphics);
 		graphics.pose().popPose();
+		if (withScissors) {
+			graphics.disableScissor();
+		}
 	}
 
 	public InteractiveRenderElement onTooltip(@Nullable Supplier<@Nullable List<Component>> onTooltip) {
@@ -73,6 +90,11 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 
 	public InteractiveRenderElement onClick(@Nullable IntPredicate onClick) {
 		this.onClick = onClick;
+		return this;
+	}
+
+	public InteractiveRenderElement withScissors(boolean withScissors) {
+		this.withScissors = withScissors;
 		return this;
 	}
 
