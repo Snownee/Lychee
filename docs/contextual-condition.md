@@ -93,7 +93,7 @@ Checks if a `location_check` predicate is passed.
     | offsetX   | offsets to location ^optional^ | int                                                     |
     | offsetY   | offsets to location ^optional^ | int                                                     |
     | offsetZ   | offsets to location ^optional^ | int                                                     |
-    | predicate | location predicate             | [LocationPredicate](general-types.md#locationpredicate) |
+    | predicate | location predicate             | [LocationPredicate](https://minecraft.wiki/w/Advancement/Conditions/location?direction=next&oldid=2544408) |
 
 ??? example
 

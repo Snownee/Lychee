@@ -78,17 +78,15 @@ Checks if a `location_check` predicate is passed.
 
 !!! note "Format"
 
-    | Name      | Description                    | Type / Literal                                          |
-    | --------- | ------------------------------ | ------------------------------------------------------- |
-    | type      | type                           | "location"                                              |
-    | offsetX   | offsets to location ^optional^ | int                                                     |
-    | offsetY   | offsets to location ^optional^ | int                                                     |
-    | offsetZ   | offsets to location ^optional^ | int                                                     |
-    | predicate | location predicate             | [LocationPredicate](general-types.md#locationpredicate) |
+    | Name      | Description                    | Type / Literal                                                                                             |
+    | --------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+    | type      | type                           | "location"                                                                                                 |
+    | offsetX   | offsets to location ^optional^ | int                                                                                                        |
+    | offsetY   | offsets to location ^optional^ | int                                                                                                        |
+    | offsetZ   | offsets to location ^optional^ | int                                                                                                        |
+    | predicate | location predicate             | [LocationPredicate](https://minecraft.wiki/w/Advancement/Conditions/location?direction=next&oldid=2544408) |
 
 ??? example
-
-    Checks if the location is in The End, and X position is between -100 and 100.
 
     ```json
     {
@@ -105,7 +103,7 @@ Checks if a `location_check` predicate is passed.
     }
     ```
 
-    Checks if the location is in the ocean and can see the sky.
+    Description: Checks if the location is in The End, and X position is between -100 and 100.
 
     ```json
     {
@@ -116,6 +114,8 @@ Checks if a `location_check` predicate is passed.
         }
     }
     ```
+
+    Description: Checks if the location is in the ocean and can see the sky.
 
 !!! note
 
@@ -156,14 +156,14 @@ Checks if world is in any of the listed difficulties.
 
 ??? example
 
-    Recipe or post action only works when difficulty is peaceful or easy:
-
     ```json
     {
         "type": "difficulty",
         "difficulty": ["peaceful", 1]
     }
     ```
+
+    Description: Recipe or post action only works when difficulty is peaceful or easy.
 
 ### Time Check
 
@@ -181,8 +181,6 @@ Compares the current game time (the age of the world in game ticks) against give
 
 ??? example
 
-    Recipe works every other second:
-
     ```json
     {
         "type": "time",
@@ -193,6 +191,8 @@ Compares the current game time (the age of the world in game ticks) against give
         "period": 40
     }
     ```
+
+    Description: Recipe works every other second.
 
 ### Command Check
 
@@ -278,27 +278,30 @@ Checks the direction that being interacted. Only works for interaction recipes.
 
     Allowed value for "direction": "up", "down", "north", "south", "east", "west", "side", "forward"
 
-### Loot Parameter Check
+### Parameter Check
 
-Checks if a parameter exists in the loot context.
+Checks if a parameter exists in the context.
 
 !!! note "Format"
 
-    | Name | Description         | Type / Literal |
-    | ---- | ------------------- | -------------- |
-    | type | type                | "check_param"  |
-    | key  | loot parameter name | string         |
+    | Name   | Description                                                                                       | Type / Literal |
+    | ------ | ------------------------------------------------------------------------------------------------- | -------------- |
+    | type   | type                                                                                              | "param"        |
+    | key    | parameter name                                                                                    | string         |
+    | loot   | loot parameter name ^optional^                                                                    | string         |
+    | create | create the parameter if it can be created from other parameters ^optional^{title="default: true"} | boolean        |
 
 ??? example
 
-    Checks if we can know the location from the context.
-
     ```json
     {
-        "type": "check_param",
-        "key": "origin"
+        "type": "param",
+        "key": "loot_params",
+        "loot": "origin"
     }
     ```
+
+    Description: Checks if we can know the location from the context.
 
 ### Sky Darkness Check
 
@@ -306,9 +309,8 @@ Checks the sky darken level.
 
 !!! note "Format"
 
-    | Name              | Description                                                        | Type / Literal                          |
-    | ----------------- | ------------------------------------------------------------------ | --------------------------------------- |
-    | type              | type                                                               | "sky_darken"                            |
-    | value             | value                                                              | [IntBounds](general-types.md#intbounds) |
-    | require_sky_light | dimension must be a surface world (not like the nether) ^optional^ | boolean                                 |
-    | can_see_sky       | the location must be able to see the sky ^optional^                | boolean                                 |
+    | Name        | Description                                         | Type / Literal                          |
+    | ----------- | --------------------------------------------------- | --------------------------------------- |
+    | type        | type                                                | "sky_darken"                            |
+    | value       | value                                               | [IntBounds](general-types.md#intbounds) |
+    | can_see_sky | the location must be able to see the sky ^optional^ | boolean                                 |

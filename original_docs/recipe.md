@@ -3,7 +3,7 @@
 !!! info
 
     Try [**Fruitful Generator**](https://fruitful-generator.github.io/) ! (Currently only supports 1.20.1)
-    
+
     It's a convenient tool for creating Lychee recipes.
 
 ## Basic Format
@@ -471,8 +471,8 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
     Description: When a lightning strikes, it will replace all calcite blocks with stone blocks in a 7x7x7 area.
 
 !!! note
-    
-    Related tags: [``lychee:lightning_immune``](extra-features.md#lycheelightning_immune), [``lychee:lightning_fire_immune``](extra-features.md#lycheelightning_fire_immune)
+
+    Related tags: [`lychee:lightning_immune`](extra-features.md#lycheelightning_immune), [`lychee:lightning_fire_immune`](extra-features.md#lycheelightning_fire_immune)
 
 ### Item Exploding
 
@@ -489,9 +489,83 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
     | type    | type                                       | "lychee:item_exploding"                                                                                      |
     | item_in | items affected by the explosion ^optional^ | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
 
+### Entity Ticking
+
+_Since 6.3_
+
+Event when an entity ticked.
+
+This recipe type is not [repeatable](concepts.md#repeatability).
+
+Default behavior: Continue matching the rest of the recipes.
+
+!!! note "Format"
+
+    | Name   | Description      | Type / Literal                                                                          |
+    | ------ | ---------------- | --------------------------------------------------------------------------------------- |
+    | type   | type             | "lychee:entity_ticking"                                                                 |
+    | entity | entity predicate | [EntityPredicate](https://minecraft.wiki/w/Advancement/Conditions/entity?oldid=2600889) |
+
 !!! note
 
-    You can tag items with `lychee:item_exploding_catalysts` to let them be shown in JEI / REI.
+    This recipe type does not have JEI / REI integration.
+
+??? example
+
+    ```json
+    {
+        "type": "lychee:entity_ticking",
+        "entity": {
+            "type": "falling_block",
+            "nbt": {
+                "BlockState": {
+                    "Name": "minecraft:gravel"
+                }
+            },
+            "movement": {
+                "fall_distance": {
+                    "min": 5
+                }
+            }
+        },
+        "post": {
+            "type": "set_block",
+            "block": "iron_block"
+        }
+    }
+    ```
+
+    Description: When a falling block with gravel as its block state has a fall distance of 5 or more, it will be replaced with an iron block.
+
+    ```json
+    {
+        "type": "lychee:entity_ticking",
+        "entity": {
+            "type": "player",
+            "equipment": {
+                "head": {
+                    "items": "netherite_helmet"
+                },
+                "chest": {
+                    "items": "netherite_chestplate"
+                },
+                "legs": {
+                    "items": "netherite_leggings"
+                },
+                "feet": {
+                    "items": "netherite_boots"
+                }
+            }
+        },
+        "interval": 20,
+        "post": {
+            "type": "execute",
+            "command": "effect give @s fire_resistance 3 0 true"
+        }
+    }
+    ```
+
+    Description: When a player has a full set of netherite armor, they will receive fire resistance every 20 ticks.
 
 ### Block Exploding
 
@@ -507,10 +581,6 @@ Default behavior: Block drops items from loot table.
     | -------- | ------------------------------------------- | ------------------------------------------------- |
     | type     | type                                        | "lychee:block_exploding"                          |
     | block_in | block destroyed by the explosion ^optional^ | [BlockPredicate](general-types.md#blockpredicate) |
-
-!!! note
-
-    You can tag items with `lychee:block_exploding_catalysts` to let them be shown as catalysts in JEI / REI.
 
 ### Random Block Ticking
 
