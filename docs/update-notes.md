@@ -1,5 +1,21 @@
 # Update Notes
 
+## 6.3
+
+- Added JEI / REI integration customization.
+  - You can now add, hide or replace the UI elements in a Lychee's recipe.
+  - You can change the width and height of the recipe UI.
+  - You can replace the category icon or workstations of a recipe type.
+- The `check_param`(Loot Parameter Check) condition type has been removed.
+- Added `param` condition type.
+- Added `move` action type to move the anchored position in the context.
+- Added `set_block` action type to modify a falling block entity.
+- `cycle_state_property` action: Allow cycling state property reversely.
+- Improved the visual effect of the lightning channeling recipe.
+- Improved the category icon of the block crushing recipe.
+- Removed the catalyst tags(`lychee:item_exploding_catalysts` and `lychee:block_exploding_catalysts`).
+- Fixed some tooltips in JEI / REI not showing correctly.
+
 ## 6.2
 
 - Added LycheeBuilder to generate recipes in data generators or KubeJS.

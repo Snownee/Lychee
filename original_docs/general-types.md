@@ -31,7 +31,7 @@ An ingredient is a predicate of ItemStack.
         | type | ingredient type          | string         |
         |      | additional properties... |                |
 
-        You can use NeoForge's built-in features to check item nbt or combine several ingredients to one compound ingredient: [Documentation](https://docs.neoforged.net/docs/1.20.4/resources/server/recipes/ingredients)
+        You can use NeoForge's built-in features to check item nbt or combine several ingredients to one compound ingredient: [Documentation](https://docs.neoforged.net/docs/1.21.1/resources/server/recipes/ingredients)
 
     === "Fabric"
 

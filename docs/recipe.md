@@ -3,7 +3,7 @@
 !!! info
 
     Try [**Fruitful Generator**](https://fruitful-generator.github.io/) ! (Currently only supports 1.20.1)
-    
+
     It's a convenient tool for creating Lychee recipes.
 
 ## Basic Format
@@ -64,8 +64,6 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 ??? example
 
-    Prevent player from carving pumpkins. Here the `prevent_default` means do not consume the shears.
-
     === "YAML"
 
         ```yaml
@@ -92,7 +90,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
         }
         ```
 
-    Stripping an oak log with an iron axe, you will have 50% chance to obtain a diamond:
+    Description: Prevent player from carving pumpkins. Here the `prevent_default` means do not consume the shears.
 
     === "YAML"
 
@@ -140,6 +138,8 @@ This recipe type is not [repeatable](concepts.md#repeatability).
             ]
         }
         ```
+
+    Description: When a player uses an iron axe on an oak log, there is a 50% chance of dropping a diamond, the oak log will be stripped, and the axe will be damaged.
 
 ??? note "Note: Matches empty hand"
 
@@ -300,8 +300,6 @@ Default behavior: none.
 
 ??? example
 
-    Burning logs produces charcoal:
-
     === "YAML"
 
         ```yaml
@@ -328,6 +326,8 @@ Default behavior: none.
         }
         ```
 
+    Description: Logs that can be burnt will drop charcoal.
+
 ### Item Entity inside a Block
 
 Event when an item entity is inside a block. This will be tested every second.
@@ -346,8 +346,6 @@ Default behavior: Item is consumed.
     | time     | waiting time in seconds ^optional^ | int                                                                                                                    |
 
 ??? example
-
-    Drop a bucket into a full water cauldron, it returns a water bucket and empty the cauldron:
 
     === "YAML"
 
@@ -393,7 +391,7 @@ Default behavior: Item is consumed.
         }
         ```
 
-    Drop a bucket to pick up a water source block:
+    Description: When a water bucket is inside a full water cauldron, it will drop a water bucket and turn the cauldron into an empty one.
 
     === "YAML"
 
@@ -439,6 +437,8 @@ Default behavior: Item is consumed.
         }
         ```
 
+    Description: When a water bucket is inside a water source block, it will drop a water bucket and consume the water block.
+
 !!! note
 
     If the block is a fluid block, the block id is not always the same as the fluid id. To see the block id, you should use Jade mod and enable the "Registry Name" option in the plugin settings.
@@ -463,8 +463,6 @@ Default behavior: Anvil is damaged.
     | assembling    | actions that running before the result is displayed ^optional^                           | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
 
 ??? example
-
-    It costs 1 apple, 8 gold ingots and 1 level to make a golden_apple. Does not damage the anvil:
 
     === "YAML"
 
@@ -505,6 +503,8 @@ Default behavior: Anvil is damaged.
         }
         ```
 
+    Description: Use 1 apple, 8 gold ingots and 1 xp level to craft a golden apple. Here the `prevent_default` means do not damage the anvil.
+
 ### Block Crushing
 
 Event when a falling block entity lands on a block.
@@ -523,8 +523,6 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
     | landing_block | the landing block. default is any block ^optional^       | [BlockPredicate](general-types.md#blockpredicate)                                                            |
 
 ??? example
-
-    Papers from sugar canes:
 
     === "YAML"
 
@@ -560,7 +558,7 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
         }
         ```
 
-    Making a mossy stone bricks block. It uses a location check to check the block below the current position:
+    Description: When an anvil falls on 3 sugar cane items, they will be crushed into 3 papers.
 
     === "YAML"
 
@@ -609,6 +607,8 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
             ]
         }
         ```
+
+    Description: Making a mossy stone bricks block. It uses a location check to check the block below the current position.
 
 !!! note
 
@@ -660,9 +660,11 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
         }
         ```
 
+    Description: When a lightning strikes, it will replace all calcite blocks with stone blocks in a 7x7x7 area.
+
 !!! note
-    
-    Related tags: [``lychee:lightning_immune``](extra-features.md#lycheelightning_immune), [``lychee:lightning_fire_immune``](extra-features.md#lycheelightning_fire_immune)
+
+    Related tags: [`lychee:lightning_immune`](extra-features.md#lycheelightning_immune), [`lychee:lightning_fire_immune`](extra-features.md#lycheelightning_fire_immune)
 
 ### Item Exploding
 
@@ -679,9 +681,125 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
     | type    | type                                       | "lychee:item_exploding"                                                                                      |
     | item_in | items affected by the explosion ^optional^ | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
 
+### Entity Ticking
+
+_Since 6.3_
+
+Event when an entity ticked.
+
+This recipe type is not [repeatable](concepts.md#repeatability).
+
+Default behavior: Continue matching the rest of the recipes.
+
+!!! note "Format"
+
+    | Name   | Description      | Type / Literal                                                                          |
+    | ------ | ---------------- | --------------------------------------------------------------------------------------- |
+    | type   | type             | "lychee:entity_ticking"                                                                 |
+    | entity | entity predicate | [EntityPredicate](https://minecraft.wiki/w/Advancement/Conditions/entity?oldid=2600889) |
+
 !!! note
 
-    You can tag items with `lychee:item_exploding_catalysts` to let them be shown in JEI / REI.
+    This recipe type does not have JEI / REI integration.
+
+??? example
+
+    === "YAML"
+
+        ```yaml
+        type: lychee:entity_ticking
+        entity:
+          type: falling_block
+          nbt:
+            BlockState:
+              Name: minecraft:gravel
+          movement:
+            fall_distance:
+              min: 5
+        post:
+          type: set_block
+          block: iron_block
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:entity_ticking",
+            "entity": {
+                "type": "falling_block",
+                "nbt": {
+                    "BlockState": {
+                        "Name": "minecraft:gravel"
+                    }
+                },
+                "movement": {
+                    "fall_distance": {
+                        "min": 5
+                    }
+                }
+            },
+            "post": {
+                "type": "set_block",
+                "block": "iron_block"
+            }
+        }
+        ```
+
+    Description: When a falling block with gravel as its block state has a fall distance of 5 or more, it will be replaced with an iron block.
+
+    === "YAML"
+
+        ```yaml
+        type: lychee:entity_ticking
+        entity:
+          type: player
+          equipment:
+            head:
+              items: netherite_helmet
+            chest:
+              items: netherite_chestplate
+            legs:
+              items: netherite_leggings
+            feet:
+              items: netherite_boots
+        interval: 20
+        post:
+          type: execute
+          command: effect give @s fire_resistance 3 0 true
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:entity_ticking",
+            "entity": {
+                "type": "player",
+                "equipment": {
+                    "head": {
+                        "items": "netherite_helmet"
+                    },
+                    "chest": {
+                        "items": "netherite_chestplate"
+                    },
+                    "legs": {
+                        "items": "netherite_leggings"
+                    },
+                    "feet": {
+                        "items": "netherite_boots"
+                    }
+                }
+            },
+            "interval": 20,
+            "post": {
+                "type": "execute",
+                "command": "effect give @s fire_resistance 3 0 true"
+            }
+        }
+        ```
+
+    Description: When a player has a full set of netherite armor, they will receive fire resistance every 20 ticks.
 
 ### Block Exploding
 
@@ -697,10 +815,6 @@ Default behavior: Block drops items from loot table.
     | -------- | ------------------------------------------- | ------------------------------------------------- |
     | type     | type                                        | "lychee:block_exploding"                          |
     | block_in | block destroyed by the explosion ^optional^ | [BlockPredicate](general-types.md#blockpredicate) |
-
-!!! note
-
-    You can tag items with `lychee:block_exploding_catalysts` to let them be shown as catalysts in JEI / REI.
 
 ### Random Block Ticking
 
@@ -766,6 +880,8 @@ Default behavior: Do the default ticking behavior.
         }
         ```
 
+    Description: When water drips on a sponge, it will turn into a wet sponge.
+
 ### Advanced Shaped Crafting
 
 This allows you to add contextual conditions and actions, and control the behaviors of the ingredients and the result.
@@ -786,8 +902,6 @@ Default behavior: none.
     | assembling | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]        |
 
 ??? example
-
-    With the uses of the [`set_item`](post-action.md#set-item-set_item) action, you can customize the remainders and dynamically change the crafting result.
 
     === "YAML"
 
@@ -849,6 +963,8 @@ Default behavior: none.
             ]
         }
         ```
+
+    Description: Crafting a pufferfish and a water bucket into a pufferfish bucket. The water bucket will be consumed and the result will be shown as an apple, before you take it out.
 
     [Here](kubejs.md#example-repairing-tool-with-anvil-and-custom-item) is a more advanced example that uses KubeJS Integration.
 

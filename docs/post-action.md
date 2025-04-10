@@ -11,9 +11,10 @@ You can add post actions to a Lychee's recipe, and they will be executed after t
 | type | type                                                             | string                                                                                             |
 | if   | contextual conditions ^optional^                                 | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
 | hide | hide this action in JEI/REI ^optional^{ title="default: false" } | boolean                                                                                            |
+| icon | sprite icon location ^optional^                                  | string                                                                                             |
 |      | additional properties...                                         |                                                                                                    |
 
-## Built-in Actions
+## Entity-related Actions
 
 ### Drop Item
 
@@ -55,6 +56,34 @@ Spawns an item entity on the ground.
             }
         }
         ```
+
+### Drop Experience
+
+Spawns experience orbs.
+
+!!! note "Format"
+
+    | Name | Description | Type / Literal |
+    | ---- | ----------- | -------------- |
+    | type | type        | "drop_xp"      |
+    | xp   | amount      | int            |
+
+### Set Falling Block's Block
+
+_Since 6.3_
+
+Sets the block of a falling block entity.
+
+This action is not [repeatable](concepts.md#repeatability).
+
+!!! note "Format"
+
+    | Name  | Description         | Type / Literal                                    |
+    | ----- | ------------------- | ------------------------------------------------- |
+    | type  | type                | "set_block"                                       |
+    | block | the block being set | [BlockPredicate](general-types.md#blockpredicate) |
+
+## Block-related Actions
 
 ### Place Block
 
@@ -136,52 +165,58 @@ This action is not [repeatable](concepts.md#repeatability).
         }
         ```
 
-### Execute Command
+### Cycle State Property
 
-Executes a command.
+Cycles a property's value in a block-state.
 
 !!! note "Format"
 
-    | Name    | Description                                                              | Type / Literal |
-    | ------- | ------------------------------------------------------------------------ | -------------- |
-    | type    | type                                                                     | "execute"      |
-    | command | the command to run                                                       | string         |
-    | repeat  | execute commands by repetition count ^optional^{ title="default: true" } | boolean        |
+    | Name     | Description                                                 | Type / Literal                                    |
+    | -------- | ----------------------------------------------------------- | ------------------------------------------------- |
+    | type     | type                                                        | "cycle_state_property"                            |
+    | block    | only matched block-states will be cycled                    | [BlockPredicate](general-types.md#blockpredicate) |
+    | property | the property name                                           | string                                            |
+    | offsetX  | offsets to location ^optional^                              | int                                               |
+    | offsetY  | offsets to location ^optional^                              | int                                               |
+    | offsetZ  | offsets to location ^optional^                              | int                                               |
+    | reversed | cycle in reversed order ^optional^ {title="default: false"} | boolean                                           |
 
-??? example
+## Control Flow Actions
 
-    Spawns particles:
+### Prevent Default Behavior
 
-    === "YAML"
+Prevents default behavior and do nothing. The defaultbehaviors are explained on the recipes page.
 
-        ```yaml
-        type: execute
-        command: particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20
-        hide: true
-        ```
+!!! note "Format"
 
-    === "JSON"
+    | Name | Description | Type / Literal    |
+    | ---- | ----------- | ----------------- |
+    | type | type        | "prevent_default" |
 
-        ```json
-        {
-            "type": "execute",
-            "command": "particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20",
-            "hide": true
-        }
-        ```
+### Delay
 
-    For how to use `particle` command, please read the [wiki](https://minecraft.wiki/w/Commands/particle).
-
-### Drop Experience
-
-Spawns experience orbs.
+Waits for several seconds, then execute the following actions.
 
 !!! note "Format"
 
     | Name | Description | Type / Literal |
     | ---- | ----------- | -------------- |
-    | type | type        | "drop_xp"      |
-    | xp   | amount      | int            |
+    | type | type        | "delay"        |
+    | s    | seconds     | number         |
+
+!!! note
+
+    After the delay, some context will lose. For example, if the player leaves the game while delaying, you can't hurt the player after this delay.
+
+### Exit
+
+Stops executing the following actions.
+
+!!! note "Format"
+
+    | Name | Description | Type / Literal |
+    | ---- | ----------- | -------------- |
+    | type | type        | "exit"         |
 
 ### Random
 
@@ -263,6 +298,86 @@ Executes a list of actions if the contextual conditions are met or not.
     | then | a list of actions to be executed if the conditions are met ^optional^     | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
     | else | a list of actions to be executed if the conditions are not met ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[] |
 
+## Position Anchor Actions
+
+### Move
+
+_Since 6.3_
+
+Moves the anchored position in the context.
+
+!!! note "Format"
+
+    | Name   | Description                    | Type / Literal |
+    | ------ | ------------------------------ | -------------- |
+    | type   | type                           | "move"         |
+    | offset | the distance to move           | number\[3]     |
+    | with   | block property name ^optional^ | string         |
+
+    You can use `with` to rotate the offset according to the facing of the current block. When `with` is set, the offset will be rotated from "up".
+
+### Move towards Face
+
+Moves the anchored position in the context towards the direction that being interacted. Only works for interaction
+recipes.
+
+!!! note "Format"
+
+    | Name   | Description                             | Type / Literal      |
+    | ------ | --------------------------------------- | ------------------- |
+    | type   | type                                    | "move_towards_face" |
+    | factor | factor ^optional^{ title="default: 1" } | number              |
+
+## Miscellaneous Actions
+
+### Execute Command
+
+Executes a command.
+
+!!! note "Format"
+
+    | Name    | Description                                                              | Type / Literal |
+    | ------- | ------------------------------------------------------------------------ | -------------- |
+    | type    | type                                                                     | "execute"      |
+    | command | the command to run                                                       | string         |
+    | repeat  | execute commands by repetition count ^optional^{ title="default: true" } | boolean        |
+
+??? example
+
+    Spawns particles:
+
+    === "YAML"
+
+        ```yaml
+        type: execute
+        command: particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20
+        hide: true
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "execute",
+            "command": "particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20",
+            "hide": true
+        }
+        ```
+
+    For how to use `particle` command, please read the [wiki](https://minecraft.wiki/w/Commands/particle).
+
+### Add Item Cooldown
+
+Adds item cooldown to an item, just like the cooldown when you use an ender pearl.
+
+!!! note "Format"
+
+    | Name | Description                                                                   | Type / Literal      |
+    | ---- | ----------------------------------------------------------------------------- | ------------------- |
+    | type | type                                                                          | "add_item_cooldown" |
+    | s    | seconds                                                                       | number              |
+    | item | the item resource id ^optional^{ title="default: the item in player's hand" } | string              |
+
 ### Create Explosion
 
 Creates an explosion at where the interaction occurs.
@@ -291,85 +406,6 @@ on the falling height.
     | ------ | ---------------------- | --------------------- |
     | type   | type                   | "anvil_damage_chance" |
     | chance | chance between 0 and 1 | number                |
-
-### Add Item Cooldown
-
-Adds item cooldown to an item, just like the cooldown when you use an ender pearl.
-
-!!! note "Format"
-
-    | Name | Description                                                                   | Type / Literal      |
-    | ---- | ----------------------------------------------------------------------------- | ------------------- |
-    | type | type                                                                          | "add_item_cooldown" |
-    | s    | seconds                                                                       | number              |
-    | item | the item resource id ^optional^{ title="default: the item in player's hand" } | string              |
-
-### Move towards Face
-
-Moves the anchored position in the context towards the direction that being interacted. Only works for interaction
-recipes.
-
-!!! note "Format"
-
-    | Name   | Description                             | Type / Literal      |
-    | ------ | --------------------------------------- | ------------------- |
-    | type   | type                                    | "move_towards_face" |
-    | factor | factor ^optional^{ title="default: 1" } | number              |
-
-### Delay
-
-Waits for several seconds, then execute the following actions.
-
-!!! note "Format"
-
-    | Name | Description | Type / Literal |
-    | ---- | ----------- | -------------- |
-    | type | type        | "delay"        |
-    | s    | seconds     | number         |
-
-!!! note
-
-    After the delay, some context will lose. For example, if the player leaves the game while delaying, you can't hurt the player after this delay.
-
-### Exit
-
-Stops executing the following actions.
-
-!!! note "Format"
-
-    | Name | Description | Type / Literal |
-    | ---- | ----------- | -------------- |
-    | type | type        | "exit"        |
-
-### Cycle State Property
-
-Cycles a property's value in a block-state.
-
-!!! note "Format"
-
-    | Name     | Description                              | Type / Literal                                    |
-    | -------- | ---------------------------------------- | ------------------------------------------------- |
-    | type     | type                                     | "cycle_state_property"                            |
-    | block    | only matched block-states will be cycled | [BlockPredicate](general-types.md#blockpredicate) |
-    | property | the property name                        | string                                            |
-    | offsetX  | offsets to location ^optional^           | int                                               |
-    | offsetY  | offsets to location ^optional^           | int                                               |
-    | offsetZ  | offsets to location ^optional^           | int                                               |
-
-## Special Built-in Actions
-
-These following actions will prevent the default behavior of the recipe (such as consuming input item). The default
-behaviors are explained on the recipes page.
-
-### Prevent Default Behavior
-
-Prevents default behavior and do nothing.
-
-!!! note "Format"
-
-    | Name | Description | Type / Literal    |
-    | ---- | ----------- | ----------------- |
-    | type | type        | "prevent_default" |
 
 ### Damage Item
 
