@@ -33,7 +33,7 @@ public record TextElement(
 			ComponentSerialization.CODEC.fieldOf("text").forGetter(TextElement::text),
 			ComponentSerialization.CODEC.optionalFieldOf("dark_text").forGetter(TextElement::darkText),
 			TEXT_COLOR_CODEC.optionalFieldOf("color", DEFAULT_LIGHT_MODE_COLOR).forGetter(TextElement::color),
-			TEXT_COLOR_CODEC.optionalFieldOf("dark_color", DEFAULT_LIGHT_MODE_COLOR).forGetter(TextElement::darkColor),
+			TEXT_COLOR_CODEC.optionalFieldOf("dark_color", DEFAULT_DARK_MODE_COLOR).forGetter(TextElement::darkColor),
 			Codec.BOOL.optionalFieldOf("shadow", false).forGetter(TextElement::shadow),
 			Codec.BOOL.optionalFieldOf("centered", false).forGetter(TextElement::centered)
 	).apply(i, TextElement::new));

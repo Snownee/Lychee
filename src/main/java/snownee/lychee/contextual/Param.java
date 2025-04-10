@@ -15,7 +15,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
@@ -53,7 +52,9 @@ public record Param(Holder<LycheeContextKey<?>> key, boolean create, String loot
 		if (!loot.isEmpty()) {
 			boolean found = false;
 			var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
-			lootParams.initAll();
+			if (create) {
+				lootParams.initAll();
+			}
 			for (Map.Entry<LootContextParam<?>, @Nullable Object> entry : lootParams.params().entrySet()) {
 				if (entry.getValue() == null) {
 					continue;
@@ -75,10 +76,10 @@ public record Param(Holder<LycheeContextKey<?>> key, boolean create, String loot
 		public static final MapCodec<Param> CODEC = RecordCodecBuilder.<Param>mapCodec(i -> i.group(
 				LycheeRegistries.CONTEXT.holderByNameCodec().fieldOf("key").forGetter(Param::key),
 				Codec.BOOL.optionalFieldOf("create", true).forGetter(Param::create),
-				ExtraCodecs.NON_EMPTY_STRING.optionalFieldOf("loot", "").forGetter(Param::loot)
+				Codec.STRING.optionalFieldOf("loot", "").forGetter(Param::loot)
 		).apply(i, Param::new)).validate(it -> {
 			if (!it.loot.isEmpty() && it.key.value() != LycheeContextKey.LOOT_PARAMS) {
-				return DataResult.error(() -> "Key must not be empty");
+				return DataResult.error(() -> "`loot` can only be used with `loot_params` key");
 			}
 			return DataResult.success(it);
 		});
