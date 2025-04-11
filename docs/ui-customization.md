@@ -26,7 +26,7 @@ The elements are split into many sections. You can add new elements by using any
     | sort_order     | sort order ^optional^{ title="default: 0" }                 | int                                                                                                                                                                                                                      |
     | category       | category id matcher                                         | [RegExPattern](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html) \| [RegExPattern](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html)[] |
     | elements       | UI elements ^optional^                                      | dictionary<string, [UIElement](#ui-element)[]>                                                                                                                                                                           |
-    | render_default | render default elements ^optional^{ title="default: true" } | boolean                                                                                                                                                                                                                  |
+    | render_default | render default elements ^optional^{ title="default: true" } | true \| false                                                                                                                                                                                                            |
     | size           | base panel size ^optional^                                  | int\[2]                                                                                                                                                                                                                  |
     | workstation    | workstations ^optional^                                     | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[]                                                                                                                                 |
 
@@ -43,7 +43,7 @@ Only one category metadata can take effect. If multiple category metadata are ma
     | category       | category id matcher                                         | [RegExPattern](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html) \| [RegExPattern](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html)[] |
     | recipe         | recipe id matcher                                           | [RegExPattern](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html) \| [RegExPattern](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html)[] |
     | elements       | UI elements ^optional^                                      | dictionary<string, [UIElement](#ui-element)[]>                                                                                                                                                                           |
-    | render_default | render default elements ^optional^{ title="default: true" } | boolean                                                                                                                                                                                                                  |
+    | render_default | render default elements ^optional^{ title="default: true" } | true \| false                                                                                                                                                                                                            |
 
 Multiple category modifiers can take effect on one recipe. Modifier with greater sort order will replace the previous element member if their key is the same.
 
@@ -58,12 +58,38 @@ Multiple category modifiers can take effect on one recipe. Modifier with greater
 
 ## Built-in Section Names
 
-- `lychee:block_interacting`: `ingredient_group`, `action_group`, `info`, `consume_block_in`, `block_in`, `method`
-- `lychee:item_inside`: `ingredient_group`, `action_group`, `info`, `consume_block_in`, `block_in`, `method`
-- `lychee:item_burning`: `ingredient_group`, `action_group`, `info`, `consume_block_in`, `block_in`, `method`
-- `lychee:block_exploding`: `action_group`, `info`, `consume_block_in`, `block_in`
-- `lychee:block_crushing`: `ingredient_group`, `action_group`, `info`, `consume_block_in`, `falling_block`, `landing_block`
-- `lychee:dripstone_dripping`: `action_group`, `info`, `consume_block_in`, `source_block`, `dripstone_block`, `target_block`
-- `lychee:item_exploding`: `ingredient_group`, `action_group`, `info`, `block_in`, `tnt`
-- `lychee:lightning_channeling`: `ingredient_group`, `action_group`, `info`, `lightning_bolt`, `lightning_rod`
-- `lychee:blank`: `ingredient_group`, `action_group`
+### `lychee:block_interacting`
+
+`ingredient_group`, `action_group`, `info`, `consume_block_in`, `block_in`, `method`
+
+### `lychee:item_inside`
+
+`ingredient_group`, `action_group`, `info`, `consume_block_in`, `block_in`, `method`
+
+### `lychee:item_burning`
+
+`ingredient_group`, `action_group`, `info`, `consume_block_in`, `block_in`, `method`
+
+### `lychee:block_exploding`
+
+`action_group`, `info`, `consume_block_in`, `block_in`
+
+### `lychee:block_crushing`
+
+`ingredient_group`, `action_group`, `info`, `consume_block_in`, `falling_block`, `landing_block`
+
+### `lychee:dripstone_dripping`
+
+`action_group`, `info`, `consume_block_in`, `source_block`, `dripstone_block`, `target_block`
+
+### `lychee:item_exploding`
+
+`ingredient_group`, `action_group`, `info`, `block_in`, `tnt`
+
+### `lychee:lightning_channeling`
+
+`ingredient_group`, `action_group`, `info`, `lightning_bolt`, `lightning_rod`
+
+### `lychee:blank`
+
+`ingredient_group`, `action_group`

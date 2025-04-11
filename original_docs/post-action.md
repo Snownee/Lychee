@@ -10,7 +10,7 @@ You can add post actions to a Lychee's recipe, and they will be executed after t
 | ---- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | type | type                                                             | string                                                                                             |
 | if   | contextual conditions ^optional^                                 | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
-| hide | hide this action in JEI/REI ^optional^{ title="default: false" } | boolean                                                                                            |
+| hide | hide this action in JEI/REI ^optional^{ title="default: false" } | true \| false                                                                                      |
 | icon | sprite icon location ^optional^                                  | string                                                                                             |
 |      | additional properties...                                         |                                                                                                    |
 
@@ -137,7 +137,7 @@ Cycles a property's value in a block-state.
     | offsetX  | offsets to location ^optional^                              | int                                               |
     | offsetY  | offsets to location ^optional^                              | int                                               |
     | offsetZ  | offsets to location ^optional^                              | int                                               |
-    | reversed | cycle in reversed order ^optional^ {title="default: false"} | boolean                                           |
+    | reversed | cycle in reversed order ^optional^ {title="default: false"} | true \| false                                     |
 
 ## Control Flow Actions
 
@@ -276,7 +276,7 @@ Executes a command.
     | ------- | ------------------------------------------------------------------------ | -------------- |
     | type    | type                                                                     | "execute"      |
     | command | the command to run                                                       | string         |
-    | repeat  | execute commands by repetition count ^optional^{ title="default: true" } | boolean        |
+    | repeat  | execute commands by repetition count ^optional^{ title="default: true" } | true \| false  |
 
 ??? example
 
@@ -316,7 +316,7 @@ Creates an explosion at where the interaction occurs.
     | offsetX           | offsets to location ^optional^                                                                | int                                         |
     | offsetY           | offsets to location ^optional^                                                                | int                                         |
     | offsetZ           | offsets to location ^optional^                                                                | int                                         |
-    | fire              | set fire. false by default ^optional^                                                         | boolean                                     |
+    | fire              | set fire. false by default ^optional^                                                         | true \| false                               |
     | block_interaction | whether break blocks or not. "destroy" by default ^optional^                                  | "keep" \| "destroy" \| "destroy_with_decay" |
     | radius            | the base radius of the explosion. 4 by default ^optional^                                     | number                                      |
     | radius_step       | the radius step according to how many times the recipe can be done. 0.5 by default ^optional^ | number                                      |

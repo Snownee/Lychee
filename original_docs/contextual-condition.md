@@ -9,7 +9,7 @@ Contextual condition can be applied to a recipe, or a single result (aka Post Ac
 | Name        | Description                                                         | Type / Literal |
 | ----------- | ------------------------------------------------------------------- | -------------- |
 | type        | type                                                                | string         |
-| secret      | displays as "???" in player's tooltip ^optional^                    | boolean        |
+| secret      | displays as "???" in player's tooltip ^optional^                    | true \| false  |
 | description | overrides the default description with a translation key ^optional^ | string         |
 |             | additional properties...                                            |                |
 
@@ -284,12 +284,12 @@ Checks if a parameter exists in the context.
 
 !!! note "Format"
 
-    | Name   | Description                                                                                       | Type / Literal |
-    | ------ | ------------------------------------------------------------------------------------------------- | -------------- |
-    | type   | type                                                                                              | "param"        |
-    | key    | parameter name                                                                                    | string         |
-    | loot   | loot parameter name ^optional^                                                                    | string         |
-    | create | create the parameter if it can be created from other parameters ^optional^{title="default: true"} | boolean        |
+    | Name   | Description                                                                                         | Type / Literal |
+    | ------ | --------------------------------------------------------------------------------------------------- | -------------- |
+    | type   | type                                                                                                | "param"        |
+    | key    | parameter name                                                                                      | string         |
+    | loot   | loot parameter name ^optional^                                                                      | string         |
+    | create | create the parameter if it can be created from other parameters ^optional^{ title="default: true" } | true \| false  |
 
 ??? example
 
@@ -313,4 +313,4 @@ Checks the sky darken level.
     | ----------- | --------------------------------------------------- | --------------------------------------- |
     | type        | type                                                | "sky_darken"                            |
     | value       | value                                               | [IntBounds](general-types.md#intbounds) |
-    | can_see_sky | the location must be able to see the sky ^optional^ | boolean                                 |
+    | can_see_sky | the location must be able to see the sky ^optional^ | true \| false                           |

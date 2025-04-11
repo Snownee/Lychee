@@ -37,8 +37,8 @@ Note: Not every element type supports opacity.
     | dark_text  | dark theme text ^optional^                              | [TextComponent](https://minecraft.wiki/w/Text_component_format?oldid=2725300) |
     | color      | default color ^optional^{ title="default: #666666" }    | string (TextColor)                                                            |
     | dark_color | dark theme color ^optional^{ title="default: #BBBBBB" } | string (TextColor)                                                            |
-    | shadow     | draw shadow ^optional^{ title="default: false" }        | boolean                                                                       |
-    | centered   | center text ^optional^{ title="default: false" }        | boolean                                                                       |
+    | shadow     | draw shadow ^optional^{ title="default: false" }        | true \| false                                                                 |
+    | centered   | center text ^optional^{ title="default: false" }        | true \| false                                                                 |
 
 ## Game Element Properties
 
