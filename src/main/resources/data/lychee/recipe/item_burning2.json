@@ -1,109 +1,118 @@
 {
-  "type": "lychee:item_burning",
-  "item_in": {
-    "tag": "planks"
-  },
-  "post": [
-    {
-      "type": "drop_item",
+	"type": "lychee:item_burning",
+	"item_in": {
+		"tag": "planks"
+	},
+	"post": [
+		{
+			"type": "drop_item",
 			"id": "diamond"
-    },
-    {
-      "type": "drop_item",
+		},
+		{
+			"type": "drop_item",
 			"id": "cod",
-      "contextual": {
-        "type": "chance",
-        "chance": 0.5
-      }
-    },
-    {
-      "type": "drop_item",
+			"contextual": {
+				"type": "chance",
+				"chance": 0.5
+			}
+		},
+		{
+			"type": "drop_item",
 			"id": "cod",
-      "contextual": {
-        "type": "chance",
-        "chance": 0.5
-      }
-    },
-    {
-      "type": "drop_item",
+			"contextual": {
+				"type": "chance",
+				"chance": 0.5
+			}
+		},
+		{
+			"type": "drop_item",
 			"id": "cod",
-      "contextual": {
-        "type": "chance",
-        "chance": 0.5
-      }
-    },
-    {
-      "type": "drop_item",
+			"contextual": {
+				"type": "chance",
+				"chance": 0.5
+			}
+		},
+		{
+			"type": "drop_item",
 			"id": "cod",
-      "contextual": [
-        {
-          "type": "chance",
-          "chance": 0.5
-        },
-        {
-          "type": "chance",
-          "chance": 0.5
-        }
-      ]
-    },
-    {
-      "type": "drop_item",
+			"contextual": [
+				{
+					"type": "chance",
+					"chance": 0.5
+				},
+				{
+					"type": "chance",
+					"chance": 0.5
+				}
+			]
+		},
+		{
+			"type": "drop_item",
 			"id": "cod",
-      "contextual": {
-        "type": "or",
-        "contextual": [
-          {
-            "type": "chance",
-            "chance": 0.5
-          },
-          {
-            "type": "not",
-            "contextual": {
-              "type": "difficulty",
-              "difficulty": [1, 2, 3]
-            }
-          },
-          {
-            "type": "location",
-            "predicate": {
-              "dimension": "the_end",
-              "smokey": false,
-              "feature": "igloo",
-              "position": {
-                "x": {
-                  "min": -1000,
-                  "max": 1000
-                }
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "type": "drop_xp",
-      "xp": 100,
-      "contextual": {
-        "type": "weather",
-        "weather": "rain"
-      }
-    },
-    {
-      "type": "place",
-      "block": {
-        "blocks": ["oak_stairs"],
-        "state": {
+			"contextual": {
+				"type": "or",
+				"contextual": [
+					{
+						"type": "chance",
+						"chance": 0.5
+					},
+					{
+						"type": "not",
+						"contextual": {
+							"type": "difficulty",
+							"difficulty": [
+								1,
+								2,
+								3
+							]
+						}
+					},
+					{
+						"type": "location",
+						"predicate": {
+							"fluid": {
+								"fluids": "minecraft:flowing_water"
+							},
+							"dimension": "the_end",
+							"smokey": false,
+							"feature": "igloo",
+							"position": {
+								"x": {
+									"min": -1000,
+									"max": 1000
+								}
+							}
+						}
+					}
+				]
+			}
+		},
+		{
+			"type": "drop_xp",
+			"xp": 100,
+			"contextual": {
+				"type": "weather",
+				"weather": "rain"
+			}
+		},
+		{
+			"type": "place",
+			"block": {
+				"blocks": [
+					"oak_stairs"
+				],
+				"state": {
 					"waterlogged": "true"
-        }
-      }
-    },
-    {
-      "type": "execute",
-      "command": "say hi",
-      "contextual": {
-        "type": "weather",
-        "weather": "clear"
-      }
-    }
-  ]
+				}
+			}
+		},
+		{
+			"type": "execute",
+			"command": "say hi",
+			"contextual": {
+				"type": "weather",
+				"weather": "clear"
+			}
+		}
+	]
 }

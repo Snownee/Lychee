@@ -4,10 +4,13 @@ import java.text.MessageFormat;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.material.Fluid;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
@@ -41,6 +44,10 @@ public class ClientProxy implements ClientModInitializer {
 
 	public static boolean postWidgetClickEvent(Recipe<?> recipe, String id, int button) {
 		return RECIPE_VIEWER_WIDGET_CLICK_EVENT.invoker().onClick(recipe, id, button);
+	}
+
+	public static Component getFluidName(Fluid fluid) {
+		return FluidVariantAttributes.getName(FluidVariant.of(fluid));
 	}
 
 	@Override
