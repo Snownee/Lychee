@@ -21,6 +21,7 @@ Currently Lychee has support for the following recipe type (with full JEI/REI su
 - Random block ticking (No JEI/REI integration)
 - Dripstone dripping
 - Advanced shaped crafting
+- Entity ticking (No JEI/REI integration)
 
 ## Dependencies Information
 

@@ -14,7 +14,7 @@ nav:
     - Advanced:
         - Concepts: concepts.md
         - "UI Customization": ui-customization.md
-        - "UI Elements": ui-elements.md
+        - "UI Elements": ui-element.md
         - "JSON Fragment": fragment.md
         - "KubeJS Integration": kubejs.md
     - "Update Notes": update-notes.md

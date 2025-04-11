@@ -415,11 +415,11 @@ This action is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name   | Description             | Type / Literal                              |
-    | ------ | ----------------------- | ------------------------------------------- |
-    | type   | type                    | "damage_item"                               |
-    | damage | damage ^optional^       | int                                         |
-    | target | target items ^optional^ | [JsonPointer](general-types.md#jsonpointer) |
+    | Name   | Description                                           | Type / Literal                              |
+    | ------ | ----------------------------------------------------- | ------------------------------------------- |
+    | type   | type                                                  | "damage_item"                               |
+    | damage | damage ^optional^{ title="default: 1" }               | int                                         |
+    | target | target items ^optional^{ title="default: all items" } | [JsonPointer](general-types.md#jsonpointer) |
 
 ### Set Item
 
