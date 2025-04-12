@@ -10,7 +10,7 @@ Currently, modifying elements is not supported for anvil crafting and shaped cra
 - Category modifier allows you to modify the elements in the specific recipes of a category.
 - Blank recipe allows you to display something from scratch along with category modifiers.
 
-The category id format is usually `<recipe type id>/<group id>`. Specifically, the block clicking recipe uses block interacting recipe's recipe type id.
+The category id format is usually `<recipe type id>/<group id namespace>/<group id path>`. Specifically, the block clicking recipe uses block interacting recipe's recipe type id.
 
 If the group id is not specified, it will be set to `default`. Recipes with the same category id will be grouped together in JEI / REI.
 

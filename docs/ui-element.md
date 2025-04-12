@@ -10,7 +10,7 @@ _Since 6.3_
 | pos      | element position ^optional^                          | number[]                                                                                                                                                         |
 | size     | element size ^optional^{ title="default: [16, 16]" } | int\[2]                                                                                                                                                          |
 | tooltip  | tooltip ^optional^                                   | [TextComponent](https://minecraft.wiki/w/Text_component_format?oldid=2725300) \| [TextComponent](https://minecraft.wiki/w/Text_component_format?oldid=2725300)[] |
-| on_click | click action name to be posted ^optional^            | string                                                                                                                                                           |
+| on_input | input action name to be posted ^optional^            | string                                                                                                                                                           |
 | opacity  | opacity ^optional^{ title="default: 1" }             | number                                                                                                                                                           |
 |          | additional properties...                             |                                                                                                                                                                  |
 
