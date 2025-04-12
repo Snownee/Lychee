@@ -18,6 +18,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
+import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
 import snownee.lychee.client.gui.InteractiveRenderElement;
@@ -40,6 +41,7 @@ public class ClientProxy {
 						}
 						return false;
 					});
+	public static boolean hasJade = Platform.isModLoaded("jade");
 
 	public static MutableComponent format(String s, Object... objects) {
 		try {

@@ -20,7 +20,9 @@ import mezz.jei.common.input.IInternalKeyMappings;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
+import snownee.jade.api.config.IWailaConfig;
 import snownee.lychee.compat.recipeviewer.RvHelper;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.ui.InputAction;
 
 
@@ -87,6 +89,14 @@ public class JeiRvHelper extends RvHelper {
 		} catch (Exception ignored) {
 		}
 		return Optional.empty();
+	}
+
+	@Override
+	public boolean appendModName() {
+		if (ClientProxy.hasJade && IWailaConfig.get().getGeneral().showItemModNameTooltip()) {
+			return true;
+		}
+		return jeiHelpers != null && jeiHelpers.getModIdHelper().isDisplayingModNameEnabled();
 	}
 
 	@ApiStatus.Internal
