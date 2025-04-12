@@ -101,7 +101,7 @@ public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 				.rotateBlock(12.5, -22.5, 0);
 		return new InteractiveRenderElement((InteractiveRenderElement element) -> blockElement.get())
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(stateSupplier.get(), predicate))
-				.onClick(helper.lookupBlock(stateSupplier))
+				.onInput(helper.inputOnBlock(stateSupplier))
 				.withSize(BLOCK_SIZE);
 	}
 
@@ -115,7 +115,7 @@ public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 
 		return result
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(getTargetBlock(recipe), recipe.blockPredicate()))
-				.onClick(helper.lookupBlock(() -> getTargetBlock(recipe)))
+				.onInput(helper.inputOnBlock(() -> getTargetBlock(recipe)))
 				.at(TARGET_BLOCK_POSITION)
 				.withSize(BLOCK_SIZE);
 	}

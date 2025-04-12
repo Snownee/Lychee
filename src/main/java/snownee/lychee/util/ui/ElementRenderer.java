@@ -52,10 +52,14 @@ public interface ElementRenderer {
 			List<Component> tooltip = properties.tooltip().get();
 			renderElement = interactiveElement.onTooltip(() -> tooltip);
 		}
-		String id = properties.onClick().orElse(null);
+		String id = properties.onInput().orElse(null);
 		if (recipeHolder != null && id != null) {
 			InteractiveRenderElement interactiveElement = InteractiveRenderElement.create(renderElement);
-			renderElement = interactiveElement.onClick(btn -> ClientProxy.postWidgetClickEvent(recipeHolder.value(), id, btn));
+			renderElement = interactiveElement.onInput((action, element0) -> ClientProxy.postWidgetInputEvent(
+					recipeHolder.value(),
+					id,
+					action,
+					element0));
 		}
 		renderElement.at(properties.pos()).withSize(properties.size()).withAlpha(properties.opacity());
 		return renderElement;

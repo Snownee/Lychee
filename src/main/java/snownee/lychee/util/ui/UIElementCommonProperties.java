@@ -24,7 +24,7 @@ public record UIElementCommonProperties(
 		Vector3fc pos,
 		Vector2ic size,
 		Optional<List<Component>> tooltip,
-		Optional<String> onClick,
+		Optional<String> onInput,
 		float opacity) {
 	public static final Vector2ic DEFAULT_SIZE = new Vector2i(16);
 
@@ -32,7 +32,7 @@ public record UIElementCommonProperties(
 			VectorExtensions.CODEC3F.optionalFieldOf("pos", VectorExtensions.ZERO3F).forGetter(UIElementCommonProperties::pos),
 			VectorExtensions.CODEC2I.optionalFieldOf("size", DEFAULT_SIZE).forGetter(UIElementCommonProperties::size),
 			KCodecs.compactList(ComponentSerialization.CODEC).optionalFieldOf("tooltip").forGetter(UIElementCommonProperties::tooltip),
-			ExtraCodecs.NON_EMPTY_STRING.optionalFieldOf("on_click").forGetter(UIElementCommonProperties::onClick),
+			ExtraCodecs.NON_EMPTY_STRING.optionalFieldOf("on_input").forGetter(UIElementCommonProperties::onInput),
 			Codec.floatRange(0, 1).optionalFieldOf("opacity", 1F).forGetter(UIElementCommonProperties::opacity)
 	).apply(i, UIElementCommonProperties::new));
 
@@ -44,7 +44,7 @@ public record UIElementCommonProperties(
 			ByteBufCodecs.optional(ComponentSerialization.TRUSTED_STREAM_CODEC.apply(ByteBufCodecs.list())),
 			UIElementCommonProperties::tooltip,
 			ByteBufCodecs.optional(ByteBufCodecs.STRING_UTF8),
-			UIElementCommonProperties::onClick,
+			UIElementCommonProperties::onInput,
 			ByteBufCodecs.FLOAT,
 			UIElementCommonProperties::opacity,
 			UIElementCommonProperties::new);

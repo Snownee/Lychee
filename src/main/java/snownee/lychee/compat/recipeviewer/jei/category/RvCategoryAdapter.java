@@ -26,7 +26,6 @@ import mezz.jei.api.runtime.IIngredientManager;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -255,9 +254,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 			public void addElement(RenderElement element) {
 				var adapter = new RenderElementAdapter(element);
 				builder.addWidget(adapter);
-				if (element instanceof GuiEventListener) {
-					builder.addGuiEventListener(adapter);
-				}
+				builder.addGuiEventListener(adapter);
 			}
 		};
 		instance.configureDecorations(widgetBuilder, recipe);

@@ -118,7 +118,11 @@ public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return InteractiveRenderElement.create(new SpriteElementRenderer(AllGuiTextures.INFO.id).<SpriteElementRenderer>withSize(
 						InfoElementHelper.INFO_SIZE))
 				.onTooltip(() -> RVs.getRecipeTooltip(recipe))
-				.onClick(button -> ClientProxy.postWidgetClickEvent(recipeHolder.value(), recipeHolder.id().toString(), button))
+				.onInput((action, element) -> ClientProxy.postWidgetInputEvent(
+						recipeHolder.value(),
+						recipeHolder.id().toString(),
+						action,
+						element))
 				.withSize(InfoElementHelper.INFO_SIZE);
 	}
 }

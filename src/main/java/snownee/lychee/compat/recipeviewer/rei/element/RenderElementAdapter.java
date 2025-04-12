@@ -58,18 +58,39 @@ public class RenderElementAdapter extends WidgetWithBounds {
 	}
 
 	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		if (!(element instanceof GuiEventListener listener)) {
+			return false;
+		}
+		double relMouseX = mouseX - startPoint.x();
+		double relMouseY = mouseY - startPoint.y();
+		return listener.mouseScrolled(relMouseX, relMouseY, scrollX, scrollY);
+	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		if (!(element instanceof GuiEventListener listener)) {
+			return false;
+		}
+		return listener.keyPressed(keyCode, scanCode, modifiers);
+	}
+
+	@Override
 	public Rectangle getBounds() {
 		return bounds;
 	}
 
 	@Override
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		float relMouseX = mouseX - startPoint.x();
-		float relMouseY = mouseY - startPoint.y();
-		if (element instanceof InteractiveRenderElement interactive && element.containsMouse(relMouseX, relMouseY)) {
-			var tooltip = interactive.getTooltip();
-			if (tooltip != null) {
-				Tooltip.create(tooltip).queue();
+		double relMouseX = mouseX - startPoint.x();
+		double relMouseY = mouseY - startPoint.y();
+		if (element instanceof InteractiveRenderElement interactive) {
+			interactive.updateHoverState(relMouseX, relMouseY);
+			if (interactive.isHovered()) {
+				var tooltip = interactive.getTooltip();
+				if (tooltip != null) {
+					Tooltip.create(tooltip).queue();
+				}
 			}
 		}
 		PoseStack pose = guiGraphics.pose();

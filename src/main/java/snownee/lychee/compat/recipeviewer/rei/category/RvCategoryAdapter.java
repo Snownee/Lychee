@@ -2,7 +2,7 @@ package snownee.lychee.compat.recipeviewer.rei.category;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.IntPredicate;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
@@ -51,6 +51,7 @@ import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.ui.InputAction;
 
 public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements DisplayCategory<LycheeDisplay<R>> {
 
@@ -258,10 +259,10 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 							}
 							return tooltip.toArray(Component[]::new);
 						});
-						IntPredicate onClick = interactive.getOnClick();
-						if (onClick != null) {
+						BiPredicate<InputAction, @Nullable InteractiveRenderElement> onInput = interactive.getOnInput();
+						if (onInput != null) {
 							widget.clickable();
-							widget.setOnClick(it -> onClick.test(0));
+							widget.setOnClick(it -> onInput.test(InputAction.mousePressed(0), null));
 						}
 					}
 					widgets.add(widget);
