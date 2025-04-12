@@ -10,6 +10,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 
+import net.createmod.ponder.render.VirtualRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -33,7 +34,9 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import snownee.kiwi.util.Color;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.VecHelper;
 
 public class GuiGameElement {
@@ -157,11 +160,16 @@ public class GuiGameElement {
 
 		protected BakedModel blockModel;
 		protected BlockState blockState;
+		private ModelData modelData;
 
 		public GuiBlockModelRenderBuilder(BakedModel bakedModel, @Nullable BlockState blockState) {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
 			this.blockModel = bakedModel;
 			withRotationOffset(VecHelper.getCenterOf(BlockPos.ZERO));
+			this.modelData = ModelData.EMPTY;
+			if (ClientProxy.HAS_PONDER) {
+				this.modelData = VirtualRenderHelper.VIRTUAL_DATA;
+			}
 		}
 
 		@Override
@@ -201,7 +209,9 @@ public class GuiGameElement {
 					rgb.getGreenAsFloat(),
 					rgb.getBlueAsFloat(),
 					LightTexture.FULL_BRIGHT,
-					OverlayTexture.NO_OVERLAY
+					OverlayTexture.NO_OVERLAY,
+					modelData,
+					null
 			);
 			buffer.endBatch();
 		}

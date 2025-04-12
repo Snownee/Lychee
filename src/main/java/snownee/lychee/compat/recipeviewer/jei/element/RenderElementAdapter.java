@@ -20,7 +20,7 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 
 	public RenderElementAdapter(RenderElement element) {
 		this.element = element;
-		this.bounds = new ScreenRectangle(0, 0, element.width(), element.height());
+		this.bounds = new ScreenRectangle((int) element.x(), (int) element.y(), element.width(), element.height());
 	}
 
 	@Override
@@ -35,19 +35,19 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 
 	@Override
 	public void draw(GuiGraphics guiGraphics, int xOffset, int yOffset) {
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(xOffset, yOffset, 0);
+		PoseStack pose = guiGraphics.pose();
+		pose.pushPose();
+		pose.translate(xOffset, yOffset, element.z());
 		element.render(guiGraphics);
-		guiGraphics.pose().popPose();
+		pose.popPose();
 	}
 
 	@Override
 	public void drawWidget(GuiGraphics guiGraphics, double mouseX, double mouseY) {
-		PoseStack pose = guiGraphics.pose();
-		pose.pushPose();
-		pose.translate(bounds.left(), bounds.top(), 0);
-		element.render(guiGraphics);
-		pose.popPose();
+		if (element instanceof InteractiveRenderElement interactive) {
+			interactive.updateHoverState(element.x() + mouseX, element.y() + mouseY);
+		}
+		draw(guiGraphics, (int) -element.x(), (int) -element.y());
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 
 	@Override
 	public void getTooltip(ITooltipBuilder tooltip, double mouseX, double mouseY) {
-		if (!(element instanceof InteractiveRenderElement interactive) || !interactive.containsMouse(mouseX, mouseY)) {
+		if (!(element instanceof InteractiveRenderElement interactive) || !interactive.isHovered()) {
 			return;
 		}
 		var components = interactive.getTooltip();
@@ -78,6 +78,22 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 		if (!(element instanceof GuiEventListener listener)) {
 			return false;
 		}
-		return listener.mouseClicked(mouseX, mouseY, button);
+		return listener.mouseClicked(-1, -1, button);
+	}
+
+	@Override
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+		if (!(element instanceof GuiEventListener listener)) {
+			return false;
+		}
+		return listener.mouseScrolled(-1, -1, scrollX, scrollY);
+	}
+
+	@Override
+	public boolean keyPressed(double mouseX, double mouseY, int keyCode, int scanCode, int modifiers) {
+		if (!(element instanceof GuiEventListener listener)) {
+			return false;
+		}
+		return listener.keyPressed(keyCode, scanCode, modifiers);
 	}
 }

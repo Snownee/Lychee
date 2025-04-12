@@ -108,7 +108,7 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 					((BlockKeyableRecipe) recipe).blockPredicate()));
 		}
 
-		return result.onClick(helper.lookupBlock(() -> getRenderingBlock(recipe)))
+		return result.onInput(helper.inputOnBlock(() -> getRenderingBlock(recipe)))
 				.at(inputBlockPosition)
 				.withSize(BLOCK_SIZE);
 	}

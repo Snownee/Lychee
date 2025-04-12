@@ -2,6 +2,10 @@ package snownee.lychee.util;
 
 import java.text.MessageFormat;
 
+import org.jetbrains.annotations.Nullable;
+
+import com.mojang.blaze3d.platform.InputConstants;
+
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
@@ -16,20 +20,21 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
+import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.particles.dripstone.client.ParticleFactories;
 import snownee.lychee.util.ui.ElementRenderer;
+import snownee.lychee.util.ui.InputAction;
 
 @Mod(value = Lychee.ID, dist = Dist.CLIENT)
 public class ClientProxy {
-
 	public static final boolean HAS_PONDER = ModList.get().isLoaded("ponder");
-	private static final KEvent<RecipeViewerWidgetClickListener> RECIPE_VIEWER_WIDGET_CLICK_EVENT =
+	private static final KEvent<RecipeViewerWidgetInputListener> RECIPE_VIEWER_WIDGET_INPUT_EVENT =
 			KEvent.createArrayBacked(
-					RecipeViewerWidgetClickListener.class, listeners -> (recipe, location, button) -> {
+					RecipeViewerWidgetInputListener.class, listeners -> (recipe, location, action) -> {
 						for (var listener : listeners) {
-							if (listener.onClick(recipe, location, button)) {
+							if (listener.on(recipe, location, action)) {
 								return true;
 							}
 						}
@@ -44,12 +49,16 @@ public class ClientProxy {
 		}
 	}
 
-	public static void registerWidgetClickListener(RecipeViewerWidgetClickListener listener) {
-		RECIPE_VIEWER_WIDGET_CLICK_EVENT.register(listener);
+	public static void registerWidgetInputListener(RecipeViewerWidgetInputListener listener) {
+		RECIPE_VIEWER_WIDGET_INPUT_EVENT.register(listener);
 	}
 
-	public static boolean postWidgetClickEvent(Recipe<?> recipe, String id, int button) {
-		return RECIPE_VIEWER_WIDGET_CLICK_EVENT.invoker().onClick(recipe, id, button);
+	public static boolean postWidgetInputEvent(
+			Recipe<?> recipe,
+			String id,
+			InputAction action,
+			@Nullable InteractiveRenderElement element) {
+		return action.isMouseOver(element) && RECIPE_VIEWER_WIDGET_INPUT_EVENT.invoker().on(recipe, id, action);
 	}
 
 	public static Component getFluidName(Fluid fluid) {
@@ -57,6 +66,15 @@ public class ClientProxy {
 			return fluid.getFluidType().getDescription();
 		}
 		return FluidVariantAttributes.getName(FluidVariant.of(fluid));
+	}
+
+	public static InputConstants.Key getKeyMapping(InputAction action) {
+		if (action instanceof InputAction.MousePressed mousePressed) {
+			return InputConstants.Type.MOUSE.getOrCreate(mousePressed.button);
+		} else if (action instanceof InputAction.KeyPressed keyPressed) {
+			return InputConstants.getKey(keyPressed.keyCode, keyPressed.scanCode);
+		}
+		return InputConstants.UNKNOWN;
 	}
 
 	public ClientProxy(IEventBus modEventBus) {
@@ -78,7 +96,7 @@ public class ClientProxy {
 	}
 
 	@FunctionalInterface
-	public interface RecipeViewerWidgetClickListener {
-		boolean onClick(Recipe<?> recipe, String id, int button);
+	public interface RecipeViewerWidgetInputListener {
+		boolean on(Recipe<?> recipe, String id, InputAction action);
 	}
 }

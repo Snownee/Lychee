@@ -23,6 +23,7 @@ import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.ui.InputAction;
 
 public class LycheeKubeJSPlugin implements KubeJSPlugin {
 
@@ -32,7 +33,7 @@ public class LycheeKubeJSPlugin implements KubeJSPlugin {
 		CommonProxy.registerCustomActionListener(this::onCustomAction);
 		CommonProxy.registerCustomConditionListener(this::onCustomCondition);
 		if (Platform.isPhysicalClient()) {
-			ClientProxy.registerWidgetClickListener(this::onInfoBadgeClicked);
+			ClientProxy.registerWidgetInputListener(this::onInfoBadgeClicked);
 		}
 	}
 
@@ -50,12 +51,12 @@ public class LycheeKubeJSPlugin implements KubeJSPlugin {
 		return false;
 	}
 
-	private boolean onInfoBadgeClicked(Recipe<?> recipe, @Nullable String id, int button) {
+	private boolean onInfoBadgeClicked(Recipe<?> recipe, @Nullable String id, InputAction action) {
 		if (LycheeKubeJSEvents.CLICKED_INFO_BADGE.hasListeners()) {
 			return LycheeKubeJSEvents.CLICKED_INFO_BADGE.post(
 					ScriptType.CLIENT,
 					id,
-					new ClickedInfoBadgeKubeEvent(recipe, id, button)).override();
+					new ClickedInfoBadgeKubeEvent(recipe, id, action)).override();
 		}
 		return false;
 	}

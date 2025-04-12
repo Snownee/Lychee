@@ -3,8 +3,10 @@ package snownee.lychee.compat.recipeviewer;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.IntPredicate;
+import java.util.function.BiPredicate;
 import java.util.function.Supplier;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -19,10 +21,12 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import snownee.kiwi.util.KUtil;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.util.ui.CategoryMetadata;
 import snownee.lychee.util.ui.CategoryModifier;
 import snownee.lychee.util.ui.CategorySettingRecipe;
+import snownee.lychee.util.ui.InputAction;
 
 public abstract class RvHelper {
 	private List<RecipeHolder<CategoryMetadata>> metadataList = List.of();
@@ -55,47 +59,41 @@ public abstract class RvHelper {
 		return ImmutableList.copyOf(list);
 	}
 
-	/**
-	 * @param stack         The stack to open
-	 * @param usageOrRecipe true for usage, false for recipes
-	 * @return the page is opened
-	 */
-	public abstract boolean openPage(ItemStack stack, boolean usageOrRecipe);
+	public abstract boolean doAction(ItemStack stack, InputAction.Direct action);
 
-	public boolean openPage(Block block, boolean usageOrRecipe) {
-		return openPage(block.asItem().getDefaultInstance(), usageOrRecipe);
+	public boolean doAction(Block block, InputAction.Direct action) {
+		return doAction(block.asItem().getDefaultInstance(), action);
 	}
 
-	public boolean openPage(BlockState blockState, boolean usageOrRecipe) {
+	public boolean doAction(BlockState blockState, InputAction.Direct action) {
 		if (blockState.is(Blocks.CHIPPED_ANVIL) || blockState.is(Blocks.DAMAGED_ANVIL)) {
 			blockState = Blocks.ANVIL.defaultBlockState();
 		}
 		if (blockState.getBlock() instanceof LiquidBlock) {
-			return openPage(blockState.getFluidState(), usageOrRecipe);
+			return doAction(blockState.getFluidState(), action);
 		} else {
-			return openPage(blockState.getBlock(), usageOrRecipe);
+			return doAction(blockState.getBlock(), action);
 		}
 	}
 
-	public abstract boolean openPage(Fluid fluid, boolean usageOrRecipe);
+	public abstract boolean doAction(Fluid fluid, InputAction.Direct action);
 
-	public boolean openPage(FluidState fluidState, boolean usageOrRecipe) {
-		return openPage(fluidState.getType(), usageOrRecipe);
+	public boolean doAction(FluidState fluidState, InputAction.Direct action) {
+		return doAction(fluidState.getType(), action);
 	}
 
-	public Optional<Boolean> buttonToUsageOrRecipe(int button) {
-		if (button == 0) {
-			return Optional.of(false);
-		} else if (button == 1) {
-			return Optional.of(true);
-		} else {
+	private Optional<InputAction.Direct> toDirectAction(InputAction action, @Nullable InteractiveRenderElement element) {
+		if (!action.isMouseOver(element)) {
 			return Optional.empty();
 		}
+		return toDirectAction(action);
 	}
 
-	public IntPredicate lookupBlock(Supplier<BlockState> blockStateSupplier) {
-		return button -> buttonToUsageOrRecipe(button)
-				.map(usageOrRecipe -> openPage(blockStateSupplier.get(), usageOrRecipe))
+	public abstract Optional<InputAction.Direct> toDirectAction(InputAction action);
+
+	public BiPredicate<InputAction, InteractiveRenderElement> inputOnBlock(Supplier<BlockState> blockStateSupplier) {
+		return (action, element) -> toDirectAction(action, element)
+				.map(direct -> doAction(blockStateSupplier.get(), direct))
 				.orElse(false);
 	}
 }

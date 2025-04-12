@@ -1,8 +1,8 @@
 package snownee.lychee.client.gui;
 
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
@@ -16,13 +16,15 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import snownee.lychee.util.VectorExtensions;
+import snownee.lychee.util.ui.InputAction;
 
 public class InteractiveRenderElement extends RenderElement implements WrapperRenderElement, GuiEventListener {
 	private final @Nullable Function<InteractiveRenderElement, ScreenElement> renderable;
 	private @Nullable Supplier<@Nullable List<Component>> onTooltip;
-	private @Nullable IntPredicate onClick;
+	private @Nullable BiPredicate<InputAction, InteractiveRenderElement> onInput;
 	private boolean focused;
 	private boolean withScissors;
+	private boolean hovered;
 
 	public InteractiveRenderElement(Function<InteractiveRenderElement, ScreenElement> renderable) {
 		this.renderable = renderable;
@@ -88,8 +90,8 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 		return this;
 	}
 
-	public InteractiveRenderElement onClick(@Nullable IntPredicate onClick) {
-		this.onClick = onClick;
+	public InteractiveRenderElement onInput(@Nullable BiPredicate<InputAction, @Nullable InteractiveRenderElement> onInput) {
+		this.onInput = onInput;
 		return this;
 	}
 
@@ -106,21 +108,39 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 		return onTooltip.get();
 	}
 
-	public @Nullable IntPredicate getOnClick() {
-		return onClick;
+	public @Nullable BiPredicate<InputAction, @Nullable InteractiveRenderElement> getOnInput() {
+		return onInput;
+	}
+
+	@Override
+	public boolean isMouseOver(double mouseX, double mouseY) {
+		return containsMouse(mouseX, mouseY);
+	}
+
+	public boolean isHovered() {
+		return hovered;
 	}
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (onClick != null && containsMouse(mouseX, mouseY)) {
+		if (onInput != null && onInput.test(InputAction.mousePressed(button, mouseX, mouseY), this)) {
 			produceClickSound();
-			return onClick.test(button);
+			return true;
 		}
 		return false;
 	}
 
 	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		return onInput != null && onInput.test(InputAction.keyPressed(keyCode, scanCode, modifiers), this);
+	}
+
+	@Override
 	public @Nullable ScreenElement getWrappedElement() {
 		return renderable == null ? null : renderable.apply(this);
+	}
+
+	public void updateHoverState(double mouseX, double mouseY) {
+		hovered = isMouseOver(mouseX, mouseY);
 	}
 }
