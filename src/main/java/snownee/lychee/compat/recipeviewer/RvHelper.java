@@ -96,4 +96,6 @@ public abstract class RvHelper {
 				.map(direct -> doAction(blockStateSupplier.get(), direct))
 				.orElse(false);
 	}
+
+	public abstract boolean appendModName();
 }

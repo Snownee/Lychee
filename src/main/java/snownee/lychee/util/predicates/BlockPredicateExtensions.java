@@ -49,6 +49,10 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.jade.api.theme.IThemeHelper;
+import snownee.jade.util.ModIdentification;
+import snownee.lychee.compat.recipeviewer.RvHelper;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 
@@ -289,8 +293,12 @@ public class BlockPredicateExtensions {
 		return states;
 	}
 
+	public static List<Component> getTooltips(BlockState blockState, BlockPredicate predicate, RvHelper helper) {
+		return getTooltips(blockState, predicate, helper.appendModName());
+	}
+
 	@SuppressWarnings({"rawtypes", "unchecked"})
-	public static List<Component> getTooltips(BlockState blockState, BlockPredicate predicate) {
+	public static List<Component> getTooltips(BlockState blockState, BlockPredicate predicate, boolean appendModName) {
 		if (isAny(predicate)) {
 			if (blockState.isAir()) {
 				return List.of(Component.translatable("tip.lychee.anyBlock"));
@@ -332,6 +340,9 @@ public class BlockPredicateExtensions {
 		}
 		if (predicate.nbt().isPresent()) {
 			list.add(Component.translatable("tip.lychee.nbtPredicate").withStyle(ChatFormatting.GRAY));
+		}
+		if (appendModName && ClientProxy.hasJade) {
+			list.add(IThemeHelper.get().modName(ModIdentification.getModName(blockState.getBlock())));
 		}
 		return list;
 	}

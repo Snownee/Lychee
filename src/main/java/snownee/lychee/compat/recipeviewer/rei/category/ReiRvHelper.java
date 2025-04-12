@@ -64,6 +64,11 @@ public class ReiRvHelper extends RvHelper {
 		return Optional.empty();
 	}
 
+	@Override
+	public boolean appendModName() {
+		return ConfigObject.getInstance().shouldAppendModNames();
+	}
+
 	@SuppressWarnings("UnstableApiUsage")
 	public boolean doAction(EntryStack<?> entry, InputAction.Direct action) {
 		if (action == InputAction.Direct.SHOW_RECIPES) {

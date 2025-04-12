@@ -111,7 +111,7 @@ dependencies {
 
     compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 
-//    modImplementation("dev.latvian.mods:kubejs-fabric:${kubejs_version}")
+    modImplementation "maven.modrinth:jade:${project.jade_version}+fabric"
 }
 
 loom {

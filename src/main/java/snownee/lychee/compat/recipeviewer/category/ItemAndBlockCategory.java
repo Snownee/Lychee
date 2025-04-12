@@ -65,11 +65,13 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		mapBuilder.put(
 				"block_in", (builder, recipeHolder) -> {
 					R recipe = recipeHolder.value();
-					InteractiveRenderElement element = getInputBlockElement(recipe, inputBlockPosition(), builder.helper());
+					RvHelper helper = builder.helper();
+					InteractiveRenderElement element = getInputBlockElement(recipe, inputBlockPosition(), helper);
 					if (shouldRenderInputBlockTooltip(recipe)) {
 						element.onTooltip(() -> BlockPredicateExtensions.getTooltips(
 								getRenderingBlock(recipe),
-								((BlockKeyableRecipe) recipe).blockPredicate()));
+								((BlockKeyableRecipe) recipe).blockPredicate(),
+								helper));
 					}
 					builder.addElement(element);
 				});
@@ -105,7 +107,8 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		if (shouldRenderInputBlockTooltip(recipe)) {
 			result.onTooltip(() -> BlockPredicateExtensions.getTooltips(
 					getRenderingBlock(recipe),
-					((BlockKeyableRecipe) recipe).blockPredicate()));
+					((BlockKeyableRecipe) recipe).blockPredicate(),
+					helper));
 		}
 
 		return result.onInput(helper.inputOnBlock(() -> getRenderingBlock(recipe)))

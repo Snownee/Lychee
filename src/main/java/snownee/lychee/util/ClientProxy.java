@@ -15,6 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.material.Fluid;
+import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.util.action.ActionRenderer;
@@ -35,6 +36,7 @@ public class ClientProxy implements ClientModInitializer {
 						}
 						return false;
 					});
+	public static boolean hasJade = Platform.isModLoaded("jade");
 
 	public static MutableComponent format(String s, Object... objects) {
 		try {
