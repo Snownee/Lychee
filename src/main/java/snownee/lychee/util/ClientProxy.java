@@ -7,8 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
-import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -64,10 +62,7 @@ public class ClientProxy {
 	}
 
 	public static Component getFluidName(Fluid fluid) {
-		if (I18n.exists(fluid.getFluidType().getDescriptionId())) {
-			return fluid.getFluidType().getDescription();
-		}
-		return FluidVariantAttributes.getName(FluidVariant.of(fluid));
+		return fluid.getFluidType().getDescription();
 	}
 
 	public static InputConstants.Key getKeyMapping(InputAction action) {
