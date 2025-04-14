@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import dev.latvian.mods.kubejs.event.KubeEvent;
 import dev.latvian.mods.kubejs.util.MapJS;
 import dev.latvian.mods.kubejs.util.Tristate;
-import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.contextual.CustomCondition;
@@ -32,9 +32,9 @@ public class CustomConditionKubeEvent implements KubeEvent {
 
 	public void setTestInTooltipsFunc(BiFunction<Level, @Nullable Player, Object> func) {
 		condition.testInTooltipsFunc = (level, player) -> switch (Tristate.wrap(func.apply(level, player))) {
-			case TRUE -> TriState.TRUE;
-			case FALSE -> TriState.FALSE;
-			case DEFAULT -> TriState.DEFAULT;
+			case TRUE -> InteractionResult.SUCCESS;
+			case FALSE -> InteractionResult.FAIL;
+			case DEFAULT -> InteractionResult.PASS;
 		};
 	}
 
