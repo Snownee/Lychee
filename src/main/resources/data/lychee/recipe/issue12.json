@@ -11,7 +11,8 @@
 			"id": "obsidian"
     },
     {
-			"type": "place"
+			"type": "place",
+			"block": "*"
     }
   ]
 }

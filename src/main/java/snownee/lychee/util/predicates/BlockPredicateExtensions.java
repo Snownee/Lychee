@@ -49,6 +49,10 @@ import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.jade.api.theme.IThemeHelper;
+import snownee.jade.util.ModIdentification;
+import snownee.lychee.compat.recipeviewer.RvHelper;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 
@@ -199,12 +203,12 @@ public class BlockPredicateExtensions {
 	 * Optimized without get block state and block entity calls. And needn't pos loaded.
 	 */
 	public static boolean matches(BlockPredicate predicate, LycheeContext context) {
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		final var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		return unsafeMatches(
 				context.level(),
 				predicate,
-				lootParamsContext.get(LootContextParams.BLOCK_STATE),
-				() -> lootParamsContext.getOrNull(LootContextParams.BLOCK_ENTITY)
+				lootParams.get(LootContextParams.BLOCK_STATE),
+				() -> lootParams.getOrNull(LootContextParams.BLOCK_ENTITY)
 		);
 	}
 
@@ -244,6 +248,7 @@ public class BlockPredicateExtensions {
 		}
 	}
 
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	public static List<BlockState> getShowcaseBlockStates(
 			BlockPredicate predicate,
 			Collection<Property<?>> iterableProperties
@@ -265,7 +270,7 @@ public class BlockPredicateExtensions {
 					for (Comparable<?> object : property.getPossibleValues()) {
 						if (matcher.get().match(
 								block.getStateDefinition(),
-								state.setValue((Property) property, (Comparable) object)
+								state.trySetValue((Property) property, (Comparable) object)
 						)) {
 							propertyMap.put(property, object);
 						}
@@ -279,7 +284,7 @@ public class BlockPredicateExtensions {
 				stream = stream.flatMap(
 						$ -> e.getValue()
 								.stream()
-								.map(v -> $.setValue((Property) e.getKey(), (Comparable) v))
+								.map(v -> $.trySetValue((Property) e.getKey(), (Comparable) v))
 				);
 			}
 
@@ -288,30 +293,42 @@ public class BlockPredicateExtensions {
 		return states;
 	}
 
-	@SuppressWarnings("rawtypes")
-	public static List<Component> getTooltips(BlockState state, BlockPredicate predicate) {
+	public static List<Component> getTooltips(BlockState blockState, BlockPredicate predicate, RvHelper helper) {
+		return getTooltips(blockState, predicate, helper.appendModName());
+	}
+
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public static List<Component> getTooltips(BlockState blockState, BlockPredicate predicate, boolean appendModName) {
 		if (isAny(predicate)) {
-			return List.of();
+			if (blockState.isAir()) {
+				return List.of(Component.translatable("tip.lychee.anyBlock"));
+			} else {
+				return List.of();
+			}
 		}
-		final var list = Lists.<Component>newArrayList(state.getBlock().getName());
+		final var list = Lists.<Component>newArrayList(blockState.getBlock().getName());
 		final var matchers = predicate.properties().map(StatePropertiesPredicate::properties);
 		if (matchers.isPresent()) {
 			for (final var matcher : matchers.get()) {
 				final var name = Component.literal(matcher.name() + "=").withStyle(ChatFormatting.GRAY);
-				if (matcher.valueMatcher() instanceof StatePropertiesPredicate.ExactMatcher exactMatcher) {
-					name.append(Component.literal(exactMatcher.value()).withStyle(ChatFormatting.WHITE));
-				} else if (matcher.valueMatcher() instanceof StatePropertiesPredicate.RangedMatcher rangedMatcher) {
-					final var definition = state.getBlock().getStateDefinition();
+				if (matcher.valueMatcher() instanceof StatePropertiesPredicate.ExactMatcher(String value)) {
+					name.append(Component.literal(value).withStyle(ChatFormatting.WHITE));
+				} else if (matcher.valueMatcher() instanceof StatePropertiesPredicate.RangedMatcher(
+						Optional<String> minValue, Optional<String> maxValue)) {
+					final var definition = blockState.getBlock().getStateDefinition();
 					final Property property = definition.getProperty(matcher.name());
+					if (property == null) {
+						continue;
+					}
 					final var rangePair = Suppliers.memoize(() -> {
 						final var sorted = property.getPossibleValues()
 								.stream()
 								.sorted()
 								.toList();
-						return Pair.of(sorted.get(0), sorted.get(sorted.size() - 1));
+						return Pair.of(sorted.getFirst(), sorted.getLast());
 					});
-					var min = rangedMatcher.minValue().orElseGet(() -> property.getName((Comparable) rangePair.get().getFirst()));
-					var max = rangedMatcher.maxValue().orElseGet(() -> property.getName((Comparable) rangePair.get().getSecond()));
+					var min = minValue.orElseGet(() -> property.getName((Comparable) rangePair.get().getFirst()));
+					var max = maxValue.orElseGet(() -> property.getName((Comparable) rangePair.get().getSecond()));
 					name.append(Component.literal(min).withStyle(ChatFormatting.WHITE));
 					if (!min.equals(max)) {
 						name.append(Component.literal("~").withStyle(ChatFormatting.GRAY));
@@ -323,6 +340,9 @@ public class BlockPredicateExtensions {
 		}
 		if (predicate.nbt().isPresent()) {
 			list.add(Component.translatable("tip.lychee.nbtPredicate").withStyle(ChatFormatting.GRAY));
+		}
+		if (appendModName && ClientProxy.hasJade) {
+			list.add(IThemeHelper.get().modName(ModIdentification.getModName(blockState.getBlock())));
 		}
 		return list;
 	}

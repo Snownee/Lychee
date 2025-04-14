@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.google.common.collect.Streams;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -19,8 +17,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.RecipeSerializers;
@@ -35,6 +31,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	protected final NonNullList<Ingredient> ingredients;
@@ -84,9 +81,6 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	@Override
 	public boolean matches(final LycheeContext context, final Level level) {
 		final var anvilContext = context.get(LycheeContextKey.ANVIL);
-		if (anvilContext == null) {
-			return false;
-		}
 		if (ingredients.size() == 2 && anvilContext.input().getSecond().getCount() < materialCost) {
 			return false;
 		}
@@ -94,7 +88,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public @NotNull ItemStack assemble(final LycheeContext context, final HolderLookup.Provider provider) {
+	public ItemStack assemble(final LycheeContext context, final HolderLookup.Provider provider) {
 		final var anvilContext = context.get(LycheeContextKey.ANVIL);
 		anvilContext.setLevelCost(levelCost);
 		anvilContext.setMaterialCost(materialCost);
@@ -107,22 +101,22 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public @NotNull ItemStack getResultItem(final HolderLookup.Provider provider) {
+	public ItemStack getResultItem(final HolderLookup.Provider provider) {
 		return output.copy();
 	}
 
 	@Override
-	public @NotNull NonNullList<Ingredient> getIngredients() {
+	public NonNullList<Ingredient> getIngredients() {
 		return ingredients;
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<AnvilCraftingRecipe> getSerializer() {
+	public LycheeRecipeSerializer<AnvilCraftingRecipe> getSerializer() {
 		return RecipeSerializers.ANVIL_CRAFTING;
 	}
 
 	@Override
-	public @NotNull RecipeType<AnvilCraftingRecipe> getType() {
+	public LycheeRecipeType<AnvilCraftingRecipe> getType() {
 		return RecipeTypes.ANVIL_CRAFTING;
 	}
 
@@ -161,7 +155,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 				.apply(instance, AnvilCraftingRecipe::new));
 
 		@Override
-		public @NotNull MapCodec<AnvilCraftingRecipe> codec() {
+		public MapCodec<AnvilCraftingRecipe> codec() {
 			return CODEC;
 		}
 
@@ -181,7 +175,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 				AnvilCraftingRecipe::new);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> streamCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

@@ -30,7 +30,6 @@ import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.context.CraftingContext;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipeAccess;
@@ -42,39 +41,39 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
-@NotNullByDefault
-public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements CraftingRecipe {
+
+public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, CraftingRecipe {
 	private static final Cache<CraftingInput, LycheeContext> CONTEXT_CACHE =
 			CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.SECONDS).build();
 
+	protected final LycheeRecipeCommonProperties commonProperties;
 	protected final ShapedRecipe shaped;
 	protected final List<PostAction> assemblingActions;
 
-	public ShapedCraftingRecipe(
-			final LycheeRecipeCommonProperties commonProperties, final ShapedRecipe shaped, final List<PostAction> assemblingActions) {
-		super(commonProperties);
+	public ShapedCraftingRecipe(LycheeRecipeCommonProperties commonProperties, ShapedRecipe shaped, List<PostAction> assemblingActions) {
+		this.commonProperties = commonProperties;
 		this.assemblingActions = assemblingActions;
 		this.shaped = shaped;
 		onConstructed();
 	}
 
 	public ShapedCraftingRecipe(
-			final LycheeRecipeCommonProperties commonProperties,
-			final String group,
-			final CraftingBookCategory category,
-			final ShapedRecipePattern pattern,
-			final ItemStack result,
-			final boolean showNotification,
-			final List<PostAction> assemblingActions
-	) {
-		super(commonProperties);
-		this.assemblingActions = assemblingActions;
-		this.shaped = new ShapedRecipe(group, category, pattern, result, showNotification);
-		onConstructed();
+			LycheeRecipeCommonProperties commonProperties,
+			String group,
+			CraftingBookCategory category,
+			ShapedRecipePattern pattern,
+			ItemStack result,
+			boolean showNotification,
+			List<PostAction> assemblingActions) {
+		this(commonProperties, new ShapedRecipe(group, category, pattern, result, showNotification), assemblingActions);
+	}
+
+	@Override
+	public LycheeRecipeCommonProperties commonProperties() {
+		return commonProperties;
 	}
 
 	@Override
@@ -147,10 +146,10 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 			pair = CraftingContext.CONTAINER_WORLD_LOCATOR.get(input.getClass()).apply(input);
 		} catch (ExecutionException ignored) {
 		}
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		final var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		if (pair != null) {
-			lootParamsContext.setParam(LootContextParams.ORIGIN, pair.getFirst());
-			lootParamsContext.setParam(LootContextParams.THIS_ENTITY, pair.getSecond());
+			lootParams.set(LootContextParams.ORIGIN, pair.getFirst());
+			lootParams.set(LootContextParams.THIS_ENTITY, pair.getSecond());
 		}
 
 		CONTEXT_CACHE.put(input, context);
@@ -176,14 +175,13 @@ public class ShapedCraftingRecipe extends LycheeRecipe<CraftingInput> implements
 		return passed;
 	}
 
-
 	@Override
 	public ItemStack assemble(CraftingInput container, HolderLookup.Provider provider) {
 		var context = CONTEXT_CACHE.getIfPresent(container);
 		if (context == null) {
 			return ItemStack.EMPTY;
 		}
-		final var craftingContext = context.get(LycheeContextKey.CRAFTING);
+		final var craftingContext = context.getOrNull(LycheeContextKey.CRAFTING);
 		if (craftingContext == null) {
 			return ItemStack.EMPTY;
 		}

@@ -3,8 +3,6 @@ package snownee.lychee.context;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -31,7 +29,7 @@ public record CraftingContext(
 			CONTAINER_WORLD_LOCATOR =
 			CacheBuilder.newBuilder().build(new CacheLoader<>() {
 				@Override
-				public @NotNull Function<CraftingInput, Pair<Vec3, Player>> load(final @NotNull Class<?> key) {
+				public Function<CraftingInput, Pair<Vec3, Player>> load(final Class<?> key) {
 					var clazz = key.getSuperclass();
 					while (clazz != null && clazz != CraftingInput.class) {
 						var locator = CONTAINER_WORLD_LOCATOR.getIfPresent(clazz);
@@ -48,7 +46,7 @@ public record CraftingContext(
 			MENU_WORLD_LOCATOR =
 			CacheBuilder.newBuilder().build(new CacheLoader<>() {
 				@Override
-				public @NotNull Function<AbstractContainerMenu, Pair<Vec3, Player>> load(final @NotNull Class<?> key) {
+				public Function<AbstractContainerMenu, Pair<Vec3, Player>> load(final Class<?> key) {
 					var clazz = key.getSuperclass();
 					while (clazz != AbstractContainerMenu.class) {
 						var locator = MENU_WORLD_LOCATOR.getIfPresent(clazz);

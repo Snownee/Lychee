@@ -15,7 +15,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.Lychee;
 import snownee.lychee.context.ItemShapelessContext;
-import snownee.lychee.context.RecipeContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 
@@ -46,7 +45,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 		}
 		final var list = itemEntities.filter($ -> validItems.contains($.getItem())).collect(Collectors.toCollection(LinkedList::new));
 		context.put(LycheeContextKey.ITEM_SHAPELESS, new ItemShapelessContext(list, context));
-		context.get(LycheeContextKey.LOOT_PARAMS).validate(contextParamSet);
+		context.get(LycheeContextKey.LOOT_PARAMS).validate();
 		process(this, recipes, context, null);
 	}
 
@@ -54,7 +53,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 			final LycheeRecipeType<T> recipeType,
 			final Iterable<RecipeHolder<T>> recipes,
 			final LycheeContext context,
-			final Predicate<RecipeHolder<T>> predicate
+			final @Nullable Predicate<RecipeHolder<T>> predicate
 	) {
 		var matchedAny = false;
 		var loop = 0;
@@ -80,8 +79,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 							excluded.add(recipe);
 							continue;
 						}
-						context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
-						context.put(LycheeContextKey.RECIPE, recipe.value());
+						context.put(recipe);
 						matchedAny = matched = true;
 						var times = 1;
 						final var matcher = itemShapelessContext.getMatcher();

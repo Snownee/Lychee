@@ -18,20 +18,25 @@ import net.minecraft.advancements.critereon.LightPredicate;
 import net.minecraft.advancements.critereon.LocationPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds.Doubles;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.util.BoundsExtensions;
+import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.RegistryEntryDisplay;
 import snownee.lychee.util.codec.LycheeCodecs;
@@ -70,15 +75,15 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	@Override
 	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		final var level = ctx.level();
-		final var lootParamsContext = ctx.get(LycheeContextKey.LOOT_PARAMS);
+		final var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
 		if (level.isClientSide) {
 			return testClient(
 					level,
-					lootParamsContext.getOrNull(LycheeLootContextParams.BLOCK_POS),
-					lootParamsContext.getOrNull(LootContextParams.ORIGIN)
+					lootParams.get(LycheeLootContextParams.BLOCK_POS),
+					lootParams.get(LootContextParams.ORIGIN)
 			).get() ? times : 0;
 		} else {
-			return check.test(lootParamsContext.asLootContext()) ? times : 0;
+			return check.test(lootParams.asLootContext()) ? times : 0;
 		}
 	}
 
@@ -215,10 +220,11 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public void appendToTooltips(List<Component> tooltips, int indent, String key, Doubles value, TriState result) {
-			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(
-					key + "." + name,
-					BoundsExtensions.getDescription(value).withStyle(ChatFormatting.WHITE)
-			));
+			ContextualConditionDisplay.appendToTooltips(
+					tooltips,
+					result,
+					indent,
+					Component.translatable(key + "." + name, BoundsExtensions.getDescription(value)));
 		}
 	}
 
@@ -254,6 +260,13 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public void appendToTooltips(List<Component> tooltips, int indent, String key, FluidPredicate value, TriState result) {
+			List<Fluid> fluids = value.fluids().map($ -> $.stream().map(Holder::value).toList()).orElse(List.of());
+			Fluid fluid = CommonProxy.getCycledItem(fluids, Fluids.EMPTY, 1000);
+			MutableComponent displayName = ClientProxy.getFluidName(fluid).copy().withStyle(ChatFormatting.WHITE);
+			if (value.properties().isPresent()) {
+				displayName.append("*");
+			}
+			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(key + "." + name, displayName));
 		}
 	}
 
@@ -270,7 +283,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public void appendToTooltips(List<Component> tooltips, int indent, String key, LightPredicate value, TriState result) {
-			var displayName = BoundsExtensions.getDescription(value.composite()).withStyle(ChatFormatting.WHITE);
+			var displayName = BoundsExtensions.getDescription(value.composite());
 			ContextualConditionDisplay.appendToTooltips(tooltips, result, indent, Component.translatable(key + "." + name, displayName));
 		}
 	}

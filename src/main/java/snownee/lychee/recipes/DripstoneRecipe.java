@@ -5,7 +5,6 @@ import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
@@ -19,14 +18,12 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
@@ -49,6 +46,7 @@ import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
+
 
 public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe, ChanceRecipe {
 	protected final BlockPredicate sourceBlock;
@@ -83,12 +81,12 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
 		context.put(LycheeContextKey.DRIPSTONE_SOURCE, sourceBlock);
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, targetBlock);
+		var lootParams = context.initLootParams(RecipeTypes.DRIPSTONE_DRIPPING);
+		lootParams.set(LootContextParams.BLOCK_STATE, targetBlock);
 		var origin = new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.99, targetPos.getZ() + 0.5);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, origin);
-		lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, targetPos);
-		lootParamsContext.validate(LycheeLootContextParamSets.BLOCK_ONLY);
+		lootParams.set(LootContextParams.ORIGIN, origin);
+		lootParams.set(LycheeLootContextParams.BLOCK_POS, targetPos);
+		lootParams.validate();
 		var recipe = RecipeTypes.DRIPSTONE_DRIPPING.process(level, targetBlock, context);
 		if (recipe == null) {
 			return false;
@@ -113,13 +111,13 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 			return false;
 		}
 
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 
 		return BlockPredicateExtensions.unsafeMatches(
 				level,
 				sourceBlock,
 				context.get(LycheeContextKey.DRIPSTONE_SOURCE),
-				() -> level.getBlockEntity(lootParamsContext.get(LycheeLootContextParams.BLOCK_POS))
+				() -> level.getBlockEntity(lootParams.get(LycheeLootContextParams.BLOCK_POS))
 		);
 	}
 
@@ -134,12 +132,12 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<DripstoneRecipe> getSerializer() {
+	public LycheeRecipeSerializer<DripstoneRecipe> getSerializer() {
 		return RecipeSerializers.DRIPSTONE_DRIPPING;
 	}
 
 	@Override
-	public @NotNull LycheeRecipeType<DripstoneRecipe> getType() {
+	public LycheeRecipeType<DripstoneRecipe> getType() {
 		return RecipeTypes.DRIPSTONE_DRIPPING;
 	}
 
@@ -197,11 +195,6 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 						BlockPredicateExtensions.CODEC_FOR_TESTING.fieldOf("target_block").forGetter(DripstoneRecipe::blockPredicate)
 				).apply(instance, DripstoneRecipe::new));
 
-		@Override
-		public @NotNull MapCodec<DripstoneRecipe> codec() {
-			return CODEC;
-		}
-
 		public static final StreamCodec<RegistryFriendlyByteBuf, DripstoneRecipe> STREAM_CODEC =
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
@@ -214,7 +207,12 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 				);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, DripstoneRecipe> streamCodec() {
+		public MapCodec<DripstoneRecipe> codec() {
+			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, DripstoneRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

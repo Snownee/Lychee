@@ -8,7 +8,6 @@ import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
 import net.createmod.ponder.render.VirtualRenderHelper;
@@ -17,7 +16,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -28,8 +26,8 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.StairBlock;
@@ -51,14 +49,14 @@ public class GuiGameElement {
 		return new GuiItemRenderBuilder(itemProvider);
 	}
 
-	public static GuiRenderBuilder of(BlockState state) {
-		if (state.getRenderShape() != RenderShape.MODEL && state.getFluidState().isEmpty()) {
-			return GuiGameElement.of(state.getBlock());
+	public static GuiRenderBuilder of(BlockState blockState) {
+		if (blockState.getRenderShape() != RenderShape.MODEL && blockState.getFluidState().isEmpty()) {
+			return new GuiBlockStateRenderBuilder(blockState, GuiGameElement.of(blockState.getBlock()));
 		}
-		if (state.getBlock() instanceof StairBlock) {
-			state = state.setValue(StairBlock.FACING, state.getValue(StairBlock.FACING).getOpposite());
+		if (blockState.getBlock() instanceof StairBlock) {
+			blockState = blockState.setValue(StairBlock.FACING, blockState.getValue(StairBlock.FACING).getOpposite());
 		}
-		return new GuiBlockStateRenderBuilder(state);
+		return new GuiBlockStateRenderBuilder(blockState);
 	}
 
 	public static GuiRenderBuilder of(Fluid fluid) {
@@ -123,11 +121,15 @@ public class GuiGameElement {
 		}
 
 		protected void transformMatrix(PoseStack matrixStack) {
-			matrixStack.translate(x + 3, y + 13, z);
-			matrixStack.scale((float) scale, (float) scale, (float) scale);
+			float scale = (float) this.scale;
+			matrixStack.translate(x(), y() + scale, z());
+			matrixStack.scale(scale, scale, scale);
 			matrixStack.translate(xLocal, yLocal, zLocal);
 			UIRenderHelper.flipForGuiRender(matrixStack);
 			matrixStack.translate(rotationOffset.x, rotationOffset.y, rotationOffset.z);
+
+//			matrixStack.mulPose(Axis.YP.rotationDegrees((float) Util.getMillis() / 20));
+
 			matrixStack.mulPose(Axis.ZP.rotationDegrees((float) zRot));
 			matrixStack.mulPose(Axis.XP.rotationDegrees((float) xRot));
 			matrixStack.mulPose(Axis.YP.rotationDegrees((float) yRot));
@@ -160,9 +162,10 @@ public class GuiGameElement {
 		protected BlockState blockState;
 		private ModelData modelData;
 
-		public GuiBlockModelRenderBuilder(BakedModel blockmodel, @Nullable BlockState blockState) {
+		public GuiBlockModelRenderBuilder(BakedModel bakedModel, @Nullable BlockState blockState) {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
-			this.blockModel = blockmodel;
+			this.blockModel = bakedModel;
+			withRotationOffset(VecHelper.getCenterOf(BlockPos.ZERO));
 			this.modelData = ModelData.EMPTY;
 			if (ClientProxy.HAS_PONDER) {
 				this.modelData = VirtualRenderHelper.VIRTUAL_DATA;
@@ -177,26 +180,16 @@ public class GuiGameElement {
 			Minecraft mc = Minecraft.getInstance();
 			BlockRenderDispatcher blockRenderer = mc.getBlockRenderer();
 			MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
-			RenderType renderType = blockState.getBlock() == Blocks.AIR
-					? Sheets.translucentCullBlockSheet()
-					: ItemBlockRenderTypes.getRenderType(blockState, true);
-			VertexConsumer vb = buffer.getBuffer(renderType);
 
 			transformMatrix(matrixStack);
 
 			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
-			renderModel(blockRenderer, buffer, renderType, vb, matrixStack);
+			renderModel(blockRenderer, buffer, matrixStack);
 
 			cleanUpMatrix(matrixStack);
 		}
 
-		protected void renderModel(
-				BlockRenderDispatcher blockRenderer,
-				MultiBufferSource.BufferSource buffer,
-				RenderType renderType,
-				VertexConsumer vb,
-				PoseStack ms
-		) {
+		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {
 			Minecraft mc = Minecraft.getInstance();
 			int color = mc.getBlockColors().getColor(
 					blockState,
@@ -207,7 +200,9 @@ public class GuiGameElement {
 			Color rgb = new Color(color == -1 ? this.color : color);
 			blockRenderer.getModelRenderer().renderModel(
 					ms.last(),
-					vb,
+					buffer.getBuffer(blockState.getBlock() == Blocks.AIR ?
+							Sheets.translucentCullBlockSheet() :
+							ItemBlockRenderTypes.getRenderType(blockState, true)),
 					blockState,
 					blockModel,
 					rgb.getRedAsFloat(),
@@ -220,24 +215,35 @@ public class GuiGameElement {
 			);
 			buffer.endBatch();
 		}
-
 	}
 
 	public static class GuiBlockStateRenderBuilder extends GuiBlockModelRenderBuilder {
+		private final @Nullable GuiRenderBuilder override;
 
-		public GuiBlockStateRenderBuilder(BlockState blockstate) {
-			super(Minecraft.getInstance().getBlockRenderer().getBlockModel(blockstate), blockstate);
+		public GuiBlockStateRenderBuilder(BlockState blockState) {
+			this(blockState, null);
+		}
+
+		public GuiBlockStateRenderBuilder(BlockState blockState, @Nullable GuiRenderBuilder override) {
+			super(Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState), blockState);
+			this.override = override;
+		}
+
+		@Override
+		public void render(GuiGraphics graphics) {
+			if (override != null) {
+				override.atLocal(xLocal, yLocal, zLocal).at(position).offset(-3, -3).render(graphics);
+			}
+			super.render(graphics);
 		}
 
 		@Override
 		protected void renderModel(
 				BlockRenderDispatcher blockRenderer,
 				MultiBufferSource.BufferSource buffer,
-				RenderType renderType,
-				VertexConsumer vb,
 				PoseStack ms
 		) {
-			if (blockState.getBlock() instanceof FireBlock) {
+			if (blockState.getBlock() instanceof BaseFireBlock) {
 				Lighting.setupForFlatItems();
 				blockRenderer.renderSingleBlock(
 						blockState,
@@ -251,7 +257,7 @@ public class GuiGameElement {
 				return;
 			}
 
-			super.renderModel(blockRenderer, buffer, renderType, vb, ms);
+			super.renderModel(blockRenderer, buffer, ms);
 
 			if (blockState.getFluidState().isEmpty()) {
 				return;
@@ -298,8 +304,9 @@ public class GuiGameElement {
 			cleanUpMatrix(matrixStack);
 		}
 
+		@Override
 		protected void transformMatrix(PoseStack matrixStack) {
-			matrixStack.translate(x, y, z);
+			matrixStack.translate(x(), y(), z());
 			matrixStack.translate(xLocal * scale, yLocal * scale, zLocal * scale);
 			UIRenderHelper.flipForGuiRender(matrixStack);
 		}

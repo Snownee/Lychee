@@ -21,7 +21,6 @@ import snownee.lychee.Lychee;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.context.ItemShapelessContext;
-import snownee.lychee.context.RecipeContext;
 import snownee.lychee.network.SCustomLevelEventPacket;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.LycheeFallingBlockEntity;
@@ -65,15 +64,14 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		context.put(LycheeContextKey.LEVEL, entity.level());
 		final var itemShapelessContext = new ItemShapelessContext(itemEntities, context);
 		context.put(LycheeContextKey.ITEM_SHAPELESS, itemShapelessContext);
-		context.put(LycheeContextKey.FALLING_BLOCK_ENTITY, entity);
 		final var matcher = itemShapelessContext.getMatcher();
 
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, entity.position());
-		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, entity);
-		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, landingBlock);
-		lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, pos);
-		lootParamsContext.validate(contextParamSet);
+		final var lootParams = context.initLootParams(this);
+		lootParams.set(LootContextParams.ORIGIN, entity.position());
+		lootParams.set(LootContextParams.THIS_ENTITY, entity);
+		lootParams.set(LootContextParams.BLOCK_STATE, landingBlock);
+		lootParams.set(LycheeLootContextParams.BLOCK_POS, pos);
+		lootParams.validate();
 
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 
@@ -92,8 +90,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 					if (match.isPresent()) {
 						matchedAny = matched = true;
 						var times = 1;
-						context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipe.id()));
-						context.put(LycheeContextKey.RECIPE, recipe.value());
+						context.put(recipe);
 						if (matcher.map(it -> it.inputUsed.length > 0).orElse(false)) {
 							final var inputUsed = matcher.get().inputUsed;
 							//System.out.println(Arrays.toString(context.match));

@@ -3,20 +3,20 @@ package snownee.lychee.compat.kubejs;
 import org.jetbrains.annotations.Nullable;
 
 import dev.latvian.mods.kubejs.client.ClientKubeEvent;
-import net.minecraft.resources.ResourceLocation;
-import snownee.lychee.util.recipe.ILycheeRecipe;
+import net.minecraft.world.item.crafting.Recipe;
+import snownee.lychee.util.ui.InputAction;
 
 public class ClickedInfoBadgeKubeEvent implements ClientKubeEvent {
 
-	public final ILycheeRecipe<?> recipe;
+	public final Recipe<?> recipe;
 	@Nullable
-	public final ResourceLocation recipeId;
-	public final int button;
+	public final String recipeId;
+	public final InputAction action;
 
-	public ClickedInfoBadgeKubeEvent(ILycheeRecipe<?> recipe, @Nullable ResourceLocation recipeId, int button) {
+	public ClickedInfoBadgeKubeEvent(Recipe<?> recipe, @Nullable String recipeId, InputAction action) {
 		this.recipe = recipe;
 		this.recipeId = recipeId;
-		this.button = button;
+		this.action = action;
 	}
 
 }

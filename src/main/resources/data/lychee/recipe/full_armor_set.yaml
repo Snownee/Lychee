@@ -1,0 +1,16 @@
+type: lychee:entity_ticking
+entity:
+  type: player
+  equipment:
+    head:
+      items: netherite_helmet
+    chest:
+      items: netherite_chestplate
+    legs:
+      items: netherite_leggings
+    feet:
+      items: netherite_boots
+interval: 20
+post:
+  type: execute
+  command: effect give @s fire_resistance 3 0 true

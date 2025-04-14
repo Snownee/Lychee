@@ -1,63 +1,45 @@
 package snownee.lychee.util;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.blaze3d.platform.InputConstants;
+
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
+import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
-import snownee.lychee.LycheeRegistries;
-import snownee.lychee.action.DropItem;
-import snownee.lychee.action.DropXp;
-import snownee.lychee.action.Execute;
-import snownee.lychee.action.Explode;
-import snownee.lychee.action.input.DamageItem;
-import snownee.lychee.action.input.PreventDefault;
-import snownee.lychee.action.input.SetItem;
-import snownee.lychee.client.action.CycleStatePropertyPostActionRenderer;
-import snownee.lychee.client.action.IfPostActionRenderer;
-import snownee.lychee.client.action.PlaceBlockPostActionRenderer;
-import snownee.lychee.compat.rv.IngredientInfo;
-import snownee.lychee.compat.rv.SlotType;
-import snownee.lychee.util.action.ItemBasedPostActionRenderer;
-import snownee.lychee.util.action.ItemStackPostActionRenderer;
-import snownee.lychee.util.action.PostActionRenderer;
-import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.client.gui.InteractiveRenderElement;
+import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.particles.dripstone.client.ParticleFactories;
-import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.recipe.LycheeRecipeType;
+import snownee.lychee.util.ui.ElementRenderer;
+import snownee.lychee.util.ui.InputAction;
 
 @Mod(value = Lychee.ID, dist = Dist.CLIENT)
 public class ClientProxy {
-
 	public static final boolean HAS_PONDER = ModList.get().isLoaded("ponder");
-	private static final KEvent<RecipeViewerWidgetClickListener> RECIPE_VIEWER_WIDGET_CLICK_EVENT =
+	private static final KEvent<RecipeViewerWidgetInputListener> RECIPE_VIEWER_WIDGET_INPUT_EVENT =
 			KEvent.createArrayBacked(
-					RecipeViewerWidgetClickListener.class, listeners -> (recipe, id, button) -> {
+					RecipeViewerWidgetInputListener.class, listeners -> (recipe, location, action) -> {
 						for (var listener : listeners) {
-							if (listener.onClick(recipe, id, button)) {
+							if (listener.on(recipe, location, action)) {
 								return true;
 							}
 						}
 						return false;
 					});
+	public static boolean hasJade = Platform.isModLoaded("jade");
 
 	public static MutableComponent format(String s, Object... objects) {
 		try {
@@ -67,17 +49,29 @@ public class ClientProxy {
 		}
 	}
 
-	public static void registerInfoBadgeClickListener(RecipeViewerWidgetClickListener listener) {
-		RECIPE_VIEWER_WIDGET_CLICK_EVENT.register(listener);
+	public static void registerWidgetInputListener(RecipeViewerWidgetInputListener listener) {
+		RECIPE_VIEWER_WIDGET_INPUT_EVENT.register(listener);
 	}
 
-	public static boolean postInfoBadgeClickEvent(ILycheeRecipe<?> recipe, @Nullable ResourceLocation id, int button) {
-		return RECIPE_VIEWER_WIDGET_CLICK_EVENT.invoker().onClick(recipe, id, button);
+	public static boolean postWidgetInputEvent(
+			Recipe<?> recipe,
+			String id,
+			InputAction action,
+			@Nullable InteractiveRenderElement element) {
+		return action.isMouseOver(element) && RECIPE_VIEWER_WIDGET_INPUT_EVENT.invoker().on(recipe, id, action);
 	}
 
-	public static void drawCenteredStringNoShadow(GuiGraphics graphics, Font font, Component text, int x, int y, int color) {
-		FormattedCharSequence formattedCharSequence = text.getVisualOrderText();
-		graphics.drawString(font, formattedCharSequence, x - font.width(formattedCharSequence) / 2, y, color, false);
+	public static Component getFluidName(Fluid fluid) {
+		return fluid.getFluidType().getDescription();
+	}
+
+	public static InputConstants.Key getKeyMapping(InputAction action) {
+		if (action instanceof InputAction.MousePressed mousePressed) {
+			return InputConstants.Type.MOUSE.getOrCreate(mousePressed.button);
+		} else if (action instanceof InputAction.KeyPressed keyPressed) {
+			return InputConstants.getKey(keyPressed.keyCode, keyPressed.scanCode);
+		}
+		return InputConstants.UNKNOWN;
 	}
 
 	public ClientProxy(IEventBus modEventBus) {
@@ -94,74 +88,12 @@ public class ClientProxy {
 				ParticleFactories.Splash::new
 		);
 
-		PostActionRenderer.register(
-				PostActionTypes.DROP_ITEM,
-				(ItemStackPostActionRenderer<DropItem>) DropItem::stack
-		);
-		PostActionRenderer.register(
-				PostActionTypes.SET_ITEM,
-				(ItemStackPostActionRenderer<SetItem>) SetItem::stack
-		);
-		PostActionRenderer.register(
-				PostActionTypes.DROP_XP,
-				(ItemBasedPostActionRenderer<DropXp>) action -> Items.EXPERIENCE_BOTTLE.getDefaultInstance()
-		);
-		PostActionRenderer.register(
-				PostActionTypes.EXECUTE,
-				(ItemBasedPostActionRenderer<Execute>) action -> Items.COMMAND_BLOCK.getDefaultInstance()
-		);
-		PostActionRenderer.register(
-				PostActionTypes.EXPLODE,
-				(ItemBasedPostActionRenderer<Explode>) action -> Items.TNT.getDefaultInstance()
-		);
-		PostActionRenderer.register(PostActionTypes.IF, new IfPostActionRenderer());
-		PostActionRenderer.register(PostActionTypes.PLACE, new PlaceBlockPostActionRenderer());
-		PostActionRenderer.register(PostActionTypes.CYCLE_STATE_PROPERTY, new CycleStatePropertyPostActionRenderer());
-		PostActionRenderer.register(
-				PostActionTypes.DAMAGE_ITEM, new PostActionRenderer<>() {
-					@Override
-					public void loadCatalystsInfo(
-							DamageItem action,
-							final ILycheeRecipe<?> recipe,
-							final List<IngredientInfo> ingredients) {
-						var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(action.type()));
-						var component = Component.translatable(key, action.damage()).withStyle(ChatFormatting.YELLOW);
-						var mc = Minecraft.getInstance();
-						recipe.getItemIndexes(action.target()).forEach(i -> {
-							var info = ingredients.get(i);
-							info.addTooltip(component);
-							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
-							info.type = SlotType.CATALYST;
-						});
-					}
-				});
-		PostActionRenderer.register(
-				PostActionTypes.PREVENT_DEFAULT, new PostActionRenderer<>() {
-					@Override
-					public void loadCatalystsInfo(
-							PreventDefault action,
-							final ILycheeRecipe<?> recipe,
-							final List<IngredientInfo> ingredients) {
-						if (recipe == null ||
-								!(recipe.getType() instanceof LycheeRecipeType<?> lycheeRecipeType) ||
-								!lycheeRecipeType.canPreventConsumeInputs) {
-							return;
-						}
-						var mc = Minecraft.getInstance();
-						for (var info : ingredients) {
-							if (!info.tooltips.isEmpty()) {
-								continue;
-							}
-							info.addTooltip(((LycheeRecipeType) lycheeRecipeType).getPreventDefaultDescription(recipe));
-							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
-							info.type = SlotType.CATALYST;
-						}
-					}
-				});
+		ActionRenderer.init();
+		ElementRenderer.init();
 	}
 
 	@FunctionalInterface
-	public interface RecipeViewerWidgetClickListener {
-		boolean onClick(ILycheeRecipe<?> recipe, @Nullable ResourceLocation id, int button);
+	public interface RecipeViewerWidgetInputListener {
+		boolean on(Recipe<?> recipe, String id, InputAction action);
 	}
 }

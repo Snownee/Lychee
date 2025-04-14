@@ -12,10 +12,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParams;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -61,19 +64,15 @@ public record CycleStateProperty(
 
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var blockPos = lootParamsContext.getOrNull(LycheeLootContextParams.BLOCK_POS);
-		if (blockPos == null) {
-			blockPos = BlockPos.containing(lootParamsContext.get(LootContextParams.ORIGIN));
-		}
-		blockPos = blockPos.offset(offset);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParams.get(LycheeLootContextParams.BLOCK_POS).offset(offset);
 		var level = context.level();
-		var oldState = level.getBlockState(blockPos);
+		var oldState = level.getBlockState(pos);
 		var state = reversed ? cycleReversed(oldState, property()) : oldState.cycle(property());
-		if (!level.setBlockAndUpdate(blockPos, state)) {
+		if (!level.setBlockAndUpdate(pos, state)) {
 			return;
 		}
-		level.gameEvent(GameEvent.BLOCK_CHANGE, blockPos, GameEvent.Context.of(state));
+		level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(state));
 	}
 
 	private static <T extends Comparable<T>> BlockState cycleReversed(BlockState oldState, Property<T> property) {
@@ -98,13 +97,30 @@ public record CycleStateProperty(
 						PostActionCommonProperties.MAP_CODEC.forGetter(CycleStateProperty::commonProperties),
 						BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(CycleStateProperty::block),
 						LycheeCodecs.OFFSET_CODEC.forGetter(CycleStateProperty::offset),
-						Codec.STRING.fieldOf("property").forGetter(CycleStateProperty::propertyName),
+						ExtraCodecs.NON_EMPTY_STRING.fieldOf("property").forGetter(CycleStateProperty::propertyName),
 						Codec.BOOL.optionalFieldOf("reversed", false).forGetter(CycleStateProperty::reversed))
 				.apply(instance, CycleStateProperty::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, CycleStateProperty> STREAM_CODEC = StreamCodec.composite(
+				PostActionCommonProperties.STREAM_CODEC,
+				CycleStateProperty::commonProperties,
+				BlockPredicate.STREAM_CODEC,
+				CycleStateProperty::block,
+				BlockPos.STREAM_CODEC,
+				CycleStateProperty::offset,
+				ByteBufCodecs.STRING_UTF8,
+				CycleStateProperty::propertyName,
+				ByteBufCodecs.BOOL,
+				CycleStateProperty::reversed,
+				CycleStateProperty::new);
 
 		@Override
 		public MapCodec<CycleStateProperty> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, CycleStateProperty> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

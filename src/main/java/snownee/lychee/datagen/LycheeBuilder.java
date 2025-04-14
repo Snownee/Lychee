@@ -40,6 +40,7 @@ import snownee.lychee.action.If;
 import snownee.lychee.action.Move;
 import snownee.lychee.action.MoveTowardsFace;
 import snownee.lychee.action.PlaceBlock;
+import snownee.lychee.action.SetBlock;
 import snownee.lychee.action.input.DamageItem;
 import snownee.lychee.action.input.PreventDefault;
 import snownee.lychee.action.input.SetItem;
@@ -51,6 +52,7 @@ import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionLike;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
+import snownee.lychee.util.ui.BlankRecipe;
 
 public interface LycheeBuilder {
 	ThreadLocal<RegistryOps<Object>> registryOps = new ThreadLocal<>();
@@ -65,6 +67,10 @@ public interface LycheeBuilder {
 
 	default void teardown() {
 		registryOps.remove();
+	}
+
+	default LycheeRecipeBuilder.SimpleShapeless<BlankRecipe> blankRecipe() {
+		return new LycheeRecipeBuilder.SimpleShapeless<>(BlankRecipe::new);
 	}
 
 	default LycheeRecipeBuilder.AnvilCrafting anvilCraftingRecipe(
@@ -155,6 +161,10 @@ public interface LycheeBuilder {
 		return new ActionBuilder<>(new PlaceBlock(PostActionCommonProperties.EMPTY, block(block), offset));
 	}
 
+	default ActionBuilder<?, SetBlock> setBlock(Object block) {
+		return new ActionBuilder<>(new SetBlock(PostActionCommonProperties.EMPTY, block(block)));
+	}
+
 	default ActionBuilder<?, CycleStateProperty> cycleStateProperty(Object block, String property) {
 		return cycleStateProperty(block, property, BlockPos.ZERO);
 	}
@@ -176,7 +186,11 @@ public interface LycheeBuilder {
 	}
 
 	default ActionBuilder<?, Move> move(Vec3 offset) {
-		return new ActionBuilder<>(new Move(PostActionCommonProperties.EMPTY, offset));
+		return new ActionBuilder<>(new Move(PostActionCommonProperties.EMPTY, offset, ""));
+	}
+
+	default ActionBuilder<?, Move> move(Vec3 offset, String with) {
+		return new ActionBuilder<>(new Move(PostActionCommonProperties.EMPTY, offset, with));
 	}
 
 	default ActionBuilder<?, Execute> execute(String command) {
@@ -194,7 +208,7 @@ public interface LycheeBuilder {
 	default ActionBuilder<?, If> ifAction(
 			Collection<? extends PostActionLike> successEntries,
 			Collection<? extends PostActionLike> failureEntries) {
-		return new ActionBuilder<>(new If(
+		return new ActionBuilder<>(If.of(
 				PostActionCommonProperties.EMPTY,
 				successEntries.stream().map(PostActionLike::asAction).toList(),
 				failureEntries.stream().map(PostActionLike::asAction).toList()));

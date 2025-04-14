@@ -2,8 +2,6 @@ package snownee.lychee.recipes;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -13,13 +11,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.context.RecipeContext;
 import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -33,14 +29,12 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	public static void invoke(ItemEntity entity) {
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, entity.level());
-		final var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-
-		lootParamsContext.setParam(LootContextParams.ORIGIN, entity.position());
-		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, entity);
-		lootParamsContext.validate(RecipeTypes.ITEM_BURNING.contextParamSet);
+		final var lootParams = context.initLootParams(RecipeTypes.ITEM_BURNING);
+		lootParams.set(LootContextParams.ORIGIN, entity.position());
+		lootParams.set(LootContextParams.THIS_ENTITY, entity);
+		lootParams.validate();
 		RecipeTypes.ITEM_BURNING.findFirst(context, entity.level()).ifPresent(it -> {
-			context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(it.id()));
-			context.put(LycheeContextKey.RECIPE, it.value());
+			context.put(it);
 			int times = it.value().getRandomRepeats(entity.getItem().getCount() / it.value().input.count(), context);
 			var itemStackHolders = ItemStackHolderCollection.InWorld.of(entity);
 			context.put(LycheeContextKey.ITEM, itemStackHolders);
@@ -63,13 +57,13 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 
 	@Override
 	public boolean matches(LycheeContext context, Level level) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		ItemStack stack = ((ItemEntity) lootParamsContext.get(LootContextParams.THIS_ENTITY)).getItem();
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		ItemStack stack = ((ItemEntity) lootParams.get(LootContextParams.THIS_ENTITY)).getItem();
 		return input.test(stack);
 	}
 
 	@Override
-	public @NotNull NonNullList<Ingredient> getIngredients() {
+	public NonNullList<Ingredient> getIngredients() {
 		return NonNullListExtensions.copyOf(List.of(input.ingredient()));
 	}
 
@@ -79,12 +73,12 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<ItemBurningRecipe> getSerializer() {
+	public LycheeRecipeSerializer<ItemBurningRecipe> getSerializer() {
 		return RecipeSerializers.ITEM_BURNING;
 	}
 
 	@Override
-	public @NotNull LycheeRecipeType<ItemBurningRecipe> getType() {
+	public LycheeRecipeType<ItemBurningRecipe> getType() {
 		return RecipeTypes.ITEM_BURNING;
 	}
 
@@ -96,7 +90,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 				).apply(instance, ItemBurningRecipe::new));
 
 		@Override
-		public @NotNull MapCodec<ItemBurningRecipe> codec() {
+		public MapCodec<ItemBurningRecipe> codec() {
 			return CODEC;
 		}
 
@@ -111,7 +105,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 				);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, ItemBurningRecipe> streamCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, ItemBurningRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

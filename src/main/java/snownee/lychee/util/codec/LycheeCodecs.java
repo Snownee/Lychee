@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.mojang.brigadier.StringReader;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -53,18 +51,18 @@ public final class LycheeCodecs {
 					}
 					ItemParser parser = new ItemParser(new HolderLookup.Provider() {
 						@Override
-						public @NotNull Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
+						public Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
 							throw new IllegalStateException();
 						}
 
 						@Override
-						public <R> @NotNull Optional<HolderLookup.RegistryLookup<R>> lookup(@NotNull ResourceKey<? extends Registry<? extends R>> resourceKey) {
+						public <R> Optional<HolderLookup.RegistryLookup<R>> lookup(ResourceKey<? extends Registry<? extends R>> resourceKey) {
 							//noinspection unchecked
 							return Optional.of((HolderLookup.RegistryLookup<R>) BuiltInRegistries.ITEM.asLookup());
 						}
 
 						@Override
-						public <V> @NotNull RegistryOps<V> createSerializationContext(@NotNull DynamicOps<V> dynamicOps) {
+						public <V> RegistryOps<V> createSerializationContext(DynamicOps<V> dynamicOps) {
 							return registryOps.withParent(dynamicOps);
 						}
 					});

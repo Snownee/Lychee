@@ -8,8 +8,12 @@ import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -62,9 +66,17 @@ public record IsOffItemCooldown(Holder<Item> item) implements ContextualConditio
 				IsOffItemCooldown::new,
 				IsOffItemCooldown::item).fieldOf("item");
 
+		public static final StreamCodec<RegistryFriendlyByteBuf, IsOffItemCooldown> STREAM_CODEC =
+				ByteBufCodecs.holderRegistry(Registries.ITEM).map(IsOffItemCooldown::new, IsOffItemCooldown::item);
+
 		@Override
 		public MapCodec<IsOffItemCooldown> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, IsOffItemCooldown> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

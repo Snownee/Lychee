@@ -8,6 +8,7 @@ import dev.latvian.mods.kubejs.script.BindingRegistry;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.script.TypeWrapperRegistry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.kiwi.loader.Platform;
@@ -22,6 +23,7 @@ import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.ui.InputAction;
 
 public class LycheeKubeJSPlugin implements KubeJSPlugin {
 
@@ -31,7 +33,7 @@ public class LycheeKubeJSPlugin implements KubeJSPlugin {
 		CommonProxy.registerCustomActionListener(this::onCustomAction);
 		CommonProxy.registerCustomConditionListener(this::onCustomCondition);
 		if (Platform.isPhysicalClient()) {
-			ClientProxy.registerInfoBadgeClickListener(this::onInfoBadgeClicked);
+			ClientProxy.registerWidgetInputListener(this::onInfoBadgeClicked);
 		}
 	}
 
@@ -49,12 +51,12 @@ public class LycheeKubeJSPlugin implements KubeJSPlugin {
 		return false;
 	}
 
-	private boolean onInfoBadgeClicked(ILycheeRecipe<?> recipe, @Nullable ResourceLocation id, int button) {
+	private boolean onInfoBadgeClicked(Recipe<?> recipe, @Nullable String id, InputAction action) {
 		if (LycheeKubeJSEvents.CLICKED_INFO_BADGE.hasListeners()) {
 			return LycheeKubeJSEvents.CLICKED_INFO_BADGE.post(
 					ScriptType.CLIENT,
-					id == null ? null : id.toString(),
-					new ClickedInfoBadgeKubeEvent(recipe, id, button)).override();
+					id,
+					new ClickedInfoBadgeKubeEvent(recipe, id, action)).override();
 		}
 		return false;
 	}

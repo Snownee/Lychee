@@ -8,6 +8,9 @@ import com.google.common.collect.Sets;
 import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
@@ -17,6 +20,8 @@ import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipeType;
 import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.recipes.DripstoneRecipeType;
+import snownee.lychee.recipes.EntityTickingRecipe;
+import snownee.lychee.recipes.EntityTickingRecipeType;
 import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.ItemInsideRecipe;
@@ -29,6 +34,9 @@ import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.ItemShapelessRecipeType;
 import snownee.lychee.util.recipe.LycheeRecipeType;
+import snownee.lychee.util.ui.BlankRecipe;
+import snownee.lychee.util.ui.CategoryMetadata;
+import snownee.lychee.util.ui.CategoryModifier;
 
 public final class RecipeTypes {
 
@@ -38,6 +46,14 @@ public final class RecipeTypes {
 	}
 
 	public static final Set<LycheeRecipeType<? extends ILycheeRecipe<LycheeContext>>> ALL = Sets.newLinkedHashSet();
+
+	public static final RecipeType<CategoryMetadata> CATEGORY_METADATA = register("category_metadata");
+	public static final RecipeType<CategoryModifier> CATEGORY_MODIFIER = register("category_modifier");
+	public static final LycheeRecipeType<BlankRecipe> BLANK = register(new LycheeRecipeType<>(
+			"blank",
+			BlankRecipe.class,
+			LootContextParamSets.EMPTY));
+
 	public static final LycheeRecipeType<ItemBurningRecipe> ITEM_BURNING =
 			register(new LycheeRecipeType<>("item_burning", ItemBurningRecipe.class, null));
 	public static final ItemInsideRecipeType ITEM_INSIDE = register(Util.make(
@@ -54,7 +70,7 @@ public final class RecipeTypes {
 							"block_interacting",
 							BlockInteractingRecipe.class,
 							LycheeLootContextParamSets.BLOCK_INTERACTION),
-					(it) -> {
+					it -> {
 						it.requiresClient = true;
 						it.canPreventConsumeInputs = true;
 					}
@@ -65,17 +81,16 @@ public final class RecipeTypes {
 							"block_clicking",
 							BlockClickingRecipe.class,
 							LycheeLootContextParamSets.BLOCK_INTERACTION),
-					(it) -> {
+					it -> {
 						it.requiresClient = true;
 						it.categoryId = BLOCK_INTERACTING.categoryId;
 						it.canPreventConsumeInputs = true;
 					}
 			));
-	public static final LycheeRecipeType<AnvilCraftingRecipe> ANVIL_CRAFTING =
-			register(Util.make(
-					new LycheeRecipeType<>("anvil_crafting", AnvilCraftingRecipe.class, null),
-					it -> it.hasStandaloneCategory = false
-			));
+	public static final LycheeRecipeType<AnvilCraftingRecipe> ANVIL_CRAFTING = register(new LycheeRecipeType<>(
+			"anvil_crafting",
+			AnvilCraftingRecipe.class,
+			null));
 	public static final BlockCrushingRecipeType BLOCK_CRUSHING = register(new BlockCrushingRecipeType(
 			"block_crushing",
 			BlockCrushingRecipe.class,
@@ -103,22 +118,22 @@ public final class RecipeTypes {
 					RandomBlockTickingRecipe.class,
 					LycheeLootContextParamSets.BLOCK_ONLY
 			),
+			it -> it.extractChance = true
+	));
+	public static final DripstoneRecipeType DRIPSTONE_DRIPPING = register(Util.make(
+			new DripstoneRecipeType(
+					"dripstone_dripping",
+					DripstoneRecipe.class,
+					LycheeLootContextParamSets.BLOCK_ONLY),
 			it -> {
 				it.extractChance = true;
-				it.hasStandaloneCategory = false;
+				it.requiresClient = true;
 			}
 	));
-	public static final DripstoneRecipeType DRIPSTONE_DRIPPING = register(
-			Util.make(
-					new DripstoneRecipeType(
-							"dripstone_dripping",
-							DripstoneRecipe.class,
-							LycheeLootContextParamSets.BLOCK_ONLY),
-					it -> {
-						it.extractChance = true;
-						it.requiresClient = true;
-					}
-			));
+	public static final EntityTickingRecipeType ENTITY_TICKING = register(new EntityTickingRecipeType(
+			"entity_ticking",
+			EntityTickingRecipe.class,
+			null));
 
 	public static <T extends LycheeRecipeType<? extends ILycheeRecipe<LycheeContext>>> T register(T recipeType) {
 		ALL.add(recipeType);
@@ -128,6 +143,18 @@ public final class RecipeTypes {
 	public static void buildCache() {
 		ALL.forEach(LycheeRecipeType::refreshCache);
 		ALL.forEach(LycheeRecipeType::updateEmptyState);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends RecipeType<?>> T register(String name) {
+		ResourceLocation id = Lychee.id(name);
+		return (T) Registry.register(
+				BuiltInRegistries.RECIPE_TYPE, id, new RecipeType<>() {
+					@Override
+					public String toString() {
+						return id.toString();
+					}
+				});
 	}
 
 }

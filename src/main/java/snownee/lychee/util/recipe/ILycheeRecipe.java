@@ -5,21 +5,24 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.util.BoundsExtensions;
+import snownee.lychee.util.IngredientCollection;
+import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
@@ -30,6 +33,7 @@ import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.contextual.ContextualPredicate;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
+
 
 public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, ContextualPredicate, Contextual {
 	String DEFAULT_GROUP = "default";
@@ -73,7 +77,7 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	}
 
 	@Override
-	default @NotNull ItemStack assemble(C inv, HolderLookup.Provider provider) {
+	default ItemStack assemble(C inv, HolderLookup.Provider provider) {
 		return ItemStack.EMPTY;
 	}
 
@@ -94,11 +98,12 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	}
 
 	@Override
-	default @NotNull ItemStack getResultItem(HolderLookup.Provider provider) {
+	default ItemStack getResultItem(HolderLookup.Provider provider) {
 		return ItemStack.EMPTY;
 	}
 
-	@NotNull RecipeType<? extends Recipe<?>> getType();
+	@Override
+	RecipeType<? extends Recipe<?>> getType();
 
 	LycheeRecipeCommonProperties commonProperties();
 
@@ -176,7 +181,25 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 				.toList();
 	}
 
+	@Nullable
+	default IngredientCollection ingredientCollection() {
+		return null;
+	}
+
 	default List<SizedIngredient> sizedIngredients() {
-		throw new UnsupportedOperationException();
+		IngredientCollection collection = ingredientCollection();
+		if (collection == null) {
+			throw new UnsupportedOperationException();
+		}
+		return collection.ingredients();
+	}
+
+	@Override
+	default NonNullList<Ingredient> getIngredients() {
+		IngredientCollection collection = ingredientCollection();
+		if (collection == null) {
+			return NonNullListExtensions.copyOf(List.of());
+		}
+		return collection.flattenedIngredients();
 	}
 }

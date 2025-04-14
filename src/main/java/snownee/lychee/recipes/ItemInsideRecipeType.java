@@ -44,8 +44,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 	private final List<RecipeHolder<ItemInsideRecipe>> specialRecipes = Lists.newArrayList();
 	private final Multimap<Item, RecipeHolder<ItemInsideRecipe>> recipesByItem = ArrayListMultimap.create();
 
-	public ItemInsideRecipeType(
-			String name, Class<ItemInsideRecipe> clazz, @Nullable LootContextParamSet contextParamSet) {
+	public ItemInsideRecipeType(String name, Class<ItemInsideRecipe> clazz, @Nullable LootContextParamSet contextParamSet) {
 		super(name, clazz, contextParamSet);
 	}
 
@@ -128,23 +127,24 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 		final var level = entity.level();
 		final var blockState = level.getBlockState(pos);
 		final var block = blockState.getBlock();
-		final var itemEntities = level.getEntitiesOfClass(ItemEntity.class, AABB.ofSize(origin, 3, 3, 3), it -> {
-			if (it.isRemoved()) {
-				return false;
-			}
-			return pos.equals(it.blockPosition()) || level.getBlockState(it.blockPosition()).is(block);
-		});
+		final var itemEntities = level.getEntitiesOfClass(
+				ItemEntity.class, AABB.ofSize(origin, 3, 3, 3), it -> {
+					if (it.isRemoved()) {
+						return false;
+					}
+					return pos.equals(it.blockPosition()) || level.getBlockState(it.blockPosition()).is(block);
+				});
 
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
 		var itemShapelessContext = new ItemShapelessContext(itemEntities, context);
 		context.put(LycheeContextKey.ITEM_SHAPELESS, itemShapelessContext);
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
-		lootParamsContext.setParam(LootContextParams.THIS_ENTITY, entity);
-		lootParamsContext.setParam(LootContextParams.BLOCK_STATE, blockState);
-		lootParamsContext.setParam(LycheeLootContextParams.BLOCK_POS, pos);
-		lootParamsContext.validate(contextParamSet);
+		var lootParams = context.initLootParams(this);
+		lootParams.set(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
+		lootParams.set(LootContextParams.THIS_ENTITY, entity);
+		lootParams.set(LootContextParams.BLOCK_STATE, blockState);
+		lootParams.set(LycheeLootContextParams.BLOCK_POS, pos);
+		lootParams.validate();
 		@SuppressWarnings("unchecked") @Nullable final var prevRecipe =
 				(RecipeHolder<ItemInsideRecipe>) Optional.ofNullable(prevRecipeId)
 						.map(CommonProxy::recipe)
@@ -154,10 +154,11 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 		if (prevRecipe != null) {
 			allRecipes = Iterables.concat(List.of(prevRecipe), Iterables.filter(allRecipes, it -> !it.equals(prevRecipe)));
 		}
-		ItemShapelessRecipeType.process(this, allRecipes, context, it -> {
-			((LycheeCounter) entity).lychee$update(prevRecipeId, it);
-			return it.value().tickOrApply(context);
-		});
+		ItemShapelessRecipeType.process(
+				this, allRecipes, context, it -> {
+					((LycheeCounter) entity).lychee$update(prevRecipeId, it);
+					return it.value().tickOrApply(context);
+				});
 	}
 
 	public record Cache(RecipeHolder<ItemInsideRecipe> recipe, List<? extends Set<Item>> ingredients) {}

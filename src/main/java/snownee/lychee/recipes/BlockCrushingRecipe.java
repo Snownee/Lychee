@@ -2,7 +2,7 @@ package snownee.lychee.recipes;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Lists;
 import com.mojang.serialization.MapCodec;
@@ -10,21 +10,19 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.Util;
 import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import snownee.kiwi.recipe.SizedIngredient;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.RecipeMatcher;
 import snownee.lychee.util.context.LycheeContext;
@@ -35,6 +33,7 @@ import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
+
 
 public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
 	public static final BlockPredicate ANVIL = BlockPredicate.Builder.block().of(BlockTags.ANVIL).build();
@@ -74,8 +73,9 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		if (!BlockPredicateExtensions.isAny(landingBlock) && !BlockPredicateExtensions.matches(landingBlock, context)) {
 			return false;
 		}
-		final var fallingBlockEntityContext = context.get(LycheeContextKey.FALLING_BLOCK_ENTITY);
-		if (!matchesFallingBlock(fallingBlockEntityContext.getBlockState(), fallingBlockEntityContext.blockData)) {
+		LootParamsContext lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		final var entity = (FallingBlockEntity) lootParams.get(LootContextParams.THIS_ENTITY);
+		if (!matchesFallingBlock(entity.getBlockState(), entity.blockData)) {
 			return false;
 		}
 		if (ingredients.isEmpty()) {
@@ -94,7 +94,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		return true;
 	}
 
-	public boolean matchesFallingBlock(BlockState blockstate, CompoundTag nbt) {
+	public boolean matchesFallingBlock(BlockState blockstate, @Nullable CompoundTag nbt) {
 		if (BlockPredicateExtensions.isAny(blockPredicate())) {
 			return true;
 		}
@@ -109,13 +109,8 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 	}
 
 	@Override
-	public List<SizedIngredient> sizedIngredients() {
-		return ingredients.ingredients();
-	}
-
-	@Override
-	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return ingredients.flattenedIngredients();
+	public IngredientCollection ingredientCollection() {
+		return ingredients;
 	}
 
 	@Override
@@ -129,12 +124,12 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<BlockCrushingRecipe> getSerializer() {
+	public LycheeRecipeSerializer<BlockCrushingRecipe> getSerializer() {
 		return RecipeSerializers.BLOCK_CRUSHING;
 	}
 
 	@Override
-	public @NotNull RecipeType<BlockCrushingRecipe> getType() {
+	public BlockCrushingRecipeType getType() {
 		return RecipeTypes.BLOCK_CRUSHING;
 	}
 
@@ -148,14 +143,8 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 								.forGetter(BlockCrushingRecipe::landingBlock),
 						IngredientCollection.CODEC
 								.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
-								.forGetter(it -> it.ingredients)
+								.forGetter(BlockCrushingRecipe::ingredientCollection)
 				).apply(instance, BlockCrushingRecipe::new)));
-
-		@Override
-		public @NotNull MapCodec<BlockCrushingRecipe> codec() {
-			return CODEC;
-		}
-
 		public static final StreamCodec<RegistryFriendlyByteBuf, BlockCrushingRecipe> STREAM_CODEC =
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
@@ -165,12 +154,17 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 						BlockPredicate.STREAM_CODEC,
 						BlockCrushingRecipe::landingBlock,
 						IngredientCollection.STREAM_CODEC,
-						it -> it.ingredients,
+						BlockCrushingRecipe::ingredientCollection,
 						BlockCrushingRecipe::new
 				);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, BlockCrushingRecipe> streamCodec() {
+		public MapCodec<BlockCrushingRecipe> codec() {
+			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, BlockCrushingRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

@@ -2,23 +2,17 @@ package snownee.lychee.recipes;
 
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.IngredientCollection;
@@ -37,9 +31,9 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 				.map(ItemEntity.class::cast);
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		lootParamsContext.setParam(LootContextParams.ORIGIN, new Vec3(x, y, z));
-		lootParamsContext.setParam(LootContextParams.EXPLOSION_RADIUS, radius);
+		var lootParams = context.initLootParams(RecipeTypes.ITEM_EXPLODING);
+		lootParams.set(LootContextParams.ORIGIN, new Vec3(x, y, z));
+		lootParams.set(LootContextParams.EXPLOSION_RADIUS, radius);
 		RecipeTypes.ITEM_EXPLODING.process(itemEntities, context);
 	}
 
@@ -60,27 +54,22 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<ItemExplodingRecipe> getSerializer() {
+	public LycheeRecipeSerializer<ItemExplodingRecipe> getSerializer() {
 		return RecipeSerializers.ITEM_EXPLODING;
 	}
 
 	@Override
-	public @NotNull LycheeRecipeType<ItemExplodingRecipe> getType() {
+	public LycheeRecipeType<ItemExplodingRecipe> getType() {
 		return RecipeTypes.ITEM_EXPLODING;
 	}
 
 	@Override
-	public @NotNull NonNullList<Ingredient> getIngredients() {
-		return ingredients.flattenedIngredients();
+	public IngredientCollection ingredientCollection() {
+		return ingredients;
 	}
 
 	@Override
-	public List<SizedIngredient> sizedIngredients() {
-		return ingredients.ingredients();
-	}
-
-	@Override
-	public int compareTo(@NotNull ItemExplodingRecipe that) {
+	public int compareTo(ItemExplodingRecipe that) {
 		int i;
 		i = Integer.compare(maxRepeats().isAny() ? 1 : 0, that.maxRepeats().isAny() ? 1 : 0);
 		if (i != 0) {
@@ -104,7 +93,7 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 				).apply(instance, ItemExplodingRecipe::new)));
 
 		@Override
-		public @NotNull MapCodec<ItemExplodingRecipe> codec() {
+		public MapCodec<ItemExplodingRecipe> codec() {
 			return CODEC;
 		}
 
@@ -119,7 +108,7 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 				);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, ItemExplodingRecipe> streamCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, ItemExplodingRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

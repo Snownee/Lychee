@@ -14,15 +14,14 @@ public record Job(PostAction action, int times) {
 					Codec.INT.fieldOf("times").forGetter(Job::times)
 			).apply(instance, Job::new));
 
-
 	public void apply(LycheeContext context) {
-		var recipe = context.get(LycheeContextKey.RECIPE);
+		var recipe = context.getOrNull(LycheeContextKey.RECIPE);
 		var times = action.test(recipe, context, this.times);
 		if (times > 0) {
 			try {
 				action.apply(recipe, context, times);
 			} catch (Exception e) {
-				Lychee.LOGGER.error("Error when apply post action for recipe {}", context.get(LycheeContextKey.RECIPE_ID), e);
+				Lychee.LOGGER.error("Error when apply post action for recipe {}", context.getOrNull(LycheeContextKey.RECIPE_ID), e);
 			}
 		} else {
 			action.onFailure(recipe, context, this.times);

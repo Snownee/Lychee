@@ -1,7 +1,5 @@
 package snownee.lychee.recipes;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -9,8 +7,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
@@ -53,12 +49,12 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<RandomBlockTickingRecipe> getSerializer() {
+	public LycheeRecipeSerializer<RandomBlockTickingRecipe> getSerializer() {
 		return RecipeSerializers.RANDOM_BLOCK_TICKING;
 	}
 
 	@Override
-	public @NotNull RecipeType<RandomBlockTickingRecipe> getType() {
+	public RandomBlockTickingRecipeType getType() {
 		return RecipeTypes.RANDOM_BLOCK_TICKING;
 	}
 
@@ -75,7 +71,7 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 				});
 
 		@Override
-		public @NotNull MapCodec<RandomBlockTickingRecipe> codec() {
+		public MapCodec<RandomBlockTickingRecipe> codec() {
 			return CODEC;
 		}
 
@@ -88,7 +84,7 @@ public class RandomBlockTickingRecipe extends LycheeRecipe<LycheeContext> implem
 				RandomBlockTickingRecipe::new);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, RandomBlockTickingRecipe> streamCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, RandomBlockTickingRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

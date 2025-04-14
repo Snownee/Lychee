@@ -1,15 +1,11 @@
 package snownee.lychee.recipes;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
@@ -19,6 +15,8 @@ import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
+import snownee.lychee.util.recipe.LycheeRecipeType;
+
 
 public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
 	protected final BlockPredicate blockPredicate;
@@ -43,12 +41,12 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 	}
 
 	@Override
-	public @NotNull RecipeSerializer<BlockExplodingRecipe> getSerializer() {
+	public LycheeRecipeSerializer<BlockExplodingRecipe> getSerializer() {
 		return RecipeSerializers.BLOCK_EXPLODING;
 	}
 
 	@Override
-	public @NotNull RecipeType<BlockExplodingRecipe> getType() {
+	public LycheeRecipeType<BlockExplodingRecipe> getType() {
 		return RecipeTypes.BLOCK_EXPLODING;
 	}
 
@@ -61,7 +59,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 				).apply(instance, BlockExplodingRecipe::new));
 
 		@Override
-		public @NotNull MapCodec<BlockExplodingRecipe> codec() {
+		public MapCodec<BlockExplodingRecipe> codec() {
 			return CODEC;
 		}
 
@@ -75,7 +73,7 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 				);
 
 		@Override
-		public @NotNull StreamCodec<RegistryFriendlyByteBuf, BlockExplodingRecipe> streamCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, BlockExplodingRecipe> streamCodec() {
 			return STREAM_CODEC;
 		}
 	}

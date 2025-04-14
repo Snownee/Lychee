@@ -30,6 +30,9 @@
 		"recipes.crafting.ShapedRecipeAccess",
 		"recipes.crafting.ShapedRecipePatternAccess",
 		"recipes.crafting.TransientCraftingContainerAccess",
+		"recipes.entityticking.EntityMixin",
+		"recipes.entityticking.EntityTypeMixin",
+		"recipes.entityticking.ServerLevelMixin",
 		"recipes.itemburing.ItemEntityHurtMixin",
 		"recipes.itemexploding.ExplosionMixin",
 		"recipes.iteminside.EntityMixin",
@@ -40,9 +43,10 @@
 		"rei.DefaultCraftingDisplayMixin"
 	],
 	"client": [
-		"ClientPacketListenerMixin",
-		"ClientRecipeBookMixin",
-		"GameRendererAccess",
+		"client.ClientPacketListenerMixin",
+		"client.ClientRecipeBookMixin",
+		"client.GameRendererAccess",
+		"client.GuiGraphicsMixin",
 		"jei.AnvilRecipeCategoryMixin"
 	],
 	"injectors": {

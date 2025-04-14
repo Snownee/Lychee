@@ -5,7 +5,10 @@ import org.jetbrains.annotations.Nullable;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -29,8 +32,8 @@ public record DropXp(PostActionCommonProperties commonProperties, int xp) implem
 
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParamsContext = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParamsContext.get(LootContextParams.ORIGIN);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+		var pos = lootParams.get(LootContextParams.ORIGIN);
 		ExperienceOrb.award((ServerLevel) context.level(), pos, xp * times);
 	}
 
@@ -45,10 +48,21 @@ public record DropXp(PostActionCommonProperties commonProperties, int xp) implem
 						PostActionCommonProperties.MAP_CODEC.forGetter(DropXp::commonProperties),
 						ExtraCodecs.POSITIVE_INT.fieldOf("xp").forGetter(DropXp::xp)
 				).apply(instance, DropXp::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, DropXp> STREAM_CODEC = StreamCodec.composite(
+				PostActionCommonProperties.STREAM_CODEC,
+				DropXp::commonProperties,
+				ByteBufCodecs.VAR_INT,
+				DropXp::xp,
+				DropXp::new);
 
 		@Override
 		public MapCodec<DropXp> codec() {
 			return CODEC;
+		}
+
+		@Override
+		public StreamCodec<RegistryFriendlyByteBuf, DropXp> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

@@ -1,0 +1,74 @@
+package snownee.lychee.compat.recipeviewer.element;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2f;
+
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.BlockState;
+import snownee.kiwi.loader.Platform;
+import snownee.lychee.client.gui.AllGuiTextures;
+import snownee.lychee.client.gui.InteractiveRenderElement;
+import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.ui.SpriteElementRenderer;
+
+public class ShadowElement {
+	private final int blockSize;
+	private final int shadowWidth;
+	private final int shadowHeight;
+	private @Nullable RenderElement darkShadow;
+	private @Nullable RenderElement lightShadow;
+
+	public ShadowElement(int blockSize, int shadowWidth, int shadowHeight) {
+		this.blockSize = blockSize;
+		this.shadowWidth = shadowWidth;
+		this.shadowHeight = shadowHeight;
+	}
+
+	public RenderElement get(boolean light) {
+		var shadow = light ? lightShadow : darkShadow;
+		if (shadow != null) {
+			return shadow;
+		}
+		ResourceLocation id = light ? AllGuiTextures.LIGHT_SHADOW.id : AllGuiTextures.SHADOW.id;
+		shadow = new SpriteElementRenderer(id).withSize(shadowWidth, shadowHeight);
+		if (light) {
+			lightShadow = shadow;
+		} else {
+			darkShadow = shadow;
+		}
+		return shadow;
+	}
+
+	public InteractiveRenderElement blockWithShadow(
+			Supplier<BlockState> blockStateSupplier,
+			Function<BlockState, RenderElement> blockElement) {
+		return InteractiveRenderElement.create(graphics -> {
+			var blockState = blockStateSupplier.get();
+			if (blockState.isAir()) {
+				RenderElement.create(AllGuiTextures.QUESTION_MARK).at(2, 2).render(graphics);
+				return;
+			}
+			RenderElement element = blockElement.apply(blockState);
+			float x = element.position.x + blockSize * 0.5F - shadowWidth * 0.5F;
+			float y = element.position.y + blockSize - shadowHeight * 0.4F;
+			var shadowPosition = new Vector2f(x, y);
+			if (!Platform.isProduction() && Screen.hasControlDown()) {
+				graphics.pose().pushPose();
+				graphics.pose().translate(0, 0, 1000);
+				graphics.renderOutline((int) element.x(), (int) element.y(), blockSize, blockSize, 0x88FF0000);
+				graphics.pose().popPose();
+			}
+			int lightEmission = blockState.getLightEmission();
+			if (lightEmission < 5) {
+				get(false).at(shadowPosition).debugOutline(graphics, 0x00FF00).render(graphics);
+			} else if (lightEmission > 7) {
+				get(true).at(shadowPosition).debugOutline(graphics, 0x00FF00).render(graphics);
+			}
+			element.render(graphics);
+		});
+	}
+}

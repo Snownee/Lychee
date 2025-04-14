@@ -6,7 +6,6 @@ import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonObject;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -15,6 +14,7 @@ import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
@@ -30,14 +30,14 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
  */
 public class CustomCondition implements ContextualCondition {
 	public final JsonObject data;
-	public final String id;
-	public ContextualPredicate testFunc;
+	private final String id;
+	public ContextualPredicate testFunc = null;
 	public BiFunction<Level, @Nullable Player, TriState> testInTooltipsFunc = (level, player) -> TriState.DEFAULT;
 
 	public CustomCondition(String id, JsonObject data) {
 		this.id = id;
 		this.data = data;
-		CommonProxy.postCustomConditionEvent(id, this);
+		CommonProxy.postCustomConditionEvent(GsonHelper.getAsString(data, "id"), this);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class CustomCondition implements ContextualCondition {
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
-		return Component.translatable(getDescriptionId(inverted), id);
+		return Component.translatable(getDescriptionId(inverted), GsonHelper.getAsString(data, "id"));
 	}
 
 	public JsonObject data() {
@@ -78,7 +78,7 @@ public class CustomCondition implements ContextualCondition {
 
 	public static class Type implements ContextualConditionType<CustomCondition> {
 		public static final MapCodec<CustomCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.STRING.fieldOf("id").forGetter(CustomCondition::id),
+				ExtraCodecs.NON_EMPTY_STRING.fieldOf("id").forGetter(CustomCondition::id),
 				ExtraCodecs.JSON.comapFlatMap(
 						it -> {
 							try {

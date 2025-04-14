@@ -1,0 +1,9 @@
+type: lychee:category_modifier
+category: lychee:item_inside/minecraft/default
+recipe: lychee:item_inside.
+elements:
+  extra:
+    type: item
+    id: apple
+    pos: [ 40, 20 ]
+    tooltip: Test
