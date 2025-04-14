@@ -123,7 +123,7 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 
 	@Override
 	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (onInput != null && onInput.test(InputAction.mousePressed(button, mouseX, mouseY), this)) {
+		if (onInput != null && hovered && onInput.test(InputAction.mousePressed(button, mouseX, mouseY), this)) {
 			produceClickSound();
 			return true;
 		}
