@@ -163,7 +163,7 @@ dependencies {
     // https://github.com/neoforged/ModDevGradle?tab=readme-ov-file#jar-in-jar
     jarJar(implementation("org.sinytra.forgified-fabric-api:fabric-particles-v1:4.0.2+824f924c19"))
 
-    implementation "maven.modrinth:jade:${project.jade_version}+fabric"
+    implementation "maven.modrinth:jade:${project.jade_version}+neoforge"
 
     implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 
