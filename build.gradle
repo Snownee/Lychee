@@ -175,6 +175,7 @@ dependencies {
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude("/assets/${project.mod_id}/lang/en_us.existing.json")
     exclude("/data/${project.mod_id}/lychee_fragment")
     exclude("/data/${project.mod_id}/predicate")
