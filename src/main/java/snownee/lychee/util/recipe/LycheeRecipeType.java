@@ -18,10 +18,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.kiwi.util.KUtil;
 import snownee.lychee.Lychee;
-import snownee.lychee.context.RecipeContext;
 import snownee.lychee.mixin.LootContextParamSetsAccess;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
 
 public class LycheeRecipeType<T extends ILycheeRecipe<LycheeContext>> implements RecipeType<T> {
 	public final ResourceLocation id;
@@ -57,15 +55,10 @@ public class LycheeRecipeType<T extends ILycheeRecipe<LycheeContext>> implements
 
 	public Optional<RecipeHolder<T>> tryMatch(RecipeHolder<T> recipeHolder, Level level, LycheeContext context) {
 		final var lycheeRecipe = recipeHolder.value();
-		context.put(LycheeContextKey.RECIPE_ID, new RecipeContext(recipeHolder.id()));
-		context.put(LycheeContextKey.RECIPE, recipeHolder.value());
-		Optional<RecipeHolder<T>> result = lycheeRecipe.matches(context, level) &&
+		return lycheeRecipe.matches(context, level) &&
 				lycheeRecipe.test(recipeHolder.value(), context, 1) > 0
 				? Optional.of(recipeHolder)
 				: Optional.empty();
-		context.remove(LycheeContextKey.RECIPE);
-		context.remove(LycheeContextKey.RECIPE_ID);
-		return result;
 	}
 
 	public List<RecipeHolder<T>> recipes() {

@@ -6,13 +6,13 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IPlatformFluidHelper;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.fluids.FluidStack;
 import snownee.kiwi.util.NotNullByDefault;
 import snownee.lychee.compat.recipeviewer.RvHelper;
 
@@ -45,7 +45,7 @@ public class JeiRvHelper extends RvHelper {
 		var recipesGui = runtime.getRecipesGui();
 		var helpers = runtime.getJeiHelpers();
 		//noinspection unchecked
-		var fluidHelper = (IPlatformFluidHelper<IJeiFluidIngredient>) helpers.getPlatformFluidHelper();
+		var fluidHelper = (IPlatformFluidHelper<FluidStack>) helpers.getPlatformFluidHelper();
 		var focusFactory = helpers.getFocusFactory();
 		var role = !usageOrRecipe ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
 		recipesGui.show(focusFactory.createFocus(

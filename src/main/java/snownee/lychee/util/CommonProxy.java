@@ -336,7 +336,7 @@ public class CommonProxy {
 
 	private static void register(RegisterEvent event) {
 		event.register(LycheeRegistries.CONTEXT.key(), helper -> Objects.requireNonNull(LycheeContextKey.ACTION));
-		event.register(LycheeRegistries.CONTEXT_SERIALIZER.key(), helper -> Objects.requireNonNull(LycheeContextSerializers.ACTION));
+		event.register(LycheeRegistries.CONTEXT_SERIALIZER.key(), helper -> LycheeContextSerializers.init());
 		event.register(LycheeRegistries.CONTEXTUAL.key(), helper -> Objects.requireNonNull(ContextualConditionType.AND));
 		event.register(LycheeRegistries.POST_ACTION.key(), helper -> Objects.requireNonNull(PostActionTypes.DROP_ITEM));
 		event.register(BuiltInRegistries.RECIPE_SERIALIZER.key(), helper -> Objects.requireNonNull(RecipeSerializers.ITEM_BURNING));
