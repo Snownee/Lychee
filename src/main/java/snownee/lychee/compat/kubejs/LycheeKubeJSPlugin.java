@@ -8,6 +8,7 @@ import dev.latvian.mods.kubejs.script.BindingRegistry;
 import dev.latvian.mods.kubejs.script.ScriptType;
 import dev.latvian.mods.kubejs.script.TypeWrapperRegistry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.kiwi.loader.Platform;
@@ -31,7 +32,7 @@ public class LycheeKubeJSPlugin implements KubeJSPlugin {
 		CommonProxy.registerCustomActionListener(this::onCustomAction);
 		CommonProxy.registerCustomConditionListener(this::onCustomCondition);
 		if (Platform.isPhysicalClient()) {
-			ClientProxy.registerInfoBadgeClickListener(this::onInfoBadgeClicked);
+			ClientProxy.registerWidgetClickListener(this::onInfoBadgeClicked);
 		}
 	}
 
@@ -49,11 +50,11 @@ public class LycheeKubeJSPlugin implements KubeJSPlugin {
 		return false;
 	}
 
-	private boolean onInfoBadgeClicked(ILycheeRecipe<?> recipe, @Nullable ResourceLocation id, int button) {
+	private boolean onInfoBadgeClicked(Recipe<?> recipe, @Nullable String id, int button) {
 		if (LycheeKubeJSEvents.CLICKED_INFO_BADGE.hasListeners()) {
 			return LycheeKubeJSEvents.CLICKED_INFO_BADGE.post(
 					ScriptType.CLIENT,
-					id == null ? null : id.toString(),
+					id,
 					new ClickedInfoBadgeKubeEvent(recipe, id, button)).override();
 		}
 		return false;
