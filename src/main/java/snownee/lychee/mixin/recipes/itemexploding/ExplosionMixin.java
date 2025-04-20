@@ -40,6 +40,7 @@ public abstract class ExplosionMixin {
 
 	@Inject(at = @At("TAIL"), method = "explode()V")
 	private void lychee_explode(final CallbackInfo ci, @Local List<Entity> list) {
+		if (level.isClientSide) return;
 		ItemExplodingRecipe.invoke((ServerLevel) level, x, y, z, list, radius());
 	}
 }
