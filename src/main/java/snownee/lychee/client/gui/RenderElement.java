@@ -141,7 +141,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 
 	@SuppressWarnings("unchecked")
 	public <T extends RenderElement> T debugOutline(GuiGraphics graphics, int color) {
-		if (!Platform.isProduction() && !Screen.hasControlDown()) {
+		if (Platform.isProduction() || !Screen.hasControlDown()) {
 			return (T) this;
 		}
 		if (FastColor.ARGB32.alpha(color) == 0) {
