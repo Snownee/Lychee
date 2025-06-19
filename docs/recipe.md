@@ -970,4 +970,4 @@ Default behavior: none.
 
 !!! note
 
-    No guarantee that modded crafting machines contains player and location information. You can use [`check_param`](contextual-condition.md#check-parameter-check_param) to require these parameters to be present when crafting.
+    No guarantee that modded crafting machines contains player and location information. You can use [`param`](contextual-condition.md#parameter-check) to require these parameters to be present when crafting.
