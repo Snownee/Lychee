@@ -36,12 +36,14 @@ public class JeiRvHelper extends RvHelper {
 		if (runtime == null) {
 			return false;
 		}
-		var recipesGui = runtime.getRecipesGui();
-		var focusFactory = runtime.getJeiHelpers().getFocusFactory();
-		var role = action == InputAction.Direct.SHOW_USAGES ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
-		if (!stack.isEmpty()) {
-			recipesGui.show(focusFactory.createFocus(role, VanillaTypes.ITEM_STACK, stack));
-			return true;
+		if (action == InputAction.Direct.SHOW_USAGES || action == InputAction.Direct.SHOW_RECIPES) {
+			var recipesGui = runtime.getRecipesGui();
+			var focusFactory = runtime.getJeiHelpers().getFocusFactory();
+			var role = action == InputAction.Direct.SHOW_USAGES ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
+			if (!stack.isEmpty()) {
+				recipesGui.show(focusFactory.createFocus(role, VanillaTypes.ITEM_STACK, stack));
+				return true;
+			}
 		}
 		return false;
 	}
@@ -51,19 +53,22 @@ public class JeiRvHelper extends RvHelper {
 		if (runtime == null) {
 			return false;
 		}
-		var recipesGui = runtime.getRecipesGui();
-		var helpers = runtime.getJeiHelpers();
-		//noinspection unchecked
-		var fluidHelper = (IPlatformFluidHelper<IJeiFluidIngredient>) helpers.getPlatformFluidHelper();
-		var focusFactory = helpers.getFocusFactory();
-		var role = action == InputAction.Direct.SHOW_USAGES ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
-		//noinspection deprecation
-		recipesGui.show(focusFactory.createFocus(
-				role,
-				fluidHelper.getFluidIngredientType(),
-				fluidHelper.create(fluid.builtInRegistryHolder(), fluidHelper.bucketVolume())
-		));
-		return true;
+		if (action == InputAction.Direct.SHOW_USAGES || action == InputAction.Direct.SHOW_RECIPES) {
+			var recipesGui = runtime.getRecipesGui();
+			var helpers = runtime.getJeiHelpers();
+			//noinspection unchecked
+			var fluidHelper = (IPlatformFluidHelper<IJeiFluidIngredient>) helpers.getPlatformFluidHelper();
+			var focusFactory = helpers.getFocusFactory();
+			var role = action == InputAction.Direct.SHOW_USAGES ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
+			//noinspection deprecation
+			recipesGui.show(focusFactory.createFocus(
+					role,
+					fluidHelper.getFluidIngredientType(),
+					fluidHelper.create(fluid.builtInRegistryHolder(), fluidHelper.bucketVolume())
+			));
+			return true;
+		}
+		return false;
 	}
 
 	@Override

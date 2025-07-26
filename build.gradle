@@ -26,6 +26,7 @@ repositories {
     maven { url = "https://maven.parchmentmc.org" }
     maven { url "https://maven.shedaniel.me/" }
     maven { url "https://maven.terraformersmc.com/releases/" }
+    maven { url "https://maven.terraformersmc.com/" }
     maven {
         url "https://cursemaven.com"
         content {
@@ -38,14 +39,7 @@ repositories {
     maven { url = "https://api.modrinth.com/maven" }
     maven {
         // saps.dev Maven (KubeJS and Rhino)
-        url = "https://maven.saps.dev/minecraft"
-        content {
-            includeGroup "dev.latvian.mods"
-        }
-    }
-    maven {
-        // saps.dev Maven (KubeJS and Rhino)
-        url = "https://maven.saps.dev/minecraft"
+        url = "https://maven.latvian.dev/releases"
         content {
             includeGroup "dev.latvian.mods"
             includeGroup "dev.latvian.apps"
@@ -112,6 +106,9 @@ dependencies {
     compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 
     modImplementation "maven.modrinth:jade:${project.jade_version}+fabric"
+
+//    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
+    modImplementation "dev.emi:emi-fabric:${emi_version}"
 }
 
 loom {

@@ -92,7 +92,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 	}
 
 	static void actionSlot(ImmutableList.Builder<Widget> widgets, Vector2fc startPoint, PostAction action, int x, int y) {
-		var slot = LycheeREIPlugin.slot(startPoint, x, y, action.conditions().conditions().isEmpty() ? SlotType.NORMAL : SlotType.CHANCE);
+		var slot = LycheeREIPlugin.slot(startPoint, x, y, action.conditions().showingCount() == 0 ? SlotType.NORMAL : SlotType.CHANCE);
 		slot.markOutput();
 		List<EntryStack<?>> entries = Lists.newArrayList();
 		Map<EntryStack<ItemStack>, PostAction> itemMap = Maps.newHashMap();

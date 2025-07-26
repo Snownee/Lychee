@@ -33,6 +33,9 @@
 		],
 		"jei_mod_plugin": [
 			"snownee.lychee.compat.recipeviewer.jei.LycheeJEIPlugin"
+		],
+		"emi": [
+			"snownee.lychee.compat.recipeviewer.emi.LycheeEMIPlugin"
 		]
 	},
 	"mixins": [

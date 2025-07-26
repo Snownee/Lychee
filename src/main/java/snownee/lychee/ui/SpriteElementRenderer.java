@@ -6,8 +6,8 @@ import snownee.lychee.client.gui.LycheeGuiGraphics;
 import snownee.lychee.client.gui.RenderElement;
 
 public class SpriteElementRenderer extends RenderElement {
-	private final ResourceLocation id;
-	private final float scale;
+	public final ResourceLocation id;
+	public final float scale;
 
 	public SpriteElementRenderer(ResourceLocation id) {
 		this(id, 1F);
