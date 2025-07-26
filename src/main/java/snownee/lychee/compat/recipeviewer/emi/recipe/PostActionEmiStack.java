@@ -2,9 +2,15 @@ package snownee.lychee.compat.recipeviewer.emi.recipe;
 
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import dev.emi.emi.EmiPort;
+import dev.emi.emi.api.render.EmiTooltipComponents;
 import dev.emi.emi.api.stack.EmiStack;
+import dev.emi.emi.screen.tooltip.EmiTextTooltipWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +25,9 @@ public class PostActionEmiStack extends EmiStack {
 
 	public PostActionEmiStack(PostAction action) {
 		this.action = action;
-		Chance chance = (Chance) action.conditions().conditions().stream()
+		Chance chance = (Chance) action.conditions()
+				.conditions()
+				.stream()
 				.filter($ -> $.type() == ContextualConditionType.CHANCE)
 				.findFirst()
 				.orElse(null);
@@ -61,6 +69,20 @@ public class PostActionEmiStack extends EmiStack {
 	@Override
 	public List<Component> getTooltipText() {
 		return ActionRenderer.of(action).getTooltips(action, Minecraft.getInstance().player);
+	}
+
+	@Override
+	public List<ClientTooltipComponent> getTooltip() {
+		List<ClientTooltipComponent> list = Lists.newArrayList();
+		List<Component> text = getTooltipText();
+		if (!text.isEmpty()) {
+			list.add(new EmiTextTooltipWrapper(this, EmiPort.ordered(text.getFirst())));
+		}
+		list.addAll(text.stream().skip(1).map(EmiTooltipComponents::of).toList());
+		String namespace = getId().getNamespace();
+		EmiTooltipComponents.appendModName(list, namespace);
+		list.addAll(super.getTooltip());
+		return list;
 	}
 
 	@Override

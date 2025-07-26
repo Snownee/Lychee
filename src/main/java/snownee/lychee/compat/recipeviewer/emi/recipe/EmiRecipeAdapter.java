@@ -15,21 +15,30 @@ import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.stack.ItemEmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import snownee.lychee.action.DropItem;
+import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
+import snownee.lychee.client.gui.ScreenElement;
+import snownee.lychee.client.gui.WrapperRenderElement;
+import snownee.lychee.compat.recipeviewer.IngredientInfo;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.SlotType;
+import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryLayoutBuilder;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryWidgetBuilder;
 import snownee.lychee.compat.recipeviewer.emi.category.RvCategoryAdapter;
 import snownee.lychee.compat.recipeviewer.emi.element.EmiWidgetAdapter;
 import snownee.lychee.compat.recipeviewer.emi.element.LycheeSlotWidget;
+import snownee.lychee.ui.TextElementRenderer;
 import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
@@ -41,10 +50,57 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements EmiRecipe {
 	private final RvCategoryAdapter<R> category;
 	private final RecipeHolder<R> recipe;
+	protected List<EmiIngredient> inputs = Lists.newArrayList();
+	protected List<EmiIngredient> catalysts = Lists.newArrayList();
+	protected List<EmiStack> outputs = Lists.newArrayList();
 
-	public EmiRecipeAdapter(RvCategoryAdapter<R> category, RecipeHolder<R> recipe) {
+	public EmiRecipeAdapter(RvCategoryAdapter<R> category, RecipeHolder<R> recipeHolder) {
 		this.category = category;
-		this.recipe = recipe;
+		this.recipe = recipeHolder;
+
+		R recipe = recipeHolder.value();
+		List<IngredientInfo> ingredients = RVs.generateShapelessInputs(recipe);
+		for (IngredientInfo ingredient : ingredients) {
+			EmiIngredient emiIngredient = EmiIngredient.of(ingredient.ingredient, ingredient.count);
+			if (ingredient.type == SlotType.CATALYST) {
+				catalysts.add(emiIngredient);
+			} else {
+				inputs.add(emiIngredient);
+			}
+		}
+
+		//TODO we need better handling of block inputs
+		List<EmiIngredient> list = RvCategory.needConsumeBlockInput(recipe) ? inputs : catalysts;
+		recipe.getBlockInputs()
+				.stream()
+				.map(BlockPredicateExtensions::matchedFluids)
+				.flatMap(Set::stream)
+				.distinct()
+				.map(EmiStack::of)
+				.forEach(list::add);
+		recipe.getBlockInputs()
+				.stream()
+				.map(BlockPredicateExtensions::matchedBlocks)
+				.flatMap(Set::stream)
+				.map(Block::asItem)
+				.filter(it -> !it.equals(Items.AIR))
+				.distinct()
+				.map(EmiStack::of)
+				.forEach(list::add);
+
+		recipe.allActions()
+				.filter(it -> !it.hidden())
+				.map(PostActionDisplay::getOutputItems)
+				.flatMap(List::stream)
+				.map(EmiStack::of)
+				.forEach(outputs::add);
+		recipe.getBlockOutputs()
+				.stream()
+				.map(BlockPredicateExtensions::matchedFluids)
+				.flatMap(Set::stream)
+				.distinct()
+				.map(EmiStack::of)
+				.forEach(outputs::add);
 	}
 
 	@Override
@@ -59,55 +115,17 @@ public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements
 
 	@Override
 	public List<EmiIngredient> getInputs() {
-		R recipe = this.recipe.value();
-		List<EmiIngredient> ingredients = Lists.newArrayList();
-		try {
-			recipe.sizedIngredients().stream()
-					.map($ -> EmiIngredient.of($.ingredient(), $.count()))
-					.forEach(ingredients::add);
-		} catch (UnsupportedOperationException ignored) {
-			recipe.getIngredients().stream()
-					.map(EmiIngredient::of)
-					.forEach(ingredients::add);
-		}
-		recipe.getBlockInputs().stream()
-				.map(BlockPredicateExtensions::matchedFluids)
-				.flatMap(Set::stream)
-				.distinct()
-				.map(EmiStack::of)
-				.forEach(ingredients::add);
-		recipe.getBlockInputs().stream()
-				.map(BlockPredicateExtensions::matchedBlocks)
-				.flatMap(Set::stream)
-				.map(Block::asItem)
-				.filter(it -> !it.equals(Items.AIR))
-				.distinct()
-				.map(EmiStack::of)
-				.forEach(ingredients::add);
-		return ingredients;
+		return inputs;
 	}
 
 	@Override
 	public List<EmiIngredient> getCatalysts() {
-		return EmiRecipe.super.getCatalysts();
+		return catalysts;
 	}
 
 	@Override
 	public List<EmiStack> getOutputs() {
-		R recipe = this.recipe.value();
-		List<EmiStack> ingredients = Lists.newArrayList();
-		recipe.allActions().filter(it -> !it.hidden())
-				.map(PostActionDisplay::getOutputItems)
-				.flatMap(List::stream)
-				.map(EmiStack::of)
-				.forEach(ingredients::add);
-		recipe.getBlockOutputs().stream()
-				.map(BlockPredicateExtensions::matchedFluids)
-				.flatMap(Set::stream)
-				.distinct()
-				.map(EmiStack::of)
-				.forEach(ingredients::add);
-		return ingredients;
+		return outputs;
 	}
 
 	@Override
@@ -139,6 +157,21 @@ public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements
 		var widgetBuilder = new RvCategoryWidgetBuilder<>(instance, recipe) {
 			@Override
 			public void addElement(RenderElement element) {
+				boolean interactive = false;
+				if (element instanceof InteractiveRenderElement interactiveElement) {
+					interactive = interactiveElement.getTooltip() != null || interactiveElement.getOnInput() != null;
+				}
+				if (!interactive) {
+					ScreenElement unwrapped = WrapperRenderElement.unwrap(element);
+					if (unwrapped instanceof TextElementRenderer text) {
+						int x = (int) element.x();
+						if (text.centered) {
+							x -= Minecraft.getInstance().font.width(text.text) / 2;
+						}
+						widgets.addText(text.text, x, (int) element.y(), text.lightModeColor, text.shadow);
+						return;
+					}
+				}
 				widgets.add(new EmiWidgetAdapter(element));
 			}
 		};
@@ -147,18 +180,24 @@ public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements
 
 	private void ingredientGroup(WidgetHolder widgets, R recipe, float x, float y) {
 		var ingredients = RVs.generateShapelessInputs(recipe);
+		slotGroup(
+				widgets, x, y, ingredients, (w, ingredient, x0, y0) -> {
+					LycheeSlotWidget widget = w.add(new LycheeSlotWidget(
+							EmiIngredient.of(ingredient.ingredient, ingredient.count),
+							(int) x0,
+							(int) y0,
+							ingredient.type));
+					for (Component tooltip : ingredient.tooltips) {
+						widget.appendTooltip(tooltip);
+					}
+				});
 	}
 
 	private void actionGroup(WidgetHolder widgets, R recipe, float x, float y) {
 		slotGroup(widgets, x, y, recipe.postActions().stream().filter(it -> !it.hidden()).toList(), this::actionSlot);
 	}
 
-	static <T> void slotGroup(
-			WidgetHolder widgets,
-			float x,
-			float y,
-			List<T> items,
-			SlotLayoutFunction<T> layoutFunction) {
+	static <T> void slotGroup(WidgetHolder widgets, float x, float y, List<T> items, SlotLayoutFunction<T> layoutFunction) {
 		var size = Math.min(items.size(), 9);
 		var gridX = (int) Math.ceil(Math.sqrt(size));
 		var gridY = (int) Math.ceil((float) size / gridX);
@@ -185,30 +224,42 @@ public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements
 		SlotType slotType = action.conditions().showingCount() == 0 ? SlotType.NORMAL : SlotType.CHANCE;
 		LycheeSlotWidget widget = widgets.add(new LycheeSlotWidget(EmiIngredient.of(entries), (int) x, (int) y, slotType));
 		widget.recipeContext(this);
-//		widget.appendTooltip()
 	}
 
-	private void buildActionSlot(
-			List<EmiIngredient> entries,
-			PostAction action,
-			Map<EmiIngredient, PostAction> itemMap) {
+	@SuppressWarnings("UnstableApiUsage")
+	private void buildActionSlot(List<EmiIngredient> entries, PostAction action, Map<EmiIngredient, PostAction> itemMap) {
 		switch (action) {
 			case DropItem dropItem -> {
 				ActionRenderer<PostAction> renderer = ActionRenderer.of(action);
 				ItemEmiStack entry = new ItemEmiStack(dropItem.itemStack()) {
 					@Override
 					public void render(GuiGraphics draw, int x, int y, float delta, int flags) {
-						super.render(draw, x, y, delta, flags);
+						if (action.commonProperties().icon() == null) {
+							super.render(draw, x, y, delta, flags);
+						} else {
+							renderer.render(action, draw, x, y);
+						}
+					}
+
+					@Override
+					public List<ClientTooltipComponent> getTooltip() {
+						List<ClientTooltipComponent> tooltip = super.getTooltip();
+						List<Component> list = Lists.newArrayList();
+						ActionRenderer.appendConditionTooltips(list, action, Minecraft.getInstance().player);
+						if (!list.isEmpty()) {
+							list.stream().map(Component::getVisualOrderText).map(ClientTooltipComponent::create).forEach(tooltip::add);
+						}
+						return tooltip;
 					}
 				};
+				if (action.commonProperties().icon() != null) {
+					entry.setUnbatchable();
+				}
 				entries.add(entry);
 				itemMap.put(entry, dropItem);
 			}
 			case CompoundAction compoundAction -> {
-				compoundAction.getChildActions().filter(it -> !it.hidden()).forEach(child -> buildActionSlot(
-						entries,
-						child,
-						itemMap));
+				compoundAction.getChildActions().filter(it -> !it.hidden()).forEach(child -> buildActionSlot(entries, child, itemMap));
 			}
 			default -> entries.add(new PostActionEmiStack(action));
 		}
