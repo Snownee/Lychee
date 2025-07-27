@@ -16,6 +16,7 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostAction;
@@ -90,6 +91,16 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	@Override
 	public void validate(ILycheeRecipe<?> recipe) {
 		Preconditions.checkArgument(!recipe.getItemIndexes(target).isEmpty(), "No target found for %s", target);
+	}
+
+	@Override
+	public ItemStack transformRemainder(ItemStack itemStack, @Nullable ILycheeRecipe<?> recipe) {
+		if (itemStack.isDamageableItem()) {
+			ItemStack copy = itemStack.copy();
+			copy.setDamageValue(copy.getDamageValue() + damage);
+			return copy;
+		}
+		return ItemStack.EMPTY;
 	}
 
 	public static class Type implements PostActionType<DamageItem> {

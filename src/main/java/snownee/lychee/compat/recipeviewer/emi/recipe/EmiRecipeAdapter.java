@@ -8,6 +8,7 @@ import org.joml.Vector2fc;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mojang.datafixers.util.Pair;
 
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
@@ -20,10 +21,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import snownee.lychee.action.DropItem;
+import snownee.lychee.action.input.DamageItem;
+import snownee.lychee.action.input.PreventDefault;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
@@ -51,6 +55,7 @@ public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements
 	private final RvCategoryAdapter<R> category;
 	private final RecipeHolder<R> recipe;
 	protected List<EmiIngredient> inputs = Lists.newArrayList();
+	protected List<Pair<IngredientInfo, EmiIngredient>> ingredients = Lists.newArrayList();
 	protected List<EmiIngredient> catalysts = Lists.newArrayList();
 	protected List<EmiStack> outputs = Lists.newArrayList();
 
@@ -62,7 +67,20 @@ public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements
 		List<IngredientInfo> ingredients = RVs.generateShapelessInputs(recipe);
 		for (IngredientInfo ingredient : ingredients) {
 			EmiIngredient emiIngredient = EmiIngredient.of(ingredient.ingredient, ingredient.count);
-			if (ingredient.type == SlotType.CATALYST) {
+			if (ingredient.relatedAction != null) {
+				for (EmiStack emiStack : emiIngredient.getEmiStacks()) {
+					ItemStack itemStack = emiStack.getItemStack();
+					if (itemStack.isEmpty()) {
+						continue;
+					}
+					itemStack = ingredient.relatedAction.transformRemainder(itemStack, recipe);
+					if (!itemStack.isEmpty()) {
+						emiStack.setRemainder(EmiStack.of(itemStack));
+					}
+				}
+			}
+			this.ingredients.add(Pair.of(ingredient, emiIngredient));
+			if (ingredient.type == SlotType.CATALYST && ingredient.relatedAction instanceof PreventDefault) {
 				catalysts.add(emiIngredient);
 			} else {
 				inputs.add(emiIngredient);
@@ -179,16 +197,14 @@ public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements
 	}
 
 	private void ingredientGroup(WidgetHolder widgets, R recipe, float x, float y) {
-		var ingredients = RVs.generateShapelessInputs(recipe);
 		slotGroup(
-				widgets, x, y, ingredients, (w, ingredient, x0, y0) -> {
-					LycheeSlotWidget widget = w.add(new LycheeSlotWidget(
-							EmiIngredient.of(ingredient.ingredient, ingredient.count),
-							(int) x0,
-							(int) y0,
-							ingredient.type));
-					for (Component tooltip : ingredient.tooltips) {
-						widget.appendTooltip(tooltip);
+				widgets, x, y, ingredients, (w, pair, x0, y0) -> {
+					IngredientInfo info = pair.getFirst();
+					LycheeSlotWidget widget = w.add(new LycheeSlotWidget(pair.getSecond(), (int) x0, (int) y0, info.type));
+					if (!(info.relatedAction instanceof DamageItem)) {
+						for (Component tooltip : info.tooltips) {
+							widget.appendTooltip(tooltip);
+						}
 					}
 				});
 	}
