@@ -2,7 +2,7 @@
 
 _Since 6.3_
 
-These are 3 special recipe types that are used to customize the UI in JEI / REI from the server side.
+These are 3 special recipe types that are used to customize the UI in JEI/REI/EMI from the server side.
 
 Currently, modifying elements is not supported for anvil crafting and shaped crafting recipe.
 
@@ -12,7 +12,7 @@ Currently, modifying elements is not supported for anvil crafting and shaped cra
 
 The category id format is usually `<recipe type id>/<group id namespace>/<group id path>`. Specifically, the block clicking recipe uses block interacting recipe's recipe type id.
 
-If the group id is not specified, it will be set to `default`. Recipes with the same category id will be grouped together in JEI / REI.
+If the group id is not specified, it will be set to `default`. Recipes with the same category id will be grouped together in JEI/REI/EMI.
 
 The elements are split into many sections. You can add new elements by using any new name, or replace the existing elements by using the existing name. Replacing the existing elements with an empty array will remove that section.
 

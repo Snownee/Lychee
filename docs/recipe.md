@@ -12,33 +12,33 @@ Recipes should be placed in `data/<namespace>/recipe/` folder, like normal data-
 
 === "NeoForge"
 
-    | Name                | Description                                                                        | Type / Literal                                                                                     |
-    | ------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-    | type                | type                                                                               | string                                                                                             |
-    | neoforge:conditions | conditions ^optional^                                                              | [NeoForgeCondition](https://docs.neoforged.net/docs/resources/server/conditional)[]                |
-    | if                  | contextual conditions ^optional^                                                   | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
-    | post                | post actions ^optional^                                                            | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
-    | comment             | language key to show in JEI/REI ^optional^                                         | string                                                                                             |
-    | ghost               | only show in JEI/REI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
-    | hide_in_viewer      | hide in JEI/REI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
-    | group               | show this recipe in a new category in JEI/REI ^optional^                           | string (ResourceLocation)                                                                          |
-    | max_repeats         | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | [IntBounds](general-types.md#intbounds)                                                            |
-    |                     | additional properties...                                                           |                                                                                                    |
+    | Name                | Description                                                                            | Type / Literal                                                                                     |
+    | ------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+    | type                | type                                                                                   | string                                                                                             |
+    | neoforge:conditions | conditions ^optional^                                                                  | [NeoForgeCondition](https://docs.neoforged.net/docs/resources/server/conditional)[]                |
+    | if                  | contextual conditions ^optional^                                                       | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+    | post                | post actions ^optional^                                                                | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
+    | comment             | language key to show in JEI/REI/EMI ^optional^                                         | string                                                                                             |
+    | ghost               | only show in JEI/REI/EMI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
+    | hide_in_viewer      | hide in JEI/REI/EMI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
+    | group               | show this recipe in a new category in JEI/REI/EMI ^optional^                           | string (ResourceLocation)                                                                          |
+    | max_repeats         | max repeats for a processing. not work for a unrepeatable recipe ^optional^            | [IntBounds](general-types.md#intbounds)                                                            |
+    |                     | additional properties...                                                               |                                                                                                    |
 
 === "Fabric"
 
-    | Name                   | Description                                                                        | Type / Literal                                                                                     |
-    | ---------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-    | type                   | type                                                                               | string                                                                                             |
-    | fabric:load_conditions | conditions ^optional^                                                              | [FabricCondition](https://github.com/FabricMC/fabric/pull/1656)[]                                  |
-    | if                     | contextual conditions ^optional^                                                   | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
-    | post                   | post actions ^optional^                                                            | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
-    | comment                | language key to show in JEI/REI ^optional^                                         | string                                                                                             |
-    | ghost                  | only show in JEI/REI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
-    | hide_in_viewer         | hide in JEI/REI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
-    | group                  | show this recipe in a new category in JEI/REI ^optional^                           | string (ResourceLocation)                                                                          |
-    | max_repeats            | max repeats for a processing. not work for a unrepeatable recipe ^optional^        | [IntBounds](general-types.md#intbounds)                                                            |
-    |                        | additional properties...                                                           |                                                                                                    |
+    | Name                   | Description                                                                            | Type / Literal                                                                                     |
+    | ---------------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+    | type                   | type                                                                                   | string                                                                                             |
+    | fabric:load_conditions | conditions ^optional^                                                                  | [FabricCondition](https://github.com/FabricMC/fabric/pull/1656)[]                                  |
+    | if                     | contextual conditions ^optional^                                                       | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+    | post                   | post actions ^optional^                                                                | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                                     |
+    | comment                | language key to show in JEI/REI/EMI ^optional^                                         | string                                                                                             |
+    | ghost                  | only show in JEI/REI/EMI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
+    | hide_in_viewer         | hide in JEI/REI/EMI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
+    | group                  | show this recipe in a new category in JEI/REI/EMI ^optional^                           | string (ResourceLocation)                                                                          |
+    | max_repeats            | max repeats for a processing. not work for a unrepeatable recipe ^optional^            | [IntBounds](general-types.md#intbounds)                                                            |
+    |                        | additional properties...                                                               |                                                                                                    |
 
 ## Recipe Types
 
@@ -445,7 +445,7 @@ Default behavior: Item is consumed.
 
 ### Anvil Crafting
 
-It is not recommended to add actions to the recipe, because they cannot be displayed on JEI/REI at the moment.
+It is not recommended to add actions to the recipe, because they cannot be displayed on JEI/REI/EMI at the moment.
 
 This recipe type is not [repeatable](concepts.md#repeatability).
 
@@ -700,7 +700,7 @@ Default behavior: Continue matching the rest of the recipes.
 
 !!! note
 
-    This recipe type does not have JEI / REI integration.
+    This recipe type does not have JEI/REI/EMI integration.
 
 ??? example
 
@@ -833,7 +833,7 @@ Default behavior: Do the default ticking behavior.
 
 !!! note
 
-    This recipe type does not have JEI / REI integration.
+    This recipe type does not have JEI/REI/EMI integration.
 
 ### Dripstone Dripping
 

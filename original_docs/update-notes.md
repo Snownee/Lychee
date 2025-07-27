@@ -1,8 +1,12 @@
 # Update Notes
 
+## 6.3.6
+
+- Added EMI integration.
+
 ## 6.3
 
-- Added JEI / REI integration customization.
+- Added JEI/REI integration customization.
   - You can now add, hide or replace the UI elements in a Lychee's recipe.
   - You can change the width and height of the recipe UI.
   - You can replace the category icon or workstations of a recipe type.

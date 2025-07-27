@@ -119,7 +119,7 @@ LycheeEvents.customCondition('example_always_true_condition', (event) => {
   event.testFunc = (recipe, ctx, times) => times
 
   // this function is optional
-  // will be called when the condition is displayed in JEI/REI on the client side
+  // will be called when the condition is displayed in JEI/REI/EMI on the client side
   // true    => checkmark
   // false   => cross
   // "default" => the default "-"

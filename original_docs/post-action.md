@@ -6,13 +6,13 @@ You can add post-actions to a Lychee's recipe, and they will be executed after t
 
 ## Basic Format
 
-| Name | Description                                                      | Type / Literal                                                                                     |
-| ---- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| type | type                                                             | string                                                                                             |
-| if   | contextual conditions ^optional^                                 | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
-| hide | hide this action in JEI/REI ^optional^{ title="default: false" } | true \| false                                                                                      |
-| icon | sprite icon location ^optional^                                  | string                                                                                             |
-|      | additional properties...                                         |                                                                                                    |
+| Name | Description                                                          | Type / Literal                                                                                     |
+| ---- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| type | type                                                                 | string                                                                                             |
+| if   | contextual conditions ^optional^                                     | [ContextualCondition](contextual-condition.md) \| [ContextualCondition](contextual-condition.md)[] |
+| hide | hide this action in JEI/REI/EMI ^optional^{ title="default: false" } | true \| false                                                                                      |
+| icon | sprite icon location ^optional^                                      | string                                                                                             |
+|      | additional properties...                                             |                                                                                                    |
 
 ## Entity-related Actions
 
@@ -143,7 +143,7 @@ Cycles a property's value in a block-state.
 
 ### Prevent Default Behavior
 
-Prevents default behavior and do nothing. The defaultbehaviors are explained on the recipes page.
+Prevents default behavior and do nothing. The default behaviors are explained on the recipes page.
 
 !!! note "Format"
 

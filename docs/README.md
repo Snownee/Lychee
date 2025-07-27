@@ -10,7 +10,7 @@ You can download Lychee on CurseForge:
 - [Lychee (NeoForge)](https://www.curseforge.com/minecraft/mc-mods/lychee)
 - [Lychee (Fabric)](https://www.curseforge.com/minecraft/mc-mods/lychee-fabric)
 
-Currently Lychee has support for the following recipe type (with full JEI/REI support!):
+Currently Lychee has support for the following recipe type (with full JEI/REI/EMI support!):
 
 - Use or click on a block with item
 - Item entity burning
@@ -18,10 +18,10 @@ Currently Lychee has support for the following recipe type (with full JEI/REI su
 - Anvil crafting
 - Falling block crushing items or block
 - Lightning channeling
-- Random block ticking (No JEI/REI integration)
+- Random block ticking (No JEI/REI/EMI integration)
 - Dripstone dripping
 - Advanced shaped crafting
-- Entity ticking (No JEI/REI integration)
+- Entity ticking (No JEI/REI/EMI integration)
 
 ## Dependencies Information
 
