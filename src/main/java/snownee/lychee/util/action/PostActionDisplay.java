@@ -2,9 +2,12 @@ package snownee.lychee.util.action;
 
 import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostActionDisplay {
 
@@ -27,4 +30,8 @@ public interface PostActionDisplay {
 	}
 
 	String toJsonString();
+
+	default ItemStack transformRemainder(ItemStack itemStack, @Nullable ILycheeRecipe<?> recipe) {
+		return ItemStack.EMPTY;
+	}
 }

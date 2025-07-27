@@ -73,6 +73,7 @@ public interface ActionRenderer<T extends PostAction> {
 							info.addTooltip(component);
 							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
 							info.type = SlotType.CATALYST;
+							info.relatedAction = action;
 						});
 					}
 				});
@@ -95,6 +96,7 @@ public interface ActionRenderer<T extends PostAction> {
 							info.addTooltip(((LycheeRecipeType) lycheeRecipeType).getPreventDefaultDescription(recipe));
 							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
 							info.type = SlotType.CATALYST;
+							info.relatedAction = action;
 						}
 					}
 				});
