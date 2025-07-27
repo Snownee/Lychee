@@ -25,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.input.DamageItem;
 import snownee.lychee.action.input.PreventDefault;
@@ -42,6 +43,7 @@ import snownee.lychee.compat.recipeviewer.category.RvCategoryWidgetBuilder;
 import snownee.lychee.compat.recipeviewer.emi.category.RvCategoryAdapter;
 import snownee.lychee.compat.recipeviewer.emi.element.EmiWidgetAdapter;
 import snownee.lychee.compat.recipeviewer.emi.element.LycheeSlotWidget;
+import snownee.lychee.compat.recipeviewer.emi.ingredient.PostActionEmiStack;
 import snownee.lychee.ui.TextElementRenderer;
 import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.action.CompoundAction;
@@ -88,7 +90,12 @@ public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements
 		}
 
 		//TODO we need better handling of block inputs
-		List<EmiIngredient> list = RvCategory.needConsumeBlockInput(recipe) ? inputs : catalysts;
+		List<EmiIngredient> list;
+		if (recipe.getType() == RecipeTypes.BLOCK_EXPLODING) {
+			list = inputs;
+		} else {
+			list = RvCategory.needConsumeBlockInput(recipe) ? inputs : catalysts;
+		}
 		recipe.getBlockInputs()
 				.stream()
 				.map(BlockPredicateExtensions::matchedFluids)
@@ -253,7 +260,7 @@ public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements
 						if (action.commonProperties().icon() == null) {
 							super.render(draw, x, y, delta, flags);
 						} else {
-							renderer.render(action, draw, x, y);
+							renderer.internalRender(action, draw, x, y);
 						}
 					}
 

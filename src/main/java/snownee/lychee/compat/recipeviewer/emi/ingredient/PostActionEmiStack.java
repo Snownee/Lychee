@@ -1,4 +1,4 @@
-package snownee.lychee.compat.recipeviewer.emi.recipe;
+package snownee.lychee.compat.recipeviewer.emi.ingredient;
 
 import java.util.List;
 
@@ -43,7 +43,7 @@ public class PostActionEmiStack extends EmiStack {
 
 	@Override
 	public void render(GuiGraphics draw, int x, int y, float delta, int flags) {
-		ActionRenderer.of(action).render(action, draw, x, y);
+		ActionRenderer.of(action).internalRender(action, draw, x, y);
 	}
 
 	@Override
