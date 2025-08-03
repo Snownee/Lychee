@@ -44,6 +44,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -56,6 +57,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
+import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
@@ -109,12 +111,21 @@ public class CommonProxy {
 		modEventBus.addListener(CommonProxy::register);
 		modEventBus.addListener(CommonProxy::registerRecipeBookCategories);
 		MinecraftForge.EVENT_BUS.addListener((PlayerInteractEvent.RightClickBlock event) -> {
-			InteractionResult result = InteractionRecipeMod.useItemOn(event.getEntity(), event.getLevel(), event.getHand(), event.getHitVec());
+			InteractionResult result = InteractionRecipeMod.useItemOn(
+					event.getEntity(),
+					event.getLevel(),
+					event.getHand(),
+					event.getHitVec());
 			event.setCanceled(result.consumesAction());
 			event.setCancellationResult(result);
 		});
 		MinecraftForge.EVENT_BUS.addListener((PlayerInteractEvent.LeftClickBlock event) -> {
-			InteractionResult result = InteractionRecipeMod.clickItemOn(event.getEntity(), event.getLevel(), event.getHand(), event.getPos(), event.getFace());
+			InteractionResult result = InteractionRecipeMod.clickItemOn(
+					event.getEntity(),
+					event.getLevel(),
+					event.getHand(),
+					event.getPos(),
+					event.getFace());
 			event.setCanceled(result.consumesAction());
 			event.setCancellationResult(result);
 		});
@@ -133,22 +144,25 @@ public class CommonProxy {
 
 	public static void register(RegisterEvent event) {
 		event.register(LycheeRegistries.CONTEXTUAL.key(), helper -> ContextualConditionTypes.init());
-		event.register(LycheeRegistries.POST_ACTION.key(), helper -> {
-			PostActionTypes.init();
-			if (isPhysicalClient()) {
-				ClientProxy.registerPostActionRenderers();
-			}
-		});
-		event.register(ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), helper -> {
-			RecipeSerializers.init();
-			CraftingHelper.register(new ResourceLocation(Lychee.ID, "always_true"), AlwaysTrueIngredient.Serializer.INSTANCE);
-		});
+		event.register(
+				LycheeRegistries.POST_ACTION.key(), helper -> {
+					PostActionTypes.init();
+					if (isPhysicalClient()) {
+						ClientProxy.registerPostActionRenderers();
+					}
+				});
+		event.register(
+				ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), helper -> {
+					RecipeSerializers.init();
+					CraftingHelper.register(new ResourceLocation(Lychee.ID, "always_true"), AlwaysTrueIngredient.Serializer.INSTANCE);
+				});
 		event.register(ForgeRegistries.RECIPE_TYPES.getRegistryKey(), helper -> RecipeTypes.init());
-		event.register(ForgeRegistries.PARTICLE_TYPES.getRegistryKey(), helper -> {
-			helper.register(new ResourceLocation(Lychee.ID, "dripstone_dripping"), DripstoneRecipeMod.DRIPSTONE_DRIPPING);
-			helper.register(new ResourceLocation(Lychee.ID, "dripstone_falling"), DripstoneRecipeMod.DRIPSTONE_FALLING);
-			helper.register(new ResourceLocation(Lychee.ID, "dripstone_splash"), DripstoneRecipeMod.DRIPSTONE_SPLASH);
-		});
+		event.register(
+				ForgeRegistries.PARTICLE_TYPES.getRegistryKey(), helper -> {
+					helper.register(new ResourceLocation(Lychee.ID, "dripstone_dripping"), DripstoneRecipeMod.DRIPSTONE_DRIPPING);
+					helper.register(new ResourceLocation(Lychee.ID, "dripstone_falling"), DripstoneRecipeMod.DRIPSTONE_FALLING);
+					helper.register(new ResourceLocation(Lychee.ID, "dripstone_splash"), DripstoneRecipeMod.DRIPSTONE_SPLASH);
+				});
 	}
 
 	public static void registerRecipeBookCategories(RegisterRecipeBookCategoriesEvent event) {
@@ -165,7 +179,8 @@ public class CommonProxy {
 			@Nullable Consumer<ItemEntity> extraStep) {
 		while (!pStack.isEmpty()) {
 			var itementity = new ItemEntity(pLevel, pX, pY, pZ, pStack.split(Math.min(RANDOM.nextInt(21) + 10, pStack.getMaxStackSize())));
-			itementity.setDeltaMovement(RANDOM.nextGaussian() * 0.05 - 0.025,
+			itementity.setDeltaMovement(
+					RANDOM.nextGaussian() * 0.05 - 0.025,
 					RANDOM.nextGaussian() * 0.05 + 0.2,
 					RANDOM.nextGaussian() * 0.05 - 0.025);
 			if (extraStep != null) {
@@ -176,7 +191,9 @@ public class CommonProxy {
 	}
 
 	public static String makeDescriptionId(String pType, @Nullable ResourceLocation pId) {
-		return pId == null ? pType + ".unregistered_sadface" : pType + "." + wrapNamespace(pId.getNamespace()) + "." + pId.getPath().replace('/', '.');
+		return pId == null ?
+				pType + ".unregistered_sadface" :
+				pType + "." + wrapNamespace(pId.getNamespace()) + "." + pId.getPath().replace('/', '.');
 	}
 
 	public static String wrapNamespace(String modid) {
@@ -388,7 +405,11 @@ public class CommonProxy {
 		customConditionListeners.add(listener);
 	}
 
-	public static synchronized void postCustomActionEvent(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
+	public static synchronized void postCustomActionEvent(
+			String id,
+			CustomAction action,
+			ILycheeRecipe<?> recipe,
+			ILycheeRecipe.NBTPatchContext patchContext) {
 		for (CustomActionListener listener : customActionListeners) {
 			if (listener.on(id, action, recipe, patchContext)) {
 				return;
@@ -418,28 +439,66 @@ public class CommonProxy {
 		return IngredientInfo.Type.NORMAL;
 	}
 
-	public static ItemStack dispensePlacement(BlockSource pSource, ItemStack pStack, Direction direction) {
+	public static boolean dispensePlacement(BlockSource pSource, ItemStack pStack, Direction direction) {
 		if (!(pStack.getItem() instanceof BlockItem item)) {
-			return pStack;
+			return false;
 		}
 		BlockPos blockpos = pSource.getPos().relative(direction);
 		BlockState state = pSource.getLevel().getBlockState(blockpos);
-		if (FallingBlock.isFree(state)) {
-			item.place(new DirectionalPlaceContext(pSource.getLevel(), blockpos, direction, pStack, direction));
+		if (!FallingBlock.isFree(state)) {
+			return false;
 		}
-		return pStack;
+		if (item.getBlock() instanceof PointedDripstoneBlock block) {
+			BlockState blockState = block.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN);
+			FallingBlockEntity entity = FallingBlockEntity.fall(pSource.getLevel(), blockpos, blockState);
+			float f = 6;
+			entity.setHurtsEntities(f, 40);
+			pStack.shrink(1);
+			return true;
+		}
+		try {
+			return item.place(new DirectionalPlaceContext(pSource.getLevel(), blockpos, direction, pStack, direction)).consumesAction();
+		} catch (Exception exception) {
+			Lychee.LOGGER.error("Error trying to place block at {}", blockpos, exception);
+		}
+		return false;
 	}
 
-	public static void explode(Explode action, ServerLevel level, Vec3 pos, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, float radius) {
-		Explosion explosion = new Explosion(level, entity, damageSource, damageCalculator, pos.x, pos.y, pos.z, radius, action.fire, action.blockInteraction);
+	public static void explode(
+			Explode action,
+			ServerLevel level,
+			Vec3 pos,
+			@Nullable Entity entity,
+			@Nullable DamageSource damageSource,
+			@Nullable ExplosionDamageCalculator damageCalculator,
+			float radius) {
+		Explosion explosion = new Explosion(
+				level,
+				entity,
+				damageSource,
+				damageCalculator,
+				pos.x,
+				pos.y,
+				pos.z,
+				radius,
+				action.fire,
+				action.blockInteraction);
 		explosion.explode();
 		explosion.finalizeExplosion(true);
 		if (!explosion.interactsWithBlocks()) {
 			explosion.clearToBlow();
 		}
 		for (ServerPlayer player : level.players()) {
-			if (!(player.distanceToSqr(pos) < 4096.0)) continue;
-			player.connection.send(new ClientboundExplodePacket(pos.x, pos.y, pos.z, radius, explosion.getToBlow(), explosion.getHitPlayers().get(player)));
+			if (!(player.distanceToSqr(pos) < 4096.0)) {
+				continue;
+			}
+			player.connection.send(new ClientboundExplodePacket(
+					pos.x,
+					pos.y,
+					pos.z,
+					radius,
+					explosion.getToBlow(),
+					explosion.getHitPlayers().get(player)));
 		}
 	}
 

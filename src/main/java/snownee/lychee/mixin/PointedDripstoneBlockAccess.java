@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction.AxisDirection;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -35,12 +36,23 @@ public interface PointedDripstoneBlockAccess {
 	}
 
 	@Invoker
-	static Optional<BlockPos> callFindBlockVertical(LevelAccessor level, BlockPos blockPos2, AxisDirection axisDirection, BiPredicate<BlockPos, BlockState> biPredicate, Predicate<BlockState> predicate, int i) {
+	static Optional<BlockPos> callFindBlockVertical(
+			LevelAccessor level,
+			BlockPos blockPos2,
+			AxisDirection axisDirection,
+			BiPredicate<BlockPos, BlockState> biPredicate,
+			Predicate<BlockState> predicate,
+			int i) {
 		throw new IllegalStateException();
 	}
 
 	@Invoker
 	static Optional<BlockPos> callFindRootBlock(Level level, BlockPos blockPos2, BlockState blockState, int i) {
+		throw new IllegalStateException();
+	}
+
+	@Invoker
+	static void callSpawnFallingStalactite(BlockState blockState, ServerLevel level, BlockPos pos) {
 		throw new IllegalStateException();
 	}
 
