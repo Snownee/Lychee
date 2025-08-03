@@ -32,6 +32,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -41,6 +42,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.Mod;
@@ -270,16 +272,29 @@ public class CommonProxy implements ModInitializer {
 		return IngredientType.NORMAL;
 	}
 
-	public static ItemStack dispensePlacement(BlockSource pSource, ItemStack pStack, Direction direction) {
+	public static boolean dispensePlacement(BlockSource pSource, ItemStack pStack, Direction direction) {
 		if (!(pStack.getItem() instanceof BlockItem item)) {
-			return pStack;
+			return false;
 		}
 		var blockpos = pSource.pos().relative(direction);
 		var state = pSource.level().getBlockState(blockpos);
-		if (FallingBlock.isFree(state)) {
-			item.place(new DirectionalPlaceContext(pSource.level(), blockpos, direction, pStack, direction));
+		if (!FallingBlock.isFree(state)) {
+			return false;
 		}
-		return pStack;
+		if (item.getBlock() instanceof PointedDripstoneBlock block) {
+			var blockState = block.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN);
+			var entity = FallingBlockEntity.fall(pSource.level(), blockpos, blockState);
+			var f = 6f;
+			entity.setHurtsEntities(f, 40);
+			pStack.shrink(1);
+			return true;
+		}
+		try {
+			item.place(new DirectionalPlaceContext(pSource.level(), blockpos, direction, pStack, direction));
+		} catch (Exception exception) {
+			Lychee.LOGGER.error("Error trying to place block at {}", blockpos, exception);
+		}
+		return false;
 	}
 
 	public static <T> String getTagTranslationKey(TagKey<T> key) {
