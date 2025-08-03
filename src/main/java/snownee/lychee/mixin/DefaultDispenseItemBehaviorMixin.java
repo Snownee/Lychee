@@ -46,7 +46,9 @@ public class DefaultDispenseItemBehaviorMixin {
 						LycheeConfig.dispenserFallableBlockPlacement && block instanceof Fallable)) {
 			return;
 		}
-		ci.setReturnValue(CommonProxy.dispensePlacement(pSource, pStack, direction));
-	}
 
+		if (CommonProxy.dispensePlacement(pSource, pStack, direction)) {
+			ci.setReturnValue(pStack);
+		}
+	}
 }
