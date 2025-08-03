@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.1-SNAPSHOT'
+    id 'fabric-loom' version '1.10-SNAPSHOT'
     id 'maven-publish'
     id "me.shedaniel.unified-publishing" version "0.1.+"
 }
@@ -83,8 +83,8 @@ dependencies {
     //modImplementation "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
     //annotationProcessor "libs:Kiwi-1.18.1-fabric:${project.kiwi_version}"
 
-    modImplementation "curse.maven:kiwi-549404:4688477"
-    annotationProcessor "curse.maven:kiwi-549404:4688477"
+    modImplementation "maven.modrinth:kiwi:${project.kiwi_version}+fabric"
+//    annotationProcessor "maven.modrinth:kiwi:${project.kiwi_version}+fabric"
 
     modRuntimeOnly "curse.maven:jade-324717:4792447"
 
