@@ -56,6 +56,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -69,6 +70,7 @@ import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
@@ -94,22 +96,24 @@ import snownee.lychee.mixin.RecipeManagerAccess;
 
 @Mod(Lychee.ID)
 public class CommonProxy implements ModInitializer {
-	public static final Event<CustomActionListener> CUSTOM_ACTION_EVENT = EventFactory.createArrayBacked(CustomActionListener.class, listeners -> (id, action, recipe, patchContext) -> {
-		for (CustomActionListener listener : listeners) {
-			if (listener.on(id, action, recipe, patchContext)) {
-				return true;
-			}
-		}
-		return false;
-	});
-	public static final Event<CustomConditionListener> CUSTOM_CONDITION_EVENT = EventFactory.createArrayBacked(CustomConditionListener.class, listeners -> (id, condition) -> {
-		for (CustomConditionListener listener : listeners) {
-			if (listener.on(id, condition)) {
-				return true;
-			}
-		}
-		return false;
-	});
+	public static final Event<CustomActionListener> CUSTOM_ACTION_EVENT = EventFactory.createArrayBacked(
+			CustomActionListener.class, listeners -> (id, action, recipe, patchContext) -> {
+				for (CustomActionListener listener : listeners) {
+					if (listener.on(id, action, recipe, patchContext)) {
+						return true;
+					}
+				}
+				return false;
+			});
+	public static final Event<CustomConditionListener> CUSTOM_CONDITION_EVENT = EventFactory.createArrayBacked(
+			CustomConditionListener.class, listeners -> (id, condition) -> {
+				for (CustomConditionListener listener : listeners) {
+					if (listener.on(id, condition)) {
+						return true;
+					}
+				}
+				return false;
+			});
 	private static final Random RANDOM = new Random();
 	public static boolean hasKiwi = isModLoaded("kiwi");
 	public static boolean hasDFLib = isModLoaded("dripstone_fluid_lib");
@@ -124,7 +128,8 @@ public class CommonProxy implements ModInitializer {
 			@Nullable Consumer<ItemEntity> extraStep) {
 		while (!pStack.isEmpty()) {
 			var itementity = new ItemEntity(pLevel, pX, pY, pZ, pStack.split(Math.min(RANDOM.nextInt(21) + 10, pStack.getMaxStackSize())));
-			itementity.setDeltaMovement(RANDOM.nextGaussian() * 0.05 - 0.025,
+			itementity.setDeltaMovement(
+					RANDOM.nextGaussian() * 0.05 - 0.025,
 					RANDOM.nextGaussian() * 0.05 + 0.2,
 					RANDOM.nextGaussian() * 0.05 - 0.025);
 			if (extraStep != null) {
@@ -135,7 +140,9 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static String makeDescriptionId(String pType, @Nullable ResourceLocation pId) {
-		return pId == null ? pType + ".unregistered_sadface" : pType + "." + wrapNamespace(pId.getNamespace()) + "." + pId.getPath().replace('/', '.');
+		return pId == null ?
+				pType + ".unregistered_sadface" :
+				pType + "." + wrapNamespace(pId.getNamespace()) + "." + pId.getPath().replace('/', '.');
 	}
 
 	public static String wrapNamespace(String modid) {
@@ -342,7 +349,11 @@ public class CommonProxy implements ModInitializer {
 		CUSTOM_CONDITION_EVENT.register(listener);
 	}
 
-	public static void postCustomActionEvent(String id, CustomAction action, ILycheeRecipe<?> recipe, ILycheeRecipe.NBTPatchContext patchContext) {
+	public static void postCustomActionEvent(
+			String id,
+			CustomAction action,
+			ILycheeRecipe<?> recipe,
+			ILycheeRecipe.NBTPatchContext patchContext) {
 		CUSTOM_ACTION_EVENT.invoker().on(id, action, recipe, patchContext);
 	}
 
@@ -372,44 +383,87 @@ public class CommonProxy implements ModInitializer {
 		return FabricParticleTypes.complex(deserializer);
 	}
 
-	public static ItemStack dispensePlacement(BlockSource pSource, ItemStack pStack, Direction direction) {
+	public static boolean dispensePlacement(BlockSource pSource, ItemStack pStack, Direction direction) {
 		if (!(pStack.getItem() instanceof BlockItem item)) {
-			return pStack;
+			return false;
 		}
 		BlockPos blockpos = pSource.getPos().relative(direction);
 		BlockState state = pSource.getLevel().getBlockState(blockpos);
-		if (FallingBlock.isFree(state)) {
-			item.place(new DirectionalPlaceContext(pSource.getLevel(), blockpos, direction, pStack, direction));
+		if (!FallingBlock.isFree(state)) {
+			return false;
 		}
-		return pStack;
+		if (item.getBlock() instanceof PointedDripstoneBlock block) {
+			BlockState blockState = block.defaultBlockState().setValue(PointedDripstoneBlock.TIP_DIRECTION, Direction.DOWN);
+			FallingBlockEntity entity = FallingBlockEntity.fall(pSource.getLevel(), blockpos, blockState);
+			float f = 6;
+			entity.setHurtsEntities(f, 40);
+			pStack.shrink(1);
+			return true;
+		}
+		try {
+			return item.place(new DirectionalPlaceContext(pSource.getLevel(), blockpos, direction, pStack, direction)).consumesAction();
+		} catch (Exception exception) {
+			Lychee.LOGGER.error("Error trying to place block at {}", blockpos, exception);
+		}
+		return false;
 	}
 
-	public static void explode(Explode action, ServerLevel level, Vec3 pos, @Nullable Entity entity, @Nullable DamageSource damageSource, @Nullable ExplosionDamageCalculator damageCalculator, float radius) {
-		Explosion explosion = new Explosion(level, entity, damageSource, damageCalculator, pos.x, pos.y, pos.z, radius, action.fire, action.blockInteraction);
+	public static void explode(
+			Explode action,
+			ServerLevel level,
+			Vec3 pos,
+			@Nullable Entity entity,
+			@Nullable DamageSource damageSource,
+			@Nullable ExplosionDamageCalculator damageCalculator,
+			float radius) {
+		Explosion explosion = new Explosion(
+				level,
+				entity,
+				damageSource,
+				damageCalculator,
+				pos.x,
+				pos.y,
+				pos.z,
+				radius,
+				action.fire,
+				action.blockInteraction);
 		explosion.explode();
 		explosion.finalizeExplosion(true);
 		if (!explosion.interactsWithBlocks()) {
 			explosion.clearToBlow();
 		}
 		for (ServerPlayer player : level.players()) {
-			if (!(player.distanceToSqr(pos) < 4096.0)) continue;
-			player.connection.send(new ClientboundExplodePacket(pos.x, pos.y, pos.z, radius, explosion.getToBlow(), explosion.getHitPlayers().get(player)));
+			if (!(player.distanceToSqr(pos) < 4096.0)) {
+				continue;
+			}
+			player.connection.send(new ClientboundExplodePacket(
+					pos.x,
+					pos.y,
+					pos.z,
+					radius,
+					explosion.getToBlow(),
+					explosion.getHitPlayers().get(player)));
 		}
 	}
 
 	@Override
 	public void onInitialize() {
 		if (hasKiwi) {
-			FabricLoader.getInstance().getModContainer("kiwi").map(ModContainer::getMetadata).map(ModMetadata::getVersion).ifPresent(version -> {
-				try {
-					Version minVersion = Version.parse("11.1.1");
-					if (minVersion.compareTo(version) > 0) {
-						throw new RuntimeException("Kiwi version is too low! Please update to at least 11.1.1. You have %s".formatted(version));
-					}
-				} catch (VersionParsingException e) {
-					throw new RuntimeException(e);
-				}
-			});
+			FabricLoader.getInstance()
+					.getModContainer("kiwi")
+					.map(ModContainer::getMetadata)
+					.map(ModMetadata::getVersion)
+					.ifPresent(version -> {
+						try {
+							Version minVersion = Version.parse("11.1.1");
+							if (minVersion.compareTo(version) > 0) {
+								throw new RuntimeException("Kiwi version is too low! Please update to at least 11.1.1. You have %s".formatted(
+										version));
+							}
+						} catch (VersionParsingException e) {
+							throw new RuntimeException(e);
+						}
+					});
 		}
 
 		RecipeTypes.init();
@@ -425,9 +479,18 @@ public class CommonProxy implements ModInitializer {
 		AttackBlockCallback.EVENT.register(InteractionRecipeMod::clickItemOn);
 
 		// Dripstone recipes
-		Registry.register(BuiltInRegistries.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_dripping"), DripstoneRecipeMod.DRIPSTONE_DRIPPING);
-		Registry.register(BuiltInRegistries.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_falling"), DripstoneRecipeMod.DRIPSTONE_FALLING);
-		Registry.register(BuiltInRegistries.PARTICLE_TYPE, new ResourceLocation(Lychee.ID, "dripstone_splash"), DripstoneRecipeMod.DRIPSTONE_SPLASH);
+		Registry.register(
+				BuiltInRegistries.PARTICLE_TYPE,
+				new ResourceLocation(Lychee.ID, "dripstone_dripping"),
+				DripstoneRecipeMod.DRIPSTONE_DRIPPING);
+		Registry.register(
+				BuiltInRegistries.PARTICLE_TYPE,
+				new ResourceLocation(Lychee.ID, "dripstone_falling"),
+				DripstoneRecipeMod.DRIPSTONE_FALLING);
+		Registry.register(
+				BuiltInRegistries.PARTICLE_TYPE,
+				new ResourceLocation(Lychee.ID, "dripstone_splash"),
+				DripstoneRecipeMod.DRIPSTONE_SPLASH);
 	}
 
 	public interface CustomActionListener {

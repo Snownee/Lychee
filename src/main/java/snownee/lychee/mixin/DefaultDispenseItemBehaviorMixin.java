@@ -27,7 +27,12 @@ public class DefaultDispenseItemBehaviorMixin {
 					value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;split(I)Lnet/minecraft/world/item/ItemStack;"
 			), method = "execute", locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true
 	)
-	private void execute(BlockSource pSource, ItemStack pStack, CallbackInfoReturnable<ItemStack> ci, Direction direction, Position position) {
+	private void execute(
+			BlockSource pSource,
+			ItemStack pStack,
+			CallbackInfoReturnable<ItemStack> ci,
+			Direction direction,
+			Position position) {
 		if (this == DropperBlock.DISPENSE_BEHAVIOUR) {
 			return;
 		}
@@ -38,7 +43,9 @@ public class DefaultDispenseItemBehaviorMixin {
 		if (!(pStack.is(LycheeTags.DISPENSER_PLACEMENT) || LycheeConfig.dispenserFallableBlockPlacement && block instanceof Fallable)) {
 			return;
 		}
-		ci.setReturnValue(CommonProxy.dispensePlacement(pSource, pStack, direction));
+		if (CommonProxy.dispensePlacement(pSource, pStack, direction)) {
+			ci.setReturnValue(pStack);
+		}
 	}
 
 }
