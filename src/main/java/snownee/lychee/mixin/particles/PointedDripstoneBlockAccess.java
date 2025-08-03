@@ -50,5 +50,4 @@ public interface PointedDripstoneBlockAccess {
 	static Optional<BlockPos> callFindRootBlock(Level level, BlockPos pos, BlockState state, int maxIterations) {
 		throw new IllegalStateException();
 	}
-
 }

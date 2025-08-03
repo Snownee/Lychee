@@ -45,26 +45,11 @@ public interface ActionRenderer<T extends PostAction> {
 	ActionRenderer<PostAction> DEFAULT = new ActionRenderer<>() {};
 
 	static void init() {
-		register(
-				PostActionTypes.DROP_ITEM,
-				(ItemStackActionRenderer<DropItem>) DropItem::itemStack
-		);
-		register(
-				PostActionTypes.SET_ITEM,
-				(ItemStackActionRenderer<SetItem>) SetItem::itemStack
-		);
-		register(
-				PostActionTypes.DROP_XP,
-				(ItemBasedActionRenderer<DropXp>) action -> Items.EXPERIENCE_BOTTLE.getDefaultInstance()
-		);
-		register(
-				PostActionTypes.EXECUTE,
-				(ItemBasedActionRenderer<Execute>) action -> Items.COMMAND_BLOCK.getDefaultInstance()
-		);
-		register(
-				PostActionTypes.EXPLODE,
-				(ItemBasedActionRenderer<Explode>) action -> Items.TNT.getDefaultInstance()
-		);
+		register(PostActionTypes.DROP_ITEM, (ItemStackActionRenderer<DropItem>) DropItem::itemStack);
+		register(PostActionTypes.SET_ITEM, (ItemStackActionRenderer<SetItem>) SetItem::itemStack);
+		register(PostActionTypes.DROP_XP, (ItemBasedActionRenderer<DropXp>) action -> Items.EXPERIENCE_BOTTLE.getDefaultInstance());
+		register(PostActionTypes.EXECUTE, (ItemBasedActionRenderer<Execute>) action -> Items.COMMAND_BLOCK.getDefaultInstance());
+		register(PostActionTypes.EXPLODE, (ItemBasedActionRenderer<Explode>) action -> Items.TNT.getDefaultInstance());
 		register(PostActionTypes.IF, new IfActionRenderer());
 		register(PostActionTypes.PLACE, BlockBasedActionRenderer.fromPredicate(PlaceBlock::block));
 		register(PostActionTypes.SET_BLOCK, BlockBasedActionRenderer.fromPredicate(SetBlock::block));
@@ -88,6 +73,7 @@ public interface ActionRenderer<T extends PostAction> {
 							info.addTooltip(component);
 							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
 							info.type = SlotType.CATALYST;
+							info.relatedAction = action;
 						});
 					}
 				});
@@ -110,6 +96,7 @@ public interface ActionRenderer<T extends PostAction> {
 							info.addTooltip(((LycheeRecipeType) lycheeRecipeType).getPreventDefaultDescription(recipe));
 							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
 							info.type = SlotType.CATALYST;
+							info.relatedAction = action;
 						}
 					}
 				});
@@ -180,15 +167,19 @@ public interface ActionRenderer<T extends PostAction> {
 	}
 
 	default List<Component> getTooltips(T action, @Nullable Player player) {
-		var list = getBaseTooltips(action, player);
-		var c = action.conditions().showingCount();
-		if (c > 0) {
-			list.add(ClientProxy.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
-		}
-		var mc = Minecraft.getInstance();
-		action.conditions().appendToTooltips(list, mc.level, player, 0);
+		var list = Lists.newArrayList(getBaseTooltips(action, player));
+		appendConditionTooltips(list, action, player);
 		return list;
 	}
 
 	default void loadCatalystsInfo(T action, ILycheeRecipe<?> recipe, List<IngredientInfo> ingredients) {}
+
+	static void appendConditionTooltips(List<Component> tooltips, PostAction action, @Nullable Player player) {
+		int c = action.conditions().showingCount();
+		if (c > 0) {
+			tooltips.add(ClientProxy.format("contextual.lychee", c).withStyle(ChatFormatting.GRAY));
+		}
+		var mc = Minecraft.getInstance();
+		action.conditions().appendToTooltips(tooltips, mc.level, player, 0);
+	}
 }

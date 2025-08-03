@@ -76,6 +76,11 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStack ite
 		Preconditions.checkArgument(!recipe.getItemIndexes(target).isEmpty(), "No target found for %s", target);
 	}
 
+	@Override
+	public ItemStack transformRemainder(ItemStack itemStack, @Nullable ILycheeRecipe<?> recipe) {
+		return itemStack();
+	}
+
 	//	@Override
 	//	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
 	//		setPath(pointer.toString());

@@ -23,6 +23,7 @@ repositories {
     mavenLocal()
     maven { url "https://api.modrinth.com/maven" }
     maven { url "https://maven.shedaniel.me/" }
+    maven { url "https://maven.terraformersmc.com/releases" }
     maven { url "https://dvs1.progwml6.com/files/maven/" }
     maven { url "https://modmaven.dev" }
     maven { url "https://maven.su5ed.dev/releases" }
@@ -35,7 +36,7 @@ repositories {
     }
     maven {
         // saps.dev Maven (KubeJS and Rhino)
-        url = "https://maven.saps.dev/minecraft"
+        url = "https://maven.latvian.dev/releases"
         content {
             includeGroup "dev.latvian.mods"
             includeGroup "dev.latvian.apps"
@@ -158,6 +159,9 @@ dependencies {
     implementation "mezz.jei:jei-${project.minecraft_version}-common-api:${project.jei_version}"
     implementation "mezz.jei:jei-${project.minecraft_version}-neoforge-api:${project.jei_version}"
     implementation "mezz.jei:jei-${project.minecraft_version}-neoforge:${project.jei_version}"
+
+//    modCompileOnly "dev.emi:emi-neoforge:${emi_version}:api"
+    implementation "dev.emi:emi-neoforge:${emi_version}"
 
     implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:0.107.0+2.0.25+1.21.1"
     // https://github.com/neoforged/ModDevGradle?tab=readme-ov-file#jar-in-jar

@@ -124,7 +124,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 			}
 			tooltip.addAll(list);
 		});
-		SlotType slotType = action.conditions().conditions().isEmpty() ? SlotType.NORMAL : SlotType.CHANCE;
+		SlotType slotType = action.conditions().showingCount() == 0 ? SlotType.NORMAL : SlotType.CHANCE;
 		slotBuilder.setBackground(LycheeJEIPlugin.slot(slotType), -1, -1);
 	}
 
