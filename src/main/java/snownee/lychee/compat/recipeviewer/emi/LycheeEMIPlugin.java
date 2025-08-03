@@ -1,5 +1,6 @@
 package snownee.lychee.compat.recipeviewer.emi;
 
+import dev.emi.emi.api.EmiEntrypoint;
 import dev.emi.emi.api.EmiPlugin;
 import dev.emi.emi.api.EmiRegistry;
 import dev.emi.emi.api.recipe.VanillaEmiRecipeCategories;
@@ -19,6 +20,7 @@ import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
+@EmiEntrypoint
 public class LycheeEMIPlugin implements EmiPlugin {
 	private final RvPlugin<EmiRvHelper> rvPlugin = new RvPlugin<>(EmiRvHelper.INSTANCE);
 
