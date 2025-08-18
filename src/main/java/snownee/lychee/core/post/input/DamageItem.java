@@ -49,12 +49,8 @@ public class DamageItem extends PostAction {
 		IntList indexes = recipe.getItemIndexes(target);
 		Entity thisEntity = ctx.getParam(LootContextParams.THIS_ENTITY);
 		for (var index : indexes) {
-			ItemStack stack = ctx.getItem(index);
-			if (!stack.isDamageableItem()) {
-				return;
-			}
 			ctx.itemHolders.ignoreConsumptionFlags.set(index);
-			stack = ctx.itemHolders.split(index, 1).get();
+			ItemStack stack = ctx.itemHolders.split(index, 1).get();
 			int damage = this.damage;
 			LivingEntity living = null;
 			InteractionHand hand = null;
