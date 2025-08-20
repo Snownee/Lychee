@@ -41,11 +41,7 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 		var thisEntity = lootParams.get(LootContextParams.THIS_ENTITY);
 		var itemStackHolders = context.get(LycheeContextKey.ITEM);
 		for (var index : indexes) {
-			var stackHolder = itemStackHolders.get(index);
-			if (!stackHolder.get().isDamageableItem()) {
-				return;
-			}
-			stackHolder.setConsumption(0);
+			itemStackHolders.get(index).setConsumption(0);
 			var itemStack = itemStackHolders.split(index, 1).get();
 
 			// Forge hook
