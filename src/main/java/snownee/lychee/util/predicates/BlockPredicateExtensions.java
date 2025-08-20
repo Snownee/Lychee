@@ -149,7 +149,11 @@ public class BlockPredicateExtensions {
 						}
 						DataResult<Pair<BlockPredicate, T>> result = BlockPredicate.CODEC.decode(ops, input);
 						if (result.result().isPresent() && isAny(result.getOrThrow().getFirst())) {
-							return DataResult.error(() -> "Wildcard BlockPredicate must be \"*\" string, but found " + input);
+							if (ops.getMap(input).getOrThrow().entries().findAny().isPresent()) {
+								return DataResult.error(() -> "Cannot find any valid key in BlockPredicate: " + input);
+							} else {
+								return DataResult.error(() -> "Wildcard BlockPredicate must be \"*\" string, but found " + input);
+							}
 						}
 						return result;
 					}
