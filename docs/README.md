@@ -14,7 +14,7 @@ Currently Lychee has support for the following recipe type (with full JEI/REI/EM
 
 - Use or click on a block with item
 - Item entity burning
-- Item entity inside a specific block (for instance water)
+- Item entity inside a specific block (or liquid)
 - Anvil crafting
 - Falling block crushing items or block
 - Lightning channeling
@@ -41,8 +41,8 @@ Having trouble creating recipe, or got an idea for Lychee? You can [join our Dis
 
 ### Why is my recipe not working?
 
-1. Make sure your recipe file is a valid JSON. You can use [this site](https://jsonlint.com/) to validate your JSON.
-2. Check if your recipe is shown in JEI / REI. If not, search the error output in logs for some helpful information.
+1. Make sure your recipe file is a valid JSON/YAML. You can click the corresponding link to validate your [JSON](https://jsonformatter.org/)/[YAML](https://jsonformatter.org/yaml-validator).
+2. Check if your recipe is shown in JEI/REI/EMI. If not, search the error output in logs for some helpful information.
 
 ### CraftTweaker integration?
 
