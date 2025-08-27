@@ -372,7 +372,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	public static class Type implements ContextualConditionType<Location> {
 		private static final MapCodec<LocationCheck> LOCATION_CHECK_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				LocationPredicate.CODEC.optionalFieldOf("predicate").forGetter(LocationCheck::predicate),
-				LycheeCodecs.OFFSET_CODEC.forGetter(LocationCheck::offset)
+				LycheeCodecs.OFFSET.forGetter(LocationCheck::offset)
 		).apply(instance, LocationCheck::new));
 
 		public static final MapCodec<Location> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

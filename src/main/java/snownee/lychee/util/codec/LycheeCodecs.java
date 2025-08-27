@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.google.common.base.Preconditions;
 import com.mojang.brigadier.StringReader;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -24,6 +25,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
+import snownee.kiwi.recipe.SizedIngredient;
 
 public final class LycheeCodecs {
 	private static final MapCodec<Integer> ITEM_STACK_COUNT = ExtraCodecs.NON_NEGATIVE_INT.fieldOf("count").orElse(1);
@@ -95,9 +97,13 @@ public final class LycheeCodecs {
 		return DataResult.success(stack);
 	});
 
-	public static final Codec<ItemStack> ITEM_STACK_CODEC = NONEMPTY_ITEM_STACK_MAP_CODEC.codec();
+	public static final Codec<ItemStack> ITEM_STACK = Codec.withAlternative(
+			NONEMPTY_ITEM_STACK_MAP_CODEC.codec(), ExtraCodecs.NON_EMPTY_STRING.flatXmap(
+					s -> tryCatch(() -> ParsedItem.read(new StringReader(s)).itemStack()),
+					stack -> DataResult.error(() -> "Encoding shorthand ItemStack is not supported")
+			));
 
-	public static final MapCodec<BlockPos> OFFSET_CODEC = RecordCodecBuilder.mapCodec(posInstance -> posInstance.group(
+	public static final MapCodec<BlockPos> OFFSET = RecordCodecBuilder.mapCodec(posInstance -> posInstance.group(
 			Codec.INT.optionalFieldOf("offsetX", 0).forGetter(Vec3i::getX),
 			Codec.INT.optionalFieldOf("offsetY", 0).forGetter(Vec3i::getY),
 			Codec.INT.optionalFieldOf("offsetZ", 0).forGetter(Vec3i::getZ)).apply(
@@ -119,4 +125,25 @@ public final class LycheeCodecs {
 			return DataResult.success(list);
 		});
 	}
+
+	//TODO(1.22) move to Kiwi
+	public static final Codec<SizedIngredient> SIZED_INGREDIENT = Codec.withAlternative(
+			SizedIngredient.CODEC, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
+					s -> tryCatch(() -> {
+						StringReader reader = new StringReader(s);
+						ParsedItem parsedItem = ParsedItem.read(reader);
+						Preconditions.checkArgument(!reader.canRead(), "Cannot parse %s", s);
+						return parsedItem.sizedIngredient();
+					}), ingredient -> DataResult.error(() -> "Encoding shorthand SizedIngredient is not supported")
+			)
+	);
+
+	public static <T> DataResult<T> tryCatch(ThrowingSupplier<T> supplier) {
+		try {
+			return DataResult.success(supplier.get());
+		} catch (Exception e) {
+			return DataResult.error(e::getMessage);
+		}
+	}
+
 }

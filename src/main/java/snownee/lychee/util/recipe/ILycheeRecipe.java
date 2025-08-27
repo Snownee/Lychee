@@ -63,7 +63,12 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	}
 
 	default IntList getItemIndexes(JsonPointer pointer) {
-		int size = getIngredients().size();
+		int size;
+		try {
+			size = sizedIngredients().size();
+		} catch (Exception ignored) {
+			size = getIngredients().size();
+		}
 		if (pointer.size() == 1 && pointer.getString(0).equals(ITEM_IN)) {
 			return IntList.of(IntStream.range(0, size).toArray());
 		}

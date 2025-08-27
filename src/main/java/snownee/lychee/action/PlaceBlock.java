@@ -173,7 +173,7 @@ public record PlaceBlock(
 		public static final MapCodec<PlaceBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(PlaceBlock::commonProperties),
 				BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(PlaceBlock::block),
-				LycheeCodecs.OFFSET_CODEC.forGetter(PlaceBlock::offset)).apply(instance, PlaceBlock::new));
+				LycheeCodecs.OFFSET.forGetter(PlaceBlock::offset)).apply(instance, PlaceBlock::new));
 
 		public static final StreamCodec<RegistryFriendlyByteBuf, PlaceBlock> STREAM_CODEC = StreamCodec.composite(
 				PostActionCommonProperties.STREAM_CODEC,

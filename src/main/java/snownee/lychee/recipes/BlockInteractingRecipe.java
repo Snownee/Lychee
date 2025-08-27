@@ -39,9 +39,8 @@ import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
 
-	private static final Codec<SizedIngredient> OPTIONAL_SIZED_INGREDIENT_CODEC = ExtraCodecs.optionalEmptyMap(SizedIngredient.CODEC).xmap(
-			it -> it.orElse(SizedIngredient.EMPTY),
-			Optional::of);
+	private static final Codec<SizedIngredient> OPTIONAL_SIZED_INGREDIENT_CODEC = ExtraCodecs.optionalEmptyMap(LycheeCodecs.SIZED_INGREDIENT)
+			.xmap(it -> it.orElse(SizedIngredient.EMPTY), Optional::of);
 
 	public static InteractionResult invoke(
 			final Player player,

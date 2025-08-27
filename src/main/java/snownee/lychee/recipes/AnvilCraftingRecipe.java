@@ -151,7 +151,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 										.xmap(NonNullListExtensions::copyOf, Function.identity())
 										.fieldOf(ITEM_IN)
 										.forGetter(AnvilCraftingRecipe::getIngredients),
-								LycheeCodecs.ITEM_STACK_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
+								LycheeCodecs.ITEM_STACK.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
 								PostAction.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
 								ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),
 								ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1).forGetter(AnvilCraftingRecipe::materialCost))

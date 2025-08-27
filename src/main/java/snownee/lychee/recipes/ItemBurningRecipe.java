@@ -17,6 +17,7 @@ import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.NonNullListExtensions;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
@@ -86,7 +87,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		public static final MapCodec<ItemBurningRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						SizedIngredient.CODEC.fieldOf(ITEM_IN).forGetter(ItemBurningRecipe::input)
+						LycheeCodecs.SIZED_INGREDIENT.fieldOf(ITEM_IN).forGetter(ItemBurningRecipe::input)
 				).apply(instance, ItemBurningRecipe::new));
 
 		@Override

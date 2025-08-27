@@ -104,7 +104,7 @@ public record Explode(
 						},
 						it -> it.name().toLowerCase(Locale.ENGLISH)
 				).optionalFieldOf("block_interaction", BlockInteraction.DESTROY).forGetter(Explode::blockInteraction),
-				LycheeCodecs.OFFSET_CODEC.forGetter(Explode::offset),
+				LycheeCodecs.OFFSET.forGetter(Explode::offset),
 				Codec.BOOL.optionalFieldOf("fire", false).forGetter(Explode::fire),
 				ExtraCodecs.POSITIVE_FLOAT.optionalFieldOf("radius", 4F).forGetter(Explode::radius),
 				Codec.FLOAT.optionalFieldOf("radius_step", 4F).forGetter(Explode::step)
