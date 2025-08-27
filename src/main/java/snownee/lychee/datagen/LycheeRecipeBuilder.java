@@ -17,6 +17,7 @@ import com.mojang.datafixers.util.Function3;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.NonNullList;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -36,6 +37,7 @@ import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.recipes.DripstoneRecipe;
+import snownee.lychee.recipes.EntityTickingRecipe;
 import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.recipes.RandomBlockTickingRecipe;
@@ -397,6 +399,21 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 				case REDSTONE -> CraftingBookCategory.REDSTONE;
 				default -> CraftingBookCategory.MISC;
 			};
+		}
+	}
+
+	public static class EntityTicking extends LycheeRecipeBuilder<EntityTicking, EntityTickingRecipe> {
+		private final EntityPredicate predicate;
+		private final int interval;
+
+		public EntityTicking(EntityPredicate predicate, int interval) {
+			this.predicate = predicate;
+			this.interval = interval;
+		}
+
+		@Override
+		public EntityTickingRecipe build() {
+			return new EntityTickingRecipe(properties(), predicate, interval);
 		}
 	}
 }
