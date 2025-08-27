@@ -6,7 +6,6 @@ import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonObject;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -19,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
@@ -79,14 +79,9 @@ public class CustomCondition implements ContextualCondition {
 	public static class Type implements ContextualConditionType<CustomCondition> {
 		public static final MapCodec<CustomCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				ExtraCodecs.NON_EMPTY_STRING.fieldOf("id").forGetter(CustomCondition::id),
-				ExtraCodecs.JSON.comapFlatMap(
-						it -> {
-							try {
-								return DataResult.success(it.getAsJsonObject());
-							} catch (Exception e) {
-								return DataResult.error(e::getMessage);
-							}
-						}, Function.identity()).optionalFieldOf("data", new JsonObject()).forGetter(CustomCondition::data)
+				ExtraCodecs.JSON.comapFlatMap(it -> LycheeCodecs.tryCatch(it::getAsJsonObject), Function.identity())
+						.optionalFieldOf("data", new JsonObject())
+						.forGetter(CustomCondition::data)
 		).apply(instance, CustomCondition::new));
 
 		@Override

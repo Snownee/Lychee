@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 
@@ -15,10 +16,12 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.codec.LycheeParser;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.Contextual;
 import snownee.lychee.util.contextual.ContextualHolder;
@@ -28,7 +31,12 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostAction extends PostActionDisplay, PostActionLike, ContextualPredicate, Contextual {
 	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatchMap(PostAction::type, PostActionType::codec);
-	Codec<PostAction> CODEC = MAP_CODEC.codec();
+	Codec<PostAction> OBJECT_CODEC = MAP_CODEC.codec();
+	Codec<PostAction> CODEC = Codec.withAlternative(
+			OBJECT_CODEC, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
+					LycheeParser::action,
+					action -> DataResult.error(() -> "Encoding shorthand PostAction is not supported")
+			));
 	Codec<List<PostAction>> LIST_CODEC = KCodecs.compactList(CODEC);
 
 	StreamCodec<RegistryFriendlyByteBuf, PostAction> STREAM_CODEC = ByteBufCodecs.registry(LycheeRegistries.POST_ACTION.key()).dispatch(

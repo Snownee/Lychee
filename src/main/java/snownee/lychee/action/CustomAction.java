@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -17,6 +16,7 @@ import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -90,14 +90,9 @@ public class CustomAction implements PostAction {
 		public static final MapCodec<CustomAction> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(CustomAction::commonProperties),
 				ExtraCodecs.NON_EMPTY_STRING.fieldOf("id").forGetter(CustomAction::id),
-				ExtraCodecs.JSON.comapFlatMap(
-						it -> {
-							try {
-								return DataResult.success(it.getAsJsonObject());
-							} catch (Exception e) {
-								return DataResult.error(e::getMessage);
-							}
-						}, Function.identity()).optionalFieldOf("data", new JsonObject()).forGetter(CustomAction::data),
+				ExtraCodecs.JSON.comapFlatMap(it -> LycheeCodecs.tryCatch(it::getAsJsonObject), Function.identity())
+						.optionalFieldOf("data", new JsonObject())
+						.forGetter(CustomAction::data),
 				Codec.BOOL.optionalFieldOf("repeatable", true).forGetter(CustomAction::repeatable),
 				Codec.BOOL.optionalFieldOf("preventSync", false).forGetter(CustomAction::preventSync)
 		).apply(instance, CustomAction::new));

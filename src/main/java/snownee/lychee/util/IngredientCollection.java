@@ -18,12 +18,12 @@ import snownee.lychee.util.codec.LycheeCodecs;
 public final class IngredientCollection {
 	public static final IngredientCollection EMPTY = new IngredientCollection(List.of());
 
-	public static final Codec<IngredientCollection> CODEC = KCodecs.compactList(SizedIngredient.CODEC).xmap(
+	public static final Codec<IngredientCollection> CODEC = KCodecs.compactList(LycheeCodecs.SIZED_INGREDIENT).xmap(
 			IngredientCollection::new,
 			IngredientCollection::ingredients);
 
 	public static Codec<IngredientCollection> codec(int minSize, int maxSize) {
-		return LycheeCodecs.sizeLimit(KCodecs.compactList(SizedIngredient.CODEC), minSize, maxSize).xmap(
+		return LycheeCodecs.sizeLimit(KCodecs.compactList(LycheeCodecs.SIZED_INGREDIENT), minSize, maxSize).xmap(
 				IngredientCollection::of,
 				IngredientCollection::ingredients);
 	}

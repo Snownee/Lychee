@@ -66,10 +66,10 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 				.map(recipeHolder ->
 						new Cache(
 								recipeHolder,
-								recipeHolder.value().getIngredients().stream()
+								recipeHolder.value().sizedIngredients().stream()
 										.map(ingredient -> {
 											var items = Arrays.stream(ingredient.getItems()).map(ItemStack::getItem).toList();
-											final var weight = 1F / items.size();
+											final var weight = (float) ingredient.count() / items.size();
 											for (final var item : items)
 												itemWeights.merge(item, weight, Float::sum);
 											return Sets.newHashSet(items);

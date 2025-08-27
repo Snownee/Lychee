@@ -114,7 +114,7 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 	}
 
 	protected Vector2f landingBlockPosition(BlockCrushingRecipe recipe) {
-		var xOffset = recipe.getIngredients().isEmpty() ? 40 : (width - BLOCK_SIZE) / 2;
+		var xOffset = recipe.sizedIngredients().isEmpty() ? 40 : (width - BLOCK_SIZE) / 2;
 		return new Vector2f(xOffset, 38);
 	}
 

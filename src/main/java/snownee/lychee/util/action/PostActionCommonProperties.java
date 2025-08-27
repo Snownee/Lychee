@@ -1,10 +1,12 @@
 package snownee.lychee.util.action;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -13,6 +15,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualHolder;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 
@@ -81,5 +84,33 @@ public class PostActionCommonProperties {
 				.add("path", path)
 				.add("icon", icon)
 				.toString();
+	}
+
+	public PostActionCommonProperties.Builder builder() {
+		PostActionCommonProperties.Builder builder = new PostActionCommonProperties.Builder();
+		builder.conditions().addAll(conditions().conditions());
+		builder.icon(icon);
+		return builder;
+	}
+
+	public static class Builder {
+		private final List<ContextualCondition> conditions = Lists.newArrayList();
+		private @Nullable ResourceLocation icon;
+
+		public PostActionCommonProperties build() {
+			return new PostActionCommonProperties(new ContextualHolder(List.copyOf(conditions)), Optional.ofNullable(icon));
+		}
+
+		public List<ContextualCondition> conditions() {
+			return conditions;
+		}
+
+		public void icon(@Nullable ResourceLocation icon) {
+			this.icon = icon;
+		}
+
+		public void hide() {
+			icon = HIDDEN;
+		}
 	}
 }

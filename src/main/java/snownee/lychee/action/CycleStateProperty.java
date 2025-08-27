@@ -96,7 +96,7 @@ public record CycleStateProperty(
 		public static final MapCodec<CycleStateProperty> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 						PostActionCommonProperties.MAP_CODEC.forGetter(CycleStateProperty::commonProperties),
 						BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(CycleStateProperty::block),
-						LycheeCodecs.OFFSET_CODEC.forGetter(CycleStateProperty::offset),
+						LycheeCodecs.OFFSET.forGetter(CycleStateProperty::offset),
 						ExtraCodecs.NON_EMPTY_STRING.fieldOf("property").forGetter(CycleStateProperty::propertyName),
 						Codec.BOOL.optionalFieldOf("reversed", false).forGetter(CycleStateProperty::reversed))
 				.apply(instance, CycleStateProperty::new));

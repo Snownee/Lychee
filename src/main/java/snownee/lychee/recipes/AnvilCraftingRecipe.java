@@ -21,6 +21,7 @@ import net.minecraft.world.level.Level;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.codec.LycheeCodecs;
@@ -142,17 +143,18 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	public static class Serializer implements LycheeRecipeSerializer<AnvilCraftingRecipe> {
-		public static final MapCodec<AnvilCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
-						LycheeCodecs.sizeLimit(KCodecs.compactList(Ingredient.CODEC_NONEMPTY), 1, 2)
-								.xmap(NonNullList::copyOf, Function.identity())
-								.fieldOf(ITEM_IN)
-								.forGetter(AnvilCraftingRecipe::getIngredients),
-						LycheeCodecs.ITEM_STACK_CODEC.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
-						PostAction.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
-						ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),
-						ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1).forGetter(AnvilCraftingRecipe::materialCost))
-				.apply(instance, AnvilCraftingRecipe::new));
+		public static final MapCodec<AnvilCraftingRecipe> CODEC =
+				RecordCodecBuilder.mapCodec(instance -> instance.group(
+								LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
+								LycheeCodecs.sizeLimit(KCodecs.compactList(Ingredient.CODEC_NONEMPTY), 1, 2)
+										.xmap(NonNullListExtensions::copyOf, Function.identity())
+										.fieldOf(ITEM_IN)
+										.forGetter(AnvilCraftingRecipe::getIngredients),
+								LycheeCodecs.ITEM_STACK.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
+								PostAction.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
+								ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),
+								ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1).forGetter(AnvilCraftingRecipe::materialCost))
+						.apply(instance, AnvilCraftingRecipe::new));
 
 		@Override
 		public MapCodec<AnvilCraftingRecipe> codec() {
