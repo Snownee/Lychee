@@ -18,6 +18,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.recipe.CustomIngredient;
 import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.lychee.Lychee;
+import snownee.lychee.util.codec.LycheeCodecs;
 
 public class VisualOnlyComponentsIngredient implements CustomIngredient {
 	public static final ResourceLocation ID = Lychee.id("visual_only_components");
@@ -75,7 +76,7 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 
 	private static class Serializer implements CustomIngredientSerializer<VisualOnlyComponentsIngredient> {
 		private static final MapCodec<VisualOnlyComponentsIngredient> ALLOW_EMPTY_CODEC = createCodec(Ingredient.CODEC);
-		private static final MapCodec<VisualOnlyComponentsIngredient> DISALLOW_EMPTY_CODEC = createCodec(Ingredient.CODEC_NONEMPTY);
+		private static final MapCodec<VisualOnlyComponentsIngredient> DISALLOW_EMPTY_CODEC = createCodec(LycheeCodecs.NONEMPTY_INGREDIENT);
 		private static final StreamCodec<RegistryFriendlyByteBuf, VisualOnlyComponentsIngredient> PACKET_CODEC = StreamCodec.composite(
 				Ingredient.CONTENTS_STREAM_CODEC, VisualOnlyComponentsIngredient::getBase,
 				DataComponentPatch.STREAM_CODEC, VisualOnlyComponentsIngredient::getComponents,

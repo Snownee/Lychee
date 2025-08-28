@@ -25,6 +25,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.recipe.SizedIngredient;
 
 public final class LycheeCodecs {
@@ -125,6 +126,17 @@ public final class LycheeCodecs {
 			return DataResult.success(list);
 		});
 	}
+
+	//TODO(1.22) move to Kiwi
+	public static final Codec<Ingredient> NONEMPTY_INGREDIENT = Codec.withAlternative(
+			Ingredient.CODEC_NONEMPTY, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
+					s -> tryCatch(() -> {
+						StringReader reader = new StringReader(s);
+						ParsedItem parsedItem = ParsedItem.read(reader);
+						Preconditions.checkArgument(!reader.canRead(), "Cannot parse %s", s);
+						return parsedItem.ingredient();
+					}), ingredient -> DataResult.error(() -> "Encoding shorthand Ingredient is not supported")
+			));
 
 	//TODO(1.22) move to Kiwi
 	public static final Codec<SizedIngredient> SIZED_INGREDIENT = Codec.withAlternative(
