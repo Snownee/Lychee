@@ -62,11 +62,9 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
         ```yaml
         type: lychee:block_interacting
-        item_in:
-          item: shears
+        item_in: shears
         block_in: pumpkin
-        post:
-          type: prevent_default
+        post: prevent_default
         ```
 
     === "JSON"
@@ -74,13 +72,9 @@ This recipe type is not [repeatable](concepts.md#repeatability).
         ```json
         {
             "type": "lychee:block_interacting",
-            "item_in": {
-                "item": "shears"
-            },
+            "item_in": "shears",
             "block_in": "pumpkin",
-            "post": {
-                "type": "prevent_default"
-            }
+            "post": "prevent_default"
         }
         ```
 
@@ -90,18 +84,12 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
         ```yaml
         type: lychee:block_interacting
-        item_in:
-          item: iron_axe
+        item_in: iron_axe
         block_in: oak_log
         post:
-        - type: drop_item
-          id: diamond
-          if:
-            type: chance
-            chance: 0.5
-        - type: place
-          block: stripped_oak_log
-        - type: damage_item
+        - drop diamond /.5
+        - place stripped_oak_log
+        - damage_item
         ```
 
     === "JSON"
@@ -109,26 +97,12 @@ This recipe type is not [repeatable](concepts.md#repeatability).
         ```json
         {
             "type": "lychee:block_interacting",
-            "item_in": {
-                "item": "iron_axe"
-            },
+            "item_in": "iron_axe",
             "block_in": "oak_log",
             "post": [
-                {
-                    "type": "drop_item",
-                    "id": "diamond",
-                    "if": {
-                        "type": "chance",
-                        "chance": 0.5
-                    }
-                },
-                {
-                    "type": "place",
-                    "block": "stripped_oak_log"
-                },
-                {
-                    "type": "damage_item"
-                }
+                "drop diamond /.5",
+                "place stripped_oak_log",
+                "damage_item"
             ]
         }
         ```
@@ -298,11 +272,8 @@ Default behavior: none.
 
         ```yaml
         type: lychee:item_burning
-        item_in:
-          tag: logs_that_burn
-        post:
-          type: drop_item
-          id: charcoal
+        item_in: '#logs_that_burn'
+        post: drop charcoal
         ```
 
     === "JSON"
@@ -310,13 +281,8 @@ Default behavior: none.
         ```json
         {
             "type": "lychee:item_burning",
-            "item_in": {
-                "tag": "logs_that_burn"
-            },
-            "post": {
-                "type": "drop_item",
-                "id": "charcoal"
-            }
+            "item_in": "#logs_that_burn",
+            "post": "drop charcoal"
         }
         ```
 
@@ -345,17 +311,11 @@ Default behavior: Item is consumed.
 
         ```yaml
         type: lychee:item_inside
-        item_in:
-          item: bucket
-        block_in:
-          blocks: water_cauldron
-          state:
-            level: '3'
+        item_in: bucket
+        block_in: water_cauldron[level=3]
         post:
-        - type: drop_item
-          id: water_bucket
-        - type: place
-          block: cauldron
+        - drop water_bucket
+        - place cauldron
         ```
 
     === "JSON"
@@ -363,24 +323,11 @@ Default behavior: Item is consumed.
         ```json
         {
             "type": "lychee:item_inside",
-            "item_in": {
-                "item": "bucket"
-            },
-            "block_in": {
-                "blocks": "water_cauldron",
-                "state": {
-                    "level": "3"
-                }
-            },
+            "item_in": "bucket",
+            "block_in": "water_cauldron[level=3]",
             "post": [
-                {
-                    "type": "drop_item",
-                    "id": "water_bucket"
-                },
-                {
-                    "type": "place",
-                    "block": "cauldron"
-                }
+                "drop water_bucket",
+                "place cauldron"
             ]
         }
         ```
@@ -391,17 +338,11 @@ Default behavior: Item is consumed.
 
         ```yaml
         type: lychee:item_inside
-        item_in:
-          item: bucket
-        block_in:
-          blocks: water
-          state:
-            level: '0'
+        item_in: bucket
+        block_in: water[level=0]
         post:
-        - type: drop_item
-          id: water_bucket
-        - type: place
-          block: '*'
+        - drop water_bucket
+        - place *
         ```
 
     === "JSON"
@@ -409,24 +350,11 @@ Default behavior: Item is consumed.
         ```json
         {
             "type": "lychee:item_inside",
-            "item_in": {
-                "item": "bucket"
-            },
-            "block_in": {
-                "blocks": "water",
-                "state": {
-                    "level": "0"
-                }
-            },
+            "item_in": "bucket",
+            "block_in": "water[level=0]",
             "post": [
-                {
-                    "type": "drop_item",
-                    "id": "water_bucket"
-                },
-                {
-                    "type": "place",
-                    "block": "*"
-                }
+                "drop water_bucket",
+                "place *"
             ]
         }
         ```
@@ -465,12 +393,10 @@ Default behavior: Anvil is damaged.
         item_in:
         - item: apple
         - item: gold_ingot
-        item_out:
-          id: golden_apple
+        item_out: golden_apple
         level_cost: 1
         material_cost: 8
-        post:
-          type: prevent_default
+        post: prevent_default
         ```
 
     === "JSON"
@@ -486,14 +412,10 @@ Default behavior: Anvil is damaged.
                     "item": "gold_ingot"
                 }
             ],
-            "item_out": {
-                "id": "golden_apple"
-            },
+            "item_out": "golden_apple",
             "level_cost": 1,
             "material_cost": 8,
-            "post": {
-                "type": "prevent_default"
-            }
+            "post": "prevent_default"
         }
         ```
 
@@ -522,13 +444,8 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
 
         ```yaml
         type: lychee:block_crushing
-        item_in:
-        - item: sugar_cane
-          count: 3
-        post:
-        - type: drop_item
-          id: paper
-          count: 3
+        item_in: 3x sugar_cane
+        post: drop 3x paper
         ```
 
     === "JSON"
@@ -536,19 +453,8 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
         ```json
         {
             "type": "lychee:block_crushing",
-            "item_in": [
-                {
-                    "item": "sugar_cane",
-                    "count": 3
-                }
-            ],
-            "post": [
-                {
-                    "type": "drop_item",
-                    "id": "paper",
-                    "count": 3
-                }
-            ]
+            "item_in": "3x sugar_cane",
+            "post": "drop 3x paper"
         }
         ```
 
@@ -566,8 +472,7 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
             block:
               blocks: stone_bricks
         post:
-        - type: place
-          block: '*'
+        - place *
         - type: place
           offsetY: -1
           block: mossy_stone_bricks
@@ -589,10 +494,7 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
                 }
             },
             "post": [
-                {
-                    "type": "place",
-                    "block": "*"
-                },
+                "place *",
                 {
                     "type": "place",
                     "offsetY": -1,
@@ -635,9 +537,7 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 
         ```yaml
         type: lychee:lightning_channeling
-        post:
-        - type: execute
-          command: fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite
+        post: run "fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite"
         ```
 
     === "JSON"
@@ -645,12 +545,7 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
         ```json
         {
             "type": "lychee:lightning_channeling",
-            "post": [
-                {
-                    "type": "execute",
-                    "command": "fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite"
-                }
-            ]
+            "post": "run \"fill ~-3 ~-3 ~-3 ~3 ~3 ~3 stone replace calcite\""
         }
         ```
 
@@ -710,9 +605,7 @@ Default behavior: Continue matching the rest of the recipes.
           movement:
             fall_distance:
               min: 5
-        post:
-          type: set_block
-          block: iron_block
+        post: set_block iron_block
         ```
 
     === "JSON"
@@ -733,10 +626,7 @@ Default behavior: Continue matching the rest of the recipes.
                     }
                 }
             },
-            "post": {
-                "type": "set_block",
-                "block": "iron_block"
-            }
+            "post": "set_block iron_block"
         }
         ```
 
@@ -758,9 +648,7 @@ Default behavior: Continue matching the rest of the recipes.
             feet:
               items: netherite_boots
         interval: 20
-        post:
-          type: execute
-          command: effect give @s fire_resistance 3 0 true
+        post: run "effect give @s fire_resistance 3 0 true"
         ```
 
     === "JSON"
@@ -786,10 +674,7 @@ Default behavior: Continue matching the rest of the recipes.
                 }
             },
             "interval": 20,
-            "post": {
-                "type": "execute",
-                "command": "effect give @s fire_resistance 3 0 true"
-            }
+            "post": "run \"effect give @s fire_resistance 3 0 true\""
         }
         ```
 
@@ -853,9 +738,7 @@ Default behavior: Do the default ticking behavior.
         type: lychee:dripstone_dripping
         source_block: water
         target_block: sponge
-        post:
-        - type: place
-          block: wet_sponge
+        post: place wet_sponge
         ```
 
     === "JSON"
@@ -865,12 +748,7 @@ Default behavior: Do the default ticking behavior.
             "type": "lychee:dripstone_dripping",
             "source_block": "water",
             "target_block": "sponge",
-            "post": [
-                {
-                    "type": "place",
-                    "block": "wet_sponge"
-                }
-            ]
+            "post": "place wet_sponge"
         }
         ```
 
@@ -895,6 +773,8 @@ Default behavior: none.
     | group      | same as vanilla ^optional^                                     |                                                                       |
     | assembling | actions that running before the result is displayed ^optional^ | [PostAction](post-action.md) \| [PostAction](post-action.md)[]        |
 
+    Note: You cannot use shorthand ingredients or result in this recipe type.
+
 ??? example
 
     === "YAML"
@@ -912,11 +792,11 @@ Default behavior: none.
         result:
           id: apple
         post:
-        - type: set_item
+          type: set_item
           target: /key/B
           id: air
         assembling:
-        - type: set_item
+          type: set_item
           target: /result
           id: pufferfish_bucket
         ```
@@ -941,20 +821,16 @@ Default behavior: none.
             "result": {
                 "id": "apple"
             },
-            "post": [
-                {
-                    "type": "set_item",
-                    "target": "/key/B",
-                    "id": "air"
-                }
-            ],
-            "assembling": [
-                {
-                    "type": "set_item",
-                    "target": "/result",
-                    "id": "pufferfish_bucket"
-                }
-            ]
+            "post": {
+                "type": "set_item",
+                "target": "/key/B",
+                "id": "air"
+            },
+            "assembling": {
+                "type": "set_item",
+                "target": "/result",
+                "id": "pufferfish_bucket"
+            }
         }
         ```
 

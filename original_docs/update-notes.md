@@ -1,5 +1,9 @@
 # Update Notes
 
+## 6.4
+
+- Added more shorthand formats.
+
 ## 6.3.6
 
 - Added EMI integration.

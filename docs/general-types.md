@@ -4,7 +4,17 @@
 
 An ingredient is a predicate of ItemStack.
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    Checks if item id matches:
+
+    `<item_id>`
+
+    Checks if item has the tag:
+
+    `#<item_tag>`
+
+??? note "Format"
 
     Checks if item id matches:
 
@@ -45,6 +55,16 @@ An ingredient is a predicate of ItemStack.
 ## SizedIngredient
 
 A SizedIngredient is an ingredient with a count.
+
+!!! note "Shorthand Format"
+
+    Checks if item id matches:
+
+    `<item_id>`(single item) or `<count>x <item_id>`(multiple items)
+
+    Checks if item has the tag:
+
+    `#<item_tag>`(single item) or `<count>x #<item_tag>`(multiple items)
 
 ??? note "Format"
 
@@ -92,7 +112,21 @@ A SizedIngredient is an ingredient with a count.
 
 A BlockPredicate is a predicate of an in-world block. It can also be used to represent the first possible block that matches this predicate.
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    Matches all blocks:
+
+    `*`
+
+    Checks if block id matches:
+
+    `<block_id>` or `<block_id>[<property>=<value>, ...]` or `<block_id>{<nbt>}`
+
+    Checks if block has the tag:
+
+    `#<block_tag>` or `#<block_tag>[<property>=<value>, ...]` or `#<block_tag>{<nbt>}`
+
+??? note "Format"
 
     A BlockPredicate can be either a simple string or a dictionary:
 
@@ -102,13 +136,31 @@ A BlockPredicate is a predicate of an in-world block. It can also be used to rep
     | nbt    | the block nbt ^optional^                                                                | string                                                |
     | state  | a map of block property names to values ^optional^                                      | [StatePropertiesPredicate](#statepropertiespredicate) |
 
-    As a shortcut you can also use a string (an ID, or a tag with `#`) to represent a simple BlockPredicate:
-
-    - `"stone"`
-    - `"minecraft:oak_log[axis=y]"`
-    - `"#wooden_stairs"`
-
 ??? example
+
+    === "YAML"
+
+        ```yaml
+        minecraft:oak_log[axis=y]
+        ```
+
+    === "JSON"
+
+        ```json
+        "minecraft:oak_log[axis=y]"
+        ```
+
+    === "YAML"
+
+        ```yaml
+        '#wooden_stairs'
+        ```
+
+    === "JSON"
+
+        ```json
+        "#wooden_stairs"
+        ```
 
     === "YAML"
 
@@ -125,10 +177,6 @@ A BlockPredicate is a predicate of an in-world block. It can also be used to rep
             "nbt": "{\"tank\":{\"FluidName\":\"thermal:tree_oil\",\"Amount\":50}}"
         }
         ```
-
-### Special case
-
-You can use `"*"` to represent a BlockPredicate to match all blocks.
 
 ## StatePropertiesPredicate
 
@@ -196,58 +244,77 @@ Describes a inclusive range for doubles.
 
 An ItemStack is an item with its count and components.
 
-=== "YAML"
+!!! note "Shorthand Format"
 
-	```yaml
-	item: diamond
-	count: 3
-	components:
-	  item_name: ComponentTest
-	```
+    `<item_id>`(single item) or `<count>x <item_id>`(multiple items)
 
-=== "JSON"
+??? example
 
-	```json
-	{
-	  "item": "diamond",
-	  "count": 3,
-	  "components": {
-	    "item_name": "ComponentTest"
-	  }
-	}
-	```
+    === "YAML"
 
-or in shorthand form:
+        ```yaml
+        3x diamond
+        ```
 
-=== "YAML"
+    === "JSON"
 
-	```yaml
-	item: diamond[item_name=ComponentTest]
-	count: 3
-	```
+        ```json
+        "3x diamond"
+        ```
 
-=== "JSON"
+    === "YAML"
 
-	```json
-	{
-	  "item": "diamond[item_name=ComponentTest]",
-	  "count": 3
-	}
-	```
+        ```yaml
+        item: diamond
+        count: 3
+        components:
+          item_name: ComponentTest
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "item": "diamond",
+            "count": 3,
+            "components": {
+                "item_name": "ComponentTest"
+            }
+        }
+        ```
+
+    or in shorthand form:
+
+    === "YAML"
+
+        ```yaml
+        item: diamond[item_name=ComponentTest]
+        count: 3
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+        "item": "diamond[item_name=ComponentTest]",
+        "count": 3
+        }
+        ```
 
 ## JsonPointer
 
 JsonPointer is a string syntax for identifying a specific value within a JSON. But the only thing you need to know is you should separate the path to the target with `/`.
 
-=== "YAML"
+!!! example
 
-	```yaml
-	/path/to/the/target
-	...
-	```
+    === "YAML"
 
-=== "JSON"
+        ```yaml
+        /path/to/the/target
+        ```
 
-	```json
-	"/path/to/the/target"
-	```
+    === "JSON"
+
+        ```json
+        "/path/to/the/target"
+        ```

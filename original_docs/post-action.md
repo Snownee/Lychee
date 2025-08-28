@@ -14,13 +14,30 @@ You can add post-actions to a Lychee's recipe, and they will be executed after t
 | icon | sprite icon location ^optional^                                      | string                                                                                             |
 |      | additional properties...                                             |                                                                                                    |
 
+## Basic Shorthand Format
+
+Post-actions can be defined using a shorthand string:
+
+```json
+"<command> [arg1] [arg2] ... [/option1][/option2]"
+```
+
+### Available Options
+
+- `/hide` - Hide this action in JEI/REI/EMI.
+- `/<number>` - Add a chance for this action to be executed. For example, `/0.5` = 50% chance.
+
 ## Entity-related Actions
 
 ### Drop Item
 
 Spawns an item entity on the ground.
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    `drop <ItemStack>`
+
+??? note "Format"
 
     | Name       | Description                                  | Type / Literal |
     | ---------- | -------------------------------------------- | -------------- |
@@ -49,7 +66,11 @@ Spawns an item entity on the ground.
 
 Spawns experience orbs.
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    `drop <amount: int>xp`
+
+??? note "Format"
 
     | Name | Description | Type / Literal |
     | ---- | ----------- | -------------- |
@@ -58,13 +79,15 @@ Spawns experience orbs.
 
 ### Set Falling Block's Block
 
-_Since 6.3_
-
 Sets the block of a falling block entity.
 
 This action is not [repeatable](concepts.md#repeatability).
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    `set_block <BlockPredicate>`
+
+??? note "Format"
 
     | Name  | Description         | Type / Literal                                    |
     | ----- | ------------------- | ------------------------------------------------- |
@@ -79,7 +102,11 @@ Places a block in world.
 
 This action is not [repeatable](concepts.md#repeatability).
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    `place <BlockPredicate> [<offsetX: int> <offsetY: int> <offsetZ: int>]`
+
+??? note "Format"
 
     | Name    | Description                    | Type / Literal                                    |
     | ------- | ------------------------------ | ------------------------------------------------- |
@@ -94,6 +121,10 @@ This action is not [repeatable](concepts.md#repeatability).
     Places a cauldron:
 
     ```json
+    "place cauldron"
+    ```
+
+    ```json
     {
         "type": "place",
         "block": "cauldron"
@@ -101,6 +132,10 @@ This action is not [repeatable](concepts.md#repeatability).
     ```
 
     Places a waterlogged oak stairs:
+
+    ```json
+    "place oak_stairs[waterlogged=true]"
+    ```
 
     ```json
     {
@@ -115,6 +150,10 @@ This action is not [repeatable](concepts.md#repeatability).
     ```
 
     Destroys current block (place air):
+
+    ```json
+    "place *"
+    ```
 
     ```json
     {
@@ -145,7 +184,11 @@ Cycles a property's value in a block-state.
 
 Prevents default behavior and do nothing. The default behaviors are explained on the recipes page.
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    `prevent_default`
+
+??? note "Format"
 
     | Name | Description | Type / Literal    |
     | ---- | ----------- | ----------------- |
@@ -155,7 +198,11 @@ Prevents default behavior and do nothing. The default behaviors are explained on
 
 Waits for several seconds, then execute the following actions.
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    `delay <seconds: int>`
+
+??? note "Format"
 
     | Name | Description | Type / Literal |
     | ---- | ----------- | -------------- |
@@ -170,7 +217,11 @@ Waits for several seconds, then execute the following actions.
 
 Stops executing the following actions.
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    `exit`
+
+??? note "Format"
 
     | Name | Description | Type / Literal |
     | ---- | ----------- | -------------- |
@@ -238,11 +289,13 @@ Executes a list of actions if the contextual conditions are met or not.
 
 ### Move
 
-_Since 6.3_
-
 Moves the anchored position in the context.
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    `move <x: int> <y: int> <z: int>`
+
+??? note "Format"
 
     | Name   | Description                    | Type / Literal |
     | ------ | ------------------------------ | -------------- |
@@ -270,7 +323,11 @@ recipes.
 
 Executes a command.
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    `run "<command: string>"` or `execute "<command: string>"`
+
+??? note "Format"
 
     | Name    | Description                                                              | Type / Literal |
     | ------- | ------------------------------------------------------------------------ | -------------- |
@@ -281,6 +338,10 @@ Executes a command.
 ??? example
 
     Spawns particles:
+
+    ```json
+    "run \"particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20\" /hide"
+    ```
 
     ```json
     {
@@ -296,7 +357,11 @@ Executes a command.
 
 Adds item cooldown to an item, just like the cooldown when you use an ender pearl.
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    `add_item_cooldown <seconds: number>`
+
+??? note "Format"
 
     | Name | Description                                                                   | Type / Literal      |
     | ---- | ----------------------------------------------------------------------------- | ------------------- |
@@ -339,7 +404,11 @@ Consumes the item's durability.
 
 This action is not [repeatable](concepts.md#repeatability).
 
-!!! note "Format"
+!!! note "Shorthand Format"
+
+    `damage_item`
+
+??? note "Format"
 
     | Name   | Description                                           | Type / Literal                              |
     | ------ | ----------------------------------------------------- | ------------------------------------------- |

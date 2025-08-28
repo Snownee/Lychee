@@ -43,7 +43,9 @@ def processJsonBlock(match):
     json_str = match.group(3)
     # print(json_str)
     json_obj = json.loads(json_str)
-    yaml_str = yaml.dump(json_obj, default_flow_style=False, indent=2, sort_keys=False)
+    yaml_str = yaml.safe_dump(json_obj, default_flow_style=False, indent=2, sort_keys=False, explicit_end=False)
+    if yaml_str.endswith('\n...\n'):
+        yaml_str = yaml_str[:-5]
     yaml_str = indent + yaml_str.strip()
     yaml_str = yaml_str.replace('\n', '\n' + indent)
     attrs = attrs.replace('.json', '.yaml')
