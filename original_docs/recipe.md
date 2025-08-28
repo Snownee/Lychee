@@ -285,12 +285,8 @@ Default behavior: Anvil is damaged.
     {
         "type": "lychee:anvil_crafting",
         "item_in": [
-            {
-                "item": "apple"
-            },
-            {
-                "item": "gold_ingot"
-            }
+            "apple",
+            "gold_ingot"
         ],
         "item_out": "golden_apple",
         "level_cost": 1,
