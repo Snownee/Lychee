@@ -23,6 +23,7 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.Patterns;
 import snownee.lychee.util.VectorExtensions;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.codec.LycheeStreamCodecs;
 
 
@@ -87,7 +88,7 @@ public class CategoryMetadata extends CategorySettingRecipe {
 				Codec.BOOL.optionalFieldOf("render_default", true).forGetter(CategoryMetadata::renderDefault),
 				VectorExtensions.CODEC2I.optionalFieldOf("size").forGetter(CategoryMetadata::size),
 				UIElement.CODEC.optionalFieldOf("icon").forGetter(CategoryMetadata::icon),
-				KCodecs.compactList(Ingredient.CODEC_NONEMPTY).optionalFieldOf("workstation").forGetter(CategoryMetadata::workstation)
+				KCodecs.compactList(LycheeCodecs.NONEMPTY_INGREDIENT).optionalFieldOf("workstation").forGetter(CategoryMetadata::workstation)
 		).apply(instance, CategoryMetadata::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, CategoryMetadata> STREAM_CODEC = LycheeStreamCodecs.composite(
 				ByteBufCodecs.VAR_INT,
