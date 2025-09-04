@@ -65,7 +65,7 @@ Generates a random number between 0.0 and 1.0, and checks if it is less than a s
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: chance
@@ -97,7 +97,7 @@ Checks if a `location_check` predicate is passed.
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: location
@@ -128,7 +128,7 @@ Checks if a `location_check` predicate is passed.
 
     Description: Checks if the location is in The End, and X position is between -100 and 100.
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: location
@@ -190,7 +190,7 @@ Checks if world is in any of the listed difficulties.
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: difficulty
@@ -226,7 +226,7 @@ Compares the current game time (the age of the world in game ticks) against give
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: time
@@ -287,7 +287,7 @@ Checks if entity's is in a range.
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:block_interacting
@@ -369,7 +369,7 @@ Checks if a parameter exists in the context.
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: param

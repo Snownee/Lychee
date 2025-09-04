@@ -61,7 +61,7 @@ First you need to add a custom action somewhere in your recipe:
 
 !!! example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: custom
@@ -112,7 +112,7 @@ First you need to add a custom condition somewhere in your recipe:
 
 !!! example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: custom
@@ -168,7 +168,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', (event) => {
 
 === "Recipe"
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:anvil_crafting
@@ -274,7 +274,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', (event) => {
 
 === "Recipe"
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:anvil_crafting
@@ -395,7 +395,7 @@ LycheeEvents.clickedInfoBadge('your:recipe_id', (event) => {
 
 === "Recipe"
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:item_inside

@@ -58,7 +58,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:block_interacting
@@ -80,7 +80,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
     Description: Prevent player from carving pumpkins. Here the `prevent_default` means do not consume the shears.
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:block_interacting
@@ -119,7 +119,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
     === "NeoForge"
 
-        === "YAML"
+        ===! "YAML"
 
             ```yaml
             type: lychee:block_interacting
@@ -142,7 +142,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
     === "Fabric"
 
-        === "YAML"
+        ===! "YAML"
 
             ```yaml
             type: lychee:block_interacting
@@ -197,7 +197,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
     === "NeoForge"
 
-        === "YAML"
+        ===! "YAML"
 
             ```yaml
             type: lychee:block_clicking
@@ -220,7 +220,7 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
     === "Fabric"
 
-        === "YAML"
+        ===! "YAML"
 
             ```yaml
             type: lychee:block_clicking
@@ -268,7 +268,7 @@ Default behavior: none.
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:item_burning
@@ -298,16 +298,16 @@ Default behavior: Item is consumed.
 
 !!! note "Format"
 
-    | Name     | Description                        | Type / Literal                                                                                                         |
-    | -------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-    | type     | type                               | "lychee:item_inside"                                                                                                   |
-    | item_in  | the ticking item(s)                | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#ingsizedingredientredient)[] |
-    | block_in | the block where the item(s) in     | [BlockPredicate](general-types.md#blockpredicate)                                                                      |
-    | time     | waiting time in seconds ^optional^ | int                                                                                                                    |
+    | Name     | Description                        | Type / Literal                                                                                               |
+    | -------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | type     | type                               | "lychee:item_inside"                                                                                         |
+    | item_in  | the ticking item(s)                | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
+    | block_in | the block where the item(s) in     | [BlockPredicate](general-types.md#blockpredicate)                                                            |
+    | time     | waiting time in seconds ^optional^ | int                                                                                                          |
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:item_inside
@@ -334,7 +334,7 @@ Default behavior: Item is consumed.
 
     Description: When a water bucket is inside a full water cauldron, it will drop a water bucket and turn the cauldron into an empty one.
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:item_inside
@@ -386,7 +386,7 @@ Default behavior: Anvil is damaged.
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:anvil_crafting
@@ -436,7 +436,7 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:block_crushing
@@ -456,7 +456,7 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
 
     Description: When an anvil falls on 3 sugar cane items, they will be crushed into 3 papers.
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:block_crushing
@@ -529,7 +529,7 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 
     Make nearby stone become calcite:
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:lightning_channeling
@@ -589,7 +589,7 @@ Default behavior: Continue matching the rest of the recipes.
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:entity_ticking
@@ -628,7 +628,7 @@ Default behavior: Continue matching the rest of the recipes.
 
     Description: When a falling block with gravel as its block state has a fall distance of 5 or more, it will be replaced with an iron block.
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:entity_ticking
@@ -728,7 +728,7 @@ Default behavior: Do the default ticking behavior.
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:dripstone_dripping
@@ -773,7 +773,7 @@ Default behavior: none.
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: lychee:crafting
@@ -832,7 +832,7 @@ Default behavior: none.
 
     Description: Crafting a pufferfish and a water bucket into a pufferfish bucket. The water bucket will be consumed and the result will be shown as an apple, before you take it out.
 
-    [Here](kubejs.md#example-repairing-tool-with-anvil-and-custom-item) is a more advanced example that uses KubeJS Integration.
+    [Here](kubejs.md#anvil-crafting-recipe-to-repair-tools) is a more advanced example that uses KubeJS Integration.
 
 !!! note
 

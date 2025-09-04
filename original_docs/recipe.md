@@ -219,12 +219,12 @@ Default behavior: Item is consumed.
 
 !!! note "Format"
 
-    | Name     | Description                        | Type / Literal                                                                                                         |
-    | -------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-    | type     | type                               | "lychee:item_inside"                                                                                                   |
-    | item_in  | the ticking item(s)                | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#ingsizedingredientredient)[] |
-    | block_in | the block where the item(s) in     | [BlockPredicate](general-types.md#blockpredicate)                                                                      |
-    | time     | waiting time in seconds ^optional^ | int                                                                                                                    |
+    | Name     | Description                        | Type / Literal                                                                                               |
+    | -------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | type     | type                               | "lychee:item_inside"                                                                                         |
+    | item_in  | the ticking item(s)                | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
+    | block_in | the block where the item(s) in     | [BlockPredicate](general-types.md#blockpredicate)                                                            |
+    | time     | waiting time in seconds ^optional^ | int                                                                                                          |
 
 ??? example
 
@@ -598,7 +598,7 @@ Default behavior: none.
 
     Description: Crafting a pufferfish and a water bucket into a pufferfish bucket. The water bucket will be consumed and the result will be shown as an apple, before you take it out.
 
-    [Here](kubejs.md#example-repairing-tool-with-anvil-and-custom-item) is a more advanced example that uses KubeJS Integration.
+    [Here](kubejs.md#anvil-crafting-recipe-to-repair-tools) is a more advanced example that uses KubeJS Integration.
 
 !!! note
 

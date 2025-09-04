@@ -54,7 +54,7 @@ def processJsonBlock(match):
     indent_type = '    ' if indent.startswith(' ') else '\t'
     yaml_str = re.compile(r'^', re.MULTILINE).sub(indent_type, yaml_str)
     json_str = re.compile(r'^', re.MULTILINE).sub(indent_type, json_str)
-    s = indent + '=== "YAML"\n\n' + yaml_str + '\n\n' + indent + '=== "JSON"\n\n' + json_str
+    s = indent + '===! "YAML"\n\n' + yaml_str + '\n\n' + indent + '=== "JSON"\n\n' + json_str
     return s
 
 if __name__ == '__main__':

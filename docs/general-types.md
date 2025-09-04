@@ -138,7 +138,7 @@ A BlockPredicate is a predicate of an in-world block. It can also be used to rep
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         minecraft:oak_log[axis=y]
@@ -150,7 +150,7 @@ A BlockPredicate is a predicate of an in-world block. It can also be used to rep
         "minecraft:oak_log[axis=y]"
         ```
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         '#wooden_stairs'
@@ -162,7 +162,7 @@ A BlockPredicate is a predicate of an in-world block. It can also be used to rep
         "#wooden_stairs"
         ```
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         blocks: tconstruct:seared_lantern
@@ -195,7 +195,7 @@ A BlockPredicate is a predicate of StateDefinition.
 
     Matches water source block:
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         blocks: water
@@ -250,7 +250,7 @@ An ItemStack is an item with its count and components.
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         3x diamond
@@ -262,7 +262,7 @@ An ItemStack is an item with its count and components.
         "3x diamond"
         ```
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         item: diamond
@@ -285,7 +285,7 @@ An ItemStack is an item with its count and components.
 
     or in shorthand form:
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         item: diamond[item_name=ComponentTest]
@@ -307,7 +307,7 @@ JsonPointer is a string syntax for identifying a specific value within a JSON. B
 
 !!! example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         /path/to/the/target

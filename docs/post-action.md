@@ -18,7 +18,7 @@ You can add post-actions to a Lychee's recipe, and they will be executed after t
 
 Post-actions can be defined using a shorthand string:
 
-=== "YAML"
+===! "YAML"
 
 	```yaml
 	<command> [arg1] [arg2] ... [/option1][/option2]
@@ -58,7 +58,7 @@ Spawns an item entity on the ground.
 
     Drops a water bottle:
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: drop_item
@@ -140,7 +140,7 @@ This action is not [repeatable](concepts.md#repeatability).
 
     Places a cauldron:
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         place cauldron
@@ -152,7 +152,7 @@ This action is not [repeatable](concepts.md#repeatability).
         "place cauldron"
         ```
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: place
@@ -170,7 +170,7 @@ This action is not [repeatable](concepts.md#repeatability).
 
     Places a waterlogged oak stairs:
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         place oak_stairs[waterlogged=true]
@@ -182,7 +182,7 @@ This action is not [repeatable](concepts.md#repeatability).
         "place oak_stairs[waterlogged=true]"
         ```
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: place
@@ -208,7 +208,7 @@ This action is not [repeatable](concepts.md#repeatability).
 
     Destroys current block (place air):
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         place *
@@ -220,7 +220,7 @@ This action is not [repeatable](concepts.md#repeatability).
         "place *"
         ```
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: place
@@ -318,7 +318,7 @@ Randomly selects entries from an action list to apply. Similar to loot table.
 
 ??? example
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: random
@@ -435,7 +435,7 @@ Executes a command.
 
     Spawns particles:
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         run "particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20" /hide
@@ -447,7 +447,7 @@ Executes a command.
         "run \"particle minecraft:angry_villager ~ ~1 ~ 1 1 1 0 20\" /hide"
         ```
 
-    === "YAML"
+    ===! "YAML"
 
         ```yaml
         type: execute

@@ -29,6 +29,7 @@ theme:
         - content.tabs.link
         - content.tooltips
         - navigation.expand
+        - navigation.top
     palette:
         - media: "(prefers-color-scheme: light)"
           scheme: default
