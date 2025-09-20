@@ -11,11 +11,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.util.Reference;
@@ -40,37 +37,18 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		var thisEntity = lootParams.get(LootContextParams.THIS_ENTITY);
 		var itemStackHolders = context.get(LycheeContextKey.ITEM);
+		ServerLevel level = (ServerLevel) context.level();
+		LivingEntity entity = thisEntity instanceof LivingEntity ? (LivingEntity) thisEntity : null;
 		for (var index : indexes) {
 			itemStackHolders.get(index).setConsumption(0);
 			var itemStack = itemStackHolders.split(index, 1).get();
-
-			// Forge hook
-			//		if (thisEntity instanceof LivingEntity) {
-			//			damage = stack.getItem().damageItem(stack, damage, (LivingEntity) thisEntity, onBroken);
-			//		}
-
-			itemStack.hurtAndBreak(
-					damage,
-					(ServerLevel) context.level(),
-					thisEntity instanceof ServerPlayer player ? player : null, (it) -> {
-						if (thisEntity instanceof LivingEntity livingEntity) {
-							EquipmentSlot hand = null;
-							if (livingEntity.getMainHandItem() == itemStack) {
-								hand = EquipmentSlot.MAINHAND;
-							} else if (livingEntity.getOffhandItem() == itemStack) {
-								hand = EquipmentSlot.OFFHAND;
-							}
-							if (hand != null) {
-								livingEntity.onEquippedItemBroken(it, hand);
-							}
-						}
-						var item = itemStack.getItem();
-						itemStack.shrink(1);
-						if (thisEntity instanceof Player player) {
-							player.awardStat(Stats.ITEM_BROKEN.get(item));
-						}
-						itemStack.setDamageValue(0);
-					});
+			if (entity != null && entity.getMainHandItem() == itemStack) {
+				itemStack.hurtAndBreak(damage, entity, EquipmentSlot.MAINHAND);
+			} else if (entity != null && entity.getOffhandItem() == itemStack) {
+				itemStack.hurtAndBreak(damage, entity, EquipmentSlot.OFFHAND);
+			} else {
+				itemStack.hurtAndBreak(damage, level, entity, it -> {});
+			}
 		}
 	}
 
