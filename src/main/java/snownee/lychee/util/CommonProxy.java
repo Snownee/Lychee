@@ -24,11 +24,13 @@ import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.BlockItem;
@@ -304,6 +306,10 @@ public class CommonProxy {
 
 	public static <T> String getTagTranslationKey(TagKey<T> key) {
 		return Tags.getTagTranslationKey(key);
+	}
+
+	public static void hurtAndBreak(ItemStack itemStack, int damage, ServerLevel level, @Nullable LivingEntity entity) {
+		itemStack.hurtAndBreak(damage, level, entity, $ -> {});
 	}
 
 	public CommonProxy(IEventBus modEventBus) {

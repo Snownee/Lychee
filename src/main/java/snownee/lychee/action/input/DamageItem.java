@@ -15,6 +15,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -47,7 +48,7 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 			} else if (entity != null && entity.getOffhandItem() == itemStack) {
 				itemStack.hurtAndBreak(damage, entity, EquipmentSlot.OFFHAND);
 			} else {
-				itemStack.hurtAndBreak(damage, level, entity, it -> {});
+				CommonProxy.hurtAndBreak(itemStack, damage, level, entity);
 			}
 		}
 	}
