@@ -200,7 +200,7 @@ Waits for several seconds, then execute the following actions.
 
 !!! note "Shorthand Format"
 
-    `delay <seconds: int>`
+    `delay <seconds: number>`
 
 ??? note "Format"
 
