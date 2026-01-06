@@ -45,7 +45,7 @@
 	"depends": {
 		"fabric-api": ">=0.95",
 		"fabricloader": ">=0.15",
-		"kiwi": ">=15.1.5"
+		"kiwi": ">=15.8"
 	},
 	"custom": {
 		"modmenu": {

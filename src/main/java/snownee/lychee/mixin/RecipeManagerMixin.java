@@ -41,7 +41,8 @@ public class RecipeManagerMixin {
 			Map<ResourceLocation, JsonElement> yamlRecipes = OneTimeLoader.load(
 					resourceManager,
 					Registries.elementsDirPath(Registries.RECIPE),
-					ExtraCodecs.JSON);
+					ExtraCodecs.JSON,
+					new OneTimeLoader.Context());
 			for (Map.Entry<ResourceLocation, JsonElement> entry : yamlRecipes.entrySet()) {
 				object.putIfAbsent(entry.getKey(), entry.getValue());
 			}
