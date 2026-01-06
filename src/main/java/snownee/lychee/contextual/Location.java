@@ -162,10 +162,10 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 	@Override
 	public int showingCount() {
-		var c = 0;
 		if (check.predicate().isEmpty()) {
-			return c;
+			return 0;
 		}
+		var c = 0;
 		final var predicate = check.predicate().get();
 		for (var rule : RULES) {
 			if (!rule.isEmpty(predicate)) {
