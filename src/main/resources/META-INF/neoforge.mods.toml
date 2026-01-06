@@ -28,5 +28,10 @@ modId = "jei"
 versionRange = "[19.21, )"
 type = "optional"
 
+[[dependencies.lychee]]
+modId = "kubejs"
+versionRange = "[2101.7.2, )"
+type = "optional"
+
 [modproperties.lychee]
 catalogueItemIcon = "minecraft:crafting_table" #Support for Catalogue mod

@@ -1,12 +1,12 @@
 package snownee.lychee.compat.kubejs;
 
-import java.util.Map;
 import java.util.function.BiFunction;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.google.gson.JsonObject;
+
 import dev.latvian.mods.kubejs.event.KubeEvent;
-import dev.latvian.mods.kubejs.util.MapJS;
 import dev.latvian.mods.kubejs.util.Tristate;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.world.entity.player.Player;
@@ -18,12 +18,12 @@ public class CustomConditionKubeEvent implements KubeEvent {
 
 	public final String id;
 	public final CustomCondition condition;
-	public final Map<?, ?> data;
+	public final JsonObject data;
 
 	public CustomConditionKubeEvent(String id, CustomCondition condition) {
 		this.id = id;
 		this.condition = condition;
-		this.data = MapJS.of(condition.data);
+		this.data = condition.data;
 	}
 
 	public void setTestFunc(ContextualPredicate func) {

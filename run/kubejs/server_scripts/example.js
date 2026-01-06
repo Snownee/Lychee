@@ -23,7 +23,7 @@ ServerEvents.recipes(event => {
 })
 
 ServerEvents.recipes(event => {
-	let lb = LycheeBuilder.create(event.jsonOps)
+	let lb = LycheeBuilder.create(event.ops.json())
 	let javaRecipe = obj => event.custom(Lychee.toJSON(obj))
 	let $Chance = Java.loadClass('snownee.lychee.contextual.Chance')
 	javaRecipe(
