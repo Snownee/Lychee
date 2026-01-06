@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.base.Objects;
@@ -88,6 +87,10 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		return conditions().stream().mapToInt(ContextualConditionDisplay::showingCount).sum();
 	}
 
+	public boolean hasShowingConditions() {
+		return showingCount() > 0;
+	}
+
 	public List<ContextualConditionData> unpack() {
 		List<ContextualConditionData> list = Lists.newArrayListWithExpectedSize(conditions.size());
 		for (var i = 0; i < conditions.size(); i++) {
@@ -121,7 +124,6 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 		}
 	}
 
-	@NotNull
 	@Override
 	public Iterator<ContextualCondition> iterator() {
 		return conditions.iterator();

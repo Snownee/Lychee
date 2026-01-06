@@ -22,7 +22,6 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import mezz.jei.api.runtime.IIngredientManager;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -136,7 +135,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		switch (action) {
 			case DropItem dropItem -> {
 				slotBuilder.addItemStack(dropItem.itemStack());
-				if (action.commonProperties().icon() != null) {
+				if (action.commonProperties().icon() != null || action.commonProperties().conditions().hasShowingConditions()) {
 					slotBuilder.setCustomRenderer(
 							VanillaTypes.ITEM_STACK, new IIngredientRenderer<>() {
 								@Override
@@ -146,9 +145,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 								@Override
 								public void getTooltip(ITooltipBuilder tooltip, ItemStack ingredient, TooltipFlag tooltipFlag) {
-									IIngredientManager ingredientManager = ((JeiRvHelper) instance.helper()).jeiHelpers()
-											.getIngredientManager();
-									ingredientManager.getIngredientRenderer(ingredient).getTooltip(tooltip, ingredient, tooltipFlag);
+									PostActionIngredientRenderer.INSTANCE.getTooltip(tooltip, action, tooltipFlag);
 								}
 
 								@SuppressWarnings("removal")

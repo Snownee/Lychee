@@ -110,7 +110,7 @@ public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 	}
 
 	public static boolean needInfo(ILycheeRecipe<?> recipe) {
-		return !recipe.conditions().conditions().isEmpty() || recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false);
+		return recipe.conditions().hasShowingConditions() || recipe.comment().map(it -> !Strings.isNullOrEmpty(it)).orElse(false);
 	}
 
 	public static <R extends ILycheeRecipe<?>> RenderElement infoIcon(RecipeHolder<R> recipeHolder) {
