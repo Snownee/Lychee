@@ -48,6 +48,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	protected final List<PostAction> assemblingActions;
 	protected final boolean preserveEnchantments;
 	protected final boolean preserveAttributes;
+	protected final boolean preserveDurability;
 
 	public AnvilCraftingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
@@ -57,7 +58,8 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 			int levelCost,
 			int materialCost,
 			boolean preserveEnchantments,
-			boolean preserveAttributes) {
+			boolean preserveAttributes,
+			boolean preserveDurability) {
 		super(commonProperties);
 		this.ingredients = ingredients;
 		this.levelCost = levelCost;
@@ -66,6 +68,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		this.assemblingActions = assemblingActions;
 		this.preserveEnchantments = preserveEnchantments;
 		this.preserveAttributes = preserveAttributes;
+		this.preserveDurability = preserveDurability;
 		onConstructed();
 	}
 
@@ -146,6 +149,15 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 			}
 		}
 
+		if (preserveDurability) {
+			ItemStack firstInput = anvilContext.input().getFirst();
+			if (firstInput.isDamageableItem() && result.isDamageableItem()) {
+				float durabilityPercentage = (float)(firstInput.getMaxDamage() - firstInput.getDamageValue()) / firstInput.getMaxDamage();
+				int newDamage = result.getMaxDamage() - Math.round(durabilityPercentage * result.getMaxDamage());
+				result.setDamageValue(Math.max(0, Math.min(newDamage, result.getMaxDamage())));
+			}
+		}
+
 		context.get(LycheeContextKey.ITEM).replace(2, result);
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.reset();
@@ -195,6 +207,10 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		return preserveAttributes;
 	}
 
+	public boolean preserveDurability() {
+		return preserveDurability;
+	}
+
 	public ItemStack output() {
 		return output;
 	}
@@ -216,7 +232,8 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 						ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),
 						ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1).forGetter(AnvilCraftingRecipe::materialCost),
 						Codec.BOOL.optionalFieldOf("preserve_enchantments", true).forGetter(AnvilCraftingRecipe::preserveEnchantments),
-						Codec.BOOL.optionalFieldOf("preserve_attributes", true).forGetter(AnvilCraftingRecipe::preserveAttributes)
+						Codec.BOOL.optionalFieldOf("preserve_attributes", true).forGetter(AnvilCraftingRecipe::preserveAttributes),
+						Codec.BOOL.optionalFieldOf("preserve_durability", true).forGetter(AnvilCraftingRecipe::preserveDurability)
 				).apply(instance, AnvilCraftingRecipe::new));
 
 		@Override
@@ -238,8 +255,9 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 				int materialCost = ByteBufCodecs.VAR_INT.decode(buf);
 				boolean preserveEnchantments = ByteBufCodecs.BOOL.decode(buf);
 				boolean preserveAttributes = ByteBufCodecs.BOOL.decode(buf);
+				boolean preserveDurability = ByteBufCodecs.BOOL.decode(buf);
 
-				return new AnvilCraftingRecipe(commonProperties, ingredients, output, assemblingActions, levelCost, materialCost, preserveEnchantments, preserveAttributes);
+				return new AnvilCraftingRecipe(commonProperties, ingredients, output, assemblingActions, levelCost, materialCost, preserveEnchantments, preserveAttributes, preserveDurability);
 			}
 
 			@Override
@@ -255,6 +273,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 				ByteBufCodecs.VAR_INT.encode(buf, recipe.materialCost());
 				ByteBufCodecs.BOOL.encode(buf, recipe.preserveEnchantments());
 				ByteBufCodecs.BOOL.encode(buf, recipe.preserveAttributes());
+				ByteBufCodecs.BOOL.encode(buf, recipe.preserveDurability());
 			}
 		};
 
