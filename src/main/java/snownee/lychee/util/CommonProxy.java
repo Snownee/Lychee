@@ -2,6 +2,7 @@ package snownee.lychee.util;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -105,7 +106,7 @@ public class CommonProxy {
 	private static RecipeManager recipeManager;
 
 	public CommonProxy() {
-		LycheeTags.init();
+		Objects.requireNonNull(LycheeTags.FIRE_IMMUNE);
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		modEventBus.addListener(CommonProxy::newRegistries);
 		modEventBus.addListener(CommonProxy::register);
@@ -143,17 +144,17 @@ public class CommonProxy {
 	}
 
 	public static void register(RegisterEvent event) {
-		event.register(LycheeRegistries.CONTEXTUAL.key(), helper -> ContextualConditionTypes.init());
+		event.register(LycheeRegistries.CONTEXTUAL.key(), helper -> Objects.requireNonNull(ContextualConditionTypes.CHANCE));
 		event.register(
 				LycheeRegistries.POST_ACTION.key(), helper -> {
-					PostActionTypes.init();
+					Objects.requireNonNull(PostActionTypes.DROP_ITEM);
 					if (isPhysicalClient()) {
 						ClientProxy.registerPostActionRenderers();
 					}
 				});
 		event.register(
 				ForgeRegistries.RECIPE_SERIALIZERS.getRegistryKey(), helper -> {
-					RecipeSerializers.init();
+					Objects.requireNonNull(RecipeSerializers.ITEM_BURNING);
 					CraftingHelper.register(new ResourceLocation(Lychee.ID, "always_true"), AlwaysTrueIngredient.Serializer.INSTANCE);
 				});
 		event.register(ForgeRegistries.RECIPE_TYPES.getRegistryKey(), helper -> RecipeTypes.init());

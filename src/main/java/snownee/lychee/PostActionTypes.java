@@ -25,9 +25,6 @@ import snownee.lychee.core.post.input.SetItem;
 
 public class PostActionTypes {
 
-	public static void init() {
-	}
-
 	public static final PostActionType<DropItem> DROP_ITEM = register("drop_item", new DropItem.Type());
 	public static final PostActionType<DropXp> DROP_XP = register("drop_xp", new DropXp.Type());
 	public static final PostActionType<Execute> EXECUTE = register("execute", new Execute.Type());

@@ -21,9 +21,6 @@ import snownee.lychee.core.contextual.Time;
 
 public final class ContextualConditionTypes {
 
-	public static void init() {
-	}
-
 	public static final ContextualConditionType<Chance> CHANCE = register("chance", new Chance.Type());
 	public static final ContextualConditionType<Location> LOCATION = register("location", new Location.Type());
 	public static final ContextualConditionType<IsDifficulty> DIFFICULTY = register("difficulty", new IsDifficulty.Type());
