@@ -15,9 +15,6 @@ public final class LycheeRegistries {
 	public static final MappedRegistry<ContextualConditionType<?>> CONTEXTUAL = register("contextual", ContextualConditionType.class);
 	public static final MappedRegistry<PostActionType<?>> POST_ACTION = register("post_action", PostActionType.class);
 
-	public static void init() {
-	}
-
 	private static <T> MappedRegistry<T> register(String name, Class<?> clazz) {
 		var registry = FabricRegistryBuilder.<T>createSimple(ResourceKey.createRegistryKey(new ResourceLocation(Lychee.ID, name))).attribute(RegistryAttribute.SYNCED).buildAndRegister();
 		if (CommonProxy.hasKiwi) {

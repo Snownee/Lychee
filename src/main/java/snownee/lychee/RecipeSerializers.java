@@ -21,9 +21,6 @@ import snownee.lychee.random_block_ticking.RandomBlockTickingRecipe;
 
 public final class RecipeSerializers {
 
-	public static void init() {
-	}
-
 	public static final LycheeRecipe.Serializer<ItemBurningRecipe> ITEM_BURNING = register("item_burning", new ItemBurningRecipe.Serializer());
 	public static final LycheeRecipe.Serializer<ItemInsideRecipe> ITEM_INSIDE = register("item_inside", new ItemInsideRecipe.Serializer());
 	public static final LycheeRecipe.Serializer<BlockInteractingRecipe> BLOCK_INTERACTING = register("block_interacting", new BlockInteractingRecipe.Serializer<>(BlockInteractingRecipe::new));

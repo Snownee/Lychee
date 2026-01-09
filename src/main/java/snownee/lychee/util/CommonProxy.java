@@ -2,6 +2,7 @@ package snownee.lychee.util;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -466,12 +467,12 @@ public class CommonProxy implements ModInitializer {
 					});
 		}
 
-		RecipeTypes.init();
-		LycheeTags.init();
-		LycheeRegistries.init();
-		ContextualConditionTypes.init();
-		PostActionTypes.init();
-		RecipeSerializers.init();
+		Objects.requireNonNull(RecipeTypes.ITEM_BURNING);
+		Objects.requireNonNull(LycheeTags.FIRE_IMMUNE);
+		Objects.requireNonNull(LycheeRegistries.CONTEXTUAL);
+		Objects.requireNonNull(ContextualConditionTypes.CHANCE);
+		Objects.requireNonNull(PostActionTypes.DROP_ITEM);
+		Objects.requireNonNull(RecipeSerializers.ITEM_BURNING);
 		CustomIngredientSerializer.register(AlwaysTrueIngredient.SERIALIZER);
 
 		// Interaction recipes
