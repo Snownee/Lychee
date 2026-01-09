@@ -467,7 +467,7 @@ public class CommonProxy implements ModInitializer {
 					});
 		}
 
-		Objects.requireNonNull(RecipeTypes.ITEM_BURNING);
+		RecipeTypes.init();
 		Objects.requireNonNull(LycheeTags.FIRE_IMMUNE);
 		Objects.requireNonNull(LycheeRegistries.CONTEXTUAL);
 		Objects.requireNonNull(ContextualConditionTypes.CHANCE);
