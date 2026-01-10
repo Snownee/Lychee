@@ -113,8 +113,15 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 
 			ItemEnchantments.Mutable combinedEnchantments = new ItemEnchantments.Mutable(firstEnchantments);
 
+			outer:
 			for (var entry : secondEnchantments.entrySet()) {
 				Holder<Enchantment> enchantment = entry.getKey();
+				for (Holder<Enchantment> secondEnchantment : combinedEnchantments.keySet()) {
+					if (!Enchantment.areCompatible(enchantment, secondEnchantment)) {
+						continue outer;
+					}
+				}
+
 				int level = entry.getIntValue();
 				int existingLevel = combinedEnchantments.getLevel(enchantment);
 
@@ -129,7 +136,10 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 				}
 			}
 
-			EnchantmentHelper.setEnchantments(result, combinedEnchantments.toImmutable());
+			//FIXME check unsupported enchantments
+			if (!combinedEnchantments.keySet().isEmpty()) {
+				EnchantmentHelper.setEnchantments(result, combinedEnchantments.toImmutable());
+			}
 		}
 
 		context.get(LycheeContextKey.ITEM).replace(2, result);
