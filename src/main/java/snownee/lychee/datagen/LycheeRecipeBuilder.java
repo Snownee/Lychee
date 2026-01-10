@@ -17,6 +17,7 @@ import com.mojang.datafixers.util.Function3;
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.NonNullList;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -36,6 +37,7 @@ import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.recipes.DripstoneRecipe;
+import snownee.lychee.recipes.EntityTickingRecipe;
 import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.recipes.RandomBlockTickingRecipe;
@@ -49,11 +51,11 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 
 public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R extends ILycheeRecipe<?>> extends ContextualBuilder<T> implements LycheeBuilder {
-	protected final List<PostAction> postActions = Lists.newArrayListWithExpectedSize(6);
 	protected boolean hideInRecipeViewer;
 	protected boolean ghost;
 	protected @Nullable String comment;
 	protected String group = ILycheeRecipe.DEFAULT_GROUP;
+	protected final List<PostAction> postActions = Lists.newArrayListWithExpectedSize(6);
 	protected MinMaxBounds.Ints maxRepeats = MinMaxBounds.Ints.ANY;
 	protected @Nullable AdvancementHolder advancement;
 
@@ -224,9 +226,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		protected final int materialCost;
 		protected final ItemStack output;
 		protected final List<PostAction> assemblingActions = Lists.newArrayListWithExpectedSize(6);
-		protected boolean preserveEnchantments = true;
-		protected boolean preserveAttributes = true;
-		protected boolean preserveDurability = true;
+		protected boolean preserveEnchantments;
 
 		public AnvilCrafting(Ingredient left, @Nullable Ingredient right, int materialCost, int levelCost, ItemStack output) {
 			this.ingredients = right == null ? NonNullList.of(Ingredient.EMPTY, left) : NonNullList.of(Ingredient.EMPTY, left, right);
@@ -250,7 +250,14 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 
 		@Override
 		public AnvilCraftingRecipe build() {
-			return new AnvilCraftingRecipe(properties(), ingredients, output, assemblingActions, levelCost, materialCost, preserveEnchantments, preserveAttributes, preserveDurability);
+			return new AnvilCraftingRecipe(
+					properties(),
+					ingredients,
+					output,
+					assemblingActions,
+					levelCost,
+					materialCost,
+					preserveEnchantments);
 		}
 	}
 
@@ -316,12 +323,12 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 	}
 
 	public static class ShapedCrafting extends LycheeRecipeBuilder<ShapedCrafting, ShapedCraftingRecipe> {
-		protected final List<PostAction> assemblingActions = Lists.newArrayListWithExpectedSize(6);
 		private final RecipeCategory category;
 		private final ItemStack result;
 		private final List<String> rows;
 		private final Map<Character, Ingredient> key;
 		private boolean showNotification;
+		protected final List<PostAction> assemblingActions = Lists.newArrayListWithExpectedSize(6);
 
 		public ShapedCrafting(RecipeCategory category, ItemLike result, int amount) {
 			this(category, new ItemStack(result, amount));
@@ -333,15 +340,6 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 			this.showNotification = true;
 			this.category = category;
 			this.result = result;
-		}
-
-		static CraftingBookCategory determineBookCategory(RecipeCategory category) {
-			return switch (category) {
-				case BUILDING_BLOCKS -> CraftingBookCategory.BUILDING;
-				case TOOLS, COMBAT -> CraftingBookCategory.EQUIPMENT;
-				case REDSTONE -> CraftingBookCategory.REDSTONE;
-				default -> CraftingBookCategory.MISC;
-			};
 		}
 
 		public ShapedCrafting define(Character key, TagKey<Item> tagKey) {
@@ -400,6 +398,30 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 					result,
 					showNotification);
 			return new ShapedCraftingRecipe(properties, shapedRecipe, assemblingActions);
+		}
+
+		static CraftingBookCategory determineBookCategory(RecipeCategory category) {
+			return switch (category) {
+				case BUILDING_BLOCKS -> CraftingBookCategory.BUILDING;
+				case TOOLS, COMBAT -> CraftingBookCategory.EQUIPMENT;
+				case REDSTONE -> CraftingBookCategory.REDSTONE;
+				default -> CraftingBookCategory.MISC;
+			};
+		}
+	}
+
+	public static class EntityTicking extends LycheeRecipeBuilder<EntityTicking, EntityTickingRecipe> {
+		private final EntityPredicate predicate;
+		private final int interval;
+
+		public EntityTicking(EntityPredicate predicate, int interval) {
+			this.predicate = predicate;
+			this.interval = interval;
+		}
+
+		@Override
+		public EntityTickingRecipe build() {
+			return new EntityTickingRecipe(properties(), predicate, interval);
 		}
 	}
 }

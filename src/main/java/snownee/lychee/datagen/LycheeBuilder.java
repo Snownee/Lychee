@@ -1,23 +1,25 @@
 package snownee.lychee.datagen;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.google.gson.JsonObject;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JavaOps;
 
 import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -41,8 +43,11 @@ import snownee.lychee.action.Move;
 import snownee.lychee.action.MoveTowardsFace;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.SetBlock;
+import snownee.lychee.action.input.CopyComponent;
+import snownee.lychee.action.input.CopyDurability;
 import snownee.lychee.action.input.DamageItem;
 import snownee.lychee.action.input.PreventDefault;
+import snownee.lychee.action.input.RemoveComponent;
 import snownee.lychee.action.input.SetItem;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
@@ -51,6 +56,7 @@ import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionLike;
+import snownee.lychee.util.codec.ParsedItem;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.ui.BlankRecipe;
 
@@ -138,6 +144,10 @@ public interface LycheeBuilder {
 
 	default LycheeRecipeBuilder.ShapedCrafting shapedCraftingRecipe(RecipeCategory category, ItemStack result) {
 		return new LycheeRecipeBuilder.ShapedCrafting(category, result);
+	}
+
+	default LycheeRecipeBuilder.EntityTicking shapedCraftingRecipe(EntityPredicate predicate, int interval) {
+		return new LycheeRecipeBuilder.EntityTicking(predicate, interval);
 	}
 
 	@HideFromJS
@@ -263,6 +273,30 @@ public interface LycheeBuilder {
 		return new ActionBuilder<>(new Delay(seconds));
 	}
 
+	default ActionBuilder<?, CopyComponent> copyComponent(
+			Reference source,
+			Reference target,
+			@Nullable Collection<DataComponentType<?>> components) {
+		return new ActionBuilder<>(new CopyComponent(
+				PostActionCommonProperties.EMPTY,
+				components == null ? List.of() : List.copyOf(components),
+				source,
+				target));
+	}
+
+	default ActionBuilder<?, RemoveComponent> removeComponent(
+			Reference target,
+			@Nullable Collection<DataComponentType<?>> components) {
+		return new ActionBuilder<>(new RemoveComponent(
+				PostActionCommonProperties.EMPTY,
+				components == null ? List.of() : List.copyOf(components),
+				target));
+	}
+
+	default ActionBuilder<?, CopyDurability> copyDurability(float bonus, Reference source, Reference target) {
+		return new ActionBuilder<>(new CopyDurability(PostActionCommonProperties.EMPTY, bonus, source, target));
+	}
+
 	@SuppressWarnings("unchecked")
 	default BlockPredicate block(Object o) {
 		return switch (o) {
@@ -275,15 +309,8 @@ public interface LycheeBuilder {
 	}
 
 	default SizedIngredient sized(Object o) {
-		if (o instanceof String s && s.length() > 3) {
-			char c = s.charAt(0);
-			if (c >= '1' && c <= '9') {
-				int i = s.indexOf("x ");
-				if (i > 0) {
-					int count = Integer.parseInt(s.substring(0, i));
-					return sized(s.substring(i + 2), count);
-				}
-			}
+		if (o instanceof String s) {
+			return parse(s).sizedIngredient();
 		}
 		return sized(o, 1);
 	}
@@ -296,19 +323,22 @@ public interface LycheeBuilder {
 			case ItemLike item -> Ingredient.of(item);
 			case ItemStack stack -> Ingredient.of(stack);
 			case TagKey<?> tagKey -> Ingredient.of((TagKey<Item>) tagKey);
-			case String s -> parse(s);
+			case String s -> parse(s).ingredient();
 			default -> throw new IllegalArgumentException("Invalid argument: " + o);
 		};
 		return new SizedIngredient(i, count);
 	}
 
-	private static Ingredient parse(String s) {
-		ExtraCodecs.TagOrElementLocation id = ExtraCodecs.TAG_OR_ELEMENT_ID.decode(JavaOps.INSTANCE, s).getOrThrow().getFirst();
-		if (id.tag()) {
-			return Ingredient.of(TagKey.create(Registries.ITEM, id.id()));
-		} else {
-			return Ingredient.of(BuiltInRegistries.ITEM.get(id.id()));
+	static ParsedItem parse(String s, boolean single) {
+		try {
+			return ParsedItem.read(new StringReader(s), single);
+		} catch (CommandSyntaxException e) {
+			throw new RuntimeException(e);
 		}
+	}
+
+	static ParsedItem parse(String s) {
+		return parse(s, false);
 	}
 
 	static LycheeBuilder create(RegistryOps<?> registryOps) {

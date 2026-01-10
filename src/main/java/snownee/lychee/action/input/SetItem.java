@@ -1,6 +1,7 @@
 package snownee.lychee.action.input;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -34,7 +35,7 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStack ite
 
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var indexes = recipe.getItemIndexes(target);
+		var indexes = Objects.requireNonNull(recipe).getItemIndexes(target);
 		var registryAccess = context.level().registryAccess();
 		for (var index : indexes) {
 			var tag = (CompoundTag) context.getItem(index).save(registryAccess);
