@@ -226,9 +226,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		protected final int materialCost;
 		protected final ItemStack output;
 		protected final List<PostAction> assemblingActions = Lists.newArrayListWithExpectedSize(6);
-		protected boolean preserveEnchantments = true;
-		protected boolean preserveAttributes = true;
-		protected boolean preserveDurability = true;
+		protected boolean preserveEnchantments;
 
 		public AnvilCrafting(Ingredient left, @Nullable Ingredient right, int materialCost, int levelCost, ItemStack output) {
 			this.ingredients = right == null ? NonNullList.of(Ingredient.EMPTY, left) : NonNullList.of(Ingredient.EMPTY, left, right);
@@ -252,7 +250,14 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 
 		@Override
 		public AnvilCraftingRecipe build() {
-			return new AnvilCraftingRecipe(properties(), ingredients, output, assemblingActions, levelCost, materialCost, preserveEnchantments, preserveAttributes, preserveDurability);
+			return new AnvilCraftingRecipe(
+					properties(),
+					ingredients,
+					output,
+					assemblingActions,
+					levelCost,
+					materialCost,
+					preserveEnchantments);
 		}
 	}
 

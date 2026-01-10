@@ -13,13 +13,11 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -32,6 +30,7 @@ import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.codec.LycheeCodecs;
+import snownee.lychee.util.codec.LycheeStreamCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.json.JsonPointer;
@@ -47,8 +46,6 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	protected final ItemStack output;
 	protected final List<PostAction> assemblingActions;
 	protected final boolean preserveEnchantments;
-	protected final boolean preserveAttributes;
-	protected final boolean preserveDurability;
 
 	public AnvilCraftingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
@@ -57,9 +54,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 			List<PostAction> assemblingActions,
 			int levelCost,
 			int materialCost,
-			boolean preserveEnchantments,
-			boolean preserveAttributes,
-			boolean preserveDurability) {
+			boolean preserveEnchantments) {
 		super(commonProperties);
 		this.ingredients = ingredients;
 		this.levelCost = levelCost;
@@ -67,8 +62,6 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		this.output = output;
 		this.assemblingActions = assemblingActions;
 		this.preserveEnchantments = preserveEnchantments;
-		this.preserveAttributes = preserveAttributes;
-		this.preserveDurability = preserveDurability;
 		onConstructed();
 	}
 
@@ -139,25 +132,6 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 			EnchantmentHelper.setEnchantments(result, combinedEnchantments.toImmutable());
 		}
 
-		if (preserveAttributes) {
-			ItemStack firstInput = anvilContext.input().getFirst();
-			if (!firstInput.isEmpty()) {
-				ItemAttributeModifiers attributes = firstInput.get(DataComponents.ATTRIBUTE_MODIFIERS);
-				if (attributes != null) {
-					result.set(DataComponents.ATTRIBUTE_MODIFIERS, attributes);
-				}
-			}
-		}
-
-		if (preserveDurability) {
-			ItemStack firstInput = anvilContext.input().getFirst();
-			if (firstInput.isDamageableItem() && result.isDamageableItem()) {
-				float durabilityPercentage = (float)(firstInput.getMaxDamage() - firstInput.getDamageValue()) / firstInput.getMaxDamage();
-				int newDamage = result.getMaxDamage() - Math.round(durabilityPercentage * result.getMaxDamage());
-				result.setDamageValue(Math.max(0, Math.min(newDamage, result.getMaxDamage())));
-			}
-		}
-
 		context.get(LycheeContextKey.ITEM).replace(2, result);
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.reset();
@@ -203,14 +177,6 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		return preserveEnchantments;
 	}
 
-	public boolean preserveAttributes() {
-		return preserveAttributes;
-	}
-
-	public boolean preserveDurability() {
-		return preserveDurability;
-	}
-
 	public ItemStack output() {
 		return output;
 	}
@@ -231,9 +197,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 						PostAction.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
 						ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),
 						ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1).forGetter(AnvilCraftingRecipe::materialCost),
-						Codec.BOOL.optionalFieldOf("preserve_enchantments", true).forGetter(AnvilCraftingRecipe::preserveEnchantments),
-						Codec.BOOL.optionalFieldOf("preserve_attributes", true).forGetter(AnvilCraftingRecipe::preserveAttributes),
-						Codec.BOOL.optionalFieldOf("preserve_durability", true).forGetter(AnvilCraftingRecipe::preserveDurability)
+						Codec.BOOL.optionalFieldOf("preserve_enchantments", false).forGetter(AnvilCraftingRecipe::preserveEnchantments)
 				).apply(instance, AnvilCraftingRecipe::new));
 
 		@Override
@@ -241,41 +205,22 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 			return CODEC;
 		}
 
-		public static final StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> STREAM_CODEC = new StreamCodec<>() {
-			@Override
-			public AnvilCraftingRecipe decode(RegistryFriendlyByteBuf buf) {
-				LycheeRecipeCommonProperties commonProperties = LycheeRecipeCommonProperties.STREAM_CODEC.decode(buf);
-				NonNullList<Ingredient> ingredients = Ingredient.CONTENTS_STREAM_CODEC
-						.apply(ByteBufCodecs.list(2))
-						.map(NonNullList::copyOf, Function.identity())
-						.decode(buf);
-				ItemStack output = ItemStack.STREAM_CODEC.decode(buf);
-				List<PostAction> assemblingActions = PostAction.STREAM_LIST_CODEC.decode(buf);
-				int levelCost = ByteBufCodecs.VAR_INT.decode(buf);
-				int materialCost = ByteBufCodecs.VAR_INT.decode(buf);
-				boolean preserveEnchantments = ByteBufCodecs.BOOL.decode(buf);
-				boolean preserveAttributes = ByteBufCodecs.BOOL.decode(buf);
-				boolean preserveDurability = ByteBufCodecs.BOOL.decode(buf);
-
-				return new AnvilCraftingRecipe(commonProperties, ingredients, output, assemblingActions, levelCost, materialCost, preserveEnchantments, preserveAttributes, preserveDurability);
-			}
-
-			@Override
-			public void encode(RegistryFriendlyByteBuf buf, AnvilCraftingRecipe recipe) {
-				LycheeRecipeCommonProperties.STREAM_CODEC.encode(buf, recipe.commonProperties());
-				Ingredient.CONTENTS_STREAM_CODEC
-						.apply(ByteBufCodecs.list(2))
-						.map(NonNullList::copyOf, Function.identity())
-						.encode(buf, recipe.getIngredients());
-				ItemStack.STREAM_CODEC.encode(buf, recipe.output());
-				PostAction.STREAM_LIST_CODEC.encode(buf, recipe.assemblingActions());
-				ByteBufCodecs.VAR_INT.encode(buf, recipe.levelCost());
-				ByteBufCodecs.VAR_INT.encode(buf, recipe.materialCost());
-				ByteBufCodecs.BOOL.encode(buf, recipe.preserveEnchantments());
-				ByteBufCodecs.BOOL.encode(buf, recipe.preserveAttributes());
-				ByteBufCodecs.BOOL.encode(buf, recipe.preserveDurability());
-			}
-		};
+		public static final StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> STREAM_CODEC = LycheeStreamCodecs.composite(
+				LycheeRecipeCommonProperties.STREAM_CODEC,
+				AnvilCraftingRecipe::commonProperties,
+				Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(2)).map(NonNullList::copyOf, Function.identity()),
+				AnvilCraftingRecipe::getIngredients,
+				ItemStack.STREAM_CODEC,
+				AnvilCraftingRecipe::output,
+				PostAction.STREAM_LIST_CODEC,
+				AnvilCraftingRecipe::assemblingActions,
+				ByteBufCodecs.VAR_INT,
+				AnvilCraftingRecipe::levelCost,
+				ByteBufCodecs.VAR_INT,
+				AnvilCraftingRecipe::materialCost,
+				ByteBufCodecs.BOOL,
+				AnvilCraftingRecipe::preserveEnchantments,
+				AnvilCraftingRecipe::new);
 
 		@Override
 		public StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> streamCodec() {

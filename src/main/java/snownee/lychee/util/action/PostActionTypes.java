@@ -19,8 +19,11 @@ import snownee.lychee.action.MoveTowardsFace;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.action.SetBlock;
+import snownee.lychee.action.input.CopyComponent;
+import snownee.lychee.action.input.CopyDurability;
 import snownee.lychee.action.input.DamageItem;
 import snownee.lychee.action.input.PreventDefault;
+import snownee.lychee.action.input.RemoveComponent;
 import snownee.lychee.action.input.SetItem;
 
 public class PostActionTypes {
@@ -58,6 +61,9 @@ public class PostActionTypes {
 	public static final PostActionType<CustomAction> CUSTOM = register("custom", new CustomAction.Type());
 	public static final PostActionType<If> IF = register("if", new If.Type());
 	public static final PostActionType<SetBlock> SET_BLOCK = register("set_block", new SetBlock.Type());
+	public static final PostActionType<CopyComponent> COPY_COMPONENT = register("copy_component", new CopyComponent.Type());
+	public static final PostActionType<RemoveComponent> REMOVE_COMPONENT = register("remove_component", new RemoveComponent.Type());
+	public static final PostActionType<CopyDurability> COPY_DURABILITY = register("copy_durability", new CopyDurability.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		Registry.register(LycheeRegistries.POST_ACTION, ResourceLocation.parse(name), t);

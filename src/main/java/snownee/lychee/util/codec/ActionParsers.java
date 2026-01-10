@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JavaOps;
 
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.BlockPos;
@@ -19,6 +20,8 @@ import snownee.lychee.action.Execute;
 import snownee.lychee.action.Move;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.SetBlock;
+import snownee.lychee.action.input.CopyComponent;
+import snownee.lychee.action.input.RemoveComponent;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 
@@ -121,6 +124,33 @@ public interface ActionParsers {
 						return f;
 					})).orElseThrow();
 			return result.map(f -> new AddItemCooldown(PostActionCommonProperties.EMPTY, f, Optional.empty()));
+		}
+	}
+
+	class CopyComponentParser implements LycheeParser<CopyComponent> {
+		@Override
+		public DataResult<CopyComponent> parse(StringReader reader) throws CommandSyntaxException {
+			DataResult<String> result = LycheeParserUtils.readParam(
+					reader,
+					r -> LycheeCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();
+			return result.map(s -> new CopyComponent(
+					PostActionCommonProperties.EMPTY,
+					LycheeCodecs.WILDCARD_COMPONENTS.parse(JavaOps.INSTANCE, s).getOrThrow(),
+					CopyComponent.DEFAULT_SOURCE,
+					CopyComponent.DEFAULT_TARGET));
+		}
+	}
+
+	class RemoveComponentParser implements LycheeParser<RemoveComponent> {
+		@Override
+		public DataResult<RemoveComponent> parse(StringReader reader) throws CommandSyntaxException {
+			DataResult<String> result = LycheeParserUtils.readParam(
+					reader,
+					r -> LycheeCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();
+			return result.map(s -> new RemoveComponent(
+					PostActionCommonProperties.EMPTY,
+					LycheeCodecs.WILDCARD_COMPONENTS.parse(JavaOps.INSTANCE, s).getOrThrow(),
+					RemoveComponent.DEFAULT_TARGET));
 		}
 	}
 }

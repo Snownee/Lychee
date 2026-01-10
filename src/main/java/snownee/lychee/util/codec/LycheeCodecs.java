@@ -20,6 +20,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
@@ -27,6 +28,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.recipe.SizedIngredient;
+import snownee.kiwi.util.codec.KCodecs;
 
 public final class LycheeCodecs {
 	private static final MapCodec<Integer> ITEM_STACK_COUNT = ExtraCodecs.NON_NEGATIVE_INT.fieldOf("count").orElse(1);
@@ -158,4 +160,17 @@ public final class LycheeCodecs {
 		}
 	}
 
+	public static final Codec<List<DataComponentType<?>>> WILDCARD_COMPONENTS = Codec.withAlternative(
+			KCodecs.compactList(DataComponentType.CODEC), Codec.STRING.flatXmap(
+					s -> {
+						if (s.equals("*")) {
+							return DataResult.success(List.of());
+						}
+						return DataResult.error(() -> "Expected '*'");
+					}, componentTypes -> {
+						if (componentTypes.isEmpty()) {
+							return DataResult.success("*");
+						}
+						return DataResult.error(() -> "Expected empty list");
+					}));
 }

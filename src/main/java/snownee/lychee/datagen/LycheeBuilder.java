@@ -1,6 +1,7 @@
 package snownee.lychee.datagen;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +16,7 @@ import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.tags.TagKey;
@@ -41,8 +43,11 @@ import snownee.lychee.action.Move;
 import snownee.lychee.action.MoveTowardsFace;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.SetBlock;
+import snownee.lychee.action.input.CopyComponent;
+import snownee.lychee.action.input.CopyDurability;
 import snownee.lychee.action.input.DamageItem;
 import snownee.lychee.action.input.PreventDefault;
+import snownee.lychee.action.input.RemoveComponent;
 import snownee.lychee.action.input.SetItem;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
@@ -266,6 +271,30 @@ public interface LycheeBuilder {
 
 	default ActionBuilder<?, Delay> delay(float seconds) {
 		return new ActionBuilder<>(new Delay(seconds));
+	}
+
+	default ActionBuilder<?, CopyComponent> copyComponent(
+			Reference source,
+			Reference target,
+			@Nullable Collection<DataComponentType<?>> components) {
+		return new ActionBuilder<>(new CopyComponent(
+				PostActionCommonProperties.EMPTY,
+				components == null ? List.of() : List.copyOf(components),
+				source,
+				target));
+	}
+
+	default ActionBuilder<?, RemoveComponent> removeComponent(
+			Reference target,
+			@Nullable Collection<DataComponentType<?>> components) {
+		return new ActionBuilder<>(new RemoveComponent(
+				PostActionCommonProperties.EMPTY,
+				components == null ? List.of() : List.copyOf(components),
+				target));
+	}
+
+	default ActionBuilder<?, CopyDurability> copyDurability(float bonus, Reference source, Reference target) {
+		return new ActionBuilder<>(new CopyDurability(PostActionCommonProperties.EMPTY, bonus, source, target));
 	}
 
 	@SuppressWarnings("unchecked")

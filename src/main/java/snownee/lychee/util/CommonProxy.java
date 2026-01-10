@@ -329,6 +329,9 @@ public class CommonProxy {
 			event.setCancellationResult(result);
 		});
 		NeoForge.EVENT_BUS.addListener((PlayerInteractEvent.LeftClickBlock event) -> {
+			if (event.getFace() == null) {
+				return;
+			}
 			InteractionResult result = BlockClickingRecipe.invoke(
 					event.getEntity(),
 					event.getLevel(),

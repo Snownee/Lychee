@@ -36,6 +36,8 @@ public interface LycheeParser<T> {
 				map.put("set_block", new ActionParsers.SetBlockParser());
 				map.put("move", new ActionParsers.MoveParser());
 				map.put("add_item_cooldown", new ActionParsers.ItemCooldown());
+				map.put("copy_component", new ActionParsers.CopyComponentParser());
+				map.put("remove_component", new ActionParsers.RemoveComponentParser());
 			});
 
 	static DataResult<PostAction> action(String s) {
