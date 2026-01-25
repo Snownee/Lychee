@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.RandomlyTickable;
 import snownee.lychee.util.context.LycheeContext;
@@ -34,19 +34,19 @@ public class BlockStateMixin {
 	}
 
 	@Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
-	private void randomTick(ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource, CallbackInfo ci) {
+	private void randomTick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
 		@SuppressWarnings("DataFlowIssue") var blockState = (BlockState) (Object) this;
 
 		var block = (RandomlyTickable) blockState.getBlock();
 		if (block.lychee$isTickable(blockState)) {
 			var context = new LycheeContext();
-			context.put(LycheeContextKey.LEVEL, serverLevel);
-			context.put(LycheeContextKey.RANDOM, randomSource);
+			context.put(LycheeContextKey.LEVEL, level);
+			context.put(LycheeContextKey.RANDOM, random);
 			var lootParams = context.initLootParams(RecipeTypes.RANDOM_BLOCK_TICKING);
 			lootParams.set(LootContextParams.BLOCK_STATE, blockState);
-			lootParams.set(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
-			lootParams.set(LycheeLootContextParams.BLOCK_POS, blockPos);
-			final var recipe = RecipeTypes.RANDOM_BLOCK_TICKING.process(serverLevel, blockState, context);
+			lootParams.set(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
+			lootParams.set(LycheeContextKeys.BLOCK_POS, pos);
+			final var recipe = RecipeTypes.RANDOM_BLOCK_TICKING.process(level, blockState, context);
 			if (recipe != null && context.get(LycheeContextKey.ACTION).avoidDefault) {
 				ci.cancel();
 			}

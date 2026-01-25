@@ -3,24 +3,15 @@ package snownee.lychee.util;
 import java.text.DecimalFormat;
 import java.util.Objects;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 
 public class BoundsExtensions {
 	public static final MinMaxBounds.Ints ONE = MinMaxBounds.Ints.exactly(1);
-	public static final StreamCodec<ByteBuf, MinMaxBounds.Ints> INT_STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.optional(ByteBufCodecs.VAR_INT),
-			MinMaxBounds.Ints::min,
-			ByteBufCodecs.optional(ByteBufCodecs.VAR_INT),
-			MinMaxBounds.Ints::max,
-			MinMaxBounds.Ints::new);
 
 	private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("##.##");
 

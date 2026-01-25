@@ -5,7 +5,8 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
+import org.spongepowered.asm.mixin.Unique;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -27,7 +28,8 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -41,6 +43,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
@@ -55,6 +58,7 @@ import snownee.kiwi.util.KUtil;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.LycheeTags;
+import snownee.lychee.RecipeBookCategories;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.action.CustomAction;
@@ -68,6 +72,7 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.context.LycheeContextSerializers;
 import snownee.lychee.util.contextual.ContextualConditionType;
+import snownee.lychee.util.json.JsonFragmentManager;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.ui.UIElementType;
@@ -97,6 +102,8 @@ public class CommonProxy implements ModInitializer {
 			}
 	);
 	private static final Random RANDOM = new Random();
+	@Unique
+	public static final ThreadLocal<@Nullable JsonFragmentManager> fragmentManagerProvider = new ThreadLocal<>();
 	public static boolean hasDFLib = Platform.isModLoaded("dripstone_fluid_lib");
 
 	public static void dropItemStack(
@@ -121,14 +128,14 @@ public class CommonProxy implements ModInitializer {
 		}
 	}
 
-	public static String makeDescriptionId(String pType, @Nullable ResourceLocation pId) {
+	public static String makeDescriptionId(String pType, @Nullable Identifier pId) {
 		return pId == null
 				? pType + ".unregistered_sadface"
 				: pType + "." + wrapNamespace(pId.getNamespace()) + "." + pId.getPath().replace('/', '.');
 	}
 
 	public static String wrapNamespace(String modid) {
-		return ResourceLocation.DEFAULT_NAMESPACE.equals(modid) ? Lychee.ID : modid;
+		return Identifier.DEFAULT_NAMESPACE.equals(modid) ? Lychee.ID : modid;
 	}
 
 	public static MutableComponent white(CharSequence s) {
@@ -176,7 +183,7 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	@Nullable
-	public static RecipeHolder<?> recipe(ResourceLocation id) {
+	public static RecipeHolder<?> recipe(ResourceKey<Recipe<?>> id) {
 		var manager = KUtil.getRecipeManager();
 		if (manager == null) {
 			return null;
@@ -237,7 +244,7 @@ public class CommonProxy implements ModInitializer {
 			return (CompoundTag) JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, json);
 		} else {
 			try {
-				return TagParser.parseTag(json.getAsString());
+				return TagParser.parseCompoundFully(json.getAsString());
 			} catch (CommandSyntaxException e) {
 				throw new IllegalArgumentException(e);
 			}
@@ -318,6 +325,7 @@ public class CommonProxy implements ModInitializer {
 		Objects.requireNonNull(RecipeSerializers.ITEM_BURNING);
 		Objects.requireNonNull(LycheeContextKey.ACTION);
 		Objects.requireNonNull(UIElementType.SPRITE);
+		Objects.requireNonNull(RecipeBookCategories.UNLISTED);
 		LycheeContextSerializers.init();
 		CustomIngredientSerializer.register(AlwaysTrueIngredient.SERIALIZER);
 		CustomIngredientSerializer.register(VisualOnlyComponentsIngredient.SERIALIZER);

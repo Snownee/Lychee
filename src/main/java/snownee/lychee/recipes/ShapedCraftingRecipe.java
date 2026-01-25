@@ -12,17 +12,16 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -65,7 +64,7 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 			String group,
 			CraftingBookCategory category,
 			ShapedRecipePattern pattern,
-			ItemStack result,
+			ItemStackTemplate result,
 			boolean showNotification,
 			List<PostAction> assemblingActions) {
 		this(commonProperties, new ShapedRecipe(group, category, pattern, result, showNotification), assemblingActions);
@@ -112,7 +111,7 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		if (ghost()) {
 			return false;
 		}
-		if (level.isClientSide) {
+		if (level.isClientSide()) {
 			return shaped.matches(input, level);
 		}
 		final var context = new LycheeContext();
@@ -155,7 +154,7 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		CONTEXT_CACHE.put(input, context);
 
 		if (passed) {
-			final var result = getResultItem(level.registryAccess()).copy();
+			final var result = ((ShapedRecipeAccess) shaped).getResult().create();
 			final var ingredients = getIngredients();
 			final var items = new ItemStack[ingredients.size() + 1];
 			var k = 0;
@@ -176,7 +175,7 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 	}
 
 	@Override
-	public ItemStack assemble(CraftingInput container, HolderLookup.Provider provider) {
+	public ItemStack assemble(CraftingInput container) {
 		var context = CONTEXT_CACHE.getIfPresent(container);
 		if (context == null) {
 			return ItemStack.EMPTY;
@@ -193,9 +192,9 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 	}
 
 	@Override
-	public NonNullList<ItemStack> getRemainingItems(CraftingInput container) {
-		var items = shaped.getRemainingItems(container);
-		var context = CONTEXT_CACHE.getIfPresent(container);
+	public NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+		var items = shaped.getRemainingItems(input);
+		var context = CONTEXT_CACHE.getIfPresent(input);
 		if (context == null) {
 			return items;
 		}
@@ -206,7 +205,7 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		for (var i = 0; i < getHeight(); i++) {
 			for (var j = 0; j < getWidth(); j++) {
 				if (itemStackHolders.get(k).getConsumption() == 0) {
-					items.set(container.width() * i + (craftingContext.mirror() ? getWidth() - j - 1 : j), context.getItem(k));
+					items.set(input.width() * i + (craftingContext.mirror() ? getWidth() - j - 1 : j), context.getItem(k));
 				}
 				++k;
 			}
@@ -215,12 +214,12 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 	}
 
 	@Override
-	public RecipeSerializer<ShapedCraftingRecipe> getSerializer() {
+	public RecipeSerializer<? extends CraftingRecipe> getSerializer() {
 		return RecipeSerializers.CRAFTING;
 	}
 
 	@Override
-	public RecipeType<? extends CraftingRecipe> getType() {
+	public RecipeType<CraftingRecipe> getType() {
 		return RecipeType.CRAFTING;
 	}
 
@@ -230,35 +229,25 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 	}
 
 	@Override
-	public String getGroup() {return shaped.getGroup();}
-
-
-	@Override
-	public ItemStack getResultItem(final HolderLookup.Provider provider) {return shaped.getResultItem(provider);}
-
-	@Override
-	public NonNullList<Ingredient> getIngredients() {return shaped.getIngredients();}
+	public String group() {
+		return shaped.group();
+	}
 
 	@Override
 	public boolean showNotification() {return shaped.showNotification();}
 
-	@Override
-	public boolean canCraftInDimensions(final int width, final int height) {
-		return shaped.canCraftInDimensions(width, height);
+	public int getWidth() {
+		return shaped.getWidth();
 	}
 
-	public int getWidth() {return shaped.getWidth();}
-
-	public int getHeight() {return shaped.getHeight();}
-
-	@Override
-	public boolean isIncomplete() {return shaped.isIncomplete();}
+	public int getHeight() {
+		return shaped.getHeight();
+	}
 
 	@Override
-	public boolean isSpecial() {return shaped.isSpecial();}
-
-	@Override
-	public ItemStack getToastSymbol() {return shaped.getToastSymbol();}
+	public boolean isSpecial() {
+		return shaped.isSpecial();
+	}
 
 	public List<PostAction> assemblingActions() {
 		return assemblingActions;

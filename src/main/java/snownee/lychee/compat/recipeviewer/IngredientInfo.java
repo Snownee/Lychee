@@ -2,12 +2,13 @@ package snownee.lychee.compat.recipeviewer;
 
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Lists;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.util.action.PostAction;
 
@@ -32,5 +33,9 @@ public class IngredientInfo {
 			tooltips = Lists.newArrayList();
 		}
 		tooltips.add(line);
+	}
+
+	public SlotDisplay display() {
+		return new SizedIngredient(ingredient, count).display();
 	}
 }

@@ -5,13 +5,13 @@ import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.LocationPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.LocationPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -24,7 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.action.Delay;
@@ -85,7 +85,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		lootParams.set(LootContextParams.BLOCK_STATE, targetBlock);
 		var origin = new Vec3(targetPos.getX() + 0.5, targetPos.getY() + 0.99, targetPos.getZ() + 0.5);
 		lootParams.set(LootContextParams.ORIGIN, origin);
-		lootParams.set(LycheeLootContextParams.BLOCK_POS, targetPos);
+		lootParams.set(LycheeContextKeys.BLOCK_POS, targetPos);
 		lootParams.validate();
 		var recipe = RecipeTypes.DRIPSTONE_DRIPPING.process(level, targetBlock, context);
 		if (recipe == null) {
@@ -117,7 +117,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 				level,
 				sourceBlock,
 				context.get(LycheeContextKey.DRIPSTONE_SOURCE),
-				() -> level.getBlockEntity(lootParams.get(LycheeLootContextParams.BLOCK_POS))
+				() -> level.getBlockEntity(lootParams.get(LycheeContextKeys.BLOCK_POS))
 		);
 	}
 

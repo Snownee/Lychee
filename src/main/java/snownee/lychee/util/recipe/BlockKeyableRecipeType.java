@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
@@ -14,6 +14,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -24,10 +25,9 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.contextual.Chance;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
@@ -42,8 +42,8 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 	protected final List<RecipeHolder<R>> anyBlockRecipes = Lists.newLinkedList();
 	public boolean extractChance;
 
-	public BlockKeyableRecipeType(String name, Class<R> clazz, @Nullable LootContextParamSet paramSet) {
-		super(name, clazz, paramSet);
+	public BlockKeyableRecipeType(String name, Class<R> clazz, @Nullable ContextKeySet contextParamSet) {
+		super(name, clazz, contextParamSet);
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 		lootParams.set(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
 		lootParams.set(LootContextParams.THIS_ENTITY, player);
 		lootParams.set(LootContextParams.BLOCK_STATE, blockstate);
-		lootParams.set(LycheeLootContextParams.BLOCK_POS, pos);
+		lootParams.set(LycheeContextKeys.BLOCK_POS, pos);
 		lootParams.validate();
 		final var stack = player.getItemInHand(hand);
 		final var otherStack = player.getItemInHand(
@@ -134,7 +134,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 			if (tryMatch(recipeHolder, level, context).isPresent()) {
 				context.put(recipeHolder);
 				R recipe = recipeHolder.value();
-				if (!level.isClientSide && recipe.tickOrApply(context)) {
+				if (!level.isClientSide() && recipe.tickOrApply(context)) {
 					if (recipe.sizedIngredients().size() == 1) {
 						itemContext.get(1).setConsumption(0);
 					}

@@ -1,19 +1,25 @@
 package snownee.lychee.compat.recipe_api;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import com.mojang.serialization.MapCodec;
 
+import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.level.block.TestBlock;
+import net.minecraft.world.level.block.state.properties.TestBlockMode;
 import snownee.kiwi.recipe.CustomIngredient;
 import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.lychee.Lychee;
 
 public class AlwaysTrueIngredient implements CustomIngredient {
-	public static final ResourceLocation ID = Lychee.id("always_true");
+	public static final Identifier ID = Lychee.id("always_true");
 	public static final CustomIngredientSerializer<AlwaysTrueIngredient> SERIALIZER = new Serializer();
 
 	@Override
@@ -22,8 +28,14 @@ public class AlwaysTrueIngredient implements CustomIngredient {
 	}
 
 	@Override
-	public List<ItemStack> getMatchingStacks() {
-		return List.of();
+	public Stream<Holder<Item>> items() {
+		return Stream.empty();
+	}
+
+	@Override
+	public SlotDisplay display() {
+		//TODO
+		TestBlock.setModeOnStack(new ItemStack(Items.TEST_BLOCK), TestBlockMode.ACCEPT);
 	}
 
 	@Override
@@ -42,17 +54,17 @@ public class AlwaysTrueIngredient implements CustomIngredient {
 		public static final StreamCodec<RegistryFriendlyByteBuf, AlwaysTrueIngredient> STREAM_CODEC = StreamCodec.unit(INSTANCE);
 
 		@Override
-		public ResourceLocation getIdentifier() {
+		public Identifier getIdentifier() {
 			return ID;
 		}
 
 		@Override
-		public MapCodec<AlwaysTrueIngredient> getCodec(boolean allowEmpty) {
+		public MapCodec<AlwaysTrueIngredient> getCodec() {
 			return CODEC;
 		}
 
 		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, AlwaysTrueIngredient> getPacketCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, AlwaysTrueIngredient> getStreamCodec() {
 			return STREAM_CODEC;
 		}
 	}

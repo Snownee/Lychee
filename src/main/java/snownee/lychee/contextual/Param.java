@@ -2,7 +2,7 @@ package snownee.lychee.contextual;
 
 import java.util.Map;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
+import net.minecraft.util.context.ContextKey;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
@@ -55,11 +55,11 @@ public record Param(Holder<LycheeContextKey<?>> key, boolean create, String loot
 			if (create) {
 				lootParams.initAll();
 			}
-			for (Map.Entry<LootContextParam<?>, @Nullable Object> entry : lootParams.params().entrySet()) {
+			for (Map.Entry<ContextKey<?>, @Nullable Object> entry : lootParams.params().entrySet()) {
 				if (entry.getValue() == null) {
 					continue;
 				}
-				LootContextParam<?> param = entry.getKey();
+				ContextKey<?> param = entry.getKey();
 				if (loot.equals(param.getName().getPath()) || loot.equals(param.getName().toString())) {
 					found = true;
 					break;

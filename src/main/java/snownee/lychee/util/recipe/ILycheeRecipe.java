@@ -5,24 +5,24 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.kiwi.recipe.SizedIngredient;
+import snownee.lychee.RecipeBookCategories;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.IngredientCollection;
-import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
@@ -82,8 +82,18 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	}
 
 	@Override
-	default ItemStack assemble(C inv, HolderLookup.Provider provider) {
+	default ItemStack assemble(C inv) {
 		return ItemStack.EMPTY;
+	}
+
+	@Override
+	default RecipeBookCategory recipeBookCategory() {
+		return RecipeBookCategories.UNLISTED;
+	}
+
+	@Override
+	default PlacementInfo placementInfo() {
+		return PlacementInfo.NOT_PLACEABLE;
 	}
 
 	default JsonPointer defaultItemPointer() {
@@ -98,17 +108,7 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	boolean matches(C context, Level level);
 
 	@Override
-	default boolean canCraftInDimensions(int width, int height) {
-		return true;
-	}
-
-	@Override
-	default ItemStack getResultItem(HolderLookup.Provider provider) {
-		return ItemStack.EMPTY;
-	}
-
-	@Override
-	RecipeType<? extends Recipe<?>> getType();
+	RecipeType<? extends Recipe<C>> getType();
 
 	LycheeRecipeCommonProperties commonProperties();
 
@@ -134,6 +134,7 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 		return commonProperties().comment();
 	}
 
+	@Override
 	default String group() {
 		return commonProperties().group();
 	}
@@ -162,7 +163,7 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	}
 
 	default void applyPostActions(LycheeContext context, int times) {
-		if (!context.level().isClientSide) {
+		if (!context.level().isClientSide()) {
 			final var actionContext = context.get(LycheeContextKey.ACTION);
 			actionContext.reset();
 			actionContext.jobs.addAll(postActions().stream().map(it -> new Job(it, times)).toList());
@@ -199,11 +200,10 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 		return collection.ingredients();
 	}
 
-	@Override
-	default NonNullList<Ingredient> getIngredients() {
+	default List<Ingredient> getIngredients() {
 		IngredientCollection collection = ingredientCollection();
 		if (collection == null) {
-			return NonNullListExtensions.copyOf(List.of());
+			return List.of();
 		}
 		return collection.flattenedIngredients();
 	}

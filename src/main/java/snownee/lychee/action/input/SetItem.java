@@ -3,7 +3,7 @@ package snownee.lychee.action.input;
 import java.util.List;
 import java.util.Objects;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.MapCodec;
@@ -14,7 +14,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import snownee.lychee.util.CommonProxy;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -23,10 +24,9 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record SetItem(PostActionCommonProperties commonProperties, ItemStack itemStack, Reference target) implements PostAction {
+public record SetItem(PostActionCommonProperties commonProperties, ItemStackTemplate itemStack, Reference target) implements PostAction {
 
 	@Override
 	public PostActionType<SetItem> type() {
@@ -39,16 +39,7 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStack ite
 		var registryAccess = context.level().registryAccess();
 		for (var index : indexes) {
 			var tag = (CompoundTag) context.getItem(index).save(registryAccess);
-			ItemStack stack;
-			if (getPath().isEmpty()) {
-				stack = this.itemStack.copy();
-			} else {
-				stack = ItemStack.parseOptional(
-						registryAccess,
-						CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON)))
-				);
-
-			}
+			ItemStack stack = itemStack.create();
 			context.setItem(index, stack);
 			if (!stack.isEmpty()) {
 				((CompoundTag) context.getItem(index).saveOptional(registryAccess)).merge(tag);
@@ -59,12 +50,12 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStack ite
 
 	@Override
 	public Component getDisplayName() {
-		return itemStack.getHoverName();
+		return itemStack.create().getHoverName();
 	}
 
 	@Override
-	public List<ItemStack> getOutputItems() {
-		return List.of(itemStack);
+	public List<SlotDisplay> getOutputItems() {
+		return List.of(new SlotDisplay.ItemStackSlotDisplay(itemStack));
 	}
 
 	@Override
@@ -78,8 +69,8 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStack ite
 	}
 
 	@Override
-	public ItemStack transformRemainder(ItemStack itemStack, @Nullable ILycheeRecipe<?> recipe) {
-		return itemStack();
+	public SlotDisplay transformRemainder(SlotDisplay itemStack, @Nullable ILycheeRecipe<?> recipe) {
+		return new SlotDisplay.ItemStackSlotDisplay(itemStack());
 	}
 
 	//	@Override
@@ -91,13 +82,13 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStack ite
 	public static class Type implements PostActionType<SetItem> {
 		public static final MapCodec<SetItem> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(SetItem::commonProperties),
-				LycheeCodecs.ITEM_STACK_MAP_CODEC.forGetter(SetItem::itemStack),
+				LycheeCodecs.ITEM_STACK_TEMPLATE_MAP_CODEC.forGetter(SetItem::itemStack),
 				Reference.CODEC.optionalFieldOf("target", Reference.DEFAULT).forGetter(SetItem::target)
 		).apply(instance, SetItem::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, SetItem> STREAM_CODEC = StreamCodec.composite(
 				PostActionCommonProperties.STREAM_CODEC,
 				SetItem::commonProperties,
-				ItemStack.OPTIONAL_STREAM_CODEC,
+				ItemStackTemplate.STREAM_CODEC,
 				SetItem::itemStack,
 				Reference.STREAM_CODEC,
 				SetItem::target,

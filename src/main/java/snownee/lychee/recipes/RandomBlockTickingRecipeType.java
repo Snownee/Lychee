@@ -4,14 +4,14 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.util.RandomlyTickable;
 import snownee.lychee.util.predicates.BlockStateSet;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
@@ -20,7 +20,7 @@ public class RandomBlockTickingRecipeType extends BlockKeyableRecipeType<RandomB
 	public RandomBlockTickingRecipeType(
 			String name,
 			Class<RandomBlockTickingRecipe> clazz,
-			@Nullable LootContextParamSet paramSet
+			@Nullable ContextKeySet paramSet
 	) {
 		super(name, clazz, paramSet);
 	}

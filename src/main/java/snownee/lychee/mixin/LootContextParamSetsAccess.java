@@ -8,23 +8,23 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 import com.google.common.collect.BiMap;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
 @Mixin(LootContextParamSets.class)
 public interface LootContextParamSetsAccess {
 
 	@Invoker
-	static LootContextParamSet callRegister(
+	static ContextKeySet callRegister(
 			String pRegistryName,
-			Consumer<LootContextParamSet.Builder> pBuilderConsumer
+			Consumer<ContextKeySet.Builder> pBuilderConsumer
 	) {
 		throw new IllegalStateException();
 	}
 
 	@Accessor("REGISTRY")
-	static BiMap<ResourceLocation, LootContextParamSet> registry() {
+	static BiMap<Identifier, ContextKeySet> registry() {
 		throw new IllegalStateException();
 	}
 }

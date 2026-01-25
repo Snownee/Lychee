@@ -1,22 +1,14 @@
 package snownee.lychee.util;
 
-import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 
-import net.minecraft.client.Camera;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.mixin.client.GameRendererAccess;
 
 public class VecHelper {
 
@@ -107,11 +99,6 @@ public class VecHelper {
 		return new Vec3(x, y, z);
 	}
 
-	public static boolean isVecPointingTowards(Vec3 vec, Direction direction) {
-		return Vec3.atLowerCornerOf(direction.getNormal())
-				.dot(vec.normalize()) > 0.125; // slight tolerance to activate perpendicular movement actors
-	}
-
 	public static Vec3 getCenterOf(Vec3i pos) {
 		if (pos.equals(Vec3i.ZERO)) {
 			return CENTER_OF_ORIGIN;
@@ -130,10 +117,6 @@ public class VecHelper {
 	public static Vec3 axisAlingedPlaneOf(Vec3 vec) {
 		vec = vec.normalize();
 		return new Vec3(1, 1, 1).subtract(Math.abs(vec.x), Math.abs(vec.y), Math.abs(vec.z));
-	}
-
-	public static Vec3 axisAlingedPlaneOf(Direction face) {
-		return axisAlingedPlaneOf(Vec3.atLowerCornerOf(face.getNormal()));
 	}
 
 	public static Vec3 voxelSpace(double x, double y, double z) {
@@ -217,65 +200,6 @@ public class VecHelper {
 		}
 		double t = -lineDotDiff + Math.sqrt(delta);
 		return origin.add(lineDirection.scale(t));
-	}
-
-	// https://forums.minecraftforge.net/topic/88562-116solved-3d-to-2d-conversion/?do=findComment&comment=413573
-	// slightly modified
-	public static Vec3 projectToPlayerView(Vec3 target, float partialTicks) {
-		/*
-		 * The (centered) location on the screen of the given 3d point in the world.
-		 * Result is (dist right of center screen, dist up from center screen, if < 0,
-		 * then in front of view plane)
-		 */
-		Camera ari = Minecraft.getInstance().gameRenderer.getMainCamera();
-		Vec3 camera_pos = ari.getPosition();
-		Quaternionf camera_rotation_conj = new Quaternionf(ari.rotation());
-		camera_rotation_conj.conjugate();
-
-		Vector3f result3f = new Vector3f(
-				(float) (camera_pos.x - target.x), (float) (camera_pos.y - target.y),
-				(float) (camera_pos.z - target.z)
-		);
-		result3f.rotate(camera_rotation_conj);
-
-		// ----- compensate for view bobbing (if active) -----
-		// the following code adapted from GameRenderer::applyBobbing (to invert it)
-		Minecraft mc = Minecraft.getInstance();
-		if (mc.options.bobView().get()) {
-			Entity renderViewEntity = mc.getCameraEntity();
-			if (renderViewEntity instanceof Player) {
-				Player playerentity = (Player) renderViewEntity;
-				float distwalked_modified = playerentity.walkDist;
-
-				float f = distwalked_modified - playerentity.walkDistO;
-				float f1 = -(distwalked_modified + f * partialTicks);
-				float f2 = Mth.lerp(partialTicks, playerentity.oBob, playerentity.bob);
-				Quaternionf q2 =
-						com.mojang.math.Axis.XP.rotationDegrees(
-								Math.abs(Mth.cos(f1 * (float) Math.PI - 0.2F) * f2) * 5.0F);
-				q2.conjugate();
-				result3f.rotate(q2);
-
-				Quaternionf q1 = com.mojang.math.Axis.ZP.rotationDegrees(Mth.sin(f1 * (float) Math.PI) * f2 * 3.0F);
-				q1.conjugate();
-				result3f.rotate(q1);
-
-				Vector3f bob_translation = new Vector3f(
-						(Mth.sin(f1 * (float) Math.PI) * f2 * 0.5F),
-						(-Math.abs(Mth.cos(f1 * (float) Math.PI) * f2)), 0.0f
-				);
-				bob_translation.y = -bob_translation.y(); // this is weird but hey, if it works
-				result3f.add(bob_translation);
-			}
-		}
-
-		// ----- adjust for fov -----
-		float fov = (float) ((GameRendererAccess) mc.gameRenderer).callGetFov(ari, partialTicks, true);
-
-		float half_height = (float) mc.getWindow()
-				.getGuiScaledHeight() / 2;
-		float scale_factor = half_height / (result3f.z() * (float) Math.tan(Math.toRadians(fov / 2)));
-		return new Vec3(-result3f.x() * scale_factor, result3f.y() * scale_factor, result3f.z());
 	}
 
 	public static Vec3 bezier(Vec3 p1, Vec3 p2, Vec3 q1, Vec3 q2, float t) {

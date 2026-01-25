@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LightningRodBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RVs;
@@ -15,6 +16,10 @@ import snownee.lychee.recipes.LightningChannelingRecipe;
 public class LightningChannelingRecipeCategory extends ItemShapelessRecipeCategory<LightningChannelingRecipe> {
 	public static final int BLOCK_SIZE = 15;
 	private final ShadowElement shadowElement = new ShadowElement(BLOCK_SIZE, 11, 4);
+
+	public LightningChannelingRecipeCategory() {
+		super(RecipeTypes.LIGHTNING_CHANNELING);
+	}
 
 	@Override
 	public void setupDecorations(DecorationMapBuilder<LightningChannelingRecipe> mapBuilder) {

@@ -2,13 +2,15 @@ package snownee.lychee.compat.recipeviewer.jei;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.collect.Maps;
 
 import mezz.jei.api.IModPlugin;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.ingredients.IIngredientType;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
 import mezz.jei.api.registration.IModIngredientRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
@@ -17,8 +19,10 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplayContext;
 import snownee.kiwi.util.KUtil;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
@@ -39,7 +43,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 
 public class LycheeJEIPlugin implements IModPlugin {
-	public static final ResourceLocation ID = Lychee.id("main");
+	public static final Identifier ID = Lychee.id("main");
 	public static final IIngredientType<PostAction> POST_ACTION = () -> PostAction.class;
 	private static final Map<SlotType, IDrawable> slotElements = Maps.toMap(
 			List.of(SlotType.values()),
@@ -51,16 +55,16 @@ public class LycheeJEIPlugin implements IModPlugin {
 	}
 
 	@Override
-	public ResourceLocation getPluginUid() {
+	public Identifier getPluginUid() {
 		return ID;
 	}
 
 	@Override
-	public void registerCategories(IRecipeCategoryRegistration registry) {
-		rvPlugin.helper().setJeiHelpers(registry.getJeiHelpers());
+	public void registerCategories(IRecipeCategoryRegistration registration) {
+		rvPlugin.helper().setJeiHelpers(registration.getJeiHelpers());
 		rvPlugin.init();
 		for (var rvCategory : rvPlugin.categories().values()) {
-			registry.addRecipeCategories(new RvCategoryAdapter<>(rvCategory));
+			registration.addRecipeCategories(new RvCategoryAdapter<>(rvCategory));
 		}
 	}
 
@@ -70,10 +74,12 @@ public class LycheeJEIPlugin implements IModPlugin {
 	}
 
 	@Override
-	public void registerRecipes(IRecipeRegistration registry) {
+	public void registerRecipes(IRecipeRegistration registration) {
 		for (RvCategoryInstance<?> instance : rvPlugin.categories().values()) {
 			//noinspection unchecked,rawtypes
-			registry.addRecipes((RecipeType) registry.getJeiHelpers().getRecipeType(instance.id()).orElseThrow(), instance.recipes());
+			registration.addRecipes(
+					(IRecipeType) registration.getJeiHelpers().getRecipeType(instance.id()).orElseThrow(),
+					instance.recipes());
 		}
 
 		try {
@@ -83,7 +89,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 							!$.value().output().isEmpty() && !$.value().isSpecial() && !$.value().hideInRecipeViewer())
 					.map($ -> (IJeiAnvilRecipe) AnvilCraftingDisplay.of($))
 					.toList();
-			registry.addRecipes(mezz.jei.api.constants.RecipeTypes.ANVIL, recipes);
+			registration.addRecipes(mezz.jei.api.constants.RecipeTypes.ANVIL, recipes);
 		} catch (Throwable e) {
 			Lychee.LOGGER.error("Error when registering anvil crafting recipes", e);
 		}
@@ -100,11 +106,15 @@ public class LycheeJEIPlugin implements IModPlugin {
 	}
 
 	@Override
-	public void registerRecipeCatalysts(IRecipeCatalystRegistration registry) {
+	public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+		ContextMap context = SlotDisplayContext.fromLevel(Objects.requireNonNull(Minecraft.getInstance().level));
 		for (RvCategoryInstance<?> instance : rvPlugin.categories().values()) {
-			RecipeType<?> recipeType = registry.getJeiHelpers().getRecipeType(instance.id()).orElseThrow();
-			for (Ingredient ingredient : instance.workstations()) {
-				registry.addRecipeCatalysts(recipeType, ingredient.getItems());
+			IRecipeType<?> recipeType = registration.getJeiHelpers().getRecipeType(instance.id()).orElseThrow();
+			for (SlotDisplay ingredient : instance.workstations()) {
+				registration.addCraftingStations(
+						recipeType,
+						VanillaTypes.ITEM_STACK,
+						ingredient.resolveForStacks(context));
 			}
 		}
 	}

@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Contract;
 
 import com.google.common.collect.Lists;
 
-import dev.latvian.mods.rhino.util.RemapForJS;
 import snownee.lychee.contextual.Chance;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionData;
@@ -31,14 +30,14 @@ public class ContextualBuilder<T> {
 	}
 
 	@Contract("_ -> this")
-	@RemapForJS("conditionData")
+	//@RemapForJS("conditionData") TODO
 	public T condition(ContextualConditionData condition) {
 		conditions.add(condition);
 		return self();
 	}
 
 	@Contract("_ -> this")
-	@RemapForJS("conditionHolder")
+	//@RemapForJS("conditionHolder") TODO
 	public T condition(ContextualHolder conditions) {
 		this.conditions.addAll(conditions.unpack());
 		return self();

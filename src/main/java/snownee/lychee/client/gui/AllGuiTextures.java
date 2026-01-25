@@ -1,7 +1,7 @@
 package snownee.lychee.client.gui;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import snownee.lychee.Lychee;
 import snownee.lychee.ui.SpriteElementRenderer;
 
@@ -16,13 +16,13 @@ public enum AllGuiTextures implements ScreenElement {
 
 	private final SpriteElementRenderer renderer;
 	public final int width, height;
-	public final ResourceLocation id;
+	public final Identifier id;
 
 	AllGuiTextures(String id, int width, int height) {
 		this(Lychee.id(id), width, height);
 	}
 
-	AllGuiTextures(ResourceLocation id, int width, int height) {
+	AllGuiTextures(Identifier id, int width, int height) {
 		this.id = id;
 		this.renderer = new SpriteElementRenderer(id).withSize(width, height);
 		this.width = width;

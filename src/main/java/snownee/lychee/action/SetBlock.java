@@ -2,19 +2,19 @@ package snownee.lychee.action;
 
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.NbtPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.NbtPredicate;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.network.SUpdateFallingBlockPacket;
@@ -56,7 +56,7 @@ public record SetBlock(PostActionCommonProperties commonProperties, BlockPredica
 	}
 
 	@Override
-	public List<ItemStack> getOutputItems() {
+	public List<SlotDisplay> getOutputItems() {
 		return BlockPredicateExtensions.matchedItemStacks(block);
 	}
 

@@ -1,4 +1,4 @@
-@NotNullByDefault
+@NullMarked
 package snownee.lychee.mixin.particles;
 
-import snownee.kiwi.util.NotNullByDefault;
+import org.jspecify.annotations.NullMarked;

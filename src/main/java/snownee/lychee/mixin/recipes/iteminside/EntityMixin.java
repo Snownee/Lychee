@@ -18,7 +18,7 @@ public abstract class EntityMixin {
 			return;
 		}
 		final var entity = (Entity) (Object) this;
-		if (!entity.isAlive() || entity.getType() != EntityType.ITEM || entity.level().isClientSide || entity.tickCount % 20 != 10) {
+		if (!entity.isAlive() || entity.getType() != EntityType.ITEM || entity.level().isClientSide() || entity.tickCount % 20 != 10) {
 			return;
 		}
 

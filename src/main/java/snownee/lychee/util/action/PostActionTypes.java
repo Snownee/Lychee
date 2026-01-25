@@ -1,7 +1,7 @@
 package snownee.lychee.util.action;
 
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.action.AddItemCooldown;
 import snownee.lychee.action.AnvilDamageChance;
@@ -66,7 +66,7 @@ public class PostActionTypes {
 	public static final PostActionType<CopyDurability> COPY_DURABILITY = register("copy_durability", new CopyDurability.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
-		Registry.register(LycheeRegistries.POST_ACTION, ResourceLocation.parse(name), t);
+		Registry.register(LycheeRegistries.POST_ACTION, Identifier.parse(name), t);
 		return t;
 	}
 }

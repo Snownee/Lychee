@@ -2,11 +2,11 @@ package snownee.lychee.recipes;
 
 import java.util.Comparator;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
@@ -15,8 +15,8 @@ public class BlockInteractingRecipeType<T extends BlockInteractingRecipe> extend
 	public BlockInteractingRecipeType(
 			String name,
 			Class<T> clazz,
-			@Nullable LootContextParamSet contextParamSet) {
-		super(name, clazz, contextParamSet);
+			@Nullable ContextKeySet paramSet) {
+		super(name, clazz, paramSet);
 	}
 
 	@Override

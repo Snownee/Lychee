@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -13,8 +13,9 @@ import com.google.common.collect.Maps;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -150,9 +151,9 @@ public interface ActionRenderer<T extends PostAction> {
 
 	default void internalRender(T action, GuiGraphics graphics, int x, int y) {
 		if (!action.hidden()) {
-			ResourceLocation sprite = action.commonProperties().icon();
+			Identifier sprite = action.commonProperties().icon();
 			if (sprite != null) {
-				graphics.blitSprite(sprite, x, y, 16, 16);
+				graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, 16, 16);
 				return;
 			}
 		}

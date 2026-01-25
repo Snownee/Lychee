@@ -2,7 +2,7 @@ package snownee.lychee.util.render;
 
 import java.util.function.ToIntFunction;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
@@ -46,8 +46,8 @@ public final class VirtualLightEngine extends LevelLightEngine {
 	}
 
 	@Override
-	public int getRawBrightness(BlockPos pos, int amount) {
-		int i = skyListener.getLightValue(pos) - amount;
+	public int getRawBrightness(BlockPos pos, int skyDampen) {
+		int i = skyListener.getLightValue(pos) - skyDampen;
 		int j = blockListener.getLightValue(pos);
 		return Math.max(j, i);
 	}
@@ -74,11 +74,11 @@ public final class VirtualLightEngine extends LevelLightEngine {
 		}
 
 		@Override
-		public void updateSectionStatus(SectionPos pos, boolean isSectionEmpty) {
+		public void updateSectionStatus(SectionPos pos, boolean sectionEmpty) {
 		}
 
 		@Override
-		public void setLightEnabled(ChunkPos pos, boolean lightEnabled) {
+		public void setLightEnabled(ChunkPos pos, boolean enable) {
 		}
 
 		@Override

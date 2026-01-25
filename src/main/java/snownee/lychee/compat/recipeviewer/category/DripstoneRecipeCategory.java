@@ -6,12 +6,13 @@ import java.util.function.Supplier;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
@@ -32,6 +33,10 @@ public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 	public static final Vector2fc INFO_POSITION = VectorExtensions.offsetX(POINTED_DRIPSTONE_POSITION, BLOCK_SIZE);
 	private static final Vector2fc TARGET_BLOCK_POSITION = VectorExtensions.offsetY(SOURCE_BLOCK_POSITION, BLOCK_SIZE * 3);
 	private final ShadowElement shadowElement = new ShadowElement(BLOCK_SIZE, 24, 8);
+
+	public DripstoneRecipeCategory() {
+		super(RecipeTypes.DRIPSTONE_DRIPPING);
+	}
 
 	private BlockState getSourceBlock(DripstoneRecipe recipe) {
 		return CommonProxy.getCycledItem(

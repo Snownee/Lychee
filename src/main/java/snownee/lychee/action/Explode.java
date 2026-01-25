@@ -2,7 +2,7 @@ package snownee.lychee.action;
 
 import java.util.Locale;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -18,9 +18,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Explosion.BlockInteraction;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeRegistries;
@@ -43,11 +42,11 @@ public record Explode(
 		float step) implements PostAction {
 
 	private void explode(
-			Level level,
+			ServerLevel level,
 			@Nullable Entity source,
 			Vec3 pos,
 			float radius) {
-		var explosion = new Explosion(level, source, pos.x, pos.y, pos.z, radius, fire, blockInteraction);
+		var explosion = new ServerExplosion(level, source, pos.x, pos.y, pos.z, radius, fire, blockInteraction);
 		explosion.explode();
 		explosion.finalizeExplosion(true);
 		if (!explosion.interactsWithBlocks()) {
@@ -83,7 +82,7 @@ public record Explode(
 		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		var pos = lootParams.get(LootContextParams.ORIGIN).add(Vec3.atLowerCornerOf(offset));
 		var boundedRadius = Math.min(radius + step * (Mth.sqrt(times) - 1), radius * 4);
-		explode(context.level(), lootParams.get(LootContextParams.THIS_ENTITY), pos, boundedRadius);
+		explode((ServerLevel) context.level(), lootParams.get(LootContextParams.THIS_ENTITY), pos, boundedRadius);
 	}
 
 	@Override

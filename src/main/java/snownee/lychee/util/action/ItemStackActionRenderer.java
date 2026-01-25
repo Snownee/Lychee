@@ -2,7 +2,7 @@ package snownee.lychee.util.action;
 
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;

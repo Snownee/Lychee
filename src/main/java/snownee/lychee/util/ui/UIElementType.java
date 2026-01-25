@@ -6,7 +6,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.ui.BlockElement;
 import snownee.lychee.ui.ItemElement;
@@ -43,7 +43,7 @@ public interface UIElementType<T extends UIElement> extends SerializableType<T> 
 	}
 
 	static <T extends UIElement> UIElementType<T> register(String name, UIElementType<T> type) {
-		return Registry.register(LycheeRegistries.UI_ELEMENT, ResourceLocation.parse(name), type);
+		return Registry.register(LycheeRegistries.UI_ELEMENT, Identifier.parse(name), type);
 	}
 
 	@Override

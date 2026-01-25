@@ -28,11 +28,11 @@ public class CompoundElementRenderer extends RenderElement {
 	@Override
 	public void render(GuiGraphics graphics) {
 		var pose = graphics.pose();
-		pose.pushPose();
-		pose.translate(x(), y(), z());
+		pose.pushMatrix();
+		pose.translate(x(), y());
 		for (RenderElement element : elements) {
 			element.render(graphics);
 		}
-		pose.popPose();
+		pose.popMatrix();
 	}
 }

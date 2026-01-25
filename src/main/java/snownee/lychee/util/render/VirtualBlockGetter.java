@@ -1,5 +1,6 @@
 package snownee.lychee.util.render;
 
+import java.util.Objects;
 import java.util.function.ToIntFunction;
 
 import net.minecraft.client.Minecraft;
@@ -14,7 +15,7 @@ import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.minecraft.world.level.material.FluidState;
 
 /**
- * https://github.com/Engine-Room/Flywheel/blob/1.21.1/dev/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/VirtualBlockGetter.java
+ * <a href="https://github.com/Engine-Room/Flywheel/blob/1.21.1/dev/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/VirtualBlockGetter.java">...</a>
  */
 public abstract class VirtualBlockGetter implements BlockAndTintGetter {
 	protected final VirtualLightEngine lightEngine;
@@ -29,7 +30,7 @@ public abstract class VirtualBlockGetter implements BlockAndTintGetter {
 	}
 
 	@Override
-	public float getShade(Direction direction, boolean shaded) {
+	public float getShade(Direction direction, boolean shade) {
 		return 1f;
 	}
 
@@ -39,8 +40,11 @@ public abstract class VirtualBlockGetter implements BlockAndTintGetter {
 	}
 
 	@Override
-	public int getBlockTint(BlockPos pos, ColorResolver resolver) {
-		Biome plainsBiome = Minecraft.getInstance().getConnection().registryAccess().registryOrThrow(Registries.BIOME).getOrThrow(Biomes.PLAINS);
-		return resolver.getColor(plainsBiome, pos.getX(), pos.getZ());
+	public int getBlockTint(BlockPos pos, ColorResolver color) {
+		Biome plainsBiome = Objects.requireNonNull(Minecraft.getInstance().getConnection())
+				.registryAccess()
+				.lookupOrThrow(Registries.BIOME)
+				.getValueOrThrow(Biomes.PLAINS);
+		return color.getColor(plainsBiome, pos.getX(), pos.getZ());
 	}
 }

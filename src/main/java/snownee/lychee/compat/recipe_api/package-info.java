@@ -1,4 +1,4 @@
-@NotNullByDefault
+@NullMarked
 package snownee.lychee.compat.recipe_api;
 
-import snownee.kiwi.util.NotNullByDefault;
+import org.jspecify.annotations.NullMarked;

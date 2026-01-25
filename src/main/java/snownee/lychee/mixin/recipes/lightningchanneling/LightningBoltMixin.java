@@ -21,6 +21,7 @@ public class LightningBoltMixin {
 	@ModifyArg(at = @At(value = "INVOKE", target = "Ljava/util/Set;addAll(Ljava/util/Collection;)Z"), method = "tick")
 	private <E> Collection<? extends E> lychee_tick(final Collection<? extends E> entities) {
 		if (!entities.isEmpty() || life == 0) {
+			//noinspection unchecked
 			LightningChannelingRecipe.invoke((LightningBolt) (Object) this, (List<Entity>) entities);
 		}
 		return entities;

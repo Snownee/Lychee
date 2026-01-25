@@ -4,21 +4,22 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Sets;
 
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.FallingBlock;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import snownee.lychee.Lychee;
-import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.network.SCustomLevelEventPacket;
@@ -36,7 +37,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 	private final ValidItemCache validItems = new ValidItemCache();
 
 	public BlockCrushingRecipeType(
-			String name, Class<BlockCrushingRecipe> clazz, @Nullable LootContextParamSet paramSet) {
+			String name, Class<BlockCrushingRecipe> clazz, @Nullable ContextKeySet paramSet) {
 		super(name, clazz, paramSet);
 	}
 
@@ -70,7 +71,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		lootParams.set(LootContextParams.ORIGIN, entity.position());
 		lootParams.set(LootContextParams.THIS_ENTITY, entity);
 		lootParams.set(LootContextParams.BLOCK_STATE, landingBlock);
-		lootParams.set(LycheeLootContextParams.BLOCK_POS, pos);
+		lootParams.set(LycheeContextKeys.BLOCK_POS, pos);
 		lootParams.validate();
 
 		final var actionContext = context.get(LycheeContextKey.ACTION);
@@ -114,7 +115,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 										!alreadySentParticles.contains(holder)) {
 									alreadySentParticles.add(holder);
 									var position = entityHolder.getEntity().position();
-									new SCustomLevelEventPacket(holder.get().copy(), position)
+									new SCustomLevelEventPacket(ItemStackTemplate.fromNonEmptyStack(holder.get()), position)
 											.sendToAround((ServerLevel) entityHolder.getEntity().level());
 								}
 							}

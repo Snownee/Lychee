@@ -1,4 +1,4 @@
-@NotNullByDefault
+@NullMarked
 package snownee.lychee.mixin.recipes.itemburing;
 
-import snownee.kiwi.util.NotNullByDefault;
+import org.jspecify.annotations.NullMarked;

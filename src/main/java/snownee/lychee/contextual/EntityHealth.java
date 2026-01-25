@@ -1,11 +1,11 @@
 package snownee.lychee.contextual;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.advancements.critereon.MinMaxBounds.Doubles;
+import net.minecraft.advancements.criterion.MinMaxBounds.Doubles;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.Entity;

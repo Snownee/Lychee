@@ -5,7 +5,6 @@ import java.util.List;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -16,7 +15,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -64,8 +62,8 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public NonNullList<Ingredient> getIngredients() {
-		return NonNullListExtensions.copyOf(List.of(input.ingredient()));
+	public List<Ingredient> getIngredients() {
+		return List.of(input.ingredient());
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -12,15 +12,15 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
@@ -116,7 +116,7 @@ public record RandomSelect(
 	}
 
 	@Override
-	public List<ItemStack> getOutputItems() {
+	public List<SlotDisplay> getOutputItems() {
 		return entries.stream().map(it -> it.action.getOutputItems()).flatMap(List::stream).toList();
 	}
 
@@ -177,7 +177,7 @@ public record RandomSelect(
 				RandomSelect::entries,
 				ByteBufCodecs.VAR_INT,
 				RandomSelect::emptyWeight,
-				BoundsExtensions.INT_STREAM_CODEC,
+				MinMaxBounds.Ints.STREAM_CODEC,
 				RandomSelect::rolls,
 				RandomSelect::new);
 

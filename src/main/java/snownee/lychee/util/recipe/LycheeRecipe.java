@@ -15,8 +15,8 @@ public abstract class LycheeRecipe<C extends RecipeInput> implements ILycheeReci
 	}
 
 	@Override
-	public abstract LycheeRecipeType<?> getType();
+	public abstract LycheeRecipeType<? extends ILycheeRecipe<C>> getType();
 
 	@Override
-	public abstract LycheeRecipeSerializer<?> getSerializer();
+	public abstract LycheeRecipeSerializer<? extends ILycheeRecipe<C>> getSerializer();
 }

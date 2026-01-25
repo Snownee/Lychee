@@ -5,16 +5,16 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.kiwi.recipe.EmptyRecipeInput;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.context.LootParamsContext;
@@ -86,7 +86,7 @@ public class LycheeContext extends EmptyRecipeInput {
 		return initLootParams(recipeType.contextParamSet);
 	}
 
-	public LootParamsContext initLootParams(LootContextParamSet paramSet) {
+	public LootParamsContext initLootParams(ContextKeySet paramSet) {
 		LootParamsContext lootParams = new LootParamsContext(level(), paramSet);
 		put(LycheeContextKey.LOOT_PARAMS, lootParams);
 		return lootParams;

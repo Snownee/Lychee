@@ -1,6 +1,6 @@
 package snownee.lychee.mixin.recipes.anvilcrafting;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,12 +18,13 @@ import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.ItemCombinerMenu;
+import net.minecraft.world.inventory.ItemCombinerMenuSlotDefinition;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.AnvilContext;
 import snownee.lychee.util.context.LycheeContext;
@@ -41,17 +42,18 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	@Shadow
 	private DataSlot cost;
 	@Unique
-	private LycheeContext context;
+	private @Nullable LycheeContext context;
 	@Unique
-	private LycheeContext onTakeCtx;
+	private @Nullable LycheeContext onTakeCtx;
 
 	private AnvilMenuMixin(
-			@Nullable final MenuType<?> type,
+			@Nullable final MenuType<?> menuType,
 			final int containerId,
-			final Inventory playerInventory,
-			final ContainerLevelAccess access
+			final Inventory inventory,
+			final ContainerLevelAccess access,
+			final ItemCombinerMenuSlotDefinition itemInputSlots
 	) {
-		super(type, containerId, playerInventory, access);
+		super(menuType, containerId, inventory, access, itemInputSlots);
 	}
 
 
@@ -74,7 +76,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		BlockPos pos = access.evaluate((level, pos0) -> pos0).orElseGet(player::blockPosition);
 		lootParams.set(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
 		if (access != ContainerLevelAccess.NULL) {
-			lootParams.set(LycheeLootContextParams.BLOCK_POS, pos);
+			lootParams.set(LycheeContextKeys.BLOCK_POS, pos);
 			lootParams.set(LootContextParams.BLOCK_STATE, player.level().getBlockState(pos));
 		}
 		lootParams.set(LootContextParams.THIS_ENTITY, player);
@@ -86,7 +88,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		);
 		RecipeTypes.ANVIL_CRAFTING.findFirst(context, player.level()).ifPresent(it -> {
 			context.put(it);
-			final var output = it.value().assemble(context, player.level().registryAccess());
+			final var output = it.value().assemble(context);
 			if (output.isEmpty()) {
 				resultSlots.setItem(0, ItemStack.EMPTY);
 				cost.set(0);
@@ -109,11 +111,11 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	}
 
 	@Inject(at = @At("HEAD"), method = "onTake")
-	private void lychee_onTake(Player player, ItemStack stack, CallbackInfo ci) {
+	private void lychee_onTake(Player player, ItemStack carried, CallbackInfo ci) {
 		if (context == null) {
 			return;
 		}
-		if (context.level().isClientSide) {
+		if (context.level().isClientSide()) {
 			return;
 		}
 		var recipe = context.getOrNull(LycheeContextKey.RECIPE);
@@ -131,7 +133,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 							"(Ljava/util/function/BiConsumer;)V"
 			), method = "onTake", cancellable = true
 	)
-	private void lychee_preventDefault(Player player, ItemStack stack, CallbackInfo ci) {
+	private void lychee_preventDefault(Player player, ItemStack carried, CallbackInfo ci) {
 		if (onTakeCtx != null) {
 			for (int i = 0; i < 2; i++) {
 				if (onTakeCtx.get(LycheeContextKey.ITEM).get(i).getConsumption() == 0) {

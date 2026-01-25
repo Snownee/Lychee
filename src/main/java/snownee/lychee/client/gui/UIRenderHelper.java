@@ -1,12 +1,8 @@
 package snownee.lychee.client.gui;
 
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.platform.GlConst;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -35,75 +31,29 @@ public class UIRenderHelper {
 		});
 	}
 
-	public static void updateWindowSize(Window mainWindow) {
-		if (framebuffer != null) {
-			framebuffer.resize(mainWindow.getWidth(), mainWindow.getHeight(), Minecraft.ON_OSX);
-		}
-	}
-
-	public static void drawFramebuffer(float alpha) {
-		framebuffer.renderWithAlpha(alpha);
-	}
-
-	/**
-	 * Switch from src to dst, after copying the contents of src to dst.
-	 */
-	public static void swapAndBlitColor(RenderTarget src, RenderTarget dst) {
-		GlStateManager._glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, src.frameBufferId);
-		GlStateManager._glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, dst.frameBufferId);
-		GlStateManager._glBlitFrameBuffer(
-				0,
-				0,
-				src.viewWidth,
-				src.viewHeight,
-				0,
-				0,
-				dst.viewWidth,
-				dst.viewHeight,
-				GL30.GL_COLOR_BUFFER_BIT,
-				GL20.GL_LINEAR
-		);
-
-		GlStateManager._glBindFramebuffer(GlConst.GL_FRAMEBUFFER, dst.frameBufferId);
-	}
-
-	//just like AbstractGui#drawTexture, but with a color at every vertex
 	public static void drawColoredTexture(
 			GuiGraphics graphics,
 			Color c,
-			int x,
-			int y,
-			int tex_left,
-			int tex_top,
-			int width,
-			int height
-	) {
-		drawColoredTexture(graphics, c, x, y, 0, (float) tex_left, (float) tex_top, width, height, 256, 256);
-	}
-
-	public static void drawColoredTexture(
-			GuiGraphics graphics,
-			Color c,
-			int x,
-			int y,
+			int left,
+			int top,
 			int z,
 			float tex_left,
 			float tex_top,
-			int width,
-			int height,
+			int tex_width,
+			int tex_height,
 			int sheet_width,
 			int sheet_height
 	) {
 		drawColoredTexture(
 				graphics,
 				c,
-				x,
-				x + width,
-				y,
-				y + height,
+				left,
+				left + tex_width,
+				top,
+				top + tex_height,
 				z,
-				width,
-				height,
+				tex_width,
+				tex_height,
 				tex_left,
 				tex_top,
 				sheet_width,

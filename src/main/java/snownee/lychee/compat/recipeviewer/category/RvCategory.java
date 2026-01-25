@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -14,10 +15,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.lychee.Lychee;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.client.gui.AllGuiTextures;
@@ -30,6 +31,7 @@ import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 
 public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
@@ -37,16 +39,20 @@ public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 	public static final int WIDER_WIDTH = WIDTH + 50;
 	public static final int HEIGHT = 60;
 
-	public ResourceLocation id;
+	public final LycheeRecipeType<R> recipeType;
 	public int width = WIDTH;
 	public int height = HEIGHT;
-	public IconProvider<R> iconProvider;
+	public @Nullable IconProvider<R> iconProvider;
 	public WorkstationProvider<R> workstationProvider = category -> List.of();
 	public ImmutableMap<String, RvCategoryDecoration<R>> decorations = ImmutableMap.of();
 	public ImmutableMap<String, Predicate<R>> conditions = ImmutableMap.of();
 
-	public void setSimpleWorkstationProvider(Function<RvCategoryInstance<R>, List<ItemStack>> workstationProvider) {
-		this.workstationProvider = category -> Lists.transform(workstationProvider.apply(category), Ingredient::of);
+	public RvCategory(LycheeRecipeType<R> recipeType) {
+		this.recipeType = recipeType;
+	}
+
+	public void setSimpleWorkstationProvider(Function<RvCategoryInstance<R>, List<Item>> workstationProvider) {
+		this.workstationProvider = category -> Lists.transform(workstationProvider.apply(category), SlotDisplay.ItemSlotDisplay::new);
 	}
 
 	public void init() {
@@ -88,6 +94,14 @@ public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return VectorExtensions.ZERO2F;
 	}
 
+	public Identifier id() {
+		return recipeType.categoryId;
+	}
+
+	public Class<? extends R> recipeClass() {
+		return recipeType.recipeClass;
+	}
+
 	@FunctionalInterface
 	public interface IconProvider<R extends ILycheeRecipe<LycheeContext>> {
 		RenderElement get(RvCategoryInstance<R> category);
@@ -95,7 +109,7 @@ public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 
 	@FunctionalInterface
 	public interface WorkstationProvider<R extends ILycheeRecipe<LycheeContext>> {
-		List<Ingredient> get(RvCategoryInstance<R> category);
+		List<SlotDisplay> get(RvCategoryInstance<R> category);
 	}
 
 	public static boolean needConsumeBlockInput(ILycheeRecipe<? extends LycheeContext> recipe) {

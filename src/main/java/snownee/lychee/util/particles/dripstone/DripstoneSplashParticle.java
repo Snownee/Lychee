@@ -8,16 +8,16 @@ import net.minecraft.world.level.material.Fluid;
 // SplashParticle
 public class DripstoneSplashParticle extends DripParticle {
 	public DripstoneSplashParticle(
-			ClientLevel clientWorld,
-			double d,
-			double e,
-			double f,
+			ClientLevel level,
+			double x,
+			double y,
+			double z,
 			double g,
 			double h,
 			double i,
-			Fluid fluid
+			Fluid type
 	) {
-		super(clientWorld, d, e, f, fluid);
+		super(level, x, y, z, type);
 		this.xd *= 0.3f;
 		this.yd = Math.random() * (double) 0.2f + (double) 0.1f;
 		this.zd *= 0.3f;

@@ -5,10 +5,10 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
@@ -41,7 +41,7 @@ import snownee.lychee.util.ui.CategoryModifier;
 public final class RecipeTypes {
 
 	static {
-		Objects.requireNonNull(LycheeLootContextParams.ALL);
+		Objects.requireNonNull(LycheeContextKeys.BLOCK_POS);
 		Objects.requireNonNull(LycheeLootContextParamSets.ALL);
 	}
 
@@ -147,7 +147,7 @@ public final class RecipeTypes {
 
 	@SuppressWarnings("unchecked")
 	public static <T extends RecipeType<?>> T register(String name) {
-		ResourceLocation id = Lychee.id(name);
+		Identifier id = Lychee.id(name);
 		return (T) Registry.register(
 				BuiltInRegistries.RECIPE_TYPE, id, new RecipeType<>() {
 					@Override

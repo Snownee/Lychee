@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
@@ -12,10 +12,10 @@ import com.google.common.collect.ListMultimap;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.util.LycheeEntity;
@@ -28,7 +28,7 @@ import snownee.lychee.util.recipe.LycheeRecipeType;
 public class EntityTickingRecipeType extends LycheeRecipeType<EntityTickingRecipe> {
 	private static final Set<LycheeContextKey<?>> PRESERVED_KEYS = Set.of(LycheeContextKey.LEVEL, LycheeContextKey.LOOT_PARAMS);
 
-	public EntityTickingRecipeType(String name, Class<EntityTickingRecipe> clazz, @Nullable LootContextParamSet contextParamSet) {
+	public EntityTickingRecipeType(String name, Class<EntityTickingRecipe> clazz, @Nullable ContextKeySet contextParamSet) {
 		super(name, clazz, contextParamSet);
 	}
 
@@ -50,7 +50,7 @@ public class EntityTickingRecipeType extends LycheeRecipeType<EntityTickingRecip
 	}
 
 	public void process(Entity entity, List<RecipeHolder<EntityTickingRecipe>> recipes) {
-		if (recipes.isEmpty() || entity.level().isClientSide) {
+		if (recipes.isEmpty() || entity.level().isClientSide()) {
 			return;
 		}
 		ServerLevel level = (ServerLevel) entity.level();

@@ -2,17 +2,19 @@ package snownee.lychee.util.context;
 
 import java.util.function.Function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Marker;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -32,7 +34,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 @SuppressWarnings("StaticInitializerReferencesSubClass")
 public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Required, LycheeContextKey.Optional {
-	public final ResourceLocation id;
+	public final Identifier id;
 	@Nullable
 	public final Function<LycheeContext, T> factory;
 
@@ -43,7 +45,7 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 			it -> new LootParamsContext(it.level(), LycheeLootContextParamSets.ALL));
 	public static final LycheeContextKey.Required<ActionContext> ACTION = req("action", it -> new ActionContext());
 
-	public static final LycheeContextKey.Optional<ResourceLocation> RECIPE_ID = opt("recipe_id");
+	public static final LycheeContextKey.Optional<ResourceKey<Recipe<?>>> RECIPE_ID = opt("recipe_id");
 	public static final LycheeContextKey.Optional<ILycheeRecipe<?>> RECIPE = opt(
 			"recipe", it -> {
 				var id = it.getOrNull(LycheeContextKey.RECIPE_ID);
@@ -60,7 +62,7 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	public static final LycheeContextKey.Optional<ActionMarker> MARKER = opt(
 			"marker", it -> {
 				var level = it.level();
-				if (level.isClientSide) {
+				if (level.isClientSide()) {
 					return null;
 				}
 				var marker = new Marker(EntityType.MARKER, level);
@@ -82,7 +84,7 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	public static final LycheeContextKey.Optional<CraftingContext> CRAFTING = opt("crafting");
 	public static final LycheeContextKey.Optional<BlockState> DRIPSTONE_SOURCE = opt("dripstone_root");
 
-	protected LycheeContextKey(ResourceLocation id, @Nullable Function<LycheeContext, T> factory) {
+	protected LycheeContextKey(Identifier id, @Nullable Function<LycheeContext, T> factory) {
 		this.id = id;
 		this.factory = factory;
 	}
@@ -102,7 +104,7 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	}
 
 	public static <T> LycheeContextKey.Optional<T> opt(String name, @Nullable Function<LycheeContext, T> factory) {
-		return register(new LycheeContextKey.Optional<>(ResourceLocation.parse(name), factory));
+		return register(new LycheeContextKey.Optional<>(Identifier.parse(name), factory));
 	}
 
 	public static <T> LycheeContextKey.Required<T> req(String name) {
@@ -110,7 +112,7 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	}
 
 	public static <T> LycheeContextKey.Required<T> req(String name, @Nullable Function<LycheeContext, T> factory) {
-		return register(new LycheeContextKey.Required<>(ResourceLocation.parse(name), factory));
+		return register(new LycheeContextKey.Required<>(Identifier.parse(name), factory));
 	}
 
 	public @Nullable Codec<T> codec() {
@@ -120,13 +122,13 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	}
 
 	public static final class Required<T> extends LycheeContextKey<T> {
-		public Required(ResourceLocation id, @Nullable Function<LycheeContext, T> factory) {
+		public Required(Identifier id, @Nullable Function<LycheeContext, T> factory) {
 			super(id, factory);
 		}
 	}
 
 	public static final class Optional<T> extends LycheeContextKey<T> {
-		public Optional(ResourceLocation id, @Nullable Function<LycheeContext, T> factory) {
+		public Optional(Identifier id, @Nullable Function<LycheeContext, T> factory) {
 			super(id, factory);
 		}
 	}

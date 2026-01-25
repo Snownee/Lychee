@@ -10,14 +10,18 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import snownee.kiwi.recipe.EmptyRecipeInput;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
@@ -30,7 +34,7 @@ import snownee.lychee.util.codec.LycheeStreamCodecs;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class CategoryMetadata extends CategorySettingRecipe {
 	public static final RecipeHolder<CategoryMetadata> EMPTY = new RecipeHolder<>(
-			ResourceLocation.withDefaultNamespace("empty"),
+			ResourceKey.create(Registries.RECIPE, Identifier.withDefaultNamespace("empty")),
 			new CategoryMetadata());
 
 	private final Optional<Vector2ic> size;
@@ -59,12 +63,12 @@ public class CategoryMetadata extends CategorySettingRecipe {
 	}
 
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<? extends Recipe<EmptyRecipeInput>> getSerializer() {
 		return RecipeSerializers.CATEGORY_METADATA;
 	}
 
 	@Override
-	public RecipeType<?> getType() {
+	public RecipeType<? extends Recipe<EmptyRecipeInput>> getType() {
 		return RecipeTypes.CATEGORY_METADATA;
 	}
 
@@ -88,7 +92,9 @@ public class CategoryMetadata extends CategorySettingRecipe {
 				Codec.BOOL.optionalFieldOf("render_default", true).forGetter(CategoryMetadata::renderDefault),
 				VectorExtensions.CODEC2I.optionalFieldOf("size").forGetter(CategoryMetadata::size),
 				UIElement.CODEC.optionalFieldOf("icon").forGetter(CategoryMetadata::icon),
-				KCodecs.compactList(LycheeCodecs.NONEMPTY_INGREDIENT).optionalFieldOf("workstation").forGetter(CategoryMetadata::workstation)
+				KCodecs.compactList(LycheeCodecs.NONEMPTY_INGREDIENT)
+						.optionalFieldOf("workstation")
+						.forGetter(CategoryMetadata::workstation)
 		).apply(instance, CategoryMetadata::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, CategoryMetadata> STREAM_CODEC = LycheeStreamCodecs.composite(
 				ByteBufCodecs.VAR_INT,

@@ -6,8 +6,7 @@ import java.util.stream.Stream;
 import org.jetbrains.annotations.Unmodifiable;
 
 import mezz.jei.api.recipe.vanilla.IJeiAnvilRecipe;
-import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -21,7 +20,7 @@ public record AnvilCraftingDisplay(
 
 	public static AnvilCraftingDisplay of(RecipeHolder<AnvilCraftingRecipe> recipeHolder) {
 		AnvilCraftingRecipe recipe = recipeHolder.value();
-		NonNullList<Ingredient> ingredients = recipe.getIngredients();
+		List<Ingredient> ingredients = recipe.getIngredients();
 		List<ItemStack> left = List.of(ingredients.getFirst().getItems());
 		List<ItemStack> right = ingredients.size() == 1 ? List.of() : Stream.of(ingredients.getLast().getItems())
 				.map(ItemStack::copy)
@@ -46,7 +45,7 @@ public record AnvilCraftingDisplay(
 	}
 
 	@Override
-	public ResourceLocation getUid() {
+	public Identifier getUid() {
 		return recipeHolder.id();
 	}
 }

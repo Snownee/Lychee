@@ -1,19 +1,19 @@
 package snownee.lychee.ui;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
-import snownee.lychee.client.gui.LycheeGuiGraphics;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.resources.Identifier;
 import snownee.lychee.client.gui.RenderElement;
 
 public class SpriteElementRenderer extends RenderElement {
-	public final ResourceLocation id;
+	public final Identifier id;
 	public final float scale;
 
-	public SpriteElementRenderer(ResourceLocation id) {
+	public SpriteElementRenderer(Identifier id) {
 		this(id, 1F);
 	}
 
-	public SpriteElementRenderer(ResourceLocation id, float scale) {
+	public SpriteElementRenderer(Identifier id, float scale) {
 		this.id = id;
 		this.scale = scale;
 	}
@@ -26,9 +26,7 @@ public class SpriteElementRenderer extends RenderElement {
 		int x = Math.round(x() + xOff);
 		float yOff = (height() - height) * 0.5F;
 		int y = Math.round(y() + yOff);
-		((LycheeGuiGraphics) graphics).lychee$setRenderType(LycheeGuiGraphics::guiTextured);
-		graphics.blitSprite(id, x, y, (int) z(), width, height);
-		((LycheeGuiGraphics) graphics).lychee$setRenderType(null);
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, id, x, y, width, height);
 	}
 
 	public static SpriteElementRenderer create(SpriteElement element) {

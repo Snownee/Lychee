@@ -3,13 +3,13 @@ package snownee.lychee.compat.recipeviewer.element;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
+import org.jspecify.annotations.Nullable;
 
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.kiwi.loader.Platform;
+import snownee.kiwi.util.client.SmartKey;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
@@ -33,7 +33,7 @@ public class ShadowElement {
 		if (shadow != null) {
 			return shadow;
 		}
-		ResourceLocation id = light ? AllGuiTextures.LIGHT_SHADOW.id : AllGuiTextures.SHADOW.id;
+		Identifier id = light ? AllGuiTextures.LIGHT_SHADOW.id : AllGuiTextures.SHADOW.id;
 		shadow = new SpriteElementRenderer(id).withSize(shadowWidth, shadowHeight);
 		if (light) {
 			lightShadow = shadow;
@@ -56,11 +56,8 @@ public class ShadowElement {
 			float x = element.position.x + blockSize * 0.5F - shadowWidth * 0.5F;
 			float y = element.position.y + blockSize - shadowHeight * 0.4F;
 			var shadowPosition = new Vector2f(x, y);
-			if (!Platform.isProduction() && Screen.hasControlDown()) {
-				graphics.pose().pushPose();
-				graphics.pose().translate(0, 0, 1000);
+			if (!Platform.isProduction() && SmartKey.hasControlDown()) {
 				graphics.renderOutline((int) element.x(), (int) element.y(), blockSize, blockSize, 0x88FF0000);
-				graphics.pose().popPose();
 			}
 			int lightEmission = blockState.getLightEmission();
 			if (lightEmission < 5) {

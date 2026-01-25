@@ -3,12 +3,12 @@ package snownee.lychee.recipes;
 import java.util.Set;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Sets;
 
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 
@@ -16,7 +16,7 @@ public class DripstoneRecipeType extends BlockKeyableRecipeType<DripstoneRecipe>
 
 	private final Set<Block> allSources = Sets.newHashSet();
 
-	public DripstoneRecipeType(String name, Class<DripstoneRecipe> clazz, @Nullable LootContextParamSet paramSet) {
+	public DripstoneRecipeType(String name, Class<DripstoneRecipe> clazz, @Nullable ContextKeySet paramSet) {
 		super(name, clazz, paramSet);
 	}
 

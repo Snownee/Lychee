@@ -2,10 +2,11 @@ package snownee.lychee.util;
 
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
 
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -33,7 +34,7 @@ public final class IngredientCollection {
 
 	private final List<SizedIngredient> ingredients;
 	private final int ingredientCount;
-	private NonNullList<Ingredient> flattenedIngredients;
+	private @Nullable List<Ingredient> flattenedIngredients;
 
 	public static IngredientCollection of(List<SizedIngredient> ingredients) {
 		if (ingredients.isEmpty()) {
@@ -63,7 +64,7 @@ public final class IngredientCollection {
 		return ingredientCount;
 	}
 
-	public NonNullList<Ingredient> flattenedIngredients() {
+	public List<Ingredient> flattenedIngredients() {
 		if (flattenedIngredients == null) {
 			List<Ingredient> list = Lists.newArrayListWithExpectedSize(ingredientCount);
 			for (SizedIngredient ingredient : ingredients) {
@@ -71,7 +72,7 @@ public final class IngredientCollection {
 					list.add(ingredient.ingredient());
 				}
 			}
-			flattenedIngredients = NonNullListExtensions.copyOf(list);
+			flattenedIngredients = list;
 		}
 		return flattenedIngredients;
 	}

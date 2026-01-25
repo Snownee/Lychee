@@ -4,11 +4,10 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.contextual.And;
 import snownee.lychee.contextual.Chance;
-import snownee.lychee.contextual.Param;
 import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.contextual.DirectionCheck;
 import snownee.lychee.contextual.EntityHealth;
@@ -21,6 +20,7 @@ import snownee.lychee.contextual.IsWeather;
 import snownee.lychee.contextual.Location;
 import snownee.lychee.contextual.Not;
 import snownee.lychee.contextual.Or;
+import snownee.lychee.contextual.Param;
 import snownee.lychee.contextual.SkyDarken;
 import snownee.lychee.contextual.Time;
 import snownee.lychee.util.SerializableType;
@@ -56,10 +56,10 @@ public interface ContextualConditionType<T extends ContextualCondition> extends 
 
 
 	static <T extends ContextualConditionType<?>> T register(String name, T object) {
-		return register(ResourceLocation.parse(name), object);
+		return register(Identifier.parse(name), object);
 	}
 
-	static <T extends ContextualConditionType<?>> T register(ResourceLocation location, T object) {
+	static <T extends ContextualConditionType<?>> T register(Identifier location, T object) {
 		Registry.register(LycheeRegistries.CONTEXTUAL, location, object);
 		return object;
 	}

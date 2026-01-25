@@ -7,9 +7,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.Lychee;
 import snownee.lychee.util.action.Job;
-import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 
 public class ActionContext {
@@ -17,7 +17,7 @@ public class ActionContext {
 			instance.group(
 					Codec.BOOL.optionalFieldOf("avoid_default", false).forGetter(it -> it.avoidDefault),
 					Codec.INT.fieldOf("state")
-							.flatXmap(it -> LycheeCodecs.tryCatch(() -> State.values()[it]), it -> DataResult.success(it.ordinal()))
+							.flatXmap(it -> KCodecs.tryCatch(() -> State.values()[it]), it -> DataResult.success(it.ordinal()))
 							.forGetter(it -> it.state),
 					Codec.list(Job.CODEC).fieldOf("jobs").<Queue<Job>>xmap(
 							Queues::newLinkedBlockingQueue,

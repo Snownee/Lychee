@@ -1,40 +1,26 @@
-accessWidener   v1  named
-accessible class net/minecraft/client/renderer/RenderType$CompositeState
-
-accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$PropertyMatcher
-accessible method net/minecraft/advancements/critereon/StatePropertiesPredicate$PropertyMatcher <init> (Ljava/lang/String;Lnet/minecraft/advancements/critereon/StatePropertiesPredicate$ValueMatcher;)V
-accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactMatcher
-accessible method net/minecraft/advancements/critereon/StatePropertiesPredicate$ExactMatcher <init> (Ljava/lang/String;)V
-accessible class net/minecraft/advancements/critereon/StatePropertiesPredicate$RangedMatcher
+accessWidener   v1  official
+accessible class net/minecraft/advancements/criterion/StatePropertiesPredicate$PropertyMatcher
+accessible method net/minecraft/advancements/criterion/StatePropertiesPredicate$PropertyMatcher <init> (Ljava/lang/String;Lnet/minecraft/advancements/criterion/StatePropertiesPredicate$ValueMatcher;)V
+accessible class net/minecraft/advancements/criterion/StatePropertiesPredicate$ExactMatcher
+accessible method net/minecraft/advancements/criterion/StatePropertiesPredicate$ExactMatcher <init> (Ljava/lang/String;)V
+accessible class net/minecraft/advancements/criterion/StatePropertiesPredicate$RangedMatcher
 
 accessible field net/minecraft/world/level/storage/loot/IntRange min Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;
 accessible field net/minecraft/world/level/storage/loot/IntRange max Lnet/minecraft/world/level/storage/loot/providers/number/NumberProvider;
 
-accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
-accessible method net/minecraft/client/particle/DripParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDLnet/minecraft/world/level/material/Fluid;)V
+accessible method net/minecraft/client/particle/DripParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDLnet/minecraft/world/level/material/Fluid;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V
 accessible field net/minecraft/client/particle/DripParticle isGlowing Z
 accessible class net/minecraft/client/particle/DripParticle$DripstoneFallAndLandParticle
-accessible method net/minecraft/client/particle/DripParticle$DripstoneFallAndLandParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDLnet/minecraft/world/level/material/Fluid;Lnet/minecraft/core/particles/ParticleOptions;)V
+accessible method net/minecraft/client/particle/DripParticle$DripstoneFallAndLandParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDLnet/minecraft/world/level/material/Fluid;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V
 accessible class net/minecraft/client/particle/DripParticle$DripHangParticle
-accessible method net/minecraft/client/particle/DripParticle$DripHangParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDLnet/minecraft/world/level/material/Fluid;Lnet/minecraft/core/particles/ParticleOptions;)V
-accessible class net/minecraft/world/item/crafting/Ingredient$ItemValue
-accessible method net/minecraft/world/item/crafting/Ingredient$ItemValue <init> (Lnet/minecraft/world/item/ItemStack;)V
-accessible class net/minecraft/world/item/crafting/Ingredient$Value
+accessible method net/minecraft/client/particle/DripParticle$DripHangParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDLnet/minecraft/world/level/material/Fluid;Lnet/minecraft/core/particles/ParticleOptions;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V
+
 accessible field net/minecraft/world/level/block/DropperBlock DISPENSE_BEHAVIOUR Lnet/minecraft/core/dispenser/DispenseItemBehavior;
 
-accessible class net/minecraft/advancements/critereon/LocationPredicate$PositionPredicate
-
-accessible class net/minecraft/world/item/crafting/Ingredient$TagValue
-accessible method net/minecraft/world/item/crafting/Ingredient fromValues (Ljava/util/stream/Stream;)Lnet/minecraft/world/item/crafting/Ingredient;
-
-accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
-accessible class net/minecraft/client/renderer/RenderStateShard$ShaderStateShard
-accessible class net/minecraft/client/renderer/RenderStateShard$TransparencyStateShard
-accessible field net/minecraft/client/renderer/RenderStateShard POSITION_TEX_SHADER Lnet/minecraft/client/renderer/RenderStateShard$ShaderStateShard;
-accessible field net/minecraft/client/renderer/RenderStateShard TRANSLUCENT_TRANSPARENCY Lnet/minecraft/client/renderer/RenderStateShard$TransparencyStateShard;
+accessible class net/minecraft/advancements/criterion/LocationPredicate$PositionPredicate
 
 accessible field net/minecraft/world/entity/item/FallingBlockEntity blockState Lnet/minecraft/world/level/block/state/BlockState;
 
 accessible field net/minecraft/world/Difficulty BY_ID Ljava/util/function/IntFunction;
 
-accessible method net/minecraft/advancements/critereon/MinMaxBounds$Ints <init> (Ljava/util/Optional;Ljava/util/Optional;)V
+accessible field net/minecraft/world/item/crafting/RecipeManager RECIPE_LISTER Lnet/minecraft/resources/FileToIdConverter;

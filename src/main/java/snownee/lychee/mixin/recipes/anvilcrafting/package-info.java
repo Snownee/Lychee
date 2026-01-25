@@ -1,4 +1,4 @@
-@NotNullByDefault
+@NullMarked
 package snownee.lychee.mixin.recipes.anvilcrafting;
 
-import snownee.kiwi.util.NotNullByDefault;
+import org.jspecify.annotations.NullMarked;

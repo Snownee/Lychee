@@ -5,9 +5,9 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.RvHelper;
@@ -22,7 +22,7 @@ public interface RvCategoryInstance<R extends ILycheeRecipe<LycheeContext>> {
 
 	RvHelper helper();
 
-	ResourceLocation id();
+	Identifier id();
 
 	List<RecipeHolder<R>> recipes();
 
@@ -50,7 +50,7 @@ public interface RvCategoryInstance<R extends ILycheeRecipe<LycheeContext>> {
 		return type().iconProvider.get(this);
 	}
 
-	default List<Ingredient> workstations() {
+	default List<SlotDisplay> workstations() {
 		return type().workstationProvider.get(this);
 	}
 

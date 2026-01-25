@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.MapCodec;
@@ -12,11 +12,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.FluidPredicate;
-import net.minecraft.advancements.critereon.LightPredicate;
-import net.minecraft.advancements.critereon.LocationPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds.Doubles;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.FluidPredicate;
+import net.minecraft.advancements.criterion.LightPredicate;
+import net.minecraft.advancements.criterion.LocationPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds.Doubles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -34,7 +34,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
@@ -76,10 +76,10 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		final var level = ctx.level();
 		final var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
-		if (level.isClientSide) {
+		if (level.isClientSide()) {
 			return testClient(
 					level,
-					lootParams.get(LycheeLootContextParams.BLOCK_POS),
+					lootParams.get(LycheeContextKeys.BLOCK_POS),
 					lootParams.get(LootContextParams.ORIGIN)
 			).get() ? times : 0;
 		} else {

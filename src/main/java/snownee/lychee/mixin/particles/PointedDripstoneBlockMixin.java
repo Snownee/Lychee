@@ -28,13 +28,13 @@ public class PointedDripstoneBlockMixin {
 			cancellable = true
 	)
 	private static void lychee_maybeTransferFluid(
-			BlockState blockState,
-			ServerLevel serverLevel,
-			BlockPos blockPos,
-			float f,
+			BlockState state,
+			ServerLevel level,
+			BlockPos pos,
+			float randomValue,
 			CallbackInfo ci
 	) {
-		if (DripstoneRecipe.invoke(blockState, serverLevel, blockPos)) {
+		if (DripstoneRecipe.invoke(state, level, pos)) {
 			ci.cancel();
 		}
 	}
@@ -49,11 +49,11 @@ public class PointedDripstoneBlockMixin {
 	)
 	private static void lychee_spawnDripParticle(
 			Level level,
-			BlockPos blockPos,
-			BlockState blockState,
+			BlockPos stalactiteTipPos,
+			BlockState stalactiteTipState,
 			CallbackInfo ci
 	) {
-		if (DripstoneParticleService.spawnDripParticle(level, blockPos, blockState)) {
+		if (DripstoneParticleService.spawnDripParticle(level, stalactiteTipPos, stalactiteTipState)) {
 			ci.cancel();
 		}
 	}
@@ -67,13 +67,13 @@ public class PointedDripstoneBlockMixin {
 			), method = "animateTick", cancellable = true
 	)
 	private void animateTick(
-			BlockState blockState,
+			BlockState state,
 			Level level,
-			BlockPos blockPos,
-			RandomSource randomSource,
+			BlockPos pos,
+			RandomSource random,
 			CallbackInfo ci
 	) {
-		if (DripstoneParticleService.spawnDripParticle(level, blockPos, blockState)) {
+		if (DripstoneParticleService.spawnDripParticle(level, pos, state)) {
 			ci.cancel();
 		}
 	}

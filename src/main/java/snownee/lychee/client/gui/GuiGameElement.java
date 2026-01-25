@@ -1,6 +1,6 @@
 package snownee.lychee.client.gui;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
@@ -17,9 +17,9 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -155,10 +155,10 @@ public class GuiGameElement {
 
 	private static class GuiBlockModelRenderBuilder extends GuiRenderBuilder {
 
-		protected BakedModel blockModel;
+		protected BlockStateModel blockModel;
 		protected BlockState blockState;
 
-		public GuiBlockModelRenderBuilder(BakedModel bakedModel, @Nullable BlockState blockState) {
+		public GuiBlockModelRenderBuilder(BlockStateModel bakedModel, @Nullable BlockState blockState) {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
 			this.blockModel = bakedModel;
 			withRotationOffset(VecHelper.getCenterOf(BlockPos.ZERO));
@@ -186,7 +186,7 @@ public class GuiGameElement {
 			int color = mc.getBlockColors().getColor(
 					blockState,
 					mc.level,
-					mc.cameraEntity != null ? mc.cameraEntity.blockPosition() : null,
+					mc.getCameraEntity() != null ? mc.getCameraEntity().blockPosition() : null,
 					0
 			);
 			Color rgb = new Color(color == -1 ? this.color : color);

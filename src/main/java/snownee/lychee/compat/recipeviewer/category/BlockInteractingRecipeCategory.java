@@ -5,9 +5,9 @@ import java.util.List;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
-import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Util;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.InteractiveRenderElement;
@@ -22,6 +22,10 @@ public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockIn
 	public static final Vector2fc METHOD_POSITION = VectorExtensions.offsetX(ItemAndBlockCategory.METHOD_POSITION, 40);
 
 	public static final Vector2fc INFO_POSITION = new Vector2f(INPUT_INGREDIENT_X - 4, 40);
+
+	public BlockInteractingRecipeCategory() {
+		super(RecipeTypes.BLOCK_INTERACTING);
+	}
 
 	@Override
 	public void setupDecorations(DecorationMapBuilder<BlockInteractingRecipe> mapBuilder) {

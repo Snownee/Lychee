@@ -3,7 +3,7 @@ package snownee.lychee.contextual;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;

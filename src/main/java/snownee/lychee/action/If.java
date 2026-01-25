@@ -4,18 +4,18 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
@@ -86,7 +86,7 @@ public record If(
 	}
 
 	@Override
-	public List<ItemStack> getOutputItems() {
+	public List<SlotDisplay> getOutputItems() {
 		return getChildActions().map(PostAction::getOutputItems).flatMap(List::stream).toList();
 	}
 

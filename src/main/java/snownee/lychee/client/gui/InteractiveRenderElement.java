@@ -5,13 +5,15 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -76,10 +78,10 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 					(int) bottomRight.x(),
 					(int) bottomRight.y());
 		}
-		graphics.pose().pushPose();
-		graphics.pose().translate(x(), y(), z());
+		graphics.pose().pushMatrix();
+		graphics.pose().translate(x(), y());
 		renderable.apply(this).render(graphics);
-		graphics.pose().popPose();
+		graphics.pose().popMatrix();
 		if (withScissors) {
 			graphics.disableScissor();
 		}
@@ -122,8 +124,8 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 	}
 
 	@Override
-	public boolean mouseClicked(double mouseX, double mouseY, int button) {
-		if (onInput != null && hovered && onInput.test(InputAction.mousePressed(button, mouseX, mouseY), this)) {
+	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+		if (onInput != null && hovered && onInput.test(InputAction.mousePressed(event), this)) {
 			produceClickSound();
 			return true;
 		}
@@ -131,8 +133,8 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 	}
 
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-		return onInput != null && onInput.test(InputAction.keyPressed(keyCode, scanCode, modifiers), this);
+	public boolean keyPressed(KeyEvent event) {
+		return onInput != null && onInput.test(InputAction.keyPressed(event), this);
 	}
 
 	@Override

@@ -11,8 +11,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
+import snownee.kiwi.recipe.EmptyRecipeInput;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.Patterns;
@@ -38,12 +40,12 @@ public class CategoryModifier extends CategorySettingRecipe {
 	}
 
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<? extends Recipe<EmptyRecipeInput>> getSerializer() {
 		return RecipeSerializers.CATEGORY_MODIFIER;
 	}
 
 	@Override
-	public RecipeType<?> getType() {
+	public RecipeType<? extends Recipe<EmptyRecipeInput>> getType() {
 		return RecipeTypes.CATEGORY_MODIFIER;
 	}
 

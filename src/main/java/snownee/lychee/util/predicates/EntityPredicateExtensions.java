@@ -2,7 +2,7 @@ package snownee.lychee.util.predicates;
 
 import java.util.Optional;
 
-import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.criterion.EntityPredicate;
 
 public class EntityPredicateExtensions {
 	public static EntityPredicate withoutType(EntityPredicate original) {
@@ -10,7 +10,7 @@ public class EntityPredicateExtensions {
 				Optional.empty(),
 				original.distanceToPlayer(),
 				original.movement(),
-				original.location(),
+				original.identifier(),
 				original.effects(),
 				original.nbt(),
 				original.flags(),

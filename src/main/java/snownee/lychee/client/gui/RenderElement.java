@@ -11,9 +11,9 @@ import org.joml.Vector3fc;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import snownee.kiwi.loader.Platform;
+import snownee.kiwi.util.client.SmartKey;
 import snownee.lychee.util.ui.UIElementCommonProperties;
 
 public abstract class RenderElement implements ScreenElement, Renderable {
@@ -128,29 +128,29 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	public void render(GuiGraphics graphics, int offsetX, int offsetY) {
-		graphics.pose().pushPose();
-		graphics.pose().translate(offsetX, offsetY, 0);
+		graphics.pose().pushMatrix();
+		graphics.pose().translate(offsetX, offsetY);
 		render(graphics);
-		graphics.pose().popPose();
+		graphics.pose().popMatrix();
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		render(guiGraphics);
+	public void render(GuiGraphics graphics, int mouseX, int mouseY, float a) {
+		render(graphics);
 	}
 
 	@SuppressWarnings("unchecked")
 	public <T extends RenderElement> T debugOutline(GuiGraphics graphics, int color) {
-		if (Platform.isProduction() || !Screen.hasControlDown()) {
+		if (Platform.isProduction() || !SmartKey.hasControlDown()) {
 			return (T) this;
 		}
-		if (FastColor.ARGB32.alpha(color) == 0) {
+		if (ARGB.alpha(color) == 0) {
 			color |= 0x88000000;
 		}
-		graphics.pose().pushPose();
-		graphics.pose().translate(0, 0, 1000);
+		graphics.pose().pushMatrix();
+//		graphics.pose().translate(0, 0, 1000);
 		graphics.renderOutline(Math.round(x()), Math.round(y()), width(), height(), color);
-		graphics.pose().popPose();
+		graphics.pose().pushMatrix();
 		return (T) this;
 	}
 }

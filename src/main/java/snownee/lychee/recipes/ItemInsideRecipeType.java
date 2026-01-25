@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
@@ -19,18 +19,18 @@ import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.LycheeCounter;
@@ -44,7 +44,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 	private final List<RecipeHolder<ItemInsideRecipe>> specialRecipes = Lists.newArrayList();
 	private final Multimap<Item, RecipeHolder<ItemInsideRecipe>> recipesByItem = ArrayListMultimap.create();
 
-	public ItemInsideRecipeType(String name, Class<ItemInsideRecipe> clazz, @Nullable LootContextParamSet contextParamSet) {
+	public ItemInsideRecipeType(String name, Class<ItemInsideRecipe> clazz, @Nullable ContextKeySet contextParamSet) {
 		super(name, clazz, contextParamSet);
 	}
 
@@ -111,7 +111,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 			return;
 		}
 
-		ResourceLocation prevRecipeId;
+		ResourceKey<Recipe<?>> prevRecipeId;
 		if (entity instanceof LycheeCounter counter) {
 			prevRecipeId = counter.lychee$getRecipeId();
 			counter.lychee$setRecipeId(null);
@@ -143,7 +143,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 		lootParams.set(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
 		lootParams.set(LootContextParams.THIS_ENTITY, entity);
 		lootParams.set(LootContextParams.BLOCK_STATE, blockState);
-		lootParams.set(LycheeLootContextParams.BLOCK_POS, pos);
+		lootParams.set(LycheeContextKeys.BLOCK_POS, pos);
 		lootParams.validate();
 		@SuppressWarnings("unchecked") @Nullable final var prevRecipe =
 				(RecipeHolder<ItemInsideRecipe>) Optional.ofNullable(prevRecipeId)

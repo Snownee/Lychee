@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
@@ -17,10 +18,10 @@ import snownee.lychee.mixin.EntityAccess;
 
 public class CachedRenderingEntity<T extends Entity> {
 
-	protected T entity;
+	protected @Nullable T entity;
 	protected float scale = 15;
 	protected Vector3f translation = new Vector3f(0, 0, 20);
-	private Function<Level, T> factory;
+	private @Nullable Function<Level, T> factory;
 
 	protected CachedRenderingEntity(T entity) {
 		setEntity(entity);
@@ -38,15 +39,16 @@ public class CachedRenderingEntity<T extends Entity> {
 		return new CachedRenderingEntity<>(factory);
 	}
 
-	private void ensureEntity() {
+	private T ensureEntity() {
 		if (entity == null) {
-			entity = Objects.requireNonNull(factory.apply(Minecraft.getInstance().level));
+			entity = Objects.requireNonNull(Objects.requireNonNull(factory).apply(Objects.requireNonNull(Minecraft.getInstance().level)));
 			factory = null;
 		}
+		return entity;
 	}
 
 	public T getEntity() {
-		ensureEntity();
+		T entity = ensureEntity();
 		LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {
 			entity.tickCount = player.tickCount;
@@ -61,8 +63,7 @@ public class CachedRenderingEntity<T extends Entity> {
 	}
 
 	public void earlySetLevel() {
-		ensureEntity();
-		((EntityAccess) entity).callSetLevel(Objects.requireNonNull(Minecraft.getInstance().level));
+		((EntityAccess) ensureEntity()).callSetLevel(Objects.requireNonNull(Minecraft.getInstance().level));
 	}
 
 	public float getScale() {
@@ -82,10 +83,10 @@ public class CachedRenderingEntity<T extends Entity> {
 		if (mc.level == null) {
 			return;
 		}
-		ensureEntity();
+		T entity = ensureEntity();
 		((EntityAccess) entity).callSetLevel(mc.level);
 		entity.tickCount = (int) (mc.level.getGameTime() % 240000L);
-		var position = mc.gameRenderer.getMainCamera().getPosition();
+		var position = mc.gameRenderer.getMainCamera().position();
 		entity.setPosRaw(position.x(), position.y(), position.z());
 
 		matrixStack.pushPose();

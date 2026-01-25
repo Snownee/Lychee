@@ -1,6 +1,6 @@
 package snownee.lychee.action;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -12,6 +12,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -61,7 +62,7 @@ public record Execute(PostActionCommonProperties commonProperties, String comman
 				pos,
 				rotation,
 				level,
-				2,
+				LevelBasedPermissionSet.GAMEMASTER,
 				name,
 				displayName,
 				level.getServer(),

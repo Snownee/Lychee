@@ -1,21 +1,22 @@
 package snownee.lychee.mixin;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.crafting.Recipe;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.util.LycheeCounter;
 
 @Mixin(ItemEntity.class)
 public class ItemEntityMixin implements LycheeCounter {
 	@Unique
-	private ResourceLocation recipeId;
+	private @Nullable ResourceKey<Recipe<?>> recipeId;
 	@Unique
 	private int count;
 
@@ -27,12 +28,12 @@ public class ItemEntityMixin implements LycheeCounter {
 	}
 
 	@Override
-	public void lychee$setRecipeId(@Nullable ResourceLocation id) {
+	public void lychee$setRecipeId(@Nullable ResourceKey<Recipe<?>> id) {
 		recipeId = id;
 	}
 
 	@Override
-	public @Nullable ResourceLocation lychee$getRecipeId() {
+	public @Nullable ResourceKey<Recipe<?>> lychee$getRecipeId() {
 		return recipeId;
 	}
 

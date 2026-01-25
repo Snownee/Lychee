@@ -3,7 +3,7 @@ package snownee.lychee.util.contextual;
 import java.util.List;
 import java.util.Locale;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;

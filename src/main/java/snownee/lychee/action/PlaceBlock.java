@@ -4,18 +4,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
@@ -25,7 +26,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
-import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
@@ -45,12 +46,12 @@ public record PlaceBlock(
 		BlockPos offset,
 		boolean fancyDisplay) implements PostAction {
 
-	public PlaceBlock(PostActionCommonProperties properties, BlockPredicate block, BlockPos offset) {
+	public PlaceBlock(PostActionCommonProperties commonProperties, BlockPredicate block, BlockPos offset) {
 		this(
-				properties,
+				commonProperties,
 				block,
 				offset,
-				properties.icon() == null && BlockPredicateExtensions.isAny(block) && offset.equals(BlockPos.ZERO));
+				commonProperties.icon() == null && BlockPredicateExtensions.isAny(block) && offset.equals(BlockPos.ZERO));
 	}
 
 	private static void destroyBlock(Level level, BlockPos pos, boolean drop) {
@@ -86,7 +87,7 @@ public record PlaceBlock(
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
 		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParams.get(LycheeLootContextParams.BLOCK_POS).offset(offset);
+		var pos = lootParams.get(LycheeContextKeys.BLOCK_POS).offset(offset);
 		var level = context.level();
 		var oldState = level.getBlockState(pos);
 		var blockState = BlockPredicateExtensions.anyBlockState(block);
@@ -150,7 +151,7 @@ public record PlaceBlock(
 	}
 
 	@Override
-	public List<ItemStack> getOutputItems() {
+	public List<SlotDisplay> getOutputItems() {
 		return BlockPredicateExtensions.matchedItemStacks(block);
 	}
 

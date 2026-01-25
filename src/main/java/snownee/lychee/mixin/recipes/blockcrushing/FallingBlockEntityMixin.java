@@ -34,8 +34,8 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 	@Shadow
 	private BlockState blockState;
 
-	public FallingBlockEntityMixin(EntityType<?> pEntityType, Level pLevel) {
-		super(pEntityType, pLevel);
+	public FallingBlockEntityMixin(EntityType<?> type, Level level) {
+		super(type, level);
 	}
 
 	@Inject(at = @At("HEAD"), method = "causeFallDamage")
@@ -46,7 +46,7 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 			CallbackInfoReturnable<Boolean> ci
 	) {
 		final var entity = (FallingBlockEntity) (Object) this;
-		if (entity.level().isClientSide) {
+		if (entity.level().isClientSide()) {
 			return;
 		}
 		RecipeTypes.BLOCK_CRUSHING.process(entity);

@@ -4,15 +4,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2ic;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.util.context.LycheeContext;
@@ -25,14 +26,14 @@ import snownee.lychee.util.ui.UIElement;
 public class RvCategoryInstanceImpl<R extends ILycheeRecipe<LycheeContext>> implements RvCategoryInstance<R> {
 	private final RvCategory<R> type;
 	private final RvHelper helper;
-	private final ResourceLocation id;
+	private final Identifier id;
 	protected final RecipeHolder<CategoryMetadata> metadata;
 	protected final List<RecipeHolder<CategoryModifier>> modifiers;
 	private final List<RecipeHolder<R>> recipes = Lists.newArrayList();
 	private final Map<String, RvCategoryDecoration<R>> decorations = Maps.newLinkedHashMap();
 	private final Map<String, Predicate<R>> conditions = Maps.newLinkedHashMap();
 
-	public RvCategoryInstanceImpl(RvCategory<R> type, ResourceLocation id, RvHelper helper) {
+	public RvCategoryInstanceImpl(RvCategory<R> type, Identifier id, RvHelper helper) {
 		this.type = type;
 		this.id = id;
 		this.helper = helper;
@@ -49,7 +50,7 @@ public class RvCategoryInstanceImpl<R extends ILycheeRecipe<LycheeContext>> impl
 	}
 
 	@Override
-	public ResourceLocation id() {
+	public Identifier id() {
 		return id;
 	}
 
@@ -79,8 +80,10 @@ public class RvCategoryInstanceImpl<R extends ILycheeRecipe<LycheeContext>> impl
 	}
 
 	@Override
-	public List<Ingredient> workstations() {
-		return metadata().workstation().orElseGet(RvCategoryInstance.super::workstations);
+	public List<SlotDisplay> workstations() {
+		return metadata().workstation()
+				.map($ -> $.stream().map(Ingredient::display).toList())
+				.orElseGet(RvCategoryInstance.super::workstations);
 	}
 
 	@Override

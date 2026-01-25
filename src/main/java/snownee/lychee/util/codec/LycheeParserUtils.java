@@ -7,9 +7,10 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.DataResult;
 
 import net.minecraft.CharPredicate;
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
+import snownee.kiwi.util.codec.ThrowingFunction;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public class LycheeParserUtils {

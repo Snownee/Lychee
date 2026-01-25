@@ -2,8 +2,9 @@ package snownee.lychee.compat.recipe_api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -12,17 +13,19 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.FabricIngredient;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.lychee.Lychee;
-import snownee.lychee.util.codec.LycheeCodecs;
 
 public class VisualOnlyComponentsIngredient implements CustomIngredient {
-	public static final ResourceLocation ID = Lychee.id("visual_only_components");
+	public static final Identifier ID = Lychee.id("visual_only_components");
 	public static final CustomIngredientSerializer<VisualOnlyComponentsIngredient> SERIALIZER = new Serializer();
 
 	private final Ingredient base;
@@ -40,6 +43,16 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 	@Override
 	public boolean test(ItemStack stack) {
 		return base.test(stack);
+	}
+
+	@Override
+	public Stream<Holder<Item>> items() {
+		return Stream.empty();
+	}
+
+	@Override
+	public SlotDisplay display() {
+		return base.display(); //FIXME
 	}
 
 	@Override
@@ -77,9 +90,8 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 	}
 
 	private static class Serializer implements CustomIngredientSerializer<VisualOnlyComponentsIngredient> {
-		private static final MapCodec<VisualOnlyComponentsIngredient> ALLOW_EMPTY_CODEC = createCodec(Ingredient.CODEC);
-		private static final MapCodec<VisualOnlyComponentsIngredient> DISALLOW_EMPTY_CODEC = createCodec(LycheeCodecs.NONEMPTY_INGREDIENT);
-		private static final StreamCodec<RegistryFriendlyByteBuf, VisualOnlyComponentsIngredient> PACKET_CODEC = StreamCodec.composite(
+		private static final MapCodec<VisualOnlyComponentsIngredient> CODEC = createCodec(Ingredient.CODEC);
+		private static final StreamCodec<RegistryFriendlyByteBuf, VisualOnlyComponentsIngredient> STREAM_CODEC = StreamCodec.composite(
 				Ingredient.CONTENTS_STREAM_CODEC, VisualOnlyComponentsIngredient::getBase,
 				DataComponentPatch.STREAM_CODEC, VisualOnlyComponentsIngredient::getComponents,
 				VisualOnlyComponentsIngredient::new
@@ -95,18 +107,18 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 		}
 
 		@Override
-		public ResourceLocation getIdentifier() {
+		public Identifier getIdentifier() {
 			return ID;
 		}
 
 		@Override
-		public MapCodec<VisualOnlyComponentsIngredient> getCodec(boolean allowEmpty) {
-			return allowEmpty ? ALLOW_EMPTY_CODEC : DISALLOW_EMPTY_CODEC;
+		public MapCodec<VisualOnlyComponentsIngredient> getCodec() {
+			return CODEC;
 		}
 
 		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, VisualOnlyComponentsIngredient> getPacketCodec() {
-			return PACKET_CODEC;
+		public StreamCodec<RegistryFriendlyByteBuf, VisualOnlyComponentsIngredient> getStreamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

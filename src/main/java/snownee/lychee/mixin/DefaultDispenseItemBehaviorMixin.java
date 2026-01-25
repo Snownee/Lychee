@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.DropperBlock;
@@ -19,7 +20,7 @@ import snownee.lychee.LycheeTags;
 import snownee.lychee.util.CommonProxy;
 
 @Mixin(DefaultDispenseItemBehavior.class)
-public class DefaultDispenseItemBehaviorMixin {
+public abstract class DefaultDispenseItemBehaviorMixin implements DispenseItemBehavior {
 
 	@Inject(
 			at = @At(
@@ -28,8 +29,8 @@ public class DefaultDispenseItemBehaviorMixin {
 			), method = "execute", locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true
 	)
 	private void execute(
-			BlockSource pSource,
-			ItemStack pStack,
+			BlockSource source,
+			ItemStack dispensed,
 			CallbackInfoReturnable<ItemStack> ci,
 			Direction direction,
 			Position position
@@ -37,18 +38,18 @@ public class DefaultDispenseItemBehaviorMixin {
 		if (this == DropperBlock.DISPENSE_BEHAVIOUR) {
 			return;
 		}
-		if (!(pStack.getItem() instanceof BlockItem item)) {
+		if (!(dispensed.getItem() instanceof BlockItem item)) {
 			return;
 		}
 		var block = item.getBlock();
 		if (!(
-				pStack.is(LycheeTags.DISPENSER_PLACEMENT) ||
+				dispensed.is(LycheeTags.DISPENSER_PLACEMENT) ||
 						LycheeConfig.dispenserFallableBlockPlacement && block instanceof Fallable)) {
 			return;
 		}
 
-		if (CommonProxy.dispensePlacement(pSource, pStack, direction)) {
-			ci.setReturnValue(pStack);
+		if (CommonProxy.dispensePlacement(source, dispensed, direction)) {
+			ci.setReturnValue(dispensed);
 		}
 	}
 }

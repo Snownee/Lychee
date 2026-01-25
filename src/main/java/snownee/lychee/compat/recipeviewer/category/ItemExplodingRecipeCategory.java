@@ -1,10 +1,14 @@
 package snownee.lychee.compat.recipeviewer.category;
 
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 
 public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<ItemExplodingRecipe> {
+	public ItemExplodingRecipeCategory() {
+		super(RecipeTypes.ITEM_EXPLODING);
+	}
 
 	@Override
 	public void setupDecorations(DecorationMapBuilder<ItemExplodingRecipe> mapBuilder) {

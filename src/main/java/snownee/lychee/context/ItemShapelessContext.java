@@ -1,9 +1,10 @@
 package snownee.lychee.context;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -14,8 +15,8 @@ import snownee.lychee.util.input.ItemStackHolderCollection;
 
 public class ItemShapelessContext {
 	public final List<ItemEntity> itemEntities;
-	public List<ItemEntity> filteredItems;
-	private RecipeMatcher<ItemStack> matcher;
+	public @Nullable List<ItemEntity> filteredItems;
+	private @Nullable RecipeMatcher<ItemStack> matcher;
 	public int totalItems;
 	private final LycheeContext context;
 
@@ -34,7 +35,7 @@ public class ItemShapelessContext {
 		var entities = new ItemEntity[matcher.tests.size()];
 		for (var i = 0; i < matcher.inputUsed.length; i++) {
 			for (var j = 0; j < matcher.inputUsed[i]; j++) {
-				entities[matcher.use[i][j]] = filteredItems.get(i);
+				entities[matcher.use[i][j]] = Objects.requireNonNull(filteredItems).get(i);
 			}
 		}
 		context.put(LycheeContextKey.ITEM, ItemStackHolderCollection.InWorld.of(entities));

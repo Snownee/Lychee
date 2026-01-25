@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 

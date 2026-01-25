@@ -6,13 +6,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Sets;
 
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.Lychee;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.util.context.LycheeContext;
@@ -24,7 +24,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 	public ItemShapelessRecipeType(
 			String name,
 			Class<R> clazz,
-			@Nullable LootContextParamSet contextParamSet
+			@Nullable ContextKeySet contextParamSet
 	) {
 		super(name, clazz, contextParamSet);
 	}

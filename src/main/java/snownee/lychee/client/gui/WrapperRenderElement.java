@@ -1,6 +1,6 @@
 package snownee.lychee.client.gui;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public interface WrapperRenderElement {
 	@Nullable ScreenElement getWrappedElement();

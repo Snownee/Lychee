@@ -2,7 +2,7 @@ package snownee.lychee.util.particles.dripstone;
 
 import java.util.concurrent.ExecutionException;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;

@@ -25,7 +25,6 @@ public enum PostActionIngredientRenderer implements IIngredientRenderer<PostActi
 			BlockPredicateExtensions.ANY,
 			BlockPos.ZERO);
 
-	@SuppressWarnings("removal")
 	@Override
 	public List<Component> getTooltip(PostAction ingredient, TooltipFlag tooltipFlag) {
 		return List.of();
@@ -41,10 +40,10 @@ public enum PostActionIngredientRenderer implements IIngredientRenderer<PostActi
 	}
 
 	@Override
-	public void render(GuiGraphics graphics, PostAction action) {
+	public void render(GuiGraphics guiGraphics, PostAction action) {
 		if (action == INGREDIENT_HACK_DUMMY) {
 			return;
 		}
-		ActionRenderer.of(action).internalRender(action, graphics, 0, 0);
+		ActionRenderer.of(action).internalRender(action, guiGraphics, 0, 0);
 	}
 }

@@ -6,7 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +35,7 @@ public record ParsedItem(ExtraCodecs.TagOrElementLocation tagOrId, int count) {
 			input.skip();
 			tag = true;
 		}
-		ResourceLocation id = ResourceLocation.read(input);
+		Identifier id = Identifier.read(input);
 		if (!tag) {
 			Preconditions.checkArgument(BuiltInRegistries.ITEM.containsKey(id), "Unknown item: %s", id);
 		}

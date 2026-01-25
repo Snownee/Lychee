@@ -2,7 +2,7 @@ package snownee.lychee.action.input;
 
 import java.util.Objects;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.mojang.serialization.Codec;
@@ -16,6 +16,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Reference;
@@ -71,7 +72,7 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	}
 
 	@Override
-	public ItemStack transformRemainder(ItemStack itemStack, @Nullable ILycheeRecipe<?> recipe) {
+	public SlotDisplay transformRemainder(SlotDisplay itemStack, @Nullable ILycheeRecipe<?> recipe) {
 		if (itemStack.isDamageableItem()) {
 			ItemStack copy = itemStack.copy();
 			copy.setDamageValue(copy.getDamageValue() + damage);

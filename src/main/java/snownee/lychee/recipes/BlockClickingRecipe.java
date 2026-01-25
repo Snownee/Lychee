@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.mojang.serialization.MapCodec;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.recipe.SizedIngredient;
-import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.context.LycheeContext;
@@ -38,18 +38,17 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 			return InteractionResult.PASS;
 		}
 		final var stack = player.getItemInHand(hand);
-		if (player.getCooldowns().isOnCooldown(stack.getItem())) {
+		if (player.getCooldowns().isOnCooldown(stack)) {
 			return InteractionResult.PASS;
 		}
 		final var vec = Vec3.atCenterOf(pos);
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
 		final var lootParams = context.initLootParams(RecipeTypes.BLOCK_CLICKING);
-		lootParams.set(LycheeLootContextParams.DIRECTION, direction);
+		lootParams.set(LycheeContextKeys.DIRECTION, direction);
 		final var result = RecipeTypes.BLOCK_CLICKING.process(player, hand, pos, vec, context);
-		return result.map(it -> InteractionResult.SUCCESS).orElse(InteractionResult.PASS);
+		return result.isPresent() ? InteractionResult.SUCCESS_SERVER : InteractionResult.PASS;
 	}
-
 
 	public BlockClickingRecipe(
 			LycheeRecipeCommonProperties commonProperties,

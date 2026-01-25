@@ -7,7 +7,7 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -19,7 +19,7 @@ import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class JsonFragment {
 	private static final Pattern VARIABLE_PATTERN = Pattern.compile("\\$\\{([^}]+?)}");
@@ -27,7 +27,7 @@ public final class JsonFragment {
 	public static void process(final JsonElement json, Context context) {
 		if (json.isJsonObject()) {
 			JsonObject object = json.getAsJsonObject();
-			Map<String, JsonElement> toPut = Maps.newLinkedHashMap();
+			Map<String, @Nullable JsonElement> toPut = Maps.newLinkedHashMap();
 			object.entrySet().forEach(entry -> {
 				String key = entry.getKey();
 				JsonElement value = entry.getValue();
@@ -126,9 +126,9 @@ public final class JsonFragment {
 		} else {
 			return null;
 		}
-		ResourceLocation id;
+		Identifier id;
 		try {
-			id = ResourceLocation.parse(object.get(key).getAsString());
+			id = Identifier.parse(object.get(key).getAsString());
 		} catch (Throwable e) {
 			return null;
 		}
@@ -148,7 +148,7 @@ public final class JsonFragment {
 	}
 
 	public record Anchor(JsonElement fragment, boolean spread, Map<String, JsonElement> vars) {
-		public void apply(String key, JsonObject json, Context context, Map<String, JsonElement> toPut) {
+		public void apply(String key, JsonObject json, Context context, Map<String, @Nullable JsonElement> toPut) {
 			if (spread) {
 				toPut.put(key, null);
 			}
@@ -180,7 +180,7 @@ public final class JsonFragment {
 		}
 	}
 
-	public record Context(Function<ResourceLocation, JsonElement> getter, Map<String, JsonElement> vars) {
+	public record Context(Function<Identifier, @Nullable JsonElement> getter, Map<String, JsonElement> vars) {
 		public void putVars(Map<String, JsonElement> map) {
 			map.forEach((k, v) -> {
 				Preconditions.checkArgument(!vars.containsKey(k), "Duplicate variable %s", k);

@@ -3,7 +3,7 @@ package snownee.lychee.contextual;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.gson.JsonObject;
 import com.mojang.serialization.MapCodec;
@@ -18,7 +18,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.CommonProxy;
-import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
@@ -80,7 +79,7 @@ public class CustomCondition implements ContextualCondition {
 		// TODO 需要测试
 		public static final MapCodec<CustomCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				ExtraCodecs.NON_EMPTY_STRING.fieldOf("id").forGetter(CustomCondition::id),
-				ExtraCodecs.JSON.comapFlatMap(it -> LycheeCodecs.tryCatch(it::getAsJsonObject), Function.identity())
+				ExtraCodecs.JSON.comapFlatMap(it -> KCodecs.tryCatch(it::getAsJsonObject), Function.identity())
 						.optionalFieldOf("data", new JsonObject())
 						.forGetter(CustomCondition::data)
 		).apply(instance, CustomCondition::new));

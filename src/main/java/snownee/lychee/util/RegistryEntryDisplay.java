@@ -10,16 +10,16 @@ import net.minecraft.resources.ResourceKey;
 public final class RegistryEntryDisplay {
 	public static <T> MutableComponent of(ResourceKey<T> value, ResourceKey<Registry<T>> registry) {
 		return Component.translatableWithFallback(
-				value.location().toLanguageKey(registry.location().toShortLanguageKey()),
-				CommonProxy.capitaliseAllWords(value.location().getPath())
+				value.identifier().toLanguageKey(registry.identifier().toShortLanguageKey()),
+				CommonProxy.capitaliseAllWords(value.identifier().getPath())
 		);
 	}
 
 	public static <T> MutableComponent of(Holder<T> holder, ResourceKey<Registry<T>> registry) {
 		if (holder instanceof Holder.Reference<T> reference) {
 			return Component.translatableWithFallback(
-					reference.key().location().toLanguageKey(registry.location().toShortLanguageKey()),
-					CommonProxy.capitaliseAllWords(reference.key().location().getPath())
+					reference.key().identifier().toLanguageKey(registry.identifier().toShortLanguageKey()),
+					CommonProxy.capitaliseAllWords(reference.key().identifier().getPath())
 			);
 		}
 		// There isn't key of Holder.Direct. Display the instance id.

@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -20,9 +21,9 @@ public class ItemEntityHurtMixin {
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/entity/item/ItemEntity;discard()V",
 					shift = At.Shift.AFTER
-			), method = "hurt"
+			), method = "hurtServer"
 	)
-	private void lychee_hurt(DamageSource pSource, float pAmount, CallbackInfoReturnable<Boolean> ci) {
+	private void lychee_hurt(ServerLevel level, DamageSource source, float damage, CallbackInfoReturnable<Boolean> cir) {
 		if (RecipeTypes.ITEM_BURNING.isEmpty()) {
 			return;
 		}

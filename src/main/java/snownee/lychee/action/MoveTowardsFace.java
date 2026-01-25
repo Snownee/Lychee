@@ -1,6 +1,6 @@
 package snownee.lychee.action;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -10,7 +10,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -30,7 +30,7 @@ public record MoveTowardsFace(PostActionCommonProperties commonProperties, float
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
 		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		var pos = lootParams.get(LootContextParams.ORIGIN);
-		var vector = new Vec3(lootParams.get(LycheeLootContextParams.DIRECTION).step()).scale(factor);
+		var vector = new Vec3(lootParams.get(LycheeContextKeys.DIRECTION).step()).scale(factor);
 		lootParams.set(LootContextParams.ORIGIN, pos.add(vector));
 	}
 

@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;

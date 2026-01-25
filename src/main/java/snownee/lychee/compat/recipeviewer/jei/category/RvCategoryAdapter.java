@@ -1,12 +1,11 @@
 package snownee.lychee.compat.recipeviewer.jei.category;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2fc;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Maps;
 
@@ -20,15 +19,18 @@ import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.advancements.critereon.BlockPredicate;
+import mezz.jei.api.recipe.types.IRecipeHolderType;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.material.Fluid;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.RandomSelect;
@@ -39,6 +41,7 @@ import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryLayoutBuilder;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryWidgetBuilder;
 import snownee.lychee.compat.recipeviewer.jei.LycheeJEIPlugin;
+import snownee.lychee.compat.recipeviewer.jei.LycheeJeiRecipeType;
 import snownee.lychee.compat.recipeviewer.jei.element.RenderElementAdapter;
 import snownee.lychee.compat.recipeviewer.jei.ingredient.PostActionIngredientRenderer;
 import snownee.lychee.util.action.ActionRenderer;
@@ -51,12 +54,12 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implements IRecipeCategory<RecipeHolder<R>> {
 	private final RvCategoryInstance<R> instance;
-	private final RecipeType<RecipeHolder<R>> type;
+	private final IRecipeHolderType<R> type;
 	private final IDrawable icon;
 
 	public RvCategoryAdapter(RvCategoryInstance<R> instance) {
 		this.instance = instance;
-		this.type = RecipeType.createRecipeHolderType(instance.id());
+		this.type = new LycheeJeiRecipeType<>(instance.id(), instance.type().recipeClass());
 		this.icon = new RenderElementAdapter(instance.icon());
 	}
 
@@ -72,7 +75,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 			if (!items.isEmpty() || !fluids.isEmpty()) {
 				IIngredientAcceptor<?> acceptor = builder.addInvisibleIngredients(role);
 				acceptor.addItemStacks(items);
-				fluids.forEach(fluid -> acceptor.addFluidStack(
+				fluids.forEach(fluid -> acceptor.add(
 						fluid,
 						((JeiRvHelper) instance.helper()).jeiHelpers().getPlatformFluidHelper().bucketVolume()));
 			}
@@ -101,7 +104,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	private void actionSlot(IRecipeLayoutBuilder builder, PostAction action, float x, float y) {
 		var slotBuilder = builder.addSlot(RecipeIngredientRole.OUTPUT, (int) (x + 1), (int) (y + 1));
-		var itemMap = Maps.<ItemStack, PostAction>newIdentityHashMap();
+		var itemMap = Maps.<ItemStackTemplate, PostAction>newIdentityHashMap();
 		buildActionSlot(builder, slotBuilder, action, itemMap);
 		slotBuilder.addRichTooltipCallback((view, tooltip) -> {
 			var displayedIngredient = view.getDisplayedIngredient();
@@ -131,10 +134,10 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 			IRecipeLayoutBuilder builder,
 			IRecipeSlotBuilder slotBuilder,
 			PostAction action,
-			Map<ItemStack, PostAction> itemMap) {
+			Map<ItemStackTemplate, PostAction> itemMap) {
 		switch (action) {
 			case DropItem dropItem -> {
-				slotBuilder.addItemStack(dropItem.itemStack());
+				slotBuilder.add(new SlotDisplay.ItemStackSlotDisplay(dropItem.itemStack()));
 				if (action.commonProperties().icon() != null || action.commonProperties().conditions().hasShowingConditions()) {
 					slotBuilder.setCustomRenderer(
 							VanillaTypes.ITEM_STACK, new IIngredientRenderer<>() {
@@ -148,7 +151,6 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 									PostActionIngredientRenderer.INSTANCE.getTooltip(tooltip, action, tooltipFlag);
 								}
 
-								@SuppressWarnings("removal")
 								@Override
 								public List<Component> getTooltip(ItemStack ingredient, TooltipFlag tooltipFlag) {
 									return List.of();
@@ -165,17 +167,16 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 						itemMap));
 			}
 			default -> {
-				slotBuilder.addIngredient(LycheeJEIPlugin.POST_ACTION, action);
-				var outputItems = action.getOutputItems();
-				if (!outputItems.isEmpty()) {
-					builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).addItemStacks(outputItems);
+				slotBuilder.add(LycheeJEIPlugin.POST_ACTION, action);
+				for (SlotDisplay outputItem : action.getOutputItems()) {
+					builder.addInvisibleIngredients(RecipeIngredientRole.OUTPUT).add(outputItem);
 				}
 			}
 		}
 	}
 
 	@Override
-	public RecipeType<RecipeHolder<R>> getRecipeType() {
+	public IRecipeType<RecipeHolder<R>> getRecipeType() {
 		return type;
 	}
 
@@ -210,14 +211,10 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 					var slotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, (int) x0, (int) y0);
 					if (ingredient.ingredient.isEmpty()) {
 						if (!ingredient.tooltips.isEmpty()) {
-							slotBuilder.addIngredient(LycheeJEIPlugin.POST_ACTION, PostActionIngredientRenderer.INGREDIENT_HACK_DUMMY);
+							slotBuilder.add(LycheeJEIPlugin.POST_ACTION, PostActionIngredientRenderer.INGREDIENT_HACK_DUMMY);
 						}
-					} else if (ingredient.count == 1) {
-						slotBuilder.addIngredients(ingredient.ingredient);
 					} else {
-						slotBuilder.addItemStacks(Arrays.stream(ingredient.ingredient.getItems())
-								.map(it -> it.copyWithCount(ingredient.count))
-								.toList());
+						slotBuilder.add(ingredient.display());
 					}
 					slotBuilder.setBackground(LycheeJEIPlugin.slot(ingredient.type), -1, -1);
 					if (!ingredient.tooltips.isEmpty()) {

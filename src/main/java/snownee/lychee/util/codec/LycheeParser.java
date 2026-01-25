@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -16,8 +16,8 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JavaOps;
 import com.mojang.serialization.MapLike;
 
-import net.minecraft.Util;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.contextual.Chance;
 import snownee.lychee.util.action.PostAction;
@@ -49,8 +49,8 @@ public interface LycheeParser<T> {
 	}
 
 	static DataResult<PostAction> action(StringReader reader) throws Exception {
-		ResourceLocation id = ResourceLocation.read(reader);
-		LycheeParser<? extends PostAction> parser = ACTION_PARSERS.get(id.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE) ?
+		Identifier id = Identifier.read(reader);
+		LycheeParser<? extends PostAction> parser = ACTION_PARSERS.get(id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE) ?
 				id.getPath() :
 				id.toString());
 		DataResult<PostAction> result = null;
@@ -59,7 +59,7 @@ public interface LycheeParser<T> {
 			result = (DataResult<PostAction>) parser.parse(reader);
 		}
 		if (result == null || result.isError()) {
-			PostActionType<?> actionType = LycheeRegistries.POST_ACTION.get(id);
+			PostActionType<?> actionType = LycheeRegistries.POST_ACTION.getValue(id);
 			if (actionType == null && parser != null) {
 				return result;
 			} else if (actionType == null) {

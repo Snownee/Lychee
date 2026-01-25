@@ -1,14 +1,14 @@
 package snownee.lychee.contextual;
 
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.brigadier.ParseResults;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -44,7 +44,7 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 	@Override
 	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		final var level = ctx.level();
-		if (command.isEmpty() || level.isClientSide) {
+		if (command.isEmpty() || level.isClientSide()) {
 			return 0;
 		}
 		final var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);

@@ -8,8 +8,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.core.NonNullList;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -22,11 +21,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.kiwi.util.codec.KCodecs;
-import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.BoundsExtensions;
-import snownee.lychee.util.NonNullListExtensions;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -53,18 +51,20 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		if (hand == InteractionHand.OFF_HAND && player.getOffhandItem().isEmpty()) {
 			return InteractionResult.PASS;
 		}
-		if (player.getCooldowns().isOnCooldown(player.getItemInHand(hand).getItem())) {
+		if (player.getCooldowns().isOnCooldown(player.getItemInHand(hand))) {
 			return InteractionResult.PASS;
 		}
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
 		final var lootParams = context.initLootParams(RecipeTypes.BLOCK_INTERACTING);
-		lootParams.set(LycheeLootContextParams.DIRECTION, hitResult.getDirection());
+		lootParams.set(LycheeContextKeys.DIRECTION, hitResult.getDirection());
 		final var result = RecipeTypes.BLOCK_INTERACTING.process(player, hand, hitResult.getBlockPos(), hitResult.getLocation(), context);
-		return result.map(it -> {
+		if (result.isPresent()) {
 			player.swing(hand, true);
 			return InteractionResult.SUCCESS;
-		}).orElse(InteractionResult.PASS);
+		} else {
+			return InteractionResult.PASS;
+		}
 	}
 
 	protected final List<SizedIngredient> input;
@@ -109,8 +109,8 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 	}
 
 	@Override
-	public NonNullList<Ingredient> getIngredients() {
-		return NonNullListExtensions.copyOf(input.stream().map(SizedIngredient::ingredient).toList());
+	public List<Ingredient> getIngredients() {
+		return input.stream().map(SizedIngredient::ingredient).toList();
 	}
 
 	@Override

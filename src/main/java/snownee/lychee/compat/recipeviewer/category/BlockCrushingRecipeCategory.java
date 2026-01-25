@@ -3,10 +3,9 @@ package snownee.lychee.compat.recipeviewer.category;
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
@@ -22,6 +21,10 @@ import snownee.lychee.util.predicates.BlockPredicateExtensions;
 public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe> {
 	private static final int FALLING_BLOCK_HEIGHT = 35;
 	private static final int BLOCK_SIZE = 13;
+
+	public BlockCrushingRecipeCategory() {
+		super(RecipeTypes.BLOCK_CRUSHING);
+	}
 
 	@Override
 	public void setupDecorations(DecorationMapBuilder<BlockCrushingRecipe> mapBuilder) {
@@ -39,10 +42,10 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 								ticks = ticks * ticks * ticks * ticks;
 
 								var matrixStack = graphics.pose();
-								matrixStack.pushPose();
+								matrixStack.pushMatrix();
 
 								if (getLandingBlock(recipe).getLightEmission() < 5) {
-									matrixStack.pushPose();
+									matrixStack.pushMatrix();
 									var shadow = 0.5F;
 									int y = element.height();
 									if (landingBlockIsAny) {
@@ -50,14 +53,14 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 									} else {
 										y += BLOCK_SIZE;
 									}
-									matrixStack.translate(element.width() / 2F, y, 0);
-									matrixStack.scale(shadow, shadow, shadow);
-									matrixStack.translate(-AllGuiTextures.SHADOW.width * 0.5F, -AllGuiTextures.SHADOW.height * 0.5F, 0);
+									matrixStack.translate(element.width() / 2F, y);
+									matrixStack.scale(shadow);
+									matrixStack.translate(-AllGuiTextures.SHADOW.width * 0.5F, -AllGuiTextures.SHADOW.height * 0.5F);
 									AllGuiTextures.SHADOW.render(graphics);
-									matrixStack.popPose();
+									matrixStack.popMatrix();
 								}
 
-								matrixStack.pushPose();
+								matrixStack.pushMatrix();
 								GuiGameElement.of(getFallingBlock(recipe))
 										.scale(BLOCK_SIZE)
 										.atLocal(0, ticks * 1.3 + 0.4, 2)
@@ -65,9 +68,9 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 										.lighting(RVs.BLOCK_LIGHTING)
 										.atZ(300)
 										.render(graphics);
-								matrixStack.popPose();
+								matrixStack.popMatrix();
 
-								matrixStack.popPose();
+								matrixStack.popMatrix();
 							})
 							.at(fallingBlockPosition(recipe))
 							.withSize(BLOCK_SIZE, FALLING_BLOCK_HEIGHT));
@@ -88,13 +91,13 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 
 					builder.addElement(RenderElement.create((graphics, element) -> {
 						var matrixStack = graphics.pose();
-						matrixStack.pushPose();
+						matrixStack.pushMatrix();
 						GuiGameElement.of(getLandingBlock(recipe))
 								.scale(BLOCK_SIZE)
 								.rotateBlock(20, 225, 0)
 								.lighting(RVs.BLOCK_LIGHTING)
 								.render(graphics);
-						matrixStack.popPose();
+						matrixStack.popMatrix();
 					}).at(landingBlockPosition));
 
 					RvHelper helper = builder.helper();
@@ -153,8 +156,7 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 					pos -= 1.5F * 1.5F * 1.5F * 1.5F * 15;
 				}
 			}
-			PoseStack pose = graphics.pose();
-			pose.translate(0, pos, 0);
+			graphics.pose().translate(0, pos);
 			element.render(graphics);
 		}).withScissors(true).at(element.position).withSize(element.size);
 	}

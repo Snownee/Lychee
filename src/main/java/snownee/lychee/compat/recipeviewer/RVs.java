@@ -15,13 +15,13 @@ import com.mojang.datafixers.util.Pair;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.PrimedTnt;
@@ -81,7 +81,7 @@ public final class RVs {
 		}
 	}
 
-	public static MutableComponent makeTitle(ResourceLocation id) {
+	public static MutableComponent makeTitle(Identifier id) {
 		var key = id.toLanguageKey("recipeType");
 		var i = key.indexOf('/');
 		if ("/minecraft/default".equals(key.substring(i))) {
@@ -157,8 +157,8 @@ public final class RVs {
 		LIGHTNING_BOLT.render(graphics.pose(), quaternion);
 	}
 
-	public static ResourceLocation composeCategoryIdentifier(ResourceLocation categoryId, ResourceLocation group) {
-		return ResourceLocation.fromNamespaceAndPath(
+	public static Identifier composeCategoryIdentifier(Identifier categoryId, Identifier group) {
+		return Identifier.fromNamespaceAndPath(
 				categoryId.getNamespace(),
 				"%s/%s/%s".formatted(categoryId.getPath(), group.getNamespace(), group.getPath()));
 	}

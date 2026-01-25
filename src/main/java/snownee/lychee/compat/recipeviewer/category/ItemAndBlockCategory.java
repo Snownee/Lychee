@@ -21,6 +21,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extends RvCategory<R> {
 	public static final Vector2fc INPUT_BLOCK_POSITION = new Vector2f(22, 32);
@@ -32,6 +33,10 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 
 	public static final Vector2fc INFO_POSITION = VectorExtensions.offset(METHOD_POSITION, METHOD_SIZE, 4);
 	private final ShadowElement shadowElement = new ShadowElement(BLOCK_SIZE, 36, 9);
+
+	public ItemAndBlockCategory(LycheeRecipeType<R> recipeType) {
+		super(recipeType);
+	}
 
 	public Vector2fc inputBlockPosition() {
 		return INPUT_BLOCK_POSITION;

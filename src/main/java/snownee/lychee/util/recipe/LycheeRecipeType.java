@@ -6,30 +6,30 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.kiwi.util.KUtil;
 import snownee.lychee.Lychee;
 import snownee.lychee.mixin.LootContextParamSetsAccess;
 import snownee.lychee.util.context.LycheeContext;
 
 public class LycheeRecipeType<T extends ILycheeRecipe<LycheeContext>> implements RecipeType<T> {
-	public final ResourceLocation id;
-	public ResourceLocation categoryId;
-	public final Class<? extends T> clazz;
-	public final LootContextParamSet contextParamSet;
+	public final Identifier id;
+	public Identifier categoryId;
+	public final Class<? extends T> recipeClass;
+	public final ContextKeySet contextParamSet;
 	/**
 	 * Ghost recipes not included
 	 */
-	protected List<RecipeHolder<T>> recipes;
+	protected List<RecipeHolder<T>> recipes = List.of();
 	public boolean requiresClient;
 	public boolean canPreventConsumeInputs;
 
@@ -38,9 +38,9 @@ public class LycheeRecipeType<T extends ILycheeRecipe<LycheeContext>> implements
 	public static final Component DEFAULT_PREVENT_TIP =
 			Component.translatable("tip.lychee.preventDefault.default").withStyle(ChatFormatting.YELLOW);
 
-	public LycheeRecipeType(String name, Class<T> clazz, @Nullable LootContextParamSet contextParamSet) {
+	public LycheeRecipeType(String name, Class<T> recipeClass, @Nullable ContextKeySet contextParamSet) {
 		id = categoryId = Lychee.id(name);
-		this.clazz = clazz;
+		this.recipeClass = recipeClass;
 		this.contextParamSet = contextParamSet == null
 				? LootContextParamSetsAccess.registry().get(id)
 				: contextParamSet;

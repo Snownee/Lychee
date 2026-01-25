@@ -1,6 +1,6 @@
 package snownee.lychee.util.action;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.world.entity.Marker;
 

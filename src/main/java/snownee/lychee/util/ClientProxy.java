@@ -2,12 +2,12 @@ package snownee.lychee.util;
 
 import java.text.MessageFormat;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.client.resources.language.I18n;
@@ -64,24 +64,24 @@ public class ClientProxy implements ClientModInitializer {
 
 	public static InputConstants.Key getKeyMapping(InputAction action) {
 		if (action instanceof InputAction.MousePressed mousePressed) {
-			return InputConstants.Type.MOUSE.getOrCreate(mousePressed.button);
+			return InputConstants.Type.MOUSE.getOrCreate(mousePressed.button());
 		} else if (action instanceof InputAction.KeyPressed keyPressed) {
-			return InputConstants.getKey(keyPressed.keyCode, keyPressed.scanCode);
+			return InputConstants.getKey(keyPressed.keyCode(), keyPressed.scanCode());
 		}
 		return InputConstants.UNKNOWN;
 	}
 
 	@Override
 	public void onInitializeClient() {
-		ParticleFactoryRegistry.getInstance().register(
+		ParticleProviderRegistry.getInstance().register(
 				DripstoneParticleService.DRIPSTONE_DRIPPING,
 				ParticleFactories.Dripping::new
 		);
-		ParticleFactoryRegistry.getInstance().register(
+		ParticleProviderRegistry.getInstance().register(
 				DripstoneParticleService.DRIPSTONE_FALLING,
 				ParticleFactories.Falling::new
 		);
-		ParticleFactoryRegistry.getInstance().register(
+		ParticleProviderRegistry.getInstance().register(
 				DripstoneParticleService.DRIPSTONE_SPLASH,
 				ParticleFactories.Splash::new
 		);

@@ -20,10 +20,10 @@ import snownee.lychee.util.CommonProxy;
 public class BlockStateMixin {
 
 	@Inject(at = @At("HEAD"), method = "randomTick", cancellable = true)
-	private void randomTick(ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource, CallbackInfo ci) {
+	private void randomTick(ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
 		BlockState state = (BlockState) (Object) this;
 
-		if (CommonProxy.hasDFLib && DripstoneRecipe.safeTick(state, serverLevel, blockPos, randomSource)) {
+		if (CommonProxy.hasDFLib && DripstoneRecipe.safeTick(state, level, pos, random)) {
 			ci.cancel();
 		}
 	}

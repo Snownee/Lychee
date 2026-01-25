@@ -2,6 +2,7 @@ package snownee.lychee.compat.recipeviewer.category;
 
 import org.joml.Vector2fc;
 
+import snownee.lychee.RecipeTypes;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.ui.TextElementRenderer;
 import snownee.lychee.util.ClientProxy;
@@ -14,6 +15,10 @@ public class ItemInsideRecipeCategory extends ItemAndBlockCategory<ItemInsideRec
 	private static final float INPUT_INGREDIENT_X = 27;
 
 	public static final Vector2fc INFO_POSITION = VectorExtensions.offset(METHOD_POSITION, METHOD_SIZE, 4);
+
+	public ItemInsideRecipeCategory() {
+		super(RecipeTypes.ITEM_INSIDE);
+	}
 
 	@Override
 	public void setupDecorations(DecorationMapBuilder<ItemInsideRecipe> mapBuilder) {

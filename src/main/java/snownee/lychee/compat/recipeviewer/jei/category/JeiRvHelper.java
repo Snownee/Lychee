@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
 
@@ -88,17 +88,17 @@ public class JeiRvHelper extends RvHelper {
 			for (Map.Entry<IJeiKeyMapping, InputAction.Direct> entry : keys) {
 				InputConstants.Key key = action.keyMapping();
 				if (key != InputConstants.UNKNOWN && entry.getKey().isActiveAndMatches(key)) {
-					return Optional.ofNullable(entry.getValue());
+					return Optional.of(entry.getValue());
 				}
 			}
-		} catch (Exception ignored) {
+		} catch (Exception _) {
 		}
 		return Optional.empty();
 	}
 
 	@Override
 	public boolean appendModName() {
-		if (ClientProxy.hasJade && IWailaConfig.get().getGeneral().showItemModNameTooltip()) {
+		if (ClientProxy.hasJade && IWailaConfig.get().general().showItemModNameTooltip()) {
 			return true;
 		}
 		return jeiHelpers != null && jeiHelpers.getModIdHelper().isDisplayingModNameEnabled();

@@ -25,14 +25,14 @@ import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements Comparable<ItemExplodingRecipe> {
-	public static void invoke(final ServerLevel level, double x, double y, double z, List<Entity> entityList, float radius) {
+	public static void invoke(final ServerLevel level, Vec3 center, List<Entity> entityList, float radius) {
 		final var itemEntities = entityList.stream()
 				.filter(it -> it instanceof ItemEntity)
 				.map(ItemEntity.class::cast);
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
 		var lootParams = context.initLootParams(RecipeTypes.ITEM_EXPLODING);
-		lootParams.set(LootContextParams.ORIGIN, new Vec3(x, y, z));
+		lootParams.set(LootContextParams.ORIGIN, center);
 		lootParams.set(LootContextParams.EXPLOSION_RADIUS, radius);
 		RecipeTypes.ITEM_EXPLODING.process(itemEntities, context);
 	}

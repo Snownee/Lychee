@@ -30,7 +30,7 @@ public class FluidRenderer {
 	//		boolean inbound, VertexConsumer builder, PoseStack ms, int light) {
 	//		Fluid fluid = fluidStack.getFluid();
 	//		FluidAttributes fluidAttributes = fluid.getAttributes();
-	//		Function<ResourceLocation, TextureAtlasSprite> spriteAtlas = Minecraft.getInstance()
+	//		Function<Identifier, TextureAtlasSprite> spriteAtlas = Minecraft.getInstance()
 	//			.getTextureAtlas(InventoryMenu.BLOCK_ATLAS);
 	//		TextureAtlasSprite flowTexture = spriteAtlas.apply(fluidAttributes.getFlowingTexture(fluidStack));
 	//		TextureAtlasSprite stillTexture = spriteAtlas.apply(fluidAttributes.getStillTexture(fluidStack));

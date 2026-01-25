@@ -8,7 +8,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JavaOps;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -67,13 +67,13 @@ public interface ActionParsers {
 		public DataResult<PostAction> parse(StringReader reader) throws CommandSyntaxException {
 			DataResult<ItemStack> itemResult = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(() -> ParsedItem.read(reader).itemStack())).orElseThrow();
+					r -> KCodecs.tryCatch(() -> ParsedItem.read(reader).itemStack())).orElseThrow();
 			if (itemResult.isSuccess()) {
 				return itemResult.map(item -> new DropItem(PostActionCommonProperties.EMPTY, item));
 			}
 			DataResult<Integer> xpResult = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(() -> {
+					r -> KCodecs.tryCatch(() -> {
 						int i = r.readInt();
 						r.expect('x');
 						r.expect('p');
@@ -94,7 +94,7 @@ public interface ActionParsers {
 		public DataResult<Execute> parse(StringReader reader) throws CommandSyntaxException {
 			DataResult<String> result = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(reader::readQuotedString)).orElseThrow();
+					r -> KCodecs.tryCatch(reader::readQuotedString)).orElseThrow();
 			return result.map(s -> new Execute(PostActionCommonProperties.EMPTY, s, false));
 		}
 	}
@@ -104,7 +104,7 @@ public interface ActionParsers {
 		public DataResult<Delay> parse(StringReader reader) throws CommandSyntaxException {
 			DataResult<Float> result = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(() -> {
+					r -> KCodecs.tryCatch(() -> {
 						float f = r.readFloat();
 						Preconditions.checkArgument(f > 0, "Delay must be positive");
 						return f;
@@ -118,7 +118,7 @@ public interface ActionParsers {
 		public DataResult<AddItemCooldown> parse(StringReader reader) throws CommandSyntaxException {
 			DataResult<Float> result = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(() -> {
+					r -> KCodecs.tryCatch(() -> {
 						float f = r.readFloat();
 						Preconditions.checkArgument(f > 0, "Cooldown must be positive");
 						return f;
@@ -132,7 +132,7 @@ public interface ActionParsers {
 		public DataResult<CopyComponent> parse(StringReader reader) throws CommandSyntaxException {
 			DataResult<String> result = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();
+					r -> KCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();
 			return result.map(s -> new CopyComponent(
 					PostActionCommonProperties.EMPTY,
 					LycheeCodecs.WILDCARD_COMPONENTS.parse(JavaOps.INSTANCE, s).getOrThrow(),
@@ -146,7 +146,7 @@ public interface ActionParsers {
 		public DataResult<RemoveComponent> parse(StringReader reader) throws CommandSyntaxException {
 			DataResult<String> result = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();
+					r -> KCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();
 			return result.map(s -> new RemoveComponent(
 					PostActionCommonProperties.EMPTY,
 					LycheeCodecs.WILDCARD_COMPONENTS.parse(JavaOps.INSTANCE, s).getOrThrow(),

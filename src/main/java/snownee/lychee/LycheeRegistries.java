@@ -19,7 +19,7 @@ public final class LycheeRegistries {
 	public static final MappedRegistry<UIElementType<?>> UI_ELEMENT = register("ui_element");
 
 	private static <T> MappedRegistry<T> register(String id) {
-		return FabricRegistryBuilder.createSimple(ResourceKey.<T>createRegistryKey(Lychee.id(id)))
+		return FabricRegistryBuilder.create(ResourceKey.<T>createRegistryKey(Lychee.id(id)))
 				.attribute(RegistryAttribute.SYNCED)
 				.buildAndRegister();
 	}

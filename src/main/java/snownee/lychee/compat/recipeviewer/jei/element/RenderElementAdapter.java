@@ -1,7 +1,5 @@
 package snownee.lychee.compat.recipeviewer.jei.element;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.inputs.IJeiGuiEventListener;
@@ -10,6 +8,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
 
@@ -35,11 +36,11 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 
 	@Override
 	public void draw(GuiGraphics guiGraphics, int xOffset, int yOffset) {
-		PoseStack pose = guiGraphics.pose();
-		pose.pushPose();
-		pose.translate(xOffset, yOffset, element.z());
+		var pose = guiGraphics.pose();
+		pose.pushMatrix();
+		pose.translate(xOffset, yOffset);
 		element.render(guiGraphics);
-		pose.popPose();
+		pose.popMatrix();
 	}
 
 	@Override
@@ -78,7 +79,7 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 		if (!(element instanceof GuiEventListener listener)) {
 			return false;
 		}
-		return listener.mouseClicked(-1, -1, button);
+		return listener.mouseClicked(new MouseButtonEvent(mouseX, mouseY, new MouseButtonInfo(button, 0)), false);
 	}
 
 	@Override
@@ -94,6 +95,6 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 		if (!(element instanceof GuiEventListener listener)) {
 			return false;
 		}
-		return listener.keyPressed(keyCode, scanCode, modifiers);
+		return listener.keyPressed(new KeyEvent(keyCode, scanCode, modifiers));
 	}
 }

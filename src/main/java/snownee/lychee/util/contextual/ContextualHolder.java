@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -165,14 +165,14 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) {
+	public boolean equals(Object obj) {
+		if (this == obj) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
-		final ContextualHolder that = (ContextualHolder) o;
+		final ContextualHolder that = (ContextualHolder) obj;
 		return Objects.equal(conditions, that.conditions) && Objects.equal(secretFlags, that.secretFlags) && Objects.equal(
 				overrideDesc,
 				that.overrideDesc);

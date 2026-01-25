@@ -3,7 +3,7 @@ package snownee.lychee.mixin.recipes.blockexploding;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -24,6 +24,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -33,8 +34,8 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 
-@Mixin(value = Explosion.class, priority = 700)
-public abstract class ExplosionMixin {
+@Mixin(value = ServerExplosion.class, priority = 700)
+public abstract class ServerExplosionMixin {
 
 	@Final
 	@Shadow
@@ -72,9 +73,9 @@ public abstract class ExplosionMixin {
 			final Explosion explosion,
 			final BiConsumer<ItemStack, BlockPos> biConsumer,
 			@Share("state") LocalRef<BlockState> stateRef,
-			@Share("context") LocalRef<LycheeContext> contextRef,
+			@Share("context") LocalRef<@Nullable LycheeContext> contextRef,
 			@Share("currentDrops") LocalRef<List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
-		if (level.isClientSide || RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
+		if (level.isClientSide() || RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
 			contextRef.set(null);
 			return state;
 		}
@@ -102,7 +103,7 @@ public abstract class ExplosionMixin {
 					target = "Lnet/minecraft/world/level/block/state/BlockState;onExplosionHit(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;Ljava/util/function/BiConsumer;)V"))
 	private BiConsumer<ItemStack, BlockPos> lychee_redirectDrops(
 			BiConsumer<ItemStack, BlockPos> original,
-			@Share("currentDrops") LocalRef<List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
+			@Share("currentDrops") LocalRef<@Nullable List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
 		return currentDropsRef.get() == null ?
 				original :
 				(itemStack, blockPos) -> addOrAppendStack(currentDropsRef.get(), itemStack, blockPos);
@@ -119,12 +120,12 @@ public abstract class ExplosionMixin {
 	private void lychee_afterOnExplosionHit(
 			final boolean spawnParticles,
 			final CallbackInfo ci,
-			@Local BlockPos blockPos,
-			@Local List<Pair<ItemStack, BlockPos>> allDrops,
-			@Share("state") LocalRef<BlockState> stateRef,
-			@Share("context") LocalRef<LycheeContext> contextRef,
-			@Share("currentDrops") LocalRef<List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
-		if (level.isClientSide) {
+			@Local(argsOnly = true) BlockPos blockPos,
+			@Local(argsOnly = true) List<Pair<ItemStack, BlockPos>> allDrops,
+			@Share("state") LocalRef<@Nullable BlockState> stateRef,
+			@Share("context") LocalRef<@Nullable LycheeContext> contextRef,
+			@Share("currentDrops") LocalRef<@Nullable List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
+		if (level.isClientSide()) {
 			return;
 		}
 		var context = contextRef.get();

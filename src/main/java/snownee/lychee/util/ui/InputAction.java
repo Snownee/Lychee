@@ -1,26 +1,17 @@
 package snownee.lychee.util.ui;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.MouseHandler;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.util.ClientProxy;
 
 public interface InputAction {
-	static MousePressed mousePressed(int button, double mouseX, double mouseY) {
-		return new MousePressed(button, mouseX, mouseY);
-	}
-
-	static InputAction mousePressed(int button) {
-		MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
-		Window window = Minecraft.getInstance().getWindow();
-		double mouseX = mouseHandler.xpos() * window.getGuiScaledWidth() / window.getScreenWidth();
-		double mouseY = mouseHandler.ypos() * window.getGuiScaledHeight() / window.getScreenHeight();
-		return mousePressed(button, mouseX, mouseY);
+	static MousePressed mousePressed(MouseButtonEvent event) {
+		return new MousePressed(event);
 	}
 
 	default InputConstants.Key keyMapping() {
@@ -31,33 +22,14 @@ public interface InputAction {
 		return true;
 	}
 
-	class MousePressed implements InputAction {
-		public final int button;
-		public final double mouseX;
-		public final double mouseY;
-
-		public MousePressed(int button, double mouseX, double mouseY) {
-			this.button = button;
-			this.mouseX = mouseX;
-			this.mouseY = mouseY;
-		}
+	record MousePressed(MouseButtonEvent event) implements InputAction {
 	}
 
-	static KeyPressed keyPressed(int keyCode, int scanCode, int modifiers) {
-		return new KeyPressed(keyCode, scanCode, modifiers);
+	static KeyPressed keyPressed(KeyEvent event) {
+		return new KeyPressed(event);
 	}
 
-	class KeyPressed implements InputAction {
-		public final int keyCode;
-		public final int scanCode;
-		public final int modifiers;
-
-		public KeyPressed(int keyCode, int scanCode, int modifiers) {
-			this.keyCode = keyCode;
-			this.scanCode = scanCode;
-			this.modifiers = modifiers;
-		}
-
+	record KeyPressed(KeyEvent event) implements InputAction {
 		@Override
 		public boolean isMouseOver(@Nullable InteractiveRenderElement element) {
 			return element != null && element.isHovered();

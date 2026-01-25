@@ -5,16 +5,15 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.RecordBuilder;
 
-import dev.latvian.mods.rhino.util.HideFromJS;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.action.PostAction;
@@ -24,10 +23,11 @@ import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 
 public class ActionBuilder<T extends ActionBuilder<T, R>, R extends PostAction> extends ContextualBuilder<T> implements PostActionLike {
 	protected @Nullable R action;
-	protected @Nullable ResourceLocation icon;
+	protected @Nullable Identifier icon;
 
 	public ActionBuilder() {}
 
+	@SuppressWarnings("NullableProblems")
 	public ActionBuilder(R action) {
 		this.action = action;
 	}
@@ -38,7 +38,7 @@ public class ActionBuilder<T extends ActionBuilder<T, R>, R extends PostAction> 
 	}
 
 	@Contract("_ -> this")
-	public T icon(ResourceLocation icon) {
+	public T icon(Identifier icon) {
 		this.icon = icon;
 		return self();
 	}
@@ -91,7 +91,7 @@ public class ActionBuilder<T extends ActionBuilder<T, R>, R extends PostAction> 
 		}
 
 		@Contract("_ -> this")
-		@HideFromJS
+		//@HideFromJS TODO
 		public RandomSelectBuilder rolls(MinMaxBounds.Ints rolls) {
 			this.rolls = rolls;
 			return self();

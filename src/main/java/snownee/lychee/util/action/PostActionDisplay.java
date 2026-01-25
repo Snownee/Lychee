@@ -2,11 +2,11 @@ package snownee.lychee.util.action;
 
 import java.util.List;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostActionDisplay {
@@ -17,7 +17,7 @@ public interface PostActionDisplay {
 		return List.of();
 	}
 
-	default List<ItemStack> getOutputItems() {
+	default List<SlotDisplay> getOutputItems() {
 		return List.of();
 	}
 
@@ -31,7 +31,7 @@ public interface PostActionDisplay {
 
 	String toJsonString();
 
-	default ItemStack transformRemainder(ItemStack itemStack, @Nullable ILycheeRecipe<?> recipe) {
-		return ItemStack.EMPTY;
+	default SlotDisplay transformRemainder(SlotDisplay itemStack, @Nullable ILycheeRecipe<?> recipe) {
+		return SlotDisplay.Empty.INSTANCE;
 	}
 }

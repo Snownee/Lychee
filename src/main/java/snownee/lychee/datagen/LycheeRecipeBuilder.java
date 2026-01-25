@@ -7,27 +7,28 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.mojang.datafixers.util.Function3;
 
-import dev.latvian.mods.rhino.util.HideFromJS;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.core.NonNullList;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.ItemLike;
@@ -51,11 +52,11 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 
 public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R extends ILycheeRecipe<?>> extends ContextualBuilder<T> implements LycheeBuilder {
+	protected final List<PostAction> postActions = Lists.newArrayListWithExpectedSize(6);
 	protected boolean hideInRecipeViewer;
 	protected boolean ghost;
 	protected @Nullable String comment;
 	protected String group = ILycheeRecipe.DEFAULT_GROUP;
-	protected final List<PostAction> postActions = Lists.newArrayListWithExpectedSize(6);
 	protected MinMaxBounds.Ints maxRepeats = MinMaxBounds.Ints.ANY;
 	protected @Nullable AdvancementHolder advancement;
 
@@ -101,7 +102,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 	}
 
 	@Contract("_ -> this")
-	@HideFromJS
+	//@HideFromJS TODO
 	public T post(Collection<? extends PostActionLike> postActions) {
 		postActions.forEach(this::post);
 		return self();
@@ -128,7 +129,12 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 	public abstract R build();
 
 	@CanIgnoreReturnValue
-	public R export(ResourceLocation id, RecipeOutput exporter) {
+	public R export(Identifier id, RecipeOutput exporter) {
+		return export(ResourceKey.create(Registries.RECIPE, id), exporter);
+	}
+
+	@CanIgnoreReturnValue
+	public R export(ResourceKey<Recipe<?>> id, RecipeOutput exporter) {
 		R recipe = build();
 		exporter.accept(id, recipe, advancement);
 		return recipe;
@@ -221,15 +227,15 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 	}
 
 	public static class AnvilCrafting extends LycheeRecipeBuilder<AnvilCrafting, AnvilCraftingRecipe> {
-		protected final NonNullList<Ingredient> ingredients;
+		protected final List<Ingredient> ingredients;
 		protected final int levelCost;
 		protected final int materialCost;
-		protected final ItemStack output;
+		protected final ItemStackTemplate output;
 		protected final List<PostAction> assemblingActions = Lists.newArrayListWithExpectedSize(6);
 		protected boolean preserveEnchantments;
 
-		public AnvilCrafting(Ingredient left, @Nullable Ingredient right, int materialCost, int levelCost, ItemStack output) {
-			this.ingredients = right == null ? NonNullList.of(Ingredient.EMPTY, left) : NonNullList.of(Ingredient.EMPTY, left, right);
+		public AnvilCrafting(Ingredient left, @Nullable Ingredient right, int materialCost, int levelCost, ItemStackTemplate output) {
+			this.ingredients = right == null ? List.of(left) : List.of(left, right);
 			this.levelCost = levelCost;
 			this.materialCost = materialCost;
 			this.output = output;
@@ -242,7 +248,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 
 		@Contract("_ -> this")
-		@HideFromJS
+		//@HideFromJS TODO
 		public AnvilCrafting assembling(Collection<? extends PostActionLike> assemblingActions) {
 			assemblingActions.forEach(this::assembling);
 			return self();
@@ -323,23 +329,32 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 	}
 
 	public static class ShapedCrafting extends LycheeRecipeBuilder<ShapedCrafting, ShapedCraftingRecipe> {
+		protected final List<PostAction> assemblingActions = Lists.newArrayListWithExpectedSize(6);
 		private final RecipeCategory category;
-		private final ItemStack result;
+		private final ItemStackTemplate result;
 		private final List<String> rows;
 		private final Map<Character, Ingredient> key;
 		private boolean showNotification;
-		protected final List<PostAction> assemblingActions = Lists.newArrayListWithExpectedSize(6);
 
 		public ShapedCrafting(RecipeCategory category, ItemLike result, int amount) {
-			this(category, new ItemStack(result, amount));
+			this(category, new ItemStackTemplate(result.asItem(), amount));
 		}
 
-		public ShapedCrafting(RecipeCategory category, ItemStack result) {
+		public ShapedCrafting(RecipeCategory category, ItemStackTemplate result) {
 			this.rows = Lists.newArrayList();
 			this.key = Maps.newLinkedHashMap();
 			this.showNotification = true;
 			this.category = category;
 			this.result = result;
+		}
+
+		static CraftingBookCategory determineBookCategory(RecipeCategory category) {
+			return switch (category) {
+				case BUILDING_BLOCKS -> CraftingBookCategory.BUILDING;
+				case TOOLS, COMBAT -> CraftingBookCategory.EQUIPMENT;
+				case REDSTONE -> CraftingBookCategory.REDSTONE;
+				default -> CraftingBookCategory.MISC;
+			};
 		}
 
 		public ShapedCrafting define(Character key, TagKey<Item> tagKey) {
@@ -382,7 +397,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 
 		@Contract("_ -> this")
-		@HideFromJS
+		//@HideFromJS TODO
 		public ShapedCrafting assembling(Collection<? extends PostActionLike> assemblingActions) {
 			assemblingActions.forEach(this::assembling);
 			return self();
@@ -398,15 +413,6 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 					result,
 					showNotification);
 			return new ShapedCraftingRecipe(properties, shapedRecipe, assemblingActions);
-		}
-
-		static CraftingBookCategory determineBookCategory(RecipeCategory category) {
-			return switch (category) {
-				case BUILDING_BLOCKS -> CraftingBookCategory.BUILDING;
-				case TOOLS, COMBAT -> CraftingBookCategory.EQUIPMENT;
-				case REDSTONE -> CraftingBookCategory.REDSTONE;
-				default -> CraftingBookCategory.MISC;
-			};
 		}
 	}
 

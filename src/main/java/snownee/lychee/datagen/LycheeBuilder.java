@@ -4,16 +4,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.gson.JsonObject;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JavaOps;
 
-import dev.latvian.mods.rhino.util.HideFromJS;
-import net.minecraft.advancements.critereon.BlockPredicate;
-import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentType;
@@ -61,7 +60,25 @@ import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.ui.BlankRecipe;
 
 public interface LycheeBuilder {
-	ThreadLocal<RegistryOps<Object>> registryOps = new ThreadLocal<>();
+	ThreadLocal<@Nullable RegistryOps<Object>> registryOps = new ThreadLocal<>();
+
+	static ParsedItem parse(String s, boolean single) {
+		try {
+			return ParsedItem.read(new StringReader(s), single);
+		} catch (CommandSyntaxException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	static ParsedItem parse(String s) {
+		return parse(s, false);
+	}
+
+	static LycheeBuilder create(RegistryOps<?> registryOps) {
+		LycheeBuilder builder = new LycheeBuilder() {};
+		builder.setup(registryOps.withParent(JavaOps.INSTANCE));
+		return builder;
+	}
 
 	default void setup(HolderLookup.Provider wrapperLookup) {
 		setup(wrapperLookup.createSerializationContext(JavaOps.INSTANCE));
@@ -150,7 +167,7 @@ public interface LycheeBuilder {
 		return new LycheeRecipeBuilder.EntityTicking(predicate, interval);
 	}
 
-	@HideFromJS
+	//@HideFromJS TODO
 	default ActionBuilder<?, DropItem> dropItem(ItemLike item) {
 		return dropItem(item, 1);
 	}
@@ -327,23 +344,5 @@ public interface LycheeBuilder {
 			default -> throw new IllegalArgumentException("Invalid argument: " + o);
 		};
 		return new SizedIngredient(i, count);
-	}
-
-	static ParsedItem parse(String s, boolean single) {
-		try {
-			return ParsedItem.read(new StringReader(s), single);
-		} catch (CommandSyntaxException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	static ParsedItem parse(String s) {
-		return parse(s, false);
-	}
-
-	static LycheeBuilder create(RegistryOps<?> registryOps) {
-		LycheeBuilder builder = new LycheeBuilder() {};
-		builder.setup(registryOps.withParent(JavaOps.INSTANCE));
-		return builder;
 	}
 }

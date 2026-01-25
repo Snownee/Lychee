@@ -8,6 +8,7 @@ import snownee.lychee.compat.recipeviewer.element.InfoElementHelper;
 import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.ILycheeRecipe;
+import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>> extends RvCategory<R> {
 	public static final int ICON_SIZE = 24;
@@ -17,6 +18,10 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 			(float) InfoElementHelper.INFO_SIZE / 2,
 			-InfoElementHelper.INFO_SIZE);
 
+	public ItemShapelessRecipeCategory(LycheeRecipeType<R> recipeType) {
+		super(recipeType);
+	}
+
 	@Override
 	public void setupDecorations(DecorationMapBuilder<R> mapBuilder) {
 		mapBuilder.info(this::infoPosition);
@@ -24,13 +29,9 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 		mapBuilder.put(
 				"icon", (builder, recipeHolder) -> {
 					RenderElement icon = builder.instance().icon();
-					builder.addElement(RenderElement.create((graphics, element) -> {
-						var stack = graphics.pose();
-						stack.pushPose();
-						stack.translate(0, 0, 100);
-						icon.render(graphics);
-						stack.popPose();
-					}).at(ICON_POSITION).withSize(ICON_SIZE));
+					builder.addElement(RenderElement.create((graphics, element) -> icon.render(graphics))
+							.at(ICON_POSITION)
+							.withSize(ICON_SIZE));
 				});
 	}
 

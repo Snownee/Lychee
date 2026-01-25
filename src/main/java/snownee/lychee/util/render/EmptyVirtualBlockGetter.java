@@ -2,7 +2,7 @@ package snownee.lychee.util.render;
 
 import java.util.function.ToIntFunction;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
@@ -45,7 +45,7 @@ public class EmptyVirtualBlockGetter extends VirtualBlockGetter {
 	}
 
 	@Override
-	public final int getMinBuildHeight() {
+	public int getMinY() {
 		return 0;
 	}
 }

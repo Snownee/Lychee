@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Map;
 import java.util.Objects;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
@@ -46,7 +46,7 @@ public class JsonPatch {
 			if (patch.op != null && patch.path != null) {
 				return patch;
 			}
-		} catch (Exception e) {
+		} catch (Exception _) {
 		}
 		return null;
 	}

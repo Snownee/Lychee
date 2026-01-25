@@ -26,6 +26,7 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.kiwi.util.codec.KCodecs;
@@ -34,7 +35,7 @@ public final class LycheeCodecs {
 	private static final MapCodec<Integer> ITEM_STACK_COUNT = ExtraCodecs.NON_NEGATIVE_INT.fieldOf("count").orElse(1);
 
 	private static final MapCodec<ItemStack> ITEM_STACK_MAP_ENCODER = RecordCodecBuilder.mapCodec(instance -> instance.group(
-					BuiltInRegistries.ITEM.holderByNameCodec().fieldOf("id").forGetter(ItemStack::getItemHolder),
+					BuiltInRegistries.ITEM.holderByNameCodec().fieldOf("id").forGetter(ItemStack::typeHolder),
 					ITEM_STACK_COUNT.forGetter(ItemStack::getCount),
 					DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(ItemStack::getComponentsPatch))
 			.apply(instance, ItemStack::new));
@@ -56,14 +57,19 @@ public final class LycheeCodecs {
 					}
 					ItemParser parser = new ItemParser(new HolderLookup.Provider() {
 						@Override
-						public Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
+						public Stream<ResourceKey<? extends Registry<?>>> listRegistryKeys() {
+							throw new IllegalStateException();
+						}
+
+						@Override
+						public Stream<HolderLookup.RegistryLookup<?>> listRegistries() {
 							throw new IllegalStateException();
 						}
 
 						@Override
 						public <R> Optional<HolderLookup.RegistryLookup<R>> lookup(ResourceKey<? extends Registry<? extends R>> resourceKey) {
 							//noinspection unchecked
-							return Optional.of((HolderLookup.RegistryLookup<R>) BuiltInRegistries.ITEM.asLookup());
+							return Optional.of((HolderLookup.RegistryLookup<R>) BuiltInRegistries.ITEM);
 						}
 
 						@Override
@@ -102,9 +108,13 @@ public final class LycheeCodecs {
 
 	public static final Codec<ItemStack> ITEM_STACK = Codec.withAlternative(
 			NONEMPTY_ITEM_STACK_MAP_CODEC.codec(), ExtraCodecs.NON_EMPTY_STRING.flatXmap(
-					s -> tryCatch(() -> ParsedItem.read(new StringReader(s)).itemStack()),
+					s -> KCodecs.tryCatch(() -> ParsedItem.read(new StringReader(s)).itemStack()),
 					stack -> DataResult.error(() -> "Encoding shorthand ItemStack is not supported")
 			));
+
+	public static final Codec<ItemStackTemplate> ITEM_STACK_TEMPLATE = null;
+	public static final MapCodec<ItemStackTemplate> ITEM_STACK_TEMPLATE_MAP_CODEC = null;
+	public static final MapCodec<ItemStackTemplate> NONEMPTY_ITEM_STACK_TEMPLATE_MAP_CODEC = null;
 
 	public static final MapCodec<BlockPos> OFFSET = RecordCodecBuilder.mapCodec(posInstance -> posInstance.group(
 			Codec.INT.optionalFieldOf("offsetX", 0).forGetter(Vec3i::getX),
@@ -129,10 +139,10 @@ public final class LycheeCodecs {
 		});
 	}
 
-	//TODO(1.22) move to Kiwi
+	//TODO move to Kiwi
 	public static final Codec<Ingredient> NONEMPTY_INGREDIENT = Codec.withAlternative(
-			Ingredient.CODEC_NONEMPTY, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
-					s -> tryCatch(() -> {
+			Ingredient.CODEC, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
+					s -> KCodecs.tryCatch(() -> {
 						StringReader reader = new StringReader(s);
 						ParsedItem parsedItem = ParsedItem.read(reader);
 						Preconditions.checkArgument(!reader.canRead(), "Cannot parse %s", s);
@@ -140,10 +150,10 @@ public final class LycheeCodecs {
 					}), ingredient -> DataResult.error(() -> "Encoding shorthand Ingredient is not supported")
 			));
 
-	//TODO(1.22) move to Kiwi
+	//TODO move to Kiwi
 	public static final Codec<SizedIngredient> SIZED_INGREDIENT = Codec.withAlternative(
 			SizedIngredient.CODEC, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
-					s -> tryCatch(() -> {
+					s -> KCodecs.tryCatch(() -> {
 						StringReader reader = new StringReader(s);
 						ParsedItem parsedItem = ParsedItem.read(reader);
 						Preconditions.checkArgument(!reader.canRead(), "Cannot parse %s", s);
@@ -151,14 +161,6 @@ public final class LycheeCodecs {
 					}), ingredient -> DataResult.error(() -> "Encoding shorthand SizedIngredient is not supported")
 			)
 	);
-
-	public static <T> DataResult<T> tryCatch(ThrowingSupplier<T> supplier) {
-		try {
-			return DataResult.success(supplier.get());
-		} catch (Exception e) {
-			return DataResult.error(e::getMessage);
-		}
-	}
 
 	public static final Codec<List<DataComponentType<?>>> WILDCARD_COMPONENTS = Codec.withAlternative(
 			KCodecs.compactList(DataComponentType.CODEC), Codec.STRING.flatXmap(

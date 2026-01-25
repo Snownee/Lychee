@@ -1,7 +1,7 @@
 package snownee.lychee.util.recipe;
 
 
-import net.minecraft.advancements.critereon.BlockPredicate;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import snownee.lychee.util.context.LycheeContext;
 
 public interface BlockKeyableRecipe extends ILycheeRecipe<LycheeContext> {

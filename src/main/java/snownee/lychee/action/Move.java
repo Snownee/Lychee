@@ -1,6 +1,6 @@
 package snownee.lychee.action;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -11,7 +11,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.util.action.PostAction;
@@ -39,10 +39,10 @@ public record Move(PostActionCommonProperties commonProperties, Vec3 offset, Str
 				return;
 			}
 			var property = blockState.getBlock().getStateDefinition().getProperty(with);
-			if (!(property instanceof DirectionProperty directionProperty)) {
+			if (!(property instanceof EnumProperty) || property.getValueClass() != Direction.class) {
 				return;
 			}
-			Direction direction = blockState.getValue(directionProperty);
+			Direction direction = (Direction) blockState.getValue(property);
 			offset = switch (direction) {
 				case DOWN -> offset.xRot(Mth.PI);
 				case UP -> offset;

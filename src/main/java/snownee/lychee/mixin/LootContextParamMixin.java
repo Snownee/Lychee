@@ -5,15 +5,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
-import snownee.kiwi.util.KUtil;
-import snownee.lychee.LycheeLootContextParams;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextKey;
+import snownee.lychee.LycheeContextKeys;
 
-@Mixin(LootContextParam.class)
+@Mixin(ContextKey.class)
 public class LootContextParamMixin {
 	@Inject(method = "<init>", at = @At("RETURN"))
-	private void lychee_init(ResourceLocation name, CallbackInfo ci) {
-		LycheeLootContextParams.ALL.put(KUtil.trimRL(name.toString()), (LootContextParam<?>) (Object) this);
+	private void lychee_init(Identifier name, CallbackInfo ci) {
+		LycheeContextKeys.ALL.put(name, (ContextKey<?>) (Object) this);
 	}
 }
