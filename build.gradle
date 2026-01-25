@@ -1,7 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.10-SNAPSHOT'
     id 'maven-publish'
-    id "me.shedaniel.unified-publishing" version "0.1.+"
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
 }
 
 sourceCompatibility = JavaVersion.VERSION_21
@@ -142,13 +142,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    // ensure that the encoding is set to UTF-8, no matter what the system default is
-    // this fixes some edge cases with special characters not displaying correctly
-    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-    // If Javadoc is generated, this must be specified in that task too.
     it.options.encoding = "UTF-8"
-
-    // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
     it.options.release = 21
 }
 
@@ -170,70 +164,37 @@ jar {
 
     exclude '**/*.py'
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
+        rename { "${it}_${project.archives_base_name}" }
     }
 }
 
-configurations.all {
+configurations.configureEach {
     resolutionStrategy {
         force "dev.architectury:architectury-fabric:${project.architectury_version}"
     }
 }
 
-// configure the maven publication
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                builtBy remapJar
-            }
-            //artifact(sourcesJar) {
-            //  builtBy remapSourcesJar
-            //}
-        }
+publishMods {
+    file = remapJar.archiveFile
+    changelog = file('CHANGELOG.md').exists() ? file('CHANGELOG.md').text : ''
+    type = ['release': STABLE, 'beta': BETA, 'alpha': ALPHA][release_type]
+    modLoaders.add("fabric")
+    modLoaders.add("quilt")
+    displayName = "[Fabric ${supported_version}] ${mod_version}"
+    version = realVersion
+
+    curseforge {
+        projectId = "574650"
+        accessToken = providers.environmentVariable("CURSE_TOKEN")
+        minecraftVersions.add(minecraft_version)
+        requires("kiwi-fabric")
+        optional("cloth-config")
     }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-        // Notice: This block does NOT have the same function as the block in the top level.
-        // The repositories here will be used for publishing your artifact, not for
-        // retrieving dependencies.
-    }
-}
-
-unifiedPublishing {
-    project {
-        displayName = "[Fabric $project.supported_version] $project.mod_version"
-        version = realVersion // Optional, Inferred from project by default
-        changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "" // Optional, in markdown format
-        releaseType = project.release_type // Optional, use "release", "beta" or "alpha"
-        gameVersions = [project.minecraft_version]
-        gameLoaders = ["fabric", "quilt"]
-
-        mainPublication tasks.remapJar // Declares the publicated jar
-
-        if (System.getenv("CURSE_TOKEN") != null) {
-            curseforge {
-                token = System.getenv("CURSE_TOKEN")
-                id = "574650" // Required, must be a string, ID of CurseForge project
-
-                relations { // Optional, Inferred from the relations above by default
-                    depends "kiwi-fabric"
-                }
-            }
-        }
-
-        if (System.getenv("MODRINTH_TOKEN") != null) {
-            modrinth {
-                token = System.getenv("MODRINTH_TOKEN")
-                id = "TdN6LxjM" // Required, must be a string, ID of Modrinth project
-
-                relations { // Optional, Inferred from the relations above by default
-                    depends "kiwi"
-                }
-            }
-        }
+    modrinth {
+        projectId = "TdN6LxjM"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add(minecraft_version)
+        requires("kiwi")
+        optional("cloth-config")
     }
 }
