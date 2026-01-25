@@ -218,7 +218,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		public static final StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> STREAM_CODEC = LycheeStreamCodecs.composite(
 				LycheeRecipeCommonProperties.STREAM_CODEC,
 				AnvilCraftingRecipe::commonProperties,
-				Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(2)).map(NonNullList::copyOf, Function.identity()),
+				Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(2)).map(NonNullListExtensions::copyOf, Function.identity()),
 				AnvilCraftingRecipe::getIngredients,
 				ItemStack.STREAM_CODEC,
 				AnvilCraftingRecipe::output,
