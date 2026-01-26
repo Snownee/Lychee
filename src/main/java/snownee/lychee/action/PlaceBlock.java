@@ -12,9 +12,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
@@ -26,10 +29,13 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.TagValueInput;
+import snownee.lychee.Lychee;
 import snownee.lychee.LycheeContextKeys;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.Displays;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -123,19 +129,25 @@ public record PlaceBlock(
 		setNbt:
 		if (block.nbt().isPresent()) {
 			var blockEntity = level.getBlockEntity(pos);
-			if (blockEntity == null || blockEntity.onlyOpCanSetNbt()) {
+			if (blockEntity == null || blockEntity.getType().onlyOpCanSetNbt()) {
 				break setNbt;
 			}
 
-			var prevTag = blockEntity.saveWithoutMetadata(level.registryAccess());
+			HolderLookup.Provider registries = level.registryAccess();
+			var prevTag = blockEntity.saveWithoutMetadata(registries);
 			var originalTag = prevTag.copy();
 			prevTag.merge(block.nbt().get().tag());
 			if (prevTag.equals(originalTag)) {
 				break setNbt;
 			}
 
-			blockEntity.loadWithComponents(prevTag, level.registryAccess());
-			blockEntity.setChanged();
+			try (ProblemReporter.ScopedCollector reporter = new ProblemReporter.ScopedCollector(Lychee.LOGGER)) {
+				blockEntity.loadWithComponents(TagValueInput.create(reporter, registries, prevTag));
+				blockEntity.setChanged();
+				if (level instanceof ServerLevel serverLevel) {
+					serverLevel.getChunkSource().blockChanged(pos);
+				}
+			}
 		}
 		level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(blockState));
 	}
@@ -152,7 +164,7 @@ public record PlaceBlock(
 
 	@Override
 	public List<SlotDisplay> getOutputItems() {
-		return BlockPredicateExtensions.matchedItemStacks(block);
+		return BlockPredicateExtensions.matchedItemStacks(block).stream().map(Displays::slot).toList();
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package snownee.lychee.recipes;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.mojang.serialization.MapCodec;
 
@@ -52,10 +53,10 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 
 	public BlockClickingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			List<SizedIngredient> input,
+			List<Optional<SizedIngredient>> inputs,
 			BlockPredicate blockPredicate
 	) {
-		super(commonProperties, input, blockPredicate);
+		super(commonProperties, inputs, blockPredicate);
 	}
 
 	@Override
@@ -80,8 +81,8 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 				StreamCodec.composite(
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						BlockClickingRecipe::commonProperties,
-						SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list(2)),
-						BlockClickingRecipe::sizedIngredients,
+						SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs::optional).apply(ByteBufCodecs.list(2)),
+						BlockClickingRecipe::inputs,
 						BlockPredicate.STREAM_CODEC,
 						BlockClickingRecipe::blockPredicate,
 						BlockClickingRecipe::new

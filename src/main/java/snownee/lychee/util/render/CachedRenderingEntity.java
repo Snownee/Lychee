@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level;
 import snownee.lychee.client.gui.ILightingSettings;
 import snownee.lychee.mixin.EntityAccess;
 
+@Deprecated
 public class CachedRenderingEntity<T extends Entity> {
 
 	protected @Nullable T entity;
@@ -79,43 +80,43 @@ public class CachedRenderingEntity<T extends Entity> {
 	}
 
 	public void render(PoseStack matrixStack, Quaternionf rotation) {
-		var mc = Minecraft.getInstance();
-		if (mc.level == null) {
-			return;
-		}
-		T entity = ensureEntity();
-		((EntityAccess) entity).callSetLevel(mc.level);
-		entity.tickCount = (int) (mc.level.getGameTime() % 240000L);
-		var position = mc.gameRenderer.getMainCamera().position();
-		entity.setPosRaw(position.x(), position.y(), position.z());
-
-		matrixStack.pushPose();
-		matrixStack.translate(translation.x, translation.y, translation.z);
-		matrixStack.scale(scale, scale, scale);
-
-		matrixStack.mulPose(rotation);
-		var renderDispatcher = mc.getEntityRenderDispatcher();
-		rotation.conjugate();
-		renderDispatcher.overrideCameraOrientation(rotation);
-
-		renderDispatcher.setRenderShadow(false);
-		var bufferSource = mc.renderBuffers().bufferSource();
-		renderDispatcher.render(
-				entity,
-				0.0D,
-				0.0D,
-				0.0D,
-				mc.getTimer().getGameTimeDeltaPartialTick(true),
-				1,
-				matrixStack,
-				bufferSource,
-				15728880);
-		bufferSource.endBatch();
-		renderDispatcher.setRenderShadow(true);
-
-		matrixStack.popPose();
-		((EntityAccess) entity).callSetLevel(null);
-		ILightingSettings.DEFAULT_3D.applyLighting();
+//		var mc = Minecraft.getInstance();
+//		if (mc.level == null) {
+//			return;
+//		}
+//		T entity = ensureEntity();
+//		((EntityAccess) entity).callSetLevel(mc.level);
+//		entity.tickCount = (int) (mc.level.getGameTime() % 240000L);
+//		var position = mc.gameRenderer.getMainCamera().position();
+//		entity.setPosRaw(position.x(), position.y(), position.z());
+//
+//		matrixStack.pushPose();
+//		matrixStack.translate(translation.x, translation.y, translation.z);
+//		matrixStack.scale(scale, scale, scale);
+//
+//		matrixStack.mulPose(rotation);
+//		var renderDispatcher = mc.getEntityRenderDispatcher();
+//		rotation.conjugate();
+//		renderDispatcher.overrideCameraOrientation(rotation);
+//
+//		renderDispatcher.setRenderShadow(false);
+//		var bufferSource = mc.renderBuffers().bufferSource();
+//		renderDispatcher.render(
+//				entity,
+//				0.0D,
+//				0.0D,
+//				0.0D,
+//				mc.getTimer().getGameTimeDeltaPartialTick(true),
+//				1,
+//				matrixStack,
+//				bufferSource,
+//				15728880);
+//		bufferSource.endBatch();
+//		renderDispatcher.setRenderShadow(true);
+//
+//		matrixStack.popPose();
+//		((EntityAccess) entity).callSetLevel(null);
+//		ILightingSettings.DEFAULT_3D.applyLighting();
 	}
 
 }

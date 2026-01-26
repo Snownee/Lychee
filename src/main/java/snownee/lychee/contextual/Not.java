@@ -4,7 +4,7 @@ import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
 
-import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.util.TriState;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
@@ -28,7 +28,7 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 	}
 
 	@Override
-	public net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
+	public TriState testForTooltips(Level level, @Nullable Player player) {
 		return switch (condition.testForTooltips(level, player)) {
 			case TRUE -> TriState.FALSE;
 			case FALSE -> TriState.TRUE;

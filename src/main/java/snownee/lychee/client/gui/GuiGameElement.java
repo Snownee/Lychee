@@ -2,30 +2,18 @@ package snownee.lychee.client.gui;
 
 import org.jspecify.annotations.Nullable;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
-import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -33,12 +21,11 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
-import snownee.kiwi.util.Color;
 import snownee.lychee.util.VecHelper;
 
 public class GuiGameElement {
 
-	public static GuiRenderBuilder of(ItemStack stack) {
+	public static GuiRenderBuilder of(ItemStackTemplate stack) {
 		return new GuiItemRenderBuilder(stack);
 	}
 
@@ -109,12 +96,12 @@ public class GuiGameElement {
 		}
 
 		protected void prepareMatrix(PoseStack matrixStack) {
-			matrixStack.pushPose();
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-			RenderSystem.enableDepthTest();
-			RenderSystem.enableBlend();
-			RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-			prepareLighting(matrixStack);
+//			matrixStack.pushPose();
+//			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+//			RenderSystem.enableDepthTest();
+//			RenderSystem.enableBlend();
+//			RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+//			prepareLighting(matrixStack);
 		}
 
 		protected void transformMatrix(PoseStack matrixStack) {
@@ -139,17 +126,17 @@ public class GuiGameElement {
 		}
 
 		protected void prepareLighting(PoseStack matrixStack) {
-			if (customLighting != null) {
-				customLighting.applyLighting();
-			} else {
-				Lighting.setupFor3DItems();
-			}
+//			if (customLighting != null) {
+//				customLighting.applyLighting();
+//			} else {
+//				Lighting.setupFor3DItems();
+//			}
 		}
 
 		protected void cleanUpLighting(PoseStack matrixStack) {
-			if (customLighting != null) {
-				Lighting.setupFor3DItems();
-			}
+//			if (customLighting != null) {
+//				Lighting.setupFor3DItems();
+//			}
 		}
 	}
 
@@ -166,44 +153,44 @@ public class GuiGameElement {
 
 		@Override
 		public void render(GuiGraphics graphics) {
-			PoseStack matrixStack = graphics.pose();
-			prepareMatrix(matrixStack);
-
-			Minecraft mc = Minecraft.getInstance();
-			BlockRenderDispatcher blockRenderer = mc.getBlockRenderer();
-			MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
-
-			transformMatrix(matrixStack);
-
-			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
-			renderModel(blockRenderer, buffer, matrixStack);
-
-			cleanUpMatrix(matrixStack);
+//			PoseStack matrixStack = graphics.pose();
+//			prepareMatrix(matrixStack);
+//
+//			Minecraft mc = Minecraft.getInstance();
+//			BlockRenderDispatcher blockRenderer = mc.getBlockRenderer();
+//			MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
+//
+//			transformMatrix(matrixStack);
+//
+//			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
+//			renderModel(blockRenderer, buffer, matrixStack);
+//
+//			cleanUpMatrix(matrixStack);
 		}
 
 		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {
-			Minecraft mc = Minecraft.getInstance();
-			int color = mc.getBlockColors().getColor(
-					blockState,
-					mc.level,
-					mc.getCameraEntity() != null ? mc.getCameraEntity().blockPosition() : null,
-					0
-			);
-			Color rgb = new Color(color == -1 ? this.color : color);
-			blockRenderer.getModelRenderer().renderModel(
-					ms.last(),
-					buffer.getBuffer(blockState.getBlock() == Blocks.AIR ?
-							Sheets.translucentCullBlockSheet() :
-							ItemBlockRenderTypes.getRenderType(blockState, true)),
-					blockState,
-					blockModel,
-					rgb.getRedAsFloat(),
-					rgb.getGreenAsFloat(),
-					rgb.getBlueAsFloat(),
-					LightTexture.FULL_BRIGHT,
-					OverlayTexture.NO_OVERLAY
-			);
-			buffer.endBatch();
+//			Minecraft mc = Minecraft.getInstance();
+//			int color = mc.getBlockColors().getColor(
+//					blockState,
+//					mc.level,
+//					mc.getCameraEntity() != null ? mc.getCameraEntity().blockPosition() : null,
+//					0
+//			);
+//			Color rgb = new Color(color == -1 ? this.color : color);
+//			blockRenderer.getModelRenderer().renderModel(
+//					ms.last(),
+//					buffer.getBuffer(blockState.getBlock() == Blocks.AIR ?
+//							Sheets.translucentCullBlockSheet() :
+//							ItemBlockRenderTypes.getRenderType(blockState, true)),
+//					blockState,
+//					blockModel,
+//					rgb.getRedAsFloat(),
+//					rgb.getGreenAsFloat(),
+//					rgb.getBlueAsFloat(),
+//					LightTexture.FULL_BRIGHT,
+//					OverlayTexture.NO_OVERLAY
+//			);
+//			buffer.endBatch();
 		}
 	}
 
@@ -233,65 +220,65 @@ public class GuiGameElement {
 				MultiBufferSource.BufferSource buffer,
 				PoseStack ms
 		) {
-			if (blockState.getBlock() instanceof BaseFireBlock) {
-				Lighting.setupForFlatItems();
-				blockRenderer.renderSingleBlock(
-						blockState,
-						ms,
-						buffer,
-						LightTexture.FULL_BRIGHT,
-						OverlayTexture.NO_OVERLAY
-				);
-				buffer.endBatch();
-				Lighting.setupFor3DItems();
-				return;
-			}
-
-			super.renderModel(blockRenderer, buffer, ms);
-
-			if (blockState.getFluidState().isEmpty()) {
-				return;
-			}
-
-			float min = 0.001F, max = 0.999F;
-			// LiquidBlockRenderer.MAX_FLUID_HEIGHT
-			FluidRenderer.renderFluidBox(
-					blockState.getFluidState(),
-					min,
-					min,
-					min,
-					max,
-					max * 0.8888889F,
-					max,
-					buffer,
-					ms,
-					LightTexture.FULL_BRIGHT,
-					false
-			);
-			buffer.endBatch();
+//			if (blockState.getBlock() instanceof BaseFireBlock) {
+//				Lighting.setupForFlatItems();
+//				blockRenderer.renderSingleBlock(
+//						blockState,
+//						ms,
+//						buffer,
+//						LightTexture.FULL_BRIGHT,
+//						OverlayTexture.NO_OVERLAY
+//				);
+//				buffer.endBatch();
+//				Lighting.setupFor3DItems();
+//				return;
+//			}
+//
+//			super.renderModel(blockRenderer, buffer, ms);
+//
+//			if (blockState.getFluidState().isEmpty()) {
+//				return;
+//			}
+//
+//			float min = 0.001F, max = 0.999F;
+//			// LiquidBlockRenderer.MAX_FLUID_HEIGHT
+//			FluidRenderer.renderFluidBox(
+//					blockState.getFluidState(),
+//					min,
+//					min,
+//					min,
+//					max,
+//					max * 0.8888889F,
+//					max,
+//					buffer,
+//					ms,
+//					LightTexture.FULL_BRIGHT,
+//					false
+//			);
+//			buffer.endBatch();
 		}
 	}
 
 	public static class GuiItemRenderBuilder extends GuiRenderBuilder {
 
-		private final ItemStack stack;
+		private final ItemStackTemplate stack;
 
-		public GuiItemRenderBuilder(ItemStack stack) {
+		public GuiItemRenderBuilder(ItemStackTemplate stack) {
 			this.stack = stack;
 			scale = 10;
 		}
 
 		public GuiItemRenderBuilder(ItemLike provider) {
-			this(provider.asItem().getDefaultInstance());
+			this(new ItemStackTemplate(provider.asItem()));
 		}
 
 		@Override
 		public void render(GuiGraphics graphics) {
-			PoseStack matrixStack = graphics.pose();
-			prepareMatrix(matrixStack);
-			transformMatrix(matrixStack);
-			renderItemIntoGUI(matrixStack, stack, customLighting == null);
-			cleanUpMatrix(matrixStack);
+//			PoseStack matrixStack = graphics.pose();
+//			prepareMatrix(matrixStack);
+//			transformMatrix(matrixStack);
+//			renderItemIntoGUI(matrixStack, stack, customLighting == null);
+//			cleanUpMatrix(matrixStack);
 		}
 
 		@Override
@@ -302,47 +289,47 @@ public class GuiGameElement {
 		}
 
 		public static void renderItemIntoGUI(PoseStack matrixStack, ItemStack stack, boolean useDefaultLighting) {
-			ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
-			BakedModel bakedModel = renderer.getModel(stack, null, null, 0);
-
-			Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
-			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
-			RenderSystem.enableBlend();
-			RenderSystem.enableCull();
-			RenderSystem.blendFunc(
-					GlStateManager.SourceFactor.SRC_ALPHA,
-					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
-			);
-			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-			matrixStack.pushPose();
-			matrixStack.translate(0, 0, 100.0F);
-			matrixStack.translate(8.0F, -8.0F, 0.0F);
-			matrixStack.scale(16.0F, 16.0F, 16.0F);
-			MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-			boolean flatLighting = !bakedModel.usesBlockLight();
-			if (useDefaultLighting && flatLighting) {
-				Lighting.setupForFlatItems();
-			}
-
-			renderer.render(
-					stack,
-					ItemDisplayContext.GUI,
-					false,
-					matrixStack,
-					buffer,
-					LightTexture.FULL_BRIGHT,
-					OverlayTexture.NO_OVERLAY,
-					bakedModel
-			);
-			RenderSystem.disableDepthTest();
-			buffer.endBatch();
-
-			RenderSystem.enableDepthTest();
-			if (useDefaultLighting && flatLighting) {
-				Lighting.setupFor3DItems();
-			}
-
-			matrixStack.popPose();
+//			ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
+//			BakedModel bakedModel = renderer.getModel(stack, null, null, 0);
+//
+//			Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
+//			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
+//			RenderSystem.enableBlend();
+//			RenderSystem.enableCull();
+//			RenderSystem.blendFunc(
+//					GlStateManager.SourceFactor.SRC_ALPHA,
+//					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
+//			);
+//			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+//			matrixStack.pushPose();
+//			matrixStack.translate(0, 0, 100.0F);
+//			matrixStack.translate(8.0F, -8.0F, 0.0F);
+//			matrixStack.scale(16.0F, 16.0F, 16.0F);
+//			MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+//			boolean flatLighting = !bakedModel.usesBlockLight();
+//			if (useDefaultLighting && flatLighting) {
+//				Lighting.setupForFlatItems();
+//			}
+//
+//			renderer.render(
+//					stack,
+//					ItemDisplayContext.GUI,
+//					false,
+//					matrixStack,
+//					buffer,
+//					LightTexture.FULL_BRIGHT,
+//					OverlayTexture.NO_OVERLAY,
+//					bakedModel
+//			);
+//			RenderSystem.disableDepthTest();
+//			buffer.endBatch();
+//
+//			RenderSystem.enableDepthTest();
+//			if (useDefaultLighting && flatLighting) {
+//				Lighting.setupFor3DItems();
+//			}
+//
+//			matrixStack.popPose();
 		}
 
 		@Override

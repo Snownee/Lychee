@@ -10,7 +10,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
 import io.netty.buffer.ByteBuf;
-import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -49,8 +49,8 @@ public record IsWeather(String id, Predicate<Level> predicate) implements Contex
 	}
 
 	@Override
-	public net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
-		return TriState.of(predicate.test(level));
+	public TriState testForTooltips(Level level, @Nullable Player player) {
+		return TriState.from(predicate.test(level));
 	}
 
 	@Override

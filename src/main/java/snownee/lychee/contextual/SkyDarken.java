@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.util.TriState;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -29,7 +29,7 @@ public record SkyDarken(MinMaxBounds.Ints value, boolean requireSkyLight) implem
 
 	@Override
 	public TriState testForTooltips(Level level, @Nullable Player player) {
-		return TriState.of(test(level));
+		return TriState.from(test(level));
 	}
 
 	private boolean test(Level level) {

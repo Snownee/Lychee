@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -33,6 +34,7 @@ import snownee.lychee.RecipeSerializers;
 import snownee.lychee.context.CraftingContext;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipeAccess;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipePatternAccess;
+import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
@@ -73,6 +75,16 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 	@Override
 	public LycheeRecipeCommonProperties commonProperties() {
 		return commonProperties;
+	}
+
+	@Override
+	public void onConstructed() {
+		ILycheeRecipe.super.onConstructed();
+	}
+
+	@Override
+	public IntList getItemIndexes(Reference reference) {
+		return ILycheeRecipe.super.getItemIndexes(reference);
 	}
 
 	@Override
@@ -154,7 +166,7 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		CONTEXT_CACHE.put(input, context);
 
 		if (passed) {
-			final var result = ((ShapedRecipeAccess) shaped).getResult().create();
+			final var result = result().create();
 			final var ingredients = getIngredients();
 			final var items = new ItemStack[ingredients.size() + 1];
 			var k = 0;
@@ -189,6 +201,11 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		actionContext.jobs.addAll(assemblingActions.stream().map(it -> new Job(it, 1)).toList());
 		actionContext.run(context);
 		return context.getItem(context.size() - 1);
+	}
+
+	@Override
+	public RecipeBookCategory recipeBookCategory() {
+		return CraftingRecipe.super.recipeBookCategory();
 	}
 
 	@Override
@@ -255,6 +272,10 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 
 	public ShapedRecipe shaped() {
 		return shaped;
+	}
+
+	public ItemStackTemplate result() {
+		return ((ShapedRecipeAccess) shaped).getResult();
 	}
 
 	public static class Serializer implements LycheeRecipeSerializer<ShapedCraftingRecipe> {

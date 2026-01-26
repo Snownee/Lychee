@@ -60,7 +60,7 @@ public record Param(Holder<LycheeContextKey<?>> key, boolean create, String loot
 					continue;
 				}
 				ContextKey<?> param = entry.getKey();
-				if (loot.equals(param.getName().getPath()) || loot.equals(param.getName().toString())) {
+				if (loot.equals(param.name().getPath()) || loot.equals(param.name().toString())) {
 					found = true;
 					break;
 				}

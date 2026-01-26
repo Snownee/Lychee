@@ -47,7 +47,7 @@ public class DripstoneParticleService {
 		if (handler == null) {
 			return false;
 		}
-		var vec3 = blockState.getOffset(level, blockPos);
+		var vec3 = blockState.getOffset(blockPos);
 		var e = (double) blockPos.getX() + 0.5 + vec3.x;
 		var f = (double) ((float) (blockPos.getY() + 1) - 0.6875f) - 0.0625;
 		var g = (double) blockPos.getZ() + 0.5 + vec3.z;
@@ -55,17 +55,18 @@ public class DripstoneParticleService {
 		return true;
 	}
 
-	public static DripParticleHandler getParticleHandler(Level level, BlockState sourceBlock) {
+	public static @Nullable DripParticleHandler getParticleHandler(Level level, BlockState sourceBlock) {
 		var block = sourceBlock.getBlock();
 		try {
-			return particleHandlers.get(block, () -> {
-				if (!Platform.isPhysicalClient()) {
-					return DripParticleHandler.SIMPLE_DUMMY;
-				}
-				var defaultState = block.defaultBlockState();
-				var color = defaultState.getMapColor(level, BlockPos.ZERO).col;
-				return new DripParticleHandler.Simple(color, defaultState.getLightEmission() > 4);
-			});
+			return particleHandlers.get(
+					block, () -> {
+						if (!Platform.isPhysicalClient()) {
+							return DripParticleHandler.SIMPLE_DUMMY;
+						}
+						var defaultState = block.defaultBlockState();
+						var color = defaultState.getMapColor(level, BlockPos.ZERO).col;
+						return new DripParticleHandler.Simple(color, defaultState.getLightEmission() > 4);
+					});
 		} catch (ExecutionException e) {
 			Lychee.LOGGER.error("", e);
 		}

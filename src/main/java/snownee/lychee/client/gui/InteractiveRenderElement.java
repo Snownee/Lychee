@@ -68,23 +68,23 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 			return;
 		}
 		boolean withScissors = this.withScissors;
-		if (withScissors) {
-			Matrix4f matrix = graphics.pose().last().pose();
-			Vector3f topLeft = matrix.transformPosition(new Vector3f());
-			Vector3f bottomRight = matrix.transformPosition(new Vector3f(size.x(), size.y(), 0));
-			graphics.enableScissor(
-					(int) topLeft.x(),
-					(int) topLeft.y(),
-					(int) bottomRight.x(),
-					(int) bottomRight.y());
-		}
+//		if (withScissors) { FIXME
+//			Matrix4f matrix = graphics.pose().last().pose();
+//			Vector3f topLeft = matrix.transformPosition(new Vector3f());
+//			Vector3f bottomRight = matrix.transformPosition(new Vector3f(size.x(), size.y(), 0));
+//			graphics.enableScissor(
+//					(int) topLeft.x(),
+//					(int) topLeft.y(),
+//					(int) bottomRight.x(),
+//					(int) bottomRight.y());
+//		}
 		graphics.pose().pushMatrix();
 		graphics.pose().translate(x(), y());
 		renderable.apply(this).render(graphics);
 		graphics.pose().popMatrix();
-		if (withScissors) {
-			graphics.disableScissor();
-		}
+//		if (withScissors) { FIXME
+//			graphics.disableScissor();
+//		}
 	}
 
 	public InteractiveRenderElement onTooltip(@Nullable Supplier<@Nullable List<Component>> onTooltip) {

@@ -7,10 +7,10 @@ import org.jspecify.annotations.Nullable;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.context.LycheeContext;
@@ -40,7 +40,7 @@ public record And(ContextualHolder conditions) implements ContextualCondition, C
 			if (result == TriState.FALSE) {
 				return result;
 			}
-			if (!result.get()) {
+			if (result == TriState.DEFAULT) {
 				finalResult = TriState.DEFAULT;
 			}
 		}

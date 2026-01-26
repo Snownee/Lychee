@@ -10,6 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.block.TestBlock;
@@ -17,6 +18,7 @@ import net.minecraft.world.level.block.state.properties.TestBlockMode;
 import snownee.kiwi.recipe.CustomIngredient;
 import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.lychee.Lychee;
+import snownee.lychee.util.Displays;
 
 public class AlwaysTrueIngredient implements CustomIngredient {
 	public static final Identifier ID = Lychee.id("always_true");
@@ -34,8 +36,9 @@ public class AlwaysTrueIngredient implements CustomIngredient {
 
 	@Override
 	public SlotDisplay display() {
-		//TODO
-		TestBlock.setModeOnStack(new ItemStack(Items.TEST_BLOCK), TestBlockMode.ACCEPT);
+		return Displays.slot(ItemStackTemplate.fromNonEmptyStack(TestBlock.setModeOnStack(
+				new ItemStack(Items.TEST_BLOCK),
+				TestBlockMode.ACCEPT)));
 	}
 
 	@Override

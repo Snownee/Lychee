@@ -16,14 +16,16 @@ import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemInstance;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.recipe.SizedIngredient;
@@ -101,13 +103,14 @@ public interface LycheeBuilder {
 			@Nullable Ingredient right,
 			int materialCost,
 			int levelCost,
-			ItemStack output) {
+			ItemStackTemplate output) {
 		return new LycheeRecipeBuilder.AnvilCrafting(left, right, materialCost, levelCost, output);
 	}
 
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	default LycheeRecipeBuilder.BlockInteracting<BlockClickingRecipe> blockClickingRecipe(
-			SizedIngredient mainHand,
-			@Nullable SizedIngredient offHand,
+			Optional<SizedIngredient> mainHand,
+			@Nullable Optional<SizedIngredient> offHand,
 			Object block) {
 		return new LycheeRecipeBuilder.BlockInteracting<>(BlockClickingRecipe::new, mainHand, offHand, block(block));
 	}
@@ -120,9 +123,10 @@ public interface LycheeBuilder {
 		return new LycheeRecipeBuilder.BlockExploding(block(block));
 	}
 
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	default LycheeRecipeBuilder.BlockInteracting<BlockInteractingRecipe> blockInteractingRecipe(
-			SizedIngredient mainHand,
-			@Nullable SizedIngredient offHand,
+			Optional<SizedIngredient> mainHand,
+			@Nullable Optional<SizedIngredient> offHand,
 			Object block) {
 		return new LycheeRecipeBuilder.BlockInteracting<>(BlockInteractingRecipe::new, mainHand, offHand, block(block));
 	}
@@ -156,10 +160,10 @@ public interface LycheeBuilder {
 	}
 
 	default LycheeRecipeBuilder.ShapedCrafting shapedCraftingRecipe(RecipeCategory category, ItemLike result, int amount) {
-		return shapedCraftingRecipe(category, new ItemStack(result, amount));
+		return shapedCraftingRecipe(category, new ItemStackTemplate(result.asItem(), amount));
 	}
 
-	default LycheeRecipeBuilder.ShapedCrafting shapedCraftingRecipe(RecipeCategory category, ItemStack result) {
+	default LycheeRecipeBuilder.ShapedCrafting shapedCraftingRecipe(RecipeCategory category, ItemStackTemplate result) {
 		return new LycheeRecipeBuilder.ShapedCrafting(category, result);
 	}
 
@@ -173,10 +177,10 @@ public interface LycheeBuilder {
 	}
 
 	default ActionBuilder<?, DropItem> dropItem(ItemLike item, int count) {
-		return dropItem(new ItemStack(item, count));
+		return dropItem(new ItemStackTemplate(item.asItem(), count));
 	}
 
-	default ActionBuilder<?, DropItem> dropItem(ItemStack itemStack) {
+	default ActionBuilder<?, DropItem> dropItem(ItemStackTemplate itemStack) {
 		return new ActionBuilder<>(new DropItem(PostActionCommonProperties.EMPTY, itemStack));
 	}
 
@@ -266,7 +270,7 @@ public interface LycheeBuilder {
 	}
 
 	default ActionBuilder<?, Explode> explode(
-			Explosion.BlockInteraction blockInteraction,
+			Level.ExplosionInteraction blockInteraction,
 			BlockPos offset,
 			boolean fire,
 			float radius,
@@ -282,7 +286,7 @@ public interface LycheeBuilder {
 		return new ActionBuilder<>(new DamageItem(PostActionCommonProperties.EMPTY, damage, target));
 	}
 
-	default ActionBuilder<?, SetItem> setItem(ItemStack itemStack, Reference target) {
+	default ActionBuilder<?, SetItem> setItem(ItemStackTemplate itemStack, Reference target) {
 		return new ActionBuilder<>(new SetItem(PostActionCommonProperties.EMPTY, itemStack, target));
 	}
 
@@ -319,8 +323,8 @@ public interface LycheeBuilder {
 		return switch (o) {
 			case BlockPredicate bp -> bp;
 			case String s -> BlockPredicateExtensions.fromString(s, true).getOrThrow();
-			case Block block -> BlockPredicate.Builder.block().of(block).build();
-			case TagKey<?> tagKey -> BlockPredicate.Builder.block().of((TagKey<Block>) tagKey).build();
+			case Block block -> BlockPredicate.Builder.block().of(BuiltInRegistries.BLOCK, block).build();
+			case TagKey<?> tagKey -> BlockPredicate.Builder.block().of(BuiltInRegistries.BLOCK, (TagKey<Block>) tagKey).build();
 			default -> throw new IllegalArgumentException("Invalid argument: " + o);
 		};
 	}
@@ -338,8 +342,8 @@ public interface LycheeBuilder {
 			case SizedIngredient si -> si.ingredient();
 			case Ingredient ing -> ing;
 			case ItemLike item -> Ingredient.of(item);
-			case ItemStack stack -> Ingredient.of(stack);
-			case TagKey<?> tagKey -> Ingredient.of((TagKey<Item>) tagKey);
+			case ItemInstance itemInstance -> Ingredient.of(itemInstance.typeHolder().value());
+			case TagKey<?> tagKey -> Ingredient.of(BuiltInRegistries.ITEM.getOrThrow((TagKey<Item>) tagKey));
 			case String s -> parse(s).ingredient();
 			default -> throw new IllegalArgumentException("Invalid argument: " + o);
 		};

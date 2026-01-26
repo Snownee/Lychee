@@ -9,7 +9,6 @@ import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -17,7 +16,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.GsonHelper;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
@@ -111,13 +109,6 @@ public interface PostAction extends PostActionDisplay, PostActionLike, Contextua
 	@Override
 	default int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 		return conditions().test(recipe, ctx, times);
-	}
-
-	@Override
-	default String toJsonString() {
-		return GsonHelper.toStableString(((Codec<PostAction>) type().codec())
-				.encodeStart(JsonOps.INSTANCE, this)
-				.getOrThrow());
 	}
 
 	default void validate(ILycheeRecipe<?> recipe) {}

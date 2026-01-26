@@ -1,11 +1,14 @@
 package snownee.lychee.util.particles.dripstone.client;
 
+import org.jspecify.annotations.Nullable;
+
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.DripParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
 import snownee.lychee.util.particles.dripstone.DripParticleHandler;
@@ -45,23 +48,22 @@ public class ParticleFactories {
 		}
 
 		@Override
-		public Particle createParticle(
-				BlockParticleOption defaultParticleType,
+		public @Nullable Particle createParticle(
+				BlockParticleOption options,
 				ClientLevel level,
 				double x,
 				double y,
 				double z,
-				double velocityX,
-				double velocityY,
-				double velocityZ
-		) {
+				double xAux,
+				double yAux,
+				double zAux,
+				RandomSource random) {
 			BlockParticleOption fallOption = new BlockParticleOption(
 					DripstoneParticleService.DRIPSTONE_FALLING,
-					defaultParticleType.getState()
+					options.getState()
 			);
-			DripParticle particle = new DripParticle.DripHangParticle(level, x, y, z, Fluids.WATER, fallOption);
-			particle.pickSprite(this.sprite);
-			postParticle(particle, defaultParticleType.getState(), level, x, y, z, velocityX, velocityY, velocityZ);
+			DripParticle particle = new DripParticle.DripHangParticle(level, x, y, z, Fluids.WATER, fallOption, sprite.get(random));
+			postParticle(particle, options.getState(), level, x, y, z, xAux, yAux, zAux);
 			return particle;
 		}
 	}
@@ -74,19 +76,19 @@ public class ParticleFactories {
 		}
 
 		@Override
-		public Particle createParticle(
-				BlockParticleOption defaultParticleType,
+		public @Nullable Particle createParticle(
+				BlockParticleOption options,
 				ClientLevel level,
 				double x,
 				double y,
 				double z,
-				double velocityX,
-				double velocityY,
-				double velocityZ
-		) {
+				double xAux,
+				double yAux,
+				double zAux,
+				RandomSource random) {
 			BlockParticleOption fallOption = new BlockParticleOption(
 					DripstoneParticleService.DRIPSTONE_SPLASH,
-					defaultParticleType.getState()
+					options.getState()
 			);
 			DripParticle particle = new DripParticle.DripstoneFallAndLandParticle(
 					level,
@@ -94,10 +96,10 @@ public class ParticleFactories {
 					y,
 					z,
 					Fluids.WATER,
-					fallOption
+					fallOption,
+					sprite.get(random)
 			);
-			particle.pickSprite(this.sprite);
-			postParticle(particle, defaultParticleType.getState(), level, x, y, z, velocityX, velocityY, velocityZ);
+			postParticle(particle, options.getState(), level, x, y, z, xAux, yAux, zAux);
 			return particle;
 		}
 	}
@@ -110,28 +112,28 @@ public class ParticleFactories {
 		}
 
 		@Override
-		public Particle createParticle(
-				BlockParticleOption defaultParticleType,
+		public @Nullable Particle createParticle(
+				BlockParticleOption options,
 				ClientLevel level,
 				double x,
 				double y,
 				double z,
-				double velocityX,
-				double velocityY,
-				double velocityZ
-		) {
+				double xAux,
+				double yAux,
+				double zAux,
+				RandomSource random) {
 			DripstoneSplashParticle particle = new DripstoneSplashParticle(
 					level,
 					x,
 					y,
 					z,
-					velocityX,
-					velocityY,
-					velocityZ,
-					Fluids.WATER
+					xAux,
+					yAux,
+					zAux,
+					Fluids.WATER,
+					sprite.get(random)
 			);
-			particle.pickSprite(this.sprite);
-			postParticle(particle, defaultParticleType.getState(), level, x, y, z, velocityX, velocityY, velocityZ);
+			postParticle(particle, options.getState(), level, x, y, z, xAux, yAux, zAux);
 			return particle;
 		}
 	}

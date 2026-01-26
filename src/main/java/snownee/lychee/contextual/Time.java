@@ -7,20 +7,21 @@ import org.jspecify.annotations.Nullable;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.core.Holder;
+import net.minecraft.util.TriState;
+import net.minecraft.world.clock.WorldClock;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.predicates.TimeCheck;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record Time(MinMaxBounds.Ints value, Optional<Long> period) implements ContextualCondition {
+public record Time(Holder<WorldClock> clock, MinMaxBounds.Ints value, Optional<Long> period) implements ContextualCondition {
 
 	@Override
 	public ContextualConditionType<Time> type() {
@@ -33,45 +34,40 @@ public record Time(MinMaxBounds.Ints value, Optional<Long> period) implements Co
 	}
 
 	@Override
-	public net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
-		return TriState.of(test(level));
+	public TriState testForTooltips(Level level, @Nullable Player player) {
+		return TriState.from(test(level));
 	}
 
-	public boolean test(LevelAccessor level) {
-		long i = level.dayTime();
+	public boolean test(Level level) {
+		long time = level.clockManager().getTotalTicks(this.clock);
 		if (period.isPresent()) {
-			i %= period.get();
+			time %= period.get();
 		}
-		return value.matches((int) i);
+
+		return value.matches((int) time);
 	}
 
 	public static class Type implements ContextualConditionType<Time> {
-		public static final MapCodec<Time> CODEC = TimeCheck.CODEC.flatXmap(
+		public static final MapCodec<Time> CODEC = TimeCheck.MAP_CODEC.flatXmap(
 				it -> {
-					if (it.value().min == null || it.value().min.getType() != NumberProviders.CONSTANT) {
-						return DataResult.error(() -> "`min` not exists or not a constant");
+					if (it.value().min == null || it.value().min.codec() != ConstantValue.MAP_CODEC) {
+						return DataResult.error(() -> "`min` not exists or not a constant value");
 					}
-					if (it.value().max == null || it.value().max.getType() != NumberProviders.CONSTANT) {
-						return DataResult.error(() -> "`max` not exists or not a constant");
+					if (it.value().max == null || it.value().max.codec() != ConstantValue.MAP_CODEC) {
+						return DataResult.error(() -> "`max` not exists or not a constant value");
 					}
-					return DataResult.success(
-							new Time(
-									MinMaxBounds.Ints.between(
-											it.value().min.getInt(null),
-											it.value().max.getInt(null)
-									),
-									it.period()
-							));
-				},
-				it -> {
-					final var builder = TimeCheck.time(IntRange.range(
-							it.value().min().orElseThrow(),
-							it.value().max().orElseThrow()
-					));
+					//noinspection DataFlowIssue
+					return DataResult.success(new Time(
+							it.clock(),
+							MinMaxBounds.Ints.between(it.value().min.getInt(null), it.value().max.getInt(null)),
+							it.period()));
+				}, it -> {
+					final var builder = TimeCheck.time(
+							it.clock,
+							IntRange.range(it.value.min().orElseThrow(), it.value.max().orElseThrow()));
 					it.period.ifPresent(builder::setPeriod);
 					return DataResult.success(builder.build());
-				}
-		);
+				});
 
 		@Override
 		public MapCodec<Time> codec() {

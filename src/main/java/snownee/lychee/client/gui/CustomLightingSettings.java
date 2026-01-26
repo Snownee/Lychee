@@ -34,7 +34,7 @@ public class CustomLightingSettings implements ILightingSettings {
 
 	@Override
 	public void applyLighting() {
-		RenderSystem.setupLevelDiffuseLighting(light1, light2);
+//		RenderSystem.setupLevelDiffuseLighting(light1, light2);
 	}
 
 	public static Builder builder() {

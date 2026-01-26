@@ -53,7 +53,7 @@ public class LootParamsContext {
 	public <T> T get(ContextKey<T> param) {
 		final var result = getOrNull(param);
 		if (result == null) {
-			throw new NoSuchElementException(param.getName().toString());
+			throw new NoSuchElementException(param.name().toString());
 		} else {
 			return result;
 		}
@@ -62,7 +62,7 @@ public class LootParamsContext {
 	/**
 	 * @return The value of the given parameter if it is present in this context, null otherwise.
 	 */
-	public @Nullable <T> T getOrNull(ContextKey<T> param) {
+	public <T> @Nullable T getOrNull(ContextKey<T> param) {
 		//noinspection unchecked
 		return (T) params.computeIfAbsent(param, this::init);
 	}
@@ -101,7 +101,7 @@ public class LootParamsContext {
 	}
 
 	public void validate(ContextKeySet paramSet) {
-		final var difference = Sets.difference(paramSet.getRequired(), params.keySet());
+		final var difference = Sets.difference(paramSet.required(), params.keySet());
 		if (!difference.isEmpty()) {
 			throw new IllegalArgumentException("Missing required parameters: " + difference);
 		}

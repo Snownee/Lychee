@@ -1,10 +1,7 @@
 package snownee.lychee.compat.recipe_api;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
-import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -18,11 +15,15 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.display.DisplayContentsFactory;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.lychee.Lychee;
+import snownee.lychee.SlotDisplayTypes;
 
 public class VisualOnlyComponentsIngredient implements CustomIngredient {
 	public static final Identifier ID = Lychee.id("visual_only_components");
@@ -52,21 +53,7 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 
 	@Override
 	public SlotDisplay display() {
-		return base.display(); //FIXME
-	}
-
-	@Override
-	public List<ItemStack> getMatchingStacks() {
-		List<ItemStack> stacks = new ArrayList<>(List.of(base.getItems()));
-		stacks.replaceAll(stack -> {
-			ItemStack copy = stack.copy();
-
-			stack.applyComponents(components);
-
-			return copy;
-		});
-		stacks.removeIf(stack -> !base.test(stack));
-		return stacks;
+		return new Display(base.display(), components);
 	}
 
 	@Override
@@ -84,7 +71,6 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 		return base;
 	}
 
-	@Nullable
 	private DataComponentPatch getComponents() {
 		return components;
 	}
@@ -94,8 +80,7 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 		private static final StreamCodec<RegistryFriendlyByteBuf, VisualOnlyComponentsIngredient> STREAM_CODEC = StreamCodec.composite(
 				Ingredient.CONTENTS_STREAM_CODEC, VisualOnlyComponentsIngredient::getBase,
 				DataComponentPatch.STREAM_CODEC, VisualOnlyComponentsIngredient::getComponents,
-				VisualOnlyComponentsIngredient::new
-		);
+				VisualOnlyComponentsIngredient::new);
 
 		private static MapCodec<VisualOnlyComponentsIngredient> createCodec(Codec<Ingredient> ingredientCodec) {
 			return RecordCodecBuilder.mapCodec(instance ->
@@ -119,6 +104,38 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 		@Override
 		public StreamCodec<RegistryFriendlyByteBuf, VisualOnlyComponentsIngredient> getStreamCodec() {
 			return STREAM_CODEC;
+		}
+	}
+
+	public record Display(SlotDisplay base, DataComponentPatch components) implements SlotDisplay {
+		public static final MapCodec<Display> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+				SlotDisplay.CODEC.fieldOf("base").forGetter(Display::base),
+				DataComponentPatch.CODEC.fieldOf("components").forGetter(Display::components)
+		).apply(instance, Display::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, Display> STREAM_CODEC = StreamCodec.composite(
+				SlotDisplay.STREAM_CODEC, Display::base,
+				DataComponentPatch.STREAM_CODEC, Display::components,
+				Display::new);
+
+		@Override
+		public <T> Stream<T> resolve(ContextMap context, DisplayContentsFactory<T> builder) {
+			if (!(builder instanceof DisplayContentsFactory.ForStacks<T> stacks)) {
+				return Stream.empty();
+			}
+			List<ItemStack> itemStacks = base.resolveForStacks(context);
+			return itemStacks.isEmpty() ?
+					Stream.empty() :
+					itemStacks.stream().peek($ -> $.applyComponents(components)).map(stacks::forStack);
+		}
+
+		@Override
+		public boolean isEnabled(FeatureFlagSet enabledFeatures) {
+			return base.isEnabled(enabledFeatures);
+		}
+
+		@Override
+		public SlotDisplay.Type<? extends SlotDisplay> type() {
+			return SlotDisplayTypes.VISUAL_ONLY;
 		}
 	}
 }

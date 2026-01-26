@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import snownee.lychee.LycheeRegistries;
@@ -48,9 +49,9 @@ public interface ActionRenderer<T extends PostAction> {
 	static void init() {
 		register(PostActionTypes.DROP_ITEM, (ItemStackActionRenderer<DropItem>) DropItem::itemStack);
 		register(PostActionTypes.SET_ITEM, (ItemStackActionRenderer<SetItem>) SetItem::itemStack);
-		register(PostActionTypes.DROP_XP, (ItemBasedActionRenderer<DropXp>) action -> Items.EXPERIENCE_BOTTLE.getDefaultInstance());
-		register(PostActionTypes.EXECUTE, (ItemBasedActionRenderer<Execute>) action -> Items.COMMAND_BLOCK.getDefaultInstance());
-		register(PostActionTypes.EXPLODE, (ItemBasedActionRenderer<Explode>) action -> Items.TNT.getDefaultInstance());
+		register(PostActionTypes.DROP_XP, (ItemBasedActionRenderer<DropXp>) _ -> new ItemStackTemplate(Items.EXPERIENCE_BOTTLE));
+		register(PostActionTypes.EXECUTE, (ItemBasedActionRenderer<Execute>) _ -> new ItemStackTemplate(Items.COMMAND_BLOCK));
+		register(PostActionTypes.EXPLODE, (ItemBasedActionRenderer<Explode>) _ -> new ItemStackTemplate(Items.TNT));
 		register(PostActionTypes.IF, new IfActionRenderer());
 		register(PostActionTypes.PLACE, BlockBasedActionRenderer.fromPredicate(PlaceBlock::block));
 		register(PostActionTypes.SET_BLOCK, BlockBasedActionRenderer.fromPredicate(SetBlock::block));

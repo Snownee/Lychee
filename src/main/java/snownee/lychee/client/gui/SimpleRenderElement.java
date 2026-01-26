@@ -3,7 +3,7 @@ package snownee.lychee.client.gui;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import org.joml.Matrix3x2fStack;
 
 import net.minecraft.client.gui.GuiGraphics;
 
@@ -21,10 +21,10 @@ public class SimpleRenderElement extends RenderElement {
 
 	@Override
 	public void render(GuiGraphics graphics) {
-		PoseStack pose = graphics.pose();
-		pose.pushPose();
-		pose.translate(x(), y(), z());
+		Matrix3x2fStack pose = graphics.pose();
+		pose.pushMatrix();
+		pose.translate(x(), y());
 		renderable.apply(this).accept(graphics, this);
-		pose.popPose();
+		pose.popMatrix();
 	}
 }

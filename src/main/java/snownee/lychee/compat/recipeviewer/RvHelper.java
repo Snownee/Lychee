@@ -13,13 +13,13 @@ import com.google.common.collect.Lists;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import snownee.kiwi.util.KUtil;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
@@ -32,10 +32,10 @@ public abstract class RvHelper {
 	private List<RecipeHolder<CategoryMetadata>> metadataList = List.of();
 	private List<RecipeHolder<CategoryModifier>> modifierList = List.of();
 
-	public void init() {
+	public void init(RecipeMap recipeMap) {
 		Comparator<RecipeHolder<? extends CategorySettingRecipe>> comparator = Comparator.comparing(RecipeHolder::value);
-		metadataList = ImmutableList.sortedCopyOf(comparator, KUtil.getRecipes(RecipeTypes.CATEGORY_METADATA));
-		modifierList = ImmutableList.sortedCopyOf(comparator, KUtil.getRecipes(RecipeTypes.CATEGORY_MODIFIER));
+		metadataList = ImmutableList.sortedCopyOf(comparator, recipeMap.byType(RecipeTypes.CATEGORY_METADATA));
+		modifierList = ImmutableList.sortedCopyOf(comparator, recipeMap.byType(RecipeTypes.CATEGORY_MODIFIER));
 	}
 
 	public RecipeHolder<CategoryMetadata> getMetadata(RvCategoryInstance<?> category) {

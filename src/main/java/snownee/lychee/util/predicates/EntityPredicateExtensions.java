@@ -10,7 +10,7 @@ public class EntityPredicateExtensions {
 				Optional.empty(),
 				original.distanceToPlayer(),
 				original.movement(),
-				original.identifier(),
+				original.location(),
 				original.effects(),
 				original.nbt(),
 				original.flags(),
@@ -21,6 +21,7 @@ public class EntityPredicateExtensions {
 				original.passenger(),
 				original.targetedEntity(),
 				original.team(),
-				original.slots());
+				original.slots(),
+				original.components());
 	}
 }

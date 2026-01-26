@@ -16,6 +16,7 @@ import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.util.LycheeEntity;
@@ -33,8 +34,8 @@ public class EntityTickingRecipeType extends LycheeRecipeType<EntityTickingRecip
 	}
 
 	@Override
-	public void refreshCache() {
-		super.refreshCache();
+	public void refreshCache(RecipeMap recipeMap) {
+		super.refreshCache(recipeMap);
 		ListMultimap<EntityType<?>, RecipeHolder<EntityTickingRecipe>> map = ArrayListMultimap.create();
 		for (RecipeHolder<EntityTickingRecipe> recipe : recipes) {
 			recipe.value()

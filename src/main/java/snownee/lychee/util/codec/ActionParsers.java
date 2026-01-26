@@ -10,8 +10,9 @@ import com.mojang.serialization.JavaOps;
 
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.phys.Vec3;
+import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.action.AddItemCooldown;
 import snownee.lychee.action.Delay;
 import snownee.lychee.action.DropItem;
@@ -65,9 +66,9 @@ public interface ActionParsers {
 	class Drop implements LycheeParser<PostAction> {
 		@Override
 		public DataResult<PostAction> parse(StringReader reader) throws CommandSyntaxException {
-			DataResult<ItemStack> itemResult = LycheeParserUtils.readParam(
+			DataResult<ItemStackTemplate> itemResult = LycheeParserUtils.readParam(
 					reader,
-					r -> KCodecs.tryCatch(() -> ParsedItem.read(reader).itemStack())).orElseThrow();
+					r -> KCodecs.tryCatch(() -> ParsedItem.read(reader).template())).orElseThrow();
 			if (itemResult.isSuccess()) {
 				return itemResult.map(item -> new DropItem(PostActionCommonProperties.EMPTY, item));
 			}

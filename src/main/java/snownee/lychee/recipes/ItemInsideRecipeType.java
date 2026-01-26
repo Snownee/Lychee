@@ -1,6 +1,5 @@
 package snownee.lychee.recipes;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +18,9 @@ import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -27,6 +28,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -50,10 +52,10 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 
 	@Override
 	@MustBeInvokedByOverriders
-	public void refreshCache() {
+	public void refreshCache(RecipeMap recipeMap) {
 		specialRecipes.clear();
 		recipesByItem.clear();
-		super.refreshCache();
+		super.refreshCache(recipeMap);
 		final var itemWeights = new Object2FloatOpenHashMap<Item>();
 		final var caches = recipes.stream()
 				.filter(it -> {
@@ -68,7 +70,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 								recipeHolder,
 								recipeHolder.value().sizedIngredients().stream()
 										.map(ingredient -> {
-											var items = Arrays.stream(ingredient.getItems()).map(ItemStack::getItem).toList();
+											var items = ingredient.ingredient().items().map(Holder::value).toList();
 											final var weight = (float) ingredient.count() / items.size();
 											for (final var item : items)
 												itemWeights.merge(item, weight, Float::sum);
@@ -145,9 +147,9 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 		lootParams.set(LootContextParams.BLOCK_STATE, blockState);
 		lootParams.set(LycheeContextKeys.BLOCK_POS, pos);
 		lootParams.validate();
-		@SuppressWarnings("unchecked") @Nullable final var prevRecipe =
+		@SuppressWarnings("unchecked") final var prevRecipe =
 				(RecipeHolder<ItemInsideRecipe>) Optional.ofNullable(prevRecipeId)
-						.map(CommonProxy::recipe)
+						.flatMap($ -> ((ServerLevel) level).getServer().getRecipeManager().byKey($))
 						.filter(it -> it.value() instanceof ItemInsideRecipe)
 						.orElse(null);
 		var allRecipes = Iterables.concat(recipes, specialRecipes);
@@ -156,6 +158,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 		}
 		ItemShapelessRecipeType.process(
 				this, allRecipes, context, it -> {
+					//noinspection DataFlowIssue
 					((LycheeCounter) entity).lychee$update(prevRecipeId, it);
 					return it.value().tickOrApply(context);
 				});

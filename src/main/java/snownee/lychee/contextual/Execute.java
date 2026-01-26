@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import snownee.lychee.Lychee;
@@ -66,7 +67,7 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 				pos,
 				rotation,
 				serverLevel,
-				2,
+				LevelBasedPermissionSet.GAMEMASTER,
 				name,
 				displayName,
 				server,

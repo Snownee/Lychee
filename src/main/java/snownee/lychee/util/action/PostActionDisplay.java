@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
+import snownee.lychee.util.Displays;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostActionDisplay {
@@ -29,9 +30,7 @@ public interface PostActionDisplay {
 		return false;
 	}
 
-	String toJsonString();
-
-	default SlotDisplay transformRemainder(SlotDisplay itemStack, @Nullable ILycheeRecipe<?> recipe) {
-		return SlotDisplay.Empty.INSTANCE;
+	default SlotDisplay transformRemainder(SlotDisplay display, @Nullable ILycheeRecipe<?> recipe) {
+		return Displays.emptySlot();
 	}
 }

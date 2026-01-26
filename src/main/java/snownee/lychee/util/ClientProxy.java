@@ -1,19 +1,23 @@
 package snownee.lychee.util;
 
 import java.text.MessageFormat;
+import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
-
-import com.mojang.blaze3d.platform.InputConstants;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeAccess;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.material.Fluid;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.KEvent;
@@ -62,13 +66,13 @@ public class ClientProxy implements ClientModInitializer {
 		return FluidVariantAttributes.getName(FluidVariant.of(fluid));
 	}
 
-	public static InputConstants.Key getKeyMapping(InputAction action) {
-		if (action instanceof InputAction.MousePressed mousePressed) {
-			return InputConstants.Type.MOUSE.getOrCreate(mousePressed.button());
-		} else if (action instanceof InputAction.KeyPressed keyPressed) {
-			return InputConstants.getKey(keyPressed.keyCode(), keyPressed.scanCode());
-		}
-		return InputConstants.UNKNOWN;
+	@Nullable
+	public static RecipeHolder<?> recipe(ResourceKey<Recipe<?>> id) {
+		return Objects.requireNonNull(Minecraft.getInstance().getConnection()).recipes().getSynchronizedRecipes().get(id);
+	}
+
+	public static RecipeMap recipes(RecipeAccess recipes) {
+		return RecipeMap.create(recipes.getSynchronizedRecipes().recipes());
 	}
 
 	@Override

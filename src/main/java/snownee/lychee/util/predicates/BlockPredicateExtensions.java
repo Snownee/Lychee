@@ -12,6 +12,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.base.Suppliers;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -28,6 +30,7 @@ import com.mojang.serialization.DynamicOps;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.criterion.BlockPredicate;
+import net.minecraft.advancements.criterion.DataComponentMatchers;
 import net.minecraft.advancements.criterion.NbtPredicate;
 import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
@@ -35,8 +38,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -57,7 +59,11 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 
 public class BlockPredicateExtensions {
-	public static final BlockPredicate ANY = new BlockPredicate(Optional.empty(), Optional.empty(), Optional.empty());
+	public static final BlockPredicate ANY = new BlockPredicate(
+			Optional.empty(),
+			Optional.empty(),
+			Optional.empty(),
+			DataComponentMatchers.ANY);
 	private static final Cache<BlockPredicate, List<BlockState>> CACHE = CacheBuilder.newBuilder()
 			.expireAfterAccess(10, TimeUnit.MINUTES)
 			.build();
@@ -94,9 +100,9 @@ public class BlockPredicateExtensions {
 		Either<BlockStateParser.BlockResult, BlockStateParser.TagResult> result;
 		try {
 			if (forTesting) {
-				result = BlockStateParser.parseForTesting(BuiltInRegistries.BLOCK.asLookup(), s, true);
+				result = BlockStateParser.parseForTesting(BuiltInRegistries.BLOCK, s, true);
 			} else {
-				result = Either.left(BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK.asLookup(), s, true));
+				result = Either.left(BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK, s, true));
 			}
 		} catch (Exception e) {
 			return DataResult.error(() -> "Invalid block predicate: %s - %s".formatted(s, e.getMessage()));
@@ -104,7 +110,7 @@ public class BlockPredicateExtensions {
 
 		return DataResult.success(result.map(
 				$ -> new BlockPredicate(
-						Optional.of(HolderSet.direct($.blockState().getBlockHolder())),
+						Optional.of(HolderSet.direct($.blockState().typeHolder())),
 						$.properties().isEmpty() ?
 								Optional.empty() :
 								Optional.of(new StatePropertiesPredicate($.properties()
@@ -114,7 +120,8 @@ public class BlockPredicateExtensions {
 												it.getKey().getName(),
 												new StatePropertiesPredicate.ExactMatcher(getNameByValue(it.getKey(), it.getValue()))))
 										.toList())),
-						Optional.ofNullable($.nbt()).map(NbtPredicate::new)),
+						Optional.ofNullable($.nbt()).map(NbtPredicate::new),
+						DataComponentMatchers.ANY),
 				$ -> new BlockPredicate(
 						Optional.of($.tag()),
 						$.vagueProperties().isEmpty() ?
@@ -126,7 +133,8 @@ public class BlockPredicateExtensions {
 												it.getKey(),
 												new StatePropertiesPredicate.ExactMatcher(it.getValue())))
 										.toList())),
-						Optional.ofNullable($.nbt()).map(NbtPredicate::new)
+						Optional.ofNullable($.nbt()).map(NbtPredicate::new),
+						DataComponentMatchers.ANY
 				)
 		));
 	}
@@ -175,7 +183,7 @@ public class BlockPredicateExtensions {
 		if (predicate.blocks().isPresent()) {
 			Iterables.addAll(
 					blocks,
-					predicate.blocks().get().unwrap().map(BuiltInRegistries.BLOCK::getOrCreateTag, Function.identity()));
+					predicate.blocks().get().unwrap().map(BuiltInRegistries.BLOCK::getTagOrEmpty, Function.identity()));
 		}
 		return blocks.stream().map(Holder::value).collect(Collectors.toSet());
 	}
@@ -191,7 +199,7 @@ public class BlockPredicateExtensions {
 		/* on */
 	}
 
-	public static List<ItemStack> matchedItemStacks(BlockPredicate predicate) {
+	public static List<ItemStackTemplate> matchedItemStacks(BlockPredicate predicate) {
 		if (isAny(predicate)) {
 			return List.of();
 		}
@@ -199,7 +207,7 @@ public class BlockPredicateExtensions {
 				.map(Block::asItem)
 				.filter(Predicate.not(Items.AIR::equals))
 				.distinct()
-				.map(Item::getDefaultInstance)
+				.map(ItemStackTemplate::new)
 				.toList();
 	}
 
@@ -220,7 +228,7 @@ public class BlockPredicateExtensions {
 			Level level,
 			BlockPredicate predicate,
 			BlockState state,
-			Supplier<BlockEntity> blockEntitySupplier
+			Supplier<@Nullable BlockEntity> blockEntitySupplier
 	) {
 		if (predicate.blocks().isPresent() && !state.is(predicate.blocks().get())) {
 			return false;

@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.Displays;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -72,13 +73,13 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	}
 
 	@Override
-	public SlotDisplay transformRemainder(SlotDisplay itemStack, @Nullable ILycheeRecipe<?> recipe) {
-		if (itemStack.isDamageableItem()) {
-			ItemStack copy = itemStack.copy();
-			copy.setDamageValue(copy.getDamageValue() + damage);
-			return copy;
-		}
-		return ItemStack.EMPTY;
+	public SlotDisplay transformRemainder(SlotDisplay display, @Nullable ILycheeRecipe<?> recipe) {
+//		if (display.isDamageableItem()) { FIXME
+//			ItemStack copy = display.copy();
+//			copy.setDamageValue(copy.getDamageValue() + damage);
+//			return copy;
+//		}
+		return Displays.emptySlot();
 	}
 
 	public static class Type implements PostActionType<DamageItem> {

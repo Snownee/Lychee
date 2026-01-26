@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mojang.datafixers.util.Function3;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -16,6 +15,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -36,9 +36,6 @@ import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
-
-	private static final Codec<SizedIngredient> OPTIONAL_SIZED_INGREDIENT_CODEC = ExtraCodecs.optionalEmptyMap(LycheeCodecs.SIZED_INGREDIENT)
-			.xmap(it -> it.orElse(SizedIngredient.EMPTY), Optional::of);
 
 	public static InteractionResult invoke(
 			final Player player,
@@ -67,33 +64,36 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		}
 	}
 
-	protected final List<SizedIngredient> input;
+	protected final List<Optional<SizedIngredient>> inputs;
 	protected final BlockPredicate blockPredicate;
 
 	public BlockInteractingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			List<SizedIngredient> input,
+			List<Optional<SizedIngredient>> inputs,
 			BlockPredicate blockPredicate) {
 		super(commonProperties);
-		this.input = input;
+		this.inputs = inputs;
 		this.blockPredicate = blockPredicate;
 		onConstructed();
 	}
 
-	public static <T extends BlockInteractingRecipe> MapCodec<T> codec(Function3<LycheeRecipeCommonProperties, List<SizedIngredient>, BlockPredicate, T> constructor) {
+	public static <T extends BlockInteractingRecipe> MapCodec<T> codec(Function3<LycheeRecipeCommonProperties, List<Optional<SizedIngredient>>, BlockPredicate, T> constructor) {
 		return RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.mapCodec(BoundsExtensions.ONE).forGetter(T::commonProperties),
-						LycheeCodecs.sizeLimit(KCodecs.compactList(OPTIONAL_SIZED_INGREDIENT_CODEC), 1, 2)
-								.fieldOf(ITEM_IN)
-								.forGetter(T::sizedIngredients),
-						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
-								.forGetter(T::blockPredicate))
-				.apply(instance, constructor));
+				LycheeRecipeCommonProperties.mapCodec(BoundsExtensions.ONE).forGetter(T::commonProperties),
+				LycheeCodecs.sizeLimit(KCodecs.compactList(ExtraCodecs.optionalEmptyMap(LycheeCodecs.SIZED_INGREDIENT)), 1, 2)
+						.fieldOf(ITEM_IN)
+						.forGetter(T::inputs),
+				BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
+						.forGetter(T::blockPredicate)).apply(instance, constructor));
+	}
+
+	public List<Optional<SizedIngredient>> inputs() {
+		return inputs;
 	}
 
 	@Override
 	public List<SizedIngredient> sizedIngredients() {
-		return input;
+		return inputs.stream().filter(Optional::isPresent).map(Optional::get).toList();
 	}
 
 	@Override
@@ -103,14 +103,19 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 
 	@Override
 	public boolean matches(LycheeContext context, Level level) {
-		return input.getFirst().test(context.getItem(0)) && (
-				BlockPredicateExtensions.isAny(blockPredicate) || BlockPredicateExtensions.matches(blockPredicate, context)) &&
-				(input.size() == 1 || input.getLast().test(context.getItem(1)));
+		return matchesInput(inputs.getFirst(), context.getItem(0)) &&
+				(inputs.size() == 1 || matchesInput(inputs.getLast(), context.getItem(1))) &&
+				(BlockPredicateExtensions.isAny(blockPredicate) || BlockPredicateExtensions.matches(blockPredicate, context));
+	}
+
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+	public static boolean matchesInput(Optional<SizedIngredient> ingredient, ItemStack itemStack) {
+		return ingredient.map($ -> $.test(itemStack)).orElseGet(itemStack::isEmpty);
 	}
 
 	@Override
 	public List<Ingredient> getIngredients() {
-		return input.stream().map(SizedIngredient::ingredient).toList();
+		return sizedIngredients().stream().map(SizedIngredient::ingredient).toList();
 	}
 
 	@Override
@@ -134,8 +139,8 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		public static final StreamCodec<RegistryFriendlyByteBuf, BlockInteractingRecipe> STREAM_CODEC = StreamCodec.composite(
 				LycheeRecipeCommonProperties.STREAM_CODEC,
 				BlockInteractingRecipe::commonProperties,
-				SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list(2)),
-				BlockInteractingRecipe::sizedIngredients,
+				SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs::optional).apply(ByteBufCodecs.list(2)),
+				BlockInteractingRecipe::inputs,
 				BlockPredicate.STREAM_CODEC,
 				BlockInteractingRecipe::blockPredicate,
 				BlockInteractingRecipe::new);

@@ -12,6 +12,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import snownee.lychee.RecipeTypes;
@@ -50,9 +51,9 @@ public class RvPlugin<Helper extends RvHelper> {
 		return rvHelper;
 	}
 
-	public void init() {
+	public void init(RecipeMap recipeMap) {
 		categoryTypes.clear();
-		rvHelper.init();
+		rvHelper.init(recipeMap);
 		var categories = Maps.<Identifier, RvCategoryInstance<?>>newHashMap();
 		register(
 				new RvCategory<>(RecipeTypes.BLANK),
@@ -141,7 +142,7 @@ public class RvPlugin<Helper extends RvHelper> {
 			}
 
 			var factory = provider.get(category, rvHelper);
-			for (var recipe : recipeType.inViewerRecipes()) {
+			for (var recipe : recipeType.inViewerRecipes(recipeMap)) {
 				var id = RVs.composeCategoryIdentifier(recipeType.categoryId, Identifier.parse(recipe.value().group()));
 				//noinspection unchecked,rawtypes
 				categories.computeIfAbsent(id, factory).addRecipe((RecipeHolder) recipe);

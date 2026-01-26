@@ -92,7 +92,7 @@ public class CategoryMetadata extends CategorySettingRecipe {
 				Codec.BOOL.optionalFieldOf("render_default", true).forGetter(CategoryMetadata::renderDefault),
 				VectorExtensions.CODEC2I.optionalFieldOf("size").forGetter(CategoryMetadata::size),
 				UIElement.CODEC.optionalFieldOf("icon").forGetter(CategoryMetadata::icon),
-				KCodecs.compactList(LycheeCodecs.NONEMPTY_INGREDIENT)
+				KCodecs.compactList(LycheeCodecs.INGREDIENT)
 						.optionalFieldOf("workstation")
 						.forGetter(CategoryMetadata::workstation)
 		).apply(instance, CategoryMetadata::new));

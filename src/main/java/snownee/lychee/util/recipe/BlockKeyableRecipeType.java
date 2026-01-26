@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,10 +49,10 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 
 	@Override
 	@MustBeInvokedByOverriders
-	public void refreshCache() {
+	public void refreshCache(RecipeMap recipeMap) {
 		recipesByBlock.clear();
 		anyBlockRecipes.clear();
-		super.refreshCache();
+		super.refreshCache(recipeMap);
 		final var multimap = ArrayListMultimap.<Block, RecipeHolder<R>>create();
 		for (final var recipe : recipes) {
 			var iterator = recipe.value().conditions().iterator();

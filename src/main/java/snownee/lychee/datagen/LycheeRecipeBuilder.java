@@ -18,6 +18,7 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
@@ -168,7 +169,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 	}
 
 	public static class BlockCrushing extends Shapeless<BlockCrushing, BlockCrushingRecipe> {
-		protected BlockPredicate fallingBlock = BlockCrushingRecipe.ANVIL;
+		protected BlockPredicate fallingBlock = BlockCrushingRecipe.ANVIL.get();
 		protected BlockPredicate landingBlock = BlockPredicateExtensions.ANY;
 
 		@Contract("_ -> this")
@@ -307,24 +308,25 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 	}
 
 	public static class BlockInteracting<R extends BlockInteractingRecipe> extends LycheeRecipeBuilder<BlockInteracting<R>, R> {
-		protected final Function3<LycheeRecipeCommonProperties, List<SizedIngredient>, BlockPredicate, R> constructor;
-		protected final List<SizedIngredient> input;
+		protected final Function3<LycheeRecipeCommonProperties, List<Optional<SizedIngredient>>, BlockPredicate, R> constructor;
+		protected final List<Optional<SizedIngredient>> inputs;
 		protected final BlockPredicate blockPredicate;
 
+		@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 		public BlockInteracting(
-				Function3<LycheeRecipeCommonProperties, List<SizedIngredient>, BlockPredicate, R> constructor,
-				SizedIngredient mainHand,
-				@Nullable SizedIngredient offHand,
+				Function3<LycheeRecipeCommonProperties, List<Optional<SizedIngredient>>, BlockPredicate, R> constructor,
+				Optional<SizedIngredient> mainHand,
+				@Nullable Optional<SizedIngredient> offHand,
 				BlockPredicate block) {
 			this.constructor = constructor;
-			this.input = offHand == null ? List.of(mainHand) : List.of(mainHand, offHand);
+			this.inputs = offHand == null ? List.of(mainHand) : List.of(mainHand, offHand);
 			this.blockPredicate = block;
 			noRepeat();
 		}
 
 		@Override
 		public R build() {
-			return constructor.apply(properties(), input, blockPredicate);
+			return constructor.apply(properties(), inputs, blockPredicate);
 		}
 	}
 
@@ -358,7 +360,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 
 		public ShapedCrafting define(Character key, TagKey<Item> tagKey) {
-			return this.define(key, Ingredient.of(tagKey));
+			return this.define(key, Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(tagKey)));
 		}
 
 		public ShapedCrafting define(Character key, ItemLike item) {
@@ -377,7 +379,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 
 		public ShapedCrafting pattern(String row) {
-			if (!this.rows.isEmpty() && row.length() != this.rows.get(0).length()) {
+			if (!this.rows.isEmpty() && row.length() != this.rows.getFirst().length()) {
 				throw new IllegalArgumentException("Pattern must be the same width on every line!");
 			} else {
 				this.rows.add(row);

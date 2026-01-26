@@ -4,7 +4,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LightningRodBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.GuiGameElement;
@@ -38,11 +37,11 @@ public class LightningChannelingRecipeCategory extends ItemShapelessRecipeCatego
 		mapBuilder.put(
 				"lightning_rod", (builder, recipeHolder) -> {
 					Supplier<BlockState> blockStateSupplier = () -> {
-						int time = RVs.LIGHTNING_BOLT.getEntity().tickCount % 80;
+//						int time = RVs.LIGHTNING_BOLT.getEntity().tickCount % 80; FIXME
 						BlockState blockState = Blocks.LIGHTNING_ROD.defaultBlockState();
-						if (time <= 7) {
-							blockState = blockState.setValue(LightningRodBlock.POWERED, true);
-						}
+//						if (time <= 7) {
+//							blockState = blockState.setValue(LightningRodBlock.POWERED, true);
+//						}
 						return blockState;
 					};
 					Function<BlockState, RenderElement> blockElement = blockState -> GuiGameElement.of(blockState)

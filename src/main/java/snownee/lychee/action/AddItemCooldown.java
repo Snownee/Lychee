@@ -36,7 +36,7 @@ public record AddItemCooldown(PostActionCommonProperties commonProperties, float
 		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		var player = (Player) lootParams.get(LootContextParams.THIS_ENTITY);
 		var item = context.getItem(0);
-		player.getCooldowns().addCooldown(this.item.orElse(item.getItem()), (int) (seconds * 20 * times));
+		player.getCooldowns().addCooldown(this.item.map(Item::getDefaultInstance).orElse(item), (int) (seconds * 20 * times));
 	}
 
 	@Override

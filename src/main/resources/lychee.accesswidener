@@ -24,3 +24,6 @@ accessible field net/minecraft/world/entity/item/FallingBlockEntity blockState L
 accessible field net/minecraft/world/Difficulty BY_ID Ljava/util/function/IntFunction;
 
 accessible field net/minecraft/world/item/crafting/RecipeManager RECIPE_LISTER Lnet/minecraft/resources/FileToIdConverter;
+accessible field net/minecraft/world/item/crafting/RecipeManager recipes Lnet/minecraft/world/item/crafting/RecipeMap;
+
+accessible field net/minecraft/world/level/Level DEFAULT_EXPLOSION_BLOCK_PARTICLES Lnet/minecraft/util/random/WeightedList;

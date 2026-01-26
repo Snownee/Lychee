@@ -2,6 +2,7 @@ package snownee.lychee.util.particles.dripstone;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.DripParticle;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.level.material.Fluid;
 
 // Modified from Dripstone Fluid Lib
@@ -15,9 +16,9 @@ public class DripstoneSplashParticle extends DripParticle {
 			double g,
 			double h,
 			double i,
-			Fluid type
-	) {
-		super(level, x, y, z, type);
+			Fluid type,
+			TextureAtlasSprite sprite) {
+		super(level, x, y, z, type, sprite);
 		this.xd *= 0.3f;
 		this.yd = Math.random() * (double) 0.2f + (double) 0.1f;
 		this.zd *= 0.3f;

@@ -4,12 +4,10 @@ import java.util.List;
 
 import org.jspecify.annotations.Nullable;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.netty.buffer.ByteBuf;
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -17,6 +15,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.TriState;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -39,8 +38,8 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 	}
 
 	@Override
-	public net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
-		return TriState.of(difficulties.contains(level.getDifficulty()));
+	public TriState testForTooltips(Level level, @Nullable Player player) {
+		return TriState.from(difficulties.contains(level.getDifficulty()));
 	}
 
 	@Override
@@ -69,12 +68,8 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 	}
 
 	public static class Type implements ContextualConditionType<IsDifficulty> {
-		public static final Codec<Difficulty> DIFFICULTY_CODEC = Codec.withAlternative(
-				Difficulty.CODEC,
-				ExtraCodecs.NON_NEGATIVE_INT.xmap(Difficulty::byId, Difficulty::getId));
-
 		public static final MapCodec<IsDifficulty> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				ExtraCodecs.nonEmptyList(KCodecs.compactList(DIFFICULTY_CODEC))
+				ExtraCodecs.nonEmptyList(KCodecs.compactList(Difficulty.CODEC))
 						.fieldOf("difficulty")
 						.forGetter(IsDifficulty::difficulties)
 		).apply(instance, IsDifficulty::new));

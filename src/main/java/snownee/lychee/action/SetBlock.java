@@ -19,6 +19,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.network.SUpdateFallingBlockPacket;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.Displays;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -57,7 +58,7 @@ public record SetBlock(PostActionCommonProperties commonProperties, BlockPredica
 
 	@Override
 	public List<SlotDisplay> getOutputItems() {
-		return BlockPredicateExtensions.matchedItemStacks(block);
+		return BlockPredicateExtensions.matchedItemStacks(block).stream().map(Displays::slot).toList();
 	}
 
 	@Override

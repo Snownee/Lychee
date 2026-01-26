@@ -86,7 +86,7 @@ public class JsonPointer {
 
 	public JsonPointer parent() {
 		List<String> list = Lists.newArrayList(tokens);
-		list.remove(list.size() - 1);
+		list.removeLast();
 		return new JsonPointer(list);
 	}
 

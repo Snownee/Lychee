@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
@@ -24,11 +25,19 @@ public class BlockInteractingRecipeType<T extends BlockInteractingRecipe> extend
 		return Comparator.comparing(
 				RecipeHolder::value,
 				Comparator.comparing((BlockInteractingRecipe $) -> !BlockPredicateExtensions.isAny($.blockPredicate()))
-						.thenComparingInt($ -> $.getIngredients().size())
+						.thenComparingInt($ -> $.inputs().size())
 						.thenComparing($ -> !$.maxRepeats().isAny())
 						.thenComparing(Recipe::isSpecial)
-						.thenComparing($ -> !CommonProxy.isSimpleIngredient($.sizedIngredients().getFirst().ingredient()))
-						.thenComparing($ -> !CommonProxy.isSimpleIngredient($.sizedIngredients().getLast().ingredient()))
+						.thenComparing($ -> !$.inputs()
+								.getFirst()
+								.map(SizedIngredient::ingredient)
+								.map(CommonProxy::isSimpleIngredient)
+								.orElse(false))
+						.thenComparing($ -> !$.inputs()
+								.getLast()
+								.map(SizedIngredient::ingredient)
+								.map(CommonProxy::isSimpleIngredient)
+								.orElse(false))
 						.reversed());
 	}
 }

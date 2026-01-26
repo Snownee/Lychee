@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import com.google.common.base.Preconditions;
 import com.mojang.brigadier.StringReader;
+import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
@@ -25,8 +26,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.kiwi.util.codec.KCodecs;
@@ -34,17 +36,28 @@ import snownee.kiwi.util.codec.KCodecs;
 public final class LycheeCodecs {
 	private static final MapCodec<Integer> ITEM_STACK_COUNT = ExtraCodecs.NON_NEGATIVE_INT.fieldOf("count").orElse(1);
 
-	private static final MapCodec<ItemStack> ITEM_STACK_MAP_ENCODER = RecordCodecBuilder.mapCodec(instance -> instance.group(
-					BuiltInRegistries.ITEM.holderByNameCodec().fieldOf("id").forGetter(ItemStack::typeHolder),
-					ITEM_STACK_COUNT.forGetter(ItemStack::getCount),
-					DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(ItemStack::getComponentsPatch))
-			.apply(instance, ItemStack::new));
+	private static final MapCodec<ItemStackTemplate> ITEM_STACK_TEMPLATE_MAP_ENCODER = RecordCodecBuilder.mapCodec(instance -> instance.group(
+					Item.CODEC.fieldOf("id").forGetter(ItemStackTemplate::item),
+					ITEM_STACK_COUNT.forGetter(ItemStackTemplate::count),
+					DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(ItemStackTemplate::components))
+			.apply(instance, ItemStackTemplate::new));
+	private static final MapCodec<Optional<ItemStackTemplate>> OPTIONAL_ITEM_STACK_TEMPLATE_MAP_ENCODER = Codec.mapEither(
+			ITEM_STACK_TEMPLATE_MAP_ENCODER.flatXmap(
+					$ -> DataResult.success(Optional.of($)),
+					$ -> $.map(DataResult::success).orElseGet(() -> DataResult.error(() -> ""))),
+			Item.CODEC.validate($ -> $.value() == Items.AIR ? DataResult.success($) : DataResult.error(() -> ""))
+					.fieldOf("id").flatXmap(
+							_ -> DataResult.success(Optional.<ItemStackTemplate>empty()),
+							$ -> $.isEmpty() ?
+									DataResult.success(BuiltInRegistries.ITEM.wrapAsHolder(Items.AIR)) :
+									DataResult.error(() -> ""))
+	).xmap(Either::unwrap, $ -> $.isPresent() ? Either.left($) : Either.right($));
 
-	public static final MapCodec<ItemStack> ITEM_STACK_MAP_CODEC = MapCodec.of(
-			ITEM_STACK_MAP_ENCODER, new MapDecoder.Implementation<>() {
+	public static final MapCodec<Optional<ItemStackTemplate>> OPTIONAL_ITEM_STACK_TEMPLATE_MAP_CODEC = MapCodec.of(
+			OPTIONAL_ITEM_STACK_TEMPLATE_MAP_ENCODER, new MapDecoder.Implementation<>() {
 				@Override
-				public <T> DataResult<ItemStack> decode(DynamicOps<T> ops, MapLike<T> input) {
-					DataResult<ItemStack> result = ITEM_STACK_MAP_ENCODER.decode(ops, input);
+				public <T> DataResult<Optional<ItemStackTemplate>> decode(DynamicOps<T> ops, MapLike<T> input) {
+					DataResult<Optional<ItemStackTemplate>> result = OPTIONAL_ITEM_STACK_TEMPLATE_MAP_ENCODER.decode(ops, input);
 					if (result.isSuccess()) {
 						return result;
 					}
@@ -90,31 +103,25 @@ public final class LycheeCodecs {
 					if (count.isError()) {
 						return DataResult.error(() -> "Failed to decode count: " + count.error().orElseThrow().message());
 					}
-					return DataResult.success(new ItemStack(itemResult.item(), count.getOrThrow(), itemResult.components()));
+					return DataResult.success(Optional.of(new ItemStackTemplate(
+							itemResult.item(),
+							count.getOrThrow(),
+							itemResult.components())));
 				}
 
 				@Override
 				public <T> Stream<T> keys(DynamicOps<T> ops) {
-					return ITEM_STACK_MAP_ENCODER.keys(ops);
+					return ITEM_STACK_TEMPLATE_MAP_ENCODER.keys(ops);
 				}
-			}, () -> "MapCodec[ItemStack]");
-
-	public static final MapCodec<ItemStack> NONEMPTY_ITEM_STACK_MAP_CODEC = ITEM_STACK_MAP_CODEC.validate(stack -> {
-		if (stack.isEmpty()) {
-			return DataResult.error(() -> "ItemStack cannot be empty");
-		}
-		return DataResult.success(stack);
-	});
-
-	public static final Codec<ItemStack> ITEM_STACK = Codec.withAlternative(
-			NONEMPTY_ITEM_STACK_MAP_CODEC.codec(), ExtraCodecs.NON_EMPTY_STRING.flatXmap(
-					s -> KCodecs.tryCatch(() -> ParsedItem.read(new StringReader(s)).itemStack()),
-					stack -> DataResult.error(() -> "Encoding shorthand ItemStack is not supported")
-			));
-
-	public static final Codec<ItemStackTemplate> ITEM_STACK_TEMPLATE = null;
-	public static final MapCodec<ItemStackTemplate> ITEM_STACK_TEMPLATE_MAP_CODEC = null;
-	public static final MapCodec<ItemStackTemplate> NONEMPTY_ITEM_STACK_TEMPLATE_MAP_CODEC = null;
+			}, () -> "MapCodec[ItemStackTemplate]");
+	public static final MapCodec<ItemStackTemplate> ITEM_STACK_TEMPLATE_MAP_CODEC = OPTIONAL_ITEM_STACK_TEMPLATE_MAP_CODEC.flatXmap(
+			$ -> {
+				return $.map(DataResult::success).orElseGet(() -> DataResult.error(() -> "ItemStack cannot be empty"));
+			}, $ -> DataResult.success(Optional.of($)));
+	public static final Codec<ItemStackTemplate> ITEM_STACK_TEMPLATE = Codec.withAlternative(
+			ITEM_STACK_TEMPLATE_MAP_CODEC.codec(), ExtraCodecs.NON_EMPTY_STRING.flatXmap(
+					s -> KCodecs.tryCatch(() -> ParsedItem.read(new StringReader(s)).template()),
+					_ -> DataResult.error(() -> "Encoding shorthand ItemStack is not supported")));
 
 	public static final MapCodec<BlockPos> OFFSET = RecordCodecBuilder.mapCodec(posInstance -> posInstance.group(
 			Codec.INT.optionalFieldOf("offsetX", 0).forGetter(Vec3i::getX),
@@ -140,17 +147,15 @@ public final class LycheeCodecs {
 	}
 
 	//TODO move to Kiwi
-	public static final Codec<Ingredient> NONEMPTY_INGREDIENT = Codec.withAlternative(
+	public static final Codec<Ingredient> INGREDIENT = Codec.withAlternative(
 			Ingredient.CODEC, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
 					s -> KCodecs.tryCatch(() -> {
 						StringReader reader = new StringReader(s);
 						ParsedItem parsedItem = ParsedItem.read(reader);
 						Preconditions.checkArgument(!reader.canRead(), "Cannot parse %s", s);
 						return parsedItem.ingredient();
-					}), ingredient -> DataResult.error(() -> "Encoding shorthand Ingredient is not supported")
-			));
+					}), _ -> DataResult.error(() -> "Encoding shorthand Ingredient is not supported")));
 
-	//TODO move to Kiwi
 	public static final Codec<SizedIngredient> SIZED_INGREDIENT = Codec.withAlternative(
 			SizedIngredient.CODEC, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
 					s -> KCodecs.tryCatch(() -> {
@@ -158,9 +163,7 @@ public final class LycheeCodecs {
 						ParsedItem parsedItem = ParsedItem.read(reader);
 						Preconditions.checkArgument(!reader.canRead(), "Cannot parse %s", s);
 						return parsedItem.sizedIngredient();
-					}), ingredient -> DataResult.error(() -> "Encoding shorthand SizedIngredient is not supported")
-			)
-	);
+					}), _ -> DataResult.error(() -> "Encoding shorthand SizedIngredient is not supported")));
 
 	public static final Codec<List<DataComponentType<?>>> WILDCARD_COMPONENTS = Codec.withAlternative(
 			KCodecs.compactList(DataComponentType.CODEC), Codec.STRING.flatXmap(

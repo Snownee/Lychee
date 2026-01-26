@@ -20,6 +20,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.mixin.ItemEntityAccess;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.Displays;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -62,14 +63,14 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStackTem
 
 	@Override
 	public List<SlotDisplay> getOutputItems() {
-		return List.of(itemStack);
+		return List.of(Displays.slot(itemStack));
 	}
 
 	public static class Type implements PostActionType<DropItem> {
 		public static final MapCodec<DropItem> CODEC = RecordCodecBuilder.mapCodec(instance ->
 				instance.group(
 						PostActionCommonProperties.MAP_CODEC.forGetter(DropItem::commonProperties),
-						LycheeCodecs.NONEMPTY_ITEM_STACK_TEMPLATE_MAP_CODEC.forGetter(DropItem::itemStack)
+						LycheeCodecs.ITEM_STACK_TEMPLATE_MAP_CODEC.forGetter(DropItem::itemStack)
 				).apply(instance, DropItem::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, DropItem> STREAM_CODEC = StreamCodec.composite(
 				PostActionCommonProperties.STREAM_CODEC,

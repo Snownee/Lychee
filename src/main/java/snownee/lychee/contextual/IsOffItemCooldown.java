@@ -4,7 +4,7 @@ import org.jspecify.annotations.Nullable;
 
 import com.mojang.serialization.MapCodec;
 
-import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -43,21 +43,21 @@ public record IsOffItemCooldown(Holder<Item> item) implements ContextualConditio
 	}
 
 	@Override
-	public net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
+	public TriState testForTooltips(Level level, @Nullable Player player) {
 		if (player == null) {
 			return TriState.DEFAULT;
 		}
-		return TriState.of(testCommon(player));
+		return TriState.from(testCommon(player));
 	}
 
 	private boolean testCommon(Player player) {
-		return !player.getCooldowns().isOnCooldown(item.value());
+		return !player.getCooldowns().isOnCooldown(item.value().getDefaultInstance());
 	}
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
 		String key = getDescriptionId(inverted);
-		MutableComponent item = item().value().getDescription().copy();
+		MutableComponent item = item().value().getDefaultInstance().getHoverName().copy();
 		return Component.translatable(key, item.withStyle(ChatFormatting.WHITE));
 	}
 

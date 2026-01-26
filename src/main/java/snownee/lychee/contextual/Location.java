@@ -10,7 +10,6 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.advancements.criterion.FluidPredicate;
@@ -24,6 +23,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -81,14 +81,14 @@ public record Location(LocationCheck check) implements ContextualCondition {
 					level,
 					lootParams.get(LycheeContextKeys.BLOCK_POS),
 					lootParams.get(LootContextParams.ORIGIN)
-			).get() ? times : 0;
+			).toBoolean(false) ? times : 0;
 		} else {
 			return check.test(lootParams.asLootContext()) ? times : 0;
 		}
 	}
 
 	@Override
-	public net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
+	public TriState testForTooltips(Level level, @Nullable Player player) {
 		if (player == null) {
 			return TriState.DEFAULT;
 		}
@@ -215,7 +215,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public TriState testClient(Doubles value, Level level, BlockPos pos, Vec3 vec) {
-			return TriState.of(value.matches(valueGetter.apply(vec)));
+			return TriState.from(value.matches(valueGetter.apply(vec)));
 		}
 
 		@Override
@@ -245,7 +245,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public TriState testClient(BlockPredicate value, Level level, BlockPos pos, Vec3 vec) {
-			return TriState.of(BlockPredicateExtensions.unsafeMatches(
+			return TriState.from(BlockPredicateExtensions.unsafeMatches(
 					level,
 					value,
 					level.getBlockState(pos),
@@ -278,7 +278,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		@Override
 		public TriState testClient(LightPredicate value, Level level, BlockPos pos, Vec3 vec) {
 			var brightness = level.getMaxLocalRawBrightness(pos);
-			return TriState.of(value.composite().matches(brightness));
+			return TriState.from(value.composite().matches(brightness));
 		}
 
 		@Override
@@ -295,7 +295,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public TriState testClient(ResourceKey<Level> value, Level level, BlockPos pos, Vec3 vec) {
-			return TriState.of(value == level.dimension());
+			return TriState.from(value == level.dimension());
 		}
 
 		@Override
@@ -312,7 +312,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 
 		@Override
 		public TriState testClient(HolderSet<Biome> value, Level level, BlockPos pos, Vec3 vec) {
-			return TriState.of(value.contains(level.getBiome(pos)));
+			return TriState.from(value.contains(level.getBiome(pos)));
 		}
 
 		@Override

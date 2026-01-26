@@ -24,8 +24,6 @@ public class VectorExtensions {
 			list -> new Vector3f(list.get(0), list.get(1), list.size() == 3 ? list.get(2) : 0),
 			vector -> List.of(vector.x(), vector.y(), vector.z()));
 
-	public static final StreamCodec<ByteBuf, Vector3fc> STREAM_CODEC3F = ByteBufCodecs.VECTOR3F.map(Vector3f::absolute, Vector3f::new);
-
 	public static final Codec<Vector2ic> CODEC2I = Codec.INT.listOf(1, 2).xmap(
 			list -> new Vector2i(list.getFirst(), list.size() == 1 ? list.getFirst() : list.getLast()),
 			vector -> List.of(vector.x(), vector.y()));

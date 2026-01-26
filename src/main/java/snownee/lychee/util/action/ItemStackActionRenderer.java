@@ -14,7 +14,7 @@ public interface ItemStackActionRenderer<T extends PostAction> extends ItemBased
 
 	@Override
 	default List<Component> getBaseTooltips(T action, @Nullable Player player) {
-		return getItem(action).getTooltipLines(
+		return getItem(action).create().getTooltipLines(
 				Item.TooltipContext.EMPTY,
 				player,
 				Minecraft.getInstance().options.advancedItemTooltips

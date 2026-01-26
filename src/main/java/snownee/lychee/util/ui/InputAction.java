@@ -7,22 +7,23 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import snownee.lychee.client.gui.InteractiveRenderElement;
-import snownee.lychee.util.ClientProxy;
 
 public interface InputAction {
 	static MousePressed mousePressed(MouseButtonEvent event) {
 		return new MousePressed(event);
 	}
 
-	default InputConstants.Key keyMapping() {
-		return ClientProxy.getKeyMapping(this);
-	}
+	InputConstants.Key keyMapping();
 
 	default boolean isMouseOver(@Nullable InteractiveRenderElement element) {
 		return true;
 	}
 
 	record MousePressed(MouseButtonEvent event) implements InputAction {
+		@Override
+		public InputConstants.Key keyMapping() {
+			return InputConstants.Type.MOUSE.getOrCreate(event.button());
+		}
 	}
 
 	static KeyPressed keyPressed(KeyEvent event) {
@@ -34,11 +35,21 @@ public interface InputAction {
 		public boolean isMouseOver(@Nullable InteractiveRenderElement element) {
 			return element != null && element.isHovered();
 		}
+
+		@Override
+		public InputConstants.Key keyMapping() {
+			return InputConstants.getKey(event);
+		}
 	}
 
 	record Direct(String name) implements InputAction {
 		public static final Direct SHOW_RECIPES = new Direct("show_recipes");
 		public static final Direct SHOW_USAGES = new Direct("show_usages");
 		public static final Direct FAVORITE = new Direct("favorite");
+
+		@Override
+		public InputConstants.Key keyMapping() {
+			return InputConstants.UNKNOWN;
+		}
 	}
 }

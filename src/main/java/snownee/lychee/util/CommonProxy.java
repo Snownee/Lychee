@@ -17,6 +17,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
+import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,7 +30,6 @@ import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -43,8 +43,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.DirectionalPlaceContext;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
@@ -54,13 +53,13 @@ import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.Mod;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.KEvent;
-import snownee.kiwi.util.KUtil;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeBookCategories;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.SlotDisplayTypes;
 import snownee.lychee.action.CustomAction;
 import snownee.lychee.compat.recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.compat.recipe_api.VisualOnlyComponentsIngredient;
@@ -180,15 +179,6 @@ public class CommonProxy implements ModInitializer {
 		}
 		var index = (System.currentTimeMillis() / interval) % list.size();
 		return list.get(Math.toIntExact(index));
-	}
-
-	@Nullable
-	public static RecipeHolder<?> recipe(ResourceKey<Recipe<?>> id) {
-		var manager = KUtil.getRecipeManager();
-		if (manager == null) {
-			return null;
-		}
-		return manager.byKey(id).orElse(null);
 	}
 
 	// see Entity.getOnPos
@@ -322,13 +312,17 @@ public class CommonProxy implements ModInitializer {
 		Objects.requireNonNull(LycheeRegistries.CONTEXTUAL);
 		Objects.requireNonNull(ContextualConditionType.AND);
 		Objects.requireNonNull(PostActionTypes.DROP_ITEM);
-		Objects.requireNonNull(RecipeSerializers.ITEM_BURNING);
+		Objects.requireNonNull(RecipeSerializers.ALL);
 		Objects.requireNonNull(LycheeContextKey.ACTION);
 		Objects.requireNonNull(UIElementType.SPRITE);
 		Objects.requireNonNull(RecipeBookCategories.UNLISTED);
+		Objects.requireNonNull(SlotDisplayTypes.VISUAL_ONLY);
 		LycheeContextSerializers.init();
 		CustomIngredientSerializer.register(AlwaysTrueIngredient.SERIALIZER);
 		CustomIngredientSerializer.register(VisualOnlyComponentsIngredient.SERIALIZER);
+		for (RecipeSerializer<?> serializer : RecipeSerializers.ALL) {
+			RecipeSynchronization.synchronizeRecipeSerializer(serializer);
+		}
 
 		// Interaction recipes
 		UseBlockCallback.EVENT.register(BlockInteractingRecipe::invoke);

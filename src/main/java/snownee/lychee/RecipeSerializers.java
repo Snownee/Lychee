@@ -1,5 +1,9 @@
 package snownee.lychee;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -22,6 +26,7 @@ import snownee.lychee.util.ui.CategoryMetadata;
 import snownee.lychee.util.ui.CategoryModifier;
 
 public final class RecipeSerializers {
+	public static final List<RecipeSerializer<?>> ALL = Lists.newArrayList();
 	public static final RecipeSerializer<CategoryMetadata> CATEGORY_METADATA = register(
 			"category_metadata",
 			new CategoryMetadata.Serializer()
@@ -88,6 +93,7 @@ public final class RecipeSerializers {
 	);
 
 	public static <T extends RecipeSerializer<?>> T register(String id, T serializer) {
+		ALL.add(serializer);
 		return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Lychee.id(id), serializer);
 	}
 

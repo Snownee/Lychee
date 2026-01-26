@@ -21,11 +21,11 @@ public record GameElementProperties(Vector3fc localPos, Vector3fc rotation, Vect
 	).apply(i, GameElementProperties::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, GameElementProperties> STREAM_CODEC = StreamCodec.composite(
-			VectorExtensions.STREAM_CODEC3F,
+			ByteBufCodecs.VECTOR3F,
 			GameElementProperties::localPos,
-			VectorExtensions.STREAM_CODEC3F,
+			ByteBufCodecs.VECTOR3F,
 			GameElementProperties::rotation,
-			VectorExtensions.STREAM_CODEC3F,
+			ByteBufCodecs.VECTOR3F,
 			GameElementProperties::rotationOffset,
 			ByteBufCodecs.FLOAT,
 			GameElementProperties::scale,

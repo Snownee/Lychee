@@ -10,6 +10,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.recipe.SizedIngredient;
 
@@ -48,9 +49,9 @@ public record ParsedItem(ExtraCodecs.TagOrElementLocation tagOrId, int count) {
 
 	private Ingredient rawIngredient() {
 		if (tagOrId.tag()) {
-			return Ingredient.of(TagKey.create(Registries.ITEM, tagOrId.id()));
+			return Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(TagKey.create(Registries.ITEM, tagOrId.id())));
 		} else {
-			return Ingredient.of(BuiltInRegistries.ITEM.get(tagOrId.id()));
+			return Ingredient.of(BuiltInRegistries.ITEM.getValue(tagOrId.id()));
 		}
 	}
 
@@ -66,5 +67,10 @@ public record ParsedItem(ExtraCodecs.TagOrElementLocation tagOrId, int count) {
 	public ItemStack itemStack() {
 		Preconditions.checkArgument(!tagOrId.tag(), "ItemStack must not be a tag");
 		return new ItemStack(BuiltInRegistries.ITEM.getOptional(tagOrId.id()).orElseThrow(), count);
+	}
+
+	public ItemStackTemplate template() {
+		Preconditions.checkArgument(!tagOrId.tag(), "itemStackTemplate must not be a tag");
+		return new ItemStackTemplate(BuiltInRegistries.ITEM.getOptional(tagOrId.id()).orElseThrow(), count);
 	}
 }

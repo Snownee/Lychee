@@ -5,11 +5,11 @@ import java.util.Locale;
 
 import org.jspecify.annotations.Nullable;
 
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -26,7 +26,7 @@ public interface ContextualConditionDisplay {
 		tooltips.add(indentComponent);
 	}
 
-	default net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
+	default TriState testForTooltips(Level level, @Nullable Player player) {
 		return TriState.DEFAULT;
 	}
 

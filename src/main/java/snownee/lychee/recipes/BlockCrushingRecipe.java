@@ -1,6 +1,7 @@
 package snownee.lychee.recipes;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.jspecify.annotations.Nullable;
 
@@ -12,7 +13,6 @@ import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -36,7 +36,10 @@ import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 
 public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
-	public static final BlockPredicate ANVIL = BlockPredicate.Builder.block().of(BlockTags.ANVIL).build();
+	//	public static final Supplier<BlockPredicate> ANVIL = () -> BlockPredicate.Builder.block()
+//			.of(BuiltInRegistries.BLOCK, BlockTags.ANVIL)
+//			.build();
+	public static final Supplier<BlockPredicate> ANVIL = () -> BlockPredicateExtensions.ANY;
 
 	protected BlockPredicate fallingBlock;
 	protected BlockPredicate landingBlock;
@@ -137,7 +140,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		public static final MapCodec<BlockCrushingRecipe> CODEC =
 				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(BlockCrushingRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf("falling_block", ANVIL)
+						BlockPredicateExtensions.CODEC_FOR_TESTING.fieldOf("falling_block").orElseGet(ANVIL)
 								.forGetter(it -> it.fallingBlock),
 						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf("landing_block", BlockPredicateExtensions.ANY)
 								.forGetter(BlockCrushingRecipe::landingBlock),

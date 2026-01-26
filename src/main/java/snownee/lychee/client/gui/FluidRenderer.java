@@ -7,18 +7,17 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import net.fabricmc.fabric.api.transfer.v1.client.fluid.FluidVariantRendering;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.Direction.AxisDirection;
-import net.minecraft.util.Mth;
 import net.minecraft.world.level.material.FluidState;
 
 public class FluidRenderer {
 
 	public static VertexConsumer getFluidBuilder(MultiBufferSource buffer) {
-		return buffer.getBuffer(RenderTypes.getFluid());
+//		return buffer.getBuffer(RenderTypes.getFluid());
+		return null;
 	}
 
 	//	public static void renderFluidStream(FluidStack fluidStack, Direction direction, float radius, float progress,
@@ -233,66 +232,66 @@ public class FluidRenderer {
 			TextureAtlasSprite texture,
 			float textureScale
 	) {
-		var positive = dir.getAxisDirection() == Direction.AxisDirection.POSITIVE;
-		var horizontal = dir.getAxis().isHorizontal();
-		var x = dir.getAxis() == Axis.X;
-
-		var shrink = texture.uvShrinkRatio() * 0.25f * textureScale;
-		var centerU = texture.getU0() + (texture.getU1() - texture.getU0()) * 0.5f * textureScale;
-		var centerV = texture.getV0() + (texture.getV1() - texture.getV0()) * 0.5f * textureScale;
-
-		float f;
-		float x2 = 0;
-		float y2 = 0;
-		float u1, u2;
-		float v1, v2;
-		for (var x1 = left; x1 < right; x1 = x2) {
-			f = Mth.floor(x1);
-			x2 = Math.min(f + 1, right);
-			if (dir == Direction.NORTH || dir == Direction.EAST) {
-				f = Mth.ceil(x2);
-				u1 = texture.getU((f - x2) * textureScale);
-				u2 = texture.getU((f - x1) * textureScale);
-			} else {
-				u1 = texture.getU((x1 - f) * textureScale);
-				u2 = texture.getU((x2 - f) * textureScale);
-			}
-			u1 = Mth.lerp(shrink, u1, centerU);
-			u2 = Mth.lerp(shrink, u2, centerU);
-			for (var y1 = down; y1 < up; y1 = y2) {
-				f = Mth.floor(y1);
-				y2 = Math.min(f + 1, up);
-				if (dir == Direction.UP) {
-					v1 = texture.getV((y1 - f) * textureScale);
-					v2 = texture.getV((y2 - f) * textureScale);
-				} else {
-					f = Mth.ceil(y2);
-					v1 = texture.getV((f - y2) * textureScale);
-					v2 = texture.getV((f - y1) * textureScale);
-				}
-				v1 = Mth.lerp(shrink, v1, centerV);
-				v2 = Mth.lerp(shrink, v2, centerV);
-
-				if (horizontal) {
-					if (x) {
-						putVertex(builder, ms, depth, y2, positive ? x2 : x1, color, u1, v1, dir, light);
-						putVertex(builder, ms, depth, y1, positive ? x2 : x1, color, u1, v2, dir, light);
-						putVertex(builder, ms, depth, y1, positive ? x1 : x2, color, u2, v2, dir, light);
-						putVertex(builder, ms, depth, y2, positive ? x1 : x2, color, u2, v1, dir, light);
-					} else {
-						putVertex(builder, ms, positive ? x1 : x2, y2, depth, color, u1, v1, dir, light);
-						putVertex(builder, ms, positive ? x1 : x2, y1, depth, color, u1, v2, dir, light);
-						putVertex(builder, ms, positive ? x2 : x1, y1, depth, color, u2, v2, dir, light);
-						putVertex(builder, ms, positive ? x2 : x1, y2, depth, color, u2, v1, dir, light);
-					}
-				} else {
-					putVertex(builder, ms, x1, depth, positive ? y1 : y2, color, u1, v1, dir, light);
-					putVertex(builder, ms, x1, depth, positive ? y2 : y1, color, u1, v2, dir, light);
-					putVertex(builder, ms, x2, depth, positive ? y2 : y1, color, u2, v2, dir, light);
-					putVertex(builder, ms, x2, depth, positive ? y1 : y2, color, u2, v1, dir, light);
-				}
-			}
-		}
+//		var positive = dir.getAxisDirection() == Direction.AxisDirection.POSITIVE;
+//		var horizontal = dir.getAxis().isHorizontal();
+//		var x = dir.getAxis() == Axis.X;
+//
+//		var shrink = texture.uvShrinkRatio() * 0.25f * textureScale;
+//		var centerU = texture.getU0() + (texture.getU1() - texture.getU0()) * 0.5f * textureScale;
+//		var centerV = texture.getV0() + (texture.getV1() - texture.getV0()) * 0.5f * textureScale;
+//
+//		float f;
+//		float x2 = 0;
+//		float y2 = 0;
+//		float u1, u2;
+//		float v1, v2;
+//		for (var x1 = left; x1 < right; x1 = x2) {
+//			f = Mth.floor(x1);
+//			x2 = Math.min(f + 1, right);
+//			if (dir == Direction.NORTH || dir == Direction.EAST) {
+//				f = Mth.ceil(x2);
+//				u1 = texture.getU((f - x2) * textureScale);
+//				u2 = texture.getU((f - x1) * textureScale);
+//			} else {
+//				u1 = texture.getU((x1 - f) * textureScale);
+//				u2 = texture.getU((x2 - f) * textureScale);
+//			}
+//			u1 = Mth.lerp(shrink, u1, centerU);
+//			u2 = Mth.lerp(shrink, u2, centerU);
+//			for (var y1 = down; y1 < up; y1 = y2) {
+//				f = Mth.floor(y1);
+//				y2 = Math.min(f + 1, up);
+//				if (dir == Direction.UP) {
+//					v1 = texture.getV((y1 - f) * textureScale);
+//					v2 = texture.getV((y2 - f) * textureScale);
+//				} else {
+//					f = Mth.ceil(y2);
+//					v1 = texture.getV((f - y2) * textureScale);
+//					v2 = texture.getV((f - y1) * textureScale);
+//				}
+//				v1 = Mth.lerp(shrink, v1, centerV);
+//				v2 = Mth.lerp(shrink, v2, centerV);
+//
+//				if (horizontal) {
+//					if (x) {
+//						putVertex(builder, ms, depth, y2, positive ? x2 : x1, color, u1, v1, dir, light);
+//						putVertex(builder, ms, depth, y1, positive ? x2 : x1, color, u1, v2, dir, light);
+//						putVertex(builder, ms, depth, y1, positive ? x1 : x2, color, u2, v2, dir, light);
+//						putVertex(builder, ms, depth, y2, positive ? x1 : x2, color, u2, v1, dir, light);
+//					} else {
+//						putVertex(builder, ms, positive ? x1 : x2, y2, depth, color, u1, v1, dir, light);
+//						putVertex(builder, ms, positive ? x1 : x2, y1, depth, color, u1, v2, dir, light);
+//						putVertex(builder, ms, positive ? x2 : x1, y1, depth, color, u2, v2, dir, light);
+//						putVertex(builder, ms, positive ? x2 : x1, y2, depth, color, u2, v1, dir, light);
+//					}
+//				} else {
+//					putVertex(builder, ms, x1, depth, positive ? y1 : y2, color, u1, v1, dir, light);
+//					putVertex(builder, ms, x1, depth, positive ? y2 : y1, color, u1, v2, dir, light);
+//					putVertex(builder, ms, x2, depth, positive ? y2 : y1, color, u2, v2, dir, light);
+//					putVertex(builder, ms, x2, depth, positive ? y1 : y2, color, u2, v1, dir, light);
+//				}
+//			}
+//		}
 	}
 
 	private static void putVertex(
@@ -308,19 +307,19 @@ public class FluidRenderer {
 			int light
 	) {
 
-		var normal = face.getNormal();
-		var peek = ms.last();
-		var a = color >> 24 & 0xff;
-		var r = color >> 16 & 0xff;
-		var g = color >> 8 & 0xff;
-		var b = color & 0xff;
-
-		builder.addVertex(peek.pose(), x, y, z)
-				.setColor(r, g, b, a)
-				.setUv(u, v)
-				.setOverlay(OverlayTexture.NO_OVERLAY)
-				.setLight(light)
-				.setNormal(peek, normal.getX(), normal.getY(), normal.getZ());
+//		var normal = face.getNormal();
+//		var peek = ms.last();
+//		var a = color >> 24 & 0xff;
+//		var r = color >> 16 & 0xff;
+//		var g = color >> 8 & 0xff;
+//		var b = color & 0xff;
+//
+//		builder.addVertex(peek.pose(), x, y, z)
+//				.setColor(r, g, b, a)
+//				.setUv(u, v)
+//				.setOverlay(OverlayTexture.NO_OVERLAY)
+//				.setLight(light)
+//				.setNormal(peek, normal.getX(), normal.getY(), normal.getZ());
 	}
 
 }

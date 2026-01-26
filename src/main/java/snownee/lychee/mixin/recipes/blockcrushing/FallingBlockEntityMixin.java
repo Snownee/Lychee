@@ -32,19 +32,14 @@ public abstract class FallingBlockEntityMixin extends Entity implements LycheeFa
 	@Shadow
 	private boolean cancelDrop;
 	@Shadow
-	private BlockState blockState;
+	public BlockState blockState;
 
 	public FallingBlockEntityMixin(EntityType<?> type, Level level) {
 		super(type, level);
 	}
 
 	@Inject(at = @At("HEAD"), method = "causeFallDamage")
-	private void lychee_onLand(
-			float pFallDistance,
-			float pMultiplier,
-			DamageSource pSource,
-			CallbackInfoReturnable<Boolean> ci
-	) {
+	private void lychee_onLand(double fallDistance, float damageModifier, DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
 		final var entity = (FallingBlockEntity) (Object) this;
 		if (entity.level().isClientSide()) {
 			return;

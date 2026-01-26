@@ -5,8 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import org.joml.Quaternionf;
-
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -18,13 +16,12 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.entity.state.LightningBoltRenderState;
+import net.minecraft.client.renderer.entity.state.TntRenderState;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -38,12 +35,11 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ILycheeRecipe;
-import snownee.lychee.util.render.CachedRenderingEntity;
 
 // Recipe view utils
 public final class RVs {
-	public static final CachedRenderingEntity<PrimedTnt> TNT = CachedRenderingEntity.ofFactory(EntityType.TNT::create);
-	public static final CachedRenderingEntity<LightningBolt> LIGHTNING_BOLT = CachedRenderingEntity.ofFactory(EntityType.LIGHTNING_BOLT::create);
+	public static final TntRenderState TNT = new TntRenderState();
+	public static final LightningBoltRenderState LIGHTNING_BOLT = new LightningBoltRenderState();
 
 	public static ILightingSettings BLOCK_LIGHTING = CustomLightingSettings.builder()
 			.firstLightRotation(-45, -45)
@@ -127,34 +123,34 @@ public final class RVs {
 	}
 
 	public static void renderTnt(GuiGraphics graphics) {
-		PrimedTnt tnt = TNT.getEntity();
-		int fuse = 80 - tnt.tickCount % 80;
-		if (fuse >= 40) {
-			return;
-		}
-		TNT.earlySetLevel();
-		tnt.setFuse(fuse);
-		float toRad = 0.01745329251F;
-		Quaternionf quaternion = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
-		ENTITY_LIGHTING.applyLighting();
-		TNT.render(graphics.pose(), quaternion);
+//		PrimedTnt tnt = TNT.getEntity();
+//		int fuse = 80 - tnt.tickCount % 80;
+//		if (fuse >= 40) {
+//			return;
+//		}
+//		TNT.earlySetLevel();
+//		tnt.setFuse(fuse);
+//		float toRad = 0.01745329251F;
+//		Quaternionf quaternion = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
+//		ENTITY_LIGHTING.applyLighting();
+//		TNT.render(graphics.pose(), quaternion);
 	}
 
 	public static void renderLightning(GuiGraphics graphics, float x, float y) {
-		LightningBolt entity = LIGHTNING_BOLT.getEntity();
-		int time = entity.tickCount % 80;
-		if (time > 7) {
-			return;
-		}
-		float toRad = 0.01745329251F;
-		Quaternionf quaternion = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
-		if (time % 3 == 0) {
-			entity.seed = entity.tickCount;
-		}
-		ENTITY_LIGHTING.applyLighting();
-		LIGHTNING_BOLT.setScale(2);
-		LIGHTNING_BOLT.getTranslation().set(x, y, 20);
-		LIGHTNING_BOLT.render(graphics.pose(), quaternion);
+//		LightningBolt entity = LIGHTNING_BOLT.getEntity();
+//		int time = entity.tickCount % 80;
+//		if (time > 7) {
+//			return;
+//		}
+//		float toRad = 0.01745329251F;
+//		Quaternionf quaternion = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
+//		if (time % 3 == 0) {
+//			entity.seed = entity.tickCount;
+//		}
+//		ENTITY_LIGHTING.applyLighting();
+//		LIGHTNING_BOLT.setScale(2);
+//		LIGHTNING_BOLT.getTranslation().set(x, y, 20);
+//		LIGHTNING_BOLT.render(graphics.pose(), quaternion);
 	}
 
 	public static Identifier composeCategoryIdentifier(Identifier categoryId, Identifier group) {

@@ -14,9 +14,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import snownee.kiwi.util.KUtil;
 import snownee.lychee.Lychee;
 import snownee.lychee.mixin.LootContextParamSetsAccess;
 import snownee.lychee.util.context.LycheeContext;
@@ -61,8 +61,8 @@ public class LycheeRecipeType<T extends ILycheeRecipe<LycheeContext>> implements
 		return recipes;
 	}
 
-	public List<RecipeHolder<T>> inViewerRecipes() {
-		return KUtil.getRecipes(this).stream().filter(it -> !it.value().hideInRecipeViewer()).toList();
+	public List<RecipeHolder<T>> inViewerRecipes(RecipeMap recipeMap) {
+		return recipeMap.byType(this).stream().filter(it -> !it.value().hideInRecipeViewer()).toList();
 	}
 
 	public void updateEmptyState() {
@@ -74,8 +74,8 @@ public class LycheeRecipeType<T extends ILycheeRecipe<LycheeContext>> implements
 	}
 
 	@MustBeInvokedByOverriders
-	public void refreshCache() {
-		recipes = KUtil.getRecipes(this).stream().filter(it -> !it.value().ghost()).sorted(comparator()).toList();
+	public void refreshCache(RecipeMap recipeMap) {
+		recipes = recipeMap.byType(this).stream().filter(it -> !it.value().ghost()).sorted(comparator()).toList();
 	}
 
 	public Comparator<RecipeHolder<T>> comparator() {

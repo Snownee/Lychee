@@ -191,7 +191,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		public static final MapCodec<AnvilCraftingRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(AnvilCraftingRecipe::commonProperties),
-						LycheeCodecs.sizeLimit(KCodecs.compactList(LycheeCodecs.NONEMPTY_INGREDIENT), 1, 2)
+						LycheeCodecs.sizeLimit(KCodecs.compactList(LycheeCodecs.INGREDIENT), 1, 2)
 								.fieldOf(ITEM_IN)
 								.forGetter(AnvilCraftingRecipe::getIngredients),
 						LycheeCodecs.ITEM_STACK_TEMPLATE.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),

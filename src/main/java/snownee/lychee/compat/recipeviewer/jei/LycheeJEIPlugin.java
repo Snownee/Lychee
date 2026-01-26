@@ -18,12 +18,14 @@ import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IVanillaCategoryExtensionRegistration;
 import mezz.jei.api.runtime.IJeiRuntime;
+import mezz.jei.common.Internal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextMap;
+import net.minecraft.world.item.crafting.RecipeMap;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.item.crafting.display.SlotDisplayContext;
-import snownee.kiwi.util.KUtil;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.RenderElement;
@@ -62,7 +64,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registration) {
 		rvPlugin.helper().setJeiHelpers(registration.getJeiHelpers());
-		rvPlugin.init();
+		rvPlugin.init(Internal.getClientSyncedRecipes());
 		for (var rvCategory : rvPlugin.categories().values()) {
 			registration.addRecipeCategories(new RvCategoryAdapter<>(rvCategory));
 		}
@@ -82,12 +84,13 @@ public class LycheeJEIPlugin implements IModPlugin {
 					instance.recipes());
 		}
 
+		RecipeMap recipeMap = Internal.getClientSyncedRecipes();
 		try {
-			var recipes = KUtil.getRecipes(RecipeTypes.ANVIL_CRAFTING)
+			ContextMap context = SlotDisplayContext.fromLevel(Objects.requireNonNull(Minecraft.getInstance().level));
+			var recipes = recipeMap.byType(RecipeTypes.ANVIL_CRAFTING)
 					.stream()
-					.filter($ ->
-							!$.value().output().isEmpty() && !$.value().isSpecial() && !$.value().hideInRecipeViewer())
-					.map($ -> (IJeiAnvilRecipe) AnvilCraftingDisplay.of($))
+					.filter($ -> !$.value().isSpecial() && !$.value().hideInRecipeViewer())
+					.map($ -> (IJeiAnvilRecipe) AnvilCraftingDisplay.of($, context))
 					.toList();
 			registration.addRecipes(mezz.jei.api.constants.RecipeTypes.ANVIL, recipes);
 		} catch (Throwable e) {
@@ -123,7 +126,7 @@ public class LycheeJEIPlugin implements IModPlugin {
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 		rvPlugin.helper().setRuntime(jeiRuntime);
 		Minecraft.getInstance().execute(() -> {
-			var recipes = KUtil.getRecipes(net.minecraft.world.item.crafting.RecipeType.CRAFTING).stream().filter($ ->
+			var recipes = Internal.getClientSyncedRecipes().byType(RecipeType.CRAFTING).stream().filter($ ->
 					$.value() instanceof ILycheeRecipe<?> recipe && recipe.hideInRecipeViewer()).toList();
 			jeiRuntime.getRecipeManager().hideRecipes(mezz.jei.api.constants.RecipeTypes.CRAFTING, recipes);
 		});

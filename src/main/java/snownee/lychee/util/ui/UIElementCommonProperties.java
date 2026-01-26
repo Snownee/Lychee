@@ -37,7 +37,7 @@ public record UIElementCommonProperties(
 	).apply(i, UIElementCommonProperties::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, UIElementCommonProperties> STREAM_CODEC = StreamCodec.composite(
-			VectorExtensions.STREAM_CODEC3F,
+			ByteBufCodecs.VECTOR3F,
 			UIElementCommonProperties::pos,
 			VectorExtensions.STREAM_CODEC2I,
 			UIElementCommonProperties::size,

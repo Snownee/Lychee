@@ -2,6 +2,7 @@ package snownee.lychee.action.input;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.jspecify.annotations.Nullable;
 
@@ -9,13 +10,14 @@ import com.google.common.base.Preconditions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
+import snownee.lychee.util.Displays;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -26,7 +28,15 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record SetItem(PostActionCommonProperties commonProperties, ItemStackTemplate itemStack, Reference target) implements PostAction {
+public record SetItem(
+		PostActionCommonProperties commonProperties,
+		@Nullable ItemStackTemplate itemStack,
+		Reference target) implements PostAction {
+
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+	public SetItem(PostActionCommonProperties commonProperties, Optional<ItemStackTemplate> itemStack, Reference target) {
+		this(commonProperties, itemStack.orElse(null), target);
+	}
 
 	@Override
 	public PostActionType<SetItem> type() {
@@ -36,26 +46,23 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStackTemp
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
 		var indexes = Objects.requireNonNull(recipe).getItemIndexes(target);
-		var registryAccess = context.level().registryAccess();
 		for (var index : indexes) {
-			var tag = (CompoundTag) context.getItem(index).save(registryAccess);
-			ItemStack stack = itemStack.create();
-			context.setItem(index, stack);
-			if (!stack.isEmpty()) {
-				((CompoundTag) context.getItem(index).saveOptional(registryAccess)).merge(tag);
-			}
+			context.setItem(index, itemStack != null ? itemStack.create() : ItemStack.EMPTY);
 			context.get(LycheeContextKey.ITEM).get(index).setConsumption(0);
 		}
 	}
 
 	@Override
 	public Component getDisplayName() {
+		if (itemStack == null) {
+			return ItemStack.EMPTY.getHoverName(); //TODO
+		}
 		return itemStack.create().getHoverName();
 	}
 
 	@Override
 	public List<SlotDisplay> getOutputItems() {
-		return List.of(new SlotDisplay.ItemStackSlotDisplay(itemStack));
+		return List.of(Displays.slot(itemStack));
 	}
 
 	@Override
@@ -69,8 +76,8 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStackTemp
 	}
 
 	@Override
-	public SlotDisplay transformRemainder(SlotDisplay itemStack, @Nullable ILycheeRecipe<?> recipe) {
-		return new SlotDisplay.ItemStackSlotDisplay(itemStack());
+	public SlotDisplay transformRemainder(SlotDisplay display, @Nullable ILycheeRecipe<?> recipe) {
+		return Displays.slot(itemStack());
 	}
 
 	//	@Override
@@ -82,14 +89,14 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStackTemp
 	public static class Type implements PostActionType<SetItem> {
 		public static final MapCodec<SetItem> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(SetItem::commonProperties),
-				LycheeCodecs.ITEM_STACK_TEMPLATE_MAP_CODEC.forGetter(SetItem::itemStack),
+				LycheeCodecs.OPTIONAL_ITEM_STACK_TEMPLATE_MAP_CODEC.forGetter($ -> Optional.ofNullable($.itemStack)),
 				Reference.CODEC.optionalFieldOf("target", Reference.DEFAULT).forGetter(SetItem::target)
 		).apply(instance, SetItem::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, SetItem> STREAM_CODEC = StreamCodec.composite(
 				PostActionCommonProperties.STREAM_CODEC,
 				SetItem::commonProperties,
-				ItemStackTemplate.STREAM_CODEC,
-				SetItem::itemStack,
+				ItemStackTemplate.STREAM_CODEC.apply(ByteBufCodecs::optional),
+				$ -> Optional.ofNullable($.itemStack),
 				Reference.STREAM_CODEC,
 				SetItem::target,
 				SetItem::new);

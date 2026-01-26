@@ -52,7 +52,7 @@ public abstract class ServerExplosionMixin {
 	private Explosion.BlockInteraction blockInteraction;
 
 	@Shadow
-	private static void addOrAppendStack(List<Pair<ItemStack, BlockPos>> list, ItemStack itemStack, BlockPos blockPos) {
+	private static void addOrAppendStack(List<Pair<ItemStack, BlockPos>> stacks, ItemStack stack, BlockPos pos) {
 	}
 
 	/**
@@ -79,9 +79,10 @@ public abstract class ServerExplosionMixin {
 			contextRef.set(null);
 			return state;
 		}
-		contextRef.set(new LycheeContext());
-		contextRef.get().put(LycheeContextKey.LEVEL, level);
-		var lootParams = contextRef.get().get(LycheeContextKey.LOOT_PARAMS);
+		LycheeContext context = new LycheeContext();
+		contextRef.set(context);
+		context.put(LycheeContextKey.LEVEL, level);
+		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		lootParams.set(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
 		lootParams.set(LootContextParams.BLOCK_STATE, state);
 		var blockEntity = state.hasBlockEntity() ? level.getBlockEntity(blockPos) : null;

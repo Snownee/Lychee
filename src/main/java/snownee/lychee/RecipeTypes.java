@@ -9,6 +9,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
+import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
@@ -140,8 +141,8 @@ public final class RecipeTypes {
 		return Registry.register(BuiltInRegistries.RECIPE_TYPE, recipeType.id, recipeType);
 	}
 
-	public static void buildCache() {
-		ALL.forEach(LycheeRecipeType::refreshCache);
+	public static void buildCache(RecipeMap recipeMap) {
+		ALL.forEach(lycheeRecipeType -> lycheeRecipeType.refreshCache(recipeMap));
 		ALL.forEach(LycheeRecipeType::updateEmptyState);
 	}
 

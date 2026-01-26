@@ -44,6 +44,7 @@ import snownee.lychee.compat.recipeviewer.jei.LycheeJEIPlugin;
 import snownee.lychee.compat.recipeviewer.jei.LycheeJeiRecipeType;
 import snownee.lychee.compat.recipeviewer.jei.element.RenderElementAdapter;
 import snownee.lychee.compat.recipeviewer.jei.ingredient.PostActionIngredientRenderer;
+import snownee.lychee.util.Displays;
 import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.PostAction;
@@ -70,11 +71,11 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 
 	private void addBlockIngredients(IRecipeLayoutBuilder builder, Iterable<BlockPredicate> blocks, RecipeIngredientRole role) {
 		for (BlockPredicate block : blocks) {
-			List<ItemStack> items = BlockPredicateExtensions.matchedItemStacks(block);
+			List<ItemStackTemplate> items = BlockPredicateExtensions.matchedItemStacks(block);
 			Set<Fluid> fluids = BlockPredicateExtensions.matchedFluids(block);
 			if (!items.isEmpty() || !fluids.isEmpty()) {
 				IIngredientAcceptor<?> acceptor = builder.addInvisibleIngredients(role);
-				acceptor.addItemStacks(items);
+				acceptor.add(Displays.slot(items));
 				fluids.forEach(fluid -> acceptor.add(
 						fluid,
 						((JeiRvHelper) instance.helper()).jeiHelpers().getPlatformFluidHelper().bucketVolume()));
@@ -137,7 +138,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 			Map<ItemStackTemplate, PostAction> itemMap) {
 		switch (action) {
 			case DropItem dropItem -> {
-				slotBuilder.add(new SlotDisplay.ItemStackSlotDisplay(dropItem.itemStack()));
+				slotBuilder.add(Displays.slot(dropItem.itemStack()));
 				if (action.commonProperties().icon() != null || action.commonProperties().conditions().hasShowingConditions()) {
 					slotBuilder.setCustomRenderer(
 							VanillaTypes.ITEM_STACK, new IIngredientRenderer<>() {

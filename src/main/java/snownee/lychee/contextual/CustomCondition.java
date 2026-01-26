@@ -1,5 +1,6 @@
 package snownee.lychee.contextual;
 
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -9,14 +10,14 @@ import com.google.gson.JsonObject;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -30,9 +31,8 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 public class CustomCondition implements ContextualCondition {
 	public final JsonObject data;
 	private final String id;
-	public ContextualPredicate testFunc = null;
-	public BiFunction<Level, @Nullable Player, InteractionResult> testInTooltipsFunc =
-			(level, player) -> InteractionResult.PASS;
+	public @Nullable ContextualPredicate testFunc = null;
+	public BiFunction<Level, @Nullable Player, TriState> testInTooltipsFunc = (_, _) -> TriState.DEFAULT;
 
 	public CustomCondition(String id, JsonObject data) {
 		this.id = id;
@@ -54,12 +54,8 @@ public class CustomCondition implements ContextualCondition {
 	}
 
 	@Override
-	public net.fabricmc.fabric.api.util.TriState testForTooltips(Level level, @Nullable Player player) {
-		return switch (testInTooltipsFunc.apply(level, player)) {
-			case SUCCESS, SUCCESS_NO_ITEM_USED -> TriState.TRUE;
-			case FAIL -> TriState.FALSE;
-			case PASS, CONSUME_PARTIAL, CONSUME -> TriState.DEFAULT;
-		};
+	public TriState testForTooltips(Level level, @Nullable Player player) {
+		return Objects.requireNonNull(testInTooltipsFunc.apply(level, player));
 	}
 
 	@Override

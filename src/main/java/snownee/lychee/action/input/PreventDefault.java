@@ -41,8 +41,8 @@ public record PreventDefault(PostActionCommonProperties commonProperties) implem
 	}
 
 	@Override
-	public SlotDisplay transformRemainder(SlotDisplay itemStack, @Nullable ILycheeRecipe<?> recipe) {
-		return itemStack;
+	public SlotDisplay transformRemainder(SlotDisplay display, @Nullable ILycheeRecipe<?> recipe) {
+		return display;
 	}
 
 	public static class Type implements PostActionType<PreventDefault> {

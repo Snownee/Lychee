@@ -6,7 +6,6 @@
 	"mixins": [
 		"ChunkMapAccess",
 		"CraftingMenuAccess",
-		"DamageSourcesAccess",
 		"DefaultDispenseItemBehaviorMixin",
 		"EntityAccess",
 		"EntityMixin",
@@ -38,12 +37,10 @@
 		"recipes.iteminside.EntityMixin",
 		"recipes.lightningchanneling.LightningBoltMixin",
 		"recipes.randomblockticking.BlockBehaviourMixin",
-		"recipes.randomblockticking.BlocksMixin",
 		"recipes.randomblockticking.BlockStateMixin"
 	],
 	"client": [
 		"client.ClientPacketListenerMixin",
-		"client.GameRendererAccess",
 		"jei.AnvilRecipeCategoryMixin"
 	],
 	"injectors": {

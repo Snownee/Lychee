@@ -13,6 +13,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeMap;
 import snownee.lychee.Lychee;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.util.context.LycheeContext;
@@ -31,8 +32,8 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 
 	@Override
 	@MustBeInvokedByOverriders
-	public void refreshCache() {
-		super.refreshCache();
+	public void refreshCache(RecipeMap recipeMap) {
+		super.refreshCache(recipeMap);
 		validItems.refreshCache(recipes);
 	}
 

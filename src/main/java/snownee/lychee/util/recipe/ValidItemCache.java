@@ -2,24 +2,25 @@ package snownee.lychee.util.recipe;
 
 import java.util.List;
 
-import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
-import it.unimi.dsi.fastutil.ints.IntSets;
-import net.minecraft.world.entity.player.StackedContents;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import it.unimi.dsi.fastutil.objects.ReferenceSet;
+import net.minecraft.core.Holder;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class ValidItemCache {
-	private IntSet validItems = IntSets.emptySet();
+	private ReferenceSet<Holder<Item>> validItems = ReferenceSet.of();
 
-	public void refreshCache(List<? extends RecipeHolder<?>> recipes) {
-		validItems = new IntAVLTreeSet(recipes.stream()
+	public void refreshCache(List<? extends RecipeHolder<? extends ILycheeRecipe<?>>> recipes) {
+		validItems = new ReferenceOpenHashSet<>(recipes.stream()
 				.flatMap($ -> $.value().getIngredients().stream())
-				.flatMapToInt($ -> $.getStackingIds().intStream())
-				.toArray());
+				.flatMap(Ingredient::items)
+				.toList());
 	}
 
 	public boolean contains(ItemStack stack) {
-		return validItems.contains(StackedContents.getStackingIndex(stack));
+		return validItems.contains(stack.typeHolder());
 	}
 }
