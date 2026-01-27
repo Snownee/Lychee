@@ -1,0 +1,9 @@
+item_in:
+- iron_ingot
+- flint
+post:
+- type: move_towards_face
+- block: fire
+  type: place
+- type: prevent_default
+type: lychee:block_interacting

@@ -1,0 +1,8 @@
+block_in: deepslate_iron_ore
+item_in: {}
+post:
+- id: diamond
+  type: drop_item
+- s: 0.5
+  type: add_item_cooldown
+type: lychee:block_clicking

@@ -1,0 +1,10 @@
+contextual:
+  range:
+    max: 1.5
+    min: 1
+  type: fall_distance
+landing_block: chest
+post:
+  block: '*'
+  type: place
+type: lychee:block_crushing

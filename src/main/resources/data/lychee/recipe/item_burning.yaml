@@ -1,0 +1,16 @@
+contextual:
+  contextual:
+    type: weather
+    weather: rain
+  secret: true
+  type: not
+item_in:
+  count: 5
+  ingredient: dirt
+post:
+- count: 5
+  id: diamond
+  type: drop_item
+- id: gold_ingot
+  type: drop_item
+type: lychee:item_burning

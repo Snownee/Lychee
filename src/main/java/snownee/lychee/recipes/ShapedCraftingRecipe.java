@@ -1,6 +1,7 @@
 package snownee.lychee.recipes;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +23,7 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -88,8 +90,14 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 	}
 
 	@Override
+	public List<Ingredient> getIngredients() {
+		return shaped.getIngredients().stream().filter(Optional::isPresent).map(Optional::get).toList();
+	}
+
+	@Override
 	public IntList getItemIndexes(JsonPointer pointer) {
-		var size = getIngredients().size();
+		List<Ingredient> ingredients = getIngredients();
+		var size = ingredients.size();
 		if (pointer.size() == 1 && pointer.getString(0).equals("result")) {
 			return IntList.of(size);
 		}
@@ -107,8 +115,8 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 			IntList list = IntArrayList.of();
 			char cp = key.charAt(0);
 			var ingredient = data.key().get(cp);
-			for (var i = 0; i < getIngredients().size(); i++) {
-				if (ingredient == getIngredients().get(i)) {
+			for (var i = 0; i < ingredients.size(); i++) {
+				if (ingredient == ingredients.get(i)) {
 					list.add(i);
 				}
 			}

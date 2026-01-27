@@ -1,0 +1,15 @@
+item_in:
+- shears
+- pumpkin
+post:
+- contextual:
+    chance: 0.5
+    type: chance
+  target: /item_in/0
+  type: damage_item
+- id: carved_pumpkin
+  target: /item_in/1
+  type: set_item
+- id: pumpkin_seeds
+  type: drop_item
+type: lychee:item_inside

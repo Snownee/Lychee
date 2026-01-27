@@ -1,0 +1,12 @@
+item_in: coal_block
+post:
+- empty_weight: 1
+  entries:
+  - contextual:
+      chance: 0.5
+      type: chance
+    id: diamond
+    type: drop_item
+  rolls: 64
+  type: random
+type: lychee:item_exploding

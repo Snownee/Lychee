@@ -1,0 +1,9 @@
+block_in: minecraft:lava
+group: test
+item_in: magma_block
+post:
+- id: obsidian
+  type: drop_item
+- block: '*'
+  type: place
+type: lychee:item_inside

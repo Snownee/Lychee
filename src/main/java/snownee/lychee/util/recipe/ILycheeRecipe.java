@@ -44,6 +44,12 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	JsonPointer ITEM_OUT_POINTER = new JsonPointer("/item_out");
 	JsonPointer RESULT_POINTER = new JsonPointer("/result");
 	JsonPointer POST_POINTER = new JsonPointer("/post");
+	PlacementInfo DEFAULT_PLACEMENT_INFO = new PlacementInfo(List.of(), IntList.of()) {
+		@Override
+		public boolean isImpossibleToPlace() {
+			return false;
+		}
+	};
 
 	default void onConstructed() {
 		allActions().forEach(it -> it.validate(this));
@@ -93,7 +99,7 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 
 	@Override
 	default PlacementInfo placementInfo() {
-		return PlacementInfo.NOT_PLACEABLE;
+		return DEFAULT_PLACEMENT_INFO;
 	}
 
 	default JsonPointer defaultItemPointer() {

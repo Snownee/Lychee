@@ -1,0 +1,15 @@
+block_in: water_cauldron
+if:
+  description: Test
+  type: is_sneaking
+item_in:
+- count: 3
+  ingredient: '#sand'
+- bucket
+post:
+- id: water_bucket
+  target: /item_in/1
+  type: set_item
+- block: cauldron
+  type: place
+type: lychee:block_clicking

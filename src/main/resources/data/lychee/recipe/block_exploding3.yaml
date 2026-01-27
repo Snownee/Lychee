@@ -1,0 +1,10 @@
+block_in: gold_block
+if:
+  type: weather
+  weather: rain
+post:
+- block: diamond_block
+  type: place
+- id: diamond_block
+  type: drop_item
+type: lychee:block_exploding

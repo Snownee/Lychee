@@ -1,0 +1,6 @@
+post:
+- block: wet_sponge
+  type: place
+source_block: water
+target_block: sponge
+type: lychee:dripstone_dripping

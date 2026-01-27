@@ -1,0 +1,13 @@
+block_in: pumpkin
+item_in: shears
+post:
+- type: prevent_default
+- command: damage @s 2
+  contextual:
+  - range:
+      min: 2.1
+    type: entity_health
+  type: execute
+- id: dirt
+  type: drop_item
+type: lychee:block_interacting

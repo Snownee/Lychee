@@ -9,7 +9,7 @@
   ],
   "item_in": {
     "count": 2,
-    "tag": "minecraft:beds"
+    "ingredient": "#minecraft:beds"
   },
   "post": [
     {

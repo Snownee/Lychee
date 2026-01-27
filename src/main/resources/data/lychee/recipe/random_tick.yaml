@@ -1,0 +1,8 @@
+block_in: diamond_block
+contextual:
+- command: execute if block ~ ~-1 ~ minecraft:diamond_block
+  type: execute
+post:
+- block: dirt
+  type: place
+type: lychee:random_block_ticking

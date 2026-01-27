@@ -1,0 +1,6 @@
+block_in: ice
+post:
+- type: prevent_default
+- block: gold_block
+  type: place
+type: lychee:block_exploding

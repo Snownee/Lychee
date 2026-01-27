@@ -2,6 +2,7 @@ package snownee.lychee.client.gui;
 
 import org.jspecify.annotations.Nullable;
 
+import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 
@@ -11,9 +12,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -34,10 +38,14 @@ public class GuiGameElement {
 	}
 
 	public static GuiRenderBuilder of(BlockState blockState) {
-		if (blockState.getRenderShape() != RenderShape.MODEL && blockState.getFluidState().isEmpty()) {
-			return new GuiBlockStateRenderBuilder(blockState, GuiGameElement.of(blockState.getBlock()));
+		Block block = blockState.getBlock();
+		if (block == Blocks.AIR) {
+			return new GuiBlockStateRenderBuilder(blockState);
 		}
-		if (blockState.getBlock() instanceof StairBlock) {
+		if (blockState.getRenderShape() != RenderShape.MODEL && blockState.getFluidState().isEmpty()) {
+			return new GuiBlockStateRenderBuilder(blockState, GuiGameElement.of(block));
+		}
+		if (block instanceof StairBlock) {
 			blockState = blockState.setValue(StairBlock.FACING, blockState.getValue(StairBlock.FACING).getOpposite());
 		}
 		return new GuiBlockStateRenderBuilder(blockState);
@@ -269,7 +277,9 @@ public class GuiGameElement {
 		}
 
 		public GuiItemRenderBuilder(ItemLike provider) {
-			this(new ItemStackTemplate(provider.asItem()));
+			Item item = provider.asItem();
+			Preconditions.checkArgument(item != Items.AIR, "Item provider provides air item");
+			this(new ItemStackTemplate(item));
 		}
 
 		@Override

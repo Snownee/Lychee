@@ -1,0 +1,7 @@
+item_in:
+- count: 3
+  ingredient: oak_planks
+post:
+- id: oak_slab
+  type: drop_item
+type: lychee:block_crushing

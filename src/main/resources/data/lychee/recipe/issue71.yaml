@@ -1,0 +1,12 @@
+block_in: minecraft:mud
+item_in: minecraft:snowball
+post:
+- contextual:
+    chance: 0.5
+    type: chance
+  type: prevent_default
+- id: minecraft:clay
+  type: drop_item
+- block: air
+  type: place
+type: lychee:block_interacting

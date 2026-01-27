@@ -1,0 +1,68 @@
+item_in: '#planks'
+post:
+- id: diamond
+  type: drop_item
+- contextual:
+    chance: 0.5
+    type: chance
+  id: cod
+  type: drop_item
+- contextual:
+    chance: 0.5
+    type: chance
+  id: cod
+  type: drop_item
+- contextual:
+    chance: 0.5
+    type: chance
+  id: cod
+  type: drop_item
+- contextual:
+  - chance: 0.5
+    type: chance
+  - chance: 0.5
+    type: chance
+  id: cod
+  type: drop_item
+- contextual:
+    contextual:
+    - chance: 0.5
+      type: chance
+    - contextual:
+        difficulty:
+        - easy
+        - normal
+        - hard
+        type: difficulty
+      type: not
+    - predicate:
+        dimension: the_end
+        feature: igloo
+        fluid:
+          fluids: minecraft:flowing_water
+        position:
+          x:
+            max: 1000
+            min: -1000
+        smokey: false
+      type: location
+    type: or
+  id: cod
+  type: drop_item
+- contextual:
+    type: weather
+    weather: rain
+  type: drop_xp
+  xp: 100
+- block:
+    blocks:
+    - oak_stairs
+    state:
+      waterlogged: 'true'
+  type: place
+- command: say hi
+  contextual:
+    type: weather
+    weather: clear
+  type: execute
+type: lychee:item_burning

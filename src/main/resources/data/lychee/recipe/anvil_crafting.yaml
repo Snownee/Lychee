@@ -1,0 +1,16 @@
+contextual:
+  predicate:
+    dimension: overworld
+  type: location
+item_in:
+- dirt
+- dirt
+item_out:
+  id: diamond[item_name=ComponentTest]
+level_cost: 10
+material_cost: 2
+post:
+- id: apple
+  target: /item_in/1
+  type: set_item
+type: lychee:anvil_crafting

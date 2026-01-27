@@ -1,0 +1,17 @@
+comment: testing
+key:
+  a: stone
+  b: dirt
+pattern:
+- aa
+- 'b '
+- aa
+post:
+- id: minecraft:redstone
+  target: /key/a
+  type: set_item
+result:
+  count: 1
+  id: minecraft:coarse_dirt
+  ingredient: minecraft:coarse_dirt
+type: lychee:crafting

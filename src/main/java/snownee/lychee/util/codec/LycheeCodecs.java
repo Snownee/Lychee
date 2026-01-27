@@ -44,13 +44,15 @@ public final class LycheeCodecs {
 	private static final MapCodec<Optional<ItemStackTemplate>> OPTIONAL_ITEM_STACK_TEMPLATE_MAP_ENCODER = Codec.mapEither(
 			ITEM_STACK_TEMPLATE_MAP_ENCODER.flatXmap(
 					$ -> DataResult.success(Optional.of($)),
-					$ -> $.map(DataResult::success).orElseGet(() -> DataResult.error(() -> ""))),
-			Item.CODEC.validate($ -> $.value() == Items.AIR ? DataResult.success($) : DataResult.error(() -> ""))
+					$ -> $.map(DataResult::success).orElseGet(() -> DataResult.error(() -> "Item must not be minecraft:air"))),
+			BuiltInRegistries.ITEM.holderByNameCodec().validate($ -> $.value() == Items.AIR ?
+							DataResult.success($) :
+							DataResult.error(() -> "Item must be minecraft:air"))
 					.fieldOf("id").flatXmap(
 							_ -> DataResult.success(Optional.<ItemStackTemplate>empty()),
 							$ -> $.isEmpty() ?
 									DataResult.success(BuiltInRegistries.ITEM.wrapAsHolder(Items.AIR)) :
-									DataResult.error(() -> ""))
+									DataResult.error(() -> "Item must be minecraft:air"))
 	).xmap(Either::unwrap, $ -> $.isPresent() ? Either.left($) : Either.right($));
 
 	public static final MapCodec<Optional<ItemStackTemplate>> OPTIONAL_ITEM_STACK_TEMPLATE_MAP_CODEC = MapCodec.of(

@@ -1,9 +1,8 @@
 type: lychee:category_metadata
 category: lychee:item_inside/minecraft/test
 render_default: false
-size: [ 100 ]
-workstation:
-  item: apple
+size: [100]
+workstation: apple
 icon:
   type: item
   id: apple
@@ -11,6 +10,6 @@ elements:
   extra:
     type: item
     id: apple
-    pos: [ 40, 20 ]
+    pos: [40, 20]
     tooltip: Test
-  action_group: [ ]
+  action_group: []

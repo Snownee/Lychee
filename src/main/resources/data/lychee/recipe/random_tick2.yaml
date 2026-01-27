@@ -1,0 +1,12 @@
+block_in: wheat
+contextual:
+- type: weather
+  weather: rain
+post:
+- block:
+    blocks:
+    - minecraft:air
+  type: place
+- command: say 2
+  type: execute
+type: lychee:random_block_ticking

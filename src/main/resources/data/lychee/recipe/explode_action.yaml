@@ -1,0 +1,5 @@
+item_in: cobblestone
+post:
+- block_interaction: none
+  type: explode
+type: lychee:item_burning

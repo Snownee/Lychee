@@ -1,0 +1,6 @@
+post:
+- command: fill ~-3 ~-3 ~-3 ~3 ~3 ~3 calcite replace redstone_block
+  type: execute
+- id: copper_block
+  type: drop_item
+type: lychee:lightning_channeling

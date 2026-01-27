@@ -1,0 +1,13 @@
+block_in:
+  blocks:
+  - wheat
+  state:
+    age:
+      min: '5'
+item_in: bucket
+post:
+- id: water_bucket
+  type: drop_item
+- block: cauldron
+  type: place
+type: lychee:item_inside

@@ -5,11 +5,11 @@ block_in:
 item_in:
   fabric:type: lychee:always_true
 if:
-  - type: location
-    predicate:
-      dimension: minecraft:the_nether
+- type: location
+  predicate:
+    dimension: minecraft:the_nether
 post:
-  - type: prevent_default
-  - type: execute
-    command: playsound minecraft:block.fire.extinguish record @s
-    icon: lychee:left_click
+- type: prevent_default
+- type: execute
+  command: playsound minecraft:block.fire.extinguish record @s
+  icon: lychee:left_click

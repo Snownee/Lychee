@@ -1,0 +1,20 @@
+key:
+  A: minecraft:anvil
+  B: minecraft:cobblestone
+pattern:
+- A
+- ' '
+- B
+post:
+- id: minecraft:air
+  target: /key/A
+  type: set_item
+- id: minecraft:anvil
+  target: /key/B
+  type: set_item
+- command: playsound minecraft:block.anvil.land block @a ~ ~ ~ 0.3 1 0
+  hide: false
+  type: execute
+result:
+  id: minecraft:gravel
+type: lychee:crafting

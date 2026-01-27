@@ -1,0 +1,15 @@
+comment: Test
+post:
+- block: calcite
+  type: place
+- block: red_shulker_box
+  type: place
+- block: chest
+  type: place
+- block: oak_sign
+  type: place
+- block: red_banner
+  type: place
+source_block: red_banner
+target_block: sponge
+type: lychee:dripstone_dripping

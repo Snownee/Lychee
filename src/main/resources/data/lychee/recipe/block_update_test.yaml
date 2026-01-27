@@ -1,0 +1,6 @@
+block_in: short_grass
+item_in: diamond
+post:
+- block: redstone_block
+  type: place
+type: lychee:item_inside

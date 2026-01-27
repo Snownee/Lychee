@@ -1,0 +1,13 @@
+block_in:
+  blocks:
+  - minecraft:campfire
+  state:
+    lit: 'true'
+item_in: '#minecraft:logs'
+post:
+- s: 0.6
+  type: delay
+- count: 2
+  id: minecraft:torch
+  type: drop_item
+type: lychee:item_inside

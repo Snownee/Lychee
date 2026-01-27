@@ -1,0 +1,30 @@
+block_in: redstone_block
+item_in: diamond
+post:
+- id: diamond
+  type: drop_item
+- s: 1
+  type: delay
+- id: diamond
+  type: drop_item
+- s: 1
+  type: delay
+- id: diamond
+  type: drop_item
+- s: 1
+  type: delay
+- id: diamond
+  type: drop_item
+- s: 1
+  type: delay
+- id: diamond
+  type: drop_item
+- s: 1
+  type: delay
+- id: diamond
+  type: drop_item
+- s: 1
+  type: delay
+- id: diamond
+  type: drop_item
+type: lychee:block_interacting

@@ -1,0 +1,14 @@
+comment: Test
+key:
+  A: pufferfish
+  B: water_bucket
+pattern:
+- A
+- B
+post:
+- id: air
+  target: /key/B
+  type: set_item
+result:
+  id: pufferfish_bucket
+type: lychee:crafting

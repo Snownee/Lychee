@@ -1,0 +1,7 @@
+comment: Ghost recipe test
+ghost: true
+item_in: diamond
+post:
+  id: charcoal
+  type: drop_item
+type: lychee:item_burning

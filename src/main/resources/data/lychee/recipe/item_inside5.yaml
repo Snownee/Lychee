@@ -1,0 +1,9 @@
+block_in: water
+item_in: diamond
+max_repeats: 64
+post:
+- id: raw_iron
+  type: drop_item
+- block: cauldron
+  type: place
+type: lychee:item_inside

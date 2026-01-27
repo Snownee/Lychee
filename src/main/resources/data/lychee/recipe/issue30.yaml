@@ -1,0 +1,8 @@
+item_in:
+- red_dye
+- yellow_dye
+post:
+- count: 2
+  id: orange_dye
+  type: drop_item
+type: lychee:lightning_channeling

@@ -1,0 +1,9 @@
+item_in: '#logs_that_burn'
+post:
+  contextual:
+    chance: 0.5
+    type: chance
+  count: 64
+  id: charcoal
+  type: drop_item
+type: lychee:item_burning

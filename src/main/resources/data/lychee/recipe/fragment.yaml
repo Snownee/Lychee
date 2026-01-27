@@ -1,0 +1,7 @@
+_:
+  '...@': lychee:test
+  fragment: Fragment
+post:
+- '@': lychee:sugar
+  amount: 3
+type: lychee:block_crushing

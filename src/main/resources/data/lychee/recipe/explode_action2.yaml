@@ -1,0 +1,8 @@
+block_in: air
+item_in:
+- gunpowder
+- gunpowder
+post:
+- fire: true
+  type: explode
+type: lychee:item_inside

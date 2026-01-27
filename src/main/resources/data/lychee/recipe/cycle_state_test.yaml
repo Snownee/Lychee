@@ -1,0 +1,7 @@
+block_in: water_cauldron
+item_in: {}
+post:
+- block: water_cauldron
+  property: level
+  type: cycle_state_property
+type: lychee:block_interacting

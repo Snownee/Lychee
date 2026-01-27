@@ -1,0 +1,11 @@
+item_in: nether_star
+post:
+- id: diamond
+  type: drop_item
+- contextual:
+    predicate:
+      biomes: '#is_ocean'
+    type: location
+  id: cod
+  type: drop_item
+type: lychee:item_burning

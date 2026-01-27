@@ -74,12 +74,9 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 						.forGetter(IsDifficulty::difficulties)
 		).apply(instance, IsDifficulty::new));
 
-		public static final StreamCodec<ByteBuf, Difficulty> DIFFICULTY_STREAM_CODEC = ByteBufCodecs.idMapper(
-				Difficulty.BY_ID,
-				Difficulty::getId);
-
-		public static final StreamCodec<ByteBuf, IsDifficulty> STREAM_CODEC =
-				DIFFICULTY_STREAM_CODEC.apply(ByteBufCodecs.list()).map(IsDifficulty::new, IsDifficulty::difficulties);
+		public static final StreamCodec<ByteBuf, IsDifficulty> STREAM_CODEC = Difficulty.STREAM_CODEC.apply(ByteBufCodecs.list()).map(
+				IsDifficulty::new,
+				IsDifficulty::difficulties);
 
 		@Override
 		public MapCodec<IsDifficulty> codec() {

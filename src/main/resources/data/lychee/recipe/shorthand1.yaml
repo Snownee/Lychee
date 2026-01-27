@@ -1,11 +1,11 @@
 type: lychee:block_crushing
 landing_block: grass_block
 item_in:
-  - 3x gold_block
-  - '#c:gems'
+- 3x gold_block
+- '#c:gems'
 post:
-  - drop 2x diamond /.5
-  - place stripped_oak_log[axis=y]
-  - damage_item
-  - run "say hello" /hide
-  - drop 10xp /.01
+- drop 2x diamond /.5
+- place stripped_oak_log[axis=y]
+- damage_item
+- run "say hello" /hide
+- drop 10xp /.01

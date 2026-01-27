@@ -1,0 +1,43 @@
+contextual:
+  type: weather
+  weather: rain
+falling_block: dragon_egg
+item_in:
+- count: 2
+  ingredient: '#coals'
+- count: 2
+  ingredient: coal
+- count: 2
+  ingredient: coal
+- count: 2
+  ingredient: coal
+- count: 2
+  ingredient: coal
+- count: 2
+  ingredient: coal
+- count: 2
+  ingredient: coal
+- count: 2
+  ingredient: coal
+- count: 2
+  ingredient: coal
+post:
+- id: paper
+  type: drop_item
+- id: paper
+  type: drop_item
+- id: paper
+  type: drop_item
+- id: paper
+  type: drop_item
+- id: paper
+  type: drop_item
+- id: paper
+  type: drop_item
+- id: paper
+  type: drop_item
+- id: paper
+  type: drop_item
+- id: paper
+  type: drop_item
+type: lychee:block_crushing

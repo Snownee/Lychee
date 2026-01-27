@@ -1,0 +1,8 @@
+comment: Hide recipe test
+hide_in_viewer: true
+item_in: tnt
+max_repeats: 4
+post:
+  id: charcoal
+  type: drop_item
+type: lychee:item_burning

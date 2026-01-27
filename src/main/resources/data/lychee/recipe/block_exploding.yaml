@@ -1,0 +1,22 @@
+block_in: coal_block
+post:
+- icon: lychee:left_click
+  id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+type: lychee:block_exploding

@@ -1,0 +1,34 @@
+contextual:
+  predicate:
+    dimension: overworld
+  type: location
+item_in:
+- '#coals'
+- '#coals'
+- '#coals'
+- '#coals'
+- '#coals'
+- '#coals'
+- '#coals'
+- '#coals'
+- '#coals'
+post:
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+type: lychee:item_exploding

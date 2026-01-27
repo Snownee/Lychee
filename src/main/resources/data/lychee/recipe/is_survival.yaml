@@ -1,0 +1,13 @@
+block_in: sand
+contextual:
+- command: execute if entity @s[predicate=lychee:is_survival]
+  type: execute
+item_in: {}
+post:
+- id: diamond
+  type: drop_item
+- data:
+    msg: You mined a diamond!
+  id: log
+  type: custom
+type: lychee:block_interacting

@@ -1,0 +1,12 @@
+assembling:
+- component: '*'
+  type: copy_component
+item_in:
+- iron_chestplate
+- diamond
+item_out: diamond_chestplate
+level_cost: 1
+material_cost: 8
+post: prevent_default
+preserve_enchantments: false
+type: lychee:anvil_crafting

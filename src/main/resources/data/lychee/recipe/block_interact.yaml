@@ -1,0 +1,51 @@
+block_in: oak_log[axis=y]
+if:
+- direction: up
+  type: direction
+item_in: iron_axe
+post:
+- factor: 2
+  type: move_towards_face
+- id: diamond
+  if:
+    chance: 0.5
+    type: chance
+  type: drop_item
+- block: stripped_oak_log[axis=y]
+  type: place
+- target: /item_in
+  type: damage_item
+- entries:
+  - id: gold_ingot
+    if:
+      type: weather
+      weather: rain
+    type: drop_item
+  - id: ender_pearl
+    type: drop_item
+  - id: dirt
+    type: drop_item
+    weight: 2
+  if:
+    chance: 0.9
+    type: chance
+  rolls:
+    max: 5
+    min: 3
+  type: random
+- else:
+  - id: dirt
+    type: drop_item
+  if:
+    chance: 0.5
+    type: chance
+  then:
+  - id: gold_ingot
+    if:
+      type: weather
+      weather: rain
+    type: drop_item
+  - id: ender_pearl
+    type: drop_item
+  type: if
+type: lychee:block_interacting

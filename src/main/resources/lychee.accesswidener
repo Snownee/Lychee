@@ -27,3 +27,5 @@ accessible field net/minecraft/world/item/crafting/RecipeManager RECIPE_LISTER L
 accessible field net/minecraft/world/item/crafting/RecipeManager recipes Lnet/minecraft/world/item/crafting/RecipeMap;
 
 accessible field net/minecraft/world/level/Level DEFAULT_EXPLOSION_BLOCK_PARTICLES Lnet/minecraft/util/random/WeightedList;
+
+accessible method net/minecraft/world/item/crafting/PlacementInfo <init> (Ljava/util/List;Lit/unimi/dsi/fastutil/ints/IntList;)V

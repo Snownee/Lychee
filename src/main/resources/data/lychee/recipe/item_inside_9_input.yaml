@@ -1,0 +1,35 @@
+block_in: water
+contextual:
+  predicate:
+    dimension: overworld
+  type: location
+item_in:
+- coal
+- coal
+- coal
+- coal
+- coal
+- coal
+- coal
+- coal
+- coal
+post:
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+- id: diamond
+  type: drop_item
+type: lychee:item_inside
