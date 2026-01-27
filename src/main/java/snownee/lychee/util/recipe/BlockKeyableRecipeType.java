@@ -130,8 +130,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 		final var itemContext = context.get(LycheeContextKey.ITEM);
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 
-		final Iterable<RecipeHolder<R>> iterable = mergeAnyBlockRecipes(recipes);
-		for (final var recipeHolder : iterable) {
+		for (final var recipeHolder : mergeAnyBlockRecipes(recipes)) {
 			if (tryMatch(recipeHolder, level, context).isPresent()) {
 				context.put(recipeHolder);
 				R recipe = recipeHolder.value();

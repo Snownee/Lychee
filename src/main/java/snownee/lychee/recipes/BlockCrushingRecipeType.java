@@ -1,7 +1,7 @@
 package snownee.lychee.recipes;
 
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
 import org.jspecify.annotations.Nullable;
@@ -48,8 +48,8 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		}
 		final var pos = CommonProxy.getOnPos(entity);
 		final var fallingBlock = entity.getBlockState();
-		final var recipes = recipesByBlock.getOrDefault(fallingBlock.getBlock(), Collections.emptyList());
-		if (recipes.isEmpty()) {
+		final var recipes = recipesByBlock.getOrDefault(fallingBlock.getBlock(), List.of());
+		if (recipes.isEmpty() && anyBlockRecipes.isEmpty()) {
 			return;
 		}
 		var box = entity.getBoundingBox();
@@ -82,7 +82,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		major:
 		while (true) {
 			var matched = false;
-			for (final var recipe : recipes) {
+			for (final var recipe : mergeAnyBlockRecipes(recipes)) {
 				// recipe without ingredients will only run once to prevent dead loop
 				if (recipe.value().ingredients.isEmpty() && loop > 0) {
 					continue;
