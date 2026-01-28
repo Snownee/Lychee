@@ -17,7 +17,6 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.util.VectorExtensions;
 
 public record UIElementCommonProperties(
@@ -31,7 +30,9 @@ public record UIElementCommonProperties(
 	public static final MapCodec<UIElementCommonProperties> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
 			VectorExtensions.CODEC3F.optionalFieldOf("pos", VectorExtensions.ZERO3F).forGetter(UIElementCommonProperties::pos),
 			VectorExtensions.CODEC2I.optionalFieldOf("size", DEFAULT_SIZE).forGetter(UIElementCommonProperties::size),
-			KCodecs.compactList(ComponentSerialization.CODEC).optionalFieldOf("tooltip").forGetter(UIElementCommonProperties::tooltip),
+			ExtraCodecs.compactListCodec(ComponentSerialization.CODEC)
+					.optionalFieldOf("tooltip")
+					.forGetter(UIElementCommonProperties::tooltip),
 			ExtraCodecs.NON_EMPTY_STRING.optionalFieldOf("on_input").forGetter(UIElementCommonProperties::onInput),
 			Codec.floatRange(0, 1).optionalFieldOf("opacity", 1F).forGetter(UIElementCommonProperties::opacity)
 	).apply(i, UIElementCommonProperties::new));

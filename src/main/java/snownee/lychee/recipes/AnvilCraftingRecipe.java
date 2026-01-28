@@ -21,7 +21,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.action.Job;
@@ -191,7 +190,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		public static final MapCodec<AnvilCraftingRecipe> CODEC =
 				RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(AnvilCraftingRecipe::commonProperties),
-						LycheeCodecs.sizeLimit(KCodecs.compactList(LycheeCodecs.INGREDIENT), 1, 2)
+						LycheeCodecs.sizeLimit(ExtraCodecs.compactListCodec(LycheeCodecs.INGREDIENT), 1, 2)
 								.fieldOf(ITEM_IN)
 								.forGetter(AnvilCraftingRecipe::getIngredients),
 						LycheeCodecs.ITEM_STACK_TEMPLATE.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),

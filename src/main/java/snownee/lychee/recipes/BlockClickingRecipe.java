@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.recipe.SizedIngredient;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.context.LycheeContext;
@@ -46,7 +46,7 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
 		final var lootParams = context.initLootParams(RecipeTypes.BLOCK_CLICKING);
-		lootParams.set(LycheeContextKeys.DIRECTION, direction);
+		lootParams.set(LootContextKeys.DIRECTION, direction);
 		final var result = RecipeTypes.BLOCK_CLICKING.process(player, hand, pos, vec, context);
 		return result.isPresent() ? InteractionResult.SUCCESS_SERVER : InteractionResult.PASS;
 	}

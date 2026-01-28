@@ -31,7 +31,7 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.TagValueInput;
 import snownee.lychee.Lychee;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
@@ -93,7 +93,7 @@ public record PlaceBlock(
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
 		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParams.get(LycheeContextKeys.BLOCK_POS).offset(offset);
+		var pos = lootParams.get(LootContextKeys.BLOCK_POS).offset(offset);
 		var level = context.level();
 		var oldState = level.getBlockState(pos);
 		var blockState = BlockPredicateExtensions.anyBlockState(block);

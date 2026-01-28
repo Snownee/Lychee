@@ -10,6 +10,7 @@ import com.mojang.serialization.JavaOps;
 
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.util.codec.KCodecs;
@@ -29,12 +30,12 @@ import snownee.lychee.util.action.PostActionCommonProperties;
 public interface ActionParsers {
 	class Place implements LycheeParser<PlaceBlock> {
 		@Override
-		public DataResult<PlaceBlock> parse(StringReader reader) throws CommandSyntaxException {
+		public DataResult<PlaceBlock> parse(Context context, StringReader reader) throws CommandSyntaxException {
 			DataResult<BlockPredicate> blockResult = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeParserUtils.readBlock(reader, false)).orElseThrow();
+					r -> LycheeParserUtils.readBlock(context.lookupOrThrow(Registries.BLOCK), reader, false)).orElseThrow();
 			if (blockResult.isError()) {
-				return DataResult.error(() -> blockResult.error().orElseThrow().message());
+				return DataResult.error(blockResult.error().orElseThrow().messageSupplier());
 			}
 			BlockPos offset = BlockPos.ZERO;
 			Optional<DataResult<BlockPos>> offsetResult = LycheeParserUtils.readParam(reader, LycheeParserUtils::readPos);
@@ -47,17 +48,17 @@ public interface ActionParsers {
 
 	class SetBlockParser implements LycheeParser<SetBlock> {
 		@Override
-		public DataResult<SetBlock> parse(StringReader reader) throws CommandSyntaxException {
+		public DataResult<SetBlock> parse(Context context, StringReader reader) throws CommandSyntaxException {
 			DataResult<BlockPredicate> blockResult = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeParserUtils.readBlock(reader, false)).orElseThrow();
+					r -> LycheeParserUtils.readBlock(context.lookupOrThrow(Registries.BLOCK), reader, false)).orElseThrow();
 			return blockResult.map(block -> new SetBlock(PostActionCommonProperties.EMPTY, block));
 		}
 	}
 
 	class MoveParser implements LycheeParser<Move> {
 		@Override
-		public DataResult<Move> parse(StringReader reader) throws CommandSyntaxException {
+		public DataResult<Move> parse(Context context, StringReader reader) throws CommandSyntaxException {
 			DataResult<Vec3> vecResult = LycheeParserUtils.readParam(reader, LycheeParserUtils::readVec3).orElseThrow();
 			return vecResult.map(vec -> new Move(PostActionCommonProperties.EMPTY, vec, ""));
 		}
@@ -65,7 +66,7 @@ public interface ActionParsers {
 
 	class Drop implements LycheeParser<PostAction> {
 		@Override
-		public DataResult<PostAction> parse(StringReader reader) throws CommandSyntaxException {
+		public DataResult<PostAction> parse(Context context, StringReader reader) throws CommandSyntaxException {
 			DataResult<ItemStackTemplate> itemResult = LycheeParserUtils.readParam(
 					reader,
 					r -> KCodecs.tryCatch(() -> ParsedItem.read(reader).template())).orElseThrow();
@@ -92,7 +93,7 @@ public interface ActionParsers {
 
 	class Run implements LycheeParser<Execute> {
 		@Override
-		public DataResult<Execute> parse(StringReader reader) throws CommandSyntaxException {
+		public DataResult<Execute> parse(Context context, StringReader reader) throws CommandSyntaxException {
 			DataResult<String> result = LycheeParserUtils.readParam(
 					reader,
 					r -> KCodecs.tryCatch(reader::readQuotedString)).orElseThrow();
@@ -102,7 +103,7 @@ public interface ActionParsers {
 
 	class DelayParser implements LycheeParser<Delay> {
 		@Override
-		public DataResult<Delay> parse(StringReader reader) throws CommandSyntaxException {
+		public DataResult<Delay> parse(Context context, StringReader reader) throws CommandSyntaxException {
 			DataResult<Float> result = LycheeParserUtils.readParam(
 					reader,
 					r -> KCodecs.tryCatch(() -> {
@@ -116,7 +117,7 @@ public interface ActionParsers {
 
 	class ItemCooldown implements LycheeParser<AddItemCooldown> {
 		@Override
-		public DataResult<AddItemCooldown> parse(StringReader reader) throws CommandSyntaxException {
+		public DataResult<AddItemCooldown> parse(Context context, StringReader reader) throws CommandSyntaxException {
 			DataResult<Float> result = LycheeParserUtils.readParam(
 					reader,
 					r -> KCodecs.tryCatch(() -> {
@@ -130,7 +131,7 @@ public interface ActionParsers {
 
 	class CopyComponentParser implements LycheeParser<CopyComponent> {
 		@Override
-		public DataResult<CopyComponent> parse(StringReader reader) throws CommandSyntaxException {
+		public DataResult<CopyComponent> parse(Context context, StringReader reader) throws CommandSyntaxException {
 			DataResult<String> result = LycheeParserUtils.readParam(
 					reader,
 					r -> KCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();
@@ -144,7 +145,7 @@ public interface ActionParsers {
 
 	class RemoveComponentParser implements LycheeParser<RemoveComponent> {
 		@Override
-		public DataResult<RemoveComponent> parse(StringReader reader) throws CommandSyntaxException {
+		public DataResult<RemoveComponent> parse(Context context, StringReader reader) throws CommandSyntaxException {
 			DataResult<String> result = LycheeParserUtils.readParam(
 					reader,
 					r -> KCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();

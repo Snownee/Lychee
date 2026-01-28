@@ -32,7 +32,7 @@ import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.LycheeCounter;
@@ -101,7 +101,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 	public Comparator<RecipeHolder<ItemInsideRecipe>> comparator() {
 		return Comparator.comparing(
 				RecipeHolder::value,
-				Comparator.comparingInt((ItemInsideRecipe $) -> $.getIngredients().size())
+				Comparator.comparingInt((ItemInsideRecipe $) -> $.ingredientCount())
 						.thenComparingInt($ -> -$.time())
 						.thenComparing($ -> !$.maxRepeats().isAny())
 						.thenComparing(Recipe::isSpecial)
@@ -145,7 +145,7 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 		lootParams.set(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
 		lootParams.set(LootContextParams.THIS_ENTITY, entity);
 		lootParams.set(LootContextParams.BLOCK_STATE, blockState);
-		lootParams.set(LycheeContextKeys.BLOCK_POS, pos);
+		lootParams.set(LootContextKeys.BLOCK_POS, pos);
 		lootParams.validate();
 		@SuppressWarnings("unchecked") final var prevRecipe =
 				(RecipeHolder<ItemInsideRecipe>) Optional.ofNullable(prevRecipeId)

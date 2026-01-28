@@ -67,7 +67,7 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 			var matched = false;
 			for (final var recipe : recipes) {
 				// recipe without ingredients will only run once to prevent dead loop
-				if (recipe.value().getIngredients().isEmpty() && loop > 0) {
+				if (recipe.value().ingredientCount() == 0 && loop > 0) {
 					continue;
 				}
 				if (excluded.contains(recipe)) {

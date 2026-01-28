@@ -34,7 +34,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
@@ -79,7 +79,7 @@ public record Location(LocationCheck check) implements ContextualCondition {
 		if (level.isClientSide()) {
 			return testClient(
 					level,
-					lootParams.get(LycheeContextKeys.BLOCK_POS),
+					lootParams.get(LootContextKeys.BLOCK_POS),
 					lootParams.get(LootContextParams.ORIGIN)
 			).toBoolean(false) ? times : 0;
 		} else {

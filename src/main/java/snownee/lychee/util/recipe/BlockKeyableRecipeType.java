@@ -28,7 +28,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 import snownee.lychee.contextual.Chance;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
@@ -81,7 +81,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 		return Comparator.comparing(
 				RecipeHolder::value,
 				Comparator.comparing((BlockKeyableRecipe $) -> !BlockPredicateExtensions.isAny($.blockPredicate()))
-						.thenComparingInt($ -> $.getIngredients().size())
+						.thenComparingInt(ILycheeRecipe::ingredientCount)
 						.thenComparing($ -> !$.maxRepeats().isAny())
 						.thenComparing(Recipe::isSpecial)
 						.reversed());
@@ -117,7 +117,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 		lootParams.set(LootContextParams.ORIGIN, CommonProxy.clampPos(origin, pos));
 		lootParams.set(LootContextParams.THIS_ENTITY, player);
 		lootParams.set(LootContextParams.BLOCK_STATE, blockstate);
-		lootParams.set(LycheeContextKeys.BLOCK_POS, pos);
+		lootParams.set(LootContextKeys.BLOCK_POS, pos);
 		lootParams.validate();
 		final var stack = player.getItemInHand(hand);
 		final var otherStack = player.getItemInHand(

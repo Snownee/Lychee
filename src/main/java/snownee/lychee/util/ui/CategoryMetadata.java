@@ -16,13 +16,13 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import snownee.kiwi.recipe.EmptyRecipeInput;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.Patterns;
@@ -92,7 +92,7 @@ public class CategoryMetadata extends CategorySettingRecipe {
 				Codec.BOOL.optionalFieldOf("render_default", true).forGetter(CategoryMetadata::renderDefault),
 				VectorExtensions.CODEC2I.optionalFieldOf("size").forGetter(CategoryMetadata::size),
 				UIElement.CODEC.optionalFieldOf("icon").forGetter(CategoryMetadata::icon),
-				KCodecs.compactList(LycheeCodecs.INGREDIENT)
+				ExtraCodecs.compactListCodec(LycheeCodecs.INGREDIENT)
 						.optionalFieldOf("workstation")
 						.forGetter(CategoryMetadata::workstation)
 		).apply(instance, CategoryMetadata::new));

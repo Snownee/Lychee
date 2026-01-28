@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour.BlockStateBase;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.RandomlyTickable;
 import snownee.lychee.util.context.LycheeContext;
@@ -45,7 +45,7 @@ public class BlockStateMixin {
 			var lootParams = context.initLootParams(RecipeTypes.RANDOM_BLOCK_TICKING);
 			lootParams.set(LootContextParams.BLOCK_STATE, blockState);
 			lootParams.set(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
-			lootParams.set(LycheeContextKeys.BLOCK_POS, pos);
+			lootParams.set(LootContextKeys.BLOCK_POS, pos);
 			final var recipe = RecipeTypes.RANDOM_BLOCK_TICKING.process(level, blockState, context);
 			if (recipe != null && context.get(LycheeContextKey.ACTION).avoidDefault) {
 				ci.cancel();

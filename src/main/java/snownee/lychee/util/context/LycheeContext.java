@@ -69,6 +69,10 @@ public class LycheeContext extends EmptyRecipeInput {
 		}
 	}
 
+	public boolean is(LycheeContextKey.Optional<Boolean> key) {
+		return getOrNull(key) == Boolean.TRUE;
+	}
+
 	@Nullable
 	public <T> T put(LycheeContextKey<T> key, T value) {
 		if (key == LycheeContextKey.LEVEL) {

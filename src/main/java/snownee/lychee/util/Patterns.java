@@ -13,11 +13,10 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.Lychee;
 
 public class Patterns implements Predicate<String> {
-	public static final Codec<Patterns> CODEC = ExtraCodecs.nonEmptyList(KCodecs.compactList(ExtraCodecs.NON_EMPTY_STRING))
+	public static final Codec<Patterns> CODEC = ExtraCodecs.nonEmptyList(ExtraCodecs.compactListCodec(ExtraCodecs.NON_EMPTY_STRING))
 			.xmap(Patterns::new, Patterns::strings);
 	public static final StreamCodec<ByteBuf, Patterns> STREAM_CODEC = ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list())
 			.map(Patterns::new, Patterns::strings);

@@ -29,3 +29,7 @@ accessible field net/minecraft/world/item/crafting/RecipeManager recipes Lnet/mi
 accessible field net/minecraft/world/level/Level DEFAULT_EXPLOSION_BLOCK_PARTICLES Lnet/minecraft/util/random/WeightedList;
 
 accessible method net/minecraft/world/item/crafting/PlacementInfo <init> (Ljava/util/List;Lit/unimi/dsi/fastutil/ints/IntList;)V
+
+accessible class net/minecraft/commands/arguments/item/ItemParser$State
+
+accessible class net/minecraft/world/level/ServerExplosion$StackCollector

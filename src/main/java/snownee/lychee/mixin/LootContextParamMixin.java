@@ -7,12 +7,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextKey;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 
 @Mixin(ContextKey.class)
 public class LootContextParamMixin {
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void lychee_init(Identifier name, CallbackInfo ci) {
-		LycheeContextKeys.ALL.put(name, (ContextKey<?>) (Object) this);
+		LootContextKeys.ALL.put(name, (ContextKey<?>) (Object) this);
 	}
 }

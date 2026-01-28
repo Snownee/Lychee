@@ -9,6 +9,8 @@ import com.mojang.serialization.DataResult;
 import net.minecraft.CharPredicate;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.util.codec.ThrowingFunction;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -42,7 +44,10 @@ public class LycheeParserUtils {
 		return result.toString();
 	}
 
-	public static DataResult<BlockPredicate> readBlock(StringReader reader, boolean forTesting) throws CommandSyntaxException {
+	public static DataResult<BlockPredicate> readBlock(
+			HolderGetter<Block> lookup,
+			StringReader reader,
+			boolean forTesting) throws CommandSyntaxException {
 		StringBuilder sb = new StringBuilder();
 		sb.append(readStringUntil(reader, c -> c == ' ' || c == '[' || c == '{'));
 		if (reader.canRead()) {
@@ -57,7 +62,7 @@ public class LycheeParserUtils {
 				sb.append(reader.readStringUntil('}')).append('}');
 			}
 		}
-		return BlockPredicateExtensions.fromString(sb.toString(), forTesting);
+		return BlockPredicateExtensions.fromString(lookup, sb.toString(), forTesting);
 	}
 
 	public static DataResult<BlockPos> readPos(StringReader reader) throws CommandSyntaxException {

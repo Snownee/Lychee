@@ -10,7 +10,7 @@ public final class LycheeLootContextParamSets {
 	public static final ContextKeySet ALL = LootContextParamSetsAccess.callRegister(
 			"lychee:all", $ -> {
 				$.required(LootContextParams.ORIGIN);
-				LycheeContextKeys.ALL.values().stream().filter(Predicate.not(LootContextParams.ORIGIN::equals)).forEach($::optional);
+				LootContextKeys.ALL.values().stream().filter(Predicate.not(LootContextParams.ORIGIN::equals)).forEach($::optional);
 			});
 
 	public static final ContextKeySet ITEM_BURNING =
@@ -24,7 +24,7 @@ public final class LycheeLootContextParamSets {
 			$ -> $.required(LootContextParams.ORIGIN)
 					.required(LootContextParams.THIS_ENTITY)
 					.required(LootContextParams.BLOCK_STATE)
-					.required(LycheeContextKeys.BLOCK_POS)
+					.required(LootContextKeys.BLOCK_POS)
 					.optional(LootContextParams.BLOCK_ENTITY)
 	);
 
@@ -33,9 +33,9 @@ public final class LycheeLootContextParamSets {
 			$ -> $.required(LootContextParams.ORIGIN)
 					.required(LootContextParams.THIS_ENTITY)
 					.required(LootContextParams.BLOCK_STATE)
-					.required(LycheeContextKeys.BLOCK_POS)
+					.required(LootContextKeys.BLOCK_POS)
 					.optional(LootContextParams.BLOCK_ENTITY)
-					.required(LycheeContextKeys.DIRECTION)
+					.required(LootContextKeys.DIRECTION)
 	);
 
 	public static final ContextKeySet ANVIL_CRAFTING = LootContextParamSetsAccess.callRegister(
@@ -43,7 +43,7 @@ public final class LycheeLootContextParamSets {
 			$ -> $.required(LootContextParams.ORIGIN)
 					.required(LootContextParams.THIS_ENTITY)
 					.optional(LootContextParams.BLOCK_STATE)
-					.optional(LycheeContextKeys.BLOCK_POS)
+					.optional(LootContextKeys.BLOCK_POS)
 					.optional(LootContextParams.BLOCK_ENTITY)
 	);
 
@@ -52,7 +52,7 @@ public final class LycheeLootContextParamSets {
 			$ -> $.required(LootContextParams.ORIGIN)
 					.required(LootContextParams.THIS_ENTITY)
 					.required(LootContextParams.BLOCK_STATE)
-					.required(LycheeContextKeys.BLOCK_POS)
+					.required(LootContextKeys.BLOCK_POS)
 					.optional(LootContextParams.BLOCK_ENTITY)
 	);
 
@@ -70,7 +70,7 @@ public final class LycheeLootContextParamSets {
 			"lychee:block_only",
 			$ -> $.required(LootContextParams.ORIGIN)
 					.required(LootContextParams.BLOCK_STATE)
-					.optional(LycheeContextKeys.BLOCK_POS)
+					.optional(LootContextKeys.BLOCK_POS)
 					.optional(LootContextParams.BLOCK_ENTITY)
 	);
 

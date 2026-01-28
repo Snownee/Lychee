@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import snownee.lychee.Lychee;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.network.SCustomLevelEventPacket;
@@ -37,8 +37,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 
 	private final ValidItemCache validItems = new ValidItemCache();
 
-	public BlockCrushingRecipeType(
-			String name, Class<BlockCrushingRecipe> clazz, @Nullable ContextKeySet paramSet) {
+	public BlockCrushingRecipeType(String name, Class<BlockCrushingRecipe> clazz, @Nullable ContextKeySet paramSet) {
 		super(name, clazz, paramSet);
 	}
 
@@ -72,7 +71,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		lootParams.set(LootContextParams.ORIGIN, entity.position());
 		lootParams.set(LootContextParams.THIS_ENTITY, entity);
 		lootParams.set(LootContextParams.BLOCK_STATE, landingBlock);
-		lootParams.set(LycheeContextKeys.BLOCK_POS, pos);
+		lootParams.set(LootContextKeys.BLOCK_POS, pos);
 		lootParams.validate();
 
 		final var actionContext = context.get(LycheeContextKey.ACTION);
@@ -159,7 +158,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 	public Comparator<RecipeHolder<BlockCrushingRecipe>> comparator() {
 		return Comparator.comparing(
 				RecipeHolder::value,
-				Comparator.comparingInt((BlockCrushingRecipe $) -> $.getIngredients().size())
+				Comparator.comparingInt((BlockCrushingRecipe $) -> $.ingredientCount())
 						.thenComparing($ -> !BlockPredicateExtensions.isAny($.landingBlock()))
 						.thenComparing($ -> !$.maxRepeats().isAny())
 						.thenComparing(Recipe::isSpecial)

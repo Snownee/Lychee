@@ -91,6 +91,7 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	public static final LycheeContextKey.Optional<ItemShapelessContext> ITEM_SHAPELESS = opt("item_shapeless");
 	public static final LycheeContextKey.Optional<CraftingContext> CRAFTING = opt("crafting");
 	public static final LycheeContextKey.Optional<BlockState> DRIPSTONE_SOURCE = opt("dripstone_root");
+	public static final LycheeContextKey.Optional<Boolean> SMALL_EXPLOSION = opt("small_explosion");
 
 	protected LycheeContextKey(Identifier id, @Nullable Function<LycheeContext, T> factory) {
 		this.id = id;

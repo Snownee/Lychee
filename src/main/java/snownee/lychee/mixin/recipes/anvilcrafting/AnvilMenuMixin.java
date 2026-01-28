@@ -24,7 +24,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.AnvilContext;
 import snownee.lychee.util.context.LycheeContext;
@@ -76,7 +76,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		BlockPos pos = access.evaluate((level, pos0) -> pos0).orElseGet(player::blockPosition);
 		lootParams.set(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
 		if (access != ContainerLevelAccess.NULL) {
-			lootParams.set(LycheeContextKeys.BLOCK_POS, pos);
+			lootParams.set(LootContextKeys.BLOCK_POS, pos);
 			lootParams.set(LootContextParams.BLOCK_STATE, player.level().getBlockState(pos));
 		}
 		lootParams.set(LootContextParams.THIS_ENTITY, player);

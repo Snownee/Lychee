@@ -69,7 +69,7 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 
 	public static class Type implements ContextualConditionType<IsDifficulty> {
 		public static final MapCodec<IsDifficulty> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				ExtraCodecs.nonEmptyList(KCodecs.compactList(Difficulty.CODEC))
+				ExtraCodecs.nonEmptyList(ExtraCodecs.compactListCodec(Difficulty.CODEC))
 						.fieldOf("difficulty")
 						.forGetter(IsDifficulty::difficulties)
 		).apply(instance, IsDifficulty::new));

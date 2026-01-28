@@ -37,7 +37,7 @@ public class ItemShapelessRecipeUtils {
 
 	public static <T extends ILycheeRecipe<?>> MapCodec<T> validatedCodec(MapCodec<T> codec) {
 		return codec.validate(it -> {
-			if (!it.ghost() && it.getIngredients().size() > MAX_INGREDIENTS) {
+			if (!it.ghost() && it.ingredientCount() > MAX_INGREDIENTS) {
 				return DataResult.error(() -> "Ingredients cannot be more than " + MAX_INGREDIENTS);
 			}
 			return DataResult.success(it);

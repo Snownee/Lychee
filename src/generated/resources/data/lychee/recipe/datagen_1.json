@@ -1,12 +1,10 @@
 {
   "type": "lychee:item_burning",
   "comment": "Datagen test 1",
-  "if": [
-    {
-      "type": "minecraft:chance",
-      "chance": 0.5
-    }
-  ],
+  "if": {
+    "type": "minecraft:chance",
+    "chance": 0.5
+  },
   "item_in": {
     "count": 2,
     "ingredient": "#minecraft:beds"
@@ -21,13 +19,11 @@
       "block": {
         "blocks": "minecraft:stone"
       },
-      "if": [
-        {
-          "type": "minecraft:sky_darken",
-          "require_sky_light": true,
-          "value": {}
-        }
-      ],
+      "if": {
+        "type": "minecraft:sky_darken",
+        "require_sky_light": true,
+        "value": {}
+      },
       "offsetY": 2
     }
   ]

@@ -20,8 +20,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import snownee.kiwi.recipe.SizedIngredient;
-import snownee.kiwi.util.codec.KCodecs;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.BoundsExtensions;
@@ -54,7 +53,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
 		final var lootParams = context.initLootParams(RecipeTypes.BLOCK_INTERACTING);
-		lootParams.set(LycheeContextKeys.DIRECTION, hitResult.getDirection());
+		lootParams.set(LootContextKeys.DIRECTION, hitResult.getDirection());
 		final var result = RecipeTypes.BLOCK_INTERACTING.process(player, hand, hitResult.getBlockPos(), hitResult.getLocation(), context);
 		if (result.isPresent()) {
 			player.swing(hand, true);
@@ -80,7 +79,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 	public static <T extends BlockInteractingRecipe> MapCodec<T> codec(Function3<LycheeRecipeCommonProperties, List<Optional<SizedIngredient>>, BlockPredicate, T> constructor) {
 		return RecordCodecBuilder.mapCodec(instance -> instance.group(
 				LycheeRecipeCommonProperties.mapCodec(BoundsExtensions.ONE).forGetter(T::commonProperties),
-				LycheeCodecs.sizeLimit(KCodecs.compactList(ExtraCodecs.optionalEmptyMap(LycheeCodecs.SIZED_INGREDIENT)), 1, 2)
+				LycheeCodecs.sizeLimit(ExtraCodecs.compactListCodec(ExtraCodecs.optionalEmptyMap(LycheeCodecs.SIZED_INGREDIENT)), 1, 2)
 						.fieldOf(ITEM_IN)
 						.forGetter(T::inputs),
 				BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)

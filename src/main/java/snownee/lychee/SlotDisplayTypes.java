@@ -9,12 +9,18 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.lychee.compat.recipe_api.VisualOnlyComponentsIngredient;
+import snownee.lychee.util.Displays;
 
 public class SlotDisplayTypes {
 	public static final SlotDisplay.Type<VisualOnlyComponentsIngredient.Display> VISUAL_ONLY = register(
 			"visual_only",
 			VisualOnlyComponentsIngredient.Display.CODEC,
 			VisualOnlyComponentsIngredient.Display.STREAM_CODEC);
+
+	public static final SlotDisplay.Type<Displays.WithDamage> WITH_DAMAGE = register(
+			"with_damage",
+			Displays.WithDamage.CODEC,
+			Displays.WithDamage.STREAM_CODEC);
 
 	public static <T extends SlotDisplay> SlotDisplay.Type<T> register(
 			String name,

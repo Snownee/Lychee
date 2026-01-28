@@ -21,7 +21,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.CompoundAction;
@@ -165,7 +164,7 @@ public record RandomSelect(
 	public static class Type implements PostActionType<RandomSelect> {
 		public static final MapCodec<RandomSelect> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(RandomSelect::commonProperties),
-				ExtraCodecs.nonEmptyList(KCodecs.compactList(Entry.CODEC)).fieldOf("entries").forGetter(RandomSelect::entries),
+				ExtraCodecs.nonEmptyList(ExtraCodecs.compactListCodec(Entry.CODEC)).fieldOf("entries").forGetter(RandomSelect::entries),
 				ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("empty_weight", 0)
 						.forGetter(RandomSelect::emptyWeight),
 				MinMaxBounds.Ints.CODEC.optionalFieldOf("rolls", BoundsExtensions.ONE).forGetter(RandomSelect::rolls)

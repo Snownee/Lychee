@@ -35,9 +35,15 @@ import net.minecraft.advancements.criterion.NbtPredicate;
 import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -93,16 +99,37 @@ public class BlockPredicateExtensions {
 	public static final Codec<BlockPredicate> CODEC_FOR_TESTING = codec(true);
 	public static final Codec<BlockPredicate> CODEC = codec(false);
 
-	public static DataResult<BlockPredicate> fromString(String s, boolean forTesting) {
+	public static DataResult<BlockPredicate> fromString(HolderGetter<Block> getter, String s, boolean forTesting) {
 		if ("*".equals(s)) {
 			return DataResult.success(ANY);
 		}
 		Either<BlockStateParser.BlockResult, BlockStateParser.TagResult> result;
+		HolderLookup<Block> lookup = new HolderLookup<Block>() {
+			@Override
+			public Stream<Holder.Reference<Block>> listElements() {
+				return Stream.empty();
+			}
+
+			@Override
+			public Stream<HolderSet.Named<Block>> listTags() {
+				return Stream.empty();
+			}
+
+			@Override
+			public Optional<Holder.Reference<Block>> get(ResourceKey<Block> id) {
+				return getter.get(id);
+			}
+
+			@Override
+			public Optional<HolderSet.Named<Block>> get(TagKey<Block> id) {
+				return getter.get(id);
+			}
+		};
 		try {
 			if (forTesting) {
-				result = BlockStateParser.parseForTesting(BuiltInRegistries.BLOCK, s, true);
+				result = BlockStateParser.parseForTesting(lookup, s, true);
 			} else {
-				result = Either.left(BlockStateParser.parseForBlock(BuiltInRegistries.BLOCK, s, true));
+				result = Either.left(BlockStateParser.parseForBlock(lookup, s, true));
 			}
 		} catch (Exception e) {
 			return DataResult.error(() -> "Invalid block predicate: %s - %s".formatted(s, e.getMessage()));
@@ -149,9 +176,15 @@ public class BlockPredicateExtensions {
 				BlockPredicate.CODEC, new Decoder<>() {
 					@Override
 					public <T> DataResult<Pair<BlockPredicate, T>> decode(DynamicOps<T> ops, T input) {
+						if (!(ops instanceof RegistryOps<T> registryOps)) {
+							return DataResult.error(() -> "Not a registry ops");
+						}
 						var stringValue = ops.getStringValue(input);
 						if (stringValue.result().isPresent()) {
-							return fromString(stringValue.getOrThrow(), forTesting).flatMap(it -> DataResult.success(Pair.of(
+							return fromString(
+									registryOps.getter(Registries.BLOCK).orElseThrow(),
+									stringValue.getOrThrow(),
+									forTesting).flatMap(it -> DataResult.success(Pair.of(
 									it,
 									ops.empty())));
 						}

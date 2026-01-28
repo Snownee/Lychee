@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.base.Preconditions;
 import com.mojang.brigadier.StringReader;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.MapDecoder;
 import com.mojang.serialization.MapLike;
@@ -17,7 +20,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.component.DataComponentPatch;
@@ -25,7 +30,9 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Unit;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
@@ -34,6 +41,8 @@ import snownee.kiwi.recipe.SizedIngredient;
 import snownee.kiwi.util.codec.KCodecs;
 
 public final class LycheeCodecs {
+	public static final ThreadLocal<@Nullable Unit> skipComponentsValidation = new ThreadLocal<>();
+	public static final MapCodec<Boolean> ALLOW_SMALL_EXPLOSION = Codec.BOOL.optionalFieldOf("allow_small_explosion", false);
 	private static final MapCodec<Integer> ITEM_STACK_COUNT = ExtraCodecs.NON_NEGATIVE_INT.fieldOf("count").orElse(1);
 
 	private static final MapCodec<ItemStackTemplate> ITEM_STACK_TEMPLATE_MAP_ENCODER = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -73,18 +82,47 @@ public final class LycheeCodecs {
 					ItemParser parser = new ItemParser(new HolderLookup.Provider() {
 						@Override
 						public Stream<ResourceKey<? extends Registry<?>>> listRegistryKeys() {
-							throw new IllegalStateException();
+							return Stream.empty();
 						}
 
 						@Override
 						public Stream<HolderLookup.RegistryLookup<?>> listRegistries() {
-							throw new IllegalStateException();
+							return Stream.empty();
 						}
 
 						@Override
 						public <R> Optional<HolderLookup.RegistryLookup<R>> lookup(ResourceKey<? extends Registry<? extends R>> resourceKey) {
-							//noinspection unchecked
-							return Optional.of((HolderLookup.RegistryLookup<R>) BuiltInRegistries.ITEM);
+							return registryOps.getter(resourceKey).map($ -> new HolderLookup.RegistryLookup<>() {
+								@Override
+								public ResourceKey<? extends Registry<? extends R>> key() {
+									return resourceKey;
+								}
+
+								@Override
+								public Lifecycle registryLifecycle() {
+									return Lifecycle.stable();
+								}
+
+								@Override
+								public Stream<Holder.Reference<R>> listElements() {
+									return Stream.empty();
+								}
+
+								@Override
+								public Stream<HolderSet.Named<R>> listTags() {
+									return Stream.empty();
+								}
+
+								@Override
+								public Optional<Holder.Reference<R>> get(ResourceKey<R> id) {
+									return $.get(id);
+								}
+
+								@Override
+								public Optional<HolderSet.Named<R>> get(TagKey<R> id) {
+									return $.get(id);
+								}
+							});
 						}
 
 						@Override
@@ -94,9 +132,12 @@ public final class LycheeCodecs {
 					});
 					ItemParser.ItemResult itemResult;
 					try {
+						skipComponentsValidation.set(Unit.INSTANCE);
 						itemResult = parser.parse(new StringReader(ops.getStringValue(id).getOrThrow()));
 					} catch (Exception e) {
 						return DataResult.error(e::getMessage);
+					} finally {
+						skipComponentsValidation.remove();
 					}
 					if (input.get("components") != null) {
 						return DataResult.error(() -> "id with brackets cannot have the components field");
@@ -168,7 +209,7 @@ public final class LycheeCodecs {
 					}), _ -> DataResult.error(() -> "Encoding shorthand SizedIngredient is not supported")));
 
 	public static final Codec<List<DataComponentType<?>>> WILDCARD_COMPONENTS = Codec.withAlternative(
-			KCodecs.compactList(DataComponentType.CODEC), Codec.STRING.flatXmap(
+			ExtraCodecs.compactListCodec(DataComponentType.CODEC), Codec.STRING.flatXmap(
 					s -> {
 						if (s.equals("*")) {
 							return DataResult.success(List.of());

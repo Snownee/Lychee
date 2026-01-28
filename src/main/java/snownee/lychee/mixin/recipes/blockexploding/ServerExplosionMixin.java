@@ -17,13 +17,12 @@ import com.llamalad7.mixinextras.injector.ModifyReceiver;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -46,42 +45,46 @@ public abstract class ServerExplosionMixin {
 	private Entity source;
 	@Final
 	@Shadow
-	private Level level;
+	private ServerLevel level;
 	@Shadow
 	@Final
 	private Explosion.BlockInteraction blockInteraction;
 
 	@Shadow
-	private static void addOrAppendStack(List<Pair<ItemStack, BlockPos>> stacks, ItemStack stack, BlockPos pos) {
+	private static void addOrAppendStack(List<ServerExplosion.StackCollector> stacks, ItemStack stack, BlockPos pos) {
 	}
+
+	@Shadow
+	public abstract boolean isSmall();
 
 	/**
 	 * The drops are added in {@link BlockBehaviour.BlockStateBase#onExplosionHit}.
 	 * We need to avoid the default drops conditional after {@link BlockBehaviour.BlockStateBase#onExplosionHit}.
 	 */
 	@ModifyReceiver(
-			method = "finalizeExplosion",
+			method = "interactWithBlocks",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/block/state/BlockState;onExplosionHit(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;Ljava/util/function/BiConsumer;)V"
+					target = "Lnet/minecraft/world/level/block/state/BlockState;onExplosionHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;Ljava/util/function/BiConsumer;)V"
 			)
 	)
 	private BlockState lychee_beforeOnExplosionHit(
 			final BlockState state,
-			final Level level,
+			final ServerLevel level,
 			final BlockPos blockPos,
 			final Explosion explosion,
 			final BiConsumer<ItemStack, BlockPos> biConsumer,
 			@Share("state") LocalRef<BlockState> stateRef,
 			@Share("context") LocalRef<@Nullable LycheeContext> contextRef,
-			@Share("currentDrops") LocalRef<List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
-		if (level.isClientSide() || RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
+			@Share("currentDrops") LocalRef<List<ServerExplosion.StackCollector>> currentDropsRef) {
+		if (RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
 			contextRef.set(null);
 			return state;
 		}
 		LycheeContext context = new LycheeContext();
 		contextRef.set(context);
 		context.put(LycheeContextKey.LEVEL, level);
+		context.put(LycheeContextKey.SMALL_EXPLOSION, isSmall());
 		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		lootParams.set(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos));
 		lootParams.set(LootContextParams.BLOCK_STATE, state);
@@ -97,61 +100,58 @@ public abstract class ServerExplosionMixin {
 	}
 
 	@ModifyArg(
-			method = "finalizeExplosion",
+			method = "interactWithBlocks",
 			index = 3,
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/block/state/BlockState;onExplosionHit(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;Ljava/util/function/BiConsumer;)V"))
+					target = "Lnet/minecraft/world/level/block/state/BlockState;onExplosionHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;Ljava/util/function/BiConsumer;)V"))
 	private BiConsumer<ItemStack, BlockPos> lychee_redirectDrops(
 			BiConsumer<ItemStack, BlockPos> original,
-			@Share("currentDrops") LocalRef<@Nullable List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
-		return currentDropsRef.get() == null ?
+			@Share("currentDrops") LocalRef<@Nullable List<ServerExplosion.StackCollector>> currentDropsRef) {
+		List<ServerExplosion.StackCollector> currentDrops = currentDropsRef.get();
+		return currentDrops == null ?
 				original :
-				(itemStack, blockPos) -> addOrAppendStack(currentDropsRef.get(), itemStack, blockPos);
+				(itemStack, blockPos) -> addOrAppendStack(currentDrops, itemStack, blockPos);
 	}
 
 	@Inject(
-			method = "finalizeExplosion",
+			method = "interactWithBlocks",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/block/state/BlockState;onExplosionHit(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;Ljava/util/function/BiConsumer;)V",
+					target = "Lnet/minecraft/world/level/block/state/BlockState;onExplosionHit(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/Explosion;Ljava/util/function/BiConsumer;)V",
 					shift = At.Shift.AFTER
 			)
 	)
 	private void lychee_afterOnExplosionHit(
-			final boolean spawnParticles,
-			final CallbackInfo ci,
-			@Local(argsOnly = true) BlockPos blockPos,
-			@Local(argsOnly = true) List<Pair<ItemStack, BlockPos>> allDrops,
+			List<BlockPos> targetBlocks,
+			CallbackInfo ci,
+			@Local(name = "pos") BlockPos pos,
+			@Local(name = "stacks") List<ServerExplosion.StackCollector> stacks,
 			@Share("state") LocalRef<@Nullable BlockState> stateRef,
 			@Share("context") LocalRef<@Nullable LycheeContext> contextRef,
-			@Share("currentDrops") LocalRef<@Nullable List<Pair<ItemStack, BlockPos>>> currentDropsRef) {
-		if (level.isClientSide()) {
-			return;
-		}
+			@Share("currentDrops") LocalRef<@Nullable List<ServerExplosion.StackCollector>> currentDropsRef) {
 		var context = contextRef.get();
-		if (context == null) {
+		var state = stateRef.get();
+		List<ServerExplosion.StackCollector> currentDrops = currentDropsRef.get();
+		if (context == null || state == null || currentDrops == null) {
 			return;
 		}
 		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
 		lootParams.validate();
 		var itemHolders = ItemStackHolderCollection.InWorld.of();
 		context.put(LycheeContextKey.ITEM, itemHolders);
-		var state = stateRef.get();
 		var recipe = RecipeTypes.BLOCK_EXPLODING.process(level, state, context);
 		if (recipe == null) {
-			if (currentDropsRef.get() != null) {
-				allDrops.addAll(currentDropsRef.get());
-			}
+			stacks.addAll(currentDrops);
 			return;
 		}
 		var actionContext = context.get(LycheeContextKey.ACTION);
-		if (!actionContext.avoidDefault && currentDropsRef.get() != null) {
-			allDrops.addAll(currentDropsRef.get());
+		if (!actionContext.avoidDefault) {
+			stacks.addAll(currentDrops);
 		}
 		currentDropsRef.set(null);
 		for (var stack : itemHolders.stacksNeedHandle) {
-			addOrAppendStack(allDrops, stack, blockPos);
+			addOrAppendStack(stacks, stack, pos);
 		}
 	}
 }

@@ -3,20 +3,21 @@ package snownee.lychee.util.codec;
 import java.lang.reflect.RecordComponent;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.stream.Stream;
-
-import org.jspecify.annotations.Nullable;
+import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JavaOps;
-import com.mojang.serialization.MapLike;
 
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.NullOps;
+import net.minecraft.util.Unit;
 import net.minecraft.util.Util;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.contextual.Chance;
@@ -40,15 +41,15 @@ public interface LycheeParser<T> {
 				map.put("remove_component", new ActionParsers.RemoveComponentParser());
 			});
 
-	static DataResult<PostAction> action(String s) {
+	static DataResult<PostAction> action(Context context, String s) {
 		try {
-			return action(new StringReader(s));
+			return action(context, new StringReader(s));
 		} catch (Exception e) {
 			return DataResult.error(() -> "Failed to parse action %s: %s".formatted(s, e.getMessage()));
 		}
 	}
 
-	static DataResult<PostAction> action(StringReader reader) throws Exception {
+	static DataResult<PostAction> action(Context context, StringReader reader) throws Exception {
 		Identifier id = Identifier.read(reader);
 		LycheeParser<? extends PostAction> parser = ACTION_PARSERS.get(id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE) ?
 				id.getPath() :
@@ -56,7 +57,7 @@ public interface LycheeParser<T> {
 		DataResult<PostAction> result = null;
 		if (parser != null) {
 			//noinspection unchecked
-			result = (DataResult<PostAction>) parser.parse(reader);
+			result = (DataResult<PostAction>) parser.parse(context, reader);
 		}
 		if (result == null || result.isError()) {
 			PostActionType<?> actionType = LycheeRegistries.POST_ACTION.getValue(id);
@@ -67,8 +68,8 @@ public interface LycheeParser<T> {
 			}
 			//noinspection unchecked
 			DataResult<PostAction> secondResult = (DataResult<PostAction>) actionType.codec().decode(
-					JavaOps.INSTANCE,
-					EmptyMapLike.INSTANCE);
+					NullOps.INSTANCE,
+					NullOps.INSTANCE.getMap(Unit.INSTANCE).getOrThrow());
 			if (secondResult.isError()) {
 				if (result != null) {
 					String firstError = result.error().orElseThrow().message();
@@ -121,37 +122,16 @@ public interface LycheeParser<T> {
 				args[i] = components[i].getAccessor().invoke(action);
 			}
 		}
-		Class<?>[] paramTypes = Arrays.stream(components)
-				.map(RecordComponent::getType)
-				.toArray(Class<?>[]::new);
+		Class<?>[] paramTypes = Arrays.stream(components).map(RecordComponent::getType).toArray(Class<?>[]::new);
 		return clazz.getDeclaredConstructor(paramTypes).newInstance(args);
 	}
 
-	DataResult<T> parse(StringReader reader) throws CommandSyntaxException;
+	DataResult<T> parse(Context context, StringReader reader) throws CommandSyntaxException;
 
-	enum EmptyMapLike implements MapLike<Object> {
-		INSTANCE;
-
+	record Context(RegistryOps<?> registryOps) implements HolderGetter.Provider {
 		@Override
-		@Nullable
-		public Object get(Object key) {
-			return null;
-		}
-
-		@Override
-		@Nullable
-		public Object get(String key) {
-			return null;
-		}
-
-		@Override
-		public Stream<Pair<Object, Object>> entries() {
-			return Stream.empty();
-		}
-
-		@Override
-		public String toString() {
-			return "EmptyMapLike";
+		public <T> Optional<? extends HolderGetter<T>> lookup(ResourceKey<? extends Registry<? extends T>> key) {
+			return registryOps.getter(key);
 		}
 	}
 }

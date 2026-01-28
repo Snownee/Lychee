@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.mixin.ItemEntityAccess;
@@ -44,7 +44,7 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStackTem
 		if (recipe instanceof BlockCrushingRecipe) {
 			var state = lootParams.get(LootContextParams.BLOCK_STATE);
 			if (state.is(LycheeTags.EXTEND_BOX)) {
-				pos = Vec3.atCenterOf(lootParams.get(LycheeContextKeys.BLOCK_POS));
+				pos = Vec3.atCenterOf(lootParams.get(LootContextKeys.BLOCK_POS));
 			}
 		}
 		var itemStack = this.itemStack.create();

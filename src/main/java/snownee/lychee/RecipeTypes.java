@@ -42,7 +42,7 @@ import snownee.lychee.util.ui.CategoryModifier;
 public final class RecipeTypes {
 
 	static {
-		Objects.requireNonNull(LycheeContextKeys.BLOCK_POS);
+		Objects.requireNonNull(LootContextKeys.BLOCK_POS);
 		Objects.requireNonNull(LycheeLootContextParamSets.ALL);
 	}
 
@@ -142,7 +142,12 @@ public final class RecipeTypes {
 	}
 
 	public static void buildCache(RecipeMap recipeMap) {
-		ALL.forEach(lycheeRecipeType -> lycheeRecipeType.refreshCache(recipeMap));
+		ALL.forEach(type -> {
+			if (LycheeConfig.debug) {
+				Lychee.LOGGER.info("Refreshing recipe cache: {}", type);
+			}
+			type.refreshCache(recipeMap);
+		});
 		ALL.forEach(LycheeRecipeType::updateEmptyState);
 	}
 

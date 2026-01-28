@@ -17,9 +17,9 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.context.LycheeContext;
@@ -28,7 +28,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ContextualHolder implements ContextualPredicate, Iterable<ContextualCondition> {
 	public static final Component SECRET_COMPONENT = Component.translatable("contextual.lychee.secret").withStyle(ChatFormatting.GRAY);
-	public static final Codec<ContextualHolder> CODEC = KCodecs.compactList(ContextualConditionData.CODEC.codec())
+	public static final Codec<ContextualHolder> CODEC = ExtraCodecs.compactListCodec(ContextualConditionData.CODEC.codec())
 			.xmap(ContextualHolder::pack, ContextualHolder::unpack);
 	public static final StreamCodec<RegistryFriendlyByteBuf, ContextualHolder> STREAM_CODEC = ContextualConditionData.STREAM_CODEC.apply(
 			ByteBufCodecs.list()).map(ContextualHolder::pack, ContextualHolder::unpack);
@@ -36,10 +36,9 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 	public static final ContextualHolder EMPTY = new ContextualHolder(List.of(), null, null);
 
 	private final List<ContextualCondition> conditions;
-	@Nullable
-	private final BitSet secretFlags;
-	@Nullable
-	private final Component[] overrideDesc;
+
+	private final @Nullable BitSet secretFlags;
+	private final @Nullable Component[] overrideDesc;
 
 	public ContextualHolder(List<ContextualCondition> conditions, @Nullable BitSet secretFlags, @Nullable Component[] overrideDesc) {
 		this.conditions = Collections.unmodifiableList(conditions);

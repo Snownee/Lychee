@@ -18,12 +18,12 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.advancements.criterion.MinMaxBounds;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStackTemplate;
@@ -41,6 +41,7 @@ import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.recipes.DripstoneRecipe;
 import snownee.lychee.recipes.EntityTickingRecipe;
 import snownee.lychee.recipes.ItemBurningRecipe;
+import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.recipes.RandomBlockTickingRecipe;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
@@ -150,7 +151,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 			return self();
 		}
 
-		protected IngredientCollection ingredientCollection() {
+		public IngredientCollection ingredientCollection() {
 			return IngredientCollection.of(ingredients);
 		}
 	}
@@ -169,7 +170,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 	}
 
 	public static class BlockCrushing extends Shapeless<BlockCrushing, BlockCrushingRecipe> {
-		protected BlockPredicate fallingBlock = BlockCrushingRecipe.ANVIL.get();
+		protected @Nullable BlockPredicate fallingBlock;
 		protected BlockPredicate landingBlock = BlockPredicateExtensions.ANY;
 
 		@Contract("_ -> this")
@@ -186,6 +187,9 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 
 		@Override
 		public BlockCrushingRecipe build() {
+			if (fallingBlock == null) {
+				fallingBlock = block(BlockTags.ANVIL);
+			}
 			return new BlockCrushingRecipe(properties(), fallingBlock, landingBlock, ingredientCollection());
 		}
 	}
@@ -255,6 +259,11 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 			return self();
 		}
 
+		public AnvilCrafting preserveEnchantments() {
+			preserveEnchantments = true;
+			return self();
+		}
+
 		@Override
 		public AnvilCraftingRecipe build() {
 			return new AnvilCraftingRecipe(
@@ -270,14 +279,20 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 
 	public static class BlockExploding extends LycheeRecipeBuilder<BlockExploding, BlockExplodingRecipe> {
 		protected final BlockPredicate block;
+		private boolean allowSmallExplosion;
 
 		public BlockExploding(BlockPredicate block) {
 			this.block = block;
 		}
 
+		public BlockExploding allowSmallExplosion() {
+			allowSmallExplosion = true;
+			return self();
+		}
+
 		@Override
 		public BlockExplodingRecipe build() {
-			return new BlockExplodingRecipe(properties(), block);
+			return new BlockExplodingRecipe(properties(), block, allowSmallExplosion);
 		}
 	}
 
@@ -360,7 +375,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 
 		public ShapedCrafting define(Character key, TagKey<Item> tagKey) {
-			return this.define(key, Ingredient.of(BuiltInRegistries.ITEM.getOrThrow(tagKey)));
+			return this.define(key, Ingredient.of(LycheeBuilder.getterOrThrow(Registries.ITEM).getOrThrow(tagKey)));
 		}
 
 		public ShapedCrafting define(Character key, ItemLike item) {
@@ -430,6 +445,20 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		@Override
 		public EntityTickingRecipe build() {
 			return new EntityTickingRecipe(properties(), predicate, interval);
+		}
+	}
+
+	public static class ItemExploding extends Shapeless<ItemExploding, ItemExplodingRecipe> {
+		private boolean allowSmallExplosion;
+
+		public ItemExploding allowSmallExplosion() {
+			allowSmallExplosion = true;
+			return self();
+		}
+
+		@Override
+		public ItemExplodingRecipe build() {
+			return new ItemExplodingRecipe(properties(), ingredientCollection(), allowSmallExplosion);
 		}
 	}
 }

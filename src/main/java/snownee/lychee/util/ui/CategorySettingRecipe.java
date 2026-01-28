@@ -14,7 +14,6 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.Level;
 import snownee.kiwi.recipe.EmptyRecipeInput;
 import snownee.kiwi.recipe.SimpleRecipe;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.util.Patterns;
 
 
@@ -22,7 +21,7 @@ import snownee.lychee.util.Patterns;
 public abstract class CategorySettingRecipe extends SimpleRecipe<EmptyRecipeInput> implements Comparable<CategorySettingRecipe> {
 	public static final Codec<Map<String, List<UIElement>>> ELEMENTS_CODEC = ExtraCodecs.strictUnboundedMap(
 			ExtraCodecs.NON_EMPTY_STRING,
-			KCodecs.compactList(UIElement.CODEC));
+			ExtraCodecs.compactListCodec(UIElement.CODEC));
 	public static final StreamCodec<RegistryFriendlyByteBuf, Optional<Map<String, List<UIElement>>>> ELEMENTS_STREAM_CODEC = ByteBufCodecs.optional(
 			ByteBufCodecs.map(
 					HashMap::newHashMap,

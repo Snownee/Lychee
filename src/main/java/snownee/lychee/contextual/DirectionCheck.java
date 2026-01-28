@@ -16,7 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.LycheeContextKeys;
+import snownee.lychee.LootContextKeys;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
@@ -30,16 +30,16 @@ public class DirectionCheck implements ContextualCondition {
 		for (final var direction : Direction.values()) {
 			createLookup(
 					direction.getName().toLowerCase(Locale.ENGLISH),
-					ctx -> ctx.get(LycheeContextKey.LOOT_PARAMS).get(LycheeContextKeys.DIRECTION) == direction
+					ctx -> ctx.get(LycheeContextKey.LOOT_PARAMS).get(LootContextKeys.DIRECTION) == direction
 			);
 		}
 		createLookup(
 				"sides",
-				ctx -> ctx.get(LycheeContextKey.LOOT_PARAMS).get(LycheeContextKeys.DIRECTION).getStepY() == 0
+				ctx -> ctx.get(LycheeContextKey.LOOT_PARAMS).get(LootContextKeys.DIRECTION).getStepY() == 0
 		);
 		createLookup("forward", ctx -> {
 			final var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
-			final var direction = lootParams.get(LycheeContextKeys.DIRECTION);
+			final var direction = lootParams.get(LootContextKeys.DIRECTION);
 			final var state = lootParams.get(LootContextParams.BLOCK_STATE);
 			final var facing = state.getOptionalValue(BlockStateProperties.FACING)
 					.or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING))
@@ -49,7 +49,7 @@ public class DirectionCheck implements ContextualCondition {
 		});
 		createLookup("axis", ctx -> {
 			final var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
-			final var direction = lootParams.get(LycheeContextKeys.DIRECTION);
+			final var direction = lootParams.get(LootContextKeys.DIRECTION);
 			final var state = lootParams.get(LootContextParams.BLOCK_STATE);
 			final var axis = state.getOptionalValue(BlockStateProperties.AXIS)
 					.or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_AXIS))

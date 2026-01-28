@@ -10,21 +10,21 @@ import com.mojang.serialization.Codec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.recipe.SizedIngredient;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.util.codec.LycheeCodecs;
 
 public final class IngredientCollection {
 	public static final IngredientCollection EMPTY = new IngredientCollection(List.of());
 
-	public static final Codec<IngredientCollection> CODEC = KCodecs.compactList(LycheeCodecs.SIZED_INGREDIENT).xmap(
-			IngredientCollection::new,
+	public static final Codec<IngredientCollection> CODEC = ExtraCodecs.compactListCodec(LycheeCodecs.SIZED_INGREDIENT).xmap(
+			IngredientCollection::of,
 			IngredientCollection::ingredients);
 
 	public static Codec<IngredientCollection> codec(int minSize, int maxSize) {
-		return LycheeCodecs.sizeLimit(KCodecs.compactList(LycheeCodecs.SIZED_INGREDIENT), minSize, maxSize).xmap(
+		return LycheeCodecs.sizeLimit(ExtraCodecs.compactListCodec(LycheeCodecs.SIZED_INGREDIENT), minSize, maxSize).xmap(
 				IngredientCollection::of,
 				IngredientCollection::ingredients);
 	}
@@ -66,13 +66,17 @@ public final class IngredientCollection {
 
 	public List<Ingredient> flattenedIngredients() {
 		if (flattenedIngredients == null) {
-			List<Ingredient> list = Lists.newArrayListWithExpectedSize(ingredientCount);
-			for (SizedIngredient ingredient : ingredients) {
-				for (int i = 0; i < ingredient.count(); i++) {
-					list.add(ingredient.ingredient());
+			if (isEmpty()) {
+				flattenedIngredients = List.of();
+			} else {
+				List<Ingredient> list = Lists.newArrayListWithExpectedSize(ingredientCount);
+				for (SizedIngredient ingredient : ingredients) {
+					for (int i = 0; i < ingredient.count(); i++) {
+						list.add(ingredient.ingredient());
+					}
 				}
+				flattenedIngredients = list;
 			}
-			flattenedIngredients = list;
 		}
 		return flattenedIngredients;
 	}

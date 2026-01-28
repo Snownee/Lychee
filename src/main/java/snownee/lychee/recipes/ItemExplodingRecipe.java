@@ -6,6 +6,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -16,6 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.IngredientCollection;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
@@ -25,12 +27,13 @@ import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements Comparable<ItemExplodingRecipe> {
-	public static void invoke(final ServerLevel level, Vec3 center, List<Entity> entityList, float radius) {
+	public static void invoke(final ServerLevel level, Vec3 center, List<Entity> entityList, float radius, boolean small) {
 		final var itemEntities = entityList.stream()
 				.filter(it -> it instanceof ItemEntity)
 				.map(ItemEntity.class::cast);
 		final var context = new LycheeContext();
 		context.put(LycheeContextKey.LEVEL, level);
+		context.put(LycheeContextKey.SMALL_EXPLOSION, small);
 		var lootParams = context.initLootParams(RecipeTypes.ITEM_EXPLODING);
 		lootParams.set(LootContextParams.ORIGIN, center);
 		lootParams.set(LootContextParams.EXPLOSION_RADIUS, radius);
@@ -38,18 +41,24 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 	}
 
 	protected IngredientCollection ingredients;
+	private final boolean allowSmallExplosion;
 
 	public ItemExplodingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
-			final IngredientCollection ingredients
+			IngredientCollection ingredients,
+			boolean allowSmallExplosion
 	) {
 		super(commonProperties);
 		this.ingredients = ingredients;
+		this.allowSmallExplosion = allowSmallExplosion;
 		onConstructed();
 	}
 
 	@Override
 	public boolean matches(LycheeContext context, Level level) {
+		if (!allowSmallExplosion() && context.is(LycheeContextKey.SMALL_EXPLOSION)) {
+			return false;
+		}
 		return ItemShapelessRecipeUtils.matches(context, ingredients);
 	}
 
@@ -66,6 +75,10 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 	@Override
 	public IngredientCollection ingredientCollection() {
 		return ingredients;
+	}
+
+	public boolean allowSmallExplosion() {
+		return allowSmallExplosion;
 	}
 
 	@Override
@@ -89,7 +102,8 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
 						IngredientCollection.CODEC
 								.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
-								.forGetter(it -> it.ingredients)
+								.forGetter(ItemExplodingRecipe::ingredientCollection),
+						LycheeCodecs.ALLOW_SMALL_EXPLOSION.forGetter(ItemExplodingRecipe::allowSmallExplosion)
 				).apply(instance, ItemExplodingRecipe::new)));
 
 		@Override
@@ -103,7 +117,9 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 						LycheeRecipeCommonProperties.STREAM_CODEC,
 						ItemExplodingRecipe::commonProperties,
 						IngredientCollection.STREAM_CODEC,
-						it -> it.ingredients,
+						ItemExplodingRecipe::ingredientCollection,
+						ByteBufCodecs.BOOL,
+						ItemExplodingRecipe::allowSmallExplosion,
 						ItemExplodingRecipe::new
 				);
 

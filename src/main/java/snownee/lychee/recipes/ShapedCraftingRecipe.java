@@ -95,6 +95,11 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 	}
 
 	@Override
+	public int ingredientCount() {
+		return getIngredients().size();
+	}
+
+	@Override
 	public IntList getItemIndexes(JsonPointer pointer) {
 		List<Ingredient> ingredients = getIngredients();
 		var size = ingredients.size();

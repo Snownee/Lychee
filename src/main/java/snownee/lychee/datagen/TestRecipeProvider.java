@@ -2,14 +2,18 @@ package snownee.lychee.datagen;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.mojang.serialization.JavaOps;
+
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Item;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.Lychee;
 import snownee.lychee.contextual.SkyDarken;
@@ -28,7 +32,8 @@ public class TestRecipeProvider extends FabricRecipeProvider implements LycheeBu
 		return new RecipeProvider(registries, output) {
 			@Override
 			protected void buildRecipes() {
-				itemBurningRecipe(SizedIngredient.of(ItemTags.BEDS, 2))
+				HolderLookup.RegistryLookup<Item> items = registries.lookupOrThrow(Registries.ITEM);
+				itemBurningRecipe(SizedIngredient.of(items, ItemTags.BEDS, 2))
 						.comment("Datagen test 1")
 						.chance(0.5F)
 						.post(delay(0.5F))

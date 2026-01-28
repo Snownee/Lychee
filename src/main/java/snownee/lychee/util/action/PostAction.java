@@ -7,16 +7,18 @@ import java.util.function.Consumer;
 
 import org.jspecify.annotations.Nullable;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.ExtraCodecs;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.codec.LycheeParser;
@@ -30,12 +32,26 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 public interface PostAction extends PostActionDisplay, PostActionLike, ContextualPredicate, Contextual {
 	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatchMap(PostAction::type, PostActionType::codec);
 	Codec<PostAction> OBJECT_CODEC = MAP_CODEC.codec();
-	Codec<PostAction> CODEC = Codec.withAlternative(
-			OBJECT_CODEC, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
-					LycheeParser::action,
-					action -> DataResult.error(() -> "Encoding shorthand PostAction is not supported")
-			));
-	Codec<List<PostAction>> LIST_CODEC = KCodecs.compactList(CODEC);
+	Codec<PostAction> STRING_CODEC = new Codec<>() {
+		@Override
+		public <T> DataResult<Pair<PostAction, T>> decode(DynamicOps<T> ops, T input) {
+			DataResult<String> stringValue = ops.getStringValue(input);
+			if (stringValue.isError()) {
+				return DataResult.error(stringValue.error().orElseThrow().messageSupplier());
+			}
+			if (!(ops instanceof RegistryOps<T> registryOps)) {
+				return DataResult.error(() -> "Not a registry ops");
+			}
+			return LycheeParser.action(new LycheeParser.Context(registryOps), stringValue.getOrThrow()).map($ -> Pair.of($, input));
+		}
+
+		@Override
+		public <T> DataResult<T> encode(PostAction input, DynamicOps<T> ops, T prefix) {
+			return DataResult.error(() -> "Encoding shorthand PostAction is not supported");
+		}
+	};
+	Codec<PostAction> CODEC = Codec.withAlternative(OBJECT_CODEC, STRING_CODEC);
+	Codec<List<PostAction>> LIST_CODEC = ExtraCodecs.compactListCodec(CODEC);
 
 	StreamCodec<RegistryFriendlyByteBuf, PostAction> STREAM_CODEC = ByteBufCodecs.registry(LycheeRegistries.POST_ACTION.key()).dispatch(
 			PostAction::type,

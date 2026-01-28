@@ -2,6 +2,7 @@ package snownee.lychee.datagen;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.jspecify.annotations.Nullable;
@@ -14,11 +15,14 @@ import com.mojang.serialization.JavaOps;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemInstance;
@@ -28,6 +32,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
+import snownee.kiwi.recipe.RecipeUtil;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.action.AddItemCooldown;
 import snownee.lychee.action.AnvilDamageChance;
@@ -52,7 +57,6 @@ import snownee.lychee.action.input.RemoveComponent;
 import snownee.lychee.action.input.SetItem;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
-import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -139,8 +143,8 @@ public interface LycheeBuilder {
 		return new LycheeRecipeBuilder.ItemBurning(input);
 	}
 
-	default LycheeRecipeBuilder.SimpleShapeless<ItemExplodingRecipe> itemExplodingRecipe() {
-		return new LycheeRecipeBuilder.SimpleShapeless<>(ItemExplodingRecipe::new);
+	default LycheeRecipeBuilder.ItemExploding itemExplodingRecipe() {
+		return new LycheeRecipeBuilder.ItemExploding();
 	}
 
 	default LycheeRecipeBuilder.ItemInside itemInsideRecipe() {
@@ -322,9 +326,9 @@ public interface LycheeBuilder {
 	default BlockPredicate block(Object o) {
 		return switch (o) {
 			case BlockPredicate bp -> bp;
-			case String s -> BlockPredicateExtensions.fromString(s, true).getOrThrow();
-			case Block block -> BlockPredicate.Builder.block().of(BuiltInRegistries.BLOCK, block).build();
-			case TagKey<?> tagKey -> BlockPredicate.Builder.block().of(BuiltInRegistries.BLOCK, (TagKey<Block>) tagKey).build();
+			case String s -> BlockPredicateExtensions.fromString(getterOrThrow(Registries.BLOCK), s, true).getOrThrow();
+			case Block block -> BlockPredicate.Builder.block().of(getterOrThrow(Registries.BLOCK), block).build();
+			case TagKey<?> tagKey -> BlockPredicate.Builder.block().of(getterOrThrow(Registries.BLOCK), (TagKey<Block>) tagKey).build();
 			default -> throw new IllegalArgumentException("Invalid argument: " + o);
 		};
 	}
@@ -343,10 +347,18 @@ public interface LycheeBuilder {
 			case Ingredient ing -> ing;
 			case ItemLike item -> Ingredient.of(item);
 			case ItemInstance itemInstance -> Ingredient.of(itemInstance.typeHolder().value());
-			case TagKey<?> tagKey -> Ingredient.of(BuiltInRegistries.ITEM.getOrThrow((TagKey<Item>) tagKey));
+			case TagKey<?> tagKey -> RecipeUtil.tagIngredient(getterOrThrow(Registries.ITEM), (TagKey<Item>) tagKey);
 			case String s -> parse(s).ingredient();
 			default -> throw new IllegalArgumentException("Invalid argument: " + o);
 		};
 		return new SizedIngredient(i, count);
+	}
+
+	static <E> Optional<HolderGetter<E>> getter(ResourceKey<? extends Registry<? extends E>> registryKey) {
+		return Objects.requireNonNull(registryOps.get()).getter(registryKey);
+	}
+
+	static <E> HolderGetter<E> getterOrThrow(ResourceKey<? extends Registry<? extends E>> registryKey) {
+		return getter(registryKey).orElseThrow();
 	}
 }
