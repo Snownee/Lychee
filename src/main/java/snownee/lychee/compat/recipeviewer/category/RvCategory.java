@@ -43,7 +43,7 @@ public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 	public int width = WIDTH;
 	public int height = HEIGHT;
 	public @Nullable IconProvider<R> iconProvider;
-	public WorkstationProvider<R> workstationProvider = category -> List.of();
+	public WorkstationProvider<R> workstationProvider = _ -> List.of();
 	public ImmutableMap<String, RvCategoryDecoration<R>> decorations = ImmutableMap.of();
 	public ImmutableMap<String, Predicate<R>> conditions = ImmutableMap.of();
 
@@ -117,9 +117,11 @@ public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 	}
 
 	public static RenderElement consumeBlockInputIcon() {
-		return new InteractiveRenderElement((InteractiveRenderElement element) -> new SpriteElementRenderer(
-				Lychee.id("exclamation_mark"),
-				2).withSize(element.width(), element.height()).atZ(100)).onTooltip(() -> List.of(Component.translatable(
+		return new InteractiveRenderElement(
+				(InteractiveRenderElement element) -> new SpriteElementRenderer(
+						Lychee.id("exclamation_mark"),
+						2
+				).withSize(element.width(), element.height()).atZ(100), null).onTooltip(() -> List.of(Component.translatable(
 				"postAction.lychee.place.consume"))).withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE);
 	}
 
@@ -129,7 +131,7 @@ public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 
 	public static <R extends ILycheeRecipe<?>> RenderElement infoIcon(RecipeHolder<R> recipeHolder) {
 		var recipe = recipeHolder.value();
-		return InteractiveRenderElement.create(new SpriteElementRenderer(AllGuiTextures.INFO.id).<SpriteElementRenderer>withSize(
+		return RenderElement.create(new SpriteElementRenderer(AllGuiTextures.INFO.id).<SpriteElementRenderer>withSize(
 						InfoElementHelper.INFO_SIZE))
 				.onTooltip(() -> RVs.getRecipeTooltip(recipe))
 				.onInput((action, element) -> ClientProxy.postWidgetInputEvent(

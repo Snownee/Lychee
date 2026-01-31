@@ -46,7 +46,7 @@ public class ShadowElement {
 	public InteractiveRenderElement blockWithShadow(
 			Supplier<BlockState> blockStateSupplier,
 			Function<BlockState, RenderElement> blockElement) {
-		return InteractiveRenderElement.create(graphics -> {
+		return RenderElement.create(graphics -> {
 			var blockState = blockStateSupplier.get();
 			if (blockState.isAir()) {
 				RenderElement.create(AllGuiTextures.QUESTION_MARK).at(2, 2).render(graphics);

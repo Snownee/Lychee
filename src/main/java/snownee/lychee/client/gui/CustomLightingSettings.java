@@ -2,7 +2,6 @@ package snownee.lychee.client.gui;
 
 import org.joml.Vector3f;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 
 public class CustomLightingSettings implements ILightingSettings {

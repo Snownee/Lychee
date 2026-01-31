@@ -48,13 +48,13 @@ public interface ElementRenderer {
 		}
 		UIElementCommonProperties properties = element.commonProperties();
 		if (properties.tooltip().isPresent()) {
-			InteractiveRenderElement interactiveElement = InteractiveRenderElement.create(renderElement);
+			InteractiveRenderElement interactiveElement = RenderElement.create(renderElement);
 			List<Component> tooltip = properties.tooltip().get();
 			renderElement = interactiveElement.onTooltip(() -> tooltip);
 		}
 		String id = properties.onInput().orElse(null);
 		if (recipeHolder != null && id != null) {
-			InteractiveRenderElement interactiveElement = InteractiveRenderElement.create(renderElement);
+			InteractiveRenderElement interactiveElement = RenderElement.create(renderElement);
 			renderElement = interactiveElement.onInput((action, element0) -> ClientProxy.postWidgetInputEvent(
 					recipeHolder.value(),
 					id,

@@ -2,11 +2,10 @@ package snownee.lychee.client.gui;
 
 import java.util.List;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 
 import net.minecraft.client.Minecraft;
@@ -17,35 +16,28 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
-import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.ui.InputAction;
 
 public class InteractiveRenderElement extends RenderElement implements WrapperRenderElement, GuiEventListener {
-	private final @Nullable Function<InteractiveRenderElement, ScreenElement> renderable;
+	private final @Nullable Function<InteractiveRenderElement, @Nullable ScreenElement> renderable;
+	private final @Nullable Consumer<InteractiveRenderElement> onFrame;
 	private @Nullable Supplier<@Nullable List<Component>> onTooltip;
 	private @Nullable BiPredicate<InputAction, InteractiveRenderElement> onInput;
+	public boolean visible = true;
 	private boolean focused;
 	private boolean withScissors;
 	private boolean hovered;
 
-	public InteractiveRenderElement(Function<InteractiveRenderElement, ScreenElement> renderable) {
+	public InteractiveRenderElement(
+			Function<InteractiveRenderElement, ScreenElement> renderable,
+			@Nullable Consumer<InteractiveRenderElement> onFrame) {
 		this.renderable = renderable;
-	}
-
-	public static InteractiveRenderElement create(ScreenElement element) {
-		if (element instanceof InteractiveRenderElement interactiveElement) {
-			return interactiveElement;
-		}
-		InteractiveRenderElement interactiveElement = new InteractiveRenderElement(ignored -> element);
-		if (element instanceof RenderElement renderElement) {
-			interactiveElement.at(renderElement.position).withSize(renderElement.size);
-			renderElement.at(VectorExtensions.ZERO3F);
-		}
-		return interactiveElement;
+		this.onFrame = onFrame;
 	}
 
 	public InteractiveRenderElement() {
 		renderable = null;
+		onFrame = null;
 	}
 
 	public static void produceClickSound() {
@@ -67,24 +59,26 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 		if (renderable == null) {
 			return;
 		}
+		ScreenElement element = renderable.apply(this);
+		if (element == null) {
+			return;
+		}
 		boolean withScissors = this.withScissors;
-//		if (withScissors) { FIXME
-//			Matrix4f matrix = graphics.pose().last().pose();
-//			Vector3f topLeft = matrix.transformPosition(new Vector3f());
-//			Vector3f bottomRight = matrix.transformPosition(new Vector3f(size.x(), size.y(), 0));
-//			graphics.enableScissor(
-//					(int) topLeft.x(),
-//					(int) topLeft.y(),
-//					(int) bottomRight.x(),
-//					(int) bottomRight.y());
-//		}
+		if (withScissors) {
+			graphics.enableScissor(0, 0, size.x(), size.y());
+		}
 		graphics.pose().pushMatrix();
 		graphics.pose().translate(x(), y());
-		renderable.apply(this).render(graphics);
+		if (onFrame != null) {
+			onFrame.accept(this);
+		}
+		if (visible) {
+			element.render(graphics);
+		}
 		graphics.pose().popMatrix();
-//		if (withScissors) { FIXME
-//			graphics.disableScissor();
-//		}
+		if (withScissors) {
+			graphics.disableScissor();
+		}
 	}
 
 	public InteractiveRenderElement onTooltip(@Nullable Supplier<@Nullable List<Component>> onTooltip) {

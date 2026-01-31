@@ -43,6 +43,8 @@
 	],
 	"client": [
 		"client.ClientPacketListenerMixin",
+		"client.GuiEntityRendererMixin",
+		"client.GuiRenderStateMixin",
 		"jei.AnvilRecipeCategoryMixin"
 	],
 	"injectors": {

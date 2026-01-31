@@ -10,7 +10,6 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.compat.recipeviewer.element.InfoElementHelper;
 import snownee.lychee.recipes.BlockCrushingRecipe;
@@ -36,14 +35,12 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 					var recipe = recipeHolder.value();
 					var landingBlockIsAny = landingBlockIsAny(recipe);
 
-					builder.addElement(RenderElement.create((graphics, element) -> {
+					builder.addElement(RenderElement.createSimple((graphics, element) -> {
 								var ticks = (System.currentTimeMillis() % 2000) / 1000F;
 								ticks = Math.min(1, ticks);
 								ticks = ticks * ticks * ticks * ticks;
 
 								var matrixStack = graphics.pose();
-								matrixStack.pushMatrix();
-
 								if (getLandingBlock(recipe).getLightEmission() < 5) {
 									matrixStack.pushMatrix();
 									var shadow = 0.5F;
@@ -60,17 +57,12 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 									matrixStack.popMatrix();
 								}
 
-								matrixStack.pushMatrix();
 								GuiGameElement.of(getFallingBlock(recipe))
 										.scale(BLOCK_SIZE)
 										.atLocal(0, ticks * 1.3 + 0.4, 2)
 										.rotateBlock(20, 225, 0)
-										.lighting(RVs.BLOCK_LIGHTING)
 										.atZ(300)
 										.render(graphics);
-								matrixStack.popMatrix();
-
-								matrixStack.popMatrix();
 							})
 							.at(fallingBlockPosition(recipe))
 							.withSize(BLOCK_SIZE, FALLING_BLOCK_HEIGHT));
@@ -89,16 +81,12 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 					var recipe = recipeHolder.value();
 					Vector2f landingBlockPosition = landingBlockPosition(recipe);
 
-					builder.addElement(RenderElement.create((graphics, element) -> {
-						var matrixStack = graphics.pose();
-						matrixStack.pushMatrix();
-						GuiGameElement.of(getLandingBlock(recipe))
-								.scale(BLOCK_SIZE)
-								.rotateBlock(20, 225, 0)
-								.lighting(RVs.BLOCK_LIGHTING)
-								.render(graphics);
-						matrixStack.popMatrix();
-					}).at(landingBlockPosition));
+					builder.addElement(RenderElement.create(
+							GuiGameElement.of(getLandingBlock(recipe))
+									.scale(BLOCK_SIZE)
+									.rotateBlock(20, 225, 0)
+									.at(landingBlockPosition)
+					));
 
 					RvHelper helper = builder.helper();
 					builder.addElement(new InteractiveRenderElement().at(landingBlockPosition)
@@ -146,18 +134,19 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 	}
 
 	public static InteractiveRenderElement icon(RenderElement element) {
-		return InteractiveRenderElement.create(graphics -> {
-			var ticks = (System.currentTimeMillis() % 3000) / 1000F;
-			float pos = 0;
-			if (ticks < 1.5F) {
-				pos = ticks * ticks * ticks * ticks;
-				pos *= 15;
-				if (ticks > 1) {
-					pos -= 1.5F * 1.5F * 1.5F * 1.5F * 15;
-				}
-			}
-			graphics.pose().translate(0, pos);
-			element.render(graphics);
-		}).withScissors(true).at(element.position).withSize(element.size);
+		return RenderElement.create(
+				element,
+				_ -> {
+					var ticks = (System.currentTimeMillis() % 3000) / 1000F;
+					float pos = 0;
+					if (ticks < 1.5F) {
+						pos = ticks * ticks * ticks * ticks;
+						pos *= 15;
+						if (ticks > 1) {
+							pos -= 1.5F * 1.5F * 1.5F * 1.5F * 15;
+						}
+					}
+//					graphics.pose().translate(0, pos); FIXME
+				}).withScissors(true).at(element.position).withSize(element.size);
 	}
 }

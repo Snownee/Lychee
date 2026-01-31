@@ -1,17 +1,28 @@
 package snownee.lychee.client.gui;
 
+import org.joml.Matrix3x2fStack;
+import org.joml.Quaternionf;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
+import com.mojang.math.Transformation;
 
+import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.renderer.entity.state.BlockDisplayEntityRenderState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Display;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
@@ -28,6 +39,7 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.util.VecHelper;
 
 public class GuiGameElement {
+	public static final RenderStateDataKey<Lighting.Entry> CUSTOM_LIGHTING = RenderStateDataKey.create();
 
 	public static GuiRenderBuilder of(ItemStackTemplate stack) {
 		return new GuiItemRenderBuilder(stack);
@@ -52,15 +64,17 @@ public class GuiGameElement {
 	}
 
 	public static GuiRenderBuilder of(Fluid fluid) {
-		return new GuiBlockStateRenderBuilder(fluid.defaultFluidState()
-				.createLegacyBlock()
-				.setValue(LiquidBlock.LEVEL, 0));
+		return new GuiBlockStateRenderBuilder(fluid.defaultFluidState().createLegacyBlock().setValue(LiquidBlock.LEVEL, 0));
+	}
+
+	public static GuiRenderBuilder of(EntityRenderState renderState) {
+		return new GuiEntityRenderBuilder(renderState);
 	}
 
 	public static abstract class GuiRenderBuilder extends RenderElement {
-		protected double xLocal, yLocal, zLocal;
+		protected double xLocal, yLocal, zLocal = 1;
 		protected double xRot, yRot, zRot;
-		protected double scale = 1;
+		protected float scale = 1;
 		protected int color = 0xFFFFFF;
 		protected Vec3 rotationOffset = Vec3.ZERO;
 		protected ILightingSettings customLighting = null;
@@ -83,7 +97,7 @@ public class GuiGameElement {
 			return this.rotate(xRot, yRot, zRot).withRotationOffset(VecHelper.getCenterOf(BlockPos.ZERO));
 		}
 
-		public GuiRenderBuilder scale(double scale) {
+		public GuiRenderBuilder scale(float scale) {
 			this.scale = scale;
 			return this;
 		}
@@ -112,20 +126,20 @@ public class GuiGameElement {
 //			prepareLighting(matrixStack);
 		}
 
-		protected void transformMatrix(PoseStack matrixStack) {
-			float scale = (float) this.scale;
-			matrixStack.translate(x(), y() + scale, z());
-			matrixStack.scale(scale, scale, scale);
-			matrixStack.translate(xLocal, yLocal, zLocal);
-			UIRenderHelper.flipForGuiRender(matrixStack);
-			matrixStack.translate(rotationOffset.x, rotationOffset.y, rotationOffset.z);
-
-//			matrixStack.mulPose(Axis.YP.rotationDegrees((float) Util.getMillis() / 20));
-
-			matrixStack.mulPose(Axis.ZP.rotationDegrees((float) zRot));
-			matrixStack.mulPose(Axis.XP.rotationDegrees((float) xRot));
-			matrixStack.mulPose(Axis.YP.rotationDegrees((float) yRot));
-			matrixStack.translate(-rotationOffset.x, -rotationOffset.y, -rotationOffset.z);
+		protected void transformMatrix(GuiGraphics graphics) {
+//			Matrix3x2fStack pose = graphics.pose();
+//			float scale = this.scale;
+//			pose.translate(x(), y() + scale);
+//			pose.scale(scale);
+//			pose.translate(xLocal, yLocal);
+//			pose.translate(rotationOffset.x, rotationOffset.y);
+//
+////			matrixStack.mulPose(Axis.YP.rotationDegrees((float) Util.getMillis() / 20));
+//
+//			pose.mulPose(Axis.ZP.rotationDegrees((float) zRot));
+//			pose.mulPose(Axis.XP.rotationDegrees((float) xRot));
+//			pose.mulPose(Axis.YP.rotationDegrees((float) yRot));
+//			pose.translate(-rotationOffset.x, -rotationOffset.y, -rotationOffset.z);
 		}
 
 		protected void cleanUpMatrix(PoseStack matrixStack) {
@@ -150,6 +164,7 @@ public class GuiGameElement {
 
 	private static class GuiBlockModelRenderBuilder extends GuiRenderBuilder {
 
+		protected final BlockDisplayEntityRenderState renderState;
 		protected BlockStateModel blockModel;
 		protected BlockState blockState;
 
@@ -157,23 +172,51 @@ public class GuiGameElement {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
 			this.blockModel = bakedModel;
 			withRotationOffset(VecHelper.getCenterOf(BlockPos.ZERO));
+			renderState = new BlockDisplayEntityRenderState();
+			renderState.entityType = EntityType.BLOCK_DISPLAY;
+			renderState.renderState = createFreshRenderState();
+			renderState.setData(CUSTOM_LIGHTING, Lighting.Entry.ITEMS_FLAT);
+			if (blockState != null) {
+				renderState.blockRenderState = new Display.BlockDisplay.BlockRenderState(blockState);
+			}
+		}
+
+		private static Display.RenderState createFreshRenderState() {
+			Vector3fc translation = new Vector3f(-0.5f, -0.5f, -0.5f);
+			Transformation transformation = new Transformation(translation, null, null, null);
+			return new Display.RenderState(
+					Display.GenericInterpolator.constant(transformation),
+					Display.BillboardConstraints.FIXED,
+					-1,
+					Display.FloatInterpolator.constant(0),
+					Display.FloatInterpolator.constant(1),
+					-1
+			);
 		}
 
 		@Override
 		public void render(GuiGraphics graphics) {
-//			PoseStack matrixStack = graphics.pose();
-//			prepareMatrix(matrixStack);
-//
-//			Minecraft mc = Minecraft.getInstance();
-//			BlockRenderDispatcher blockRenderer = mc.getBlockRenderer();
-//			MultiBufferSource.BufferSource buffer = mc.renderBuffers().bufferSource();
-//
-//			transformMatrix(matrixStack);
-//
-//			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
-//			renderModel(blockRenderer, buffer, matrixStack);
-//
-//			cleanUpMatrix(matrixStack);
+			float toRad = 0.01745329251F;
+			Vector3f translation = new Vector3f((float) xLocal, (float) yLocal, (float) zLocal);
+			Quaternionf rotation = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
+			float halfWidth = width() / 2f;
+			float halfHeight = height() / 2f;
+			float x0 = -halfWidth;
+			float y0 = -halfHeight;
+			float x1 = width() + halfWidth;
+			float y1 = height() + halfHeight;
+			var pos0 = graphics.pose().transformPosition(new Vector2f(x0, y0));
+			var pos1 = graphics.pose().transformPosition(new Vector2f(x1, y1));
+			graphics.submitEntityRenderState(
+					renderState,
+					scale,
+					translation,
+					rotation,
+					null,
+					(int) pos0.x,
+					(int) pos0.y,
+					(int) pos1.x,
+					(int) pos1.y);
 		}
 
 		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {
@@ -223,11 +266,7 @@ public class GuiGameElement {
 		}
 
 		@Override
-		protected void renderModel(
-				BlockRenderDispatcher blockRenderer,
-				MultiBufferSource.BufferSource buffer,
-				PoseStack ms
-		) {
+		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {
 //			if (blockState.getBlock() instanceof BaseFireBlock) {
 //				Lighting.setupForFlatItems();
 //				blockRenderer.renderSingleBlock(
@@ -269,10 +308,10 @@ public class GuiGameElement {
 
 	public static class GuiItemRenderBuilder extends GuiRenderBuilder {
 
-		private final ItemStackTemplate stack;
+		private final ItemStack stack;
 
 		public GuiItemRenderBuilder(ItemStackTemplate stack) {
-			this.stack = stack;
+			this.stack = stack.create();
 			scale = 10;
 		}
 
@@ -289,13 +328,17 @@ public class GuiGameElement {
 //			transformMatrix(matrixStack);
 //			renderItemIntoGUI(matrixStack, stack, customLighting == null);
 //			cleanUpMatrix(matrixStack);
+			graphics.pose().pushMatrix();
+			graphics.renderItem(stack, (int) x(), (int) y());
+			graphics.pose().popMatrix();
 		}
 
 		@Override
-		protected void transformMatrix(PoseStack matrixStack) {
-			matrixStack.translate(x(), y(), z());
-			matrixStack.translate(xLocal * scale, yLocal * scale, zLocal * scale);
-			UIRenderHelper.flipForGuiRender(matrixStack);
+		protected void transformMatrix(GuiGraphics graphics) {
+			Matrix3x2fStack pose = graphics.pose();
+			pose.translate(x(), y());
+//			pose.translate(xLocal * scale, yLocal * scale);
+//			UIRenderHelper.flipForGuiRender(graphics);
 		}
 
 		public static void renderItemIntoGUI(PoseStack matrixStack, ItemStack stack, boolean useDefaultLighting) {
@@ -347,6 +390,37 @@ public class GuiGameElement {
 			return this;
 		}
 
+	}
+
+	public static class GuiEntityRenderBuilder extends GuiRenderBuilder {
+		private final EntityRenderState state;
+
+		public GuiEntityRenderBuilder(EntityRenderState state) {
+			this.state = state;
+		}
+
+		@Override
+		public void render(GuiGraphics graphics) {
+			float toRad = 0.01745329251F;
+			Vector3f translation = new Vector3f((float) xLocal, (float) yLocal, (float) zLocal);
+			Quaternionf rotation = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
+			float x0 = 0;
+			float y0 = 0;
+			float x1 = width();
+			float y1 = height();
+			var pos0 = graphics.pose().transformPosition(new Vector2f(x0, y0));
+			var pos1 = graphics.pose().transformPosition(new Vector2f(x1, y1));
+			graphics.submitEntityRenderState(
+					state,
+					scale,
+					translation,
+					rotation,
+					null,
+					(int) pos0.x,
+					(int) pos0.y,
+					(int) pos1.x,
+					(int) pos1.y);
+		}
 	}
 
 }

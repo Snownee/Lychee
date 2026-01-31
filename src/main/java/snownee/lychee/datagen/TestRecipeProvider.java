@@ -2,8 +2,6 @@ package snownee.lychee.datagen;
 
 import java.util.concurrent.CompletableFuture;
 
-import com.mojang.serialization.JavaOps;
-
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.advancements.criterion.MinMaxBounds;

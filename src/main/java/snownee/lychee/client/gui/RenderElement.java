@@ -1,19 +1,21 @@
 package snownee.lychee.client.gui;
 
 import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
 import org.joml.Vector3fc;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.util.ARGB;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.client.SmartKey;
+import snownee.lychee.util.VectorExtensions;
 import snownee.lychee.util.ui.UIElementCommonProperties;
 
 public abstract class RenderElement implements ScreenElement, Renderable {
@@ -29,16 +31,24 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	public Vector2i size = new Vector2i(UIElementCommonProperties.DEFAULT_SIZE);
 	protected float z = 0;
 
-	public static RenderElement create(BiConsumer<GuiGraphics, RenderElement> renderable) {
+	public static RenderElement createSimple(BiConsumer<GuiGraphics, RenderElement> renderable) {
 		return new SimpleRenderElement(renderable);
 	}
 
-	public static RenderElement create(Function<RenderElement, ScreenElement> renderable) {
-		return new SimpleRenderElement(it -> (graphics, element) -> renderable.apply(element));
+	public static InteractiveRenderElement create(ScreenElement element) {
+		return create(element, null);
 	}
 
-	public static InteractiveRenderElement create(ScreenElement element) {
-		return InteractiveRenderElement.create(element);
+	public static InteractiveRenderElement create(ScreenElement element, @Nullable Consumer<InteractiveRenderElement> onFrame) {
+		if (element instanceof InteractiveRenderElement interactiveElement) {
+			return interactiveElement;
+		}
+		InteractiveRenderElement interactiveElement = new InteractiveRenderElement(_ -> element, onFrame);
+		if (element instanceof RenderElement renderElement) {
+			interactiveElement.at(renderElement.position).withSize(renderElement.size);
+			renderElement.at(VectorExtensions.ZERO3F);
+		}
+		return interactiveElement;
 	}
 
 	protected float alpha = 1f;
@@ -147,10 +157,15 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 		if (ARGB.alpha(color) == 0) {
 			color |= 0x88000000;
 		}
-		graphics.pose().pushMatrix();
-//		graphics.pose().translate(0, 0, 1000);
 		graphics.renderOutline(Math.round(x()), Math.round(y()), width(), height(), color);
-		graphics.pose().pushMatrix();
+		return (T) this;
+	}
+
+	public <T extends RenderElement> T rect(RenderElement parent) {
+		at(parent.position);
+		atZ(parent.z);
+		withSize(parent.size);
+		//noinspection unchecked
 		return (T) this;
 	}
 }

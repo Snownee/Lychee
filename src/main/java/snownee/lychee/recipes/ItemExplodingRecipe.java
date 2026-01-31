@@ -2,6 +2,8 @@ package snownee.lychee.recipes;
 
 import java.util.List;
 
+import org.jspecify.annotations.Nullable;
+
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.IngredientCollection;
@@ -27,7 +30,16 @@ import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements Comparable<ItemExplodingRecipe> {
-	public static void invoke(final ServerLevel level, Vec3 center, List<Entity> entityList, float radius, boolean small) {
+	public static void invoke(
+			final ServerLevel level,
+			Vec3 center,
+			List<Entity> entityList,
+			float radius,
+			boolean small,
+			@Nullable Entity directSource) {
+		if (directSource != null && directSource.is(LycheeTags.SKIP_ITEM_EXPLODING)) {
+			return;
+		}
 		final var itemEntities = entityList.stream()
 				.filter(it -> it instanceof ItemEntity)
 				.map(ItemEntity.class::cast);

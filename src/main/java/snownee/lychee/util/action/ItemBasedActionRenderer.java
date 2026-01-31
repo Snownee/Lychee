@@ -1,7 +1,6 @@
 package snownee.lychee.util.action;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import snownee.lychee.client.gui.GuiGameElement;
 

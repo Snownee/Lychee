@@ -27,7 +27,7 @@ public abstract class ServerExplosionMixin implements Explosion {
 			target = "Lnet/minecraft/server/level/ServerLevel;getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"))
 	private List<Entity> lychee_hurtEntities(ServerLevel instance, Entity entity, AABB aabb, Operation<List<Entity>> original) {
 		List<Entity> list = original.call(instance, entity, aabb);
-		ItemExplodingRecipe.invoke(level(), center(), list, radius(), isSmall());
+		ItemExplodingRecipe.invoke(level(), center(), list, radius(), isSmall(), getDirectSourceEntity());
 		return list;
 	}
 }

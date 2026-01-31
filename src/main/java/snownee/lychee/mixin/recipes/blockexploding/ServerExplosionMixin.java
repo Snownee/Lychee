@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -57,6 +58,9 @@ public abstract class ServerExplosionMixin {
 	@Shadow
 	public abstract boolean isSmall();
 
+	@Shadow
+	public abstract @Nullable Entity getDirectSourceEntity();
+
 	/**
 	 * The drops are added in {@link BlockBehaviour.BlockStateBase#onExplosionHit}.
 	 * We need to avoid the default drops conditional after {@link BlockBehaviour.BlockStateBase#onExplosionHit}.
@@ -78,6 +82,11 @@ public abstract class ServerExplosionMixin {
 			@Share("context") LocalRef<@Nullable LycheeContext> contextRef,
 			@Share("currentDrops") LocalRef<List<ServerExplosion.StackCollector>> currentDropsRef) {
 		if (RecipeTypes.BLOCK_EXPLODING.isEmpty() || !RecipeTypes.BLOCK_EXPLODING.has(state)) {
+			contextRef.set(null);
+			return state;
+		}
+		Entity directSourceEntity = getDirectSourceEntity();
+		if (directSourceEntity != null && directSourceEntity.is(LycheeTags.SKIP_BLOCK_EXPLODING)) {
 			contextRef.set(null);
 			return state;
 		}

@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
-import snownee.lychee.client.gui.InteractiveRenderElement;
+import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.recipes.BlockInteractingRecipe;
 import snownee.lychee.util.VectorExtensions;
 
@@ -34,7 +34,7 @@ public class BlockInteractingRecipeCategory extends ItemAndBlockCategory<BlockIn
 				"method", (builder, recipeHolder) -> {
 					var recipe = recipeHolder.value();
 					var icon = recipe.getType() == RecipeTypes.BLOCK_CLICKING ? AllGuiTextures.LEFT_CLICK : AllGuiTextures.RIGHT_CLICK;
-					builder.addElement(InteractiveRenderElement.create(icon)
+					builder.addElement(RenderElement.create(icon)
 							.onTooltip(() -> List.of(Component.translatable(Util.makeDescriptionId(
 									"tip",
 									BuiltInRegistries.RECIPE_SERIALIZER.getKey(recipe.getSerializer())))))

@@ -12,7 +12,6 @@ import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.compat.recipeviewer.element.ShadowElement;
 import snownee.lychee.util.CommonProxy;
@@ -105,7 +104,6 @@ public class ItemAndBlockCategory<R extends ILycheeRecipe<LycheeContext>> extend
 		Function<BlockState, RenderElement> blockElement = blockState -> GuiGameElement.of(blockState)
 				.rotateBlock(12.5, 160, 0)
 				.scale(15)
-				.lighting(RVs.BLOCK_LIGHTING)
 				.withSize(BLOCK_SIZE);
 		var result = shadowElement.blockWithShadow(() -> getRenderingBlock(recipe), blockElement);
 

@@ -29,7 +29,7 @@ public class ItemShapelessRecipeCategory<R extends ILycheeRecipe<LycheeContext>>
 		mapBuilder.put(
 				"icon", (builder, recipeHolder) -> {
 					RenderElement icon = builder.instance().icon();
-					builder.addElement(RenderElement.create((graphics, element) -> icon.render(graphics))
+					builder.addElement(RenderElement.createSimple((graphics, element) -> icon.render(graphics))
 							.at(ICON_POSITION)
 							.withSize(ICON_SIZE));
 				});

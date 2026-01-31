@@ -19,6 +19,10 @@ public final class LycheeTags {
 
 	public static final TagKey<EntityType<?>> LIGHTING_FIRE_IMMUNE = entityTag("lightning_fire_immune");
 
+	public static final TagKey<EntityType<?>> SKIP_ITEM_EXPLODING = entityTag("skip_item_exploding");
+
+	public static final TagKey<EntityType<?>> SKIP_BLOCK_EXPLODING = entityTag("skip_item_exploding");
+
 	public static TagKey<EntityType<?>> entityTag(String path) {
 		return tag(Registries.ENTITY_TYPE, path);
 	}

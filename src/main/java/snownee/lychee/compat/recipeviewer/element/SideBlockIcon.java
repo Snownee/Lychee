@@ -8,7 +8,6 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.client.gui.ScreenElement;
-import snownee.lychee.compat.recipeviewer.RVs;
 
 public class SideBlockIcon extends RenderElement {
 
@@ -30,10 +29,10 @@ public class SideBlockIcon extends RenderElement {
 		mainIcon.render(graphics);
 		ms.popMatrix();
 		GuiGameElement.of(blockProvider.get())
-				.lighting(RVs.SIDE_ICON_LIGHTING)
 				.withRotationOffset(Vec3.ZERO)
 				.scale(7)
 				.rotateBlock(30, 202.5, 0)
+				.atLocal(0.3, 0.3, 1)
 				.at(7, 7)
 				.render(graphics);
 		ms.popMatrix();

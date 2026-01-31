@@ -16,7 +16,6 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.GuiGameElement;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.client.gui.RenderElement;
-import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.RvHelper;
 import snownee.lychee.compat.recipeviewer.element.ShadowElement;
 import snownee.lychee.recipes.DripstoneRecipe;
@@ -102,9 +101,9 @@ public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 	protected RenderElement getBlockElement(Supplier<BlockState> stateSupplier, BlockPredicate predicate, RvHelper helper) {
 		Supplier<RenderElement> blockElement = () -> GuiGameElement.of(stateSupplier.get())
 				.scale(BLOCK_SIZE)
-				.lighting(RVs.BLOCK_LIGHTING)
-				.rotateBlock(12.5, -22.5, 0);
-		return new InteractiveRenderElement((InteractiveRenderElement element) -> blockElement.get())
+				.rotateBlock(12.5, -22.5, 0)
+				.withSize(BLOCK_SIZE);
+		return new InteractiveRenderElement(_ -> blockElement.get(), null)
 				.onTooltip(() -> BlockPredicateExtensions.getTooltips(stateSupplier.get(), predicate, helper))
 				.onInput(helper.inputOnBlock(stateSupplier))
 				.withSize(BLOCK_SIZE);
@@ -114,7 +113,6 @@ public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 		Function<BlockState, RenderElement> blockElement = blockState -> GuiGameElement.of(blockState)
 				.rotateBlock(12.5, -22.5, 0)
 				.scale(BLOCK_SIZE)
-				.lighting(RVs.BLOCK_LIGHTING)
 				.withSize(BLOCK_SIZE);
 		var result = shadowElement.blockWithShadow(() -> getTargetBlock(recipe), blockElement);
 

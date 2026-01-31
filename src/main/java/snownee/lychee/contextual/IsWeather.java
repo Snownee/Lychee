@@ -10,13 +10,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.TriState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.util.context.LycheeContext;
