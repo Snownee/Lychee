@@ -77,7 +77,6 @@ public class GuiGameElement {
 		protected float scale = 1;
 		protected int color = 0xFFFFFF;
 		protected Vec3 rotationOffset = Vec3.ZERO;
-		protected ILightingSettings customLighting = null;
 
 		public GuiRenderBuilder atLocal(double x, double y, double z) {
 			this.xLocal = x;
@@ -109,11 +108,6 @@ public class GuiGameElement {
 
 		public GuiRenderBuilder withRotationOffset(Vec3 offset) {
 			this.rotationOffset = offset;
-			return this;
-		}
-
-		public GuiRenderBuilder lighting(ILightingSettings lighting) {
-			customLighting = lighting;
 			return this;
 		}
 
@@ -190,8 +184,7 @@ public class GuiGameElement {
 					-1,
 					Display.FloatInterpolator.constant(0),
 					Display.FloatInterpolator.constant(1),
-					-1
-			);
+					-1);
 		}
 
 		@Override
@@ -199,12 +192,10 @@ public class GuiGameElement {
 			float toRad = 0.01745329251F;
 			Vector3f translation = new Vector3f((float) xLocal, (float) yLocal, (float) zLocal);
 			Quaternionf rotation = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
-			float halfWidth = width() / 2f;
-			float halfHeight = height() / 2f;
-			float x0 = -halfWidth;
-			float y0 = -halfHeight;
-			float x1 = width() + halfWidth;
-			float y1 = height() + halfHeight;
+			float x0 = x() - width();
+			float y0 = y() - height();
+			float x1 = x() + width() + width();
+			float y1 = y() + height() + height();
 			var pos0 = graphics.pose().transformPosition(new Vector2f(x0, y0));
 			var pos1 = graphics.pose().transformPosition(new Vector2f(x1, y1));
 			graphics.submitEntityRenderState(
@@ -217,6 +208,16 @@ public class GuiGameElement {
 					(int) pos0.y,
 					(int) pos1.x,
 					(int) pos1.y);
+			graphics.guiRenderState.submitPicturesInPictureState(new GuiFluidRenderState(
+					translation,
+					rotation,
+					null,
+					(int) pos0.x,
+					(int) pos0.y,
+					(int) pos1.x,
+					(int) pos1.y,
+					scale,
+					null));
 		}
 
 		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {
@@ -384,12 +385,6 @@ public class GuiGameElement {
 //
 //			matrixStack.popPose();
 		}
-
-		@Override
-		public GuiRenderBuilder lighting(ILightingSettings lighting) {
-			return this;
-		}
-
 	}
 
 	public static class GuiEntityRenderBuilder extends GuiRenderBuilder {

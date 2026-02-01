@@ -29,7 +29,7 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 	private boolean hovered;
 
 	public InteractiveRenderElement(
-			Function<InteractiveRenderElement, ScreenElement> renderable,
+			Function<InteractiveRenderElement, @Nullable ScreenElement> renderable,
 			@Nullable Consumer<InteractiveRenderElement> onFrame) {
 		this.renderable = renderable;
 		this.onFrame = onFrame;
@@ -63,18 +63,19 @@ public class InteractiveRenderElement extends RenderElement implements WrapperRe
 		if (element == null) {
 			return;
 		}
+		if (onFrame != null) {
+			onFrame.accept(this);
+		}
+		if (!visible) {
+			return;
+		}
 		boolean withScissors = this.withScissors;
 		if (withScissors) {
 			graphics.enableScissor(0, 0, size.x(), size.y());
 		}
 		graphics.pose().pushMatrix();
 		graphics.pose().translate(x(), y());
-		if (onFrame != null) {
-			onFrame.accept(this);
-		}
-		if (visible) {
-			element.render(graphics);
-		}
+		element.render(graphics);
 		graphics.pose().popMatrix();
 		if (withScissors) {
 			graphics.disableScissor();

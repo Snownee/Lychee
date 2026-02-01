@@ -33,7 +33,6 @@ public class SideBlockIcon extends RenderElement {
 				.scale(7)
 				.rotateBlock(30, 202.5, 0)
 				.atLocal(0.3, 0.3, 1)
-				.at(7, 7)
 				.render(graphics);
 		ms.popMatrix();
 	}

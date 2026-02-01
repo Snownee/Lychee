@@ -1,5 +1,7 @@
 package snownee.lychee.compat.recipeviewer.category;
 
+import java.util.Objects;
+
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
 
@@ -81,12 +83,11 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 					var recipe = recipeHolder.value();
 					Vector2f landingBlockPosition = landingBlockPosition(recipe);
 
-					builder.addElement(RenderElement.create(
-							GuiGameElement.of(getLandingBlock(recipe))
-									.scale(BLOCK_SIZE)
-									.rotateBlock(20, 225, 0)
-									.at(landingBlockPosition)
-					));
+					builder.addElement(GuiGameElement.of(getLandingBlock(recipe))
+							.scale(BLOCK_SIZE)
+							.rotateBlock(20, 225, 0)
+							.at(landingBlockPosition)
+					);
 
 					RvHelper helper = builder.helper();
 					builder.addElement(new InteractiveRenderElement().at(landingBlockPosition)
@@ -135,8 +136,8 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 
 	public static InteractiveRenderElement icon(RenderElement element) {
 		return RenderElement.create(
-				element,
-				_ -> {
+				element.at(element.position).withSize(element.size),
+				$ -> {
 					var ticks = (System.currentTimeMillis() % 3000) / 1000F;
 					float pos = 0;
 					if (ticks < 1.5F) {
@@ -146,7 +147,8 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 							pos -= 1.5F * 1.5F * 1.5F * 1.5F * 15;
 						}
 					}
-//					graphics.pose().translate(0, pos); FIXME
-				}).withScissors(true).at(element.position).withSize(element.size);
+					RenderElement wrappedElement = (RenderElement) Objects.requireNonNull($.getWrappedElement());
+					wrappedElement.at($.x(), $.y() + pos);
+				}).withScissors(true);
 	}
 }

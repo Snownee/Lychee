@@ -199,7 +199,7 @@ public class FluidRenderer {
 			int color,
 			TextureAtlasSprite texture
 	) {
-		FluidRenderer.renderTiledFace(dir, left, down, right, up, depth, builder, ms, light, color, texture, 1);
+		renderTiledFace(dir, left, down, right, up, depth, builder, ms, light, color, texture, 1);
 	}
 
 	public static void renderFlowingTiledFace(
@@ -215,7 +215,7 @@ public class FluidRenderer {
 			int color,
 			TextureAtlasSprite texture
 	) {
-		FluidRenderer.renderTiledFace(dir, left, down, right, up, depth, builder, ms, light, color, texture, 0.5f);
+		renderTiledFace(dir, left, down, right, up, depth, builder, ms, light, color, texture, 0.5f);
 	}
 
 	public static void renderTiledFace(

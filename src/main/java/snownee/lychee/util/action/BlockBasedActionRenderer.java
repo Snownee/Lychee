@@ -26,7 +26,7 @@ public record BlockBasedActionRenderer<T extends PostAction>(Function<T, BlockSt
 				.withRotationOffset(Vec3.ZERO)
 				.rotateBlock(30, 225, 0)
 				.scale(10)
-				.at(x + 3, y + 3)
+				.at(x, y)
 				.render(graphics);
 	}
 }
