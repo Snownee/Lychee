@@ -6,10 +6,10 @@ import org.jspecify.annotations.Nullable;
 
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
-import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 
 public record GuiFluidRenderState(
-		Fluid fluid,
+		FluidState fluidState,
 		Vector3f translation,
 		Quaternionf rotation,
 		@Nullable Quaternionf overrideCameraAngle,
@@ -21,7 +21,7 @@ public record GuiFluidRenderState(
 		@Nullable ScreenRectangle scissorArea,
 		@Nullable ScreenRectangle bounds) implements PictureInPictureRenderState {
 	public GuiFluidRenderState(
-			Fluid fluid,
+			FluidState fluidState,
 			Vector3f translation,
 			Quaternionf rotation,
 			@Nullable Quaternionf overrideCameraAngle,
@@ -32,7 +32,7 @@ public record GuiFluidRenderState(
 			float scale,
 			@Nullable ScreenRectangle scissorArea) {
 		this(
-				fluid,
+				fluidState,
 				translation,
 				rotation,
 				overrideCameraAngle,
@@ -42,7 +42,6 @@ public record GuiFluidRenderState(
 				y1,
 				scale,
 				scissorArea,
-				PictureInPictureRenderState.getBounds(x0, y0, x1, y1, scissorArea)
-		);
+				PictureInPictureRenderState.getBounds(x0, y0, x1, y1, scissorArea));
 	}
 }

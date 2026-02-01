@@ -208,16 +208,19 @@ public class GuiGameElement {
 					(int) pos0.y,
 					(int) pos1.x,
 					(int) pos1.y);
-			graphics.guiRenderState.submitPicturesInPictureState(new GuiFluidRenderState(
-					translation,
-					rotation,
-					null,
-					(int) pos0.x,
-					(int) pos0.y,
-					(int) pos1.x,
-					(int) pos1.y,
-					scale,
-					null));
+//			if (!blockState.getFluidState().isEmpty()) {
+//				graphics.guiRenderState.submitPicturesInPictureState(new GuiFluidRenderState(
+//						blockState.getFluidState(),
+//						translation,
+//						rotation,
+//						null,
+//						(int) pos0.x,
+//						(int) pos0.y,
+//						(int) pos1.x,
+//						(int) pos1.y,
+//						scale,
+//						null));
+//			}
 		}
 
 		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {

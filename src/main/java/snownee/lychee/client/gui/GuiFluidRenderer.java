@@ -1,34 +1,25 @@
 package snownee.lychee.client.gui;
 
-import java.util.List;
-import java.util.Map;
+import org.joml.Vector3f;
 
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRendering;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.model.Model;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.material.FluidState;
+import snownee.lychee.util.render.EmptyVirtualBlockGetter;
 
 public class GuiFluidRenderer extends PictureInPictureRenderer<GuiFluidRenderState> {
-	private final Model.Simple model;
-
 	public GuiFluidRenderer(MultiBufferSource.BufferSource bufferSource) {
 		super(bufferSource);
-		List<ModelPart.Cube> cubes = CubeListBuilder.create()
-				.addBox(0, 0, 0, 16, 16, 16)
-				.getCubes()
-				.stream()
-				.map($ -> $.bake(32, 32))
-				.toList();
-		model = new Model.Simple(new ModelPart(cubes, Map.of()), RenderTypes::entityTranslucent);
 	}
 
 	@Override
@@ -38,20 +29,75 @@ public class GuiFluidRenderer extends PictureInPictureRenderer<GuiFluidRenderSta
 
 	@Override
 	protected void renderToTexture(GuiFluidRenderState renderState, PoseStack poseStack) {
-		FluidRenderHandler handler = FluidRenderHandlerRegistry.INSTANCE.get(renderState.fluid());
+		FluidState fluidState = renderState.fluidState();
+		FluidRenderHandler handler = FluidRenderHandlerRegistry.INSTANCE.get(fluidState.getType());
 		if (handler == null) {
 			return;
 		}
-		TextureAtlasSprite[] sprites = handler.getFluidSprites(null, null, renderState.fluid().defaultFluidState());
-		model.renderToBuffer(
-				poseStack,
-				bufferSource.getBuffer(model.renderType(sprites[0].atlasLocation())),
-				LightCoordsUtil.UI_FULL_BRIGHT,
-				OverlayTexture.NO_OVERLAY);
+		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+		Vector3f translation = renderState.translation();
+		float scale = renderState.scale();
+		poseStack.translate(translation.x, translation.y, translation.z);
+		poseStack.mulPose(renderState.rotation());
+		poseStack.scale(scale, scale, scale);
+		VertexConsumer buffer = new InjectPose(bufferSource.getBuffer(Sheets.translucentBlockItemSheet()), poseStack);
+//		VertexConsumer buffer = bufferSource.getBuffer(RenderTypes.translucentMovingBlock());
+		FluidRendering.render(
+				handler,
+				EmptyVirtualBlockGetter.FULL_BRIGHT,
+				BlockPos.ZERO,
+				buffer,
+				fluidState.createLegacyBlock(),
+				fluidState,
+				new FluidRendering.DefaultRenderer() {});
 	}
 
 	@Override
 	protected String getTextureLabel() {
 		return "lychee fluid";
+	}
+
+	public record InjectPose(VertexConsumer base, PoseStack pose) implements VertexConsumer {
+		@Override
+		public VertexConsumer addVertex(float x, float y, float z) {
+//			Vector3f pos = pose.last().pose().transformPosition(x, y, z, new Vector3f());
+//			Lychee.LOGGER.info("Transformed position: {}, {}, {}", pos.x(), pos.y(), pos.z());
+			return base.addVertex(pose.last(), x, y, z);
+		}
+
+		@Override
+		public VertexConsumer setColor(int r, int g, int b, int a) {
+			return base.setColor(r, g, b, a);
+		}
+
+		@Override
+		public VertexConsumer setColor(int color) {
+			return base.setColor(color);
+		}
+
+		@Override
+		public VertexConsumer setUv(float u, float v) {
+			return base.setUv(u, v);
+		}
+
+		@Override
+		public VertexConsumer setUv1(int u, int v) {
+			return base.setUv1(u, v);
+		}
+
+		@Override
+		public VertexConsumer setUv2(int u, int v) {
+			return base.setUv2(u, v);
+		}
+
+		@Override
+		public VertexConsumer setNormal(float x, float y, float z) {
+			return base.setNormal(pose.last(), x, y, z);
+		}
+
+		@Override
+		public VertexConsumer setLineWidth(float width) {
+			return base.setLineWidth(width);
+		}
 	}
 }
