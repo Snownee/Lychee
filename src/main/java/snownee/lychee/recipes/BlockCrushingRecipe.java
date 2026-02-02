@@ -5,11 +5,7 @@ import java.util.List;
 import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.Lists;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.MapLike;
-import com.mojang.serialization.RecordBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.advancements.criterion.BlockPredicate;
@@ -28,6 +24,7 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.RecipeMatcher;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -137,24 +134,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		public static final MapCodec<BlockCrushingRecipe> CODEC =
 				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(BlockCrushingRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC_FOR_TESTING.fieldOf("falling_block")
-								.mapResult(new MapCodec.ResultFunction<>() {
-									@Override
-									public <T> DataResult<BlockPredicate> apply(
-											DynamicOps<T> ops,
-											MapLike<T> input,
-											DataResult<BlockPredicate> a) {
-										if (a.isSuccess()) {
-											return a;
-										}
-										return BlockPredicateExtensions.CODEC_FOR_TESTING.parse(ops, ops.createString("#anvil"));
-									}
-
-									@Override
-									public <T> RecordBuilder<T> coApply(DynamicOps<T> ops, BlockPredicate input, RecordBuilder<T> t) {
-										return t;
-									}
-								})
+						LycheeCodecs.optionalInput(BlockPredicateExtensions.CODEC_FOR_TESTING, "falling_block", "#anvil")
 								.forGetter(it -> it.fallingBlock),
 						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf("landing_block", BlockPredicateExtensions.ANY)
 								.forGetter(BlockCrushingRecipe::landingBlock),

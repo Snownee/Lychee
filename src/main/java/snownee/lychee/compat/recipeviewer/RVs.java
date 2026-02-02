@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -19,6 +20,7 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -79,17 +81,20 @@ public final class RVs {
 		return list;
 	}
 
-	public static <T extends BlockKeyableRecipe> Pair<BlockState, Integer> getMostUsedBlock(Collection<? extends RecipeHolder<? extends T>> recipes) {
+	public static <T extends Recipe<?>> Pair<BlockState, Integer> getMostUsedBlock(
+			Collection<? extends RecipeHolder<? extends T>> recipes,
+			Function<T, BlockPredicate> extractor) {
 		var blockStateCount = new Object2IntOpenHashMap<Block>();
 		var blockPredicateMap = Maps.<Block, BlockPredicate>newHashMap();
-		for (var object : recipes) {
-			var recipe = object.value();
-			for (var block : BlockPredicateExtensions.matchedBlocks(recipe.blockPredicate())) {
+		for (var recipeHolder : recipes) {
+			var recipe = recipeHolder.value();
+			BlockPredicate blockPredicate = extractor.apply(recipe);
+			for (var block : BlockPredicateExtensions.matchedBlocks(blockPredicate)) {
 				if (block.defaultBlockState().isAir()) {
 					continue;
 				}
 				blockStateCount.mergeInt(block, 1, Integer::sum);
-				blockPredicateMap.putIfAbsent(block, recipe.blockPredicate());
+				blockPredicateMap.putIfAbsent(block, blockPredicate);
 			}
 		}
 		if (blockStateCount.isEmpty()) {
@@ -101,17 +106,23 @@ public final class RVs {
 				.orElseGet(() -> Pair.of(Blocks.AIR.defaultBlockState(), 0));
 	}
 
-	public static Identifier composeCategoryIdentifier(Identifier categoryId, Identifier group) {
-		return Identifier.fromNamespaceAndPath(
-				categoryId.getNamespace(),
-				"%s/%s/%s".formatted(categoryId.getPath(), group.getNamespace(), group.getPath()));
+	public static BlockState getIconBlock(Collection<? extends RecipeHolder<? extends BlockKeyableRecipe>> recipes) {
+		return getIconBlock(recipes, BlockKeyableRecipe::blockPredicate);
 	}
 
-	public static BlockState getIconBlock(Collection<? extends RecipeHolder<? extends BlockKeyableRecipe>> recipes) {
+	public static <T extends Recipe<?>> BlockState getIconBlock(
+			Collection<? extends RecipeHolder<? extends T>> recipes,
+			Function<T, BlockPredicate> extractor) {
 		var con = Minecraft.getInstance().getConnection();
 		if (con == null) {
 			return Blocks.AIR.defaultBlockState();
 		}
-		return getMostUsedBlock(recipes).getFirst();
+		return getMostUsedBlock(recipes, extractor).getFirst();
+	}
+
+	public static Identifier composeCategoryIdentifier(Identifier categoryId, Identifier group) {
+		return Identifier.fromNamespaceAndPath(
+				categoryId.getNamespace(),
+				"%s/%s/%s".formatted(categoryId.getPath(), group.getNamespace(), group.getPath()));
 	}
 }

@@ -16,6 +16,7 @@ import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.MapDecoder;
 import com.mojang.serialization.MapLike;
+import com.mojang.serialization.RecordBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.commands.arguments.item.ItemParser;
@@ -42,7 +43,6 @@ import snownee.kiwi.util.codec.KCodecs;
 
 public final class LycheeCodecs {
 	public static final ThreadLocal<@Nullable Unit> skipComponentsValidation = new ThreadLocal<>();
-	public static final MapCodec<Boolean> ALLOW_SMALL_EXPLOSION = Codec.BOOL.optionalFieldOf("allow_small_explosion", false);
 	private static final MapCodec<Integer> ITEM_STACK_COUNT = ExtraCodecs.NON_NEGATIVE_INT.fieldOf("count").orElse(1);
 
 	private static final MapCodec<ItemStackTemplate> ITEM_STACK_TEMPLATE_MAP_ENCODER = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -55,14 +55,14 @@ public final class LycheeCodecs {
 					$ -> DataResult.success(Optional.of($)),
 					$ -> $.map(DataResult::success).orElseGet(() -> DataResult.error(() -> "Item must not be minecraft:air"))),
 			BuiltInRegistries.ITEM.holderByNameCodec().validate($ -> $.value() == Items.AIR ?
-							DataResult.success($) :
-							DataResult.error(() -> "Item must be minecraft:air"))
-					.fieldOf("id").flatXmap(
-							_ -> DataResult.success(Optional.<ItemStackTemplate>empty()),
-							$ -> $.isEmpty() ?
-									DataResult.success(BuiltInRegistries.ITEM.wrapAsHolder(Items.AIR)) :
-									DataResult.error(() -> "Item must be minecraft:air"))
-	).xmap(Either::unwrap, $ -> $.isPresent() ? Either.left($) : Either.right($));
+					DataResult.success($) :
+					DataResult.error(() -> "Item must be minecraft:air")).fieldOf("id").flatXmap(
+					_ -> DataResult.success(Optional.<ItemStackTemplate>empty()),
+					$ -> $.isEmpty() ?
+							DataResult.success(BuiltInRegistries.ITEM.wrapAsHolder(Items.AIR)) :
+							DataResult.error(() -> "Item must be minecraft:air"))).xmap(
+			Either::unwrap,
+			$ -> $.isPresent() ? Either.left($) : Either.right($));
 
 	public static final MapCodec<Optional<ItemStackTemplate>> OPTIONAL_ITEM_STACK_TEMPLATE_MAP_CODEC = MapCodec.of(
 			OPTIONAL_ITEM_STACK_TEMPLATE_MAP_ENCODER, new MapDecoder.Implementation<>() {
@@ -162,7 +162,8 @@ public final class LycheeCodecs {
 				return $.map(DataResult::success).orElseGet(() -> DataResult.error(() -> "ItemStack cannot be empty"));
 			}, $ -> DataResult.success(Optional.of($)));
 	public static final Codec<ItemStackTemplate> ITEM_STACK_TEMPLATE = Codec.withAlternative(
-			ITEM_STACK_TEMPLATE_MAP_CODEC.codec(), ExtraCodecs.NON_EMPTY_STRING.flatXmap(
+			ITEM_STACK_TEMPLATE_MAP_CODEC.codec(),
+			ExtraCodecs.NON_EMPTY_STRING.flatXmap(
 					s -> KCodecs.tryCatch(() -> ParsedItem.read(new StringReader(s)).template()),
 					_ -> DataResult.error(() -> "Encoding shorthand ItemStack is not supported")));
 
@@ -221,4 +222,21 @@ public final class LycheeCodecs {
 						}
 						return DataResult.error(() -> "Expected empty list");
 					}));
+
+	public static <A> MapCodec<A> optionalInput(Codec<A> codec, String fieldName, String fallback) {
+		return codec.fieldOf(fieldName).mapResult(new MapCodec.ResultFunction<>() {
+			@Override
+			public <T> DataResult<A> apply(DynamicOps<T> ops, MapLike<T> input, DataResult<A> a) {
+				if (a.isSuccess() || input.get(fieldName) != null) {
+					return a;
+				}
+				return codec.parse(ops, ops.createString(fallback));
+			}
+
+			@Override
+			public <T> RecordBuilder<T> coApply(DynamicOps<T> ops, A input, RecordBuilder<T> t) {
+				return t;
+			}
+		});
+	}
 }

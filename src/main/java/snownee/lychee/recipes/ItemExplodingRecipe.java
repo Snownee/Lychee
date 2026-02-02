@@ -7,6 +7,7 @@ import org.jspecify.annotations.Nullable;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -20,7 +21,6 @@ import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.IngredientCollection;
-import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
@@ -29,7 +29,7 @@ import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
-public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements Comparable<ItemExplodingRecipe> {
+public class ItemExplodingRecipe extends ExplodingRecipe<LycheeContext> implements Comparable<ItemExplodingRecipe> {
 	public static void invoke(
 			final ServerLevel level,
 			Vec3 center,
@@ -53,16 +53,15 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 	}
 
 	protected IngredientCollection ingredients;
-	private final boolean allowSmallExplosion;
 
 	public ItemExplodingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			IngredientCollection ingredients,
+			BlockPredicate displayTNT,
 			boolean allowSmallExplosion
 	) {
-		super(commonProperties);
+		super(commonProperties, displayTNT, allowSmallExplosion);
 		this.ingredients = ingredients;
-		this.allowSmallExplosion = allowSmallExplosion;
 		onConstructed();
 	}
 
@@ -89,10 +88,6 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 		return ingredients;
 	}
 
-	public boolean allowSmallExplosion() {
-		return allowSmallExplosion;
-	}
-
 	@Override
 	public int compareTo(ItemExplodingRecipe that) {
 		int i;
@@ -115,7 +110,8 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 						IngredientCollection.CODEC
 								.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
 								.forGetter(ItemExplodingRecipe::ingredientCollection),
-						LycheeCodecs.ALLOW_SMALL_EXPLOSION.forGetter(ItemExplodingRecipe::allowSmallExplosion)
+						DISPLAY_TNT.forGetter(ExplodingRecipe::displayTNT),
+						ALLOW_SMALL_EXPLOSION.forGetter(ExplodingRecipe::allowSmallExplosion)
 				).apply(instance, ItemExplodingRecipe::new)));
 
 		@Override
@@ -130,6 +126,8 @@ public class ItemExplodingRecipe extends LycheeRecipe<LycheeContext> implements 
 						ItemExplodingRecipe::commonProperties,
 						IngredientCollection.STREAM_CODEC,
 						ItemExplodingRecipe::ingredientCollection,
+						BlockPredicate.STREAM_CODEC,
+						ItemExplodingRecipe::displayTNT,
 						ByteBufCodecs.BOOL,
 						ItemExplodingRecipe::allowSmallExplosion,
 						ItemExplodingRecipe::new

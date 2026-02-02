@@ -33,6 +33,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.block.Blocks;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
@@ -277,25 +278,6 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 	}
 
-	public static class BlockExploding extends LycheeRecipeBuilder<BlockExploding, BlockExplodingRecipe> {
-		protected final BlockPredicate block;
-		private boolean allowSmallExplosion;
-
-		public BlockExploding(BlockPredicate block) {
-			this.block = block;
-		}
-
-		public BlockExploding allowSmallExplosion() {
-			allowSmallExplosion = true;
-			return self();
-		}
-
-		@Override
-		public BlockExplodingRecipe build() {
-			return new BlockExplodingRecipe(properties(), block, allowSmallExplosion);
-		}
-	}
-
 	public static class RandomBlockTicking extends LycheeRecipeBuilder<RandomBlockTicking, RandomBlockTickingRecipe> {
 		protected final BlockPredicate block;
 
@@ -448,9 +430,47 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 	}
 
-	public static class ItemExploding extends Shapeless<ItemExploding, ItemExplodingRecipe> {
+	public static class BlockExploding extends LycheeRecipeBuilder<BlockExploding, BlockExplodingRecipe> {
+		protected final BlockPredicate block;
+		private @Nullable BlockPredicate displayTNT;
 		private boolean allowSmallExplosion;
 
+		public BlockExploding(BlockPredicate block) {
+			this.block = block;
+		}
+
+		@Contract("_ -> this")
+		public BlockExploding displayTNT(BlockPredicate displayTNT) {
+			this.displayTNT = displayTNT;
+			return self();
+		}
+
+		@Contract("-> this")
+		public BlockExploding allowSmallExplosion() {
+			allowSmallExplosion = true;
+			return self();
+		}
+
+		@Override
+		public BlockExplodingRecipe build() {
+			if (displayTNT == null) {
+				displayTNT = block(Blocks.TNT);
+			}
+			return new BlockExplodingRecipe(properties(), block, displayTNT, allowSmallExplosion);
+		}
+	}
+
+	public static class ItemExploding extends Shapeless<ItemExploding, ItemExplodingRecipe> {
+		private @Nullable BlockPredicate displayTNT;
+		private boolean allowSmallExplosion;
+
+		@Contract("_ -> this")
+		public ItemExploding displayTNT(BlockPredicate displayTNT) {
+			this.displayTNT = displayTNT;
+			return self();
+		}
+
+		@Contract("-> this")
 		public ItemExploding allowSmallExplosion() {
 			allowSmallExplosion = true;
 			return self();
@@ -458,7 +478,10 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 
 		@Override
 		public ItemExplodingRecipe build() {
-			return new ItemExplodingRecipe(properties(), ingredientCollection(), allowSmallExplosion);
+			if (displayTNT == null) {
+				displayTNT = block(Blocks.TNT);
+			}
+			return new ItemExplodingRecipe(properties(), ingredientCollection(), displayTNT, allowSmallExplosion);
 		}
 	}
 }

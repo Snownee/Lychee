@@ -15,6 +15,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.client.gui.AllGuiTextures;
 import snownee.lychee.client.gui.GuiGameElement;
@@ -31,6 +32,7 @@ import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstanceProviders;
 import snownee.lychee.compat.recipeviewer.element.SideBlockIcon;
+import snownee.lychee.recipes.ExplodingRecipe;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -76,7 +78,8 @@ public class RvPlugin<Helper extends RvHelper> {
 				new BlockExplodingRecipeCategory(),
 				it -> {
 					it.iconProvider = category -> {
-						var mainIcon = GuiGameElement.of(Items.TNT);
+						BlockState mainBlock = RVs.getIconBlock(category.recipes(), ExplodingRecipe::displayTNT);
+						var mainIcon = GuiGameElement.of(mainBlock.isAir() ? Blocks.TNT.defaultBlockState() : mainBlock).scale(7);
 						return new SideBlockIcon(mainIcon, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
 					};
 					it.setSimpleWorkstationProvider(_ -> List.of(Items.TNT));
@@ -111,7 +114,10 @@ public class RvPlugin<Helper extends RvHelper> {
 				new ItemExplodingRecipeCategory(),
 				it -> {
 					it.width = RvCategory.WIDER_WIDTH;
-					it.iconProvider = _ -> GuiGameElement.of(Items.TNT);
+					it.iconProvider = category -> {
+						BlockState mainBlock = RVs.getIconBlock(category.recipes(), ExplodingRecipe::displayTNT);
+						return GuiGameElement.of(mainBlock.isAir() ? Items.TNT : mainBlock.getBlock());
+					};
 					it.setSimpleWorkstationProvider(_ -> List.of(Items.TNT));
 				});
 		register(

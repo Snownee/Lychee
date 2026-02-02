@@ -10,29 +10,26 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
-import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 
-public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
+public class BlockExplodingRecipe extends ExplodingRecipe<LycheeContext> implements BlockKeyableRecipe {
 	protected final BlockPredicate blockPredicate;
-	private final boolean allowSmallExplosion;
 
 	public BlockExplodingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
 			BlockPredicate blockPredicate,
+			BlockPredicate displayTNT,
 			boolean allowSmallExplosion
 	) {
-		super(commonProperties);
+		super(commonProperties, displayTNT, allowSmallExplosion);
 		this.blockPredicate = blockPredicate;
-		this.allowSmallExplosion = allowSmallExplosion;
 		onConstructed();
 	}
 
@@ -47,10 +44,6 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 	@Override
 	public BlockPredicate blockPredicate() {
 		return blockPredicate;
-	}
-
-	public boolean allowSmallExplosion() {
-		return allowSmallExplosion;
 	}
 
 	@Override
@@ -69,7 +62,8 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(BlockExplodingRecipe::commonProperties),
 						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
 								.forGetter(BlockExplodingRecipe::blockPredicate),
-						LycheeCodecs.ALLOW_SMALL_EXPLOSION.forGetter(BlockExplodingRecipe::allowSmallExplosion)
+						DISPLAY_TNT.forGetter(ExplodingRecipe::displayTNT),
+						ALLOW_SMALL_EXPLOSION.forGetter(ExplodingRecipe::allowSmallExplosion)
 				).apply(instance, BlockExplodingRecipe::new));
 
 		@Override
@@ -83,6 +77,8 @@ public class BlockExplodingRecipe extends LycheeRecipe<LycheeContext> implements
 						BlockExplodingRecipe::commonProperties,
 						BlockPredicate.STREAM_CODEC,
 						BlockExplodingRecipe::blockPredicate,
+						BlockPredicate.STREAM_CODEC,
+						BlockExplodingRecipe::displayTNT,
 						ByteBufCodecs.BOOL,
 						BlockExplodingRecipe::allowSmallExplosion,
 						BlockExplodingRecipe::new

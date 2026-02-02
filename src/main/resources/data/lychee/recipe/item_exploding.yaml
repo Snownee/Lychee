@@ -32,3 +32,4 @@ post:
 - id: diamond
   type: drop_item
 type: lychee:item_exploding
+display_tnt: chest
