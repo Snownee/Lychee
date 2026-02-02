@@ -32,6 +32,10 @@ public class VectorExtensions {
 			list -> new Vector2i(list.getFirst(), list.getLast()),
 			vector -> List.of(vector.x(), vector.y()));
 
+	public static final StreamCodec<ByteBuf, Vector2fc> STREAM_CODEC2F = ByteBufCodecs.FLOAT.apply(ByteBufCodecs.list(2)).map(
+			list -> new Vector2f(list.getFirst(), list.getLast()),
+			vector -> List.of(vector.x(), vector.y()));
+
 	public static Vector2f offset(Vector2fc vector, float x, float y) {
 		return new Vector2f(vector.x() + x, vector.y() + y);
 	}
@@ -46,9 +50,5 @@ public class VectorExtensions {
 
 	public static Vector2f offsetY(Vector2fc vector, float y) {
 		return new Vector2f(vector.x(), vector.y() + y);
-	}
-
-	public static Vector2f withX(Vector2fc vector, float x) {
-		return new Vector2f(x, vector.y());
 	}
 }

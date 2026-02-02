@@ -34,7 +34,6 @@ import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.material.Fluid;
 import snownee.lychee.action.DropItem;
 import snownee.lychee.action.RandomSelect;
-import snownee.lychee.client.gui.RenderElement;
 import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.SlotType;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
@@ -244,15 +243,12 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 	@Override
 	public void createRecipeExtras(IRecipeExtrasBuilder builder, RecipeHolder<R> recipe, IFocusGroup focuses) {
 		IRecipeCategory.super.createRecipeExtras(builder, recipe, focuses);
-		var widgetBuilder = new RvCategoryWidgetBuilder<>(instance, recipe) {
-			@Override
-			public void addElement(RenderElement element) {
-				var adapter = new RenderElementAdapter(element);
-				builder.addWidget(adapter);
-				builder.addGuiEventListener(adapter);
-			}
-		};
+		var widgetBuilder = new RvCategoryWidgetBuilder<>(instance, recipe);
 		instance.configureDecorations(widgetBuilder, recipe);
+		widgetBuilder.sortElements().map(RenderElementAdapter::new).forEach(it -> {
+			builder.addWidget(it);
+			builder.addGuiEventListener(it);
+		});
 	}
 
 	@FunctionalInterface

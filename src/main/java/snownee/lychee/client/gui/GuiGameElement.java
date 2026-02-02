@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.entity.state.BlockDisplayEntityRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.Unit;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -32,7 +33,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
@@ -40,6 +40,8 @@ import snownee.lychee.util.VecHelper;
 
 public class GuiGameElement {
 	public static final RenderStateDataKey<Lighting.Entry> CUSTOM_LIGHTING = RenderStateDataKey.create();
+	public static final RenderStateDataKey<Unit> DRAW_FLUID_STATE = RenderStateDataKey.create();
+	public static final ThreadLocal<@Nullable Unit> DRAW_FLUID_STATE_FLAG = new ThreadLocal<>();
 
 	public static GuiRenderBuilder of(ItemStackTemplate stack) {
 		return new GuiItemRenderBuilder(stack);
@@ -57,9 +59,9 @@ public class GuiGameElement {
 		if (blockState.getRenderShape() != RenderShape.MODEL && blockState.getFluidState().isEmpty()) {
 			return new GuiBlockStateRenderBuilder(blockState, GuiGameElement.of(block));
 		}
-		if (block instanceof StairBlock) {
-			blockState = blockState.setValue(StairBlock.FACING, blockState.getValue(StairBlock.FACING).getOpposite());
-		}
+//		if (block instanceof StairBlock) {
+//			blockState = blockState.setValue(StairBlock.FACING, blockState.getValue(StairBlock.FACING).getOpposite());
+//		}
 		return new GuiBlockStateRenderBuilder(blockState);
 	}
 
@@ -172,6 +174,9 @@ public class GuiGameElement {
 			renderState.setData(CUSTOM_LIGHTING, Lighting.Entry.ITEMS_FLAT);
 			if (blockState != null) {
 				renderState.blockRenderState = new Display.BlockDisplay.BlockRenderState(blockState);
+				if (!blockState.getFluidState().isEmpty()) {
+					renderState.setData(DRAW_FLUID_STATE, Unit.INSTANCE);
+				}
 			}
 		}
 
@@ -208,19 +213,6 @@ public class GuiGameElement {
 					(int) pos0.y,
 					(int) pos1.x,
 					(int) pos1.y);
-//			if (!blockState.getFluidState().isEmpty()) {
-//				graphics.guiRenderState.submitPicturesInPictureState(new GuiFluidRenderState(
-//						blockState.getFluidState(),
-//						translation,
-//						rotation,
-//						null,
-//						(int) pos0.x,
-//						(int) pos0.y,
-//						(int) pos1.x,
-//						(int) pos1.y,
-//						scale,
-//						null));
-//			}
 		}
 
 		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {

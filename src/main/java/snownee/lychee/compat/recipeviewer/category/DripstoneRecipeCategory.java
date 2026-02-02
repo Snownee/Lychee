@@ -67,7 +67,7 @@ public class DripstoneRecipeCategory extends RvCategory<DripstoneRecipe> {
 	@Override
 	public void setupDecorations(DecorationMapBuilder<DripstoneRecipe> mapBuilder) {
 		mapBuilder.info(this::infoPosition);
-		mapBuilder.consumeBlockInput($ -> VectorExtensions.offset(TARGET_BLOCK_POSITION, BLOCK_SIZE - 4, BLOCK_SIZE - 8));
+		mapBuilder.consumeBlockInput(_ -> VectorExtensions.offset(TARGET_BLOCK_POSITION, BLOCK_SIZE - 4, BLOCK_SIZE - 8));
 
 		mapBuilder.put(
 				"source_block", (builder, recipeHolder) -> {

@@ -7,7 +7,6 @@ import org.jspecify.annotations.Nullable;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.client.Minecraft;
@@ -22,7 +21,6 @@ import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.material.Fluid;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.KEvent;
-import snownee.lychee.client.gui.GuiFluidRenderer;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
@@ -91,8 +89,6 @@ public class ClientProxy implements ClientModInitializer {
 				DripstoneParticleService.DRIPSTONE_SPLASH,
 				ParticleFactories.Splash::new
 		);
-
-		PictureInPictureRendererRegistry.register(ctx -> new GuiFluidRenderer(ctx.bufferSource()));
 
 		ActionRenderer.init();
 		ElementRenderer.init();

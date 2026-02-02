@@ -3,9 +3,9 @@ package snownee.lychee.util.ui;
 import java.util.List;
 import java.util.Optional;
 
+import org.joml.Vector2fc;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
-import org.joml.Vector3fc;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -20,7 +20,8 @@ import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.util.VectorExtensions;
 
 public record UIElementCommonProperties(
-		Vector3fc pos,
+		Vector2fc pos,
+		int sortOrder,
 		Vector2ic size,
 		Optional<List<Component>> tooltip,
 		Optional<String> onInput,
@@ -28,7 +29,8 @@ public record UIElementCommonProperties(
 	public static final Vector2ic DEFAULT_SIZE = new Vector2i(16);
 
 	public static final MapCodec<UIElementCommonProperties> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-			VectorExtensions.CODEC3F.optionalFieldOf("pos", VectorExtensions.ZERO3F).forGetter(UIElementCommonProperties::pos),
+			ExtraCodecs.VECTOR2F.optionalFieldOf("pos", VectorExtensions.ZERO2F).forGetter(UIElementCommonProperties::pos),
+			Codec.INT.optionalFieldOf("sort_order", 0).forGetter(UIElementCommonProperties::sortOrder),
 			VectorExtensions.CODEC2I.optionalFieldOf("size", DEFAULT_SIZE).forGetter(UIElementCommonProperties::size),
 			ExtraCodecs.compactListCodec(ComponentSerialization.CODEC)
 					.optionalFieldOf("tooltip")
@@ -38,8 +40,10 @@ public record UIElementCommonProperties(
 	).apply(i, UIElementCommonProperties::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, UIElementCommonProperties> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VECTOR3F,
+			VectorExtensions.STREAM_CODEC2F,
 			UIElementCommonProperties::pos,
+			ByteBufCodecs.VAR_INT,
+			UIElementCommonProperties::sortOrder,
 			VectorExtensions.STREAM_CODEC2I,
 			UIElementCommonProperties::size,
 			ByteBufCodecs.optional(ComponentSerialization.TRUSTED_STREAM_CODEC.apply(ByteBufCodecs.list())),

@@ -15,7 +15,7 @@ public class SideBlockIcon extends RenderElement {
 	private final Supplier<BlockState> blockProvider;
 
 	public SideBlockIcon(ScreenElement mainIcon, Supplier<BlockState> blockProvider) {
-		this.mainIcon = RenderElement.create(mainIcon).atZ(100);
+		this.mainIcon = RenderElement.create(mainIcon).sortOrder(100);
 		this.blockProvider = blockProvider;
 	}
 

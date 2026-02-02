@@ -63,7 +63,7 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 										.scale(BLOCK_SIZE)
 										.atLocal(0, ticks * 1.3 + 0.4, 2)
 										.rotateBlock(20, 225, 0)
-										.atZ(300)
+										.sortOrder(300)
 										.render(graphics);
 							})
 							.at(fallingBlockPosition(recipe))

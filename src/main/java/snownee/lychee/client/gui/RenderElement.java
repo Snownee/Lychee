@@ -7,7 +7,6 @@ import org.joml.Vector2f;
 import org.joml.Vector2fc;
 import org.joml.Vector2i;
 import org.joml.Vector2ic;
-import org.joml.Vector3fc;
 import org.jspecify.annotations.Nullable;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -29,7 +28,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 
 	public Vector2f position = new Vector2f();
 	public Vector2i size = new Vector2i(UIElementCommonProperties.DEFAULT_SIZE);
-	protected float z = 0;
+	protected int sortOrder = 0;
 
 	public static RenderElement createSimple(BiConsumer<GuiGraphics, RenderElement> renderable) {
 		return new SimpleRenderElement(renderable);
@@ -45,8 +44,8 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 		}
 		InteractiveRenderElement interactiveElement = new InteractiveRenderElement(_ -> element, onFrame);
 		if (element instanceof RenderElement renderElement) {
-			interactiveElement.at(renderElement.position).withSize(renderElement.size);
-			renderElement.at(VectorExtensions.ZERO3F);
+			interactiveElement.at(renderElement.position).withSize(renderElement.size).sortOrder(renderElement.sortOrder);
+			renderElement.at(VectorExtensions.ZERO2F);
 		}
 		return interactiveElement;
 	}
@@ -73,23 +72,11 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 		return offset(position.x(), position.y());
 	}
 
-	public <T extends RenderElement> T at(float x, float y, float z) {
-		this.at(x, y);
-		this.z = z;
+	public <T extends RenderElement> T sortOrder(int sortOrder) {
+		this.sortOrder = sortOrder;
 		//noinspection unchecked
 		return (T) this;
 	}
-
-	public <T extends RenderElement> T at(Vector3fc position) {
-		return at(position.x(), position.y(), position.z());
-	}
-
-	public <T extends RenderElement> T atZ(float z) {
-		this.z = z;
-		//noinspection unchecked
-		return (T) this;
-	}
-
 
 	public <T extends RenderElement> T withSize(int width, int height) {
 		this.size.set(width, height);
@@ -129,8 +116,8 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 		return this.position.y();
 	}
 
-	public float z() {
-		return z;
+	public int sortOrder() {
+		return sortOrder;
 	}
 
 	public boolean containsMouse(double mouseX, double mouseY) {
@@ -158,14 +145,6 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 			color |= 0x88000000;
 		}
 		graphics.renderOutline(Math.round(x()), Math.round(y()), width(), height(), color);
-		return (T) this;
-	}
-
-	public <T extends RenderElement> T rect(RenderElement parent) {
-		at(parent.position);
-		atZ(parent.z);
-		withSize(parent.size);
-		//noinspection unchecked
 		return (T) this;
 	}
 }
