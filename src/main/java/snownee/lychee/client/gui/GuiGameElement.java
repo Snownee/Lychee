@@ -1,6 +1,5 @@
 package snownee.lychee.client.gui;
 
-import org.joml.Matrix3x2fStack;
 import org.joml.Quaternionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -13,11 +12,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Transformation;
 
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.entity.state.BlockDisplayEntityRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.core.BlockPos;
@@ -54,19 +49,19 @@ public class GuiGameElement {
 	public static GuiRenderBuilder of(BlockState blockState) {
 		Block block = blockState.getBlock();
 		if (block == Blocks.AIR) {
-			return new GuiBlockStateRenderBuilder(blockState);
+			return new GuiBlockRenderBuilder(blockState);
 		}
 		if (blockState.getRenderShape() != RenderShape.MODEL && blockState.getFluidState().isEmpty()) {
-			return new GuiBlockStateRenderBuilder(blockState, GuiGameElement.of(block));
+			return new GuiBlockRenderBuilder(blockState, GuiGameElement.of(block));
 		}
 //		if (block instanceof StairBlock) {
 //			blockState = blockState.setValue(StairBlock.FACING, blockState.getValue(StairBlock.FACING).getOpposite());
 //		}
-		return new GuiBlockStateRenderBuilder(blockState);
+		return new GuiBlockRenderBuilder(blockState);
 	}
 
 	public static GuiRenderBuilder of(Fluid fluid) {
-		return new GuiBlockStateRenderBuilder(fluid.defaultFluidState().createLegacyBlock().setValue(LiquidBlock.LEVEL, 0));
+		return new GuiBlockRenderBuilder(fluid.defaultFluidState().createLegacyBlock().setValue(LiquidBlock.LEVEL, 0));
 	}
 
 	public static GuiRenderBuilder of(EntityRenderState renderState) {
@@ -112,61 +107,21 @@ public class GuiGameElement {
 			this.rotationOffset = offset;
 			return this;
 		}
-
-		protected void prepareMatrix(PoseStack matrixStack) {
-//			matrixStack.pushPose();
-//			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-//			RenderSystem.enableDepthTest();
-//			RenderSystem.enableBlend();
-//			RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
-//			prepareLighting(matrixStack);
-		}
-
-		protected void transformMatrix(GuiGraphics graphics) {
-//			Matrix3x2fStack pose = graphics.pose();
-//			float scale = this.scale;
-//			pose.translate(x(), y() + scale);
-//			pose.scale(scale);
-//			pose.translate(xLocal, yLocal);
-//			pose.translate(rotationOffset.x, rotationOffset.y);
-//
-////			matrixStack.mulPose(Axis.YP.rotationDegrees((float) Util.getMillis() / 20));
-//
-//			pose.mulPose(Axis.ZP.rotationDegrees((float) zRot));
-//			pose.mulPose(Axis.XP.rotationDegrees((float) xRot));
-//			pose.mulPose(Axis.YP.rotationDegrees((float) yRot));
-//			pose.translate(-rotationOffset.x, -rotationOffset.y, -rotationOffset.z);
-		}
-
-		protected void cleanUpMatrix(PoseStack matrixStack) {
-			matrixStack.popPose();
-			cleanUpLighting(matrixStack);
-		}
-
-		protected void prepareLighting(PoseStack matrixStack) {
-//			if (customLighting != null) {
-//				customLighting.applyLighting();
-//			} else {
-//				Lighting.setupFor3DItems();
-//			}
-		}
-
-		protected void cleanUpLighting(PoseStack matrixStack) {
-//			if (customLighting != null) {
-//				Lighting.setupFor3DItems();
-//			}
-		}
 	}
 
-	private static class GuiBlockModelRenderBuilder extends GuiRenderBuilder {
+	private static class GuiBlockRenderBuilder extends GuiRenderBuilder {
 
 		protected final BlockDisplayEntityRenderState renderState;
-		protected BlockStateModel blockModel;
 		protected BlockState blockState;
+		private final @Nullable GuiRenderBuilder override;
 
-		public GuiBlockModelRenderBuilder(BlockStateModel bakedModel, @Nullable BlockState blockState) {
+		public GuiBlockRenderBuilder(@Nullable BlockState blockState) {
+			this(blockState, null);
+		}
+
+		public GuiBlockRenderBuilder(@Nullable BlockState blockState, @Nullable GuiRenderBuilder override) {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
-			this.blockModel = bakedModel;
+			this.override = override;
 			withRotationOffset(VecHelper.getCenterOf(BlockPos.ZERO));
 			renderState = new BlockDisplayEntityRenderState();
 			renderState.entityType = EntityType.BLOCK_DISPLAY;
@@ -194,6 +149,9 @@ public class GuiGameElement {
 
 		@Override
 		public void render(GuiGraphics graphics) {
+			if (override != null) {
+				override.atLocal(xLocal, yLocal, zLocal).at(position).offset(-3, -3).render(graphics);
+			}
 			float toRad = 0.01745329251F;
 			Vector3f translation = new Vector3f((float) xLocal, (float) yLocal, (float) zLocal);
 			Quaternionf rotation = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
@@ -213,92 +171,6 @@ public class GuiGameElement {
 					(int) pos0.y,
 					(int) pos1.x,
 					(int) pos1.y);
-		}
-
-		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {
-//			Minecraft mc = Minecraft.getInstance();
-//			int color = mc.getBlockColors().getColor(
-//					blockState,
-//					mc.level,
-//					mc.getCameraEntity() != null ? mc.getCameraEntity().blockPosition() : null,
-//					0
-//			);
-//			Color rgb = new Color(color == -1 ? this.color : color);
-//			blockRenderer.getModelRenderer().renderModel(
-//					ms.last(),
-//					buffer.getBuffer(blockState.getBlock() == Blocks.AIR ?
-//							Sheets.translucentCullBlockSheet() :
-//							ItemBlockRenderTypes.getRenderType(blockState, true)),
-//					blockState,
-//					blockModel,
-//					rgb.getRedAsFloat(),
-//					rgb.getGreenAsFloat(),
-//					rgb.getBlueAsFloat(),
-//					LightTexture.FULL_BRIGHT,
-//					OverlayTexture.NO_OVERLAY
-//			);
-//			buffer.endBatch();
-		}
-	}
-
-	public static class GuiBlockStateRenderBuilder extends GuiBlockModelRenderBuilder {
-		private final @Nullable GuiRenderBuilder override;
-
-		public GuiBlockStateRenderBuilder(BlockState blockState) {
-			this(blockState, null);
-		}
-
-		public GuiBlockStateRenderBuilder(BlockState blockState, @Nullable GuiRenderBuilder override) {
-			super(Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState), blockState);
-			this.override = override;
-		}
-
-		@Override
-		public void render(GuiGraphics graphics) {
-			if (override != null) {
-				override.atLocal(xLocal, yLocal, zLocal).at(position).offset(-3, -3).render(graphics);
-			}
-			super.render(graphics);
-		}
-
-		@Override
-		protected void renderModel(BlockRenderDispatcher blockRenderer, MultiBufferSource.BufferSource buffer, PoseStack ms) {
-//			if (blockState.getBlock() instanceof BaseFireBlock) {
-//				Lighting.setupForFlatItems();
-//				blockRenderer.renderSingleBlock(
-//						blockState,
-//						ms,
-//						buffer,
-//						LightTexture.FULL_BRIGHT,
-//						OverlayTexture.NO_OVERLAY
-//				);
-//				buffer.endBatch();
-//				Lighting.setupFor3DItems();
-//				return;
-//			}
-//
-//			super.renderModel(blockRenderer, buffer, ms);
-//
-//			if (blockState.getFluidState().isEmpty()) {
-//				return;
-//			}
-//
-//			float min = 0.001F, max = 0.999F;
-//			// LiquidBlockRenderer.MAX_FLUID_HEIGHT
-//			FluidRenderer.renderFluidBox(
-//					blockState.getFluidState(),
-//					min,
-//					min,
-//					min,
-//					max,
-//					max * 0.8888889F,
-//					max,
-//					buffer,
-//					ms,
-//					LightTexture.FULL_BRIGHT,
-//					false
-//			);
-//			buffer.endBatch();
 		}
 	}
 
@@ -327,14 +199,6 @@ public class GuiGameElement {
 			graphics.pose().pushMatrix();
 			graphics.renderItem(stack, (int) x(), (int) y());
 			graphics.pose().popMatrix();
-		}
-
-		@Override
-		protected void transformMatrix(GuiGraphics graphics) {
-			Matrix3x2fStack pose = graphics.pose();
-			pose.translate(x(), y());
-//			pose.translate(xLocal * scale, yLocal * scale);
-//			UIRenderHelper.flipForGuiRender(graphics);
 		}
 
 		public static void renderItemIntoGUI(PoseStack matrixStack, ItemStack stack, boolean useDefaultLighting) {

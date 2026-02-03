@@ -12,7 +12,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 
 /**
- * https://github.com/Engine-Room/Flywheel/blob/1.21.1/dev/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/EmptyVirtualBlockGetter.java
+ * <a href="https://github.com/Engine-Room/Flywheel/blob/1.21.1/dev/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/EmptyVirtualBlockGetter.java">...</a>
  */
 public class EmptyVirtualBlockGetter extends VirtualBlockGetter {
 	public static final EmptyVirtualBlockGetter FULL_DARK = new EmptyVirtualBlockGetter(p -> 0, p -> 0);

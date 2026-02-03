@@ -126,7 +126,7 @@ public interface LycheeParser<T> {
 		return clazz.getDeclaredConstructor(paramTypes).newInstance(args);
 	}
 
-	DataResult<T> parse(Context context, StringReader reader) throws CommandSyntaxException;
+	DataResult<T> parse(Context context, StringReader reader);
 
 	record Context(RegistryOps<?> registryOps) implements HolderGetter.Provider {
 		@Override

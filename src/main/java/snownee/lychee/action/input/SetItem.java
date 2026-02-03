@@ -80,6 +80,11 @@ public record SetItem(
 		return Displays.slot(itemStack());
 	}
 
+	@Override
+	public boolean hidden() {
+		return itemStack == null || PostAction.super.hidden();
+	}
+
 	//	@Override
 	//	public JsonElement provideJsonInfo(ILycheeRecipe<?> recipe, JsonPointer pointer, JsonObject recipeObject) {
 	//		setPath(pointer.toString());

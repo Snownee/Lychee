@@ -16,14 +16,15 @@ import net.minecraft.world.level.lighting.LayerLightEventListener;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 
 /**
- * https://github.com/Engine-Room/Flywheel/blob/1.21.1/dev/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/VirtualLightEngine.java
+ * <a href="https://github.com/Engine-Room/Flywheel/blob/1.21.1/dev/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/VirtualLightEngine.java">...</a>
  */
 public final class VirtualLightEngine extends LevelLightEngine {
 	private final LayerLightEventListener blockListener;
 	private final LayerLightEventListener skyListener;
 
 	public VirtualLightEngine(ToIntFunction<BlockPos> blockLightFunc, ToIntFunction<BlockPos> skyLightFunc, BlockGetter level) {
-		super(new LightChunkGetter() {
+		super(
+				new LightChunkGetter() {
 					@Override
 					@Nullable
 					public LightChunk getChunkForLighting(int x, int z) {
@@ -52,12 +53,7 @@ public final class VirtualLightEngine extends LevelLightEngine {
 		return Math.max(j, i);
 	}
 
-	private static class VirtualLayerLightEventListener implements LayerLightEventListener {
-		private final ToIntFunction<BlockPos> lightFunc;
-
-		public VirtualLayerLightEventListener(ToIntFunction<BlockPos> lightFunc) {
-			this.lightFunc = lightFunc;
-		}
+	private record VirtualLayerLightEventListener(ToIntFunction<BlockPos> lightFunc) implements LayerLightEventListener {
 
 		@Override
 		public void checkBlock(BlockPos pos) {

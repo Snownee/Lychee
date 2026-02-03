@@ -208,8 +208,7 @@ public class VecHelper {
 		Vec3 v3 = lerp(t, q2, p2);
 		Vec3 inner1 = lerp(t, v1, v2);
 		Vec3 inner2 = lerp(t, v2, v3);
-		Vec3 result = lerp(t, inner1, inner2);
-		return result;
+		return lerp(t, inner1, inner2);
 	}
 
 	public static Vec3 bezierDerivative(Vec3 p1, Vec3 p2, Vec3 q1, Vec3 q2, float t) {

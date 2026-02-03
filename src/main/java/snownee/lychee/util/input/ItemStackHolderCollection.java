@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.jspecify.annotations.Nullable;
+
 import com.google.common.collect.Lists;
 
 import net.minecraft.world.entity.item.ItemEntity;
@@ -67,7 +69,7 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 
 	public static class InWorld extends ItemStackHolderCollection {
 
-		private ItemEntity itemEntity;
+		private @Nullable ItemEntity itemEntity;
 
 		public InWorld(ItemStackHolder.Entity... holders) {
 			super(holders);
@@ -84,13 +86,15 @@ public abstract class ItemStackHolderCollection extends ArrayList<ExtendedItemSt
 
 		@Override
 		public int postApply(boolean consumeInputs, int times) {
-			for (ItemStack stack : stacksNeedHandle) {
-				if (stack.isEmpty()) {
-					continue;
+			if (itemEntity != null) {
+				for (ItemStack stack : stacksNeedHandle) {
+					if (stack.isEmpty()) {
+						continue;
+					}
+					final var pos = itemEntity.position();
+					final var newEntity = new ItemEntity(itemEntity.level(), pos.x, pos.y, pos.z, stack);
+					itemEntity.level().addFreshEntity(newEntity);
 				}
-				final var pos = itemEntity.position();
-				final var newEntity = new ItemEntity(itemEntity.level(), pos.x, pos.y, pos.z, stack);
-				itemEntity.level().addFreshEntity(newEntity);
 			}
 			return consumeInputs ? consumeInputs(times) : 0;
 		}

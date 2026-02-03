@@ -48,7 +48,7 @@ public interface ActionRenderer<T extends PostAction> {
 
 	static void init() {
 		register(PostActionTypes.DROP_ITEM, (ItemStackActionRenderer<DropItem>) DropItem::itemStack);
-		register(PostActionTypes.SET_ITEM, (ItemStackActionRenderer<SetItem>) SetItem::itemStack);
+		register(PostActionTypes.SET_ITEM, (ItemStackActionRenderer<SetItem>) $ -> Objects.requireNonNull($.itemStack()));
 		register(PostActionTypes.DROP_XP, (ItemBasedActionRenderer<DropXp>) _ -> new ItemStackTemplate(Items.EXPERIENCE_BOTTLE));
 		register(PostActionTypes.EXECUTE, (ItemBasedActionRenderer<Execute>) _ -> new ItemStackTemplate(Items.COMMAND_BLOCK));
 		register(PostActionTypes.EXPLODE, (ItemBasedActionRenderer<Explode>) _ -> new ItemStackTemplate(Items.TNT));
@@ -95,6 +95,7 @@ public interface ActionRenderer<T extends PostAction> {
 							if (!info.tooltips.isEmpty()) {
 								continue;
 							}
+							//noinspection unchecked,rawtypes
 							info.addTooltip(((LycheeRecipeType) lycheeRecipeType).getPreventDefaultDescription(recipe));
 							action.conditions().appendToTooltips(info.tooltips, mc.level, mc.player, 0);
 							info.type = SlotType.CATALYST;

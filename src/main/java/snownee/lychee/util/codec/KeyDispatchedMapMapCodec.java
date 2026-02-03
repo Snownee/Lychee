@@ -115,6 +115,6 @@ public final class KeyDispatchedMapMapCodec<K, V> extends MapCodec<Map<K, V>> {
 
 	@Override
 	public String toString() {
-		return "KeyDispatchMapCodec[" + keyCodec.toString() + " " + decoder + "]";
+		return "KeyDispatchMapCodec[" + keyCodec + " " + decoder + "]";
 	}
 }
