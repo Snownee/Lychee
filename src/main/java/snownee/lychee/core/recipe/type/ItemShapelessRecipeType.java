@@ -80,7 +80,7 @@ public class ItemShapelessRecipeType<C extends ItemShapelessContext, T extends L
 								}
 							}
 						}
-						match.get().applyPostActions(ctx, times);
+						ctx = match.get().applyPostActions(ctx, times);
 						if (ctx.getMatch() != null) {
 							ctx.totalItems -= ctx.itemHolders.postApply(ctx.runtime.doDefault, times);
 						}

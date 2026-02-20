@@ -21,6 +21,11 @@ public class BlockCrushingContext extends ItemShapelessContext {
 		this.fallingBlock = fallingBlock;
 	}
 
+	@Override
+	public BlockCrushingContext copy() {
+		return new BlockCrushingContext(getRandom(), getLevel(), copyParams(), itemEntities, fallingBlock).copyExtraStates(this);
+	}
+
 	public static class Builder extends LycheeContext.Builder<BlockCrushingContext> {
 		public final List<ItemEntity> itemEntities;
 		public final FallingBlockEntity fallingBlock;

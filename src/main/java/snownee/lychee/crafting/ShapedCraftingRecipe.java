@@ -103,6 +103,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	public String pattern;
 	private List<PostAction> actions = List.of();
 	private List<PostAction> assembling = List.of();
+	protected boolean unstableContext;
 
 	public ShapedCraftingRecipe(ResourceLocation id, String group, CraftingBookCategory category, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result, boolean showNotification) {
 		super(id, group, category, width, height, ingredients, result, showNotification);
@@ -212,7 +213,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 		if (ctx == null) {
 			return items;
 		}
-		applyPostActions(ctx, 1);
+		ctx = applyPostActions(ctx, 1);
 		int startIndex = container.getWidth() * ctx.matchY + ctx.matchX;
 		int k = 0;
 		for (int i = 0; i < getHeight(); i++) {
@@ -229,6 +230,11 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 	@Override
 	public JsonPointer defaultItemPointer() {
 		return RESULT;
+	}
+
+	@Override
+	public boolean isUnstableContext() {
+		return unstableContext;
 	}
 
 	@Override
@@ -286,6 +292,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			actions = Lists.newArrayList();
 		}
 		actions.add(action);
+		unstableContext |= action.canChangeContext();
 	}
 
 	public void addAssemblingAction(PostAction action) {
@@ -300,6 +307,7 @@ public class ShapedCraftingRecipe extends ShapedRecipe implements ILycheeRecipe<
 			assembling = Lists.newArrayList();
 		}
 		assembling.add(action);
+		unstableContext |= action.canChangeContext();
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package snownee.lychee.core;
 
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -190,6 +191,21 @@ public class LycheeContext extends EmptyContainer {
 			ctx.json = jsonObject.getAsJsonObject("json");
 		}
 		return ctx;
+	}
+
+	public LycheeContext copy() {
+		return new LycheeContext(random, level, copyParams()).copyExtraStates(this);
+	}
+
+	public Map<LootContextParam<?>, Object> copyParams() {
+		return new IdentityHashMap<>(params);
+	}
+
+	protected <T> T copyExtraStates(LycheeContext original) {
+		itemHolders = original.itemHolders;
+		json = original.json;
+		//noinspection unchecked
+		return (T) this;
 	}
 
 	public static class Builder<C extends LycheeContext> {

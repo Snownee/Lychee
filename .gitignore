@@ -27,3 +27,4 @@ run/*
 /*.log
 /CHANGELOG.md
 /.vscode/settings.json
+/libs/*.jar

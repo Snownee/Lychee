@@ -112,10 +112,11 @@ public class DripstoneRecipe extends LycheeRecipe<DripstoneContext> implements B
 	}
 
 	@Override
-	public void applyPostActions(LycheeContext ctx, int times) {
+	public DripstoneContext applyPostActions(LycheeContext ctx, int times) {
 		if (!ctx.getLevel().isClientSide) {
 			ctx.enqueueActions(getPostActions(), times, true);
 		}
+		return (DripstoneContext) ctx;
 	}
 
 	public static boolean safeTick(BlockState state, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource) {

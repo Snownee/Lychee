@@ -13,6 +13,7 @@ public class CustomAction extends PostAction {
 
 	public final JsonObject data;
 	public boolean canRepeat;
+	public boolean canChangeContext;
 	public Apply applyFunc;
 
 	public CustomAction(JsonObject data) {
@@ -44,6 +45,11 @@ public class CustomAction extends PostAction {
 	@Override
 	public boolean canRepeat() {
 		return canRepeat;
+	}
+
+	@Override
+	public boolean canChangeContext() {
+		return canChangeContext;
 	}
 
 	@Override

@@ -40,6 +40,7 @@ public class RandomSelect extends PostAction implements CompoundAction {
 	public final boolean canRepeat;
 	public final boolean hidden;
 	public final boolean preventSync;
+	public final boolean canChangeContext;
 	public final int totalWeight;
 	public final int emptyWeight;
 
@@ -53,6 +54,7 @@ public class RandomSelect extends PostAction implements CompoundAction {
 		canRepeat = Arrays.stream(entries).allMatch(PostAction::canRepeat);
 		hidden = Arrays.stream(entries).allMatch(PostAction::isHidden);
 		preventSync = Arrays.stream(entries).allMatch(PostAction::preventSync);
+		canChangeContext = Arrays.stream(entries).anyMatch(PostAction::canChangeContext);
 	}
 
 	@Override

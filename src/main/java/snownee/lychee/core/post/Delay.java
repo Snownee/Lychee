@@ -41,6 +41,11 @@ public class Delay extends PostAction {
 		ctx.runtime.state = State.PAUSED;
 	}
 
+	@Override
+	public boolean canChangeContext() {
+		return true;
+	}
+
 	public static void makeMarker(ILycheeRecipe<?> recipe, LycheeContext ctx) {
 		Marker marker = EntityType.MARKER.create(ctx.getLevel());
 		Vec3 pos = ctx.getParamOrNull(LootContextParams.ORIGIN);

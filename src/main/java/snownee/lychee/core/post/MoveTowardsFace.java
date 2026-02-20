@@ -46,6 +46,11 @@ public class MoveTowardsFace extends PostAction {
 		return true;
 	}
 
+	@Override
+	public boolean canChangeContext() {
+		return true;
+	}
+
 	public static class Type extends PostActionType<MoveTowardsFace> {
 
 		@Override

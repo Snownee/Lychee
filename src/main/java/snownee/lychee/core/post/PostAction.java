@@ -126,4 +126,8 @@ public abstract class PostAction extends ContextualHolder {
 
 	public void onFailure(ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
 	}
+
+	public boolean canChangeContext() {
+		return false;
+	}
 }

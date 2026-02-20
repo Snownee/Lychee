@@ -53,9 +53,10 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 		if (landingBlock.is(LycheeTags.EXTEND_BOX)) {
 			box = box.minmax(new AABB(pos));
 		}
-		List<ItemEntity> itemEntities = entity.level().getEntitiesOfClass(ItemEntity.class, box, $ -> {
-			return $.isAlive() && validItems.contains($.getItem());
-		});
+		List<ItemEntity> itemEntities = entity.level().getEntitiesOfClass(
+				ItemEntity.class, box, $ -> {
+					return $.isAlive() && validItems.contains($.getItem());
+				});
 		BlockCrushingContext.Builder ctxBuilder = new BlockCrushingContext.Builder(entity.level(), itemEntities, entity);
 		ctxBuilder.withParameter(LootContextParams.ORIGIN, entity.position());
 		ctxBuilder.withParameter(LootContextParams.THIS_ENTITY, entity);
@@ -88,7 +89,7 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 								}
 							}
 						}
-						match.get().applyPostActions(ctx, times);
+						ctx = match.get().applyPostActions(ctx, times);
 						if (!ctx.runtime.doDefault) {
 							((LycheeFallingBlockEntity) entity).lychee$cancelDrop();
 						}
@@ -99,7 +100,10 @@ public class BlockCrushingRecipeType extends BlockKeyRecipeType<BlockCrushingCon
 								if (!ctx.itemHolders.ignoreConsumptionFlags.get(i) && !holder.get().isEmpty()) {
 									if (holder instanceof ItemHolder.InWorld && !alreadySentParticles.contains(holder)) {
 										alreadySentParticles.add(holder);
-										SCustomLevelEventPacket.sendItemParticles(holder.get(), ctx.getServerLevel(), ((ItemHolder.InWorld) holder).getEntity().position());
+										SCustomLevelEventPacket.sendItemParticles(
+												holder.get(),
+												ctx.getServerLevel(),
+												((ItemHolder.InWorld) holder).getEntity().position());
 									}
 								}
 							}

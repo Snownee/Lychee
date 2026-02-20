@@ -52,6 +52,7 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 	public String group = "default";
 	protected Ints maxRepeats = Ints.ANY;
 	protected List<PostAction> actions = List.of();
+	protected boolean unstableContext;
 
 	public LycheeRecipe(ResourceLocation id) {
 		this.id = id;
@@ -88,6 +89,12 @@ public abstract class LycheeRecipe<C extends LycheeContext> extends ContextualHo
 			maxRepeats = IntBoundsHelper.ONE;
 		}
 		actions.add(action);
+		unstableContext |= action.canChangeContext();
+	}
+
+	@Override
+	public final boolean isUnstableContext() {
+		return unstableContext;
 	}
 
 	@Override

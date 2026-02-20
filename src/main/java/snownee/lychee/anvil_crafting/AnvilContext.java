@@ -23,6 +23,11 @@ public class AnvilContext extends LycheeContext {
 		this.name = name;
 	}
 
+	@Override
+	public AnvilContext copy() {
+		return new AnvilContext(getRandom(), getLevel(), copyParams(), left, right, name).copyExtraStates(this);
+	}
+
 	public static class Builder extends LycheeContext.Builder<AnvilContext> {
 
 		private final ItemStack left;

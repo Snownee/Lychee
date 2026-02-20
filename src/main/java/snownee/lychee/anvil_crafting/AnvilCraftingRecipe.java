@@ -139,6 +139,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<AnvilContext> implements C
 			assembling = Lists.newArrayList();
 		}
 		assembling.add(action);
+		unstableContext |= action.canChangeContext();
 	}
 
 	@Override

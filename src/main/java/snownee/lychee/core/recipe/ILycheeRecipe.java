@@ -64,6 +64,8 @@ public interface ILycheeRecipe<C extends LycheeContext> {
 		return ITEM_IN;
 	}
 
+	boolean isUnstableContext();
+
 	Stream<PostAction> getPostActions();
 
 	default Stream<PostAction> getAllActions() {
@@ -87,11 +89,16 @@ public interface ILycheeRecipe<C extends LycheeContext> {
 
 	boolean showInRecipeViewer();
 
-	default void applyPostActions(LycheeContext ctx, int times) {
+	default C applyPostActions(LycheeContext ctx, int times) {
 		if (!ctx.getLevel().isClientSide) {
+			if (isUnstableContext()) {
+				ctx = ctx.copy();
+			}
 			ctx.enqueueActions(getPostActions(), times, true);
 			ctx.runtime.run(this, ctx);
 		}
+		//noinspection ReassignedVariable,unchecked
+		return (C) ctx;
 	}
 
 	default List<BlockPredicate> getBlockInputs() {

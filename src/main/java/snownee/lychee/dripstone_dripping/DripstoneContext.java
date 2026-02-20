@@ -18,6 +18,11 @@ public class DripstoneContext extends LycheeContext {
 		this.source = source;
 	}
 
+	@Override
+	public DripstoneContext copy() {
+		return new DripstoneContext(getRandom(), getLevel(), copyParams(), source).copyExtraStates(this);
+	}
+
 	public static class Builder extends LycheeContext.Builder<DripstoneContext> {
 		public final BlockState source;
 

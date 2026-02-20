@@ -26,6 +26,19 @@ public class ItemShapelessContext extends LycheeContext {
 		totalItems = itemEntities.stream().map(ItemEntity::getItem).mapToInt(ItemStack::getCount).sum();
 	}
 
+	@Override
+	public ItemShapelessContext copy() {
+		return new ItemShapelessContext(getRandom(), getLevel(), copyParams(), itemEntities).copyExtraStates(this);
+	}
+
+	@Override
+	protected <T> T copyExtraStates(LycheeContext original) {
+		filteredItems = ((ItemShapelessContext) original).filteredItems;
+		match = ((ItemShapelessContext) original).match;
+		totalItems = ((ItemShapelessContext) original).totalItems;
+		return super.copyExtraStates(original);
+	}
+
 	public void setMatch(@Nullable RecipeMatcher<ItemStack> match) {
 		this.match = match;
 		if (match == null) {

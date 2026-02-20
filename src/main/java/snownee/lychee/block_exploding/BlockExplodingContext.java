@@ -1,5 +1,6 @@
 package snownee.lychee.block_exploding;
 
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 import net.minecraft.util.RandomSource;
@@ -14,6 +15,11 @@ public class BlockExplodingContext extends LycheeContext {
 		super(pRandom, level, pParams);
 	}
 
+	@Override
+	public LycheeContext copy() {
+		return new BlockExplodingContext(getRandom(), getLevel(), copyParams()).copyExtraStates(this);
+	}
+
 	public static class Builder extends LycheeContext.Builder<BlockExplodingContext> {
 		public Builder(Level level) {
 			super(level);
@@ -22,7 +28,7 @@ public class BlockExplodingContext extends LycheeContext {
 		@Override
 		public BlockExplodingContext create(LootContextParamSet pParameterSet) {
 			beforeCreate(pParameterSet);
-			return new BlockExplodingContext(random, level, params);
+			return new BlockExplodingContext(random, level, new IdentityHashMap<>(params));
 		}
 	}
 

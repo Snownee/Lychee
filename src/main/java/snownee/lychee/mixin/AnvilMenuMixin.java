@@ -96,8 +96,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	@Inject(at = @At("HEAD"), method = "onTake")
 	private void lychee_onTake(Player player, ItemStack stack, CallbackInfo ci) {
 		if (lychee$recipe != null && lychee$ctx != null && !lychee$ctx.getLevel().isClientSide) {
-			lychee$onTakeCtx = lychee$ctx;
-			lychee$recipe.applyPostActions(lychee$ctx, 1);
+			lychee$onTakeCtx = lychee$recipe.applyPostActions(lychee$ctx, 1);
 		}
 	}
 

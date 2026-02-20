@@ -116,7 +116,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 					if (recipe.getIngredients().size() == 1) {
 						ctx.itemHolders.ignoreConsumptionFlags.set(1);
 					}
-					recipe.applyPostActions(ctx, times);
+					ctx = recipe.applyPostActions(ctx, times);
 					ctx.itemHolders.postApply(ctx.runtime.doDefault, times);
 					player.setItemInHand(hand, ctx.getItem(0));
 					player.setItemInHand(hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND, ctx.getItem(1));
@@ -151,7 +151,7 @@ public class BlockKeyRecipeType<C extends LycheeContext, T extends LycheeRecipe<
 				ctx = ctxSupplier.get();
 			}
 			if (tryMatch(recipe, level, ctx).isPresent()) {
-				recipe.applyPostActions(ctx, 1);
+				ctx = recipe.applyPostActions(ctx, 1);
 				return Pair.of(ctx, recipe);
 			}
 		}

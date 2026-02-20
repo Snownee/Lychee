@@ -21,6 +21,11 @@ public class CraftingContext extends LycheeContext {
 		this.mirror = mirror;
 	}
 
+	@Override
+	public CraftingContext copy() {
+		return new CraftingContext(getRandom(), getLevel(), copyParams(), matchX, matchY, mirror).copyExtraStates(this);
+	}
+
 	public static class Builder extends LycheeContext.Builder<CraftingContext> {
 
 		private final int matchX;
