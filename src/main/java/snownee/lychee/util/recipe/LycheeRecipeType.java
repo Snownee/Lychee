@@ -54,7 +54,7 @@ public class LycheeRecipeType<T extends ILycheeRecipe<LycheeContext>> implements
 
 	public Optional<RecipeHolder<T>> tryMatch(RecipeHolder<T> recipeHolder, Level level, LycheeContext context) {
 		final var recipe = recipeHolder.value();
-		return recipe.matches(context, level) && recipe.test(recipe, context, 1) > 0 ? Optional.of(recipeHolder) : Optional.empty();
+		return recipe.matches(context, level) && recipe.test(context) ? Optional.of(recipeHolder) : Optional.empty();
 	}
 
 	public List<RecipeHolder<T>> recipes() {

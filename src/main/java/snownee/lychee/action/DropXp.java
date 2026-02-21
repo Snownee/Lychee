@@ -1,7 +1,5 @@
 package snownee.lychee.action;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -14,6 +12,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeRegistries;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
@@ -21,8 +20,6 @@ import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record DropXp(PostActionCommonProperties commonProperties, int xp) implements PostAction {
 	@Override
@@ -31,9 +28,8 @@ public record DropXp(PostActionCommonProperties commonProperties, int xp) implem
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParams.get(LootContextParams.ORIGIN);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		var pos = actionContext.get(LootContextParams.ORIGIN);
 		ExperienceOrb.award((ServerLevel) context.level(), pos, xp * times);
 	}
 

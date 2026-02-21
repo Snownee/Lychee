@@ -1,7 +1,5 @@
 package snownee.lychee.action;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -10,14 +8,13 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.LycheeFallingBlockEntity;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record AnvilDamageChance(PostActionCommonProperties commonProperties, float chance) implements PostAction {
 
@@ -27,9 +24,8 @@ public record AnvilDamageChance(PostActionCommonProperties commonProperties, flo
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		var entity = lootParams.get(LootContextParams.THIS_ENTITY);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		var entity = actionContext.get(LootContextParams.THIS_ENTITY);
 		if (entity instanceof LycheeFallingBlockEntity fallingBlockEntity) {
 			fallingBlockEntity.lychee$anvilDamageChance(chance);
 		}

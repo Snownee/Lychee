@@ -149,13 +149,12 @@ public abstract class ServerExplosionMixin {
 		lootParams.validate();
 		var itemHolders = ItemStackHolderCollection.InWorld.of();
 		context.put(LycheeContextKey.ITEM, itemHolders);
-		var recipe = RecipeTypes.BLOCK_EXPLODING.process(level, state, context);
-		if (recipe == null) {
+		var result = RecipeTypes.BLOCK_EXPLODING.process(level, state, context);
+		if (result == null) {
 			stacks.addAll(currentDrops);
 			return;
 		}
-		var actionContext = context.get(LycheeContextKey.ACTION);
-		if (!actionContext.avoidDefault) {
+		if (!result.getSecond().avoidDefault) {
 			stacks.addAll(currentDrops);
 		}
 		currentDropsRef.set(null);

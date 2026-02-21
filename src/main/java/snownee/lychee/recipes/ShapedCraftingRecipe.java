@@ -163,7 +163,7 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		var craftingContext = new CraftingContext(context, input, mirror);
 		context.put(LycheeContextKey.CRAFTING, craftingContext);
 
-		final var passed = conditions().test(this, context, 1) > 0;
+		final var passed = test(context);
 
 		Pair<Vec3, Player> pair = null;
 		try {
@@ -209,8 +209,7 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		if (craftingContext == null) {
 			return ItemStack.EMPTY;
 		}
-		final var actionContext = context.get(LycheeContextKey.ACTION);
-		actionContext.reset();
+		final var actionContext = context.get(LycheeContextKey.ACTION).newContext();
 		actionContext.jobs.addAll(assemblingActions.stream().map(it -> new Job(it, 1)).toList());
 		actionContext.run(context);
 		return context.getItem(context.size() - 1);

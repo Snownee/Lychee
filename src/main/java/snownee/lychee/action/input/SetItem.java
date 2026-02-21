@@ -1,7 +1,6 @@
 package snownee.lychee.action.input;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.jspecify.annotations.Nullable;
@@ -17,6 +16,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.Displays;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostAction;
@@ -44,8 +44,8 @@ public record SetItem(
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var indexes = Objects.requireNonNull(recipe).getItemIndexes(target);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		var indexes = context.get(LycheeContextKey.RECIPE).getItemIndexes(target);
 		for (var index : indexes) {
 			context.setItem(index, itemStack != null ? itemStack.create() : ItemStack.EMPTY);
 			context.get(LycheeContextKey.ITEM).get(index).setConsumption(0);

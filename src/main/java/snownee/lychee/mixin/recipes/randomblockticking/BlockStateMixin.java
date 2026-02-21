@@ -46,8 +46,8 @@ public class BlockStateMixin {
 			lootParams.set(LootContextParams.BLOCK_STATE, blockState);
 			lootParams.set(LootContextParams.ORIGIN, Vec3.atCenterOf(pos));
 			lootParams.set(LootContextKeys.BLOCK_POS, pos);
-			final var recipe = RecipeTypes.RANDOM_BLOCK_TICKING.process(level, blockState, context);
-			if (recipe != null && context.get(LycheeContextKey.ACTION).avoidDefault) {
+			var result = RecipeTypes.RANDOM_BLOCK_TICKING.process(level, blockState, context);
+			if (result != null && result.getSecond().avoidDefault) {
 				ci.cancel();
 			}
 		}

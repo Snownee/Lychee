@@ -2,8 +2,6 @@ package snownee.lychee.action;
 
 import java.util.Optional;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -16,13 +14,12 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record AddItemCooldown(PostActionCommonProperties commonProperties, float seconds, Optional<Item> item) implements PostAction {
 
@@ -32,9 +29,8 @@ public record AddItemCooldown(PostActionCommonProperties commonProperties, float
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		var player = (Player) lootParams.get(LootContextParams.THIS_ENTITY);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		var player = (Player) actionContext.get(LootContextParams.THIS_ENTITY);
 		var item = context.getItem(0);
 		player.getCooldowns().addCooldown(this.item.map(Item::getDefaultInstance).orElse(item), (int) (seconds * 20 * times));
 	}

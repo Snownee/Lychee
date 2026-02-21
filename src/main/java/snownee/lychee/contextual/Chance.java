@@ -1,7 +1,5 @@
 package snownee.lychee.contextual;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
@@ -12,12 +10,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Chance(float chance) implements ContextualCondition {
 	@Override
@@ -26,7 +24,7 @@ public record Chance(float chance) implements ContextualCondition {
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
 		int n = 0;
 		for (int i = 0; i < times; i++) {
 			if (ctx.get(LycheeContextKey.RANDOM).nextFloat() < chance) {

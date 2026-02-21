@@ -35,18 +35,17 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LocationCheck;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LootContextKeys;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.RegistryEntryDisplay;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionDisplay;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Location(LocationCheck check) implements ContextualCondition {
 	public static final ImmutableList<Rule<?>> RULES = bootstrapRules();
@@ -73,17 +72,16 @@ public record Location(LocationCheck check) implements ContextualCondition {
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
 		final var level = ctx.level();
-		final var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
 		if (level.isClientSide()) {
 			return testClient(
 					level,
-					lootParams.get(LootContextKeys.BLOCK_POS),
-					lootParams.get(LootContextParams.ORIGIN)
+					actionContext.get(LootContextKeys.BLOCK_POS),
+					actionContext.get(LootContextParams.ORIGIN)
 			).toBoolean(false) ? times : 0;
 		} else {
-			return check.test(lootParams.asLootContext()) ? times : 0;
+			return check.test(actionContext.asLootContext()) ? times : 0;
 		}
 	}
 

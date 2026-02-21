@@ -10,10 +10,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Not(ContextualCondition condition) implements ContextualCondition {
 
@@ -23,8 +23,8 @@ public record Not(ContextualCondition condition) implements ContextualCondition 
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		return times - condition.test(recipe, ctx, times);
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
+		return times - condition.test(ctx, actionContext, times);
 	}
 
 	@Override

@@ -1,7 +1,5 @@
 package snownee.lychee.action;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -14,13 +12,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Move(PostActionCommonProperties commonProperties, Vec3 offset, String with) implements PostAction {
 
@@ -30,11 +27,10 @@ public record Move(PostActionCommonProperties commonProperties, Vec3 offset, Str
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
 		Vec3 offset = this.offset;
 		if (!with.isEmpty()) {
-			BlockState blockState = lootParams.getOrNull(LootContextParams.BLOCK_STATE);
+			BlockState blockState = actionContext.getOrNull(LootContextParams.BLOCK_STATE);
 			if (blockState == null) {
 				return;
 			}
@@ -52,8 +48,8 @@ public record Move(PostActionCommonProperties commonProperties, Vec3 offset, Str
 				case EAST -> offset.xRot(Mth.HALF_PI).yRot(-Mth.HALF_PI);
 			};
 		}
-		var pos = lootParams.get(LootContextParams.ORIGIN);
-		lootParams.set(LootContextParams.ORIGIN, pos.add(offset));
+		var pos = actionContext.get(LootContextParams.ORIGIN);
+		actionContext.set(LootContextParams.ORIGIN, pos.add(offset));
 	}
 
 	@Override

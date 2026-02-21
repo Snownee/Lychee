@@ -21,6 +21,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.CompoundAction;
@@ -67,7 +68,7 @@ public record RandomSelect(
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
 		var randomSource = context.get(LycheeContextKey.RANDOM);
 		times *= BoundsExtensions.random(rolls, randomSource);
 		if (times == 0) {
@@ -78,7 +79,7 @@ public record RandomSelect(
 		var validWeights = new int[entries.size()];
 		var totalWeights = 0;
 		for (var entry : entries) {
-			if (entry.action.test(recipe, context, 1) == 1) {
+			if (entry.action.test(context, actionContext, 1) == 1) {
 				validWeights[validActions.size()] = entry.weight;
 				validActions.add(entry.action);
 				totalWeights += entry.weight;
@@ -95,7 +96,6 @@ public record RandomSelect(
 				++childTimes[index];
 			}
 		}
-		var actionContext = context.get(LycheeContextKey.ACTION);
 		for (var i = 0; i < validActions.size(); i++) {
 			if (childTimes[i] > 0) {
 				actionContext.jobs.offer(new Job(validActions.get(i), childTimes[i]));

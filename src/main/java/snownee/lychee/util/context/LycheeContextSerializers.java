@@ -9,14 +9,15 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.level.block.state.BlockState;
 import snownee.lychee.LycheeRegistries;
-import snownee.lychee.context.ActionContext;
 
 public interface LycheeContextSerializers {
 	static void init() {
-		register(LycheeContextKey.ACTION, ActionContext.CODEC);
 		register(LycheeContextKey.JSON, ExtraCodecs.JSON);
 		register(LycheeContextKey.RECIPE_ID, ResourceKey.codec(Registries.RECIPE));
+		register(LycheeContextKey.DRIPSTONE_SOURCE, BlockState.CODEC);
+		register(LycheeContextKey.SMALL_EXPLOSION, Codec.BOOL);
 	}
 
 	static <T> Codec<T> register(Identifier location, Codec<T> object) {

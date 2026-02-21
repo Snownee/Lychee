@@ -87,18 +87,18 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		lootParams.set(LootContextParams.ORIGIN, origin);
 		lootParams.set(LootContextKeys.BLOCK_POS, targetPos);
 		lootParams.validate();
-		var recipe = RecipeTypes.DRIPSTONE_DRIPPING.process(level, targetBlock, context);
-		if (recipe == null) {
+		var result = RecipeTypes.DRIPSTONE_DRIPPING.process(level, targetBlock, context);
+		if (result == null) {
 			return false;
 		}
 		level.levelEvent(LevelEvent.DRIPSTONE_DRIP, tipPos, 0);
 		var i = tipPos.getY() - targetPos.getY();
 		var j = 50 + i;
 		var builder = new LocationPredicate.Builder();
-		((LocationPredicate$BuilderAccess) builder).setBlock(Optional.of(recipe.value().targetBlock));
+		((LocationPredicate$BuilderAccess) builder).setBlock(Optional.of(result.getFirst().value().targetBlock));
 		var check = (LocationCheck) LocationCheck.checkLocation(builder).build();
 		var exit = new Exit(new PostActionCommonProperties(new ContextualHolder(List.of(new Not(new Location(check)))), Optional.empty()));
-		var actionContext = context.get(LycheeContextKey.ACTION);
+		var actionContext = context.get(LycheeContextKey.ACTION).singletonContext();
 		actionContext.jobs.offer(new Job(exit, 1));
 		actionContext.jobs.offer(new Job(new Delay(j / 20F), 1));
 		actionContext.run(context);

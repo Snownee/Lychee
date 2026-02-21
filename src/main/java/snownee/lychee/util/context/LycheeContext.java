@@ -103,7 +103,7 @@ public class LycheeContext extends EmptyRecipeInput {
 	public Map<LycheeContextKey<?>, Object> serializableContext() {
 		return Map.ofEntries(context.entrySet()
 				.stream()
-				.filter(entry -> entry.getValue() != null && entry.getKey().codec() != null)
+				.filter(entry -> entry.getKey().codec() != null)
 				.toArray(Map.Entry[]::new));
 	}
 

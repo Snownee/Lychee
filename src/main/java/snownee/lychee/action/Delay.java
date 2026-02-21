@@ -1,22 +1,24 @@
 package snownee.lychee.action;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Marker;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.Lychee;
 import snownee.lychee.context.ActionContext;
+import snownee.lychee.util.action.ActionData;
+import snownee.lychee.util.action.ActionMarker;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Delay(PostActionCommonProperties commonProperties, float seconds) implements PostAction {
 
@@ -30,9 +32,19 @@ public record Delay(PostActionCommonProperties commonProperties, float seconds) 
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var actionContext = context.get(LycheeContextKey.ACTION);
-		var actionMarker = context.get(LycheeContextKey.MARKER);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		var actionMarker = actionContext.marker;
+		if (actionMarker == null) {
+			var marker = new Marker(EntityType.MARKER, context.level());
+			var pos = actionContext.getOrNull(LootContextParams.ORIGIN);
+			if (pos != null) {
+				marker.setPos(pos);
+			}
+			marker.setCustomName(Component.literal(Lychee.ID));
+			context.level().addFreshEntity(marker);
+			actionContext.marker = actionMarker = (ActionMarker) marker;
+			actionMarker.lychee$setData(new ActionData(context, actionContext, 0));
+		}
 		var actionData = actionMarker.lychee$getData();
 		if (actionData == null) {
 			Lychee.LOGGER.error("Delay action called without data: {}", context);

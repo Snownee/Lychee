@@ -18,12 +18,12 @@ import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.kiwi.util.codec.KCodecs;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
 import snownee.lychee.util.contextual.ContextualPredicate;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 /**
  * Mainly used by KubeJS script listener with `LycheeEvents.customAction('id', listener`)
@@ -46,9 +46,9 @@ public class CustomCondition implements ContextualCondition {
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
 		if (testFunc != null) {
-			return testFunc.test(recipe, ctx, times);
+			return testFunc.test(ctx, actionContext, times);
 		}
 		return 0;
 	}

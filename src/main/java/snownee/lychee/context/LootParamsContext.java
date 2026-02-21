@@ -19,7 +19,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeLootContextParamSets;
 
-public class LootParamsContext {
+public class LootParamsContext implements LootParamsAccess {
 	private final Map<ContextKey<?>, @Nullable Object> params = new IdentityHashMap<>();
 	private final Level level;
 	private final ContextKeySet paramSet;
@@ -30,28 +30,30 @@ public class LootParamsContext {
 		this.paramSet = paramSet;
 	}
 
+	public LootParamsContext copy() {
+		LootParamsContext context = new LootParamsContext(level, paramSet);
+		context.params.putAll(params);
+		return context;
+	}
+
+	@Override
 	public Map<ContextKey<?>, @Nullable Object> params() {
 		return params;
 	}
 
+	@Override
 	public ContextKeySet paramSet() {
 		return paramSet;
 	}
 
-	/**
-	 * @param param The parameter to check
-	 * @return Check whether the given parameter is present in this context.
-	 */
+	@Override
 	public boolean has(ContextKey<?> param) {
 		return params.get(param) != null;
 	}
 
-	/**
-	 * @return The value of the given parameter.
-	 * @throws NoSuchElementException if the parameter is not present in this context
-	 */
+	@Override
 	public <T> T get(ContextKey<T> param) {
-		final var result = getOrNull(param);
+		T result = getOrNull(param);
 		if (result == null) {
 			throw new NoSuchElementException(param.name().toString());
 		} else {
@@ -59,14 +61,13 @@ public class LootParamsContext {
 		}
 	}
 
-	/**
-	 * @return The value of the given parameter if it is present in this context, null otherwise.
-	 */
+	@Override
 	public <T> @Nullable T getOrNull(ContextKey<T> param) {
 		//noinspection unchecked
 		return (T) params.computeIfAbsent(param, this::init);
 	}
 
+	@Override
 	public <T> void set(ContextKey<T> param, @Nullable T value) {
 		params.put(param, value);
 		if (validated && param == LootContextParams.ORIGIN) {
@@ -79,10 +80,12 @@ public class LootParamsContext {
 		}
 	}
 
+	@Override
 	public void remove(ContextKey<?> param) {
 		set(param, null);
 	}
 
+	@Override
 	public LootContext asLootContext() {
 		initAll();
 		var paramsBuilder = new LootParams.Builder((ServerLevel) level);
@@ -108,6 +111,7 @@ public class LootParamsContext {
 		validated = true;
 	}
 
+	@Override
 	public void initAll() {
 		for (ContextKey<?> param : LootParamInit.LOOKUP.keySet()) {
 			getOrNull(param);

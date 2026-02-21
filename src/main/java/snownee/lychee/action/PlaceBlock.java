@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -33,6 +31,7 @@ import net.minecraft.world.level.storage.TagValueInput;
 import snownee.lychee.LootContextKeys;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Displays;
@@ -44,7 +43,6 @@ import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record PlaceBlock(
 		PostActionCommonProperties commonProperties,
@@ -91,9 +89,8 @@ public record PlaceBlock(
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParams.get(LootContextKeys.BLOCK_POS).offset(offset);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		var pos = actionContext.get(LootContextKeys.BLOCK_POS).offset(offset);
 		var level = context.level();
 		var oldState = level.getBlockState(pos);
 		var blockState = BlockPredicateExtensions.anyBlockState(block);
@@ -101,7 +98,7 @@ public record PlaceBlock(
 			destroyBlock(level, pos, false);
 			return;
 		}
-		if (recipe instanceof BlockCrushingRecipe && !oldState.isAir()) {
+		if (context.getOrNull(LycheeContextKey.RECIPE) instanceof BlockCrushingRecipe && !oldState.isAir()) {
 			level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, pos, Block.getId(oldState));
 		}
 

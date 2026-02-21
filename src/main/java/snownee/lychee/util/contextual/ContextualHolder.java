@@ -22,9 +22,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class ContextualHolder implements ContextualPredicate, Iterable<ContextualCondition> {
 	public static final Component SECRET_COMPONENT = Component.translatable("contextual.lychee.secret").withStyle(ChatFormatting.GRAY);
@@ -38,9 +38,9 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 	private final List<ContextualCondition> conditions;
 
 	private final @Nullable BitSet secretFlags;
-	private final @Nullable Component[] overrideDesc;
+	private final Component @Nullable [] overrideDesc;
 
-	public ContextualHolder(List<ContextualCondition> conditions, @Nullable BitSet secretFlags, @Nullable Component[] overrideDesc) {
+	public ContextualHolder(List<ContextualCondition> conditions, @Nullable BitSet secretFlags, Component @Nullable [] overrideDesc) {
 		this.conditions = Collections.unmodifiableList(conditions);
 		this.secretFlags = secretFlags;
 		this.overrideDesc = overrideDesc;
@@ -143,10 +143,10 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
 		for (var condition : conditions) {
 			try {
-				times = condition.test(recipe, ctx, times);
+				times = condition.test(ctx, actionContext, times);
 				if (times == 0) {
 					break;
 				}

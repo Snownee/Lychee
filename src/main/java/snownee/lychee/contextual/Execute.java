@@ -1,7 +1,6 @@
 package snownee.lychee.contextual;
 
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.jspecify.annotations.Nullable;
 
 import com.mojang.brigadier.ParseResults;
 import com.mojang.serialization.Codec;
@@ -21,12 +20,11 @@ import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import snownee.lychee.Lychee;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.codec.LycheeStreamCodecs;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Execute(String command, MinMaxBounds.Ints bounds) implements ContextualCondition {
 
@@ -43,14 +41,13 @@ public record Execute(String command, MinMaxBounds.Ints bounds) implements Conte
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
 		final var level = ctx.level();
 		if (command.isEmpty() || level.isClientSide()) {
 			return 0;
 		}
-		final var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
-		final var pos = lootParams.get(LootContextParams.ORIGIN);
-		final var entity = lootParams.getOrNull(LootContextParams.THIS_ENTITY);
+		final var pos = actionContext.get(LootContextParams.ORIGIN);
+		final var entity = actionContext.getOrNull(LootContextParams.THIS_ENTITY);
 		var rotation = Vec2.ZERO;
 		var displayName = snownee.lychee.action.Execute.DEFAULT_NAME;
 		var name = Lychee.ID;

@@ -20,6 +20,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.LycheeRegistries;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.codec.LycheeParser;
 import snownee.lychee.util.context.LycheeContext;
@@ -104,7 +105,7 @@ public interface PostAction extends PostActionDisplay, PostActionLike, Contextua
 
 	PostActionType<?> type();
 
-	void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times);
+	void apply(LycheeContext context, ActionContext actionContext, int times);
 
 	@Override
 	default Component getDisplayName() {
@@ -120,11 +121,11 @@ public interface PostAction extends PostActionDisplay, PostActionLike, Contextua
 
 	default void getUsedPointers(@Nullable ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {}
 
-	default void onFailure(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {}
+	default void onFailure(LycheeContext context, ActionContext actionContext, int times) {}
 
 	@Override
-	default int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		return conditions().test(recipe, ctx, times);
+	default int test(LycheeContext ctx, ActionContext actionContext, int times) {
+		return conditions().test(ctx, actionContext, times);
 	}
 
 	default void validate(ILycheeRecipe<?> recipe) {}

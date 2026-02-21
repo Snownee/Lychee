@@ -8,13 +8,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.codec.LycheeStreamCodecs;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record PreventDefault(PostActionCommonProperties commonProperties) implements PostAction {
@@ -31,8 +31,8 @@ public record PreventDefault(PostActionCommonProperties commonProperties) implem
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		context.get(LycheeContextKey.ACTION).avoidDefault = true;
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		actionContext.avoidDefault = true;
 	}
 
 	@Override

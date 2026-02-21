@@ -19,10 +19,10 @@ import net.minecraft.util.TriState;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record IsDifficulty(List<Difficulty> difficulties) implements ContextualCondition {
 
@@ -32,7 +32,7 @@ public record IsDifficulty(List<Difficulty> difficulties) implements ContextualC
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
 		return difficulties.contains(ctx.level().getDifficulty()) ? times : 0;
 	}
 

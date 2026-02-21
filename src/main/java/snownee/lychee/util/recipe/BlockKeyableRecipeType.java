@@ -3,6 +3,7 @@ package snownee.lychee.util.recipe;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.jetbrains.annotations.MustBeInvokedByOverriders;
@@ -12,6 +13,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.context.ContextKeySet;
@@ -29,6 +31,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LootContextKeys;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.contextual.Chance;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
@@ -128,7 +131,6 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 				ItemStackHolderCollection.Inventory.of(context, stack, otherStack)
 		);
 		final var itemContext = context.get(LycheeContextKey.ITEM);
-		final var actionContext = context.get(LycheeContextKey.ACTION);
 
 		for (final var recipeHolder : mergeAnyBlockRecipes(recipes)) {
 			if (tryMatch(recipeHolder, level, context).isPresent()) {
@@ -158,7 +160,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 						}
 					}
 					times = recipe.getRandomRepeats(Math.max(1, times), context);
-					recipe.applyPostActions(context, times);
+					ActionContext actionContext = Objects.requireNonNull(recipe.applyPostActions(context, times));
 					itemContext.postApply(!actionContext.avoidDefault, times);
 					player.setItemInHand(hand, context.getItem(0));
 					player.setItemInHand(
@@ -181,11 +183,7 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 	}
 
 	@Nullable
-	public RecipeHolder<R> process(
-			Level level,
-			BlockState state,
-			LycheeContext context
-	) {
+	public Pair<RecipeHolder<R>, ActionContext> process(Level level, BlockState state, LycheeContext context) {
 		final var recipes = recipesByBlock.getOrDefault(state.getBlock(), List.of());
 		final var iterable = mergeAnyBlockRecipes(recipes);
 		for (final var recipe : iterable) {
@@ -197,8 +195,8 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 			}
 			if (tryMatch(recipe, level, context).isPresent()) {
 				context.put(recipe);
-				recipe.value().applyPostActions(context, 1);
-				return recipe;
+				ActionContext actionContext = recipe.value().applyPostActions(context, 1);
+				return actionContext == null ? null : Pair.of(recipe, actionContext);
 			}
 		}
 		return null;

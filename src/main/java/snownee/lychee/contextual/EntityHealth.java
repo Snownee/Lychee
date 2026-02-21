@@ -1,7 +1,5 @@
 package snownee.lychee.contextual;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -11,12 +9,11 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record EntityHealth(Doubles range) implements ContextualCondition {
 
@@ -26,8 +23,8 @@ public record EntityHealth(Doubles range) implements ContextualCondition {
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		Entity entity = ctx.get(LycheeContextKey.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
+		Entity entity = actionContext.get(LootContextParams.THIS_ENTITY);
 		double health = 0;
 		if (entity instanceof LivingEntity living) {
 			health = living.getHealth();

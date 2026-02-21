@@ -4,8 +4,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.jspecify.annotations.Nullable;
-
 import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -17,11 +15,11 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LootContextKeys;
+import snownee.lychee.context.ActionContext;
+import snownee.lychee.context.LootParamsAccess;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public class DirectionCheck implements ContextualCondition {
 	public static final Map<String, DirectionCheck> LOOKUPS = Maps.newHashMap();
@@ -30,42 +28,42 @@ public class DirectionCheck implements ContextualCondition {
 		for (final var direction : Direction.values()) {
 			createLookup(
 					direction.getName().toLowerCase(Locale.ENGLISH),
-					ctx -> ctx.get(LycheeContextKey.LOOT_PARAMS).get(LootContextKeys.DIRECTION) == direction
+					ctx -> ctx.get(LootContextKeys.DIRECTION) == direction
 			);
 		}
 		createLookup(
 				"sides",
-				ctx -> ctx.get(LycheeContextKey.LOOT_PARAMS).get(LootContextKeys.DIRECTION).getStepY() == 0
+				ctx -> ctx.get(LootContextKeys.DIRECTION).getStepY() == 0
 		);
-		createLookup("forward", ctx -> {
-			final var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
-			final var direction = lootParams.get(LootContextKeys.DIRECTION);
-			final var state = lootParams.get(LootContextParams.BLOCK_STATE);
-			final var facing = state.getOptionalValue(BlockStateProperties.FACING)
-					.or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING))
-					.or(() -> state.getOptionalValue(BlockStateProperties.VERTICAL_DIRECTION))
-					.orElseThrow();
-			return direction == facing;
-		});
-		createLookup("axis", ctx -> {
-			final var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
-			final var direction = lootParams.get(LootContextKeys.DIRECTION);
-			final var state = lootParams.get(LootContextParams.BLOCK_STATE);
-			final var axis = state.getOptionalValue(BlockStateProperties.AXIS)
-					.or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_AXIS))
-					.orElseThrow();
-			return axis.test(direction);
-		});
+		createLookup(
+				"forward", ctx -> {
+					final var direction = ctx.get(LootContextKeys.DIRECTION);
+					final var state = ctx.get(LootContextParams.BLOCK_STATE);
+					final var facing = state.getOptionalValue(BlockStateProperties.FACING)
+							.or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_FACING))
+							.or(() -> state.getOptionalValue(BlockStateProperties.VERTICAL_DIRECTION))
+							.orElseThrow();
+					return direction == facing;
+				});
+		createLookup(
+				"axis", ctx -> {
+					final var direction = ctx.get(LootContextKeys.DIRECTION);
+					final var state = ctx.get(LootContextParams.BLOCK_STATE);
+					final var axis = state.getOptionalValue(BlockStateProperties.AXIS)
+							.or(() -> state.getOptionalValue(BlockStateProperties.HORIZONTAL_AXIS))
+							.orElseThrow();
+					return axis.test(direction);
+				});
 	}
 
-	public static void createLookup(String name, Predicate<LycheeContext> predicate) {
+	public static void createLookup(String name, Predicate<LootParamsAccess> predicate) {
 		LOOKUPS.put(name, new DirectionCheck(name, predicate));
 	}
 
 	private final String name;
-	private final Predicate<LycheeContext> predicate;
+	private final Predicate<LootParamsAccess> predicate;
 
-	private DirectionCheck(String name, Predicate<LycheeContext> predicate) {
+	private DirectionCheck(String name, Predicate<LootParamsAccess> predicate) {
 		this.name = name;
 		this.predicate = predicate;
 	}
@@ -76,8 +74,8 @@ public class DirectionCheck implements ContextualCondition {
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		return predicate.test(ctx) ? times : 0;
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
+		return predicate.test(actionContext) ? times : 0;
 	}
 
 	@Override

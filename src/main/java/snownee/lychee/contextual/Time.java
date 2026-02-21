@@ -16,10 +16,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.predicates.TimeCheck;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Time(Holder<WorldClock> clock, MinMaxBounds.Ints value, Optional<Long> period) implements ContextualCondition {
 
@@ -29,7 +29,7 @@ public record Time(Holder<WorldClock> clock, MinMaxBounds.Ints value, Optional<L
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
 		return test(ctx.level()) ? times : 0;
 	}
 

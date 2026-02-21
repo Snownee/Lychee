@@ -2,8 +2,6 @@ package snownee.lychee.action;
 
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -17,6 +15,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.LycheeRegistries;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.network.SUpdateFallingBlockPacket;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Displays;
@@ -25,9 +24,7 @@ import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record SetBlock(PostActionCommonProperties commonProperties, BlockPredicate block) implements PostAction {
 	@Override
@@ -36,8 +33,8 @@ public record SetBlock(PostActionCommonProperties commonProperties, BlockPredica
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		Entity entity = context.get(LycheeContextKey.LOOT_PARAMS).getOrNull(LootContextParams.THIS_ENTITY);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		Entity entity = actionContext.getOrNull(LootContextParams.THIS_ENTITY);
 		if (entity instanceof FallingBlockEntity fbe) {
 			fbe.blockState = BlockPredicateExtensions.anyBlockState(block);
 			if (!fbe.blockState.isAir()) {

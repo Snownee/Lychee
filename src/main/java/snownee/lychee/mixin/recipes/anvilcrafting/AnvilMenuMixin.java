@@ -26,6 +26,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LootContextKeys;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.context.AnvilContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -44,7 +45,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 	@Unique
 	private @Nullable LycheeContext context;
 	@Unique
-	private @Nullable LycheeContext onTakeCtx;
+	private @Nullable Pair<LycheeContext, ActionContext> onTakeResult;
 
 	private AnvilMenuMixin(
 			@Nullable final MenuType<?> menuType,
@@ -122,8 +123,10 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		if (recipe == null) {
 			return;
 		}
-		onTakeCtx = context;
-		recipe.applyPostActions(context, 1);
+		ActionContext actionContext = recipe.applyPostActions(context, 1);
+		if (actionContext != null) {
+			onTakeResult = Pair.of(context, actionContext);
+		}
 	}
 
 	@Inject(
@@ -134,15 +137,16 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 			), method = "onTake", cancellable = true
 	)
 	private void lychee_preventDefault(Player player, ItemStack carried, CallbackInfo ci) {
-		if (onTakeCtx != null) {
+		if (onTakeResult != null) {
 			for (int i = 0; i < 2; i++) {
-				if (onTakeCtx.get(LycheeContextKey.ITEM).get(i).getConsumption() == 0) {
-					inputSlots.setItem(i, onTakeCtx.get(LycheeContextKey.ITEM).get(i).get());
+				ItemStackHolderCollection holders = onTakeResult.getFirst().get(LycheeContextKey.ITEM);
+				if (holders.get(i).getConsumption() == 0) {
+					inputSlots.setItem(i, holders.get(i).get());
 				}
 			}
 
-			boolean avoidDefault = onTakeCtx.get(LycheeContextKey.ACTION).avoidDefault;
-			onTakeCtx = null;
+			boolean avoidDefault = onTakeResult.getSecond().avoidDefault;
+			onTakeResult = null;
 			if (avoidDefault) {
 				access.execute((level, pos) -> level.levelEvent(LevelEvent.SOUND_ANVIL_USED, pos, 0));
 				ci.cancel();

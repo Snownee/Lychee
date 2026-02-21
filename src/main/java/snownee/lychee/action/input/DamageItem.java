@@ -1,7 +1,5 @@
 package snownee.lychee.action.input;
 
-import java.util.Objects;
-
 import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
@@ -17,6 +15,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Displays;
 import snownee.lychee.util.Reference;
@@ -36,10 +35,9 @@ public record DamageItem(PostActionCommonProperties commonProperties, int damage
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var indexes = Objects.requireNonNull(recipe).getItemIndexes(target);
-		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		var thisEntity = lootParams.get(LootContextParams.THIS_ENTITY);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		var indexes = context.get(LycheeContextKey.RECIPE).getItemIndexes(target);
+		var thisEntity = actionContext.get(LootContextParams.THIS_ENTITY);
 		var itemStackHolders = context.get(LycheeContextKey.ITEM);
 		ServerLevel level = (ServerLevel) context.level();
 		LivingEntity entity = thisEntity instanceof LivingEntity ? (LivingEntity) thisEntity : null;

@@ -19,11 +19,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record IsOffItemCooldown(Holder<Item> item) implements ContextualCondition {
 
@@ -33,8 +32,8 @@ public record IsOffItemCooldown(Holder<Item> item) implements ContextualConditio
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		Entity entity = ctx.get(LycheeContextKey.LOOT_PARAMS).get(LootContextParams.THIS_ENTITY);
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
+		Entity entity = actionContext.get(LootContextParams.THIS_ENTITY);
 		if (entity instanceof Player player && !testCommon(player)) {
 			return 0;
 		} else {

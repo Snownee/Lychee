@@ -17,12 +17,12 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.context.ContextKey;
 import snownee.lychee.LycheeRegistries;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.contextual.ContextualCondition;
 import snownee.lychee.util.contextual.ContextualConditionType;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Param(Holder<LycheeContextKey<?>> key, boolean create, String loot) implements ContextualCondition {
 	public Param(Holder<LycheeContextKey<?>> key, String loot) {
@@ -45,17 +45,16 @@ public record Param(Holder<LycheeContextKey<?>> key, boolean create, String loot
 	}
 
 	@Override
-	public int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
+	public int test(LycheeContext ctx, ActionContext actionContext, int times) {
 		if (!ctx.has(key.value(), create)) {
 			return 0;
 		}
 		if (!loot.isEmpty()) {
 			boolean found = false;
-			var lootParams = ctx.get(LycheeContextKey.LOOT_PARAMS);
 			if (create) {
-				lootParams.initAll();
+				actionContext.initAll();
 			}
-			for (Map.Entry<ContextKey<?>, @Nullable Object> entry : lootParams.params().entrySet()) {
+			for (Map.Entry<ContextKey<?>, @Nullable Object> entry : actionContext.params().entrySet()) {
 				if (entry.getValue() == null) {
 					continue;
 				}

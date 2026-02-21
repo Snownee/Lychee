@@ -1,9 +1,5 @@
 package snownee.lychee.action.input;
 
-import java.util.Objects;
-
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -14,6 +10,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.Reference;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -43,8 +40,9 @@ public record CopyDurability(
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		IntList targetIndexes = Objects.requireNonNull(recipe).getItemIndexes(target);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		ILycheeRecipe<?> recipe = context.get(LycheeContextKey.RECIPE);
+		IntList targetIndexes = recipe.getItemIndexes(target);
 		ItemStackHolderCollection itemHolders = context.get(LycheeContextKey.ITEM);
 		ItemStack sourceItem = itemHolders.get(recipe.getItemIndexes(source).getFirst()).get();
 		if (!sourceItem.isDamageableItem()) {

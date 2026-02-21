@@ -16,6 +16,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.action.CompoundAction;
 import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
@@ -23,7 +24,6 @@ import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -72,16 +72,16 @@ public record If(
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
 		for (PostAction action : successEntries) {
-			context.get(LycheeContextKey.ACTION).jobs.offer(new Job(action, times));
+			actionContext.jobs.offer(new Job(action, times));
 		}
 	}
 
 	@Override
-	public void onFailure(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+	public void onFailure(LycheeContext context, ActionContext actionContext, int times) {
 		for (PostAction action : failureEntries) {
-			context.get(LycheeContextKey.ACTION).jobs.offer(new Job(action, times));
+			actionContext.jobs.offer(new Job(action, times));
 		}
 	}
 

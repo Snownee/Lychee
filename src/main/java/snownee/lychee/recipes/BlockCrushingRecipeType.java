@@ -22,6 +22,7 @@ import net.minecraft.world.phys.AABB;
 import snownee.lychee.LootContextKeys;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeTags;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.network.SCustomLevelEventPacket;
 import snownee.lychee.util.CommonProxy;
@@ -74,8 +75,6 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 		lootParams.set(LootContextKeys.BLOCK_POS, pos);
 		lootParams.validate();
 
-		final var actionContext = context.get(LycheeContextKey.ACTION);
-
 		var matchedAny = false;
 		var loop = 0;
 		major:
@@ -103,7 +102,7 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 								}
 							}
 						}
-						match.get().value().applyPostActions(context, times);
+						ActionContext actionContext = match.get().value().applyPostActions(context, times);
 						if (actionContext.avoidDefault) {
 							((LycheeFallingBlockEntity) entity).lychee$cancelDrop();
 						}

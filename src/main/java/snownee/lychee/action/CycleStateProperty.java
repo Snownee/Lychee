@@ -3,8 +3,6 @@ package snownee.lychee.action;
 import java.util.Collection;
 import java.util.function.Supplier;
 
-import org.jspecify.annotations.Nullable;
-
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -20,15 +18,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
 import snownee.lychee.LootContextKeys;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record CycleStateProperty(
 		PostActionCommonProperties commonProperties,
@@ -63,9 +60,8 @@ public record CycleStateProperty(
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParams.get(LootContextKeys.BLOCK_POS).offset(offset);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		var pos = actionContext.get(LootContextKeys.BLOCK_POS).offset(offset);
 		var level = context.level();
 		var oldState = level.getBlockState(pos);
 		var state = reversed ? cycleReversed(oldState, property()) : oldState.cycle(property());

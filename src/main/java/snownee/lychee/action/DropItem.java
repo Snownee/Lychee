@@ -2,8 +2,6 @@ package snownee.lychee.action;
 
 import java.util.List;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -17,6 +15,7 @@ import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LootContextKeys;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeTypes;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.mixin.ItemEntityAccess;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.util.CommonProxy;
@@ -37,14 +36,14 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStackTem
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParams.get(LootContextParams.ORIGIN);
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		var pos = actionContext.get(LootContextParams.ORIGIN);
 		var level = context.level();
+		ILycheeRecipe<?> recipe = context.getOrNull(LycheeContextKey.RECIPE);
 		if (recipe instanceof BlockCrushingRecipe) {
-			var state = lootParams.get(LootContextParams.BLOCK_STATE);
+			var state = actionContext.get(LootContextParams.BLOCK_STATE);
 			if (state.is(LycheeTags.EXTEND_BOX)) {
-				pos = Vec3.atCenterOf(lootParams.get(LootContextKeys.BLOCK_POS));
+				pos = Vec3.atCenterOf(actionContext.get(LootContextKeys.BLOCK_POS));
 			}
 		}
 		var itemStack = this.itemStack.create();

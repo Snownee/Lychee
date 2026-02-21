@@ -2,8 +2,6 @@ package snownee.lychee.action;
 
 import java.util.Locale;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -18,6 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeRegistries;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -25,8 +24,6 @@ import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Explode(
 		PostActionCommonProperties commonProperties,
@@ -42,12 +39,11 @@ public record Explode(
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParams.get(LootContextParams.ORIGIN).add(Vec3.atLowerCornerOf(offset));
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		var pos = actionContext.get(LootContextParams.ORIGIN).add(Vec3.atLowerCornerOf(offset));
 		var boundedRadius = Math.min(radius + step * (Mth.sqrt(times) - 1), radius * 4);
 		context.level().explode(
-				lootParams.get(LootContextParams.THIS_ENTITY),
+				actionContext.get(LootContextParams.THIS_ENTITY),
 				null, //FIXME check ExplodeEffect.java
 				null,
 				pos.x,

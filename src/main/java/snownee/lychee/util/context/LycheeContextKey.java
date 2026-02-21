@@ -8,29 +8,23 @@ import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Marker;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import snownee.lychee.Lychee;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.context.ActionContext;
+import snownee.lychee.context.ActionManager;
 import snownee.lychee.context.AnvilContext;
 import snownee.lychee.context.CraftingContext;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.util.ClientProxy;
-import snownee.lychee.util.action.ActionData;
-import snownee.lychee.util.action.ActionMarker;
 import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -45,7 +39,9 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	public static final LycheeContextKey.Required<LootParamsContext> LOOT_PARAMS = req(
 			"loot_params",
 			it -> new LootParamsContext(it.level(), LycheeLootContextParamSets.ALL));
-	public static final LycheeContextKey.Required<ActionContext> ACTION = req("action", it -> new ActionContext());
+	public static final LycheeContextKey.Required<ActionManager> ACTION = req(
+			"action",
+			it -> new ActionManager(new ActionContext(it.get(LOOT_PARAMS))));
 
 	public static final LycheeContextKey.Optional<ResourceKey<Recipe<?>>> RECIPE_ID = opt("recipe_id");
 	public static final LycheeContextKey.Optional<ILycheeRecipe<?>> RECIPE = opt(
@@ -67,24 +63,6 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 			});
 
 	public static final LycheeContextKey.Optional<ItemStackHolderCollection> ITEM = opt("item", it -> ItemStackHolderCollection.empty());
-	public static final LycheeContextKey.Optional<ActionMarker> MARKER = opt(
-			"marker", it -> {
-				var level = it.level();
-				if (level.isClientSide()) {
-					return null;
-				}
-				var marker = new Marker(EntityType.MARKER, level);
-				var lootParams = it.get(LycheeContextKey.LOOT_PARAMS);
-				var pos = lootParams.getOrNull(LootContextParams.ORIGIN);
-				if (pos != null) {
-					marker.setPos(pos);
-				}
-				marker.setCustomName(Component.literal(Lychee.ID));
-				level.addFreshEntity(marker);
-				var actionMarker = (ActionMarker) marker;
-				actionMarker.lychee$setData(new ActionData(it, 0));
-				return actionMarker;
-			});
 	public static final LycheeContextKey.Optional<JsonElement> JSON = opt("data");
 
 	public static final LycheeContextKey.Optional<AnvilContext> ANVIL = opt("anvil");

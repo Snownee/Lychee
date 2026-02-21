@@ -1,7 +1,5 @@
 package snownee.lychee.action;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -17,13 +15,12 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.Lychee;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Execute(PostActionCommonProperties commonProperties, String command, boolean repeat) implements PostAction {
 
@@ -35,19 +32,18 @@ public record Execute(PostActionCommonProperties commonProperties, String comman
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
 		if (command.isEmpty()) {
 			return;
 		}
 		if (!repeat) {
 			times = 1;
 		}
-		var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		var pos = lootParams.getOrNull(LootContextParams.ORIGIN);
+		var pos = actionContext.getOrNull(LootContextParams.ORIGIN);
 		if (pos == null) {
 			pos = Vec3.ZERO;
 		}
-		var entity = lootParams.getOrNull(LootContextParams.THIS_ENTITY);
+		var entity = actionContext.getOrNull(LootContextParams.THIS_ENTITY);
 		var rotation = Vec2.ZERO;
 		var displayName = DEFAULT_NAME;
 		var name = Lychee.ID;

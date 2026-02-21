@@ -1,7 +1,5 @@
 package snownee.lychee.action;
 
-import org.jspecify.annotations.Nullable;
-
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -13,8 +11,6 @@ import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
 import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.context.LycheeContext;
-import snownee.lychee.util.context.LycheeContextKey;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record Exit(PostActionCommonProperties commonProperties) implements PostAction {
 	public Exit() {
@@ -27,8 +23,8 @@ public record Exit(PostActionCommonProperties commonProperties) implements PostA
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		context.get(LycheeContextKey.ACTION).state = ActionContext.State.STOPPED;
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
+		actionContext.state = ActionContext.State.STOPPED;
 	}
 
 	@Override

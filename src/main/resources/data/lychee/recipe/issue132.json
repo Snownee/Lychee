@@ -1,0 +1,14 @@
+{
+	"type": "lychee:item_exploding",
+	"post": [
+		{
+			"type": "delay",
+			"s": 2
+		},
+		{
+			"type": "drop_item",
+			"id": "minecraft:emerald"
+		}
+	],
+	"item_in": "diamond"
+}

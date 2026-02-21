@@ -21,6 +21,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.RecipeBookCategories;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.Reference;
@@ -123,9 +124,13 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 		return commonProperties().conditions();
 	}
 
+	default boolean test(LycheeContext ctx) {
+		return test(ctx, ctx.get(LycheeContextKey.ACTION).prototype(), 1) == 1;
+	}
+
 	@Override
-	default int test(@Nullable ILycheeRecipe<?> recipe, LycheeContext ctx, int times) {
-		return conditions().test(recipe, ctx, times);
+	default int test(LycheeContext ctx, ActionContext actionContext, int times) {
+		return conditions().test(ctx, actionContext, times);
 	}
 
 	default boolean hideInRecipeViewer() {
@@ -168,13 +173,15 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 		return postActions().stream();
 	}
 
-	default void applyPostActions(LycheeContext context, int times) {
-		if (!context.level().isClientSide()) {
-			final var actionContext = context.get(LycheeContextKey.ACTION);
-			actionContext.reset();
-			actionContext.jobs.addAll(postActions().stream().map(it -> new Job(it, times)).toList());
-			actionContext.run(context);
+	default @Nullable ActionContext applyPostActions(LycheeContext context, int times) {
+		if (context.level().isClientSide()) {
+			return null;
 		}
+		var actionManager = context.get(LycheeContextKey.ACTION);
+		var actionContext = actionManager.newContext();
+		actionContext.jobs.addAll(postActions().stream().map(it -> new Job(it, times)).toList());
+		actionContext.run(context);
+		return actionContext;
 	}
 
 	default List<BlockPredicate> getBlockInputs() {

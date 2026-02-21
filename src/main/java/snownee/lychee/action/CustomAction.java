@@ -12,6 +12,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ExtraCodecs;
 import snownee.kiwi.util.codec.KCodecs;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
@@ -42,9 +43,9 @@ public class CustomAction implements PostAction {
 	}
 
 	@Override
-	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
+	public void apply(LycheeContext context, ActionContext actionContext, int times) {
 		if (applyFunc != null) {
-			applyFunc.apply(recipe, context, times);
+			applyFunc.apply(context, actionContext, times);
 		}
 	}
 
@@ -83,7 +84,7 @@ public class CustomAction implements PostAction {
 
 	@FunctionalInterface
 	public interface Apply {
-		void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times);
+		void apply(LycheeContext context, ActionContext actionContext, int times);
 	}
 
 	public static class Type implements PostActionType<CustomAction> {

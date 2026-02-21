@@ -15,6 +15,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeMap;
 import snownee.lychee.Lychee;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -61,7 +62,6 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 		final var excluded = Sets.newHashSet();
 		var level = context.level();
 		var itemShapelessContext = context.get(LycheeContextKey.ITEM_SHAPELESS);
-		final var actionContext = context.get(LycheeContextKey.ACTION);
 		major:
 		while (true) {
 			var matched = false;
@@ -93,12 +93,12 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 									times = Math.min(times, stack.getCount() / inputUsed[i]);
 								}
 							}
-						}
-						match.get().value().applyPostActions(context, times);
-						if (matcher.isPresent()) {
-							itemShapelessContext.totalItems -= context.get(LycheeContextKey.ITEM).postApply(
-									!actionContext.avoidDefault,
-									times);
+							ActionContext actionContext = match.get().value().applyPostActions(context, times);
+							if (actionContext != null) {
+								itemShapelessContext.totalItems -= context.get(LycheeContextKey.ITEM).postApply(
+										!actionContext.avoidDefault,
+										times);
+							}
 						}
 						if (!recipe.value().maxRepeats().isAny()) {
 							break major;

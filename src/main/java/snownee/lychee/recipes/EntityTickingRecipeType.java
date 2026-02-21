@@ -18,6 +18,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.context.LootParamsContext;
 import snownee.lychee.util.LycheeEntity;
 import snownee.lychee.util.LycheeEntityType;
@@ -74,11 +75,12 @@ public class EntityTickingRecipeType extends LycheeRecipeType<EntityTickingRecip
 			if (recipe.interval() > 1 && (entity.tickCount + 1) % recipe.interval() != 0) {
 				continue;
 			}
-			if (recipe.withoutTypePredicate().matches(level, entity.position(), entity) && recipe.test(recipe, context, 1) > 0 &&
-					recipe.matches(context, level)) {
+			if (recipe.withoutTypePredicate().matches(level, entity.position(), entity) && recipe.test(context) && recipe.matches(
+					context,
+					level)) {
 				context.put(recipeHolder);
-				recipe.applyPostActions(context, 1);
-				boolean avoidDefault = context.get(LycheeContextKey.ACTION).avoidDefault;
+				ActionContext actionContext = recipe.applyPostActions(context, 1);
+				boolean avoidDefault = actionContext != null && actionContext.avoidDefault;
 				context.removeAllExcept(PRESERVED_KEYS);
 				if (avoidDefault) {
 					break;

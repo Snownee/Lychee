@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import snownee.lychee.Lychee;
+import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 
@@ -14,17 +15,16 @@ public record Job(PostAction action, int times) {
 					Codec.INT.fieldOf("times").forGetter(Job::times)
 			).apply(instance, Job::new));
 
-	public void apply(LycheeContext context) {
-		var recipe = context.getOrNull(LycheeContextKey.RECIPE);
-		var times = action.test(recipe, context, this.times);
+	public void apply(LycheeContext context, ActionContext actionContext) {
+		var times = action.test(context, actionContext, this.times);
 		if (times > 0) {
 			try {
-				action.apply(recipe, context, times);
+				action.apply(context, actionContext, times);
 			} catch (Exception e) {
 				Lychee.LOGGER.error("Error when apply post action for recipe {}", context.getOrNull(LycheeContextKey.RECIPE_ID), e);
 			}
 		} else {
-			action.onFailure(recipe, context, this.times);
+			action.onFailure(context, actionContext, this.times);
 		}
 	}
 }
