@@ -108,13 +108,19 @@ This action is not [repeatable](concepts.md#repeatability).
 
 ??? note "Format"
 
-    | Name    | Description                    | Type / Literal                                    |
-    | ------- | ------------------------------ | ------------------------------------------------- |
-    | type    | type                           | "place"                                           |
-    | block   | the block being placed         | [BlockPredicate](general-types.md#blockpredicate) |
-    | offsetX | offsets to location ^optional^ | int                                               |
-    | offsetY | offsets to location ^optional^ | int                                               |
-    | offsetZ | offsets to location ^optional^ | int                                               |
+    | Name    | Description                                    | Type / Literal                                    |
+    | ------- | ---------------------------------------------- | ------------------------------------------------- |
+    | type    | type                                           | "place"                                           |
+    | block   | the block being placed                         | [BlockPredicate](general-types.md#blockpredicate) |
+    | offsetX | offsets to location ^optional^                 | int                                               |
+    | offsetY | offsets to location ^optional^                 | int                                               |
+    | offsetZ | offsets to location ^optional^                 | int                                               |
+    | multi   | see below ^optional^{ title="default: false" } | true \| false                                     |
+
+    The "multi" option serves the following purposes:
+
+    1. Places the corresponding blocks if the block is a multiblock.(e.g., beds, doors, tall flowers)
+    2. Triggers some special actions upon placement.(e.g., wither skull summoning, powering redstone repeater)
 
 ??? example
 
@@ -168,15 +174,15 @@ Cycles a property's value in a block-state.
 
 !!! note "Format"
 
-    | Name     | Description                                                 | Type / Literal                                    |
-    | -------- | ----------------------------------------------------------- | ------------------------------------------------- |
-    | type     | type                                                        | "cycle_state_property"                            |
-    | block    | only matched block-states will be cycled                    | [BlockPredicate](general-types.md#blockpredicate) |
-    | property | the property name                                           | string                                            |
-    | offsetX  | offsets to location ^optional^                              | int                                               |
-    | offsetY  | offsets to location ^optional^                              | int                                               |
-    | offsetZ  | offsets to location ^optional^                              | int                                               |
-    | reversed | cycle in reversed order ^optional^ {title="default: false"} | true \| false                                     |
+    | Name     | Description                                                | Type / Literal                                    |
+    | -------- | ---------------------------------------------------------- | ------------------------------------------------- |
+    | type     | type                                                       | "cycle_state_property"                            |
+    | block    | only matched block-states will be cycled                   | [BlockPredicate](general-types.md#blockpredicate) |
+    | property | the property name                                          | string                                            |
+    | offsetX  | offsets to location ^optional^                             | int                                               |
+    | offsetY  | offsets to location ^optional^                             | int                                               |
+    | offsetZ  | offsets to location ^optional^                             | int                                               |
+    | reversed | cycle in reversed order ^optional^{title="default: false"} | true \| false                                     |
 
 ## Control Flow Actions
 
