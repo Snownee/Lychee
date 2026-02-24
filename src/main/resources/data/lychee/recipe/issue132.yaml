@@ -1,0 +1,7 @@
+item_in: diamond
+post:
+- s: 2
+  type: delay
+- id: minecraft:emerald
+  type: drop_item
+type: lychee:item_exploding

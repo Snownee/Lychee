@@ -1,0 +1,14 @@
+block_in: white_carpet
+item_in: bone_meal
+post:
+- type: place
+  block: sunflower
+  multi: true
+- type: place
+  block: red_bed
+  multi: true
+  offsetX: 3
+- command: particle minecraft:happy_villager
+  hide: true
+  type: execute
+type: lychee:block_interacting

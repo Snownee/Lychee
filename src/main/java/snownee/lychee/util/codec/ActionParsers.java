@@ -41,7 +41,7 @@ public interface ActionParsers {
 			if (offsetResult.isPresent() && offsetResult.get().isSuccess()) {
 				offset = offsetResult.get().getOrThrow();
 			}
-			return DataResult.success(new PlaceBlock(PostActionCommonProperties.EMPTY, blockResult.getOrThrow(), offset));
+			return DataResult.success(new PlaceBlock(PostActionCommonProperties.EMPTY, blockResult.getOrThrow(), offset, false));
 		}
 	}
 

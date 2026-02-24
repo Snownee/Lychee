@@ -193,7 +193,11 @@ public interface LycheeBuilder {
 	}
 
 	default ActionBuilder<?, PlaceBlock> place(Object block, BlockPos offset) {
-		return new ActionBuilder<>(new PlaceBlock(PostActionCommonProperties.EMPTY, block(block), offset));
+		return place(block, offset, false);
+	}
+
+	default ActionBuilder<?, PlaceBlock> place(Object block, BlockPos offset, boolean multi) {
+		return new ActionBuilder<>(new PlaceBlock(PostActionCommonProperties.EMPTY, block(block), offset, multi));
 	}
 
 	default ActionBuilder<?, SetBlock> setBlock(Object block) {

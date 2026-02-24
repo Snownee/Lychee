@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -13,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ProblemReporter;
@@ -23,6 +25,7 @@ import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -48,13 +51,15 @@ public record PlaceBlock(
 		PostActionCommonProperties commonProperties,
 		BlockPredicate block,
 		BlockPos offset,
+		boolean multi,
 		boolean fancyDisplay) implements PostAction {
 
-	public PlaceBlock(PostActionCommonProperties commonProperties, BlockPredicate block, BlockPos offset) {
+	public PlaceBlock(PostActionCommonProperties commonProperties, BlockPredicate block, BlockPos offset, boolean multi) {
 		this(
 				commonProperties,
 				block,
 				offset,
+				multi,
 				commonProperties.icon() == null && BlockPredicateExtensions.isAny(block) && offset.equals(BlockPos.ZERO));
 	}
 
@@ -146,6 +151,12 @@ public record PlaceBlock(
 				}
 			}
 		}
+
+		if (multi) {
+			BlockState newState = level.getBlockState(pos);
+			newState.getBlock().setPlacedBy(level, pos, newState, null, newState.getCloneItemStack(level, pos, false));
+		}
+
 		level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(blockState));
 	}
 
@@ -183,7 +194,8 @@ public record PlaceBlock(
 		public static final MapCodec<PlaceBlock> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(PlaceBlock::commonProperties),
 				BlockPredicateExtensions.CODEC.fieldOf("block").forGetter(PlaceBlock::block),
-				LycheeCodecs.OFFSET.forGetter(PlaceBlock::offset)).apply(instance, PlaceBlock::new));
+				LycheeCodecs.OFFSET.forGetter(PlaceBlock::offset),
+				Codec.BOOL.optionalFieldOf("multi", false).forGetter(PlaceBlock::multi)).apply(instance, PlaceBlock::new));
 
 		public static final StreamCodec<RegistryFriendlyByteBuf, PlaceBlock> STREAM_CODEC = StreamCodec.composite(
 				PostActionCommonProperties.STREAM_CODEC,
@@ -192,6 +204,8 @@ public record PlaceBlock(
 				PlaceBlock::block,
 				BlockPos.STREAM_CODEC,
 				PlaceBlock::offset,
+				ByteBufCodecs.BOOL,
+				PlaceBlock::multi,
 				PlaceBlock::new);
 
 		@Override

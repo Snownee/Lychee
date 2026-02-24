@@ -23,7 +23,8 @@ public enum PostActionIngredientRenderer implements IIngredientRenderer<PostActi
 	public static final PostAction INGREDIENT_HACK_DUMMY = new PlaceBlock(
 			PostActionCommonProperties.EMPTY,
 			BlockPredicateExtensions.ANY,
-			BlockPos.ZERO);
+			BlockPos.ZERO,
+			false);
 
 	@Override
 	public List<Component> getTooltip(PostAction ingredient, TooltipFlag tooltipFlag) {
