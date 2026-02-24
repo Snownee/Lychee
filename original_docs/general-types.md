@@ -66,47 +66,16 @@ A SizedIngredient is an ingredient with a count.
 
     `#<item_tag>`(single item) or `<count>x #<item_tag>`(multiple items)
 
+!!! note "Shorthand Object Format"
+
+    All `Ingredient`s can be parsed as `SizedIngredient`s with a count of 1.
+
 ??? note "Format"
 
-    Checks if item id matches:
-
-    | Name  | Description                                 | Type / Literal |
-    | ----- | ------------------------------------------- | -------------- |
-    | item  | item resource id                            | string         |
-    | count | item count ^optional^{ title="default: 1" } | int            |
-
-    Checks if item has the tag:
-
-    | Name  | Description                                 | Type / Literal |
-    | ----- | ------------------------------------------- | -------------- |
-    | tag   | the item tag                                | string         |
-    | count | item count ^optional^{ title="default: 1" } | int            |
-
-    If you want to specify a modded item or tag, you need to write down the namespace at start, for example "namespace:name"
-
-    ### Custom Ingredients
-
-    Custom ingredient created by modders:
-
-    === "NeoForge"
-
-        | Name  | Description                                 | Type / Literal |
-        | ----- | ------------------------------------------- | -------------- |
-        | type  | ingredient type                             | string         |
-        | count | item count ^optional^{ title="default: 1" } | int            |
-        |       | additional properties...                    |                |
-
-        You can use NeoForge's built-in features to check item nbt or combine several ingredients to one compound ingredient: [Documentation](https://docs.neoforged.net/docs/1.20.4/resources/server/recipes/ingredients)
-
-    === "Fabric"
-
-        | Name        | Description                                 | Type / Literal |
-        | ----------- | ------------------------------------------- | -------------- |
-        | fabric:type | ingredient type                             | string         |
-        | count       | item count ^optional^{ title="default: 1" } | int            |
-        |             | additional properties...                    |                |
-
-        You can use Fabric's built-in features to check item nbt or combine several ingredients to one compound ingredient: [Documentation](https://github.com/FabricMC/fabric/blob/1.20.6/fabric-recipe-api-v1/src/main/java/net/fabricmc/fabric/api/recipe/v1/ingredient/DefaultCustomIngredients.java)
+    | Name       | Description                                 | Type / Literal   |
+    | ---------- | ------------------------------------------- | ---------------- |
+    | ingredient | the ingredient                              | string \| object |
+    | count      | item count ^optional^{ title="default: 1" } | int              |
 
 ## BlockPredicate
 

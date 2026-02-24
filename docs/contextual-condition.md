@@ -93,7 +93,7 @@ Checks if a `location_check` predicate is passed.
     | offsetX   | offsets to location ^optional^ | int                                                                                                        |
     | offsetY   | offsets to location ^optional^ | int                                                                                                        |
     | offsetZ   | offsets to location ^optional^ | int                                                                                                        |
-    | predicate | location predicate             | [LocationPredicate](https://minecraft.wiki/w/Advancement/Conditions/location?direction=next&oldid=2544408) |
+    | predicate | location predicate             | [LocationPredicate](https://minecraft.wiki/w/Advancement/Conditions/location?direction=next&oldid=3215528) |
 
 ??? example
 
@@ -183,10 +183,10 @@ Checks if world is in any of the listed difficulties.
 
 !!! note "Format"
 
-    | Name       | Description | Type / Literal                     |
-    | ---------- | ----------- | ---------------------------------- |
-    | type       | type        | "difficulty"                       |
-    | difficulty | difficulty  | string \| int \| string[] \| int[] |
+    | Name       | Description | Type / Literal     |
+    | ---------- | ----------- | ------------------ |
+    | type       | type        | "difficulty"       |
+    | difficulty | difficulty  | string \| string[] |
 
 ??? example
 
@@ -194,9 +194,7 @@ Checks if world is in any of the listed difficulties.
 
         ```yaml
         type: difficulty
-        difficulty:
-        - peaceful
-        - 1
+        difficulty: peaceful
         ```
 
     === "JSON"
@@ -204,7 +202,7 @@ Checks if world is in any of the listed difficulties.
         ```json
         {
             "type": "difficulty",
-            "difficulty": ["peaceful", 1]
+            "difficulty": "peaceful"
         }
         ```
 
@@ -395,8 +393,8 @@ Checks the sky darken level.
 
 !!! note "Format"
 
-    | Name        | Description                                         | Type / Literal                          |
-    | ----------- | --------------------------------------------------- | --------------------------------------- |
-    | type        | type                                                | "sky_darken"                            |
-    | value       | value                                               | [IntBounds](general-types.md#intbounds) |
-    | can_see_sky | the location must be able to see the sky ^optional^ | true \| false                           |
+    | Name              | Description                                                                    | Type / Literal                          |
+    | ----------------- | ------------------------------------------------------------------------------ | --------------------------------------- |
+    | type              | type                                                                           | "sky_darken"                            |
+    | value             | value                                                                          | [IntBounds](general-types.md#intbounds) |
+    | require_sky_light | the location must be able to see the sky ^optional^{ title: "default: false" } | true \| false                           |

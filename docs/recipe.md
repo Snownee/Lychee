@@ -427,12 +427,12 @@ Default behavior: Falling block becomes block or drops item. Canceling this will
 
 !!! note "Format"
 
-    | Name          | Description                                              | Type / Literal                                                                                               |
-    | ------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-    | type          | type                                                     | "lychee:block_crushing"                                                                                      |
-    | item_in       | the crushed items ^optional^                             | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
-    | falling_block | the falling block. default are all the anvils ^optional^ | [BlockPredicate](general-types.md#blockpredicate)                                                            |
-    | landing_block | the landing block. default is any block ^optional^       | [BlockPredicate](general-types.md#blockpredicate)                                                            |
+    | Name          | Description                                                                             | Type / Literal                                                                                               |
+    | ------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | type          | type                                                                                    | "lychee:block_crushing"                                                                                      |
+    | item_in       | the crushed items ^optional^                                                            | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
+    | falling_block | the falling block. default are all the anvils ^optional^{ default: &quot;#anvil&quot; } | [BlockPredicate](general-types.md#blockpredicate)                                                            |
+    | landing_block | the landing block. default is any block ^optional^                                      | [BlockPredicate](general-types.md#blockpredicate)                                                            |
 
 ??? example
 
@@ -561,14 +561,31 @@ Default behavior: Items are consumed. Canceling this will **not** prevent item f
 
 !!! note "Format"
 
-    | Name    | Description                                | Type / Literal                                                                                               |
-    | ------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-    | type    | type                                       | "lychee:item_exploding"                                                                                      |
-    | item_in | items affected by the explosion ^optional^ | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
+    | Name                  | Description                                                                                 | Type / Literal                                                                                               |
+    | --------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | type                  | type                                                                                        | "lychee:item_exploding"                                                                                      |
+    | item_in               | items affected by the explosion ^optional^                                                  | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
+    | display_tnt           | explosion source displayed in recipe viewers ^optional^{ title="default: &quot;tnt&quot;" } | [BlockPredicate](general-types.md#blockpredicate)                                                            |
+    | allow_small_explosion | allows small explosion like wind charges ^optional^{ title="default: false" }               | true \| false                                                                                                |
+
+### Block Exploding
+
+Event when a block is exploded.
+
+This recipe type is not [repeatable](concepts.md#repeatability).
+
+Default behavior: Block drops items from loot table.
+
+!!! note "Format"
+
+    | Name                  | Description                                                                                 | Type / Literal                                    |
+    | --------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+    | type                  | type                                                                                        | "lychee:block_exploding"                          |
+    | block_in              | block destroyed by the explosion ^optional^                                                 | [BlockPredicate](general-types.md#blockpredicate) |
+    | display_tnt           | explosion source displayed in recipe viewers ^optional^{ title="default: &quot;tnt&quot;" } | [BlockPredicate](general-types.md#blockpredicate) |
+    | allow_small_explosion | allows small explosion like wind charges ^optional^{ title="default: false" }               | true \| false                                     |
 
 ### Entity Ticking
-
-_Since 6.3_
 
 Event when an entity ticked.
 
@@ -675,21 +692,6 @@ Default behavior: Continue matching the rest of the recipes.
         ```
 
     Description: When a player has a full set of netherite armor, they will receive fire resistance every 20 ticks.
-
-### Block Exploding
-
-Event when a block is exploded.
-
-This recipe type is not [repeatable](concepts.md#repeatability).
-
-Default behavior: Block drops items from loot table.
-
-!!! note "Format"
-
-    | Name     | Description                                 | Type / Literal                                    |
-    | -------- | ------------------------------------------- | ------------------------------------------------- |
-    | type     | type                                        | "lychee:block_exploding"                          |
-    | block_in | block destroyed by the explosion ^optional^ | [BlockPredicate](general-types.md#blockpredicate) |
 
 ### Random Block Ticking
 
