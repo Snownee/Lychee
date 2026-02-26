@@ -18,9 +18,9 @@ An ingredient is a predicate of ItemStack.
 
     Checks if item id matches:
 
-    | Name | Description      | Type / Literal |
-    | ---- | ---------------- | -------------- |
-    | item | item resource id | string         |
+    | Name | Description      | Type / Literal      |
+    | ---- | ---------------- | ------------------- |
+    | item | item resource id | string (Identifier) |
 
     Checks if item has the tag:
 

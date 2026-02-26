@@ -130,7 +130,7 @@ Checks if an item is off cooldown, just like the cooldown when you use an ender 
     | Name | Description          | Type / Literal         |
     | ---- | -------------------- | ---------------------- |
     | type | type                 | "is_off_item_cooldown" |
-    | item | the item resource id | string                 |
+    | item | the item resource id | string (Identifier)    |
 
 ### Weather Check
 
@@ -171,11 +171,12 @@ Compares the current game time (the age of the world in game ticks) against give
 
 !!! note "Format"
 
-    | Name   | Description         | Type / Literal                          |
-    | ------ | ------------------- | --------------------------------------- |
-    | type   | type                | "time"                                  |
-    | value  | the time            | [IntBounds](general-types.md#intbounds) |
-    | period | see wiki ^optional^ | int                                     |
+    | Name   | Description                                                                            | Type / Literal                          |
+    | ------ | -------------------------------------------------------------------------------------- | --------------------------------------- |
+    | type   | type                                                                                   | "time"                                  |
+    | value  | the time                                                                               | [IntBounds](general-types.md#intbounds) |
+    | clock  | [world clock](https://minecraft.wiki/w/World_Clock) id. in most cases, use "overworld" | string                                  |
+    | period | see wiki ^optional^                                                                    | int                                     |
 
     See [Minecraft Wiki](https://minecraft.wiki/w/Predicate). Only supports constant value.
 

@@ -20,11 +20,11 @@ Note: Not every element type supports opacity.
 
 !!! note "Format"
 
-    | Name  | Description | Type / Literal            |
-    | ----- | ----------- | ------------------------- |
-    | type  | type        | "sprite"                  |
-    | id    | sprite id   | string (ResourceLocation) |
-    | scale | scale       | number                    |
+    | Name  | Description | Type / Literal      |
+    | ----- | ----------- | ------------------- |
+    | type  | type        | "sprite"            |
+    | id    | sprite id   | string (Identifier) |
+    | scale | scale       | number              |
 
 ## Text Element
 
@@ -59,12 +59,12 @@ Game element is a special element type that needs to be rendered in 3D space. Cu
 
 !!! note "Format"
 
-    | Name       | Description                                  | Type / Literal |
-    | ---------- | -------------------------------------------- | -------------- |
-    | type       | type                                         | "item"         |
-    | id         | the item resource id                         | string         |
-    | count      | item amount ^optional^{ title="default: 1" } | int            |
-    | components | item components ^optional^                   | dictionary     |
+    | Name       | Description                                  | Type / Literal      |
+    | ---------- | -------------------------------------------- | ------------------- |
+    | type       | type                                         | "item"              |
+    | id         | the item resource id                         | string (Identifier) |
+    | count      | item amount ^optional^{ title="default: 1" } | int                 |
+    | components | item components ^optional^                   | dictionary          |
 
 ## Block Element
 

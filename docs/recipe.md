@@ -15,7 +15,7 @@ Recipes should be placed in `data/<namespace>/recipe/` folder, like normal data-
     | comment             | language key to show in JEI/REI/EMI ^optional^                                         | string                                                                                             |
     | ghost               | only show in JEI/REI/EMI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
     | hide_in_viewer      | hide in JEI/REI/EMI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
-    | group               | show this recipe in a new category in JEI/REI/EMI ^optional^                           | string (ResourceLocation)                                                                          |
+    | group               | show this recipe in a new category in JEI/REI/EMI ^optional^                           | string (Identifier)                                                                                |
     | max_repeats         | max repeats for a processing. not work for a unrepeatable recipe ^optional^            | [IntBounds](general-types.md#intbounds)                                                            |
     |                     | additional properties...                                                               |                                                                                                    |
 
@@ -30,7 +30,7 @@ Recipes should be placed in `data/<namespace>/recipe/` folder, like normal data-
     | comment                | language key to show in JEI/REI/EMI ^optional^                                         | string                                                                                             |
     | ghost                  | only show in JEI/REI/EMI but does not take effect ^optional^{ title="default: false" } | true \| false                                                                                      |
     | hide_in_viewer         | hide in JEI/REI/EMI ^optional^{ title="default: false" }                               | true \| false                                                                                      |
-    | group                  | show this recipe in a new category in JEI/REI/EMI ^optional^                           | string (ResourceLocation)                                                                          |
+    | group                  | show this recipe in a new category in JEI/REI/EMI ^optional^                           | string (Identifier)                                                                                |
     | max_repeats            | max repeats for a processing. not work for a unrepeatable recipe ^optional^            | [IntBounds](general-types.md#intbounds)                                                            |
     |                        | additional properties...                                                               |                                                                                                    |
 

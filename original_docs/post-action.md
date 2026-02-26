@@ -39,12 +39,12 @@ Spawns an item entity on the ground.
 
 ??? note "Format"
 
-    | Name       | Description                                  | Type / Literal |
-    | ---------- | -------------------------------------------- | -------------- |
-    | type       | type                                         | "drop_item"    |
-    | id         | the item resource id                         | string         |
-    | count      | item amount ^optional^{ title="default: 1" } | int            |
-    | components | item components ^optional^                   | dictionary     |
+    | Name       | Description                                  | Type / Literal      |
+    | ---------- | -------------------------------------------- | ------------------- |
+    | type       | type                                         | "drop_item"         |
+    | id         | the item resource id                         | string (Identifier) |
+    | count      | item amount ^optional^{ title="default: 1" } | int                 |
+    | components | item components ^optional^                   | dictionary          |
 
 ??? example
 
@@ -373,7 +373,7 @@ Adds item cooldown to an item, just like the cooldown when you use an ender pear
     | ---- | ----------------------------------------------------------------------------- | ------------------- |
     | type | type                                                                          | "add_item_cooldown" |
     | s    | seconds                                                                       | number              |
-    | item | the item resource id ^optional^{ title="default: the item in player's hand" } | string              |
+    | item | the item resource id ^optional^{ title="default: the item in player's hand" } | string (Identifier) |
 
 ### Create Explosion
 
@@ -434,6 +434,6 @@ This action is not [repeatable](concepts.md#repeatability).
     | ---------- | -------------------------- | ------------------------------------------- |
     | type       | type                       | "set_item"                                  |
     | target     | target items ^optional^    | [JsonPointer](general-types.md#jsonpointer) |
-    | id         | the item resource id       | string                                      |
+    | id         | the item resource id       | string (Identifier)                         |
     | count      | item amount ^optional^     | int                                         |
     | components | item components ^optional^ | dictionary                                  |
