@@ -29,7 +29,7 @@ public class TestRecipeProvider extends FabricRecipeProvider implements LycheeBu
 		setup(registries);
 		return new RecipeProvider(registries, output) {
 			@Override
-			protected void buildRecipes() {
+			public void buildRecipes() {
 				HolderLookup.RegistryLookup<Item> items = registries.lookupOrThrow(Registries.ITEM);
 				itemBurningRecipe(SizedIngredient.of(items, ItemTags.BEDS, 2))
 						.comment("Datagen test 1")

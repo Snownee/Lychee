@@ -8,6 +8,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
@@ -18,10 +19,10 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
-import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
 	protected final BlockPredicate blockPredicate;
@@ -81,7 +82,7 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 
 
 	@Override
-	public LycheeRecipeSerializer<ItemInsideRecipe> getSerializer() {
+	public RecipeSerializer<? extends ILycheeRecipe<LycheeContext>> getSerializer() {
 		return RecipeSerializers.ITEM_INSIDE;
 	}
 
@@ -95,39 +96,26 @@ public class ItemInsideRecipe extends LycheeRecipe<LycheeContext> implements Blo
 		return ingredients;
 	}
 
-	public static class Serializer implements LycheeRecipeSerializer<ItemInsideRecipe> {
-		public static final MapCodec<ItemInsideRecipe> CODEC = ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
-				LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-				BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
-						.forGetter(ItemInsideRecipe::blockPredicate),
-				ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("time", 0).forGetter(ItemInsideRecipe::time),
-				IngredientCollection.codec(1, Integer.MAX_VALUE)
-						.fieldOf(ITEM_IN)
-						.forGetter(ItemInsideRecipe::ingredientCollection)
-		).apply(instance, ItemInsideRecipe::new)));
+	public static final MapCodec<ItemInsideRecipe> CODEC = ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
+			LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
+			BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf(BLOCK_IN, BlockPredicateExtensions.ANY)
+					.forGetter(ItemInsideRecipe::blockPredicate),
+			ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("time", 0).forGetter(ItemInsideRecipe::time),
+			IngredientCollection.codec(1, Integer.MAX_VALUE)
+					.fieldOf(ITEM_IN)
+					.forGetter(ItemInsideRecipe::ingredientCollection)
+	).apply(instance, ItemInsideRecipe::new)));
 
-		@Override
-		public MapCodec<ItemInsideRecipe> codec() {
-			return CODEC;
-		}
-
-
-		public static final StreamCodec<RegistryFriendlyByteBuf, ItemInsideRecipe> STREAM_CODEC =
-				StreamCodec.composite(
-						LycheeRecipeCommonProperties.STREAM_CODEC,
-						ItemInsideRecipe::commonProperties,
-						BlockPredicate.STREAM_CODEC,
-						ItemInsideRecipe::blockPredicate,
-						ByteBufCodecs.VAR_INT,
-						ItemInsideRecipe::time,
-						IngredientCollection.STREAM_CODEC,
-						ItemInsideRecipe::ingredientCollection,
-						ItemInsideRecipe::new
-				);
-
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, ItemInsideRecipe> streamCodec() {
-			return STREAM_CODEC;
-		}
-	}
+	public static final StreamCodec<RegistryFriendlyByteBuf, ItemInsideRecipe> STREAM_CODEC =
+			StreamCodec.composite(
+					LycheeRecipeCommonProperties.STREAM_CODEC,
+					ItemInsideRecipe::commonProperties,
+					BlockPredicate.STREAM_CODEC,
+					ItemInsideRecipe::blockPredicate,
+					ByteBufCodecs.VAR_INT,
+					ItemInsideRecipe::time,
+					IngredientCollection.STREAM_CODEC,
+					ItemInsideRecipe::ingredientCollection,
+					ItemInsideRecipe::new
+			);
 }

@@ -14,6 +14,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
@@ -23,10 +24,10 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
-import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemExplodingRecipe extends ExplodingRecipe<LycheeContext> implements Comparable<ItemExplodingRecipe> {
@@ -74,7 +75,7 @@ public class ItemExplodingRecipe extends ExplodingRecipe<LycheeContext> implemen
 	}
 
 	@Override
-	public LycheeRecipeSerializer<ItemExplodingRecipe> getSerializer() {
+	public RecipeSerializer<? extends ILycheeRecipe<LycheeContext>> getSerializer() {
 		return RecipeSerializers.ITEM_EXPLODING;
 	}
 
@@ -103,39 +104,26 @@ public class ItemExplodingRecipe extends ExplodingRecipe<LycheeContext> implemen
 		return i;
 	}
 
-	public static class Serializer implements LycheeRecipeSerializer<ItemExplodingRecipe> {
-		public static final MapCodec<ItemExplodingRecipe> CODEC =
-				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						IngredientCollection.CODEC
-								.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
-								.forGetter(ItemExplodingRecipe::ingredientCollection),
-						DISPLAY_TNT.forGetter(ExplodingRecipe::displayTNT),
-						ALLOW_SMALL_EXPLOSION.forGetter(ExplodingRecipe::allowSmallExplosion)
-				).apply(instance, ItemExplodingRecipe::new)));
+	public static final MapCodec<ItemExplodingRecipe> CODEC =
+			ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
+					LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
+					IngredientCollection.CODEC
+							.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
+							.forGetter(ItemExplodingRecipe::ingredientCollection),
+					DISPLAY_TNT.forGetter(ExplodingRecipe::displayTNT),
+					ALLOW_SMALL_EXPLOSION.forGetter(ExplodingRecipe::allowSmallExplosion)
+			).apply(instance, ItemExplodingRecipe::new)));
 
-		@Override
-		public MapCodec<ItemExplodingRecipe> codec() {
-			return CODEC;
-		}
-
-
-		public static final StreamCodec<RegistryFriendlyByteBuf, ItemExplodingRecipe> STREAM_CODEC =
-				StreamCodec.composite(
-						LycheeRecipeCommonProperties.STREAM_CODEC,
-						ItemExplodingRecipe::commonProperties,
-						IngredientCollection.STREAM_CODEC,
-						ItemExplodingRecipe::ingredientCollection,
-						BlockPredicate.STREAM_CODEC,
-						ItemExplodingRecipe::displayTNT,
-						ByteBufCodecs.BOOL,
-						ItemExplodingRecipe::allowSmallExplosion,
-						ItemExplodingRecipe::new
-				);
-
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, ItemExplodingRecipe> streamCodec() {
-			return STREAM_CODEC;
-		}
-	}
+	public static final StreamCodec<RegistryFriendlyByteBuf, ItemExplodingRecipe> STREAM_CODEC =
+			StreamCodec.composite(
+					LycheeRecipeCommonProperties.STREAM_CODEC,
+					ItemExplodingRecipe::commonProperties,
+					IngredientCollection.STREAM_CODEC,
+					ItemExplodingRecipe::ingredientCollection,
+					BlockPredicate.STREAM_CODEC,
+					ItemExplodingRecipe::displayTNT,
+					ByteBufCodecs.BOOL,
+					ItemExplodingRecipe::allowSmallExplosion,
+					ItemExplodingRecipe::new
+			);
 }

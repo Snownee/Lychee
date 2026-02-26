@@ -10,6 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.lychee.RecipeSerializers;
@@ -17,10 +18,10 @@ import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
-import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
@@ -57,7 +58,7 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public LycheeRecipeSerializer<LightningChannelingRecipe> getSerializer() {
+	public RecipeSerializer<? extends ILycheeRecipe<LycheeContext>> getSerializer() {
 		return RecipeSerializers.LIGHTNING_CHANNELING;
 	}
 
@@ -66,32 +67,20 @@ public class LightningChannelingRecipe extends LycheeRecipe<LycheeContext> {
 		return RecipeTypes.LIGHTNING_CHANNELING;
 	}
 
-	public static class Serializer implements LycheeRecipeSerializer<LightningChannelingRecipe> {
-		public static final MapCodec<LightningChannelingRecipe> CODEC =
-				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						IngredientCollection.CODEC
-								.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
-								.forGetter(LightningChannelingRecipe::ingredientCollection)
-				).apply(instance, LightningChannelingRecipe::new)));
+	public static final MapCodec<LightningChannelingRecipe> CODEC =
+			ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
+					LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
+					IngredientCollection.CODEC
+							.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
+							.forGetter(LightningChannelingRecipe::ingredientCollection)
+			).apply(instance, LightningChannelingRecipe::new)));
 
-		@Override
-		public MapCodec<LightningChannelingRecipe> codec() {
-			return CODEC;
-		}
-
-		public static final StreamCodec<RegistryFriendlyByteBuf, LightningChannelingRecipe> STREAM_CODEC =
-				StreamCodec.composite(
-						LycheeRecipeCommonProperties.STREAM_CODEC,
-						LightningChannelingRecipe::commonProperties,
-						IngredientCollection.STREAM_CODEC,
-						LightningChannelingRecipe::ingredientCollection,
-						LightningChannelingRecipe::new
-				);
-
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, LightningChannelingRecipe> streamCodec() {
-			return STREAM_CODEC;
-		}
-	}
+	public static final StreamCodec<RegistryFriendlyByteBuf, LightningChannelingRecipe> STREAM_CODEC =
+			StreamCodec.composite(
+					LycheeRecipeCommonProperties.STREAM_CODEC,
+					LightningChannelingRecipe::commonProperties,
+					IngredientCollection.STREAM_CODEC,
+					LightningChannelingRecipe::ingredientCollection,
+					LightningChannelingRecipe::new
+			);
 }

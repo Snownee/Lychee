@@ -17,6 +17,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
@@ -30,9 +31,9 @@ import snownee.lychee.util.codec.LycheeStreamCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.json.JsonPointer;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
-import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
@@ -151,7 +152,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public LycheeRecipeSerializer<AnvilCraftingRecipe> getSerializer() {
+	public RecipeSerializer<? extends ILycheeRecipe<LycheeContext>> getSerializer() {
 		return RecipeSerializers.ANVIL_CRAFTING;
 	}
 
@@ -185,45 +186,33 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		return assemblingActions;
 	}
 
-	public static class Serializer implements LycheeRecipeSerializer<AnvilCraftingRecipe> {
-		public static final MapCodec<AnvilCraftingRecipe> CODEC =
-				RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(AnvilCraftingRecipe::commonProperties),
-						LycheeCodecs.sizeLimit(ExtraCodecs.compactListCodec(LycheeCodecs.INGREDIENT), 1, 2)
-								.fieldOf(ITEM_IN)
-								.forGetter(AnvilCraftingRecipe::getIngredients),
-						LycheeCodecs.ITEM_STACK_TEMPLATE.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
-						PostAction.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
-						ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),
-						ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1).forGetter(AnvilCraftingRecipe::materialCost),
-						Codec.BOOL.optionalFieldOf("preserve_enchantments", false).forGetter(AnvilCraftingRecipe::preserveEnchantments)
-				).apply(instance, AnvilCraftingRecipe::new));
+	public static final MapCodec<AnvilCraftingRecipe> CODEC =
+			RecordCodecBuilder.mapCodec(instance -> instance.group(
+					LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(AnvilCraftingRecipe::commonProperties),
+					LycheeCodecs.sizeLimit(ExtraCodecs.compactListCodec(LycheeCodecs.INGREDIENT), 1, 2)
+							.fieldOf(ITEM_IN)
+							.forGetter(AnvilCraftingRecipe::getIngredients),
+					LycheeCodecs.ITEM_STACK_TEMPLATE.fieldOf(ITEM_OUT).forGetter(AnvilCraftingRecipe::output),
+					PostAction.LIST_CODEC.optionalFieldOf("assembling", List.of()).forGetter(AnvilCraftingRecipe::assemblingActions),
+					ExtraCodecs.POSITIVE_INT.optionalFieldOf("level_cost", 1).forGetter(AnvilCraftingRecipe::levelCost),
+					ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("material_cost", 1).forGetter(AnvilCraftingRecipe::materialCost),
+					Codec.BOOL.optionalFieldOf("preserve_enchantments", false).forGetter(AnvilCraftingRecipe::preserveEnchantments)
+			).apply(instance, AnvilCraftingRecipe::new));
 
-		@Override
-		public MapCodec<AnvilCraftingRecipe> codec() {
-			return CODEC;
-		}
-
-		public static final StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> STREAM_CODEC = LycheeStreamCodecs.composite(
-				LycheeRecipeCommonProperties.STREAM_CODEC,
-				AnvilCraftingRecipe::commonProperties,
-				Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(2)),
-				AnvilCraftingRecipe::getIngredients,
-				ItemStackTemplate.STREAM_CODEC,
-				AnvilCraftingRecipe::output,
-				PostAction.STREAM_LIST_CODEC,
-				AnvilCraftingRecipe::assemblingActions,
-				ByteBufCodecs.VAR_INT,
-				AnvilCraftingRecipe::levelCost,
-				ByteBufCodecs.VAR_INT,
-				AnvilCraftingRecipe::materialCost,
-				ByteBufCodecs.BOOL,
-				AnvilCraftingRecipe::preserveEnchantments,
-				AnvilCraftingRecipe::new);
-
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> streamCodec() {
-			return STREAM_CODEC;
-		}
-	}
+	public static final StreamCodec<RegistryFriendlyByteBuf, AnvilCraftingRecipe> STREAM_CODEC = LycheeStreamCodecs.composite(
+			LycheeRecipeCommonProperties.STREAM_CODEC,
+			AnvilCraftingRecipe::commonProperties,
+			Ingredient.CONTENTS_STREAM_CODEC.apply(ByteBufCodecs.list(2)),
+			AnvilCraftingRecipe::getIngredients,
+			ItemStackTemplate.STREAM_CODEC,
+			AnvilCraftingRecipe::output,
+			PostAction.STREAM_LIST_CODEC,
+			AnvilCraftingRecipe::assemblingActions,
+			ByteBufCodecs.VAR_INT,
+			AnvilCraftingRecipe::levelCost,
+			ByteBufCodecs.VAR_INT,
+			AnvilCraftingRecipe::materialCost,
+			ByteBufCodecs.BOOL,
+			AnvilCraftingRecipe::preserveEnchantments,
+			AnvilCraftingRecipe::new);
 }

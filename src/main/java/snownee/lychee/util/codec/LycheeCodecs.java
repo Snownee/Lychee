@@ -19,6 +19,7 @@ import com.mojang.serialization.MapLike;
 import com.mojang.serialization.RecordBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.commands.arguments.item.ItemInput;
 import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -130,10 +131,10 @@ public final class LycheeCodecs {
 							return registryOps.withParent(dynamicOps);
 						}
 					});
-					ItemParser.ItemResult itemResult;
+					ItemInput itemInput;
 					try {
 						skipComponentsValidation.set(Unit.INSTANCE);
-						itemResult = parser.parse(new StringReader(ops.getStringValue(id).getOrThrow()));
+						itemInput = parser.parse(new StringReader(ops.getStringValue(id).getOrThrow()));
 					} catch (Exception e) {
 						return DataResult.error(e::getMessage);
 					} finally {
@@ -147,9 +148,9 @@ public final class LycheeCodecs {
 						return DataResult.error(() -> "Failed to decode count: " + count.error().orElseThrow().message());
 					}
 					return DataResult.success(Optional.of(new ItemStackTemplate(
-							itemResult.item(),
+							itemInput.item(),
 							count.getOrThrow(),
-							itemResult.components())));
+							itemInput.components())));
 				}
 
 				@Override

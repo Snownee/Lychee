@@ -18,6 +18,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
@@ -42,9 +43,9 @@ import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.ChanceRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
-import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 
@@ -132,7 +133,7 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 	}
 
 	@Override
-	public LycheeRecipeSerializer<DripstoneRecipe> getSerializer() {
+	public RecipeSerializer<? extends ILycheeRecipe<LycheeContext>> getSerializer() {
 		return RecipeSerializers.DRIPSTONE_DRIPPING;
 	}
 
@@ -187,33 +188,21 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 				11).orElse(null);
 	}
 
-	public static class Serializer implements LycheeRecipeSerializer<DripstoneRecipe> {
-		public static final MapCodec<DripstoneRecipe> CODEC =
-				RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(DripstoneRecipe::commonProperties),
-						BlockPredicateExtensions.CODEC_FOR_TESTING.fieldOf("source_block").forGetter(DripstoneRecipe::sourceBlock),
-						BlockPredicateExtensions.CODEC_FOR_TESTING.fieldOf("target_block").forGetter(DripstoneRecipe::blockPredicate)
-				).apply(instance, DripstoneRecipe::new));
+	public static final MapCodec<DripstoneRecipe> CODEC =
+			RecordCodecBuilder.mapCodec(instance -> instance.group(
+					LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(DripstoneRecipe::commonProperties),
+					BlockPredicateExtensions.CODEC_FOR_TESTING.fieldOf("source_block").forGetter(DripstoneRecipe::sourceBlock),
+					BlockPredicateExtensions.CODEC_FOR_TESTING.fieldOf("target_block").forGetter(DripstoneRecipe::blockPredicate)
+			).apply(instance, DripstoneRecipe::new));
 
-		public static final StreamCodec<RegistryFriendlyByteBuf, DripstoneRecipe> STREAM_CODEC =
-				StreamCodec.composite(
-						LycheeRecipeCommonProperties.STREAM_CODEC,
-						DripstoneRecipe::commonProperties,
-						BlockPredicate.STREAM_CODEC,
-						DripstoneRecipe::sourceBlock,
-						BlockPredicate.STREAM_CODEC,
-						DripstoneRecipe::blockPredicate,
-						DripstoneRecipe::new
-				);
-
-		@Override
-		public MapCodec<DripstoneRecipe> codec() {
-			return CODEC;
-		}
-
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, DripstoneRecipe> streamCodec() {
-			return STREAM_CODEC;
-		}
-	}
+	public static final StreamCodec<RegistryFriendlyByteBuf, DripstoneRecipe> STREAM_CODEC =
+			StreamCodec.composite(
+					LycheeRecipeCommonProperties.STREAM_CODEC,
+					DripstoneRecipe::commonProperties,
+					BlockPredicate.STREAM_CODEC,
+					DripstoneRecipe::sourceBlock,
+					BlockPredicate.STREAM_CODEC,
+					DripstoneRecipe::blockPredicate,
+					DripstoneRecipe::new
+			);
 }

@@ -41,7 +41,7 @@
 	"mixins": [
 		"lychee.mixins.json"
 	],
-	"accessWidener": "lychee.accesswidener",
+	"accessWidener": "lychee.classtweaker",
 	"depends": {
 		"kiwi": ">=26"
 	},

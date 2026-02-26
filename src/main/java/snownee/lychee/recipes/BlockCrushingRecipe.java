@@ -16,6 +16,7 @@ import net.minecraft.util.Util;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -29,10 +30,10 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.ItemShapelessRecipeUtils;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
-import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
 	protected BlockPredicate fallingBlock;
@@ -121,7 +122,7 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 	}
 
 	@Override
-	public LycheeRecipeSerializer<BlockCrushingRecipe> getSerializer() {
+	public RecipeSerializer<? extends ILycheeRecipe<LycheeContext>> getSerializer() {
 		return RecipeSerializers.BLOCK_CRUSHING;
 	}
 
@@ -130,40 +131,28 @@ public class BlockCrushingRecipe extends LycheeRecipe<LycheeContext> implements 
 		return RecipeTypes.BLOCK_CRUSHING;
 	}
 
-	public static class Serializer implements LycheeRecipeSerializer<BlockCrushingRecipe> {
-		public static final MapCodec<BlockCrushingRecipe> CODEC =
-				ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(BlockCrushingRecipe::commonProperties),
-						LycheeCodecs.optionalInput(BlockPredicateExtensions.CODEC_FOR_TESTING, "falling_block", "#anvil")
-								.forGetter(it -> it.fallingBlock),
-						BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf("landing_block", BlockPredicateExtensions.ANY)
-								.forGetter(BlockCrushingRecipe::landingBlock),
-						IngredientCollection.CODEC
-								.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
-								.forGetter(BlockCrushingRecipe::ingredientCollection)
-				).apply(instance, BlockCrushingRecipe::new)));
+	public static final MapCodec<BlockCrushingRecipe> CODEC =
+			ItemShapelessRecipeUtils.validatedCodec(RecordCodecBuilder.mapCodec(instance -> instance.group(
+					LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(BlockCrushingRecipe::commonProperties),
+					LycheeCodecs.optionalInput(BlockPredicateExtensions.CODEC_FOR_TESTING, "falling_block", "#anvil")
+							.forGetter(it -> it.fallingBlock),
+					BlockPredicateExtensions.CODEC_FOR_TESTING.optionalFieldOf("landing_block", BlockPredicateExtensions.ANY)
+							.forGetter(BlockCrushingRecipe::landingBlock),
+					IngredientCollection.CODEC
+							.optionalFieldOf(ITEM_IN, IngredientCollection.EMPTY)
+							.forGetter(BlockCrushingRecipe::ingredientCollection)
+			).apply(instance, BlockCrushingRecipe::new)));
 
-		@Override
-		public MapCodec<BlockCrushingRecipe> codec() {
-			return CODEC;
-		}
-
-		public static final StreamCodec<RegistryFriendlyByteBuf, BlockCrushingRecipe> STREAM_CODEC =
-				StreamCodec.composite(
-						LycheeRecipeCommonProperties.STREAM_CODEC,
-						BlockCrushingRecipe::commonProperties,
-						BlockPredicate.STREAM_CODEC,
-						it -> it.fallingBlock,
-						BlockPredicate.STREAM_CODEC,
-						BlockCrushingRecipe::landingBlock,
-						IngredientCollection.STREAM_CODEC,
-						BlockCrushingRecipe::ingredientCollection,
-						BlockCrushingRecipe::new
-				);
-
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, BlockCrushingRecipe> streamCodec() {
-			return STREAM_CODEC;
-		}
-	}
+	public static final StreamCodec<RegistryFriendlyByteBuf, BlockCrushingRecipe> STREAM_CODEC =
+			StreamCodec.composite(
+					LycheeRecipeCommonProperties.STREAM_CODEC,
+					BlockCrushingRecipe::commonProperties,
+					BlockPredicate.STREAM_CODEC,
+					it -> it.fallingBlock,
+					BlockPredicate.STREAM_CODEC,
+					BlockCrushingRecipe::landingBlock,
+					IngredientCollection.STREAM_CODEC,
+					BlockCrushingRecipe::ingredientCollection,
+					BlockCrushingRecipe::new
+			);
 }

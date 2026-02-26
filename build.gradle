@@ -51,8 +51,7 @@ repositories {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/${project.mod_id}.accesswidener")
-    enableTransitiveAccessWideners = false
+    accessWidenerPath = file("src/main/resources/${project.mod_id}.classtweaker")
 }
 
 fabricApi {

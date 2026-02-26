@@ -10,6 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.kiwi.recipe.SizedIngredient;
@@ -19,9 +20,9 @@ import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.input.ItemStackHolderCollection;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
-import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 import snownee.lychee.util.recipe.LycheeRecipeType;
 
 public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
@@ -72,7 +73,7 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 	}
 
 	@Override
-	public LycheeRecipeSerializer<ItemBurningRecipe> getSerializer() {
+	public RecipeSerializer<? extends ILycheeRecipe<LycheeContext>> getSerializer() {
 		return RecipeSerializers.ITEM_BURNING;
 	}
 
@@ -81,31 +82,18 @@ public class ItemBurningRecipe extends LycheeRecipe<LycheeContext> {
 		return RecipeTypes.ITEM_BURNING;
 	}
 
-	public static class Serializer implements LycheeRecipeSerializer<ItemBurningRecipe> {
-		public static final MapCodec<ItemBurningRecipe> CODEC =
-				RecordCodecBuilder.mapCodec(instance -> instance.group(
-						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
-						LycheeCodecs.SIZED_INGREDIENT.fieldOf(ITEM_IN).forGetter(ItemBurningRecipe::input)
-				).apply(instance, ItemBurningRecipe::new));
+	public static final MapCodec<ItemBurningRecipe> CODEC =
+			RecordCodecBuilder.mapCodec(instance -> instance.group(
+					LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(LycheeRecipe::commonProperties),
+					LycheeCodecs.SIZED_INGREDIENT.fieldOf(ITEM_IN).forGetter(ItemBurningRecipe::input)
+			).apply(instance, ItemBurningRecipe::new));
 
-		@Override
-		public MapCodec<ItemBurningRecipe> codec() {
-			return CODEC;
-		}
-
-
-		public static final StreamCodec<RegistryFriendlyByteBuf, ItemBurningRecipe> STREAM_CODEC =
-				StreamCodec.composite(
-						LycheeRecipeCommonProperties.STREAM_CODEC,
-						ItemBurningRecipe::commonProperties,
-						SizedIngredient.STREAM_CODEC,
-						ItemBurningRecipe::input,
-						ItemBurningRecipe::new
-				);
-
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, ItemBurningRecipe> streamCodec() {
-			return STREAM_CODEC;
-		}
-	}
+	public static final StreamCodec<RegistryFriendlyByteBuf, ItemBurningRecipe> STREAM_CODEC =
+			StreamCodec.composite(
+					LycheeRecipeCommonProperties.STREAM_CODEC,
+					ItemBurningRecipe::commonProperties,
+					SizedIngredient.STREAM_CODEC,
+					ItemBurningRecipe::input,
+					ItemBurningRecipe::new
+			);
 }

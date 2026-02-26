@@ -1,6 +1,7 @@
 package snownee.lychee.util.recipe;
 
 import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.util.IngredientCollection;
 
@@ -21,7 +22,7 @@ public abstract class LycheeRecipe<C extends RecipeInput> implements ILycheeReci
 	public abstract LycheeRecipeType<? extends ILycheeRecipe<C>> getType();
 
 	@Override
-	public abstract LycheeRecipeSerializer<? extends ILycheeRecipe<C>> getSerializer();
+	public abstract RecipeSerializer<? extends ILycheeRecipe<C>> getSerializer();
 
 	@Override
 	public final int ingredientCount() {

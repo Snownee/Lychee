@@ -17,6 +17,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import snownee.kiwi.recipe.SizedIngredient;
@@ -30,9 +31,9 @@ import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.BlockKeyableRecipe;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
+import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
-import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implements BlockKeyableRecipe {
 
@@ -118,7 +119,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 	}
 
 	@Override
-	public LycheeRecipeSerializer<? extends BlockInteractingRecipe> getSerializer() {
+	public RecipeSerializer<? extends ILycheeRecipe<LycheeContext>> getSerializer() {
 		return RecipeSerializers.BLOCK_INTERACTING;
 	}
 
@@ -127,26 +128,14 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 		return RecipeTypes.BLOCK_INTERACTING;
 	}
 
-	public static class Serializer implements LycheeRecipeSerializer<BlockInteractingRecipe> {
-		public static MapCodec<BlockInteractingRecipe> CODEC = BlockInteractingRecipe.codec(BlockInteractingRecipe::new);
+	public static MapCodec<BlockInteractingRecipe> CODEC = BlockInteractingRecipe.codec(BlockInteractingRecipe::new);
 
-		@Override
-		public MapCodec<BlockInteractingRecipe> codec() {
-			return CODEC;
-		}
-
-		public static final StreamCodec<RegistryFriendlyByteBuf, BlockInteractingRecipe> STREAM_CODEC = StreamCodec.composite(
-				LycheeRecipeCommonProperties.STREAM_CODEC,
-				BlockInteractingRecipe::commonProperties,
-				SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs::optional).apply(ByteBufCodecs.list(2)),
-				BlockInteractingRecipe::inputs,
-				BlockPredicate.STREAM_CODEC,
-				BlockInteractingRecipe::blockPredicate,
-				BlockInteractingRecipe::new);
-
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, BlockInteractingRecipe> streamCodec() {
-			return STREAM_CODEC;
-		}
-	}
+	public static final StreamCodec<RegistryFriendlyByteBuf, BlockInteractingRecipe> STREAM_CODEC = StreamCodec.composite(
+			LycheeRecipeCommonProperties.STREAM_CODEC,
+			BlockInteractingRecipe::commonProperties,
+			SizedIngredient.STREAM_CODEC.apply(ByteBufCodecs::optional).apply(ByteBufCodecs.list(2)),
+			BlockInteractingRecipe::inputs,
+			BlockPredicate.STREAM_CODEC,
+			BlockInteractingRecipe::blockPredicate,
+			BlockInteractingRecipe::new);
 }

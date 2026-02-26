@@ -222,4 +222,9 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 	}
 
 	int ingredientCount();
+
+	@Override
+	default boolean showNotification() {
+		return false;
+	}
 }

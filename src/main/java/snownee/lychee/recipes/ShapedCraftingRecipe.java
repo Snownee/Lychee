@@ -45,7 +45,6 @@ import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
-import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 
 public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, CraftingRecipe {
@@ -71,7 +70,10 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 			ItemStackTemplate result,
 			boolean showNotification,
 			List<PostAction> assemblingActions) {
-		this(commonProperties, new ShapedRecipe(group, category, pattern, result, showNotification), assemblingActions);
+		this(
+				commonProperties,
+				new ShapedRecipe(new CommonInfo(showNotification), new CraftingBookInfo(category, group), pattern, result),
+				assemblingActions);
 	}
 
 	@Override
@@ -290,35 +292,23 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		return ((ShapedRecipeAccess) shaped).getResult();
 	}
 
-	public static class Serializer implements LycheeRecipeSerializer<ShapedCraftingRecipe> {
-		public static final MapCodec<ShapedCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance ->
-				instance.group(
-						LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
-						RecipeSerializer.SHAPED_RECIPE.codec()
-								.forGetter(ShapedCraftingRecipe::shaped),
-						PostAction.LIST_CODEC.optionalFieldOf("assembling", List.of())
-								.forGetter(ShapedCraftingRecipe::assemblingActions)
-				).apply(instance, ShapedCraftingRecipe::new));
+	public static final MapCodec<ShapedCraftingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance ->
+			instance.group(
+					LycheeRecipeCommonProperties.SIMPLE_MAP_CODEC.forGetter(ILycheeRecipe::commonProperties),
+					ShapedRecipe.SERIALIZER.codec()
+							.forGetter(ShapedCraftingRecipe::shaped),
+					PostAction.LIST_CODEC.optionalFieldOf("assembling", List.of())
+							.forGetter(ShapedCraftingRecipe::assemblingActions)
+			).apply(instance, ShapedCraftingRecipe::new));
 
-		public static final StreamCodec<RegistryFriendlyByteBuf, ShapedCraftingRecipe> STREAM_CODEC =
-				StreamCodec.composite(
-						LycheeRecipeCommonProperties.STREAM_CODEC,
-						ShapedCraftingRecipe::commonProperties,
-						// Do NOT use RecipeSerializer.SHAPED_RECIPE.streamCodec(), missing data
-						ByteBufCodecs.fromCodecWithRegistries(RecipeSerializer.SHAPED_RECIPE.codec().codec()),
-						ShapedCraftingRecipe::shaped,
-						PostAction.STREAM_LIST_CODEC,
-						ShapedCraftingRecipe::assemblingActions,
-						ShapedCraftingRecipe::new);
-
-		@Override
-		public MapCodec<ShapedCraftingRecipe> codec() {
-			return CODEC;
-		}
-
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, ShapedCraftingRecipe> streamCodec() {
-			return STREAM_CODEC;
-		}
-	}
+	public static final StreamCodec<RegistryFriendlyByteBuf, ShapedCraftingRecipe> STREAM_CODEC =
+			StreamCodec.composite(
+					LycheeRecipeCommonProperties.STREAM_CODEC,
+					ShapedCraftingRecipe::commonProperties,
+					// Do NOT use RecipeSerializer.SHAPED_RECIPE.streamCodec(), missing data
+					ByteBufCodecs.fromCodecWithRegistries(ShapedRecipe.SERIALIZER.codec().codec()),
+					ShapedCraftingRecipe::shaped,
+					PostAction.STREAM_LIST_CODEC,
+					ShapedCraftingRecipe::assemblingActions,
+					ShapedCraftingRecipe::new);
 }

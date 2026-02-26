@@ -49,35 +49,24 @@ public class CategoryModifier extends CategorySettingRecipe {
 		return RecipeTypes.CATEGORY_MODIFIER;
 	}
 
-	public static class Serializer implements RecipeSerializer<CategoryModifier> {
-		public static final MapCodec<CategoryModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-				Codec.INT.optionalFieldOf("sort_order", 0).forGetter(CategoryModifier::sortOrder),
-				Patterns.CODEC.fieldOf("category").forGetter(CategoryModifier::category),
-				Patterns.CODEC.fieldOf("recipe").forGetter(CategoryModifier::category),
-				ELEMENTS_CODEC.optionalFieldOf("elements").forGetter(CategoryModifier::elements),
-				Codec.BOOL.optionalFieldOf("render_default", true).forGetter(CategoryModifier::renderDefault)
-		).apply(instance, CategoryModifier::new));
-		public static final StreamCodec<RegistryFriendlyByteBuf, CategoryModifier> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				CategoryModifier::sortOrder,
-				Patterns.STREAM_CODEC,
-				CategoryModifier::category,
-				Patterns.STREAM_CODEC,
-				CategoryModifier::recipe,
-				ELEMENTS_STREAM_CODEC,
-				CategoryModifier::elements,
-				ByteBufCodecs.BOOL,
-				CategoryModifier::renderDefault,
-				CategoryModifier::new);
+	public static final MapCodec<CategoryModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+			Codec.INT.optionalFieldOf("sort_order", 0).forGetter(CategoryModifier::sortOrder),
+			Patterns.CODEC.fieldOf("category").forGetter(CategoryModifier::category),
+			Patterns.CODEC.fieldOf("recipe").forGetter(CategoryModifier::category),
+			ELEMENTS_CODEC.optionalFieldOf("elements").forGetter(CategoryModifier::elements),
+			Codec.BOOL.optionalFieldOf("render_default", true).forGetter(CategoryModifier::renderDefault)
+	).apply(instance, CategoryModifier::new));
 
-		@Override
-		public MapCodec<CategoryModifier> codec() {
-			return CODEC;
-		}
-
-		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, CategoryModifier> streamCodec() {
-			return STREAM_CODEC;
-		}
-	}
+	public static final StreamCodec<RegistryFriendlyByteBuf, CategoryModifier> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.VAR_INT,
+			CategoryModifier::sortOrder,
+			Patterns.STREAM_CODEC,
+			CategoryModifier::category,
+			Patterns.STREAM_CODEC,
+			CategoryModifier::recipe,
+			ELEMENTS_STREAM_CODEC,
+			CategoryModifier::elements,
+			ByteBufCodecs.BOOL,
+			CategoryModifier::renderDefault,
+			CategoryModifier::new);
 }

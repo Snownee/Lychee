@@ -28,6 +28,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipe;
@@ -406,11 +407,12 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		public ShapedCraftingRecipe build() {
 			LycheeRecipeCommonProperties properties = properties();
 			ShapedRecipe shapedRecipe = new ShapedRecipe(
-					ILycheeRecipe.DEFAULT_GROUP.equals(properties.group()) ? "" : properties.group(),
-					determineBookCategory(category),
+					new Recipe.CommonInfo(showNotification),
+					new CraftingRecipe.CraftingBookInfo(
+							determineBookCategory(category),
+							ILycheeRecipe.DEFAULT_GROUP.equals(properties.group()) ? "" : properties.group()),
 					ShapedRecipePattern.of(this.key, this.rows),
-					result,
-					showNotification);
+					result);
 			return new ShapedCraftingRecipe(properties, shapedRecipe, assemblingActions);
 		}
 	}

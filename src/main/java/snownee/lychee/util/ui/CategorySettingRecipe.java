@@ -72,4 +72,14 @@ public abstract class CategorySettingRecipe extends SimpleRecipe<EmptyRecipeInpu
 	public int compareTo(CategorySettingRecipe o) {
 		return Integer.compare(sortOrder, o.sortOrder);
 	}
+
+	@Override
+	public boolean showNotification() {
+		return false;
+	}
+
+	@Override
+	public String group() {
+		return "";
+	}
 }

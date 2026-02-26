@@ -1,5 +1,6 @@
 package snownee.lychee.mixin;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.crafting.RecipeManager;
+import snownee.kiwi.util.resource.AlternativesFileToIdConverter;
 import snownee.kiwi.util.resource.OneTimeLoader;
 import snownee.lychee.LycheeConfig;
 import snownee.lychee.util.CommonProxy;
@@ -52,7 +54,9 @@ public class SimpleJsonResourceReloadListenerMixin {
 			CommonProxy.fragmentManagerProvider.set(fragmentManager);
 		}
 		if (LycheeConfig.enableYamlRecipes) {
-			FileToIdConverter yamlLister = new FileToIdConverter(Registries.elementsDirPath(Registries.RECIPE), ".yaml");
+			AlternativesFileToIdConverter yamlLister = new AlternativesFileToIdConverter(
+					Registries.elementsDirPath(Registries.RECIPE),
+					List.of(".yaml"));
 			Map<Identifier, JsonElement> yamlRecipes = OneTimeLoader.load(
 					manager,
 					yamlLister,
