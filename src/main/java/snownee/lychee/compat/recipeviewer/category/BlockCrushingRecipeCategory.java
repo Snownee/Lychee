@@ -35,8 +35,10 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 		mapBuilder.put(
 				"falling_block", (builder, recipeHolder) -> {
 					var recipe = recipeHolder.value();
-					var landingBlockIsAny = landingBlockIsAny(recipe);
+					var needLandingBlock = needLandingBlock(recipe);
 
+					var fallingBlockPosition = fallingBlockPosition(recipe);
+					var landingBlockPosition = landingBlockPosition(recipe);
 					builder.addElement(RenderElement.createSimple((graphics, element) -> {
 								var ticks = (System.currentTimeMillis() % 2000) / 1000F;
 								ticks = Math.min(1, ticks);
@@ -45,39 +47,49 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 								var matrixStack = graphics.pose();
 								if (getLandingBlock(recipe).getLightEmission() < 5) {
 									matrixStack.pushMatrix();
-									var shadow = 0.5F;
-									int y = element.height();
-									if (landingBlockIsAny) {
-										shadow = 0.2F + ticks * 0.3F;
-									} else {
+									var scale = 0.5F;
+									var x = landingBlockPosition.x() + element.width() / 2F;
+									var y = fallingBlockPosition.y + FALLING_BLOCK_HEIGHT;
+									if (needLandingBlock) {
 										y += BLOCK_SIZE;
+									} else {
+										scale = 0.2F + ticks * 0.3F;
 									}
-									matrixStack.translate(element.width() / 2F, y);
-									matrixStack.scale(shadow);
-									matrixStack.translate(-AllGuiTextures.SHADOW.width * 0.5F, -AllGuiTextures.SHADOW.height * 0.5F);
+									matrixStack.translate(x, y);
+									matrixStack.scale(scale);
+									matrixStack.translate(-AllGuiTextures.SHADOW.width * 0.5F, AllGuiTextures.SHADOW.height * 0.5F);
 									AllGuiTextures.SHADOW.render(graphics);
 									matrixStack.popMatrix();
 								}
+							})
+							.sortOrder(300));
+
+					builder.addElement(RenderElement.createSimple((graphics, element) -> {
+								var ticks = (System.currentTimeMillis() % 2000) / 1000F;
+								ticks = Math.min(1, ticks);
+								ticks = ticks * ticks * ticks * ticks;
 
 								GuiGameElement.of(getFallingBlock(recipe))
 										.scale(BLOCK_SIZE)
-										.atLocal(0, ticks * 1.3 + 0.4, 2)
+										.atLocal(0.15, ticks * 1.3, 2)
 										.rotateBlock(20, 225, 0)
-										.sortOrder(300)
+										.debugOutline(graphics, 0xFFFFFFFF)
+										.withSize(BLOCK_SIZE, FALLING_BLOCK_HEIGHT)
 										.render(graphics);
 							})
-							.at(fallingBlockPosition(recipe))
+							.sortOrder(200)
+							.at(fallingBlockPosition)
 							.withSize(BLOCK_SIZE, FALLING_BLOCK_HEIGHT));
 
 					RvHelper helper = builder.helper();
 					builder.addElement(new InteractiveRenderElement()
-							.at(fallingBlockPosition(recipe))
+							.at(fallingBlockPosition)
 							.<InteractiveRenderElement>withSize(BLOCK_SIZE, FALLING_BLOCK_HEIGHT)
 							.onTooltip(() -> BlockPredicateExtensions.getTooltips(getFallingBlock(recipe), recipe.blockPredicate(), helper))
 							.onInput(helper.inputOnBlock(() -> getFallingBlock(recipe))));
 				});
 
-		mapBuilder.condition("landing_block", $ -> !landingBlockIsAny($));
+		mapBuilder.condition("landing_block", this::needLandingBlock);
 		mapBuilder.put(
 				"landing_block", (builder, recipeHolder) -> {
 					var recipe = recipeHolder.value();
@@ -87,6 +99,7 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 							.scale(BLOCK_SIZE)
 							.rotateBlock(20, 225, 0)
 							.at(landingBlockPosition)
+							.sortOrder(250)
 					);
 
 					RvHelper helper = builder.helper();
@@ -112,12 +125,12 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 
 	protected Vector2f fallingBlockPosition(BlockCrushingRecipe recipe) {
 		var xOffset = landingBlockPosition(recipe).x;
-		var yOffset = landingBlockIsAny(recipe) ? 50 : 38;
+		var yOffset = needLandingBlock(recipe) ? 34 : 46;
 		return new Vector2f(xOffset, yOffset - FALLING_BLOCK_HEIGHT);
 	}
 
-	protected boolean landingBlockIsAny(BlockCrushingRecipe recipe) {
-		return BlockPredicateExtensions.isAny(recipe.landingBlock());
+	protected boolean needLandingBlock(BlockCrushingRecipe recipe) {
+		return !BlockPredicateExtensions.isAny(recipe.landingBlock());
 	}
 
 	private BlockState getFallingBlock(BlockCrushingRecipe recipe) {
