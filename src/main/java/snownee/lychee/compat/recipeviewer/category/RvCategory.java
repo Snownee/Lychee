@@ -120,7 +120,7 @@ public class RvCategory<R extends ILycheeRecipe<LycheeContext>> {
 		return new InteractiveRenderElement(
 				(InteractiveRenderElement element) -> new SpriteElementRenderer(
 						Lychee.id("exclamation_mark"),
-						2
+						1.5F
 				).withSize(element.width(), element.height()).sortOrder(100), null).onTooltip(() -> List.of(Component.translatable(
 				"postAction.lychee.place.consume"))).withSize(InfoElementHelper.INFO_SIZE, InfoElementHelper.INFO_SIZE);
 	}

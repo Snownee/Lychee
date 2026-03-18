@@ -22,8 +22,8 @@ public abstract class DecorationMapBuilder<R extends ILycheeRecipe<LycheeContext
 
 	public void consumeBlockInput(Function<R, Vector2fc> positioner) {
 		condition("consume_block_in", RvCategory::needConsumeBlockInput);
-		put(
-				"consume_block_in", (builder, recipeHolder) -> builder.addElement(RvCategory.consumeBlockInputIcon()
-						.at(positioner.apply(recipeHolder.value()))));
+		put("consume_block_in",
+				(builder, recipeHolder) -> builder.addElement(
+						RvCategory.consumeBlockInputIcon().at(positioner.apply(recipeHolder.value()))));
 	}
 }

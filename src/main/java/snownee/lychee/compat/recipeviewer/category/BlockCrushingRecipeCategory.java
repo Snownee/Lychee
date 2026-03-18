@@ -30,7 +30,7 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 	@Override
 	public void setupDecorations(DecorationMapBuilder<BlockCrushingRecipe> mapBuilder) {
 		mapBuilder.info(this::infoPosition);
-		mapBuilder.consumeBlockInput($ -> VectorExtensions.offset(landingBlockPosition($), BLOCK_SIZE, BLOCK_SIZE - 10));
+		mapBuilder.consumeBlockInput($ -> VectorExtensions.offset(landingBlockPosition($), BLOCK_SIZE, BLOCK_SIZE));
 
 		mapBuilder.put(
 				"falling_block", (builder, recipeHolder) -> {
