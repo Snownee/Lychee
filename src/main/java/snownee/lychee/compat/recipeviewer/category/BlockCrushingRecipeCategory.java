@@ -57,7 +57,9 @@ public class BlockCrushingRecipeCategory extends RvCategory<BlockCrushingRecipe>
 									}
 									matrixStack.translate(x, y);
 									matrixStack.scale(scale);
-									matrixStack.translate(-AllGuiTextures.SHADOW.width * 0.5F, AllGuiTextures.SHADOW.height * 0.5F);
+									matrixStack.translate(
+											-AllGuiTextures.SHADOW.width * 0.5F,
+											-AllGuiTextures.SHADOW.height * 0.5F + BLOCK_SIZE * 0.5F / scale);
 									AllGuiTextures.SHADOW.render(graphics);
 									matrixStack.popMatrix();
 								}
