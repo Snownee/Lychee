@@ -2,7 +2,7 @@ package snownee.lychee.ui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import snownee.lychee.client.gui.RenderElement;
 
@@ -49,11 +49,11 @@ public class TextElementRenderer extends RenderElement {
 	}
 
 	@Override
-	public void render(GuiGraphics graphics) {
+	public void render(GuiGraphicsExtractor graphics) {
 		if (!centered) {
-			graphics.drawString(font, text, (int) x(), (int) y(), lightModeColor, shadow);
+			graphics.text(font, text, (int) x(), (int) y(), lightModeColor, shadow);
 		} else {
-			graphics.drawString(font, text, (int) (x() - (float) font.width(text) / 2), (int) y(), lightModeColor, shadow);
+			graphics.text(font, text, (int) (x() - (float) font.width(text) / 2), (int) y(), lightModeColor, shadow);
 		}
 	}
 

@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import snownee.lychee.client.gui.RenderElement;
 
 public class CompoundElementRenderer extends RenderElement {
@@ -26,7 +26,7 @@ public class CompoundElementRenderer extends RenderElement {
 	}
 
 	@Override
-	public void render(GuiGraphics graphics) {
+	public void render(GuiGraphicsExtractor graphics) {
 		var pose = graphics.pose();
 		pose.pushMatrix();
 		pose.translate(x(), y());

@@ -4,7 +4,7 @@ import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.inputs.IJeiGuiEventListener;
 import mezz.jei.api.gui.widgets.IRecipeWidget;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -35,7 +35,7 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 	}
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, int xOffset, int yOffset) {
+	public void draw(GuiGraphicsExtractor guiGraphics, int xOffset, int yOffset) {
 		var pose = guiGraphics.pose();
 		pose.pushMatrix();
 		pose.translate(xOffset, yOffset);
@@ -44,7 +44,7 @@ public class RenderElementAdapter implements IRecipeWidget, IJeiGuiEventListener
 	}
 
 	@Override
-	public void drawWidget(GuiGraphics guiGraphics, double mouseX, double mouseY) {
+	public void drawWidget(GuiGraphicsExtractor guiGraphics, double mouseX, double mouseY) {
 		if (element instanceof InteractiveRenderElement interactive) {
 			interactive.updateHoverState(element.x() + mouseX, element.y() + mouseY);
 		}

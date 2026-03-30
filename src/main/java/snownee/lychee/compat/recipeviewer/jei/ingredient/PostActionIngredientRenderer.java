@@ -5,7 +5,7 @@ import java.util.List;
 import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.ingredients.IIngredientRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.TooltipFlag;
@@ -27,6 +27,14 @@ public enum PostActionIngredientRenderer implements IIngredientRenderer<PostActi
 			false);
 
 	@Override
+	public void render(GuiGraphicsExtractor graphics, PostAction action) {
+		if (action == INGREDIENT_HACK_DUMMY) {
+			return;
+		}
+		ActionRenderer.of(action).internalRender(action, graphics, 0, 0);
+	}
+
+	@Override
 	public List<Component> getTooltip(PostAction ingredient, TooltipFlag tooltipFlag) {
 		return List.of();
 	}
@@ -38,13 +46,5 @@ public enum PostActionIngredientRenderer implements IIngredientRenderer<PostActi
 		}
 		var player = Minecraft.getInstance().player;
 		tooltip.addAll(ActionRenderer.of(ingredient).getTooltips(ingredient, player));
-	}
-
-	@Override
-	public void render(GuiGraphics guiGraphics, PostAction action) {
-		if (action == INGREDIENT_HACK_DUMMY) {
-			return;
-		}
-		ActionRenderer.of(action).internalRender(action, guiGraphics, 0, 0);
 	}
 }

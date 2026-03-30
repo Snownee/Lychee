@@ -3,7 +3,7 @@ package snownee.lychee.util.action;
 import java.util.function.Function;
 
 import net.minecraft.advancements.criterion.BlockPredicate;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -16,7 +16,7 @@ public record BlockBasedActionRenderer<T extends PostAction>(Function<T, BlockSt
 	}
 
 	@Override
-	public void render(T action, GuiGraphics graphics, int x, int y) {
+	public void render(T action, GuiGraphicsExtractor graphics, int x, int y) {
 		var blockState = blockStateFunction.apply(action);
 		if (blockState.isAir()) {
 			GuiGameElement.of(Items.BARRIER).render(graphics, x, y);

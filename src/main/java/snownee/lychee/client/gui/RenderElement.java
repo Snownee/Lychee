@@ -9,7 +9,7 @@ import org.joml.Vector2i;
 import org.joml.Vector2ic;
 import org.jspecify.annotations.Nullable;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.util.ARGB;
 import snownee.kiwi.loader.Platform;
@@ -22,7 +22,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	public static RenderElement empty() {
 		return new RenderElement() {
 			@Override
-			public void render(GuiGraphics graphics) {}
+			public void render(GuiGraphicsExtractor graphics) {}
 		};
 	}
 
@@ -30,7 +30,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	public Vector2i size = new Vector2i(UIElementCommonProperties.DEFAULT_SIZE);
 	protected int sortOrder = 0;
 
-	public static RenderElement createSimple(BiConsumer<GuiGraphics, RenderElement> renderable) {
+	public static RenderElement createSimple(BiConsumer<GuiGraphicsExtractor, RenderElement> renderable) {
 		return new SimpleRenderElement(renderable);
 	}
 
@@ -124,7 +124,7 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 		return mouseX >= x() && mouseY >= y() && mouseX <= x() + width() && mouseY <= y() + height();
 	}
 
-	public void render(GuiGraphics graphics, int offsetX, int offsetY) {
+	public void render(GuiGraphicsExtractor graphics, int offsetX, int offsetY) {
 		graphics.pose().pushMatrix();
 		graphics.pose().translate(offsetX, offsetY);
 		render(graphics);
@@ -132,19 +132,19 @@ public abstract class RenderElement implements ScreenElement, Renderable {
 	}
 
 	@Override
-	public void render(GuiGraphics graphics, int mouseX, int mouseY, float a) {
+	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
 		render(graphics);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends RenderElement> T debugOutline(GuiGraphics graphics, int color) {
+	public <T extends RenderElement> T debugOutline(GuiGraphicsExtractor graphics, int color) {
 		if (Platform.isProduction() || !SmartKey.hasControlDown()) {
 			return (T) this;
 		}
 		if (ARGB.alpha(color) == 0) {
 			color |= 0x88000000;
 		}
-		graphics.renderOutline(Math.round(x()), Math.round(y()), width(), height(), color);
+		graphics.outline(Math.round(x()), Math.round(y()), width(), height(), color);
 		return (T) this;
 	}
 }

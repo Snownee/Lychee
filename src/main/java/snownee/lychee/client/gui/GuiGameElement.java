@@ -8,11 +8,12 @@ import org.jspecify.annotations.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Transformation;
 
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.entity.state.BlockDisplayEntityRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.core.BlockPos;
@@ -28,6 +29,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
@@ -111,7 +113,7 @@ public class GuiGameElement {
 
 	private static class GuiBlockRenderBuilder extends GuiRenderBuilder {
 
-		protected final BlockDisplayEntityRenderState renderState;
+		protected BlockDisplayEntityRenderState renderState;
 		protected BlockState blockState;
 		private final @Nullable GuiRenderBuilder override;
 
@@ -122,16 +124,22 @@ public class GuiGameElement {
 		public GuiBlockRenderBuilder(@Nullable BlockState blockState, @Nullable GuiRenderBuilder override) {
 			this.blockState = blockState == null ? Blocks.AIR.defaultBlockState() : blockState;
 			this.override = override;
-			withRotationOffset(VecHelper.getCenterOf(BlockPos.ZERO));
-			renderState = new BlockDisplayEntityRenderState();
-			renderState.entityType = EntityType.BLOCK_DISPLAY;
-			renderState.renderState = createFreshRenderState();
-			renderState.setData(CUSTOM_LIGHTING, Lighting.Entry.ITEMS_FLAT);
 			if (blockState != null) {
-				renderState.blockRenderState = new Display.BlockDisplay.BlockRenderState(blockState);
+				withRotationOffset(VecHelper.getCenterOf(BlockPos.ZERO));
+				renderState = new BlockDisplayEntityRenderState();
+				renderState.entityType = EntityType.BLOCK_DISPLAY;
+				renderState.renderState = createFreshRenderState();
+				renderState.setData(CUSTOM_LIGHTING, Lighting.Entry.ITEMS_FLAT);
+
 				if (!blockState.getFluidState().isEmpty()) {
 					renderState.setData(DRAW_FLUID_STATE, Unit.INSTANCE);
 				}
+
+				this.blockState = this.blockState.rotate(Rotation.CLOCKWISE_180);
+				Minecraft.getInstance().blockModelResolver.update(
+						renderState.blockModel,
+						this.blockState,
+						BlockDisplayContext.create());
 			}
 		}
 
@@ -148,12 +156,11 @@ public class GuiGameElement {
 		}
 
 		@Override
-		public void render(GuiGraphics graphics) {
+		public void render(GuiGraphicsExtractor graphics) {
 			if (override != null) {
 				override.atLocal(xLocal, yLocal, zLocal).at(position).offset(-3, -3).render(graphics);
 			}
 			float toRad = 0.01745329251F;
-			Vector3f translation = new Vector3f((float) xLocal, (float) yLocal, (float) zLocal);
 			Quaternionf rotation = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
 			float x0 = x() - width();
 			float y0 = y() - height();
@@ -161,10 +168,10 @@ public class GuiGameElement {
 			float y1 = y() + height() + height();
 			var pos0 = graphics.pose().transformPosition(new Vector2f(x0, y0));
 			var pos1 = graphics.pose().transformPosition(new Vector2f(x1, y1));
-			graphics.submitEntityRenderState(
+			graphics.entity(
 					renderState,
 					scale,
-					translation,
+					new Vector3f((float) xLocal, (float) yLocal, (float) zLocal),
 					rotation,
 					null,
 					(int) pos0.x,
@@ -190,59 +197,15 @@ public class GuiGameElement {
 		}
 
 		@Override
-		public void render(GuiGraphics graphics) {
+		public void render(GuiGraphicsExtractor graphics) {
 //			PoseStack matrixStack = graphics.pose();
 //			prepareMatrix(matrixStack);
 //			transformMatrix(matrixStack);
 //			renderItemIntoGUI(matrixStack, stack, customLighting == null);
 //			cleanUpMatrix(matrixStack);
 			graphics.pose().pushMatrix();
-			graphics.renderItem(stack, (int) x(), (int) y());
+			graphics.item(stack, (int) x(), (int) y());
 			graphics.pose().popMatrix();
-		}
-
-		public static void renderItemIntoGUI(PoseStack matrixStack, ItemStack stack, boolean useDefaultLighting) {
-//			ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
-//			BakedModel bakedModel = renderer.getModel(stack, null, null, 0);
-//
-//			Minecraft.getInstance().getTextureManager().getTexture(InventoryMenu.BLOCK_ATLAS).setFilter(false, false);
-//			RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
-//			RenderSystem.enableBlend();
-//			RenderSystem.enableCull();
-//			RenderSystem.blendFunc(
-//					GlStateManager.SourceFactor.SRC_ALPHA,
-//					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
-//			);
-//			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-//			matrixStack.pushPose();
-//			matrixStack.translate(0, 0, 100.0F);
-//			matrixStack.translate(8.0F, -8.0F, 0.0F);
-//			matrixStack.scale(16.0F, 16.0F, 16.0F);
-//			MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-//			boolean flatLighting = !bakedModel.usesBlockLight();
-//			if (useDefaultLighting && flatLighting) {
-//				Lighting.setupForFlatItems();
-//			}
-//
-//			renderer.render(
-//					stack,
-//					ItemDisplayContext.GUI,
-//					false,
-//					matrixStack,
-//					buffer,
-//					LightTexture.FULL_BRIGHT,
-//					OverlayTexture.NO_OVERLAY,
-//					bakedModel
-//			);
-//			RenderSystem.disableDepthTest();
-//			buffer.endBatch();
-//
-//			RenderSystem.enableDepthTest();
-//			if (useDefaultLighting && flatLighting) {
-//				Lighting.setupFor3DItems();
-//			}
-//
-//			matrixStack.popPose();
 		}
 	}
 
@@ -254,7 +217,7 @@ public class GuiGameElement {
 		}
 
 		@Override
-		public void render(GuiGraphics graphics) {
+		public void render(GuiGraphicsExtractor graphics) {
 			float toRad = 0.01745329251F;
 			Vector3f translation = new Vector3f((float) xLocal, (float) yLocal, (float) zLocal);
 			Quaternionf rotation = new Quaternionf().rotateXYZ(200 * toRad, -20 * toRad, 0);
@@ -264,7 +227,7 @@ public class GuiGameElement {
 			float y1 = height();
 			var pos0 = graphics.pose().transformPosition(new Vector2f(x0, y0));
 			var pos1 = graphics.pose().transformPosition(new Vector2f(x1, y1));
-			graphics.submitEntityRenderState(
+			graphics.entity(
 					state,
 					scale,
 					translation,

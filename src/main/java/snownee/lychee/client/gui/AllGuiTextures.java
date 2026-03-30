@@ -1,6 +1,6 @@
 package snownee.lychee.client.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.resources.Identifier;
 import snownee.lychee.Lychee;
 import snownee.lychee.ui.SpriteElementRenderer;
@@ -30,7 +30,7 @@ public enum AllGuiTextures implements ScreenElement {
 	}
 
 	@Override
-	public void render(GuiGraphics graphics) {
+	public void render(GuiGraphicsExtractor graphics) {
 		renderer.render(graphics);
 	}
 }

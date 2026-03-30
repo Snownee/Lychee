@@ -3,6 +3,7 @@ package snownee.lychee.compat.recipeviewer.category;
 import java.util.Objects;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BlockDisplayContext;
 import net.minecraft.client.renderer.entity.state.TntRenderState;
 import net.minecraft.world.entity.EntityType;
 import snownee.lychee.RecipeTypes;
@@ -32,7 +33,10 @@ public class ItemExplodingRecipeCategory extends ItemShapelessRecipeCategory<Ite
 									.atLocal(0, 1.5, 1)
 									.withSize(width, height),
 							$ -> {
-								tnt.blockState = BlockPredicateExtensions.anyBlockState(recipeHolder.value().displayTNT());
+								Minecraft.getInstance().blockModelResolver.update(
+										tnt.blockState,
+										BlockPredicateExtensions.anyBlockState(recipeHolder.value().displayTNT()),
+										BlockDisplayContext.create());
 								int fuse = 80 - (int) Objects.requireNonNull(Minecraft.getInstance().level).getGameTime() % 80;
 								$.visible = fuse < 40;
 								tnt.fuseRemainingInTicks = fuse + Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks();

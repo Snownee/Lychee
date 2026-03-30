@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -151,7 +151,7 @@ public interface ActionRenderer<T extends PostAction> {
 		return list;
 	}
 
-	default void internalRender(T action, GuiGraphics graphics, int x, int y) {
+	default void internalRender(T action, GuiGraphicsExtractor graphics, int x, int y) {
 		if (!action.hidden()) {
 			Identifier sprite = action.commonProperties().icon();
 			if (sprite != null) {
@@ -162,7 +162,7 @@ public interface ActionRenderer<T extends PostAction> {
 		render(action, graphics, x, y);
 	}
 
-	default void render(T action, GuiGraphics graphics, int x, int y) {
+	default void render(T action, GuiGraphicsExtractor graphics, int x, int y) {
 	}
 
 	default List<Component> getBaseTooltips(T action, @Nullable Player player) {

@@ -1,6 +1,6 @@
 package snownee.lychee.ui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import snownee.lychee.client.gui.RenderElement;
@@ -19,7 +19,7 @@ public class SpriteElementRenderer extends RenderElement {
 	}
 
 	@Override
-	public void render(GuiGraphics graphics) {
+	public void render(GuiGraphicsExtractor graphics) {
 		int width = Math.round(width() * scale);
 		int height = Math.round(height() * scale);
 		float xOff = (width() - width) * 0.5F;
@@ -31,5 +31,10 @@ public class SpriteElementRenderer extends RenderElement {
 
 	public static SpriteElementRenderer create(SpriteElement element) {
 		return new SpriteElementRenderer(element.id(), element.scale());
+	}
+
+	@Override
+	public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+		render(graphics);
 	}
 }

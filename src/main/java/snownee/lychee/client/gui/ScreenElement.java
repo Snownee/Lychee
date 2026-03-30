@@ -1,8 +1,8 @@
 package snownee.lychee.client.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 @FunctionalInterface
 public interface ScreenElement {
-	void render(GuiGraphics graphics);
+	void render(GuiGraphicsExtractor graphics);
 }

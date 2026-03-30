@@ -2,6 +2,7 @@ package snownee.lychee.action;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.mojang.serialization.Codec;
@@ -98,8 +99,8 @@ public record PlaceBlock(
 		var pos = actionContext.get(LootContextKeys.BLOCK_POS).offset(offset);
 		var level = context.level();
 		var oldState = level.getBlockState(pos);
-		var blockState = BlockPredicateExtensions.anyBlockState(block);
-		if (blockState.isAir()) {
+		final var blockState = new AtomicReference<>(BlockPredicateExtensions.anyBlockState(block));
+		if (blockState.get().isAir()) {
 			destroyBlock(level, pos, false);
 			return;
 		}
@@ -113,18 +114,18 @@ public record PlaceBlock(
 				.flatMap(Collection::stream)
 				.map(StatePropertiesPredicate.PropertyMatcher::name)
 				.collect(Collectors.toSet());
-		for (var entry : oldState.getValues().entrySet()) {
-			var property = entry.getKey();
+		oldState.getValues().forEach(value -> {
+			var property = value.property();
 			if (!properties.contains(property.getName())) {
-				//noinspection rawtypes,unchecked
-				blockState = blockState.trySetValue((Property) property, (Comparable) entry.getValue());
+				//noinspection unchecked,rawtypes
+				blockState.set(blockState.get().trySetValue((Property) property, (Comparable) value.value()));
 			}
-		}
+		});
 		if (oldState.getFluidState().isSourceOfType(Fluids.WATER)) {
-			blockState = blockState.trySetValue(BlockStateProperties.WATERLOGGED, true);
+			blockState.set(blockState.get().trySetValue(BlockStateProperties.WATERLOGGED, true));
 		}
 
-		if (!level.setBlockAndUpdate(pos, blockState)) {
+		if (!level.setBlockAndUpdate(pos, blockState.get())) {
 			return;
 		}
 
@@ -157,7 +158,7 @@ public record PlaceBlock(
 			newState.getBlock().setPlacedBy(level, pos, newState, null, newState.getCloneItemStack(level, pos, false));
 		}
 
-		level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(blockState));
+		level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(blockState.get()));
 	}
 
 	@Override

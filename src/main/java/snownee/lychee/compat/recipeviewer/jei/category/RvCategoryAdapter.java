@@ -24,7 +24,7 @@ import mezz.jei.api.recipe.types.IRecipeHolderType;
 import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
@@ -142,13 +142,13 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 					slotBuilder.setCustomRenderer(
 							VanillaTypes.ITEM_STACK, new IIngredientRenderer<>() {
 								@Override
-								public void render(GuiGraphics guiGraphics, ItemStack ingredient) {
-									PostActionIngredientRenderer.INSTANCE.render(guiGraphics, action);
+								public void getTooltip(ITooltipBuilder tooltip, ItemStack ingredient, TooltipFlag tooltipFlag) {
+									PostActionIngredientRenderer.INSTANCE.getTooltip(tooltip, action, tooltipFlag);
 								}
 
 								@Override
-								public void getTooltip(ITooltipBuilder tooltip, ItemStack ingredient, TooltipFlag tooltipFlag) {
-									PostActionIngredientRenderer.INSTANCE.getTooltip(tooltip, action, tooltipFlag);
+								public void render(GuiGraphicsExtractor graphics, ItemStack itemStack) {
+									PostActionIngredientRenderer.INSTANCE.render(graphics, action);
 								}
 
 								@Override

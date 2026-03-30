@@ -4,10 +4,10 @@ import java.util.Objects;
 import java.util.function.ToIntFunction;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.CardinalLighting;
 import net.minecraft.world.level.ColorResolver;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
@@ -18,6 +18,8 @@ import net.minecraft.world.level.material.FluidState;
  * <a href="https://github.com/Engine-Room/Flywheel/blob/1.21.1/dev/common/src/lib/java/dev/engine_room/flywheel/lib/model/baked/VirtualBlockGetter.java">...</a>
  */
 public abstract class VirtualBlockGetter implements BlockAndTintGetter {
+	private static final CardinalLighting VIRTUAL_LIGHTING = CardinalLighting.DEFAULT;
+
 	protected final VirtualLightEngine lightEngine;
 
 	public VirtualBlockGetter(ToIntFunction<BlockPos> blockLightFunc, ToIntFunction<BlockPos> skyLightFunc) {
@@ -30,8 +32,8 @@ public abstract class VirtualBlockGetter implements BlockAndTintGetter {
 	}
 
 	@Override
-	public float getShade(Direction direction, boolean shade) {
-		return 1f;
+	public CardinalLighting cardinalLighting() {
+		return VIRTUAL_LIGHTING;
 	}
 
 	@Override

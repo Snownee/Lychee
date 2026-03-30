@@ -33,3 +33,5 @@ accessible method net/minecraft/world/item/crafting/PlacementInfo <init> (Ljava/
 accessible class net/minecraft/commands/arguments/item/ItemParser$State
 
 accessible class net/minecraft/world/level/ServerExplosion$StackCollector
+
+accessible field net/minecraft/client/Minecraft blockModelResolver Lnet/minecraft/client/renderer/block/BlockModelResolver;

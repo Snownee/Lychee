@@ -2,7 +2,7 @@ package snownee.lychee.compat.recipeviewer.element;
 
 import java.util.function.Supplier;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.client.gui.GuiGameElement;
@@ -20,7 +20,7 @@ public class SideBlockIcon extends RenderElement {
 	}
 
 	@Override
-	public void render(GuiGraphics graphics) {
+	public void render(GuiGraphicsExtractor graphics) {
 		var ms = graphics.pose();
 		ms.pushMatrix();
 		ms.translate(x(), y());

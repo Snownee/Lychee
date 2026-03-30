@@ -41,7 +41,6 @@
 		"recipes.randomblockticking.BlockStateMixin"
 	],
 	"client": [
-		"client.BlockRenderDispatcherMixin",
 		"client.ClientPacketListenerMixin",
 		"client.GuiEntityRendererMixin",
 		"client.GuiRenderStateMixin",

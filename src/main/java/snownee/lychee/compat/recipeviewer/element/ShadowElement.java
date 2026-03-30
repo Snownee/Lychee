@@ -57,7 +57,7 @@ public class ShadowElement {
 			float y = element.position.y + blockSize - shadowHeight * 0.4F;
 			var shadowPosition = new Vector2f(x, y);
 			if (!Platform.isProduction() && SmartKey.hasControlDown()) {
-				graphics.renderOutline((int) element.x(), (int) element.y(), blockSize, blockSize, 0x88FF0000);
+				graphics.outline((int) element.x(), (int) element.y(), blockSize, blockSize, 0x88FF0000);
 			}
 			int lightEmission = blockState.getLightEmission();
 			if (lightEmission < 5) {
