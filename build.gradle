@@ -78,12 +78,12 @@ dependencies {
 //    implementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
     // https://modrinth.com/mod/kiwi/versions
-//    implementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
+    implementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
     implementation fileTree(dir: "libs", include: ["*.jar"])
     annotationProcessor fileTree(dir: "libs", include: ["*.jar"])
 
 //    compileOnlyApi "mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}"
-    implementation "mezz.jei:jei-${minecraft_version}-fabric:${jei_version}"
+    implementation "mezz.jei:jei-26.1:${jei_version}"
 
     // https://modrinth.com/mod/jade/versions
     implementation "maven.modrinth:jade:${jade_version}+fabric"
