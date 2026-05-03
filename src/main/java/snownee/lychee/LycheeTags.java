@@ -19,6 +19,8 @@ public final class LycheeTags {
 
 	public static final TagKey<Item> BLOCK_EXPLODING_CATALYSTS = itemTag("block_exploding_catalysts");
 
+	public static final TagKey<Item> LIGHTNING_CHANNELING_CATALYSTS = itemTag("lightning_channeling_catalysts");
+
 	public static final TagKey<Block> EXTEND_BOX = blockTag("extend_box");
 
 	public static final TagKey<EntityType<?>> LIGHTNING_IMMUNE = entityTag("lightning_immune");

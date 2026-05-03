@@ -181,9 +181,6 @@ public class JEICompat implements IModPlugin {
 					.forEach($$ -> registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, $$, $.getRecipeType()));
 			/* on */
 		});
-		forEachCategories(RecipeTypes.LIGHTNING_CHANNELING, $ -> {
-			registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, Items.LIGHTNING_ROD.getDefaultInstance(), $.getRecipeType());
-		});
 		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.ITEM_EXPLODING, $ -> {
 				registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), $.getRecipeType());
@@ -191,6 +188,11 @@ public class JEICompat implements IModPlugin {
 		}
 		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.BLOCK_EXPLODING, $ -> {
+				registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), $.getRecipeType());
+			});
+		}
+		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.LIGHTNING_CHANNELING_CATALYSTS)) {
+			forEachCategories(RecipeTypes.LIGHTNING_CHANNELING, $ -> {
 				registration.addRecipeCatalyst(VanillaTypes.ITEM_STACK, item.getDefaultInstance(), $.getRecipeType());
 			});
 		}

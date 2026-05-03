@@ -130,9 +130,6 @@ public class REICompat implements REIClientPlugin {
 					.forEach($$ -> registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of($$)));
 			/* on */
 		});
-		forEachCategories(RecipeTypes.LIGHTNING_CHANNELING, $ -> {
-			registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(Items.LIGHTNING_ROD));
-		});
 		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.ITEM_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.ITEM_EXPLODING, $ -> {
 				registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(item.getDefaultInstance()));
@@ -140,6 +137,11 @@ public class REICompat implements REIClientPlugin {
 		}
 		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.BLOCK_EXPLODING_CATALYSTS)) {
 			forEachCategories(RecipeTypes.BLOCK_EXPLODING, $ -> {
+				registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(item.getDefaultInstance()));
+			});
+		}
+		for (Item item : CommonProxy.tagElements(BuiltInRegistries.ITEM, LycheeTags.LIGHTNING_CHANNELING_CATALYSTS)) {
+			forEachCategories(RecipeTypes.LIGHTNING_CHANNELING, $ -> {
 				registration.addWorkstations($.getCategoryIdentifier(), EntryStacks.of(item.getDefaultInstance()));
 			});
 		}
