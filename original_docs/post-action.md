@@ -178,6 +178,110 @@ Cycles a property's value in a block-state.
     | offsetZ  | offsets to location ^optional^                              | int                                               |
     | reversed | cycle in reversed order ^optional^ {title="default: false"} | true \| false                                     |
 
+## Item-related Actions
+
+### Damage Item
+
+Consumes the item's durability.
+
+This action is not [repeatable](concepts.md#repeatability).
+
+!!! note "Shorthand Format"
+
+    `damage_item`
+
+??? note "Format"
+
+    | Name   | Description                                           | Type / Literal                              |
+    | ------ | ----------------------------------------------------- | ------------------------------------------- |
+    | type   | type                                                  | "damage_item"                               |
+    | damage | damage ^optional^{ title="default: 1" }               | int                                         |
+    | target | target items ^optional^{ title="default: all items" } | [JsonPointer](general-types.md#jsonpointer) |
+
+### Set Item
+
+Replaces the inputs or the results.
+
+This action is not [repeatable](concepts.md#repeatability).
+
+!!! note "Format"
+
+    | Name       | Description                | Type / Literal                              |
+    | ---------- | -------------------------- | ------------------------------------------- |
+    | type       | type                       | "set_item"                                  |
+    | target     | target items ^optional^    | [JsonPointer](general-types.md#jsonpointer) |
+    | id         | the item resource id       | string (Identifier)                         |
+    | count      | item amount ^optional^     | int                                         |
+    | components | item components ^optional^ | dictionary                                  |
+
+### Add Item Cooldown
+
+Adds item cooldown to an item, just like the cooldown when you use an ender pearl.
+
+!!! note "Shorthand Format"
+
+    `add_item_cooldown <seconds: number>`
+
+??? note "Format"
+
+    | Name | Description                                                                   | Type / Literal      |
+    | ---- | ----------------------------------------------------------------------------- | ------------------- |
+    | type | type                                                                          | "add_item_cooldown" |
+    | s    | seconds                                                                       | number              |
+    | item | the item resource id ^optional^{ title="default: the item in player's hand" } | string (Identifier) |
+
+### Copy Component
+
+Copies an item's component to another item. For example, you can copy custom NBT data from the input item to the output item.
+
+This action is not [repeatable](concepts.md#repeatability).
+
+!!! note "Shorthand Format"
+
+    `copy_component <component: string>`
+
+!!! note "Format"
+
+    | Name      | Description                                                            | Type / Literal                              |
+    | --------- | ---------------------------------------------------------------------- | ------------------------------------------- |
+    | type      | type                                                                   | "copy_component"                            |
+    | component | the component id to be copied                                          | string \| string[]                          |
+    | source    | the source item ^optional^ { title="default: &quot;/item_in/0&quot;" } | [JsonPointer](general-types.md#jsonpointer) |
+    | target    | the target item ^optional^ { title="default: &quot;/item_out&quot;" }  | [JsonPointer](general-types.md#jsonpointer) |
+
+### Remove Component
+
+Removes an item's component.
+
+This action is not [repeatable](concepts.md#repeatability).
+
+!!! note "Shorthand Format"
+
+    `remove_component <component: string>`
+
+!!! note "Format"
+
+    | Name      | Description                                                           | Type / Literal                              |
+    | --------- | --------------------------------------------------------------------- | ------------------------------------------- |
+    | type      | type                                                                  | "remove_component"                          |
+    | component | the component id to be removed                                        | string \| string[]                          |
+    | target    | the target item ^optional^ { title="default: &quot;/item_out&quot;" } | [JsonPointer](general-types.md#jsonpointer) |
+
+### Copy Durability
+
+Copies durability from one item to another based on the durability percentage.
+
+This action is not [repeatable](concepts.md#repeatability).
+
+!!! note "Format"
+
+    | Name   | Description                                                                                                                                                                           | Type / Literal                              |
+    | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+    | type   | type                                                                                                                                                                                  | "copy_durability"                           |
+    | source | the source item ^optional^ { title="default: &quot;/item_in/0&quot;" }                                                                                                                | [JsonPointer](general-types.md#jsonpointer) |
+    | target | the target item ^optional^ { title="default: &quot;/item_out&quot;" }                                                                                                                 | [JsonPointer](general-types.md#jsonpointer) |
+    | bonus  | extra durability factor. For example, if the source item has 50% durability and the bonus factor is -0.5, the target item will have 24% durability. ^optional^ { title="default: 0" } | number                                      |
+
 ## Control Flow Actions
 
 ### Prevent Default Behavior
@@ -353,22 +457,6 @@ Executes a command.
 
     For how to use `particle` command, please read the [wiki](https://minecraft.wiki/w/Commands/particle).
 
-### Add Item Cooldown
-
-Adds item cooldown to an item, just like the cooldown when you use an ender pearl.
-
-!!! note "Shorthand Format"
-
-    `add_item_cooldown <seconds: number>`
-
-??? note "Format"
-
-    | Name | Description                                                                   | Type / Literal      |
-    | ---- | ----------------------------------------------------------------------------- | ------------------- |
-    | type | type                                                                          | "add_item_cooldown" |
-    | s    | seconds                                                                       | number              |
-    | item | the item resource id ^optional^{ title="default: the item in player's hand" } | string              |
-
 ### Create Explosion
 
 Creates an explosion at where the interaction occurs.
@@ -397,37 +485,3 @@ on the falling height.
     | ------ | ---------------------- | --------------------- |
     | type   | type                   | "anvil_damage_chance" |
     | chance | chance between 0 and 1 | number                |
-
-### Damage Item
-
-Consumes the item's durability.
-
-This action is not [repeatable](concepts.md#repeatability).
-
-!!! note "Shorthand Format"
-
-    `damage_item`
-
-??? note "Format"
-
-    | Name   | Description                                           | Type / Literal                              |
-    | ------ | ----------------------------------------------------- | ------------------------------------------- |
-    | type   | type                                                  | "damage_item"                               |
-    | damage | damage ^optional^{ title="default: 1" }               | int                                         |
-    | target | target items ^optional^{ title="default: all items" } | [JsonPointer](general-types.md#jsonpointer) |
-
-### Set Item
-
-Replaces the inputs or the results.
-
-This action is not [repeatable](concepts.md#repeatability).
-
-!!! note "Format"
-
-    | Name       | Description                | Type / Literal                              |
-    | ---------- | -------------------------- | ------------------------------------------- |
-    | type       | type                       | "set_item"                                  |
-    | target     | target items ^optional^    | [JsonPointer](general-types.md#jsonpointer) |
-    | id         | the item resource id       | string                                      |
-    | count      | item amount ^optional^     | int                                         |
-    | components | item components ^optional^ | dictionary                                  |
