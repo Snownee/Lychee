@@ -28,14 +28,14 @@
 		"fabric-datagen": [
 			"snownee.lychee.datagen.LycheeDataGen"
 		],
+		"rei_common": [
+		],
 		"rei_client": [
-			"snownee.lychee.compat.recipeviewer.rei.LycheeREIPlugin"
 		],
 		"jei_mod_plugin": [
 			"snownee.lychee.compat.recipeviewer.jei.LycheeJEIPlugin"
 		],
 		"emi": [
-			"snownee.lychee.compat.recipeviewer.emi.LycheeEMIPlugin"
 		]
 	},
 	"mixins": [

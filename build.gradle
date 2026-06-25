@@ -69,13 +69,13 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-//    implementation("dev.architectury:architectury-fabric:${project.architectury_version}")
-//    api("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-//        exclude(group: "net.fabricmc.fabric-api")
-//    }
+    implementation("dev.architectury:architectury-fabric:${project.architectury_version}")
+    api("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
     implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-//    implementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+    implementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
     // https://modrinth.com/mod/kiwi/versions
     implementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
