@@ -15,19 +15,27 @@ import com.mojang.serialization.JavaOps;
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.particles.ExplosionParticleInfo;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.random.WeightedList;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -277,13 +285,34 @@ public interface LycheeBuilder {
 		return new ActionBuilder.RandomSelectBuilder();
 	}
 
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	default ActionBuilder<?, Explode> explode(
+			boolean attributeToEntity,
+			Optional<Holder<DamageType>> damageType,
+			Optional<LevelBasedValue> knockbackMultiplier,
+			Optional<HolderSet<Block>> immuneBlocks,
+			Vec3 offset,
+			LevelBasedValue radius,
+			boolean createFire,
 			Level.ExplosionInteraction blockInteraction,
-			BlockPos offset,
-			boolean fire,
-			float radius,
-			float step) {
-		return new ActionBuilder<>(new Explode(PostActionCommonProperties.EMPTY, blockInteraction, offset, fire, radius, step));
+			ParticleOptions smallParticle,
+			ParticleOptions largeParticle,
+			WeightedList<ExplosionParticleInfo> blockParticles,
+			Holder<SoundEvent> sound) {
+		return new ActionBuilder<>(new Explode(
+				PostActionCommonProperties.EMPTY,
+				attributeToEntity,
+				damageType,
+				knockbackMultiplier,
+				immuneBlocks,
+				offset,
+				radius,
+				createFire,
+				blockInteraction,
+				smallParticle,
+				largeParticle,
+				blockParticles,
+				sound));
 	}
 
 	default ActionBuilder<?, CustomAction> customAction(String id, JsonObject json, boolean repeatable, boolean preventSync) {
