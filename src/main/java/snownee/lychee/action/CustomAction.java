@@ -78,7 +78,7 @@ public class CustomAction implements PostAction {
 	}
 
 	@Override
-	public Component getDisplayName() {
+	public Component getName() {
 		return Component.translatable("recipeType.lychee.custom.%s".formatted(id));
 	}
 

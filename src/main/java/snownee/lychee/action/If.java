@@ -57,7 +57,7 @@ public record If(
 			if (child.hidden()) {
 				continue;
 			}
-			list.add(Component.literal("- ").withStyle(ChatFormatting.GRAY).append(child.getDisplayName()));
+			list.add(Component.literal("- ").withStyle(ChatFormatting.GRAY).append(PostAction.getDisplayName(child)));
 		}
 	}
 

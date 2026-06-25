@@ -124,7 +124,7 @@ public interface ActionRenderer<T extends PostAction> {
 			}
 		}
 		var list = randomSelect.entries().size() == 1 && randomSelect.emptyWeight() == 0 ?
-				Lists.newArrayList(randomSelect.getDisplayName()) :
+				Lists.newArrayList(PostAction.getDisplayName(child)) :
 				ActionRenderer.of(child).getBaseTooltips(child, player);
 		if (index == -1) {
 			return list; //TODO nested actions?
@@ -166,7 +166,7 @@ public interface ActionRenderer<T extends PostAction> {
 	}
 
 	default List<Component> getBaseTooltips(T action, @Nullable Player player) {
-		return Lists.newArrayList(action.getDisplayName());
+		return Lists.newArrayList(PostAction.getDisplayName(action));
 	}
 
 	default List<Component> getTooltips(T action, @Nullable Player player) {

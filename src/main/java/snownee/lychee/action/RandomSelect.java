@@ -125,14 +125,14 @@ public record RandomSelect(
 	}
 
 	@Override
-	public Component getDisplayName() {
+	public Component getName() {
 		if (entries.size() == 1 && emptyWeight == 0) {
 			return Component.literal("%s × %s".formatted(
-					entries.getFirst().action.getDisplayName().getString(),
+					PostAction.getDisplayName(entries.getFirst().action).getString(),
 					BoundsExtensions.getPlainDescription(rolls).getString()
 			));
 		}
-		return CommonProxy.getCycledItem(entries, entries.getFirst(), 1000).action.getDisplayName();
+		return PostAction.getDisplayName(CommonProxy.getCycledItem(entries, entries.getFirst(), 1000).action);
 	}
 
 	@Override

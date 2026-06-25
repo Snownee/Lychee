@@ -91,7 +91,7 @@ public record Explode(
 	}
 
 	@Override
-	public Component getDisplayName() {
+	public Component getName() {
 		return Component.translatable(CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(type())) + "." +
 				blockInteraction.name().toLowerCase(Locale.ENGLISH));
 	}

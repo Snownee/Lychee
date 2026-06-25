@@ -12,7 +12,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostActionDisplay {
 
-	Component getDisplayName();
+	Component getName();
 
 	default List<BlockPredicate> getOutputBlocks() {
 		return List.of();

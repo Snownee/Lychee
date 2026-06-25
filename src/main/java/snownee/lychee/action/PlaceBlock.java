@@ -162,7 +162,7 @@ public record PlaceBlock(
 	}
 
 	@Override
-	public Component getDisplayName() {
+	public Component getName() {
 		var state = BlockPredicateExtensions.anyBlockState(block);
 		var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(PostActionTypes.PLACE));
 		if (state.isAir()) {

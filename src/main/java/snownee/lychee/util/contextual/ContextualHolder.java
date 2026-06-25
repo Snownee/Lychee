@@ -186,4 +186,8 @@ public class ContextualHolder implements ContextualPredicate, Iterable<Contextua
 	public String toString() {
 		return unpack().toString();
 	}
+
+	public boolean isEmpty() {
+		return this == EMPTY || conditions.isEmpty();
+	}
 }

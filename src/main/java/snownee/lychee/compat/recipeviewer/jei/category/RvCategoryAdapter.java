@@ -138,7 +138,8 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		switch (action) {
 			case DropItem dropItem -> {
 				slotBuilder.add(Displays.slot(dropItem.itemStack()));
-				if (action.commonProperties().icon() != null || action.commonProperties().conditions().hasShowingConditions()) {
+				if (action.commonProperties().icon() != null || action.commonProperties().customName() != null ||
+						action.commonProperties().conditions().hasShowingConditions()) {
 					slotBuilder.setCustomRenderer(
 							VanillaTypes.ITEM_STACK, new IIngredientRenderer<>() {
 								@Override

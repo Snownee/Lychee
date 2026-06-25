@@ -34,7 +34,7 @@ public record DropXp(PostActionCommonProperties commonProperties, int xp) implem
 	}
 
 	@Override
-	public Component getDisplayName() {
+	public Component getName() {
 		return ClientProxy.format(CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(type())), xp);
 	}
 

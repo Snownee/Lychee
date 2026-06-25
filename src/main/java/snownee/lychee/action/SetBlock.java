@@ -47,7 +47,7 @@ public record SetBlock(PostActionCommonProperties commonProperties, BlockPredica
 	}
 
 	@Override
-	public Component getDisplayName() {
+	public Component getName() {
 		var blockState = BlockPredicateExtensions.anyBlockState(block);
 		var key = CommonProxy.makeDescriptionId("postAction", LycheeRegistries.POST_ACTION.getKey(type()));
 		return Component.translatable(key, blockState.getBlock().getName());

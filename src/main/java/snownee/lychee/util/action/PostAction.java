@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 
 import org.jspecify.annotations.Nullable;
 
+import com.google.common.base.MoreObjects;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -108,7 +109,7 @@ public interface PostAction extends PostActionDisplay, PostActionLike, Contextua
 	void apply(LycheeContext context, ActionContext actionContext, int times);
 
 	@Override
-	default Component getDisplayName() {
+	default Component getName() {
 		return Component.translatable(CommonProxy.makeDescriptionId(
 				"postAction",
 				LycheeRegistries.POST_ACTION.getKey(type())
@@ -133,5 +134,9 @@ public interface PostAction extends PostActionDisplay, PostActionLike, Contextua
 	@Override
 	default PostAction asAction() {
 		return this;
+	}
+
+	static Component getDisplayName(PostAction action) {
+		return MoreObjects.firstNonNull(action.commonProperties().customName(), action.getName());
 	}
 }

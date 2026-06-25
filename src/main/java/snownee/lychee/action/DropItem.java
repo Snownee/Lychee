@@ -56,7 +56,7 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStackTem
 	}
 
 	@Override
-	public Component getDisplayName() {
+	public Component getName() {
 		return itemStack.create().getHoverName();
 	}
 

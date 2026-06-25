@@ -4,6 +4,8 @@ item_in: bucket
 post:
 - id: water_bucket
   type: drop_item
+  name: Test
 - block: cauldron
   type: place
+  name: Test
 type: lychee:item_inside

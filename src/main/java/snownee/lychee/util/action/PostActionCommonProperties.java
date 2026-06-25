@@ -12,6 +12,8 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
@@ -21,7 +23,7 @@ import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PostActionCommonProperties {
-	public static final PostActionCommonProperties EMPTY = new PostActionCommonProperties(ContextualHolder.EMPTY, Optional.empty());
+	public static final PostActionCommonProperties EMPTY = new PostActionCommonProperties(ContextualHolder.EMPTY);
 
 	public static final Identifier HIDDEN = Identifier.withDefaultNamespace("hidden");
 	public static final MapCodec<Optional<Identifier>> ICON_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -33,28 +35,52 @@ public class PostActionCommonProperties {
 	public static final MapCodec<PostActionCommonProperties> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			LycheeRecipeCommonProperties.CONTEXTUAL_CODEC.forGetter(PostActionCommonProperties::conditions),
 			ICON_CODEC.forGetter(it -> Optional.ofNullable(it.icon())),
+			ComponentSerialization.CODEC.optionalFieldOf("name").forGetter(it -> Optional.ofNullable(it.customName())),
 			Codec.STRING.optionalFieldOf("@path").forGetter(PostActionCommonProperties::getPath)
-	).apply(instance, PostActionCommonProperties::new));
+	).apply(
+			instance, (conditions, icon, customName, path) -> {
+				if (conditions.isEmpty() && icon.isEmpty() && customName.isEmpty() && path.isEmpty()) {
+					return EMPTY;
+				}
+				return new PostActionCommonProperties(conditions, icon, customName, path);
+			}));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, PostActionCommonProperties> STREAM_CODEC = StreamCodec.composite(
 			ContextualHolder.STREAM_CODEC,
 			PostActionCommonProperties::conditions,
 			ByteBufCodecs.optional(Identifier.STREAM_CODEC),
 			$ -> Optional.ofNullable($.icon()),
-			PostActionCommonProperties::new);
+			ComponentSerialization.OPTIONAL_STREAM_CODEC,
+			$ -> Optional.ofNullable($.customName()),
+			(conditions, icon, customName) -> {
+				if (conditions.isEmpty() && icon.isEmpty() && customName.isEmpty()) {
+					return EMPTY;
+				}
+				return new PostActionCommonProperties(conditions, icon, customName, Optional.empty());
+			});
 
 	private Optional<String> path;
 	private final ContextualHolder conditions;
 	private final @Nullable Identifier icon;
+	private final @Nullable Component customName;
 
-	public PostActionCommonProperties(ContextualHolder conditions, Optional<Identifier> icon) {
-		this(conditions, icon, Optional.empty());
+	public PostActionCommonProperties(ContextualHolder conditions) {
+		this(conditions, Optional.empty(), Optional.empty());
 	}
 
-	public PostActionCommonProperties(ContextualHolder conditions, Optional<Identifier> icon, Optional<String> path) {
+	public PostActionCommonProperties(ContextualHolder conditions, Optional<Identifier> icon, Optional<Component> customName) {
+		this(conditions, icon, customName, Optional.empty());
+	}
+
+	public PostActionCommonProperties(
+			ContextualHolder conditions,
+			Optional<Identifier> icon,
+			Optional<Component> customName,
+			Optional<String> path) {
 		this.path = path;
 		this.conditions = conditions;
 		this.icon = icon.orElse(null);
+		this.customName = customName.orElse(null);
 	}
 
 	public ContextualHolder conditions() {
@@ -78,6 +104,11 @@ public class PostActionCommonProperties {
 		return HIDDEN.equals(icon);
 	}
 
+	@Nullable
+	public Component customName() {
+		return customName;
+	}
+
 	@Override
 	public String toString() {
 		return MoreObjects.toStringHelper(this)
@@ -96,9 +127,14 @@ public class PostActionCommonProperties {
 	public static class Builder {
 		private final List<ContextualCondition> conditions = Lists.newArrayList();
 		private @Nullable Identifier icon;
+		private @Nullable Component customName;
 
 		public PostActionCommonProperties build() {
-			return new PostActionCommonProperties(new ContextualHolder(List.copyOf(conditions)), Optional.ofNullable(icon));
+			return new PostActionCommonProperties(
+					new ContextualHolder(List.copyOf(conditions)),
+					Optional.ofNullable(icon),
+					Optional.ofNullable(customName),
+					Optional.empty());
 		}
 
 		public List<ContextualCondition> conditions() {
@@ -111,6 +147,10 @@ public class PostActionCommonProperties {
 
 		public void hide() {
 			icon = HIDDEN;
+		}
+
+		public void name(Component customName) {
+			this.customName = customName;
 		}
 	}
 }

@@ -23,7 +23,7 @@ public class PostActionIngredientHelper implements IIngredientHelper<PostAction>
 
 	@Override
 	public String getDisplayName(PostAction postAction) {
-		return postAction.getDisplayName().getString();
+		return PostAction.getDisplayName(postAction).getString();
 	}
 
 	@Override

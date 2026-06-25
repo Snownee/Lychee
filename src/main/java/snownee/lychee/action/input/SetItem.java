@@ -53,7 +53,7 @@ public record SetItem(
 	}
 
 	@Override
-	public Component getDisplayName() {
+	public Component getName() {
 		if (itemStack == null) {
 			return ItemStack.EMPTY.getHoverName(); //TODO
 		}
