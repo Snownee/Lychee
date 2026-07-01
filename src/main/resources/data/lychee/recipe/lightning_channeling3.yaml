@@ -2,6 +2,10 @@ post:
 - command: execute as @e[type=minecraft:pufferfish,distance=..5] at @s run 
     summon minecraft:guardian
   type: execute
+  if:
+    type: location
+    predicate:
+      biomes: pale_garden
 - command: execute as @e[type=minecraft:pufferfish,distance=..5] run tp ~ ~-1000
     ~
   type: execute

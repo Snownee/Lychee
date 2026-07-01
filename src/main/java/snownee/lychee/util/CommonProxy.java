@@ -151,25 +151,6 @@ public class CommonProxy implements ModInitializer {
 		}
 	}
 
-	public static String capitaliseAllWords(String str) {
-		var sz = str.length();
-		var buffer = new StringBuilder(sz);
-		var space = true;
-		for (var i = 0; i < sz; i++) {
-			var ch = str.charAt(i);
-			if (Character.isWhitespace(ch)) {
-				buffer.append(ch);
-				space = true;
-			} else if (space) {
-				buffer.append(Character.toTitleCase(ch));
-				space = false;
-			} else {
-				buffer.append(ch);
-			}
-		}
-		return buffer.toString();
-	}
-
 	public static <T> T getCycledItem(List<T> list, T fallback, int interval) {
 		if (list.isEmpty()) {
 			return fallback;

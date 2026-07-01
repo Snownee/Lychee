@@ -7,8 +7,11 @@ import snownee.kiwi.datagen.KiwiLanguageProvider;
 public class LycheeDataGen implements DataGeneratorEntrypoint {
 	@Override
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
-		pack.addProvider(KiwiLanguageProvider::new);
-		pack.addProvider(TestRecipeProvider::new);
+		try {
+			FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
+			pack.addProvider(KiwiLanguageProvider::new);
+			pack.addProvider(TestRecipeProvider::new);
+		} catch (Exception _) {
+		}
 	}
 }

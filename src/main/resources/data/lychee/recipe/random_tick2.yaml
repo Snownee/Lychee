@@ -1,5 +1,5 @@
 block_in: wheat
-contextual:
+if:
 - type: weather
   weather: rain
 post:

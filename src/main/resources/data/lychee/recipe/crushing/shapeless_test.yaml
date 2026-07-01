@@ -1,4 +1,4 @@
-contextual:
+if:
   type: weather
   weather: rain
 falling_block: dragon_egg

@@ -123,7 +123,7 @@ jar {
     exclude("/data/${project.mod_id}/lychee_fragment")
     exclude("/data/${project.mod_id}/predicate")
     exclude("/data/${project.mod_id}/recipe")
-    exclude("/snownee/${project.mod_id}/datagen/LycheeDataGen.class")
+//    exclude("/snownee/${project.mod_id}/datagen/LycheeDataGen.class")
     exclude("/snownee/${project.mod_id}/datagen/TestRecipeProvider.class")
 
     exclude '**/*.py'
