@@ -33,6 +33,7 @@ import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstanceProviders;
 import snownee.lychee.compat.recipeviewer.element.SideBlockIcon;
 import snownee.lychee.recipes.ExplodingRecipe;
+import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -134,6 +135,7 @@ public class RvPlugin<Helper extends RvHelper> {
 							AllGuiTextures.DOWN_ARROW,
 							Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
 				});
+		CommonProxy.RECIPE_CATEGORY_EVENT.invoker().accept(this);
 
 		for (var recipeType : RecipeTypes.ALL) {
 			//noinspection unchecked

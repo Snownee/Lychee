@@ -2,7 +2,6 @@ package snownee.lychee.util;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 import java.util.function.Consumer;
 
 import org.jspecify.annotations.Nullable;
@@ -35,6 +34,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -64,6 +64,7 @@ import snownee.lychee.action.CustomAction;
 import snownee.lychee.compat.recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.compat.recipe_api.VisualOnlyComponentsIngredient;
 import snownee.lychee.compat.recipeviewer.IngredientType;
+import snownee.lychee.compat.recipeviewer.RvPlugin;
 import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
@@ -100,30 +101,41 @@ public class CommonProxy implements ModInitializer {
 				return false;
 			}
 	);
-	private static final Random RANDOM = new Random();
+	public static final KEvent<Consumer<RvPlugin<?>>> RECIPE_CATEGORY_EVENT = KEvent.createArrayBacked(
+			Consumer.class,
+			listeners -> plugin -> {
+				for (var listener : listeners) {
+					listener.accept(plugin);
+				}
+			}
+	);
 	@Unique
 	public static final ThreadLocal<@Nullable JsonFragmentManager> fragmentManagerProvider = new ThreadLocal<>();
 	public static boolean hasDFLib = Platform.isModLoaded("dripstone_fluid_lib");
 
 	public static void dropItemStack(
-			Level pLevel,
+			Level level,
 			double pX,
 			double pY,
 			double pZ,
 			ItemStack pStack,
 			@Nullable Consumer<ItemEntity> extraStep
 	) {
+		if (level.isClientSide()) {
+			return;
+		}
+		RandomSource random = level.getRandom();
 		while (!pStack.isEmpty()) {
-			var itementity = new ItemEntity(pLevel, pX, pY, pZ, pStack.split(Math.min(RANDOM.nextInt(21) + 10, pStack.getMaxStackSize())));
+			var itementity = new ItemEntity(level, pX, pY, pZ, pStack.split(Math.min(random.nextInt(21) + 10, pStack.getMaxStackSize())));
 			itementity.setDeltaMovement(
-					RANDOM.nextGaussian() * 0.05 - 0.025,
-					RANDOM.nextGaussian() * 0.05 + 0.2,
-					RANDOM.nextGaussian() * 0.05 - 0.025
+					random.nextGaussian() * 0.05 - 0.025,
+					random.nextGaussian() * 0.05 + 0.2,
+					random.nextGaussian() * 0.05 - 0.025
 			);
 			if (extraStep != null) {
 				extraStep.accept(itementity);
 			}
-			pLevel.addFreshEntity(itementity);
+			level.addFreshEntity(itementity);
 		}
 	}
 
@@ -228,6 +240,10 @@ public class CommonProxy implements ModInitializer {
 
 	public static void registerCustomConditionListener(CustomConditionListener listener) {
 		CUSTOM_CONDITION_EVENT.register(listener);
+	}
+
+	public static void registerRecipeCategoryListener(Consumer<RvPlugin<?>> listener) {
+		RECIPE_CATEGORY_EVENT.register(listener);
 	}
 
 	public static void postCustomActionEvent(

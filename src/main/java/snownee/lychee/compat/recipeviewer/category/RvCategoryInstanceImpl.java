@@ -37,8 +37,8 @@ public class RvCategoryInstanceImpl<R extends ILycheeRecipe<LycheeContext>> impl
 		this.type = type;
 		this.id = id;
 		this.helper = helper;
-		metadata = helper.getMetadata(this);
-		modifiers = helper.getModifiers(this);
+		metadata = helper.metadata(this);
+		modifiers = helper.modifiers(this);
 		decorations.putAll(type.decorations);
 		conditions.putAll(type.conditions);
 		processDecorations(metadata().elements().orElse(null), decorations);

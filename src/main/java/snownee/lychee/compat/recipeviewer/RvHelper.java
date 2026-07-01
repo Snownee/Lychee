@@ -29,16 +29,22 @@ import snownee.lychee.util.ui.CategorySettingRecipe;
 import snownee.lychee.util.ui.InputAction;
 
 public abstract class RvHelper {
+	private RecipeMap recipeMap = RecipeMap.EMPTY;
 	private List<RecipeHolder<CategoryMetadata>> metadataList = List.of();
 	private List<RecipeHolder<CategoryModifier>> modifierList = List.of();
 
 	public void init(RecipeMap recipeMap) {
+		this.recipeMap = recipeMap;
 		Comparator<RecipeHolder<? extends CategorySettingRecipe>> comparator = Comparator.comparing(RecipeHolder::value);
 		metadataList = ImmutableList.sortedCopyOf(comparator, recipeMap.byType(RecipeTypes.CATEGORY_METADATA));
 		modifierList = ImmutableList.sortedCopyOf(comparator, recipeMap.byType(RecipeTypes.CATEGORY_MODIFIER));
 	}
 
-	public RecipeHolder<CategoryMetadata> getMetadata(RvCategoryInstance<?> category) {
+	public RecipeMap recipeMap() {
+		return recipeMap;
+	}
+
+	public RecipeHolder<CategoryMetadata> metadata(RvCategoryInstance<?> category) {
 		String id = category.id().toString();
 		for (RecipeHolder<CategoryMetadata> metadata : metadataList) {
 			if (metadata.value().category().test(id)) {
@@ -48,7 +54,7 @@ public abstract class RvHelper {
 		return CategoryMetadata.EMPTY;
 	}
 
-	public List<RecipeHolder<CategoryModifier>> getModifiers(RvCategoryInstance<?> category) {
+	public List<RecipeHolder<CategoryModifier>> modifiers(RvCategoryInstance<?> category) {
 		String id = category.id().toString();
 		List<RecipeHolder<CategoryModifier>> list = Lists.newArrayList();
 		for (RecipeHolder<CategoryModifier> modifier : modifierList) {
