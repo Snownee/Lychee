@@ -2,6 +2,7 @@ package snownee.lychee.util;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 import org.jspecify.annotations.Nullable;
@@ -12,17 +13,18 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 
-import net.fabricmc.api.ModInitializer;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.fml.common.Mod;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
+import snownee.kiwi.recipe.CustomIngredientSerializer;
 import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.core.dispenser.BlockSource;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
@@ -50,9 +52,7 @@ import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import snownee.kiwi.Mod;
 import snownee.kiwi.loader.Platform;
-import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.LycheeTags;
@@ -78,37 +78,10 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.ui.UIElementType;
 
 @Mod(Lychee.ID)
-public class CommonProxy implements ModInitializer {
-	public static final KEvent<CustomActionListener> CUSTOM_ACTION_EVENT = KEvent.createArrayBacked(
-			CustomActionListener.class,
-			listeners -> (id, action, recipe) -> {
-				for (var listener : listeners) {
-					if (listener.on(id, action, recipe)) {
-						return true;
-					}
-				}
-				return false;
-			}
-	);
-	public static final KEvent<CustomConditionListener> CUSTOM_CONDITION_EVENT = KEvent.createArrayBacked(
-			CustomConditionListener.class,
-			listeners -> (id, condition) -> {
-				for (var listener : listeners) {
-					if (listener.on(id, condition)) {
-						return true;
-					}
-				}
-				return false;
-			}
-	);
-	public static final KEvent<Consumer<RvPlugin<?>>> RECIPE_CATEGORY_EVENT = KEvent.createArrayBacked(
-			Consumer.class,
-			listeners -> plugin -> {
-				for (var listener : listeners) {
-					listener.accept(plugin);
-				}
-			}
-	);
+public class CommonProxy {
+	private static final List<CustomActionListener> CUSTOM_ACTION_LISTENERS = new CopyOnWriteArrayList<>();
+	private static final List<CustomConditionListener> CUSTOM_CONDITION_LISTENERS = new CopyOnWriteArrayList<>();
+	private static final List<Consumer<RvPlugin<?>>> RECIPE_CATEGORY_LISTENERS = new CopyOnWriteArrayList<>();
 	@Unique
 	public static final ThreadLocal<@Nullable JsonFragmentManager> fragmentManagerProvider = new ThreadLocal<>();
 	public static boolean hasDFLib = Platform.isModLoaded("dripstone_fluid_lib");
@@ -215,7 +188,7 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static boolean isSimpleIngredient(Ingredient ingredient) {
-		return !ingredient.requiresTesting();
+		return ingredient.isSimple();
 	}
 
 	public static JsonObject tagToJson(CompoundTag tag) {
@@ -235,15 +208,15 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static void registerCustomActionListener(CustomActionListener listener) {
-		CUSTOM_ACTION_EVENT.register(listener);
+		CUSTOM_ACTION_LISTENERS.add(listener);
 	}
 
 	public static void registerCustomConditionListener(CustomConditionListener listener) {
-		CUSTOM_CONDITION_EVENT.register(listener);
+		CUSTOM_CONDITION_LISTENERS.add(listener);
 	}
 
 	public static void registerRecipeCategoryListener(Consumer<RvPlugin<?>> listener) {
-		RECIPE_CATEGORY_EVENT.register(listener);
+		RECIPE_CATEGORY_LISTENERS.add(listener);
 	}
 
 	public static void postCustomActionEvent(
@@ -251,16 +224,26 @@ public class CommonProxy implements ModInitializer {
 			CustomAction action,
 			ILycheeRecipe<?> recipe
 	) {
-		CUSTOM_ACTION_EVENT.invoker().on(id, action, recipe);
+		for (var listener : CUSTOM_ACTION_LISTENERS) {
+			listener.on(id, action, recipe);
+		}
 	}
 
 	public static void postCustomConditionEvent(String id, CustomCondition condition) {
-		CUSTOM_CONDITION_EVENT.invoker().on(id, condition);
+		for (var listener : CUSTOM_CONDITION_LISTENERS) {
+			listener.on(id, condition);
+		}
+	}
+
+	public static void postRecipeCategoryEvent(RvPlugin<?> plugin) {
+		for (var listener : RECIPE_CATEGORY_LISTENERS) {
+			listener.accept(plugin);
+		}
 	}
 
 	public static IngredientType getIngredientType(Ingredient ingredient) {
 		var customIngredient = ingredient.getCustomIngredient();
-		if (customIngredient != null && customIngredient.getSerializer() == AlwaysTrueIngredient.SERIALIZER) {
+		if (customIngredient != null && Objects.equals(NeoForgeRegistries.INGREDIENT_TYPES.getKey(customIngredient.getType()), AlwaysTrueIngredient.ID)) {
 			return IngredientType.ANY;
 		}
 		if (ingredient.isEmpty()) { // TODO not compatible with AIR_INGREDIENT!
@@ -295,15 +278,20 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static <T> String getTagTranslationKey(TagKey<T> key) {
-		return key.getTranslationKey();
+		return Tags.getTagTranslationKey(key);
 	}
 
 	public static void hurtAndBreak(ItemStack itemStack, int damage, ServerLevel level, @Nullable LivingEntity entity) {
 		itemStack.hurtAndBreak(damage, level, entity instanceof ServerPlayer player ? player : null, $ -> {});
 	}
 
-	@Override
-	public void onInitialize() {
+	public CommonProxy(IEventBus modEventBus) {
+		modEventBus.addListener(LycheeRegistries::init);
+		RecipeTypes.RECIPE_TYPES.register(modEventBus);
+		RecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
+		RecipeBookCategories.RECIPE_BOOK_CATEGORIES.register(modEventBus);
+		SlotDisplayTypes.SLOT_DISPLAYS.register(modEventBus);
+		DripstoneParticleService.PARTICLE_TYPES.register(modEventBus);
 		Objects.requireNonNull(RecipeTypes.ALL);
 		Objects.requireNonNull(LycheeTags.FIRE_IMMUNE);
 		Objects.requireNonNull(LycheeRegistries.CONTEXTUAL);
@@ -325,22 +313,6 @@ public class CommonProxy implements ModInitializer {
 		UseBlockCallback.EVENT.register(BlockInteractingRecipe::invoke);
 		AttackBlockCallback.EVENT.register(BlockClickingRecipe::invoke);
 
-		// Dripstone recipes
-		Registry.register(
-				BuiltInRegistries.PARTICLE_TYPE,
-				Lychee.id("dripstone_dripping"),
-				DripstoneParticleService.DRIPSTONE_DRIPPING
-		);
-		Registry.register(
-				BuiltInRegistries.PARTICLE_TYPE,
-				Lychee.id("dripstone_falling"),
-				DripstoneParticleService.DRIPSTONE_FALLING
-		);
-		Registry.register(
-				BuiltInRegistries.PARTICLE_TYPE,
-				Lychee.id("dripstone_splash"),
-				DripstoneParticleService.DRIPSTONE_SPLASH
-		);
 	}
 
 	public interface CustomActionListener {

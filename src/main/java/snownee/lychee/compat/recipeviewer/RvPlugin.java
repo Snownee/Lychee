@@ -135,7 +135,7 @@ public class RvPlugin<Helper extends RvHelper> {
 							AllGuiTextures.DOWN_ARROW,
 							Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
 				});
-		CommonProxy.RECIPE_CATEGORY_EVENT.invoker().accept(this);
+		CommonProxy.postRecipeCategoryEvent(this);
 
 		for (var recipeType : RecipeTypes.ALL) {
 			//noinspection unchecked

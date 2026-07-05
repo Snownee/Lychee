@@ -11,7 +11,6 @@ import org.jspecify.annotations.Nullable;
 import com.mojang.blaze3d.platform.InputConstants;
 
 import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.fabric.ingredients.fluids.IJeiFluidIngredient;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.helpers.IPlatformFluidHelper;
 import mezz.jei.api.recipe.RecipeIngredientRole;
@@ -57,7 +56,7 @@ public class JeiRvHelper extends RvHelper {
 			var recipesGui = runtime.getRecipesGui();
 			var helpers = runtime.getJeiHelpers();
 			//noinspection unchecked
-			var fluidHelper = (IPlatformFluidHelper<IJeiFluidIngredient>) helpers.getPlatformFluidHelper();
+			var fluidHelper = (IPlatformFluidHelper) helpers.getPlatformFluidHelper();
 			var focusFactory = helpers.getFocusFactory();
 			var role = action == InputAction.Direct.SHOW_USAGES ? RecipeIngredientRole.INPUT : RecipeIngredientRole.OUTPUT;
 			//noinspection deprecation

@@ -11,7 +11,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.world.level.Level;
-import snownee.kiwi.util.codec.KCodecs;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.LycheeLootContextParamSets;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.context.LootParamsContext;
@@ -63,7 +63,7 @@ public final class ActionData {
 				Codec.INT.fieldOf("delayedTicks").forGetter(Builder::delayedTicks),
 				Codec.BOOL.optionalFieldOf("avoidDefault", false).forGetter(Builder::avoidDefault),
 				Codec.INT.fieldOf("state")
-						.flatXmap(it -> KCodecs.tryCatch(() -> ActionContext.State.values()[it]), it -> DataResult.success(it.ordinal()))
+						.flatXmap(it -> LycheeCodecs.tryCatch(() -> ActionContext.State.values()[it]), it -> DataResult.success(it.ordinal()))
 						.forGetter(Builder::state),
 				Codec.list(Job.CODEC)
 						.fieldOf("jobs")

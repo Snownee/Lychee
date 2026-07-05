@@ -11,7 +11,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ExtraCodecs;
-import snownee.kiwi.util.codec.KCodecs;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.PostAction;
@@ -91,7 +91,7 @@ public class CustomAction implements PostAction {
 		public static final MapCodec<CustomAction> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(CustomAction::commonProperties),
 				ExtraCodecs.NON_EMPTY_STRING.fieldOf("id").forGetter(CustomAction::id),
-				ExtraCodecs.JSON.comapFlatMap(it -> KCodecs.tryCatch(it::getAsJsonObject), Function.identity())
+				ExtraCodecs.JSON.comapFlatMap(it -> LycheeCodecs.tryCatch(it::getAsJsonObject), Function.identity())
 						.optionalFieldOf("data", new JsonObject())
 						.forGetter(CustomAction::data),
 				Codec.BOOL.optionalFieldOf("repeatable", true).forGetter(CustomAction::repeatable),

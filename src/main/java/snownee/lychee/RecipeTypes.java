@@ -5,13 +5,13 @@ import java.util.Set;
 
 import com.google.common.collect.Sets;
 
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
@@ -46,6 +46,7 @@ public final class RecipeTypes {
 		Objects.requireNonNull(LycheeLootContextParamSets.ALL);
 	}
 
+	public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(BuiltInRegistries.RECIPE_TYPE, Lychee.ID);
 	public static final Set<LycheeRecipeType<? extends ILycheeRecipe<LycheeContext>>> ALL = Sets.newLinkedHashSet();
 
 	public static final RecipeType<CategoryMetadata> CATEGORY_METADATA = register("category_metadata");
@@ -138,7 +139,8 @@ public final class RecipeTypes {
 
 	public static <T extends LycheeRecipeType<? extends ILycheeRecipe<LycheeContext>>> T register(T recipeType) {
 		ALL.add(recipeType);
-		return Registry.register(BuiltInRegistries.RECIPE_TYPE, recipeType.id, recipeType);
+		RECIPE_TYPES.register(recipeType.id.getPath(), () -> recipeType);
+		return recipeType;
 	}
 
 	public static void buildCache(RecipeMap recipeMap) {
@@ -154,13 +156,14 @@ public final class RecipeTypes {
 	@SuppressWarnings("unchecked")
 	public static <T extends RecipeType<?>> T register(String name) {
 		Identifier id = Lychee.id(name);
-		return (T) Registry.register(
-				BuiltInRegistries.RECIPE_TYPE, id, new RecipeType<>() {
-					@Override
-					public String toString() {
-						return id.toString();
-					}
-				});
+		T recipeType = (T) new RecipeType<>() {
+			@Override
+			public String toString() {
+				return id.toString();
+			}
+		};
+		RECIPE_TYPES.register(name, () -> recipeType);
+		return recipeType;
 	}
 
 }

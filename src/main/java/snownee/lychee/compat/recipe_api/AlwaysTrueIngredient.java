@@ -1,24 +1,16 @@
 package snownee.lychee.compat.recipe_api;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 import com.mojang.serialization.MapCodec;
 
-import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemStackTemplate;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.display.SlotDisplay;
-import net.minecraft.world.level.block.TestBlock;
-import net.minecraft.world.level.block.state.properties.TestBlockMode;
 import snownee.kiwi.recipe.CustomIngredient;
 import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.lychee.Lychee;
-import snownee.lychee.util.Displays;
 
 public class AlwaysTrueIngredient implements CustomIngredient {
 	public static final Identifier ID = Lychee.id("always_true");
@@ -30,15 +22,8 @@ public class AlwaysTrueIngredient implements CustomIngredient {
 	}
 
 	@Override
-	public Stream<Holder<Item>> items() {
-		return Stream.empty();
-	}
-
-	@Override
-	public SlotDisplay display() {
-		return Displays.slot(ItemStackTemplate.fromNonEmptyStack(TestBlock.setModeOnStack(
-				new ItemStack(Items.TEST_BLOCK),
-				TestBlockMode.ACCEPT)));
+	public List<ItemStack> getMatchingStacks() {
+		return List.of();
 	}
 
 	@Override
@@ -62,12 +47,12 @@ public class AlwaysTrueIngredient implements CustomIngredient {
 		}
 
 		@Override
-		public MapCodec<AlwaysTrueIngredient> getCodec() {
+		public MapCodec<AlwaysTrueIngredient> getCodec(boolean allowEmpty) {
 			return CODEC;
 		}
 
 		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, AlwaysTrueIngredient> getStreamCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, AlwaysTrueIngredient> getPacketCodec() {
 			return STREAM_CODEC;
 		}
 	}

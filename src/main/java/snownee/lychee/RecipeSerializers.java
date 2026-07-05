@@ -5,8 +5,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.mojang.serialization.MapCodec;
 
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.crafting.Recipe;
@@ -29,6 +29,7 @@ import snownee.lychee.util.ui.CategoryMetadata;
 import snownee.lychee.util.ui.CategoryModifier;
 
 public final class RecipeSerializers {
+	public static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, Lychee.ID);
 	public static final List<RecipeSerializer<?>> ALL = Lists.newArrayList();
 	public static final RecipeSerializer<CategoryMetadata> CATEGORY_METADATA = register(
 			"category_metadata",
@@ -101,7 +102,8 @@ public final class RecipeSerializers {
 			StreamCodec<RegistryFriendlyByteBuf, T> streamCodec) {
 		RecipeSerializer<T> serializer = new RecipeSerializer<>(codec, streamCodec);
 		ALL.add(serializer);
-		return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Lychee.id(id), serializer);
+		RECIPE_SERIALIZERS.register(id, () -> serializer);
+		return serializer;
 	}
 
 }

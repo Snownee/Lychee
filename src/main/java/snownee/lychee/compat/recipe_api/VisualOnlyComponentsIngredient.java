@@ -7,21 +7,18 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
-import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
-import net.fabricmc.fabric.api.recipe.v1.ingredient.FabricIngredient;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.flag.FeatureFlagSet;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.display.DisplayContentsFactory;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
+import snownee.kiwi.recipe.CustomIngredient;
+import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.lychee.Lychee;
 import snownee.lychee.SlotDisplayTypes;
 
@@ -47,19 +44,21 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 	}
 
 	@Override
-	public Stream<Holder<Item>> items() {
-		return Stream.empty();
-	}
-
-	@Override
-	public SlotDisplay display() {
-		return new Display(base.display(), components);
+	public List<ItemStack> getMatchingStacks() {
+		return base.items()
+				.map(holder -> new ItemStack(holder.value()))
+				.map(stack -> {
+					ItemStack copy = stack.copy();
+					copy.applyComponents(components);
+					return copy;
+				})
+				.filter(base::test)
+				.toList();
 	}
 
 	@Override
 	public boolean requiresTesting() {
-		// TODO Fabric recipe api interface injection isn't working now
-		return ((FabricIngredient) (Object) base).requiresTesting();
+		return !base.isSimple();
 	}
 
 	@Override
@@ -97,12 +96,12 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 		}
 
 		@Override
-		public MapCodec<VisualOnlyComponentsIngredient> getCodec() {
+		public MapCodec<VisualOnlyComponentsIngredient> getCodec(boolean allowEmpty) {
 			return CODEC;
 		}
 
 		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, VisualOnlyComponentsIngredient> getStreamCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, VisualOnlyComponentsIngredient> getPacketCodec() {
 			return STREAM_CODEC;
 		}
 	}
