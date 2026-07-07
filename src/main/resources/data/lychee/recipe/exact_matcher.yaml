@@ -1,0 +1,4 @@
+type: "lychee:block_interacting"
+item_in: 'minecraft:stick'
+block_in: "minecraft:oak_fence_gate[in_wall=true]"
+post: [ 'place minecraft:stone', 'prevent_default' ]
