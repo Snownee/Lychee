@@ -13,7 +13,6 @@ import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import snownee.lychee.Lychee;
@@ -37,7 +36,7 @@ public class CustomCondition implements ContextualCondition {
 	public CustomCondition(String id, JsonObject data) {
 		this.id = id;
 		this.data = data;
-		CommonProxy.postCustomConditionEvent(GsonHelper.getAsString(data, "id"), this);
+		CommonProxy.postCustomConditionEvent(id, this);
 	}
 
 	@Override
@@ -65,7 +64,7 @@ public class CustomCondition implements ContextualCondition {
 
 	@Override
 	public MutableComponent getDescription(boolean inverted) {
-		return Component.translatable(getDescriptionId(inverted), GsonHelper.getAsString(data, "id"));
+		return Component.translatable(getDescriptionId(inverted), id);
 	}
 
 	public JsonObject data() {
