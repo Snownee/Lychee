@@ -43,7 +43,7 @@
 	],
 	"accessWidener": "lychee.classtweaker",
 	"depends": {
-		"kiwi": ">=26"
+		"kiwi": ">=26.0.14"
 	},
 	"custom": {
 		"modmenu": {
