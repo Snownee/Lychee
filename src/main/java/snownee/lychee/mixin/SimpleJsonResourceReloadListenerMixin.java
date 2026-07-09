@@ -2,11 +2,13 @@ package snownee.lychee.mixin;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -38,13 +40,35 @@ public class SimpleJsonResourceReloadListenerMixin {
 	@Inject(
 			method = "scanDirectory(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/resources/FileToIdConverter;Lcom/mojang/serialization/DynamicOps;Lcom/mojang/serialization/Codec;Ljava/util/Map;)V",
 			at = @At("HEAD"))
-	private static <T> void lychee_beginApply(
+	private static <T> void lychee_beginApply_scanDirectory(
 			ResourceManager manager,
 			FileToIdConverter lister,
 			DynamicOps<JsonElement> ops,
 			Codec<T> codec,
 			Map<Identifier, T> result,
 			CallbackInfo ci) {
+		lychee_beginApply(manager, lister, ops, codec, result);
+	}
+
+	@Inject(method = "scanDirectoryWithModifier", at = @At("HEAD"))
+	private static <T> void lychee_beginApply_scanDirectoryWithModifier(
+			ResourceManager manager,
+			FileToIdConverter lister,
+			DynamicOps<JsonElement> ops,
+			Codec<T> codec,
+			Map<Identifier, T> result,
+			Consumer<Map<Identifier, JsonElement>> jsonConsumer,
+			CallbackInfo ci) {
+		lychee_beginApply(manager, lister, ops, codec, result);
+	}
+
+	@Unique
+	private static <T> void lychee_beginApply(
+			ResourceManager manager,
+			FileToIdConverter lister,
+			DynamicOps<JsonElement> ops,
+			Codec<T> codec,
+			Map<Identifier, T> result) {
 		if (lister != RecipeManager.RECIPE_LISTER) {
 			return;
 		}

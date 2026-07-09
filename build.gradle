@@ -80,6 +80,8 @@ neoForge {
             client()
             ideName = "Run ${project.mod_id} - Client"
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'mixin.debug.export', 'true'
+            systemProperty 'mixin.debug.verbose', 'true'
         }
 
         server {
@@ -87,6 +89,8 @@ neoForge {
             ideName = "Run ${project.mod_id} - Server"
             programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'mixin.debug.export', 'true'
+            systemProperty 'mixin.debug.verbose', 'true'
         }
 
         gameTestServer {
