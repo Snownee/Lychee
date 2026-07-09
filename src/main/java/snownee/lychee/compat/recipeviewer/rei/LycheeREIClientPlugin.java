@@ -1,7 +1,6 @@
 package snownee.lychee.compat.recipeviewer.rei;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.joml.Vector2f;
 import org.joml.Vector2fc;
@@ -22,11 +21,11 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
+import me.shedaniel.rei.forge.REIPluginClient;
 import me.shedaniel.rei.plugin.common.BuiltinPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeMap;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
@@ -43,8 +42,8 @@ import snownee.lychee.compat.recipeviewer.rei.element.LycheeEntryWidget;
 import snownee.lychee.compat.recipeviewer.rei.element.RenderElementAdapter;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.action.PostAction;
-import snownee.lychee.util.recipe.ILycheeRecipe;
 
+@REIPluginClient
 public class LycheeREIClientPlugin implements REIClientPlugin {
 	public static final Identifier ID = Lychee.id("main");
 	public static final EntryType<PostAction> POST_ACTION = EntryType.deferred(Lychee.id("post_action"));
