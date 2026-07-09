@@ -53,3 +53,8 @@ versionRange="[26.1.819,)"
 modId="jade"
 type="optional"
 versionRange="[26.1.8,)"
+
+[[dependencies.lychee]]
+modId="kubejs"
+type="optional"
+versionRange="[26.1.2-8.0.3,)"

@@ -51,6 +51,13 @@ repositories {
             includeGroup "dev.latvian.apps"
         }
     }
+    maven {
+        // For com.github.rtyley:animated-gif-lib-for-java, a KubeJS dependency
+        url 'https://jitpack.io'
+        content {
+            includeGroup "com.github.rtyley"
+        }
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -119,6 +126,7 @@ dependencies {
     implementation "mezz.jei:jei-${project.jei_minecraft_version}-common-api:${project.jei_version}"
     implementation "mezz.jei:jei-${project.jei_minecraft_version}-neoforge-api:${project.jei_version}"
     implementation "mezz.jei:jei-${project.jei_minecraft_version}-neoforge:${project.jei_version}"
+    implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     annotationProcessor fileTree(dir: "libs", include: ["*.jar"])
