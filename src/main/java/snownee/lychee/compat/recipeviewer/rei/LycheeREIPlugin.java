@@ -3,12 +3,10 @@ package snownee.lychee.compat.recipeviewer.rei;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.entry.type.EntryTypeRegistry;
 import me.shedaniel.rei.api.common.plugins.REICommonPlugin;
-import me.shedaniel.rei.forge.REIPluginCommon;
 import snownee.lychee.Lychee;
 import snownee.lychee.compat.recipeviewer.rei.ingredient.PostActionIngredientHelper;
 import snownee.lychee.util.action.PostAction;
 
-@REIPluginCommon
 public class LycheeREIPlugin implements REICommonPlugin {
 	public static final EntryType<PostAction> POST_ACTION = EntryType.deferred(Lychee.id("post_action"));
 

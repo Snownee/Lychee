@@ -21,7 +21,6 @@ import me.shedaniel.rei.api.common.category.CategoryIdentifier;
 import me.shedaniel.rei.api.common.display.Display;
 import me.shedaniel.rei.api.common.entry.type.EntryType;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
-import me.shedaniel.rei.forge.REIPluginClient;
 import me.shedaniel.rei.plugin.common.BuiltinPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
@@ -43,7 +42,6 @@ import snownee.lychee.compat.recipeviewer.rei.element.RenderElementAdapter;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.action.PostAction;
 
-@REIPluginClient
 public class LycheeREIClientPlugin implements REIClientPlugin {
 	public static final Identifier ID = Lychee.id("main");
 	public static final EntryType<PostAction> POST_ACTION = EntryType.deferred(Lychee.id("post_action"));
