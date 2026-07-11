@@ -52,6 +52,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import snownee.jade.api.theme.IThemeHelper;
 import snownee.jade.util.ModIdentification;
 import snownee.lychee.compat.recipeviewer.RvHelper;
+import snownee.lychee.mixin.predicates.StatePropertiesPredicate$ExactMatcherAccess;
+import snownee.lychee.mixin.predicates.StatePropertiesPredicate$PropertyMatcherAccess;
 import snownee.lychee.util.ClientProxy;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -107,9 +109,11 @@ public class BlockPredicateExtensions {
 								Optional.of(new StatePropertiesPredicate($.properties()
 										.entrySet()
 										.stream()
-										.map(it -> new StatePropertiesPredicate.PropertyMatcher(
+										.map(it -> StatePropertiesPredicate$PropertyMatcherAccess.create(
 												it.getKey().getName(),
-												new StatePropertiesPredicate.ExactMatcher(getNameByValue(it.getKey(), it.getValue()))))
+												StatePropertiesPredicate$ExactMatcherAccess.create(getNameByValue(
+														it.getKey(),
+														it.getValue()))))
 										.toList())),
 						Optional.ofNullable($.nbt()).map(NbtPredicate::new)),
 				$ -> new BlockPredicate(
@@ -119,9 +123,9 @@ public class BlockPredicateExtensions {
 								Optional.of(new StatePropertiesPredicate($.vagueProperties()
 										.entrySet()
 										.stream()
-										.map(it -> new StatePropertiesPredicate.PropertyMatcher(
+										.map(it -> StatePropertiesPredicate$PropertyMatcherAccess.create(
 												it.getKey(),
-												new StatePropertiesPredicate.ExactMatcher(it.getValue())))
+												StatePropertiesPredicate$ExactMatcherAccess.create(it.getValue())))
 										.toList())),
 						Optional.ofNullable($.nbt()).map(NbtPredicate::new)
 				)

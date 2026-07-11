@@ -24,6 +24,8 @@
 		"particles.PointedDripstoneBlockMixin",
 		"predicates.LocationPredicate$BuilderAccess",
 		"predicates.PositionPredicateAccess",
+		"predicates.StatePropertiesPredicate$ExactMatcherAccess",
+		"predicates.StatePropertiesPredicate$PropertyMatcherAccess",
 		"recipes.anvilcrafting.AnvilMenuMixin",
 		"recipes.blockcrushing.FallingBlockEntityMixin",
 		"recipes.blockexploding.ExplosionMixin",
