@@ -1,8 +1,6 @@
 package snownee.lychee.util;
 
 import java.text.MessageFormat;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
@@ -25,6 +23,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.material.Fluid;
 import snownee.kiwi.loader.Platform;
+import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
 import snownee.lychee.client.gui.InteractiveRenderElement;
 import snownee.lychee.util.action.ActionRenderer;
@@ -37,7 +36,17 @@ import snownee.lychee.util.ui.InputAction;
 @Mod(value = Lychee.ID, dist = Dist.CLIENT)
 public class ClientProxy {
 
-	private static final List<RecipeViewerWidgetInputListener> RECIPE_VIEWER_WIDGET_INPUT_LISTENERS = new CopyOnWriteArrayList<>();
+	private static final KEvent<RecipeViewerWidgetInputListener> RECIPE_VIEWER_WIDGET_INPUT_EVENT = KEvent.createArrayBacked(
+			RecipeViewerWidgetInputListener.class,
+			listeners -> (recipe, id, action) -> {
+				for (var listener : listeners) {
+					if (listener.on(recipe, id, action)) {
+						return true;
+					}
+				}
+				return false;
+			}
+	);
 	public static boolean hasJade = Platform.isModLoaded("jade");
 
 	public static MutableComponent format(String s, Object... objects) {
@@ -49,7 +58,7 @@ public class ClientProxy {
 	}
 
 	public static void registerWidgetInputListener(RecipeViewerWidgetInputListener listener) {
-		RECIPE_VIEWER_WIDGET_INPUT_LISTENERS.add(listener);
+		RECIPE_VIEWER_WIDGET_INPUT_EVENT.register(listener);
 	}
 
 	public static boolean postWidgetInputEvent(
@@ -60,12 +69,7 @@ public class ClientProxy {
 		if (!action.isMouseOver(element)) {
 			return false;
 		}
-		for (var listener : RECIPE_VIEWER_WIDGET_INPUT_LISTENERS) {
-			if (listener.on(recipe, id, action)) {
-				return true;
-			}
-		}
-		return false;
+		return RECIPE_VIEWER_WIDGET_INPUT_EVENT.invoker().on(recipe, id, action);
 	}
 
 	public static Component getFluidName(Fluid fluid) {

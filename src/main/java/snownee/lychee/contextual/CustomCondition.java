@@ -17,7 +17,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.TriState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import snownee.lychee.util.codec.LycheeCodecs;
+import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.context.LycheeContext;
@@ -75,7 +75,7 @@ public class CustomCondition implements ContextualCondition {
 		// TODO 需要测试
 		public static final MapCodec<CustomCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				ExtraCodecs.NON_EMPTY_STRING.fieldOf("id").forGetter(CustomCondition::id),
-				ExtraCodecs.JSON.comapFlatMap(it -> LycheeCodecs.tryCatch(it::getAsJsonObject), Function.identity())
+				ExtraCodecs.JSON.comapFlatMap(it -> KCodecs.tryCatch(it::getAsJsonObject), Function.identity())
 						.optionalFieldOf("data", new JsonObject())
 						.forGetter(CustomCondition::data)
 		).apply(instance, CustomCondition::new));

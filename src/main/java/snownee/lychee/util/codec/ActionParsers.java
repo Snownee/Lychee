@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.phys.Vec3;
+import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.action.AddItemCooldown;
 import snownee.lychee.action.Delay;
 import snownee.lychee.action.DropItem;
@@ -67,13 +68,13 @@ public interface ActionParsers {
 		public DataResult<PostAction> parse(Context context, StringReader reader) {
 			DataResult<ItemStackTemplate> itemResult = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(() -> ParsedItem.read(reader).template())).orElseThrow();
+					r -> KCodecs.tryCatch(() -> ParsedItem.read(reader).template())).orElseThrow();
 			if (itemResult.isSuccess()) {
 				return itemResult.map(item -> new DropItem(PostActionCommonProperties.EMPTY, item));
 			}
 			DataResult<Integer> xpResult = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(() -> {
+					r -> KCodecs.tryCatch(() -> {
 						int i = r.readInt();
 						r.expect('x');
 						r.expect('p');
@@ -94,7 +95,7 @@ public interface ActionParsers {
 		public DataResult<Execute> parse(Context context, StringReader reader) {
 			DataResult<String> result = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(reader::readQuotedString)).orElseThrow();
+					r -> KCodecs.tryCatch(reader::readQuotedString)).orElseThrow();
 			return result.map(s -> new Execute(PostActionCommonProperties.EMPTY, s, false));
 		}
 	}
@@ -104,7 +105,7 @@ public interface ActionParsers {
 		public DataResult<Delay> parse(Context context, StringReader reader) {
 			DataResult<Float> result = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(() -> {
+					r -> KCodecs.tryCatch(() -> {
 						float f = r.readFloat();
 						Preconditions.checkArgument(f > 0, "Delay must be positive");
 						return f;
@@ -118,7 +119,7 @@ public interface ActionParsers {
 		public DataResult<AddItemCooldown> parse(Context context, StringReader reader) {
 			DataResult<Float> result = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(() -> {
+					r -> KCodecs.tryCatch(() -> {
 						float f = r.readFloat();
 						Preconditions.checkArgument(f > 0, "Cooldown must be positive");
 						return f;
@@ -132,7 +133,7 @@ public interface ActionParsers {
 		public DataResult<CopyComponent> parse(Context context, StringReader reader) {
 			DataResult<String> result = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();
+					r -> KCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();
 			return result.map(s -> new CopyComponent(
 					PostActionCommonProperties.EMPTY,
 					LycheeCodecs.WILDCARD_COMPONENTS.parse(JavaOps.INSTANCE, s).getOrThrow(),
@@ -146,7 +147,7 @@ public interface ActionParsers {
 		public DataResult<RemoveComponent> parse(Context context, StringReader reader) {
 			DataResult<String> result = LycheeParserUtils.readParam(
 					reader,
-					r -> LycheeCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();
+					r -> KCodecs.tryCatch(reader::readUnquotedString)).orElseThrow();
 			return result.map(s -> new RemoveComponent(
 					PostActionCommonProperties.EMPTY,
 					LycheeCodecs.WILDCARD_COMPONENTS.parse(JavaOps.INSTANCE, s).getOrThrow(),

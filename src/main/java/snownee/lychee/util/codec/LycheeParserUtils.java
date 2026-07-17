@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
+import snownee.kiwi.util.codec.ThrowingFunction;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
 
 public class LycheeParserUtils {
@@ -82,7 +83,7 @@ public class LycheeParserUtils {
 		return DataResult.success(new Vec3(x, y, z));
 	}
 
-	public static <T> Optional<DataResult<T>> readParam(StringReader reader, ThrowingParser<T> parser) {
+	public static <T> Optional<DataResult<T>> readParam(StringReader reader, ThrowingFunction<StringReader, DataResult<T>> parser) {
 		int cursor = reader.getCursor();
 		try {
 			reader.expect(' ');
@@ -95,10 +96,5 @@ public class LycheeParserUtils {
 			reader.setCursor(cursor);
 			return Optional.empty();
 		}
-	}
-
-	@FunctionalInterface
-	public interface ThrowingParser<T> {
-		DataResult<T> apply(StringReader reader) throws Exception;
 	}
 }

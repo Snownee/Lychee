@@ -40,6 +40,7 @@ import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import snownee.kiwi.recipe.SizedIngredient;
+import snownee.kiwi.util.codec.KCodecs;
 
 public final class LycheeCodecs {
 	public static final ThreadLocal<@Nullable Unit> skipComponentsValidation = new ThreadLocal<>();
@@ -164,7 +165,7 @@ public final class LycheeCodecs {
 	public static final Codec<ItemStackTemplate> ITEM_STACK_TEMPLATE = Codec.withAlternative(
 			ITEM_STACK_TEMPLATE_MAP_CODEC.codec(),
 			ExtraCodecs.NON_EMPTY_STRING.flatXmap(
-					s -> tryCatch(() -> ParsedItem.read(new StringReader(s)).template()),
+					s -> KCodecs.tryCatch(() -> ParsedItem.read(new StringReader(s)).template()),
 					_ -> DataResult.error(() -> "Encoding shorthand ItemStack is not supported")));
 
 	public static final MapCodec<BlockPos> OFFSET = RecordCodecBuilder.mapCodec(posInstance -> posInstance.group(
@@ -193,7 +194,7 @@ public final class LycheeCodecs {
 	//TODO move to Kiwi
 	public static final Codec<Ingredient> INGREDIENT = Codec.withAlternative(
 			Ingredient.CODEC, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
-					s -> tryCatch(() -> {
+					s -> KCodecs.tryCatch(() -> {
 						StringReader reader = new StringReader(s);
 						ParsedItem parsedItem = ParsedItem.read(reader);
 						Preconditions.checkArgument(!reader.canRead(), "Cannot parse %s", s);
@@ -202,7 +203,7 @@ public final class LycheeCodecs {
 
 	public static final Codec<SizedIngredient> SIZED_INGREDIENT = Codec.withAlternative(
 			SizedIngredient.CODEC, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
-					s -> tryCatch(() -> {
+					s -> KCodecs.tryCatch(() -> {
 						StringReader reader = new StringReader(s);
 						ParsedItem parsedItem = ParsedItem.read(reader);
 						Preconditions.checkArgument(!reader.canRead(), "Cannot parse %s", s);
@@ -238,18 +239,5 @@ public final class LycheeCodecs {
 				return t;
 			}
 		});
-	}
-
-	public static <T> DataResult<T> tryCatch(ThrowingSupplier<T> supplier) {
-		try {
-			return DataResult.success(supplier.get());
-		} catch (Exception e) {
-			return DataResult.error(e::getMessage);
-		}
-	}
-
-	@FunctionalInterface
-	public interface ThrowingSupplier<T> {
-		T get() throws Exception;
 	}
 }

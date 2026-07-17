@@ -2,7 +2,6 @@ package snownee.lychee.util;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 import org.jspecify.annotations.Nullable;
@@ -53,6 +52,7 @@ import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.loader.Platform;
+import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.LycheeTags;
@@ -79,9 +79,36 @@ import snownee.lychee.util.ui.UIElementType;
 
 @Mod(Lychee.ID)
 public class CommonProxy {
-	private static final List<CustomActionListener> CUSTOM_ACTION_LISTENERS = new CopyOnWriteArrayList<>();
-	private static final List<CustomConditionListener> CUSTOM_CONDITION_LISTENERS = new CopyOnWriteArrayList<>();
-	private static final List<Consumer<RvPlugin<?>>> RECIPE_CATEGORY_LISTENERS = new CopyOnWriteArrayList<>();
+	public static final KEvent<CustomActionListener> CUSTOM_ACTION_EVENT = KEvent.createArrayBacked(
+			CustomActionListener.class,
+			listeners -> (id, action, recipe) -> {
+				for (var listener : listeners) {
+					if (listener.on(id, action, recipe)) {
+						return true;
+					}
+				}
+				return false;
+			}
+	);
+	public static final KEvent<CustomConditionListener> CUSTOM_CONDITION_EVENT = KEvent.createArrayBacked(
+			CustomConditionListener.class,
+			listeners -> (id, condition) -> {
+				for (var listener : listeners) {
+					if (listener.on(id, condition)) {
+						return true;
+					}
+				}
+				return false;
+			}
+	);
+	public static final KEvent<Consumer<RvPlugin<?>>> RECIPE_CATEGORY_EVENT = KEvent.createArrayBacked(
+			Consumer.class,
+			listeners -> plugin -> {
+				for (var listener : listeners) {
+					listener.accept(plugin);
+				}
+			}
+	);
 	@Unique
 	public static final ThreadLocal<@Nullable JsonFragmentManager> fragmentManagerProvider = new ThreadLocal<>();
 	public static boolean hasDFLib = Platform.isModLoaded("dripstone_fluid_lib");
@@ -208,15 +235,15 @@ public class CommonProxy {
 	}
 
 	public static void registerCustomActionListener(CustomActionListener listener) {
-		CUSTOM_ACTION_LISTENERS.add(listener);
+		CUSTOM_ACTION_EVENT.register(listener);
 	}
 
 	public static void registerCustomConditionListener(CustomConditionListener listener) {
-		CUSTOM_CONDITION_LISTENERS.add(listener);
+		CUSTOM_CONDITION_EVENT.register(listener);
 	}
 
 	public static void registerRecipeCategoryListener(Consumer<RvPlugin<?>> listener) {
-		RECIPE_CATEGORY_LISTENERS.add(listener);
+		RECIPE_CATEGORY_EVENT.register(listener);
 	}
 
 	public static void postCustomActionEvent(
@@ -224,21 +251,15 @@ public class CommonProxy {
 			CustomAction action,
 			ILycheeRecipe<?> recipe
 	) {
-		for (var listener : CUSTOM_ACTION_LISTENERS) {
-			listener.on(id, action, recipe);
-		}
+		CUSTOM_ACTION_EVENT.invoker().on(id, action, recipe);
 	}
 
 	public static void postCustomConditionEvent(String id, CustomCondition condition) {
-		for (var listener : CUSTOM_CONDITION_LISTENERS) {
-			listener.on(id, condition);
-		}
+		CUSTOM_CONDITION_EVENT.invoker().on(id, condition);
 	}
 
 	public static void postRecipeCategoryEvent(RvPlugin<?> plugin) {
-		for (var listener : RECIPE_CATEGORY_LISTENERS) {
-			listener.accept(plugin);
-		}
+		RECIPE_CATEGORY_EVENT.invoker().accept(plugin);
 	}
 
 	public static IngredientType getIngredientType(Ingredient ingredient) {
