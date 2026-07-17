@@ -3,6 +3,7 @@ package snownee.lychee.mixin;
 import java.util.List;
 import java.util.Map;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +20,7 @@ import com.mojang.serialization.DynamicOps;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.ExtraCodecs;
@@ -57,11 +59,15 @@ public class SimpleJsonResourceReloadListenerMixin {
 			AlternativesFileToIdConverter yamlLister = new AlternativesFileToIdConverter(
 					Registries.elementsDirPath(Registries.RECIPE),
 					List.of(".yaml"));
+			RegistryOps.@Nullable RegistryInfoLookup registryInfo = null;
+			if (ops instanceof RegistryOps<?> registryOps) {
+				registryInfo = registryOps.lookupProvider;
+			}
 			Map<Identifier, JsonElement> yamlRecipes = OneTimeLoader.load(
 					manager,
 					yamlLister,
 					ExtraCodecs.JSON,
-					new OneTimeLoader.Context());
+					new OneTimeLoader.Context(registryInfo));
 			if (fragmentManager != null) {
 				yamlRecipes.values().forEach(fragmentManager::process);
 			}
