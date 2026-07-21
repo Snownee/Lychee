@@ -1,7 +1,7 @@
 plugins {
     id 'fabric-loom' version '1.10-SNAPSHOT'
     id 'maven-publish'
-    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+    id "me.modmuss50.mod-publish-plugin" version "2.+"
 }
 
 sourceCompatibility = JavaVersion.VERSION_21
@@ -185,6 +185,8 @@ publishMods {
 
     curseforge {
         projectId = "574650"
+        client = true
+        server = true
         accessToken = providers.environmentVariable("CURSE_TOKEN")
         minecraftVersions.add(minecraft_version)
         requires("kiwi-fabric")
