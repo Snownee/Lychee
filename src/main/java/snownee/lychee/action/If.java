@@ -106,8 +106,8 @@ public record If(
 		public static final MapCodec<If> CODEC =
 				RecordCodecBuilder.<If>mapCodec(instance -> instance.group(
 								PostActionCommonProperties.MAP_CODEC.forGetter(If::commonProperties),
-								PostAction.LIST_CODEC.fieldOf("then").forGetter(If::successEntries),
-								PostAction.LIST_CODEC.fieldOf("else").forGetter(If::failureEntries)
+								PostAction.LIST_CODEC.optionalFieldOf("then", List.of()).forGetter(If::successEntries),
+								PostAction.LIST_CODEC.optionalFieldOf("else", List.of()).forGetter(If::failureEntries)
 						).apply(instance, If::of)
 				).validate(
 						it -> {
