@@ -3,5 +3,5 @@ py build.py
 ```
 
 ```sh
-mkdocs serve
+mkdocs serve --livereload
 ```
