@@ -20,6 +20,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.LycheeRegistries;
+import snownee.lychee.action.If;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.codec.LycheeParser;
 import snownee.lychee.util.context.LycheeContext;
@@ -31,7 +32,8 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostAction extends PostActionDisplay, PostActionLike, ContextualPredicate, Contextual {
 	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatchMap(PostAction::type, PostActionType::codec);
-	Codec<PostAction> OBJECT_CODEC = MAP_CODEC.codec();
+	@SuppressWarnings("Convert2MethodRef")
+	Codec<PostAction> OBJECT_CODEC = Codec.withAlternative(MAP_CODEC.codec(), Codec.lazyInitialized(() -> If.Type.CODEC.codec()));
 	Codec<PostAction> CODEC = Codec.withAlternative(
 			OBJECT_CODEC, ExtraCodecs.NON_EMPTY_STRING.flatXmap(
 					LycheeParser::action,
