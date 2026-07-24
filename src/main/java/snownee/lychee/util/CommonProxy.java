@@ -12,13 +12,8 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import net.neoforged.fml.common.Mod;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import snownee.kiwi.recipe.CustomIngredientSerializer;
 import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -51,7 +46,12 @@ import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import snownee.kiwi.loader.Platform;
+import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
@@ -256,10 +256,6 @@ public class CommonProxy {
 
 	public static void postCustomConditionEvent(String id, CustomCondition condition) {
 		CUSTOM_CONDITION_EVENT.invoker().on(id, condition);
-	}
-
-	public static void postRecipeCategoryEvent(RvPlugin<?> plugin) {
-		RECIPE_CATEGORY_EVENT.invoker().accept(plugin);
 	}
 
 	public static IngredientType getIngredientType(Ingredient ingredient) {
