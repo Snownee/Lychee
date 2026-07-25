@@ -1,0 +1,8 @@
+block_in: minecraft:chest
+item_in: stick
+post:
+- item:
+    id: minecraft:diamond
+    count: 5
+  type: insert_item
+type: lychee:block_interacting

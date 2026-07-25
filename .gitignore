@@ -27,3 +27,4 @@ run/*
 /CHANGELOG.md
 /runs
 /libs/*.jar
+/AGENTS.md

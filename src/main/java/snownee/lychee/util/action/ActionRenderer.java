@@ -25,6 +25,7 @@ import snownee.lychee.action.DropItem;
 import snownee.lychee.action.DropXp;
 import snownee.lychee.action.Execute;
 import snownee.lychee.action.Explode;
+import snownee.lychee.action.InsertItem;
 import snownee.lychee.action.PlaceBlock;
 import snownee.lychee.action.RandomSelect;
 import snownee.lychee.action.SetBlock;
@@ -47,8 +48,9 @@ public interface ActionRenderer<T extends PostAction> {
 	ActionRenderer<PostAction> DEFAULT = new ActionRenderer<>() {};
 
 	static void init() {
-		register(PostActionTypes.DROP_ITEM, (ItemStackActionRenderer<DropItem>) DropItem::itemStack);
-		register(PostActionTypes.SET_ITEM, (ItemStackActionRenderer<SetItem>) $ -> Objects.requireNonNull($.itemStack()));
+		register(PostActionTypes.DROP_ITEM, (ItemStackActionRenderer<DropItem>) DropItem::item);
+		register(PostActionTypes.SET_ITEM, (ItemStackActionRenderer<SetItem>) SetItem::item);
+		register(PostActionTypes.INSERT_ITEM, (ItemStackActionRenderer<InsertItem>) $ -> $.item().orElse(null));
 		register(PostActionTypes.DROP_XP, (ItemBasedActionRenderer<DropXp>) _ -> new ItemStackTemplate(Items.EXPERIENCE_BOTTLE));
 		register(PostActionTypes.EXECUTE, (ItemBasedActionRenderer<Execute>) _ -> new ItemStackTemplate(Items.COMMAND_BLOCK));
 		register(PostActionTypes.EXPLODE, (ItemBasedActionRenderer<Explode>) _ -> new ItemStackTemplate(Items.TNT));

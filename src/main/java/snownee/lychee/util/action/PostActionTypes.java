@@ -13,7 +13,9 @@ import snownee.lychee.action.DropXp;
 import snownee.lychee.action.Execute;
 import snownee.lychee.action.Exit;
 import snownee.lychee.action.Explode;
+import snownee.lychee.action.ExtractItem;
 import snownee.lychee.action.If;
+import snownee.lychee.action.InsertItem;
 import snownee.lychee.action.Move;
 import snownee.lychee.action.MoveTowardsFace;
 import snownee.lychee.action.PlaceBlock;
@@ -64,6 +66,8 @@ public class PostActionTypes {
 	public static final PostActionType<CopyComponent> COPY_COMPONENT = register("copy_component", new CopyComponent.Type());
 	public static final PostActionType<RemoveComponent> REMOVE_COMPONENT = register("remove_component", new RemoveComponent.Type());
 	public static final PostActionType<CopyDurability> COPY_DURABILITY = register("copy_durability", new CopyDurability.Type());
+	public static final PostActionType<InsertItem> INSERT_ITEM = register("insert_item", new InsertItem.Type());
+	public static final PostActionType<ExtractItem> EXTRACT_ITEM = register("extract_item", new ExtractItem.Type());
 
 	public static <T extends PostActionType<?>> T register(String name, T t) {
 		Registry.register(LycheeRegistries.POST_ACTION, Identifier.parse(name), t);
