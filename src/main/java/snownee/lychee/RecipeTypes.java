@@ -30,6 +30,7 @@ import snownee.lychee.recipes.ItemInsideRecipeType;
 import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.recipes.RandomBlockTickingRecipe;
 import snownee.lychee.recipes.RandomBlockTickingRecipeType;
+import snownee.lychee.recipes.SculkSpreadingRecipe;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.recipe.BlockKeyableRecipeType;
 import snownee.lychee.util.recipe.ILycheeRecipe;
@@ -131,6 +132,14 @@ public final class RecipeTypes {
 				it.extractChance = true;
 				it.requiresClient = true;
 			}
+	));
+	public static final BlockKeyableRecipeType<SculkSpreadingRecipe> SCULK_SPREADING = register(Util.make(
+			new BlockKeyableRecipeType<>(
+					"sculk_spreading",
+					SculkSpreadingRecipe.class,
+					LycheeLootContextParamSets.BLOCK_ONLY
+			),
+			it -> it.extractChance = true
 	));
 	public static final EntityTickingRecipeType ENTITY_TICKING = register(new EntityTickingRecipeType(
 			"entity_ticking",
