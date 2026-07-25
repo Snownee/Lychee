@@ -23,6 +23,7 @@ import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.recipes.LightningChannelingRecipe;
 import snownee.lychee.recipes.RandomBlockTickingRecipe;
+import snownee.lychee.recipes.SculkSpreadingRecipe;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.util.ui.BlankRecipe;
 import snownee.lychee.util.ui.CategoryMetadata;
@@ -90,6 +91,10 @@ public final class RecipeSerializers {
 			"crafting",
 			ShapedCraftingRecipe.CODEC,
 			ShapedCraftingRecipe.STREAM_CODEC);
+	public static final RecipeSerializer<SculkSpreadingRecipe> SCULK_SPREADING = register(
+			"sculk_spreading",
+			SculkSpreadingRecipe.CODEC,
+			SculkSpreadingRecipe.STREAM_CODEC);
 	public static final RecipeSerializer<EntityTickingRecipe> ENTITY_TICKING = register(
 			"entity_ticking",
 			EntityTickingRecipe.CODEC,

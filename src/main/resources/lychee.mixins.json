@@ -38,7 +38,8 @@
 		"recipes.iteminside.EntityMixin",
 		"recipes.lightningchanneling.LightningBoltMixin",
 		"recipes.randomblockticking.BlockBehaviourMixin",
-		"recipes.randomblockticking.BlockStateMixin"
+		"recipes.randomblockticking.BlockStateMixin",
+		"recipes.sculkspreading.SculkVeinBlockMixin"
 	],
 	"client": [
 		"client.ClientPacketListenerMixin",

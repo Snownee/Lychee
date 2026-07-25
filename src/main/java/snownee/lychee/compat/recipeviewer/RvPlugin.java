@@ -28,6 +28,7 @@ import snownee.lychee.compat.recipeviewer.category.ItemBurningRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.ItemExplodingRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.ItemInsideRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.LightningChannelingRecipeCategory;
+import snownee.lychee.compat.recipeviewer.category.SculkSpreadingRecipeCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstanceProviders;
@@ -97,6 +98,12 @@ public class RvPlugin<Helper extends RvHelper> {
 								: AllGuiTextures.LEFT_CLICK;
 						return new SideBlockIcon(mainIcon, Suppliers.memoize(() -> RVs.getIconBlock(category.recipes())));
 					};
+				});
+		register(
+				new SculkSpreadingRecipeCategory(),
+				it -> {
+					it.iconProvider = _ -> GuiGameElement.of(Blocks.SCULK_CATALYST.asItem());
+					it.setSimpleWorkstationProvider(_ -> List.of(Items.SCULK_CATALYST));
 				});
 		register(
 				new DripstoneRecipeCategory(),
