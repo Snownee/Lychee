@@ -32,9 +32,10 @@ import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostAction extends PostActionDisplay, PostActionLike, ContextualPredicate, Contextual {
-	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec().optionalFieldOf("type", PostActionTypes.IF).dispatchMap(
-			PostAction::type,
-			PostActionType::codec);
+	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec()
+			.fieldOf("type")
+			.orElseGet(() -> PostActionTypes.IF)
+			.dispatchMap(PostAction::type, PostActionType::codec);
 	Codec<PostAction> OBJECT_CODEC = MAP_CODEC.codec();
 	Codec<PostAction> STRING_CODEC = new Codec<>() {
 		@Override

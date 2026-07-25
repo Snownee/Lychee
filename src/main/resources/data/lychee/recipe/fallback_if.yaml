@@ -1,8 +1,6 @@
 type: lychee:block_interacting
-block_in:
-  blocks: redstone_block
-item_in:
-  item: turtle_scute
+block_in: redstone_block
+item_in: turtle_scute
 post:
   - if:
       type: chance
