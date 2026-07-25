@@ -1,0 +1,6 @@
+block_in: minecraft:chest
+item_in: diamond
+post:
+- from: default
+  type: insert_item
+type: lychee:block_interacting

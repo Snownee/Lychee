@@ -1,0 +1,8 @@
+block_in: minecraft:chest
+item_in: stone
+post:
+- item:
+    items: minecraft:diamond
+  count: 1
+  type: extract_item
+type: lychee:block_interacting

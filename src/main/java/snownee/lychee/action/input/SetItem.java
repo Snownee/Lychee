@@ -30,12 +30,12 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record SetItem(
 		PostActionCommonProperties commonProperties,
-		@Nullable ItemStackTemplate itemStack,
+		@Nullable ItemStackTemplate item,
 		Reference target) implements PostAction {
 
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-	public SetItem(PostActionCommonProperties commonProperties, Optional<ItemStackTemplate> itemStack, Reference target) {
-		this(commonProperties, itemStack.orElse(null), target);
+	public SetItem(PostActionCommonProperties commonProperties, Optional<ItemStackTemplate> item, Reference target) {
+		this(commonProperties, item.orElse(null), target);
 	}
 
 	@Override
@@ -47,22 +47,22 @@ public record SetItem(
 	public void apply(LycheeContext context, ActionContext actionContext, int times) {
 		var indexes = context.get(LycheeContextKey.RECIPE).getItemIndexes(target);
 		for (var index : indexes) {
-			context.setItem(index, itemStack != null ? itemStack.create() : ItemStack.EMPTY);
+			context.setItem(index, item != null ? item.create() : ItemStack.EMPTY);
 			context.get(LycheeContextKey.ITEM).get(index).setConsumption(0);
 		}
 	}
 
 	@Override
 	public Component getName() {
-		if (itemStack == null) {
+		if (item == null) {
 			return ItemStack.EMPTY.getHoverName(); //TODO
 		}
-		return itemStack.create().getHoverName();
+		return item.create().getHoverName();
 	}
 
 	@Override
 	public List<SlotDisplay> getOutputItems() {
-		return List.of(Displays.slot(itemStack));
+		return List.of(Displays.slot(item));
 	}
 
 	@Override
@@ -77,12 +77,12 @@ public record SetItem(
 
 	@Override
 	public SlotDisplay transformRemainder(SlotDisplay display, @Nullable ILycheeRecipe<?> recipe) {
-		return Displays.slot(itemStack());
+		return Displays.slot(item());
 	}
 
 	@Override
 	public boolean hidden() {
-		return itemStack == null || PostAction.super.hidden();
+		return item == null || PostAction.super.hidden();
 	}
 
 	//	@Override
@@ -94,14 +94,14 @@ public record SetItem(
 	public static class Type implements PostActionType<SetItem> {
 		public static final MapCodec<SetItem> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				PostActionCommonProperties.MAP_CODEC.forGetter(SetItem::commonProperties),
-				LycheeCodecs.OPTIONAL_ITEM_STACK_TEMPLATE_MAP_CODEC.forGetter($ -> Optional.ofNullable($.itemStack)),
+				LycheeCodecs.OPTIONAL_ITEM_STACK_TEMPLATE_MAP_CODEC.forGetter($ -> Optional.ofNullable($.item)),
 				Reference.CODEC.optionalFieldOf("target", Reference.DEFAULT).forGetter(SetItem::target)
 		).apply(instance, SetItem::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, SetItem> STREAM_CODEC = StreamCodec.composite(
 				PostActionCommonProperties.STREAM_CODEC,
 				SetItem::commonProperties,
 				ItemStackTemplate.STREAM_CODEC.apply(ByteBufCodecs::optional),
-				$ -> Optional.ofNullable($.itemStack),
+				$ -> Optional.ofNullable($.item),
 				Reference.STREAM_CODEC,
 				SetItem::target,
 				SetItem::new);

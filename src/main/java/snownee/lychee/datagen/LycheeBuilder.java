@@ -14,6 +14,7 @@ import com.mojang.serialization.JavaOps;
 
 import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -52,7 +53,9 @@ import snownee.lychee.action.DropXp;
 import snownee.lychee.action.Execute;
 import snownee.lychee.action.Exit;
 import snownee.lychee.action.Explode;
+import snownee.lychee.action.ExtractItem;
 import snownee.lychee.action.If;
+import snownee.lychee.action.InsertItem;
 import snownee.lychee.action.Move;
 import snownee.lychee.action.MoveTowardsFace;
 import snownee.lychee.action.PlaceBlock;
@@ -353,6 +356,34 @@ public interface LycheeBuilder {
 
 	default ActionBuilder<?, CopyDurability> copyDurability(float bonus, Reference source, Reference target) {
 		return new ActionBuilder<>(new CopyDurability(PostActionCommonProperties.EMPTY, bonus, source, target));
+	}
+
+	default ActionBuilder<?, InsertItem> insertItem(ItemStackTemplate itemStack) {
+		return new ActionBuilder<>(new InsertItem(
+				PostActionCommonProperties.EMPTY,
+				Optional.of(itemStack),
+				Optional.empty(),
+				true));
+	}
+
+	default ActionBuilder<?, InsertItem> insertItemFrom(Reference from) {
+		return new ActionBuilder<>(new InsertItem(
+				PostActionCommonProperties.EMPTY,
+				Optional.empty(),
+				Optional.of(from),
+				true));
+	}
+
+	default ActionBuilder<?, InsertItem> insertItemFrom(Reference from, boolean dropItemIfFail) {
+		return new ActionBuilder<>(new InsertItem(
+				PostActionCommonProperties.EMPTY,
+				Optional.empty(),
+				Optional.of(from),
+				dropItemIfFail));
+	}
+
+	default ActionBuilder<?, ExtractItem> extractItem(ItemPredicate item, int count) {
+		return new ActionBuilder<>(new ExtractItem(PostActionCommonProperties.EMPTY, item, count));
 	}
 
 	@SuppressWarnings("unchecked")

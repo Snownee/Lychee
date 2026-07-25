@@ -1,8 +1,10 @@
 package snownee.lychee.util;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Unique;
@@ -15,6 +17,11 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -44,6 +51,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
@@ -300,6 +308,82 @@ public class CommonProxy {
 
 	public static void hurtAndBreak(ItemStack itemStack, int damage, ServerLevel level, @Nullable LivingEntity entity) {
 		itemStack.hurtAndBreak(damage, level, entity instanceof ServerPlayer player ? player : null, $ -> {});
+	}
+
+	public static long insertItem(
+			Level level,
+			BlockPos blockPos,
+			BlockState blockState,
+			@Nullable BlockEntity blockEntity,
+			@Nullable Direction direction,
+			ItemStack item) {
+		Storage<ItemVariant> storage = ItemStorage.SIDED.find(level, blockPos, blockState, blockEntity, direction);
+		if (storage == null || !storage.supportsInsertion()) {
+			return 0;
+		}
+		long inserted;
+		try (Transaction tx = Transaction.openOuter()) {
+			inserted = storage.insert(ItemVariant.of(item), item.getCount(), tx);
+			if (inserted > 0) {
+				tx.commit();
+				item.shrink((int) inserted);
+			}
+		}
+		return inserted;
+	}
+
+	public static long insertItem(Level level, BlockPos blockPos, @Nullable Direction direction, ItemStack item) {
+		BlockState blockState = level.getBlockState(blockPos);
+		BlockEntity blockEntity = level.getBlockEntity(blockPos);
+		return insertItem(level, blockPos, blockState, blockEntity, direction, item);
+	}
+
+	public static long extractItem(
+			Level level,
+			BlockPos blockPos,
+			BlockState blockState,
+			@Nullable BlockEntity blockEntity,
+			@Nullable Direction direction,
+			Predicate<? super ItemStack> predicate,
+			long maxCount) {
+		Storage<ItemVariant> storage = ItemStorage.SIDED.find(level, blockPos, blockState, blockEntity, direction);
+		if (storage == null || !storage.supportsExtraction()) {
+			return 0;
+		}
+		long extracted = 0;
+		try (Transaction tx = Transaction.openOuter()) {
+			Iterator<StorageView<ItemVariant>> iterator = storage.nonEmptyIterator();
+			while (iterator.hasNext() && extracted < maxCount) {
+				var view = iterator.next();
+				if (view.isResourceBlank()) {
+					continue;
+				}
+				ItemVariant resource = view.getResource();
+				if (!predicate.test(resource.toStack())) {
+					continue;
+				}
+				long toExtract = Math.min(view.getAmount(), maxCount - extracted);
+				long extractedNow = storage.extract(resource, toExtract, tx);
+				if (extractedNow > 0) {
+					extracted += extractedNow;
+				}
+			}
+			if (extracted > 0) {
+				tx.commit();
+			}
+		}
+		return extracted;
+	}
+
+	public static long extractItem(
+			Level level,
+			BlockPos blockPos,
+			@Nullable Direction direction,
+			Predicate<? super ItemStack> predicate,
+			long maxCount) {
+		BlockState blockState = level.getBlockState(blockPos);
+		BlockEntity blockEntity = level.getBlockEntity(blockPos);
+		return extractItem(level, blockPos, blockState, blockEntity, direction, predicate, maxCount);
 	}
 
 	public CommonProxy(IEventBus modEventBus) {

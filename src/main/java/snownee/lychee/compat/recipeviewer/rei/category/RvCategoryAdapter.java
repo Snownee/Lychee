@@ -9,7 +9,6 @@ import org.jspecify.annotations.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
-import me.shedaniel.math.Point;
 import me.shedaniel.math.Rectangle;
 import me.shedaniel.rei.api.client.entry.renderer.EntryRenderer;
 import me.shedaniel.rei.api.client.gui.Renderer;
@@ -95,7 +94,7 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 	private static void buildActionSlot(List<EntryStack<?>> entries, PostAction rootAction, PostAction action) {
 		switch (action) {
 			case DropItem dropItem -> {
-				EntryStack<ItemStack> itemEntry = EntryStacks.of(dropItem.itemStack().create());
+				EntryStack<ItemStack> itemEntry = EntryStacks.of(dropItem.item().create());
 				if (action.commonProperties().icon() != null || action.commonProperties().customName() != null ||
 						action.commonProperties().conditions().hasShowingConditions()) {
 					EntryStack<PostAction> actionEntry = EntryStack.of(LycheeREIPlugin.POST_ACTION, rootAction);
