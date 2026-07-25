@@ -32,9 +32,10 @@ import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostAction extends PostActionDisplay, PostActionLike, ContextualPredicate, Contextual {
-	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec().optionalFieldOf("type", PostActionTypes.IF).dispatchMap(
-			PostAction::type,
-			PostActionType::codec);
+	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec()
+			.fieldOf("type")
+			.orElseGet(() -> PostActionTypes.IF)
+			.dispatchMap(PostAction::type, PostActionType::codec);
 	Codec<PostAction> OBJECT_CODEC = MAP_CODEC.codec();
 	Codec<PostAction> STRING_CODEC = new Codec<>() {
 		@Override
@@ -62,7 +63,7 @@ public interface PostAction extends PostActionDisplay, PostActionLike, Contextua
 			PostActionType::streamCodec);
 	StreamCodec<RegistryFriendlyByteBuf, List<PostAction>> STREAM_LIST_CODEC = STREAM_CODEC.apply(original ->
 			// Error on Eclipse without the generic type (?)
-			new StreamCodec<RegistryFriendlyByteBuf, List<PostAction>>() {
+			new StreamCodec<>() {
 				@Override
 				public void encode(RegistryFriendlyByteBuf byteBuf, List<PostAction> list) {
 					var filtered = list.stream().filter(it -> !it.preventSync()).toList();
