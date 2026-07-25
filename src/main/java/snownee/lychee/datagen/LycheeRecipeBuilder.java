@@ -25,6 +25,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -46,6 +47,7 @@ import snownee.lychee.recipes.ItemBurningRecipe;
 import snownee.lychee.recipes.ItemExplodingRecipe;
 import snownee.lychee.recipes.ItemInsideRecipe;
 import snownee.lychee.recipes.RandomBlockTickingRecipe;
+import snownee.lychee.recipes.SculkSpreadingRecipe;
 import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.IngredientCollection;
@@ -289,6 +291,27 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		@Override
 		public RandomBlockTickingRecipe build() {
 			return new RandomBlockTickingRecipe(properties(), block);
+		}
+	}
+
+	public static class SculkSpreading extends LycheeRecipeBuilder<SculkSpreading, SculkSpreadingRecipe> {
+		protected final BlockPredicate block;
+		protected IntProvider charge;
+
+		public SculkSpreading(BlockPredicate block, IntProvider charge) {
+			this.block = block;
+			this.charge = charge;
+		}
+
+		@Contract("_ -> this")
+		public SculkSpreading charge(IntProvider charge) {
+			this.charge = charge;
+			return self();
+		}
+
+		@Override
+		public SculkSpreadingRecipe build() {
+			return new SculkSpreadingRecipe(properties(), block, charge);
 		}
 	}
 

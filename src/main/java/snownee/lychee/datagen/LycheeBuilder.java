@@ -31,6 +31,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.random.WeightedList;
+import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemInstance;
@@ -168,6 +169,10 @@ public interface LycheeBuilder {
 
 	default LycheeRecipeBuilder.RandomBlockTicking randomBlockTickingRecipe(Object block) {
 		return new LycheeRecipeBuilder.RandomBlockTicking(block(block));
+	}
+
+	default LycheeRecipeBuilder.SculkSpreading sculkSpreadingRecipe(Object block, IntProvider charge) {
+		return new LycheeRecipeBuilder.SculkSpreading(block(block), charge);
 	}
 
 	default LycheeRecipeBuilder.ShapedCrafting shapedCraftingRecipe(RecipeCategory category, ItemLike result) {
