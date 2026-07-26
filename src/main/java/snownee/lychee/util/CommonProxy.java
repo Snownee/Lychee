@@ -395,7 +395,6 @@ public class CommonProxy {
 		DripstoneParticleService.PARTICLE_TYPES.register(modEventBus);
 		Objects.requireNonNull(RecipeTypes.ALL);
 		Objects.requireNonNull(LycheeTags.FIRE_IMMUNE);
-		Objects.requireNonNull(LycheeRegistries.CONTEXTUAL);
 		Objects.requireNonNull(ContextualConditionType.AND);
 		Objects.requireNonNull(PostActionTypes.DROP_ITEM);
 		Objects.requireNonNull(RecipeSerializers.ALL);
