@@ -22,9 +22,10 @@ public abstract class ServerExplosionMixin implements Explosion {
 	public abstract boolean isSmall();
 
 	@WrapOperation(
-			method = "hurtEntities", at = @At(
+			method = "hurtEntities*", at = @At(
 			value = "INVOKE",
-			target = "Lnet/minecraft/server/level/ServerLevel;getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"))
+			target = "Lnet/minecraft/server/level/ServerLevel;getEntities(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/AABB;)Ljava/util/List;"),
+			require = 0)
 	private List<Entity> lychee_hurtEntities(ServerLevel instance, Entity entity, AABB aabb, Operation<List<Entity>> original) {
 		List<Entity> list = original.call(instance, entity, aabb);
 		ItemExplodingRecipe.invoke(level(), center(), list, radius(), isSmall(), getDirectSourceEntity());

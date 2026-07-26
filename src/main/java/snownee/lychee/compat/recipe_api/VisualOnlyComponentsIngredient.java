@@ -7,8 +7,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
-import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.FabricIngredient;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
@@ -22,6 +20,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.display.DisplayContentsFactory;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
+import snownee.kiwi.recipe.CustomIngredient;
+import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.lychee.Lychee;
 import snownee.lychee.SlotDisplayTypes;
 
