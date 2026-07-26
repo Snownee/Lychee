@@ -240,4 +240,8 @@ public final class LycheeCodecs {
 			}
 		});
 	}
+
+	public static <A> MapCodec<A> rename(MapCodec<A> mapCodec, String name) {
+		return MapCodec.of(mapCodec, mapCodec, () -> name);
+	}
 }
