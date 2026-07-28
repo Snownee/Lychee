@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.resources.ResourceKey;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import snownee.kiwi.AbstractModule;
 import snownee.kiwi.KiwiModule;
@@ -21,6 +22,14 @@ public final class LycheeRegistries extends AbstractModule {
 	public static final MappedRegistry<LycheeContextKey<?>> CONTEXT = register("context");
 	public static final MappedRegistry<Codec<?>> CONTEXT_SERIALIZER = register("context_serializer");
 	public static final MappedRegistry<UIElementType<?>> UI_ELEMENT = register("ui_element");
+
+	public static void init(NewRegistryEvent event) {
+		event.register(CONTEXTUAL);
+		event.register(POST_ACTION);
+		event.register(CONTEXT);
+		event.register(CONTEXT_SERIALIZER);
+		event.register(UI_ELEMENT);
+	}
 
 	@Override
 	public void addRegistries() {

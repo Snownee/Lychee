@@ -7,12 +7,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.flag.FeatureFlagSet;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.display.DisplayContentsFactory;
@@ -44,16 +46,13 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 	}
 
 	@Override
-	public List<ItemStack> getMatchingStacks() {
-		return base.items()
-				.map(holder -> new ItemStack(holder.value()))
-				.map(stack -> {
-					ItemStack copy = stack.copy();
-					copy.applyComponents(components);
-					return copy;
-				})
-				.filter(base::test)
-				.toList();
+	public Stream<Holder<Item>> items() {
+		return Stream.empty();
+	}
+
+	@Override
+	public SlotDisplay display() {
+		return new Display(base.display(), components);
 	}
 
 	@Override
@@ -96,12 +95,12 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 		}
 
 		@Override
-		public MapCodec<VisualOnlyComponentsIngredient> getCodec(boolean allowEmpty) {
+		public MapCodec<VisualOnlyComponentsIngredient> getCodec() {
 			return CODEC;
 		}
 
 		@Override
-		public StreamCodec<RegistryFriendlyByteBuf, VisualOnlyComponentsIngredient> getPacketCodec() {
+		public StreamCodec<RegistryFriendlyByteBuf, VisualOnlyComponentsIngredient> getStreamCodec() {
 			return STREAM_CODEC;
 		}
 	}
