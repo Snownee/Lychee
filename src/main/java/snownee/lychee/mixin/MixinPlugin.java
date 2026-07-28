@@ -8,11 +8,11 @@ import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
-import net.fabricmc.loader.api.FabricLoader;
+import net.neoforged.fml.loading.FMLLoader;
 
 public class MixinPlugin implements IMixinConfigPlugin {
 	private static boolean hasMod(String modId) {
-		return FabricLoader.getInstance().isModLoaded(modId);
+		return FMLLoader.getCurrent().getLoadingModList().getModFileById(modId) != null;
 	}
 
 	@Override

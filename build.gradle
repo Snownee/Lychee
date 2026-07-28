@@ -1,18 +1,25 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    id 'java-library'
+    id 'net.neoforged.moddev' version "${moddevgradle_version}"
     id 'maven-publish'
     id "me.modmuss50.mod-publish-plugin" version "2.+"
 }
 
-version = "mc${archive_minecraft_version}-Fabric-${mod_version}"
+version = "mc${archive_minecraft_version}-NeoForge-${mod_version}"
 group = project.maven_group
-var realVersion = project.mod_version + '+fabric'
+var realVersion = project.mod_version + '+neoforge'
 
 base {
     archivesName = project.archives_base_name
 }
 
 repositories {
+    maven { url "https://maven.neoforged.net/releases" }
+    maven { url "https://maven.su5ed.dev/releases" }
+    maven {
+        name = "BlameJared"
+        url = "https://maven.blamejared.com/"
+    }
     maven {
         // location of the maven that hosts JEI files
         name = "Progwml6 maven"
@@ -27,6 +34,13 @@ repositories {
     maven { url "https://maven.terraformersmc.com/releases/" }
     maven { url "https://maven.terraformersmc.com/" }
     maven {
+        // Shedaniel's maven (Architectury API)
+        url = "https://maven.architectury.dev"
+        content {
+            includeGroup "dev.architectury"
+        }
+    }
+    maven {
         url = "https://mvn.devos.one/snapshots/"
     }
     maven {
@@ -35,6 +49,13 @@ repositories {
         content {
             includeGroup "dev.latvian.mods"
             includeGroup "dev.latvian.apps"
+        }
+    }
+    maven {
+        // For com.github.rtyley:animated-gif-lib-for-java, a KubeJS dependency
+        url 'https://jitpack.io'
+        content {
+            includeGroup "com.github.rtyley"
         }
     }
     exclusiveContent {
@@ -48,59 +69,84 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    flatDir { dir 'libs' }
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/${project.mod_id}.classtweaker")
-}
+neoForge {
+    version = project.neo_version
 
-fabricApi {
-    configureDataGeneration() {
-        modId = project.mod_id
-        client = true
-        outputDirectory = file("src/generated/resources")
-        createSourceSet = true
-        strictValidation = true
+    runs {
+        client {
+            client()
+            ideName = "Run ${project.mod_id} - Client"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'mixin.debug.export', 'true'
+            systemProperty 'mixin.debug.verbose', 'true'
+        }
+
+        server {
+            server()
+            ideName = "Run ${project.mod_id} - Server"
+            programArgument '--nogui'
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'mixin.debug.export', 'true'
+            systemProperty 'mixin.debug.verbose', 'true'
+        }
+
+        gameTestServer {
+            type = "gameTestServer"
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        }
+
+        data {
+            clientData()
+            ideName = "Run ${project.mod_id} - Data"
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+        }
     }
 }
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:${project.fabric_version}"
+    jarJar(implementation("org.sinytra.forgified-fabric-api:fabric-particles-v1:${project.forgified_fabric_particles_version}"))
 
-    implementation("dev.architectury:architectury-fabric:${project.architectury_version}")
-    api("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
-    implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+    implementation "dev.architectury:architectury-neoforge:${project.architectury_version}"
+    implementation "maven.modrinth:cloth-config:${project.cloth_config_version}+neoforge"
+    implementation "maven.modrinth:kiwi:${project.kiwi_version}+neoforge"
+    annotationProcessor "maven.modrinth:kiwi:${project.kiwi_version}+neoforge"
 
-    implementation "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+    implementation "maven.modrinth:jade:${project.jade_version}+neoforge"
+    implementation "me.shedaniel:RoughlyEnoughItems-neoforge:${project.rei_version}"
+    compileOnly "me.shedaniel:REIPluginCompatibilities-forge-annotations:12.+"
 
-    // https://modrinth.com/mod/kiwi/versions
-    implementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
+    implementation "mezz.jei:jei-${project.jei_minecraft_version}-common-api:${project.jei_version}"
+    implementation "mezz.jei:jei-${project.jei_minecraft_version}-neoforge-api:${project.jei_version}"
+    implementation "mezz.jei:jei-${project.jei_minecraft_version}-neoforge:${project.jei_version}"
+    implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
     annotationProcessor fileTree(dir: "libs", include: ["*.jar"])
 
-//    compileOnlyApi "mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}"
-    implementation "mezz.jei:jei-26.1-fabric:${jei_version}"
-
-    // https://modrinth.com/mod/jade/versions
-    implementation "maven.modrinth:jade:${jade_version}+fabric"
-
     implementation 'com.google.errorprone:error_prone_annotations:2.36.0'
-
-//    compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
-
-//    compileOnly "dev.emi:emi-fabric:${emi_version}:api"
-//    implementation "dev.emi:emi-fabric:${emi_version}"
 }
 
 processResources {
     inputs.property "version", realVersion
+    inputs.property "neo_version_range", project.neo_version_range
+    inputs.property "minecraft_version_range", project.minecraft_version_range
 
-    filesMatching("fabric.mod.json") {
-        expand "version": realVersion
+    filesMatching("META-INF/neoforge.mods.toml") {
+        expand "file": ["jarVersion": realVersion],
+                "neo_version_range": project.neo_version_range,
+                "minecraft_version_range": project.minecraft_version_range
     }
 }
 
@@ -133,19 +179,12 @@ jar {
     }
 }
 
-configurations.configureEach {
-    resolutionStrategy {
-        force "dev.architectury:architectury-fabric:${project.architectury_version}"
-    }
-}
-
 publishMods {
     file = jar.archiveFile
     changelog = file('CHANGELOG.md').exists() ? file('CHANGELOG.md').text : ''
     type = ['release': STABLE, 'beta': BETA, 'alpha': ALPHA][release_type]
-    modLoaders.add("fabric")
-    modLoaders.add("quilt")
-    displayName = "[Fabric ${supported_version}] ${mod_version}"
+    modLoaders.add("neoforge")
+    displayName = "[NeoForge ${supported_version}] ${mod_version}"
     version = realVersion
 
     curseforge {
@@ -154,17 +193,13 @@ publishMods {
         server = true
         accessToken = providers.environmentVariable("CURSE_TOKEN")
         minecraftVersions.add(minecraft_version)
-        minecraftVersions.add("26.1.1")
-        minecraftVersions.add("26.1.2")
-        requires("kiwi-fabric")
+        requires("kiwi")
         optional("cloth-config")
     }
     modrinth {
         projectId = "TdN6LxjM"
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         minecraftVersions.add(minecraft_version)
-        minecraftVersions.add("26.1.1")
-        minecraftVersions.add("26.1.2")
         requires("kiwi")
         optional("cloth-config")
     }

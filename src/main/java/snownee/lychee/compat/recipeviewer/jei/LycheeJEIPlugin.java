@@ -7,6 +7,7 @@ import java.util.Objects;
 import com.google.common.collect.Maps;
 
 import mezz.jei.api.IModPlugin;
+import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.ingredients.IIngredientType;
@@ -43,7 +44,7 @@ import snownee.lychee.recipes.ShapedCraftingRecipe;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-
+@JeiPlugin
 public class LycheeJEIPlugin implements IModPlugin {
 	public static final Identifier ID = Lychee.id("main");
 	public static final IIngredientType<PostAction> POST_ACTION = () -> PostAction.class;

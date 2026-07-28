@@ -1,11 +1,13 @@
 package snownee.lychee.util;
 
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.GsonHelper;
 import snownee.lychee.util.json.JsonPointer;
 
 public abstract class Reference {
@@ -20,6 +22,11 @@ public abstract class Reference {
 			return new Pointer(new JsonPointer(value));
 		}
 		return new Constant(value);
+	}
+
+	@SuppressWarnings("unused")
+	public static Reference fromJson(JsonObject parent, String key) {
+		return create(GsonHelper.getAsString(parent, key, "default"));
 	}
 
 	public boolean isPointer() {

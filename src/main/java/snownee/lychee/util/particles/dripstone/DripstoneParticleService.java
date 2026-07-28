@@ -10,11 +10,13 @@ import com.google.common.cache.CacheBuilder;
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import snownee.kiwi.loader.Platform;
 import snownee.lychee.Lychee;
 import snownee.lychee.RecipeTypes;
@@ -24,15 +26,17 @@ public class DripstoneParticleService {
 
 	public static final Cache<Block, DripParticleHandler> particleHandlers = CacheBuilder.newBuilder().build();
 
-	public static final ParticleType<BlockParticleOption> DRIPSTONE_DRIPPING = FabricParticleTypes.complex(
-			BlockParticleOption::codec,
-			BlockParticleOption::streamCodec);
-	public static final ParticleType<BlockParticleOption> DRIPSTONE_FALLING = FabricParticleTypes.complex(
-			BlockParticleOption::codec,
-			BlockParticleOption::streamCodec);
-	public static final ParticleType<BlockParticleOption> DRIPSTONE_SPLASH = FabricParticleTypes.complex(
-			BlockParticleOption::codec,
-			BlockParticleOption::streamCodec);
+	public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, Lychee.ID);
+
+	public static final ParticleType<BlockParticleOption> DRIPSTONE_DRIPPING = register("dripstone_dripping");
+	public static final ParticleType<BlockParticleOption> DRIPSTONE_FALLING = register("dripstone_falling");
+	public static final ParticleType<BlockParticleOption> DRIPSTONE_SPLASH = register("dripstone_splash");
+
+	private static ParticleType<BlockParticleOption> register(String name) {
+		ParticleType<BlockParticleOption> type = FabricParticleTypes.complex(BlockParticleOption::codec, BlockParticleOption::streamCodec);
+		PARTICLE_TYPES.register(name, () -> type);
+		return type;
+	}
 
 	public static boolean spawnDripParticle(Level level, BlockPos blockPos, BlockState blockState) {
 		var sourceBlock = findBlockAboveStalactite(level, blockPos, blockState);

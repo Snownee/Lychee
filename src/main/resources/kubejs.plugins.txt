@@ -1,0 +1,1 @@
+snownee.lychee.compat.kubejs.LycheeKubeJSPlugin

@@ -7,6 +7,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.Lighting;
+import net.fabricmc.fabric.api.client.rendering.v1.FabricRenderState;
 
 import net.minecraft.client.gui.render.pip.GuiEntityRenderer;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
@@ -26,7 +27,7 @@ public abstract class GuiEntityRendererMixin {
 			Lighting.Entry entry,
 			Operation<Void> original,
 			@Local(argsOnly = true) GuiEntityRenderState entityState) {
-		original.call(lighting, entityState.renderState().getDataOrDefault(GuiGameElement.CUSTOM_LIGHTING, entry));
+		original.call(lighting, ((FabricRenderState) entityState.renderState()).getDataOrDefault(GuiGameElement.CUSTOM_LIGHTING, entry));
 	}
 
 	@WrapOperation(
@@ -37,7 +38,7 @@ public abstract class GuiEntityRendererMixin {
 			FeatureRenderDispatcher featureRenderDispatcher,
 			Operation<Void> original,
 			@Local(argsOnly = true) GuiEntityRenderState entityState) {
-		boolean drawFluid = entityState.renderState().getData(GuiGameElement.DRAW_FLUID_STATE) != null;
+		boolean drawFluid = ((FabricRenderState) entityState.renderState()).getData(GuiGameElement.DRAW_FLUID_STATE) != null;
 		if (drawFluid) {
 			GuiGameElement.DRAW_FLUID_STATE_FLAG.set(Unit.INSTANCE);
 			original.call(featureRenderDispatcher);

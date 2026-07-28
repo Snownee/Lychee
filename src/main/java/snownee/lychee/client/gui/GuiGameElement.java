@@ -10,6 +10,7 @@ import com.google.common.base.Preconditions;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.math.Transformation;
 
+import net.fabricmc.fabric.api.client.rendering.v1.FabricRenderState;
 import net.fabricmc.fabric.api.client.rendering.v1.RenderStateDataKey;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -129,10 +130,10 @@ public class GuiGameElement {
 				renderState = new BlockDisplayEntityRenderState();
 				renderState.entityType = EntityType.BLOCK_DISPLAY;
 				renderState.renderState = createFreshRenderState();
-				renderState.setData(CUSTOM_LIGHTING, Lighting.Entry.ITEMS_FLAT);
+				((FabricRenderState) renderState).setData(CUSTOM_LIGHTING, Lighting.Entry.ITEMS_FLAT);
 
 				if (!blockState.getFluidState().isEmpty()) {
-					renderState.setData(DRAW_FLUID_STATE, Unit.INSTANCE);
+					((FabricRenderState) renderState).setData(DRAW_FLUID_STATE, Unit.INSTANCE);
 				}
 
 				this.blockState = this.blockState.rotate(Rotation.CLOCKWISE_180);

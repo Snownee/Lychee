@@ -1,8 +1,10 @@
 package snownee.lychee.util;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Unique;
@@ -12,17 +14,18 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
-import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.core.dispenser.BlockSource;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.TagParser;
@@ -48,10 +51,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.PointedDripstoneBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import snownee.kiwi.Mod;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import snownee.kiwi.loader.Platform;
+import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
 import snownee.lychee.LycheeRegistries;
@@ -78,7 +86,7 @@ import snownee.lychee.util.recipe.ILycheeRecipe;
 import snownee.lychee.util.ui.UIElementType;
 
 @Mod(Lychee.ID)
-public class CommonProxy implements ModInitializer {
+public class CommonProxy {
 	public static final KEvent<CustomActionListener> CUSTOM_ACTION_EVENT = KEvent.createArrayBacked(
 			CustomActionListener.class,
 			listeners -> (id, action, recipe) -> {
@@ -215,7 +223,7 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static boolean isSimpleIngredient(Ingredient ingredient) {
-		return !ingredient.requiresTesting();
+		return ingredient.isSimple();
 	}
 
 	public static JsonObject tagToJson(CompoundTag tag) {
@@ -260,7 +268,7 @@ public class CommonProxy implements ModInitializer {
 
 	public static IngredientType getIngredientType(Ingredient ingredient) {
 		var customIngredient = ingredient.getCustomIngredient();
-		if (customIngredient != null && customIngredient.getSerializer() == AlwaysTrueIngredient.SERIALIZER) {
+		if (customIngredient != null && Objects.equals(NeoForgeRegistries.INGREDIENT_TYPES.getKey(customIngredient.getType()), AlwaysTrueIngredient.ID)) {
 			return IngredientType.ANY;
 		}
 		if (ingredient.isEmpty()) { // TODO not compatible with AIR_INGREDIENT!
@@ -295,18 +303,98 @@ public class CommonProxy implements ModInitializer {
 	}
 
 	public static <T> String getTagTranslationKey(TagKey<T> key) {
-		return key.getTranslationKey();
+		return Tags.getTagTranslationKey(key);
 	}
 
 	public static void hurtAndBreak(ItemStack itemStack, int damage, ServerLevel level, @Nullable LivingEntity entity) {
 		itemStack.hurtAndBreak(damage, level, entity instanceof ServerPlayer player ? player : null, $ -> {});
 	}
 
-	@Override
-	public void onInitialize() {
+	public static long insertItem(
+			Level level,
+			BlockPos blockPos,
+			BlockState blockState,
+			@Nullable BlockEntity blockEntity,
+			@Nullable Direction direction,
+			ItemStack item) {
+		Storage<ItemVariant> storage = ItemStorage.SIDED.find(level, blockPos, blockState, blockEntity, direction);
+		if (storage == null || !storage.supportsInsertion()) {
+			return 0;
+		}
+		long inserted;
+		try (Transaction tx = Transaction.openOuter()) {
+			inserted = storage.insert(ItemVariant.of(item), item.getCount(), tx);
+			if (inserted > 0) {
+				tx.commit();
+				item.shrink((int) inserted);
+			}
+		}
+		return inserted;
+	}
+
+	public static long insertItem(Level level, BlockPos blockPos, @Nullable Direction direction, ItemStack item) {
+		BlockState blockState = level.getBlockState(blockPos);
+		BlockEntity blockEntity = level.getBlockEntity(blockPos);
+		return insertItem(level, blockPos, blockState, blockEntity, direction, item);
+	}
+
+	public static long extractItem(
+			Level level,
+			BlockPos blockPos,
+			BlockState blockState,
+			@Nullable BlockEntity blockEntity,
+			@Nullable Direction direction,
+			Predicate<? super ItemStack> predicate,
+			long maxCount) {
+		Storage<ItemVariant> storage = ItemStorage.SIDED.find(level, blockPos, blockState, blockEntity, direction);
+		if (storage == null || !storage.supportsExtraction()) {
+			return 0;
+		}
+		long extracted = 0;
+		try (Transaction tx = Transaction.openOuter()) {
+			Iterator<StorageView<ItemVariant>> iterator = storage.nonEmptyIterator();
+			while (iterator.hasNext() && extracted < maxCount) {
+				var view = iterator.next();
+				if (view.isResourceBlank()) {
+					continue;
+				}
+				ItemVariant resource = view.getResource();
+				if (!predicate.test(resource.toStack())) {
+					continue;
+				}
+				long toExtract = Math.min(view.getAmount(), maxCount - extracted);
+				long extractedNow = storage.extract(resource, toExtract, tx);
+				if (extractedNow > 0) {
+					extracted += extractedNow;
+				}
+			}
+			if (extracted > 0) {
+				tx.commit();
+			}
+		}
+		return extracted;
+	}
+
+	public static long extractItem(
+			Level level,
+			BlockPos blockPos,
+			@Nullable Direction direction,
+			Predicate<? super ItemStack> predicate,
+			long maxCount) {
+		BlockState blockState = level.getBlockState(blockPos);
+		BlockEntity blockEntity = level.getBlockEntity(blockPos);
+		return extractItem(level, blockPos, blockState, blockEntity, direction, predicate, maxCount);
+	}
+
+	public CommonProxy(IEventBus modEventBus) {
+		modEventBus.addListener(LycheeRegistries::init);
+		RecipeTypes.RECIPE_TYPES.register(modEventBus);
+		RecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
+		RecipeBookCategories.RECIPE_BOOK_CATEGORIES.register(modEventBus);
+		SlotDisplayTypes.SLOT_DISPLAYS.register(modEventBus);
+		DripstoneParticleService.PARTICLE_TYPES.register(modEventBus);
 		Objects.requireNonNull(RecipeTypes.ALL);
 		Objects.requireNonNull(LycheeTags.FIRE_IMMUNE);
-		Objects.requireNonNull(LycheeRegistries.CONTEXTUAL);
 		Objects.requireNonNull(ContextualConditionType.AND);
 		Objects.requireNonNull(PostActionTypes.DROP_ITEM);
 		Objects.requireNonNull(RecipeSerializers.ALL);
@@ -325,22 +413,6 @@ public class CommonProxy implements ModInitializer {
 		UseBlockCallback.EVENT.register(BlockInteractingRecipe::invoke);
 		AttackBlockCallback.EVENT.register(BlockClickingRecipe::invoke);
 
-		// Dripstone recipes
-		Registry.register(
-				BuiltInRegistries.PARTICLE_TYPE,
-				Lychee.id("dripstone_dripping"),
-				DripstoneParticleService.DRIPSTONE_DRIPPING
-		);
-		Registry.register(
-				BuiltInRegistries.PARTICLE_TYPE,
-				Lychee.id("dripstone_falling"),
-				DripstoneParticleService.DRIPSTONE_FALLING
-		);
-		Registry.register(
-				BuiltInRegistries.PARTICLE_TYPE,
-				Lychee.id("dripstone_splash"),
-				DripstoneParticleService.DRIPSTONE_SPLASH
-		);
 	}
 
 	public interface CustomActionListener {

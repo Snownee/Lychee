@@ -29,7 +29,7 @@ import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
-public record DropItem(PostActionCommonProperties commonProperties, ItemStackTemplate itemStack) implements PostAction {
+public record DropItem(PostActionCommonProperties commonProperties, ItemStackTemplate item) implements PostAction {
 	@Override
 	public PostActionType<DropItem> type() {
 		return PostActionTypes.DROP_ITEM;
@@ -46,7 +46,7 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStackTem
 				pos = Vec3.atCenterOf(actionContext.get(LootContextKeys.BLOCK_POS));
 			}
 		}
-		var itemStack = this.itemStack.create();
+		var itemStack = this.item.create();
 		itemStack.setCount(itemStack.getCount() * times);
 		if (recipe != null && recipe.getType() == RecipeTypes.BLOCK_EXPLODING) {
 			context.get(LycheeContextKey.ITEM).stacksNeedHandle.add(itemStack);
@@ -57,25 +57,25 @@ public record DropItem(PostActionCommonProperties commonProperties, ItemStackTem
 
 	@Override
 	public Component getName() {
-		return itemStack.create().getHoverName();
+		return item.create().getHoverName();
 	}
 
 	@Override
 	public List<SlotDisplay> getOutputItems() {
-		return List.of(Displays.slot(itemStack));
+		return List.of(Displays.slot(item));
 	}
 
 	public static class Type implements PostActionType<DropItem> {
 		public static final MapCodec<DropItem> CODEC = RecordCodecBuilder.mapCodec(instance ->
 				instance.group(
 						PostActionCommonProperties.MAP_CODEC.forGetter(DropItem::commonProperties),
-						LycheeCodecs.ITEM_STACK_TEMPLATE_MAP_CODEC.forGetter(DropItem::itemStack)
+						LycheeCodecs.ITEM_STACK_TEMPLATE_MAP_CODEC.forGetter(DropItem::item)
 				).apply(instance, DropItem::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, DropItem> STREAM_CODEC = StreamCodec.composite(
 				PostActionCommonProperties.STREAM_CODEC,
 				DropItem::commonProperties,
 				ItemStackTemplate.STREAM_CODEC,
-				DropItem::itemStack,
+				DropItem::item,
 				DropItem::new);
 
 		@Override

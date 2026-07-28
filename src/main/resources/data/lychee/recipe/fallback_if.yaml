@@ -1,0 +1,9 @@
+type: lychee:block_interacting
+block_in: redstone_block
+item_in: turtle_scute
+post:
+  - if:
+      type: chance
+      chance: 0.5
+    then: drop coal
+    else: drop diamond

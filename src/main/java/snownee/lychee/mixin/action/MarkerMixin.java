@@ -69,7 +69,7 @@ public abstract class MarkerMixin extends Entity implements ActionMarker {
 
 	@Inject(at = @At("HEAD"), method = "readAdditionalSaveData")
 	private void lychee_readAdditionalSaveData(ValueInput input, CallbackInfo ci) {
-		if (!input.contains("lychee")) {
+		if (input.child(Lychee.ID).isEmpty()) {
 			return;
 		}
 		Optional<ActionData.Builder> result = input.read(Lychee.ID, ActionData.Builder.CODEC);

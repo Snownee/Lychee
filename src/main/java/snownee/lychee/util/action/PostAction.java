@@ -23,6 +23,7 @@ import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.LycheeRegistries;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.codec.LycheeParser;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.contextual.Contextual;
@@ -32,7 +33,12 @@ import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public interface PostAction extends PostActionDisplay, PostActionLike, ContextualPredicate, Contextual {
-	MapCodec<PostAction> MAP_CODEC = LycheeRegistries.POST_ACTION.byNameCodec().dispatchMap(PostAction::type, PostActionType::codec);
+	MapCodec<PostAction> MAP_CODEC = LycheeCodecs.rename(
+					LycheeRegistries.POST_ACTION.byNameCodec()
+							.fieldOf("type")
+							.orElseGet(() -> PostActionTypes.IF),
+					"Field[PostActionType]")
+			.dispatchMap(PostAction::type, PostActionType::codec);
 	Codec<PostAction> OBJECT_CODEC = MAP_CODEC.codec();
 	Codec<PostAction> STRING_CODEC = new Codec<>() {
 		@Override
@@ -60,7 +66,7 @@ public interface PostAction extends PostActionDisplay, PostActionLike, Contextua
 			PostActionType::streamCodec);
 	StreamCodec<RegistryFriendlyByteBuf, List<PostAction>> STREAM_LIST_CODEC = STREAM_CODEC.apply(original ->
 			// Error on Eclipse without the generic type (?)
-			new StreamCodec<RegistryFriendlyByteBuf, List<PostAction>>() {
+			new StreamCodec<>() {
 				@Override
 				public void encode(RegistryFriendlyByteBuf byteBuf, List<PostAction> list) {
 					var filtered = list.stream().filter(it -> !it.preventSync()).toList();

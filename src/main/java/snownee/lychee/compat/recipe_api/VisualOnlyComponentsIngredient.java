@@ -7,9 +7,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
-import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
-import net.fabricmc.fabric.api.recipe.v1.ingredient.FabricIngredient;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -22,6 +19,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.display.DisplayContentsFactory;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
+import snownee.kiwi.recipe.CustomIngredient;
+import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.lychee.Lychee;
 import snownee.lychee.SlotDisplayTypes;
 
@@ -58,8 +57,7 @@ public class VisualOnlyComponentsIngredient implements CustomIngredient {
 
 	@Override
 	public boolean requiresTesting() {
-		// TODO Fabric recipe api interface injection isn't working now
-		return ((FabricIngredient) (Object) base).requiresTesting();
+		return !base.isSimple();
 	}
 
 	@Override
