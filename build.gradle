@@ -188,7 +188,7 @@ publishMods {
     version = realVersion
 
     curseforge {
-        projectId = "574650"
+        projectId = "567403"
         client = true
         server = true
         accessToken = providers.environmentVariable("CURSE_TOKEN")
