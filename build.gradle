@@ -2,7 +2,7 @@ plugins {
     id 'idea'
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.74'
+    id 'net.neoforged.moddev' version '2.0.144'
     id "me.modmuss50.mod-publish-plugin" version "2.+"
 }
 
