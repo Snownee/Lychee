@@ -116,7 +116,16 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:${project.fabric_version}"
-    jarJar(implementation("org.sinytra.forgified-fabric-api:fabric-particles-v1:${project.forgified_fabric_particles_version}"))
+    jarJar "org.sinytra.forgified-fabric-api:fabric-particles-v1:5.0.15+77a9369f4c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-networking-api-v1:6.3.1+64200f3a4c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-api-base:2.0.3+b11575294c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-transfer-api-v1:8.0.6+7b5559184c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-api-lookup-api-v1:2.0.12+29e133704c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-rendering-fluids-v1:6.0.1+a22884974c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-lifecycle-events-v1:4.1.1+150d8dbd4c"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-recipe-api-v1:9.0.16+d86288d44c"
+    jarJar "org.sinytra:forgified-fabric-loader:2.5.83+0.19.3+26.1.2"
+    jarJar "org.sinytra.forgified-fabric-api:fabric-events-interaction-v0:5.2.2+9abcb0834c"
 
     implementation "dev.architectury:architectury-neoforge:${project.architectury_version}"
     implementation "maven.modrinth:cloth-config:${project.cloth_config_version}+neoforge"
