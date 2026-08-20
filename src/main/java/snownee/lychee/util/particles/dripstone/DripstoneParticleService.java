@@ -1,17 +1,21 @@
 package snownee.lychee.util.particles.dripstone;
 
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 import org.jspecify.annotations.Nullable;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.mojang.serialization.MapCodec;
 
-import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -26,14 +30,16 @@ public class DripstoneParticleService {
 
 	public static final Cache<Block, DripParticleHandler> particleHandlers = CacheBuilder.newBuilder().build();
 
-	public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, Lychee.ID);
+	public static final DeferredRegister<ParticleType<?>> PARTICLE_TYPES = DeferredRegister.create(
+			BuiltInRegistries.PARTICLE_TYPE,
+			Lychee.ID);
 
 	public static final ParticleType<BlockParticleOption> DRIPSTONE_DRIPPING = register("dripstone_dripping");
 	public static final ParticleType<BlockParticleOption> DRIPSTONE_FALLING = register("dripstone_falling");
 	public static final ParticleType<BlockParticleOption> DRIPSTONE_SPLASH = register("dripstone_splash");
 
 	private static ParticleType<BlockParticleOption> register(String name) {
-		ParticleType<BlockParticleOption> type = FabricParticleTypes.complex(BlockParticleOption::codec, BlockParticleOption::streamCodec);
+		ParticleType<BlockParticleOption> type = complex(false, BlockParticleOption::codec, BlockParticleOption::streamCodec);
 		PARTICLE_TYPES.register(name, () -> type);
 		return type;
 	}
@@ -83,5 +89,22 @@ public class DripstoneParticleService {
 				.callFindRootBlock(level, pos, state, 11)
 				.map(blockPos -> level.getBlockState(blockPos.above()))
 				.orElse(null);
+	}
+
+	public static <T extends ParticleOptions> ParticleType<T> complex(
+			boolean alwaysSpawn,
+			final Function<ParticleType<T>, MapCodec<T>> codecGetter,
+			final Function<ParticleType<T>, StreamCodec<? super RegistryFriendlyByteBuf, T>> streamCodecGetter) {
+		return new ParticleType<>(alwaysSpawn) {
+			@Override
+			public MapCodec<T> codec() {
+				return codecGetter.apply(this);
+			}
+
+			@Override
+			public StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec() {
+				return streamCodecGetter.apply(this);
+			}
+		};
 	}
 }

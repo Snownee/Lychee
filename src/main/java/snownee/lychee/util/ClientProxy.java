@@ -5,13 +5,9 @@ import java.util.Objects;
 
 import org.jspecify.annotations.Nullable;
 
-import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
 import net.fabricmc.fabric.api.recipe.v1.FabricRecipeAccess;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.common.Mod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -22,6 +18,10 @@ import net.minecraft.world.item.crafting.RecipeAccess;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.level.material.Fluid;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
@@ -78,7 +78,8 @@ public class ClientProxy {
 
 	@Nullable
 	public static RecipeHolder<?> recipe(ResourceKey<Recipe<?>> id) {
-		return ((FabricRecipeAccess) Objects.requireNonNull(Minecraft.getInstance().getConnection()).recipes()).getSynchronizedRecipes().get(id);
+		return ((FabricRecipeAccess) Objects.requireNonNull(Minecraft.getInstance().getConnection()).recipes()).getSynchronizedRecipes()
+				.get(id);
 	}
 
 	public static RecipeMap recipes(RecipeAccess recipes) {
@@ -86,18 +87,12 @@ public class ClientProxy {
 	}
 
 	public ClientProxy(IEventBus modEventBus) {
-		ParticleProviderRegistry.getInstance().register(
-				DripstoneParticleService.DRIPSTONE_DRIPPING,
-				ParticleFactories.Dripping::new
-		);
-		ParticleProviderRegistry.getInstance().register(
-				DripstoneParticleService.DRIPSTONE_FALLING,
-				ParticleFactories.Falling::new
-		);
-		ParticleProviderRegistry.getInstance().register(
-				DripstoneParticleService.DRIPSTONE_SPLASH,
-				ParticleFactories.Splash::new
-		);
+		modEventBus.addListener(
+				RegisterParticleProvidersEvent.class, event -> {
+					event.registerSpriteSet(DripstoneParticleService.DRIPSTONE_DRIPPING, ParticleFactories.Dripping::new);
+					event.registerSpriteSet(DripstoneParticleService.DRIPSTONE_FALLING, ParticleFactories.Falling::new);
+					event.registerSpriteSet(DripstoneParticleService.DRIPSTONE_SPLASH, ParticleFactories.Splash::new);
+				});
 
 		ActionRenderer.init();
 		ElementRenderer.init();

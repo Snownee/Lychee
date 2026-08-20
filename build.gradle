@@ -116,8 +116,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     implementation "org.sinytra.forgified-fabric-api:forgified-fabric-api:${project.fabric_version}"
-    jarJar "org.sinytra.forgified-fabric-api:fabric-particles-v1:5.0.15+77a9369f4c"
-    jarJar "org.sinytra.forgified-fabric-api:fabric-networking-api-v1:6.3.1+64200f3a4c"
     jarJar "org.sinytra.forgified-fabric-api:fabric-api-base:2.0.3+b11575294c"
     jarJar "org.sinytra.forgified-fabric-api:fabric-transfer-api-v1:8.0.6+7b5559184c"
     jarJar "org.sinytra.forgified-fabric-api:fabric-api-lookup-api-v1:2.0.12+29e133704c"
@@ -140,6 +138,7 @@ dependencies {
     implementation "mezz.jei:jei-${project.jei_minecraft_version}-neoforge-api:${project.jei_version}"
     implementation "mezz.jei:jei-${project.jei_minecraft_version}-neoforge:${project.jei_version}"
     implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    implementation "dev.latvian.mods:better-advanced-tooltips:2601.1.0-build.9"
 
     implementation fileTree(dir: "libs", include: ["*.jar"])
     annotationProcessor fileTree(dir: "libs", include: ["*.jar"])
