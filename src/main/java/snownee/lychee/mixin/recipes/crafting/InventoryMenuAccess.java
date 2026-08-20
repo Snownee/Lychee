@@ -1,4 +1,4 @@
-package snownee.lychee.mixin;
+package snownee.lychee.mixin.recipes.crafting;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -8,8 +8,6 @@ import net.minecraft.world.inventory.InventoryMenu;
 
 @Mixin(InventoryMenu.class)
 public interface InventoryMenuAccess {
-
 	@Accessor
 	Player getOwner();
-
 }
