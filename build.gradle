@@ -4,13 +4,13 @@ plugins {
     id "me.modmuss50.mod-publish-plugin" version "2.+"
 }
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
-
-archivesBaseName = project.archives_base_name
 version = project.minecraft_version + "-Fabric-" + project.mod_version
 group = project.maven_group
 var realVersion = project.mod_version + '+fabric'
+
+base {
+    archivesName = project.archives_base_name
+}
 
 repositories {
     maven {
