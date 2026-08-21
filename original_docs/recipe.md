@@ -1,5 +1,11 @@
 # Recipes
 
+!!! info
+
+    Try [**Lychee Recipe Generator**](https://misode.github.io/lychee/recipe/) !
+
+    It's a convenient tool for creating Lychee recipes.
+
 ## Basic Format
 
 Recipes should be placed in `data/<namespace>/recipe/` folder, like normal data-driven recipes.
