@@ -51,7 +51,8 @@
 		"client.ClientRecipeBookMixin",
 		"client.GameRendererAccess",
 		"client.GuiGraphicsMixin",
-		"jei.AnvilRecipeCategoryMixin"
+		"jei.AnvilRecipeCategoryMixin",
+		"recipes.blockclicking.MultiPlayerGameModeMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1,

@@ -88,11 +88,11 @@ public interface LycheeBuilder {
 		return new LycheeRecipeBuilder.AnvilCrafting(left, right, materialCost, levelCost, output);
 	}
 
-	default LycheeRecipeBuilder.BlockInteracting<BlockClickingRecipe> blockClickingRecipe(
+default LycheeRecipeBuilder.BlockClicking blockClickingRecipe(
 			SizedIngredient mainHand,
 			@Nullable SizedIngredient offHand,
 			Object block) {
-		return new LycheeRecipeBuilder.BlockInteracting<>(BlockClickingRecipe::new, mainHand, offHand, block(block));
+		return new LycheeRecipeBuilder.BlockClicking(BlockClickingRecipe::new, mainHand, offHand, block(block));
 	}
 
 	default LycheeRecipeBuilder.BlockCrushing blockCrushingRecipe() {
