@@ -42,7 +42,7 @@ public class BlockInteractingRecipe extends LycheeRecipe<LycheeContext> implemen
 			final Level level,
 			final InteractionHand hand,
 			final BlockHitResult hitResult) {
-		if (player.isSpectator()) {
+		if (player.isSpectator() || RecipeTypes.BLOCK_INTERACTING.isEmpty()) {
 			return InteractionResult.PASS;
 		}
 		if (hand == InteractionHand.OFF_HAND && player.getOffhandItem().isEmpty()) {

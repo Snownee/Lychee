@@ -124,11 +124,11 @@ public interface LycheeBuilder {
 	}
 
 	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-	default LycheeRecipeBuilder.BlockInteracting<BlockClickingRecipe> blockClickingRecipe(
+	default LycheeRecipeBuilder.BlockClicking blockClickingRecipe(
 			Optional<SizedIngredient> mainHand,
 			@Nullable Optional<SizedIngredient> offHand,
 			Object block) {
-		return new LycheeRecipeBuilder.BlockInteracting<>(BlockClickingRecipe::new, mainHand, offHand, block(block));
+		return new LycheeRecipeBuilder.BlockClicking(BlockClickingRecipe::new, mainHand, offHand, block(block));
 	}
 
 	default LycheeRecipeBuilder.BlockCrushing blockCrushingRecipe() {

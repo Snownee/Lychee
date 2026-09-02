@@ -1,0 +1,9 @@
+block_in: grass_block
+destroy_block: false
+if:
+  description: Test
+  type: is_sneaking
+item_in:
+- bucket
+post: prevent_default
+type: lychee:block_clicking

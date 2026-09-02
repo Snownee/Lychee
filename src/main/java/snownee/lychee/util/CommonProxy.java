@@ -16,6 +16,7 @@ import com.mojang.serialization.JsonOps;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -62,7 +63,6 @@ import snownee.kiwi.loader.Platform;
 import snownee.kiwi.recipe.CustomIngredientSerializer;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.Lychee;
-import snownee.lychee.LycheeRegistries;
 import snownee.lychee.LycheeTags;
 import snownee.lychee.RecipeBookCategories;
 import snownee.lychee.RecipeSerializers;
@@ -407,6 +407,7 @@ public class CommonProxy implements ModInitializer {
 		// Interaction recipes
 		UseBlockCallback.EVENT.register(BlockInteractingRecipe::invoke);
 		AttackBlockCallback.EVENT.register(BlockClickingRecipe::invoke);
+		PlayerBlockBreakEvents.BEFORE.register((level, player, pos, _, _) -> !BlockClickingRecipe.isBreakProtected(player, level, pos));
 
 		// Dripstone recipes
 		Registry.register(

@@ -38,6 +38,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
+import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
@@ -348,6 +349,33 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		@Override
 		public R build() {
 			return constructor.apply(properties(), inputs, blockPredicate);
+		}
+	}
+
+	public static class BlockClicking extends BlockInteracting<BlockClickingRecipe> {
+		protected boolean destroyBlock = true;
+
+		@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+		public BlockClicking(
+				Function3<LycheeRecipeCommonProperties, List<Optional<SizedIngredient>>, BlockPredicate, BlockClickingRecipe> constructor,
+				Optional<SizedIngredient> mainHand,
+				@Nullable Optional<SizedIngredient> offHand,
+				BlockPredicate block) {
+			super(constructor, mainHand, offHand, block);
+		}
+
+		@Contract("_ -> this")
+		public BlockClicking destroyBlock(boolean destroyBlock) {
+			this.destroyBlock = destroyBlock;
+			return this;
+		}
+
+		@Override
+		public BlockClickingRecipe build() {
+			if (destroyBlock) {
+				return super.build();
+			}
+			return new BlockClickingRecipe(properties(), inputs, blockPredicate, false);
 		}
 	}
 
