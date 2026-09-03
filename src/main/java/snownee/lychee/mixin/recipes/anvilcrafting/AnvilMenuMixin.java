@@ -120,8 +120,9 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		if (recipe == null) {
 			return;
 		}
-		onTakeCtx = context;
+onTakeCtx = context;
 		recipe.applyPostActions(context, 1);
+		context.get(LycheeContextKey.ITEM).postApply(false, 1);
 	}
 
 	@Inject(

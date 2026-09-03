@@ -87,7 +87,9 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 		if (result.isPresent()) {
 			if (!result.get().destroyBlock()) {
 				markBreakProtected(player, level, pos);
-				return InteractionResult.FAIL;
+				if (!level.isClientSide()) {
+					return InteractionResult.FAIL;
+				}
 			}
 			return InteractionResult.SUCCESS;
 		}

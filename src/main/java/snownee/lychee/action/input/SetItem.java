@@ -9,7 +9,6 @@ import com.google.common.base.Preconditions;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -23,6 +22,8 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.input.ExtendedItemStackHolder;
+import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.json.JsonPointer;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
@@ -37,24 +38,59 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStack ite
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
 		var indexes = Objects.requireNonNull(recipe).getItemIndexes(target);
 		var registryAccess = context.level().registryAccess();
+		var itemContext = context.get(LycheeContextKey.ITEM);
 		for (var index : indexes) {
-			var tag = (CompoundTag) context.getItem(index).save(registryAccess);
-			ItemStack stack;
-			if (getPath().isEmpty()) {
-				stack = this.itemStack.copy();
-			} else {
-				stack = ItemStack.parseOptional(
-						registryAccess,
-						CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON)))
-				);
-
+			var holder = itemContext.get(index);
+			var base = getPath().isEmpty()
+					? this.itemStack.copy()
+					: ItemStack.parseOptional(
+							registryAccess,
+							CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON))));
+			if (base.isEmpty()) {
+				context.setItem(index, ItemStack.EMPTY);
+				holder.setConsumption(0);
+				continue;
 			}
-			context.setItem(index, stack);
-			if (!stack.isEmpty()) {
-				((CompoundTag) context.getItem(index).saveOptional(registryAccess)).merge(tag);
+			var stack = holder.get();
+			var consumption = holder.getConsumption();
+			if (stack.isEmpty() || consumption <= 0) {
+				continue;
 			}
-			context.get(LycheeContextKey.ITEM).get(index).setConsumption(0);
+			holder.split(Math.min(times * consumption, stack.getCount()));
+			holder.setConsumption(0);
+			placeOutput(itemContext, holder, base, times);
 		}
+	}
+
+	private void placeOutput(ItemStackHolderCollection itemContext, ExtendedItemStackHolder holder, ItemStack base, int times) {
+		var total = base.getCount() * times;
+		while (total > 0) {
+			var output = base.copy();
+			output.setCount(Math.min(total, base.getMaxStackSize()));
+			total -= output.getCount();
+			if (!placeAtSlot(holder, output)) {
+				itemContext.stacksNeedHandle.add(output);
+			}
+		}
+	}
+
+	private boolean placeAtSlot(ExtendedItemStackHolder holder, ItemStack output) {
+		var current = holder.get();
+		if (current.isEmpty()) {
+			holder.set(output);
+			return true;
+		}
+		if (!ItemStack.isSameItemSameComponents(current, output)) {
+			return false;
+		}
+		var space = current.getMaxStackSize() - current.getCount();
+		if (space <= 0) {
+			return false;
+		}
+		var moved = Math.min(output.getCount(), space);
+		current.grow(moved);
+		output.shrink(moved);
+		return output.isEmpty();
 	}
 
 	@Override
@@ -65,11 +101,6 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStack ite
 	@Override
 	public List<ItemStack> getOutputItems() {
 		return List.of(itemStack);
-	}
-
-	@Override
-	public boolean repeatable() {
-		return false;
 	}
 
 	@Override
