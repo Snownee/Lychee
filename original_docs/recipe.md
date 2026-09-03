@@ -138,11 +138,12 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name     | Description               | Type / Literal                                                                                               |
-    | -------- | ------------------------- | ------------------------------------------------------------------------------------------------------------ |
-    | type     | type                      | "lychee:block_clicking"                                                                                      |
-    | item_in  | the item in player's hand | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
-    | block_in | the block being clicked   | [BlockPredicate](general-types.md#blockpredicate)                                                            |
+    | Name          | Description                                                                    | Type / Literal                                                                                               |
+    | ------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+    | type          | type                                                                           | "lychee:block_clicking"                                                                                      |
+    | item_in       | the item in player's hand                                                      | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
+    | block_in      | the block being clicked                                                        | [BlockPredicate](general-types.md#blockpredicate)                                                            |
+    | destroy_block | whether the block can continue to be mined ^optional^{ title="default: true" } | true \| false                                                                                                |
 
     `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
 
@@ -276,14 +277,15 @@ Default behavior: Anvil is damaged.
 
 !!! note "Format"
 
-    | Name          | Description                                                                              | Type / Literal                                                                           |
-    | ------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-    | type          | type                                                                                     | "lychee:anvil_crafting"                                                                  |
-    | item_in       | the input items (the second one is optional)                                             | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
-    | item_out      | the result item                                                                          | [ItemStack](general-types.md#itemstack)                                                  |
-    | level_cost    | player's xp level ^optional^{ title="default: 1" }                                       | int && >=1                                                                               |
-    | material_cost | amount of items that will be cost from right input slot ^optional^{ title="default: 1" } | int                                                                                      |
-    | assembling    | actions that running before the result is displayed ^optional^                           | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
+    | Name                  | Description                                                                                    | Type / Literal                                                                           |
+    | --------------------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+    | type                  | type                                                                                           | "lychee:anvil_crafting"                                                                  |
+    | item_in               | the input items (the second one is optional)                                                   | [Ingredient](general-types.md#ingredient) \| [Ingredient](general-types.md#ingredient)[] |
+    | item_out              | the result item                                                                                | [ItemStack](general-types.md#itemstack)                                                  |
+    | level_cost            | player's xp level ^optional^{ title="default: 1" }                                             | int && >=1                                                                               |
+    | material_cost         | amount of items that will be cost from right input slot ^optional^{ title="default: 1" }       | int                                                                                      |
+    | preserve_enchantments | merge the enchantments of the input items onto the result ^optional^{ title="default: false" } | true \| false                                                                            |
+    | assembling            | actions that running before the result is displayed ^optional^                                 | [PostAction](post-action.md) \| [PostAction](post-action.md)[]                           |
 
 ??? example
 

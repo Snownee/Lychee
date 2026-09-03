@@ -276,7 +276,7 @@ This action is not [repeatable](concepts.md#repeatability).
 
 Replaces the inputs or the results.
 
-This action is not [repeatable](concepts.md#repeatability).
+This action is [repeatable](concepts.md#repeatability). The output scales with how much material you supply, and the input material is genuinely consumed instead of being refunded.
 
 !!! note "Format"
 
@@ -287,6 +287,13 @@ This action is not [repeatable](concepts.md#repeatability).
     | id         | the item resource id       | string (Identifier)                         |
     | count      | item amount ^optional^     | int                                         |
     | components | item components ^optional^ | dictionary                                  |
+
+??? note
+
+    - The input material is consumed per its recipe ingredient count instead of being refunded. Previously the target item was replaced and the old material was returned to you.
+    - The transformed item is placed back at the original position when the input is fully consumed; otherwise leftover material stays in place and the output goes to your inventory (or drops on the ground if your inventory is full).
+    - Outputs larger than a single stack are split into multiple stacks.
+    - Setting an empty/`air` item still clears the slot.
 
 ### Add Item Cooldown
 

@@ -1,5 +1,20 @@
 # Update Notes
 
+## 6.6
+
+- `set_item` reworked: now repeatable and actually consumes inputs
+    - `set_item` is now repeatable — output scales with how much material you supply (e.g. a 4-ingredient input can transform a full stack at once).
+    - The input material is now genuinely consumed (per its recipe ingredient count) instead of being refunded. Previously the target item was replaced and the old material was returned to you.
+    - The transformed item is placed back at the original position when the input is fully consumed; otherwise leftover material stays in place and the output goes to your inventory (or drops on the ground if your inventory is full).
+    - Outputs larger than a single stack are split into multiple stacks.
+    - Setting an empty/`air` item still clears the slot as before.
+- Added `destroy_block` attribute to the block clicking recipe.
+
+## 6.5
+
+- Added new condition type `copy_component`, `remove_component` and `copy_durability`
+- Added `preserve_enchantments` attribute to the anvil crafting recipe.
+
 ## 6.4
 
 - Added more shorthand formats.
@@ -11,9 +26,9 @@
 ## 6.3
 
 - Added JEI/REI integration customization.
-  - You can now add, hide or replace the UI elements in a Lychee's recipe.
-  - You can change the width and height of the recipe UI.
-  - You can replace the category icon or workstations of a recipe type.
+    - You can now add, hide or replace the UI elements in a Lychee's recipe.
+    - You can change the width and height of the recipe UI.
+    - You can replace the category icon or workstations of a recipe type.
 - The `check_param`(Loot Parameter Check) condition type has been removed.
 - Added `param` condition type.
 - Added `move` action type to move the anchored position in the context.
