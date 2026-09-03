@@ -1,6 +1,7 @@
 package snownee.lychee.action.input;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.jspecify.annotations.Nullable;
@@ -26,6 +27,8 @@ import snownee.lychee.util.action.PostActionTypes;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
+import snownee.lychee.util.input.ExtendedItemStackHolder;
+import snownee.lychee.util.input.ItemStackHolderCollection;
 import snownee.lychee.util.recipe.ILycheeRecipe;
 
 public record SetItem(
@@ -45,11 +48,57 @@ public record SetItem(
 
 	@Override
 	public void apply(LycheeContext context, ActionContext actionContext, int times) {
-		var indexes = context.get(LycheeContextKey.RECIPE).getItemIndexes(target);
+		var recipe = context.get(LycheeContextKey.RECIPE);
+		var indexes = recipe.getItemIndexes(target);
+		var itemContext = context.get(LycheeContextKey.ITEM);
 		for (var index : indexes) {
-			context.setItem(index, item != null ? item.create() : ItemStack.EMPTY);
-			context.get(LycheeContextKey.ITEM).get(index).setConsumption(0);
+			var holder = itemContext.get(index);
+			if (item == null) {
+				context.setItem(index, ItemStack.EMPTY);
+				holder.setConsumption(0);
+				continue;
+			}
+			var stack = holder.get();
+			var consumption = holder.getConsumption();
+			if (stack.isEmpty() || consumption <= 0) {
+				continue;
+			}
+			holder.split(Math.min(times * consumption, stack.getCount()));
+			holder.setConsumption(0);
+			placeOutput(itemContext, holder, times);
 		}
+	}
+
+	private void placeOutput(ItemStackHolderCollection itemContext, ExtendedItemStackHolder holder, int times) {
+		var base = Objects.requireNonNull(item).create();
+		var total = item.count() * times;
+		while (total > 0) {
+			var output = base.copy();
+			output.setCount(Math.min(total, base.getMaxStackSize()));
+			total -= output.getCount();
+			if (!placeAtSlot(holder, output)) {
+				itemContext.stacksNeedHandle.add(output);
+			}
+		}
+	}
+
+	private boolean placeAtSlot(ExtendedItemStackHolder holder, ItemStack output) {
+		var current = holder.get();
+		if (current.isEmpty()) {
+			holder.set(output);
+			return true;
+		}
+		if (!ItemStack.isSameItemSameComponents(current, output)) {
+			return false;
+		}
+		var space = current.getMaxStackSize() - current.getCount();
+		if (space <= 0) {
+			return false;
+		}
+		var moved = Math.min(output.getCount(), space);
+		current.grow(moved);
+		output.shrink(moved);
+		return output.isEmpty();
 	}
 
 	@Override
@@ -63,11 +112,6 @@ public record SetItem(
 	@Override
 	public List<SlotDisplay> getOutputItems() {
 		return List.of(Displays.slot(item));
-	}
-
-	@Override
-	public boolean repeatable() {
-		return false;
 	}
 
 	@Override

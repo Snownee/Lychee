@@ -16,9 +16,12 @@ import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -159,19 +162,36 @@ public class BlockKeyableRecipeType<R extends BlockKeyableRecipe> extends Lychee
 							times = Math.min(times, count);
 						}
 					}
-					times = recipe.getRandomRepeats(Math.max(1, times), context);
-					ActionContext actionContext = Objects.requireNonNull(recipe.applyPostActions(context, times));
-					itemContext.postApply(!actionContext.avoidDefault, times);
-					player.setItemInHand(hand, context.getItem(0));
-					player.setItemInHand(
-							hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND,
-							context.getItem(1)
-					);
+					if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+						times = recipe.getRandomRepeats(Math.max(1, times), context);
+						ActionContext actionContext = Objects.requireNonNull(recipe.applyPostActions(context, times));
+						itemContext.postApply(!actionContext.avoidDefault, times);
+						setItemInHand(serverPlayer, hand, context.getItem(0));
+						setItemInHand(
+								serverPlayer,
+								hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND,
+								context.getItem(1));
+					}
 				}
 				return Optional.of(recipe);
 			}
 		}
 		return Optional.empty();
+	}
+
+	private void setItemInHand(ServerPlayer player, InteractionHand hand, ItemStack newItem) {
+		ItemStack oldItem = player.getItemInHand(hand);
+		if (!newItem.isEmpty() && !ItemStack.isSameItemSameComponents(oldItem, newItem)) {
+			// force set pop time
+			player.connection.send(new ClientboundContainerSetSlotPacket(
+					player.containerMenu.containerId,
+					player.containerMenu.incrementStateId(),
+					hand == InteractionHand.MAIN_HAND ?
+							InventoryMenu.USE_ROW_SLOT_START + player.getInventory().getSelectedSlot() :
+							InventoryMenu.SHIELD_SLOT,
+					ItemStack.EMPTY));
+		}
+		player.setItemInHand(hand, newItem);
 	}
 
 	public boolean has(Block block) {

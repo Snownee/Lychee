@@ -1,0 +1,10 @@
+comment: 4 cobblestone -> 1 iron_ingot per repeat; 64 cobblestone -> 16 iron_ingot as a new entity at the same position
+block_in: water_cauldron
+item_in:
+- count: 4
+  ingredient: cobblestone
+post:
+- id: iron_ingot
+  target: /item_in/0
+  type: set_item
+type: lychee:item_inside
