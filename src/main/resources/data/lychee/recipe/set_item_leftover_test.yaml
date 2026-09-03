@@ -1,12 +1,12 @@
 comment: max_repeats 2 -> leftover stone stays in hand, 2 iron_ingot go to player inventory
 block_in: stone
 item_in:
-- count: 4
-  ingredient: stone
+  - count: 4
+    item: stone
 post:
-- id: iron_ingot
-  target: /item_in/0
-  type: set_item
+  - id: iron_ingot
+    target: /item_in/0
+    type: set_item
 max_repeats: 2
 destroy_block: false
 type: lychee:block_interacting

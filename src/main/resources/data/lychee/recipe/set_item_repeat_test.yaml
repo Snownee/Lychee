@@ -2,7 +2,7 @@ comment: 4 cobblestone -> 1 iron_ingot per repeat; 64 cobblestone -> 16 iron_ing
 block_in: water_cauldron
 item_in:
 - count: 4
-  ingredient: cobblestone
+  item: cobblestone
 post:
 - id: iron_ingot
   target: /item_in/0

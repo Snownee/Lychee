@@ -1,13 +1,13 @@
 comment: right slot with 64 dirt -> 63 stay in slot and are consumed by vanilla on take, apple goes to player inventory
 item_in:
-- diamond
-- dirt
+  - item: diamond
+  - item: dirt
 item_out:
   id: diamond
 level_cost: 10
 material_cost: 2
 post:
-- id: apple
-  target: /item_in/1
-  type: set_item
+  - id: apple
+    target: /item_in/1
+    type: set_item
 type: lychee:anvil_crafting

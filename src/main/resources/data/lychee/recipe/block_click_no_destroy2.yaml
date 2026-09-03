@@ -4,6 +4,6 @@ if:
   description: Test
   type: is_sneaking
 item_in:
-- bucket
+  - item: bucket
 post: prevent_default
 type: lychee:block_clicking
