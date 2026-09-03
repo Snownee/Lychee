@@ -339,7 +339,7 @@ public class CommonProxy {
 					event.getHand(),
 					event.getPos(),
 					event.getFace());
-			event.setCanceled(result.consumesAction());
+			event.setCanceled(result != InteractionResult.PASS);
 		});
 		NeoForge.EVENT_BUS.addListener((BlockEvent.BreakEvent event) -> {
 			if (BlockClickingRecipe.isBreakProtected(event.getPlayer(), (Level) event.getLevel(), event.getPos())) {

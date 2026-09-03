@@ -39,6 +39,7 @@ import snownee.lychee.compat.recipeviewer.SlotType;
 import snownee.lychee.compat.recipeviewer.category.RvCategory;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryLayoutBuilder;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryLayoutBuilder.IngredientLayout;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryWidgetBuilder;
 import snownee.lychee.compat.recipeviewer.emi.category.RvCategoryAdapter;
 import snownee.lychee.compat.recipeviewer.emi.element.EmiWidgetAdapter;
@@ -173,8 +174,8 @@ public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements
 			}
 
 			@Override
-			protected void _ingredientGroup(R recipe, Vector2fc position) {
-				EmiRecipeAdapter.this.ingredientGroup(widgets, recipe, position.x(), position.y());
+			protected void _ingredientGroup(R recipe, IngredientLayout layout) {
+				EmiRecipeAdapter.this.ingredientGroup(widgets, recipe, layout);
 			}
 		};
 		instance.type().configureLayout(layoutBuilder, recipe);
@@ -203,17 +204,19 @@ public class EmiRecipeAdapter<R extends ILycheeRecipe<LycheeContext>> implements
 		instance.configureDecorations(widgetBuilder, recipe);
 	}
 
-	private void ingredientGroup(WidgetHolder widgets, R recipe, float x, float y) {
-		slotGroup(
-				widgets, x, y, ingredients, (w, pair, x0, y0) -> {
-					IngredientInfo info = pair.getFirst();
-					LycheeSlotWidget widget = w.add(new LycheeSlotWidget(pair.getSecond(), (int) x0, (int) y0, info.type));
-					if (!(info.relatedAction instanceof DamageItem)) {
-						for (Component tooltip : info.tooltips) {
-							widget.appendTooltip(tooltip);
-						}
-					}
-				});
+	private void ingredientGroup(WidgetHolder widgets, R recipe, IngredientLayout layout) {
+		var size = Math.min(ingredients.size(), 9);
+		for (var index = 0; index < size; index++) {
+			var position = layout.position(index, size);
+			var pair = ingredients.get(index);
+			IngredientInfo info = pair.getFirst();
+			LycheeSlotWidget widget = widgets.add(new LycheeSlotWidget(pair.getSecond(), (int) position.x(), (int) position.y(), info.type));
+			if (!(info.relatedAction instanceof DamageItem)) {
+				for (Component tooltip : info.tooltips) {
+					widget.appendTooltip(tooltip);
+				}
+			}
+		}
 	}
 
 	private void actionGroup(WidgetHolder widgets, R recipe, float x, float y) {
