@@ -324,7 +324,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 	}
 
 	public static class BlockClicking extends BlockInteracting<BlockClickingRecipe> {
-		protected boolean destroyBlock = true;
+		protected boolean canDestroy = true;
 
 		public BlockClicking(
 				Function3<LycheeRecipeCommonProperties, List<SizedIngredient>, BlockPredicate, BlockClickingRecipe> constructor,
@@ -335,14 +335,14 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		}
 
 		@Contract("_ -> this")
-		public BlockClicking destroyBlock(boolean destroyBlock) {
-			this.destroyBlock = destroyBlock;
+		public BlockClicking canDestroy(boolean canDestroy) {
+			this.canDestroy = canDestroy;
 			return this;
 		}
 
 		@Override
 		public BlockClickingRecipe build() {
-			if (destroyBlock) {
+			if (canDestroy) {
 				return super.build();
 			}
 			return new BlockClickingRecipe(properties(), input, blockPredicate, false);

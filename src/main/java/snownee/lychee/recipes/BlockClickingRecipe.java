@@ -1,9 +1,6 @@
 package snownee.lychee.recipes;
 
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -15,7 +12,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -32,37 +28,6 @@ import snownee.lychee.util.recipe.LycheeRecipeCommonProperties;
 import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 public class BlockClickingRecipe extends BlockInteractingRecipe {
-
-	private static final int BREAK_GUARD_TTL = 10;
-	private static final Map<UUID, BreakGuardRecord> breakGuard = new ConcurrentHashMap<>();
-
-	private record BreakGuardRecord(ResourceKey<Level> dimension, BlockPos pos, long expiry) {
-	}
-
-	public static void markBreakProtected(Player player, Level level, BlockPos pos) {
-		long gameTime = level.getGameTime();
-		breakGuard.put(player.getUUID(), new BreakGuardRecord(level.dimension(), pos, gameTime + BREAK_GUARD_TTL));
-		if (breakGuard.size() > 100) {
-			breakGuard.values().removeIf(record -> record.expiry() < gameTime);
-		}
-	}
-
-	public static boolean isBreakProtected(Player player, Level level, BlockPos pos) {
-		var record = breakGuard.get(player.getUUID());
-		if (record == null) {
-			return false;
-		}
-		long gameTime = level.getGameTime();
-		if (record.expiry() < gameTime) {
-			breakGuard.remove(player.getUUID());
-			return false;
-		}
-		if (!record.dimension().equals(level.dimension()) || !record.pos().equals(pos)) {
-			return false;
-		}
-		markBreakProtected(player, level, pos);
-		return true;
-	}
 
 	public static InteractionResult invoke(
 			final Player player,
@@ -84,19 +49,13 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 		final var lootParams = context.initLootParams(RecipeTypes.BLOCK_CLICKING);
 		lootParams.set(LycheeLootContextParams.DIRECTION, direction);
 		final var result = RecipeTypes.BLOCK_CLICKING.process(player, hand, pos, vec, context);
-		if (result.isPresent()) {
-			if (!result.get().destroyBlock()) {
-				markBreakProtected(player, level, pos);
-				if (!level.isClientSide()) {
-					return InteractionResult.FAIL;
-				}
-			}
-			return InteractionResult.SUCCESS;
+		if (result.isEmpty() || result.get().canDestroy()) {
+			return InteractionResult.PASS;
 		}
-		return isBreakProtected(player, level, pos) ? InteractionResult.FAIL : InteractionResult.PASS;
+		return InteractionResult.SUCCESS;
 	}
 
-	protected final boolean destroyBlock;
+	protected final boolean canDestroy;
 
 	public BlockClickingRecipe(
 			LycheeRecipeCommonProperties commonProperties,
@@ -110,21 +69,21 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 			LycheeRecipeCommonProperties commonProperties,
 			List<SizedIngredient> input,
 			BlockPredicate blockPredicate,
-			boolean destroyBlock
+			boolean canDestroy
 	) {
 		super(commonProperties, input, blockPredicate);
-		this.destroyBlock = destroyBlock;
+		this.canDestroy = canDestroy;
 	}
 
-	public static BlockClickingRecipe create(BlockClickingRecipe base, boolean destroyBlock) {
-		if (base.destroyBlock == destroyBlock) {
+	public static BlockClickingRecipe create(BlockClickingRecipe base, boolean canDestroy) {
+		if (base.canDestroy == canDestroy) {
 			return base;
 		}
-		return new BlockClickingRecipe(base.commonProperties(), base.sizedIngredients(), base.blockPredicate(), destroyBlock);
+		return new BlockClickingRecipe(base.commonProperties(), base.sizedIngredients(), base.blockPredicate(), canDestroy);
 	}
 
-	public boolean destroyBlock() {
-		return destroyBlock;
+	public boolean canDestroy() {
+		return canDestroy;
 	}
 
 	@Override
@@ -140,7 +99,7 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 	public static class Serializer implements LycheeRecipeSerializer<BlockClickingRecipe> {
 		public static MapCodec<BlockClickingRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 				BlockInteractingRecipe.codec(BlockClickingRecipe::new).forGetter($ -> $),
-				Codec.BOOL.optionalFieldOf("destroy_block", true).forGetter(BlockClickingRecipe::destroyBlock)
+				Codec.BOOL.optionalFieldOf("can_destroy", false).forGetter(BlockClickingRecipe::canDestroy)
 		).apply(instance, BlockClickingRecipe::create));
 
 		@Override
@@ -157,7 +116,7 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 						BlockPredicate.STREAM_CODEC,
 						BlockClickingRecipe::blockPredicate,
 						ByteBufCodecs.BOOL,
-						BlockClickingRecipe::destroyBlock,
+						BlockClickingRecipe::canDestroy,
 						BlockClickingRecipe::new
 				);
 
