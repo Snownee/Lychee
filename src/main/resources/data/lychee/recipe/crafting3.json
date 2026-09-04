@@ -1,0 +1,51 @@
+{
+	"type": "lychee:crafting",
+	"pattern": [
+		"aaa",
+		"bbb",
+		"aaa"
+	],
+	"key": {
+		"a": {
+			"item": "minecraft:blue_orchid"
+		},
+		"b": [
+			{
+				"type": "neoforge:components",
+				"items": "minecraft:potion",
+				"components": {
+					"minecraft:potion_contents": {
+						"potion": "minecraft:water"
+					}
+				}
+			},
+			{
+				"type": "neoforge:components",
+				"items": "minecraft:potion",
+				"components": {
+					"minecraft:potion_contents": {
+						"potion": "minecraft:water",
+						"custom_effects": [
+							{
+								"amplifier": 14,
+								"duration": 6000,
+								"id": "minecraft:unluck",
+								"ambient": false,
+								"show_icon": true,
+								"show_particles": false
+							}
+						]
+					}
+				}
+			}
+		]
+	},
+	"result": {
+		"id": "minecraft:diamond"
+	},
+	"post": {
+		"type": "set_item",
+		"target": "/key/b",
+		"id": "minecraft:glass_bottle"
+	}
+}

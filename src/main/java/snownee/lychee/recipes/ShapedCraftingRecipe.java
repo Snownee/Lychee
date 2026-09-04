@@ -48,9 +48,21 @@ import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 
 public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, CraftingRecipe {
-	public static final Cache<CraftingInput, LycheeContext> CONTEXT_CACHE = CacheBuilder.newBuilder()
+	public static final Cache<InputKey, LycheeContext> CONTEXT_CACHE = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.SECONDS)
 			.build();
+
+	public record InputKey(CraftingInput input) {
+		@Override
+		public boolean equals(Object o) {
+			return o instanceof InputKey(CraftingInput input1) && input == input1;
+		}
+
+		@Override
+		public int hashCode() {
+			return System.identityHashCode(input);
+		}
+	}
 
 	protected final LycheeRecipeCommonProperties commonProperties;
 	protected final ShapedRecipe shaped;
@@ -75,10 +87,10 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 	}
 
 	public static void injectContext(CraftingContainer container, CraftingInput input) {
-		if (RecipeTypes.ANVIL_CRAFTING.isEmpty()) {
+		if (!RecipeTypes.HAS_CRAFTING_RECIPES) {
 			return;
 		}
-		if (CONTEXT_CACHE.getIfPresent(input) != null) {
+		if (CONTEXT_CACHE.getIfPresent(new InputKey(input)) != null) {
 			return;
 		}
 		LycheeContext context = new LycheeContext();
@@ -98,7 +110,7 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		if (location.player() != null) {
 			lootParams.set(LootContextParams.THIS_ENTITY, location.player());
 		}
-		CONTEXT_CACHE.put(input, context);
+		CONTEXT_CACHE.put(new InputKey(input), context);
 	}
 
 	@Override
@@ -189,7 +201,7 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 
 	@Nullable
 	public LycheeContext updateContextAndGet(CraftingInput input) {
-		var context = CONTEXT_CACHE.getIfPresent(input);
+		var context = CONTEXT_CACHE.getIfPresent(new InputKey(input));
 		if (context == null) {
 			return null;
 		}
@@ -208,9 +220,9 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		}
 		if (getWidth() > 1 && pattern.callMatches(input, false)) {
 			matched = true;
-			mirror = true;
 		} else if (pattern.callMatches(input, true)) {
 			matched = true;
+			mirror = true;
 		}
 		if (!matched) {
 			return null;
