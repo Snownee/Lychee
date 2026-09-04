@@ -12,7 +12,6 @@
 		"EntityAccess",
 		"EntityMixin",
 		"IngredientAccess",
-		"recipes.crafting.InventoryMenuAccess",
 		"ItemEntityAccess",
 		"ItemEntityMixin",
 		"LootContextParamMixin",
@@ -32,6 +31,7 @@
 		"recipes.blockexploding.ExplosionMixin",
 		"recipes.crafting.CrafterMenuAccess",
 		"recipes.crafting.CraftingContainerMixin",
+		"recipes.crafting.InventoryMenuAccess",
 		"recipes.crafting.ShapedRecipeAccess",
 		"recipes.crafting.ShapedRecipePatternAccess",
 		"recipes.crafting.TransientCraftingContainerAccess",
@@ -52,8 +52,7 @@
 		"client.ClientRecipeBookMixin",
 		"client.GameRendererAccess",
 		"client.GuiGraphicsMixin",
-		"jei.AnvilRecipeCategoryMixin",
-		"recipes.blockclicking.MultiPlayerGameModeMixin"
+		"jei.AnvilRecipeCategoryMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1,

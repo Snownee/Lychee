@@ -4,8 +4,8 @@ if:
   description: Test
   type: is_sneaking
 item_in:
-  - item: bucket
+  - item: water_bucket
 post:
   - prevent_default
-  - drop cod
+  - add_item_cooldown 1
 type: lychee:block_clicking

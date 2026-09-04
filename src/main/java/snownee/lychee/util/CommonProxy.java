@@ -49,7 +49,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import snownee.kiwi.loader.Platform;
@@ -339,10 +338,7 @@ public class CommonProxy {
 					event.getHand(),
 					event.getPos(),
 					event.getFace());
-			event.setCanceled(result != InteractionResult.PASS);
-		});
-		NeoForge.EVENT_BUS.addListener((BlockEvent.BreakEvent event) -> {
-			if (BlockClickingRecipe.isBreakProtected(event.getPlayer(), (Level) event.getLevel(), event.getPos())) {
+			if (result.consumesAction()) {
 				event.setCanceled(true);
 			}
 		});
