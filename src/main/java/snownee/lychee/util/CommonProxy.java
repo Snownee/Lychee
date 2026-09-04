@@ -16,7 +16,6 @@ import com.mojang.serialization.JsonOps;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
-import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -407,7 +406,6 @@ public class CommonProxy implements ModInitializer {
 		// Interaction recipes
 		UseBlockCallback.EVENT.register(BlockInteractingRecipe::invoke);
 		AttackBlockCallback.EVENT.register(BlockClickingRecipe::invoke);
-		PlayerBlockBreakEvents.BEFORE.register((level, player, pos, _, _) -> !BlockClickingRecipe.isBreakProtected(player, level, pos));
 
 		// Dripstone recipes
 		Registry.register(

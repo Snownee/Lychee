@@ -1,9 +1,11 @@
 block_in: short_grass
-destroy_block: false
+can_destroy: false
 if:
   description: Test
   type: is_sneaking
 item_in:
-- bucket
-post: prevent_default
+  - item: bucket
+post:
+  - prevent_default
+  - drop cod
 type: lychee:block_clicking

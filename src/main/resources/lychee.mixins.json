@@ -47,8 +47,7 @@
 		"client.ClientPacketListenerMixin",
 		"client.GuiEntityRendererMixin",
 		"client.GuiRenderStateMixin",
-		"jei.AnvilRecipeCategoryMixin",
-		"recipes.blockclicking.MultiPlayerGameModeMixin"
+		"jei.AnvilRecipeCategoryMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1,

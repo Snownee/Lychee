@@ -1,5 +1,5 @@
 block_in: grass_block
-destroy_block: false
+can_destroy: false
 if:
   description: Test
   type: is_sneaking
