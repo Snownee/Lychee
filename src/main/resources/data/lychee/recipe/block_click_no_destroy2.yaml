@@ -1,9 +1,11 @@
 block_in: grass_block
-can_destroy: false
+can_destroy: true
 if:
   description: Test
   type: is_sneaking
 item_in:
   - item: bucket
-post: prevent_default
+post:
+  - prevent_default
+  - drop cod
 type: lychee:block_clicking
