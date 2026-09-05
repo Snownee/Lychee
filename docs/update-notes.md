@@ -8,7 +8,7 @@
     - The transformed item is placed back at the original position when the input is fully consumed; otherwise leftover material stays in place and the output goes to your inventory (or drops on the ground if your inventory is full).
     - Outputs larger than a single stack are split into multiple stacks.
     - Setting an empty/`air` item still clears the slot as before.
-- Added `destroy_block` attribute to the block clicking recipe.
+- Added `can_destroy` attribute to the block clicking recipe.
 
 ## 6.5
 

@@ -138,12 +138,12 @@ This recipe type is not [repeatable](concepts.md#repeatability).
 
 !!! note "Format"
 
-    | Name          | Description                                                                    | Type / Literal                                                                                               |
-    | ------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
-    | type          | type                                                                           | "lychee:block_clicking"                                                                                      |
-    | item_in       | the item in player's hand                                                      | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
-    | block_in      | the block being clicked                                                        | [BlockPredicate](general-types.md#blockpredicate)                                                            |
-    | destroy_block | whether the block can continue to be mined ^optional^{ title="default: true" } | true \| false                                                                                                |
+    | Name        | Description                                                                     | Type / Literal                                                                                               |
+    | ----------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+    | type        | type                                                                            | "lychee:block_clicking"                                                                                      |
+    | item_in     | the item in player's hand                                                       | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
+    | block_in    | the block being clicked                                                         | [BlockPredicate](general-types.md#blockpredicate)                                                            |
+    | can_destroy | whether the block can continue to be mined ^optional^{ title="default: false" } | true \| false                                                                                                |
 
     `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
 
