@@ -24,6 +24,7 @@ import snownee.lychee.context.AnvilContext;
 import snownee.lychee.context.CraftingContext;
 import snownee.lychee.context.ItemShapelessContext;
 import snownee.lychee.context.LootParamsContext;
+import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.action.ActionData;
 import snownee.lychee.util.action.ActionMarker;
@@ -81,6 +82,7 @@ public sealed abstract class LycheeContextKey<T> permits LycheeContextKey.Requir
 	public static final LycheeContextKey.Optional<ItemShapelessContext> ITEM_SHAPELESS = opt("item_shapeless");
 	public static final LycheeContextKey.Optional<CraftingContext> CRAFTING = opt("crafting");
 	public static final LycheeContextKey.Optional<BlockState> DRIPSTONE_SOURCE = opt("dripstone_root");
+	public static final LycheeContextKey.Optional<BlockClickingRecipe.Action> CLICK_ACTION = opt("click_action");
 
 	protected LycheeContextKey(ResourceLocation id, @Nullable Function<LycheeContext, T> factory) {
 		this.id = id;
