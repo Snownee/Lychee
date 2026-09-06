@@ -1,4 +1,4 @@
 @NotNullByDefault
-package snownee.lychee.mixin.recipes.blockclicking;
+package snownee.lychee.mixin.fabric;
 
 import snownee.kiwi.util.NotNullByDefault;
