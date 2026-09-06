@@ -14,6 +14,7 @@ import com.mojang.serialization.JsonOps;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
+import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.minecraft.ChatFormatting;
@@ -33,6 +34,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.FallingBlockEntity;
@@ -326,6 +328,7 @@ public class CommonProxy implements ModInitializer {
 		// Interaction recipes
 		UseBlockCallback.EVENT.register(BlockInteractingRecipe::invoke);
 		AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) -> BlockClickingRecipe.invoke(player, level, hand, pos, direction, BlockClickingRecipe.Action.START));
+		PlayerBlockBreakEvents.AFTER.register((level, player, pos, state, blockEntity) -> BlockClickingRecipe.invoke(player, level, InteractionHand.MAIN_HAND, pos, Direction.UP, BlockClickingRecipe.Action.STOP));
 
 		if (Platform.isModLoaded("spectrum")) {
 			SpectrumCompat.init();
