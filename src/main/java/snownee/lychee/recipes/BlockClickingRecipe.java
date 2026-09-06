@@ -151,8 +151,17 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 	}
 
 	public enum Action implements StringRepresentable {
+		/**
+		 * When the player first left clicks a block
+		 */
 		START,
+		/**
+		 * When the player stops left clicking a block by completely breaking it
+		 */
 		STOP,
+		/**
+		 * When the player stops left clicking a block by releasing the button, or no longer targeting the same block before it breaks.
+		 */
 		ABORT;
 
 		private static final IntFunction<Action> BY_ID = ByIdMap.continuous(Action::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO);
