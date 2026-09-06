@@ -23,14 +23,14 @@ public abstract class PedestalBlockEntityMixin extends BaseContainerBlockEntity 
 		super(type, pos, blockState);
 	}
 
-	@WrapMethod(method = "createRecipeInput")
+	@WrapMethod(method = "createRecipeInput", remap = false)
 	private PedestalRecipeInput createRecipeInput(Operation<PedestalRecipeInput> original) {
 		PedestalRecipeInput result = original.call();
 		ShapedCraftingRecipe.injectContext(this, result.getCraftingGridInput());
 		return result;
 	}
 
-	@WrapMethod(method = "createPositionedInput")
+	@WrapMethod(method = "createPositionedInput", remap = false)
 	private CraftingInput.Positioned createPositionedInput(Operation<CraftingInput.Positioned> original) {
 		CraftingInput.Positioned result = original.call();
 		ShapedCraftingRecipe.injectContext(this, result.input());
