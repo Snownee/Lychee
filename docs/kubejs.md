@@ -53,11 +53,14 @@ First you need to add a custom action somewhere in your recipe:
 
 !!! note "Format"
 
-    | Name | Description       | Type / Literal |
-    | ---- | ----------------- | -------------- |
-    | type | type              | "custom"       |
-    | id   | id                | string         |
-    | data | custom properties | dictionary     |
+    | Name          | Description                                             | Type / Literal |
+    | ------------- | ------------------------------------------------------- | -------------- |
+    | type          | type                                                    | "custom"       |
+    | id            | id                                                      | string         |
+    | data          | custom properties                                       | dictionary     |
+    | repeatable    | whether the action is repeatable ^optional^{ title="default: true" } | true \| false  |
+    | preventSync   | prevent the action from being synced to the client ^optional^{ title="default: false" } | true \| false  |
+    | allowClientRun | allow the action to run on the client side ^optional^{ title="default: true" } | true \| false  |
 
 !!! example
 

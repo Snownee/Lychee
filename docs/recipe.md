@@ -191,8 +191,45 @@ This recipe type is not [repeatable](concepts.md#repeatability).
     | item_in     | the item in player's hand                                                       | [SizedIngredient](general-types.md#sizedingredient) \| [SizedIngredient](general-types.md#sizedingredient)[] |
     | block_in    | the block being clicked                                                         | [BlockPredicate](general-types.md#blockpredicate)                                                            |
     | can_destroy | whether the block can continue to be mined ^optional^{ title="default: false" } | true \| false                                                                                                |
+    | action      | when the recipe takes effect ^optional^{ title="default: start" }               | "start" \| "stop" \| "abort" \| (these)[]                                                                    |
 
     `item_in` can accept an ingredient list with 2 ingredients. The second one is the item in the off hand.
+
+??? note "Note: The `action` attribute"
+
+    By default, a block clicking recipe only takes effect when the player first left clicks a block (`start`). You can
+    use the `action` attribute to also make it take effect when the click is stopped or aborted:
+
+    - `start` - when the player first left clicks a block.
+    - `stop` - when the player stops left clicking a block by completely breaking it.
+    - `abort` - when the player stops left clicking a block by releasing the button, or no longer targeting the same
+      block before it breaks.
+
+    You can pass a single value or a list of values:
+
+    ===! "YAML"
+
+        ```yaml
+        type: lychee:block_clicking
+        item_in: bucket
+        block_in: grass_block
+        action:
+        - stop
+        - abort
+        post: prevent_default
+        ```
+
+    === "JSON"
+
+        ```json
+        {
+            "type": "lychee:block_clicking",
+            "item_in": "bucket",
+            "block_in": "grass_block",
+            "action": ["stop", "abort"],
+            "post": "prevent_default"
+        }
+        ```
 
 ??? note "Note: Matches empty hand"
 

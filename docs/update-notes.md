@@ -1,5 +1,12 @@
 # Update Notes
 
+## 6.7
+
+- Added `action` attribute to the block clicking recipe, allowing the recipe to take effect when the player starts
+  clicking, stops clicking (by completely breaking the block), or aborts the click. It accepts `start`, `stop`,
+  `abort`, or a list of them.
+- Added `allowClientRun` attribute to the `custom` post action. Custom actions now run on the client side by default.
+
 ## 6.6
 
 - `set_item` reworked: now repeatable and actually consumes inputs
