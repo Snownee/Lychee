@@ -26,9 +26,7 @@ public interface PostActionDisplay {
 		return preventSync();
 	}
 
-	default boolean preventSync() {
-		return false;
-	}
+	boolean preventSync();
 
 	default SlotDisplay transformRemainder(SlotDisplay display, @Nullable ILycheeRecipe<?> recipe) {
 		return Displays.emptySlot();

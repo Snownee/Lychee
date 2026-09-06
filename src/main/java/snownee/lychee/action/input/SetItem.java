@@ -20,6 +20,7 @@ import net.minecraft.world.item.crafting.display.SlotDisplay;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.Displays;
 import snownee.lychee.util.Reference;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -127,6 +128,11 @@ public record SetItem(
 	@Override
 	public boolean hidden() {
 		return item == null || PostAction.super.hidden();
+	}
+
+	@Override
+	public ClientSideStrategy clientSideStrategy() {
+		return ClientSideStrategy.ALLOW_CLIENT_RUN;
 	}
 
 	//	@Override

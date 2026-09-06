@@ -25,7 +25,6 @@ import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.IngredientCollection;
 import snownee.lychee.util.Reference;
-import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -179,7 +178,7 @@ public interface ILycheeRecipe<C extends RecipeInput> extends Recipe<C>, Context
 		}
 		var actionManager = context.get(LycheeContextKey.ACTION);
 		var actionContext = actionManager.newContext();
-		actionContext.jobs.addAll(postActions().stream().map(it -> new Job(it, times)).toList());
+		actionContext.appendActions(context, postActions().stream(), times);
 		actionContext.run(context);
 		return actionContext;
 	}

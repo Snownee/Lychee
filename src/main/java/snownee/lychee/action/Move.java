@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.context.ActionContext;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -53,8 +54,8 @@ public record Move(PostActionCommonProperties commonProperties, Vec3 offset, Str
 	}
 
 	@Override
-	public boolean preventSync() {
-		return true;
+	public ClientSideStrategy clientSideStrategy() {
+		return ClientSideStrategy.PREVENT_SYNC;
 	}
 
 	public static class Type implements PostActionType<Move> {

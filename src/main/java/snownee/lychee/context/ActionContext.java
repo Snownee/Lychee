@@ -2,6 +2,7 @@ package snownee.lychee.context;
 
 import java.util.Map;
 import java.util.Queue;
+import java.util.stream.Stream;
 
 import org.jspecify.annotations.Nullable;
 
@@ -12,7 +13,9 @@ import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.level.storage.loot.LootContext;
 import snownee.lychee.Lychee;
 import snownee.lychee.util.action.ActionMarker;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.Job;
+import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
 
 public class ActionContext implements LootParamsAccess {
@@ -33,9 +36,28 @@ public class ActionContext implements LootParamsAccess {
 		this.lootParams = lootParams;
 	}
 
+	public void appendAction(LycheeContext context, PostAction action, int times) {
+		if (context.level().isClientSide() && action.clientSideStrategy() != ClientSideStrategy.ALLOW_CLIENT_RUN) {
+			return;
+		}
+		jobs.add(new Job(action, times));
+	}
+
+	public void appendActions(LycheeContext context, Stream<PostAction> actions, int times) {
+		actions.forEach(action -> {
+			if (context.level().isClientSide() && action.clientSideStrategy() != ClientSideStrategy.ALLOW_CLIENT_RUN) {
+				return;
+			}
+			jobs.add(new Job(action, times));
+		});
+	}
+
 	public void run(LycheeContext context) {
 		while (!jobs.isEmpty()) {
 			final var job = jobs.poll();
+			if (context.level().isClientSide() && job.action().clientSideStrategy() != ClientSideStrategy.ALLOW_CLIENT_RUN) {
+				continue;
+			}
 			try {
 				job.apply(context, this);
 				if (state != State.RUNNING) {
