@@ -25,9 +25,6 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		if (mixinClassName.startsWith("snownee.lychee.mixin.fabric.")) {
-			return !hasMod("quilted_fabric_api");
-		}
 		return true;
 	}
 

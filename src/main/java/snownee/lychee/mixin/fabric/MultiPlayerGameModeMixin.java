@@ -1,4 +1,4 @@
-package snownee.lychee.mixin.recipes.blockclicking;
+package snownee.lychee.mixin.fabric;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

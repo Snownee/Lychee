@@ -38,7 +38,7 @@
 		"recipes.entityticking.EntityMixin",
 		"recipes.entityticking.EntityTypeMixin",
 		"recipes.entityticking.ServerLevelMixin",
-		"recipes.blockclicking.ServerPlayerGameModeMixin",
+		"fabric.ServerPlayerGameModeMixin",
 		"recipes.itemburing.ItemEntityHurtMixin",
 		"recipes.itemexploding.ExplosionMixin",
 		"recipes.iteminside.EntityMixin",
@@ -55,7 +55,7 @@
 		"client.GameRendererAccess",
 		"client.GuiGraphicsMixin",
 		"jei.AnvilRecipeCategoryMixin",
-		"recipes.blockclicking.MultiPlayerGameModeMixin"
+		"fabric.MultiPlayerGameModeMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1,
