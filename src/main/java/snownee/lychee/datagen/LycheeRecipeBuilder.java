@@ -1,6 +1,7 @@
 package snownee.lychee.datagen;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -354,6 +355,7 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 
 	public static class BlockClicking extends BlockInteracting<BlockClickingRecipe> {
 		protected boolean canDestroy = true;
+		protected EnumSet<BlockClickingRecipe.Action> action = EnumSet.of(BlockClickingRecipe.Action.START);
 
 		@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 		public BlockClicking(
@@ -370,12 +372,15 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 			return this;
 		}
 
+		@Contract("_ -> this")
+		public BlockClicking action(BlockClickingRecipe.Action... actions) {
+			this.action = EnumSet.of(actions[0], actions);
+			return this;
+		}
+
 		@Override
 		public BlockClickingRecipe build() {
-			if (canDestroy) {
-				return super.build();
-			}
-			return new BlockClickingRecipe(properties(), inputs, blockPredicate, false);
+			return new BlockClickingRecipe(properties(), inputs, blockPredicate, canDestroy, action);
 		}
 	}
 

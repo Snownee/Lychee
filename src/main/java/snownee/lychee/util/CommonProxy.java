@@ -405,7 +405,7 @@ public class CommonProxy implements ModInitializer {
 
 		// Interaction recipes
 		UseBlockCallback.EVENT.register(BlockInteractingRecipe::invoke);
-		AttackBlockCallback.EVENT.register(BlockClickingRecipe::invoke);
+		AttackBlockCallback.EVENT.register((player, level, hand, pos, direction) -> BlockClickingRecipe.invoke(player, level, hand, pos, direction, BlockClickingRecipe.Action.START));
 
 		// Dripstone recipes
 		Registry.register(
