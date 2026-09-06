@@ -7,13 +7,16 @@ import org.jspecify.annotations.Nullable;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
+import net.fabricmc.fabric.api.event.client.player.ClientPlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariantAttributes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeAccess;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -22,6 +25,7 @@ import net.minecraft.world.level.material.Fluid;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.util.KEvent;
 import snownee.lychee.client.gui.InteractiveRenderElement;
+import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.util.action.ActionRenderer;
 import snownee.lychee.util.particles.dripstone.DripstoneParticleService;
 import snownee.lychee.util.particles.dripstone.client.ParticleFactories;
@@ -92,6 +96,8 @@ public class ClientProxy implements ClientModInitializer {
 
 		ActionRenderer.init();
 		ElementRenderer.init();
+
+		ClientPlayerBlockBreakEvents.AFTER.register((level, player, pos, state) -> BlockClickingRecipe.invoke(player, level, InteractionHand.MAIN_HAND, pos, Direction.UP, BlockClickingRecipe.Action.STOP));
 	}
 
 	@FunctionalInterface
