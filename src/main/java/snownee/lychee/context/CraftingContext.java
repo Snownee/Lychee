@@ -3,13 +3,15 @@ package snownee.lychee.context;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CrafterMenu;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.TransientCraftingContainer;
@@ -28,20 +30,13 @@ public record CraftingContext(
 		CraftingInput container,
 		boolean mirror
 ) {
-	public static final LoadingCache<Class<?>, Function<CraftingContainer, CraftingContainerLocation>>
+	public static final LoadingCache<Class<?>, Function<Container, CraftingContainerLocation>>
 			CONTAINER_WORLD_LOCATOR =
 			CacheBuilder.newBuilder().build(new CacheLoader<>() {
 				@Override
-				public Function<CraftingContainer, CraftingContainerLocation> load(final Class<?> key) {
-					var clazz = key.getSuperclass();
-					while (clazz != null && clazz != CraftingContainer.class) {
-						var locator = CONTAINER_WORLD_LOCATOR.getIfPresent(clazz);
-						if (locator != null) {
-							return locator;
-						}
-						clazz = clazz.getSuperclass();
-					}
-					return (ignored) -> null;
+				public Function<Container, CraftingContainerLocation> load(final Class<?> key) {
+					var locator = getLocator(CONTAINER_WORLD_LOCATOR, key);
+					return locator != null ? locator : (ignored) -> null;
 				}
 			});
 
@@ -50,17 +45,44 @@ public record CraftingContext(
 			CacheBuilder.newBuilder().build(new CacheLoader<>() {
 				@Override
 				public Function<AbstractContainerMenu, CraftingContainerLocation> load(final Class<?> key) {
-					var clazz = key.getSuperclass();
-					while (clazz != AbstractContainerMenu.class) {
-						var locator = MENU_WORLD_LOCATOR.getIfPresent(clazz);
-						if (locator != null) {
-							return locator;
-						}
-						clazz = clazz.getSuperclass();
-					}
-					return (ignored) -> null;
+					var locator = getLocator(MENU_WORLD_LOCATOR, key);
+					return locator != null ? locator : (ignored) -> null;
 				}
 			});
+
+	@Nullable
+	private static <T> Function<T, CraftingContainerLocation> getLocator(
+			LoadingCache<Class<?>, Function<T, CraftingContainerLocation>> cache,
+			Class<?> type) {
+		for (var clazz = type; clazz != null; clazz = clazz.getSuperclass()) {
+			var locator = cache.getIfPresent(clazz);
+			if (locator != null) {
+				return locator;
+			}
+			locator = getInterfaceLocator(cache, clazz.getInterfaces());
+			if (locator != null) {
+				return locator;
+			}
+		}
+		return null;
+	}
+
+	@Nullable
+	private static <T> Function<T, CraftingContainerLocation> getInterfaceLocator(
+			LoadingCache<Class<?>, Function<T, CraftingContainerLocation>> cache,
+			Class<?>[] interfaces) {
+		for (var iface : interfaces) {
+			var locator = cache.getIfPresent(iface);
+			if (locator != null) {
+				return locator;
+			}
+			locator = getInterfaceLocator(cache, iface.getInterfaces());
+			if (locator != null) {
+				return locator;
+			}
+		}
+		return null;
+	}
 
 	static {
 		CONTAINER_WORLD_LOCATOR.put(
@@ -68,18 +90,7 @@ public record CraftingContext(
 					final var access = (TransientCraftingContainerAccess) container;
 					final var menu = access.getMenu();
 					try {
-						return MENU_WORLD_LOCATOR.get(
-								menu.getClass(), () -> {
-									var clazz = menu.getClass().getSuperclass();
-									while (clazz != AbstractContainerMenu.class) {
-										var locator = MENU_WORLD_LOCATOR.getIfPresent(clazz);
-										if (locator != null) {
-											return locator;
-										}
-										clazz = clazz.getSuperclass();
-									}
-									return menu1 -> null;
-								}).apply(menu);
+						return MENU_WORLD_LOCATOR.get(menu.getClass()).apply(menu);
 					} catch (ExecutionException e) {
 						return null;
 					}

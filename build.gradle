@@ -105,52 +105,12 @@ dependencies {
 
     compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 
-    modImplementation "maven.modrinth:jade:${project.jade_version}+fabric"
+modImplementation "maven.modrinth:jade:${project.jade_version}+fabric"
 
 //    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
     modImplementation "dev.emi:emi-fabric:${emi_version}"
-}
 
-loom {
-    mixin {
-        defaultRefmapName = "${project.mod_id}.refmap.json"
-    }
-
-    accessWidenerPath = file("src/main/resources/${project.mod_id}.accesswidener")
-    enableTransitiveAccessWideners = false
-
-    runs {
-        // This adds a new gradle task that runs the datagen API: "gradlew runDatagen"
-        datagen {
-            inherit server
-            name "Data Generation"
-            vmArg "-Dfabric-api.datagen"
-            vmArg "-Dfabric-api.datagen.output-dir=${file("src/generated/resources")}"
-            vmArg "-Dfabric-api.datagen.modid=${project.mod_id}"
-
-            runDir "build/datagen"
-        }
-    }
-}
-
-processResources {
-    inputs.property "version", realVersion
-
-    filesMatching("fabric.mod.json") {
-        expand "version": realVersion
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-    it.options.release = 21
-}
-
-java {
-    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-    // if it is present.
-    // If you remove this line, sources will not be generated.
-    // withSourcesJar()
+    compileOnly "maven.modrinth:spectrum:1.10.5-1.21.1-fabric"
 }
 
 jar {

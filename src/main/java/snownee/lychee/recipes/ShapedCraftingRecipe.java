@@ -18,7 +18,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
@@ -29,14 +29,16 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import snownee.lychee.Lychee;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.context.CraftingContainerLocation;
 import snownee.lychee.context.CraftingContext;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipeAccess;
 import snownee.lychee.mixin.recipes.crafting.ShapedRecipePatternAccess;
-import snownee.lychee.util.action.Job;
+import snownee.lychee.util.LycheeCraftingInput;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -48,19 +50,49 @@ import snownee.lychee.util.recipe.LycheeRecipeSerializer;
 
 
 public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, CraftingRecipe {
-	public static final Cache<InputKey, LycheeContext> CONTEXT_CACHE = CacheBuilder.newBuilder()
+	public static final Cache<InputKey, ResolvableContext> CONTEXT_CACHE = CacheBuilder.newBuilder()
 			.expireAfterAccess(1, TimeUnit.SECONDS)
 			.build();
 
 	public record InputKey(CraftingInput input) {
 		@Override
 		public boolean equals(Object o) {
-			return o instanceof InputKey(CraftingInput input1) && input == input1;
+			if (this == o) {
+				return true;
+			}
+			if (hashCode() == 0) {
+				return false;
+			}
+			return o instanceof InputKey(CraftingInput input1) && hashCode() == ((LycheeCraftingInput) input1).lychee$hash() &&
+					input.equals(input1);
 		}
 
 		@Override
 		public int hashCode() {
-			return System.identityHashCode(input);
+			return ((LycheeCraftingInput) input).lychee$hash();
+		}
+	}
+
+	public static class ResolvableContext {
+		public @Nullable LycheeContext context;
+
+		public ResolvableContext(@Nullable LycheeContext context) {
+			this.context = context;
+		}
+
+		public @Nullable LycheeContext resolve(@Nullable Level newLevel) {
+			if (context != null) {
+				if (newLevel != null) {
+					context.put(LycheeContextKey.LEVEL, newLevel);
+				}
+				return context;
+			}
+			if (newLevel == null) {
+				return null;
+			}
+			context = new LycheeContext();
+			context.put(LycheeContextKey.LEVEL, newLevel);
+			return context;
 		}
 	}
 
@@ -86,31 +118,48 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		this(commonProperties, new ShapedRecipe(group, category, pattern, result, showNotification), assemblingActions);
 	}
 
-	public static void injectContext(CraftingContainer container, CraftingInput input) {
+	@SuppressWarnings("UnusedReturnValue")
+	@Nullable
+	public static ResolvableContext injectContext(@Nullable Container container, CraftingInput input) {
 		if (!RecipeTypes.HAS_CRAFTING_RECIPES) {
-			return;
+			return null;
 		}
-		if (CONTEXT_CACHE.getIfPresent(new InputKey(input)) != null) {
-			return;
+		LycheeCraftingInput lycheeInput = (LycheeCraftingInput) input;
+		if (lycheeInput.lychee$hash() == 0) {
+			lycheeInput.lychee$setHash(input.hashCode() * 31 + (container == null ? 0 : System.identityHashCode(container)));
 		}
-		LycheeContext context = new LycheeContext();
+		InputKey key = new InputKey(input);
+		if (CONTEXT_CACHE.getIfPresent(key) != null) {
+			return null;
+		}
+		LycheeContext context = null;
 		CraftingContainerLocation location = null;
 		try {
-			location = CraftingContext.CONTAINER_WORLD_LOCATOR.get(container.getClass()).apply(container);
+			if (container != null) {
+				location = CraftingContext.CONTAINER_WORLD_LOCATOR.get(container.getClass()).apply(container);
+			}
 		} catch (ExecutionException ignored) {
 		}
-		if (location == null) {
-			return;
+
+		if (location != null) {
+			context = new LycheeContext();
+			context.put(LycheeContextKey.LEVEL, location.level());
+			final var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
+			if (location.position() != null) {
+				lootParams.set(LootContextParams.ORIGIN, location.position());
+			}
+			if (location.player() != null) {
+				lootParams.set(LootContextParams.THIS_ENTITY, location.player());
+			}
+			if (container instanceof BlockEntity blockEntity) {
+				lootParams.set(LootContextParams.BLOCK_ENTITY, blockEntity);
+				lootParams.set(LootContextParams.BLOCK_STATE, blockEntity.getBlockState());
+			}
 		}
-		context.put(LycheeContextKey.LEVEL, location.level());
-		final var lootParams = context.get(LycheeContextKey.LOOT_PARAMS);
-		if (location.position() != null) {
-			lootParams.set(LootContextParams.ORIGIN, location.position());
-		}
-		if (location.player() != null) {
-			lootParams.set(LootContextParams.THIS_ENTITY, location.player());
-		}
-		CONTEXT_CACHE.put(new InputKey(input), context);
+		ResolvableContext resolvableContext = new ResolvableContext(context);
+		CONTEXT_CACHE.put(key, resolvableContext);
+//		Lychee.LOGGER.info("Injected context: {}", key.hashCode());
+		return resolvableContext;
 	}
 
 	@Override
@@ -151,28 +200,27 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 	@SuppressWarnings("UnreachableCode")
 	@Override
 	public boolean matches(CraftingInput input, Level level) {
-		if (ghost()) {
+		if (ghost() || !shaped.matches(input, level)) {
 			return false;
 		}
-		if (level.isClientSide) {
-			return shaped.matches(input, level);
-		}
-		var context = updateContextAndGet(input);
-		if (context != null) {
-			context.put(LycheeContextKey.LEVEL, level);
-		}
-		return context != null;
+//		Lychee.LOGGER.info(
+//				"Matching recipe {}: context {} -> {}",
+//				this.shaped,
+//				new InputKey(input).hashCode(),
+//				updateContextAndGet(input, level));
+		return updateContextAndGet(input, level) != null;
 	}
 
 	@Override
 	public ItemStack assemble(CraftingInput input, HolderLookup.Provider provider) {
-		var context = updateContextAndGet(input);
+		var context = updateContextAndGet(input, null);
 		if (context == null) {
+			Lychee.LOGGER.warn("Failed to get context for recipe {} when assembling", input.items());
 			return ItemStack.EMPTY;
 		}
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.reset();
-		actionContext.jobs.addAll(assemblingActions.stream().map(it -> new Job(it, 1)).toList());
+		actionContext.appendActions(context, assemblingActions.stream(), 1);
 		actionContext.run(context);
 		return context.getItem(context.size() - 1);
 	}
@@ -180,16 +228,29 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 	@Override
 	public NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
 		var items = shaped.getRemainingItems(input);
-		var context = updateContextAndGet(input);
+		var context = updateContextAndGet(input, null);
 		if (context == null) {
+			Lychee.LOGGER.warn("Failed to get context for recipe {} when getting remaining items", input.items());
 			return items;
 		}
 		applyPostActions(context, 1);
 		var craftingContext = context.get(LycheeContextKey.CRAFTING);
 		var itemStackHolders = context.get(LycheeContextKey.ITEM);
+//		Lychee.LOGGER.info(
+//				"isClientSide {} height {} width {}: {}",
+//				context.level().isClientSide(),
+//				getHeight(),
+//				getWidth(),
+//				itemStackHolders.stream().map(ExtendedItemStackHolder::get).toList());
+//		Lychee.LOGGER.error("", new RuntimeException("Stack trace"));
 		var k = 0;
 		for (var i = 0; i < getHeight(); i++) {
 			for (var j = 0; j < getWidth(); j++) {
+//				Lychee.LOGGER.info(
+//						"item {}: consumption {} item {}",
+//						k,
+//						itemStackHolders.get(k).getConsumption(),
+//						itemStackHolders.get(k).get());
 				if (itemStackHolders.get(k).getConsumption() == 0) {
 					items.set(input.width() * i + (craftingContext.mirror() ? getWidth() - j - 1 : j), context.getItem(k));
 				}
@@ -199,9 +260,29 @@ public class ShapedCraftingRecipe implements ILycheeRecipe<CraftingInput>, Craft
 		return items;
 	}
 
+	@Override
+	public void applyPostActions(LycheeContext context, int times) {
+		final var actionContext = context.get(LycheeContextKey.ACTION);
+		actionContext.reset();
+		actionContext.appendActions(context, postActions().stream(), 1);
+		actionContext.run(context);
+	}
+
 	@Nullable
-	public LycheeContext updateContextAndGet(CraftingInput input) {
-		var context = CONTEXT_CACHE.getIfPresent(new InputKey(input));
+	public LycheeContext updateContextAndGet(CraftingInput input, @Nullable Level newLevel) {
+		InputKey key = new InputKey(input);
+		var resolvableContext = CONTEXT_CACHE.getIfPresent(key);
+		if (resolvableContext == null) {
+			if (newLevel == null) {
+				return null;
+			}
+			injectContext(null, input);
+			resolvableContext = CONTEXT_CACHE.getIfPresent(key);
+			if (resolvableContext == null) {
+				return null;
+			}
+		}
+		var context = resolvableContext.resolve(newLevel);
 		if (context == null) {
 			return null;
 		}

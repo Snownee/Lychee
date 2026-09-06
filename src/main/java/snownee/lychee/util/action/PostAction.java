@@ -104,6 +104,18 @@ public interface PostAction extends PostActionDisplay, PostActionLike, Contextua
 		return true;
 	}
 
+	/**
+	 * Do NOT override this method unless you know what you're doing. Use {@link #clientSideStrategy()} instead.
+	 */
+	@Override
+	default boolean preventSync() {
+		return clientSideStrategy() == ClientSideStrategy.PREVENT_SYNC;
+	}
+
+	default ClientSideStrategy clientSideStrategy() {
+		return ClientSideStrategy.DEFAULT;
+	}
+
 	default void getUsedPointers(@Nullable ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {}
 
 	default void onFailure(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {}

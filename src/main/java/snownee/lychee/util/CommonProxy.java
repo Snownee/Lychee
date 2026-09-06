@@ -61,6 +61,7 @@ import snownee.lychee.action.CustomAction;
 import snownee.lychee.compat.recipe_api.AlwaysTrueIngredient;
 import snownee.lychee.compat.recipe_api.VisualOnlyComponentsIngredient;
 import snownee.lychee.compat.recipeviewer.IngredientType;
+import snownee.lychee.compat.spectrum.SpectrumCompat;
 import snownee.lychee.contextual.CustomCondition;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
@@ -325,6 +326,10 @@ public class CommonProxy implements ModInitializer {
 		// Interaction recipes
 		UseBlockCallback.EVENT.register(BlockInteractingRecipe::invoke);
 		AttackBlockCallback.EVENT.register(BlockClickingRecipe::invoke);
+
+		if (Platform.isModLoaded("spectrum")) {
+			SpectrumCompat.init();
+		}
 
 		// Dripstone recipes
 		Registry.register(

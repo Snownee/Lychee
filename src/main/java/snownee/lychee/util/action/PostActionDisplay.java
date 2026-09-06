@@ -25,9 +25,7 @@ public interface PostActionDisplay {
 		return preventSync();
 	}
 
-	default boolean preventSync() {
-		return false;
-	}
+	boolean preventSync();
 
 	String toJsonString();
 
