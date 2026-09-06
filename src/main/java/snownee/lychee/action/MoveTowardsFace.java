@@ -11,6 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import snownee.lychee.LycheeLootContextParams;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -35,8 +36,8 @@ public record MoveTowardsFace(PostActionCommonProperties commonProperties, float
 	}
 
 	@Override
-	public boolean preventSync() {
-		return true;
+	public ClientSideStrategy clientSideStrategy() {
+		return ClientSideStrategy.PREVENT_SYNC;
 	}
 
 	public static class Type implements PostActionType<MoveTowardsFace> {

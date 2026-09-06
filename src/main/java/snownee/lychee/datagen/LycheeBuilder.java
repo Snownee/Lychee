@@ -258,7 +258,16 @@ public interface LycheeBuilder {
 	}
 
 	default ActionBuilder<?, CustomAction> customAction(String id, JsonObject json, boolean repeatable, boolean preventSync) {
-		return new ActionBuilder<>(new CustomAction(PostActionCommonProperties.EMPTY, id, json, repeatable, preventSync));
+		return customAction(id, json, repeatable, preventSync, true);
+	}
+
+	default ActionBuilder<?, CustomAction> customAction(
+			String id,
+			JsonObject json,
+			boolean repeatable,
+			boolean preventSync,
+			boolean allowClientRun) {
+		return new ActionBuilder<>(new CustomAction(PostActionCommonProperties.EMPTY, id, json, repeatable, preventSync, allowClientRun));
 	}
 
 	default ActionBuilder<?, DamageItem> damageItem(int damage, Reference target) {

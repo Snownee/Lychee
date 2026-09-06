@@ -8,6 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -38,6 +39,11 @@ public record PreventDefault(PostActionCommonProperties commonProperties) implem
 	@Override
 	public boolean hidden() {
 		return true;
+	}
+
+	@Override
+	public ClientSideStrategy clientSideStrategy() {
+		return ClientSideStrategy.ALLOW_CLIENT_RUN;
 	}
 
 	@Override

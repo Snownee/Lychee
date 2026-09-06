@@ -27,7 +27,6 @@ import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
 import snownee.lychee.util.NonNullListExtensions;
-import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.codec.LycheeStreamCodecs;
@@ -145,7 +144,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 		context.get(LycheeContextKey.ITEM).replace(2, result);
 		final var actionContext = context.get(LycheeContextKey.ACTION);
 		actionContext.reset();
-		actionContext.jobs.addAll(assemblingActions.stream().map(it -> new Job(it, 1)).toList());
+		actionContext.appendActions(context, assemblingActions.stream(), 1);
 		actionContext.run(context);
 		return context.getItem(2);
 	}

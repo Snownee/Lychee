@@ -16,8 +16,8 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.CompoundAction;
-import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -33,7 +33,7 @@ public record If(
 		List<PostAction> failureEntries,
 		boolean canRepeat,
 		boolean hidden,
-		boolean preventSync) implements CompoundAction, PostAction {
+		ClientSideStrategy clientSideStrategy) implements CompoundAction, PostAction {
 
 	public static If of(
 			PostActionCommonProperties commonProperties,
@@ -42,8 +42,9 @@ public record If(
 		boolean canRepeat = Stream.concat(successEntries.stream(), failureEntries.stream()).allMatch(PostAction::repeatable);
 		boolean hidden = commonProperties.hidden() || Stream.concat(successEntries.stream(), failureEntries.stream())
 				.allMatch(PostAction::hidden);
-		boolean preventSync = Stream.concat(successEntries.stream(), failureEntries.stream()).allMatch(PostAction::preventSync);
-		return new If(commonProperties, successEntries, failureEntries, canRepeat, hidden, preventSync);
+		ClientSideStrategy clientSideStrategy = ClientSideStrategy.ofEntries(Stream.concat(successEntries.stream(), failureEntries.stream())
+				.toList());
+		return new If(commonProperties, successEntries, failureEntries, canRepeat, hidden, clientSideStrategy);
 	}
 
 	public void getConsequenceTooltips(List<Component> list, List<PostAction> actions, String translation) {
@@ -73,16 +74,12 @@ public record If(
 
 	@Override
 	public void apply(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		for (PostAction action : successEntries) {
-			context.get(LycheeContextKey.ACTION).jobs.offer(new Job(action, times));
-		}
+		context.get(LycheeContextKey.ACTION).appendActions(context, successEntries.stream(), times);
 	}
 
 	@Override
 	public void onFailure(@Nullable ILycheeRecipe<?> recipe, LycheeContext context, int times) {
-		for (PostAction action : failureEntries) {
-			context.get(LycheeContextKey.ACTION).jobs.offer(new Job(action, times));
-		}
+		context.get(LycheeContextKey.ACTION).appendActions(context, failureEntries.stream(), times);
 	}
 
 	@Override
@@ -100,6 +97,11 @@ public record If(
 		for (var action : getChildActions().toList()) {
 			action.getUsedPointers(recipe, consumer);
 		}
+	}
+
+	@Override
+	public ClientSideStrategy clientSideStrategy() {
+		return clientSideStrategy;
 	}
 
 	public static class Type implements PostActionType<If> {

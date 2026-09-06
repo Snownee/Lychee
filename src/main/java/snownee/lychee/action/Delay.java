@@ -10,6 +10,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ExtraCodecs;
 import snownee.lychee.Lychee;
 import snownee.lychee.context.ActionContext;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -43,8 +44,8 @@ public record Delay(PostActionCommonProperties commonProperties, float seconds) 
 	}
 
 	@Override
-	public boolean preventSync() {
-		return true;
+	public ClientSideStrategy clientSideStrategy() {
+		return ClientSideStrategy.PREVENT_SYNC;
 	}
 
 	public static class Type implements PostActionType<Delay> {

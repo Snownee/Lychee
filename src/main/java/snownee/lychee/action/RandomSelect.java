@@ -24,8 +24,8 @@ import net.minecraft.world.item.ItemStack;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.util.BoundsExtensions;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.CompoundAction;
-import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -43,7 +43,7 @@ public record RandomSelect(
 		MinMaxBounds.Ints rolls,
 		boolean canRepeat,
 		boolean hidden,
-		boolean preventSync
+		ClientSideStrategy clientSideStrategy
 ) implements CompoundAction, PostAction {
 	public RandomSelect(
 			PostActionCommonProperties commonProperties,
@@ -58,7 +58,7 @@ public record RandomSelect(
 				rolls,
 				entries.stream().allMatch(it -> it.action().repeatable()),
 				commonProperties.hidden() || entries.stream().allMatch(it -> it.action().hidden()),
-				entries.stream().allMatch(it -> it.action().preventSync()));
+				ClientSideStrategy.ofEntries(entries.stream().map(Entry::action).toList()));
 		Preconditions.checkArgument(totalWeight > 0, "Total weight must be positive");
 	}
 
@@ -99,7 +99,7 @@ public record RandomSelect(
 		var actionContext = context.get(LycheeContextKey.ACTION);
 		for (var i = 0; i < validActions.size(); i++) {
 			if (childTimes[i] > 0) {
-				actionContext.jobs.offer(new Job(validActions.get(i), childTimes[i]));
+				actionContext.appendAction(context, validActions.get(i), childTimes[i]);
 			}
 		}
 	}
@@ -146,6 +146,11 @@ public record RandomSelect(
 	@Override
 	public Stream<PostAction> getChildActions() {
 		return entries.stream().map(it -> it.action);
+	}
+
+	@Override
+	public ClientSideStrategy clientSideStrategy() {
+		return clientSideStrategy;
 	}
 
 	public record Entry(PostAction action, int weight) {

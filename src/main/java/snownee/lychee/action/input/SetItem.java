@@ -15,6 +15,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.util.CommonProxy;
 import snownee.lychee.util.Reference;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -44,8 +45,8 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStack ite
 			var base = getPath().isEmpty()
 					? this.itemStack.copy()
 					: ItemStack.parseOptional(
-							registryAccess,
-							CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON))));
+					registryAccess,
+					CommonProxy.jsonToTag(new JsonPointer(getPath().get()).find(context.get(LycheeContextKey.JSON))));
 			if (base.isEmpty()) {
 				context.setItem(index, ItemStack.EMPTY);
 				holder.setConsumption(0);
@@ -111,6 +112,11 @@ public record SetItem(PostActionCommonProperties commonProperties, ItemStack ite
 	@Override
 	public ItemStack transformRemainder(ItemStack itemStack, @Nullable ILycheeRecipe<?> recipe) {
 		return itemStack();
+	}
+
+	@Override
+	public ClientSideStrategy clientSideStrategy() {
+		return ClientSideStrategy.ALLOW_CLIENT_RUN;
 	}
 
 	//	@Override
