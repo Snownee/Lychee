@@ -38,6 +38,7 @@
 		"recipes.entityticking.EntityMixin",
 		"recipes.entityticking.EntityTypeMixin",
 		"recipes.entityticking.ServerLevelMixin",
+		"recipes.blockclicking.ServerPlayerGameModeMixin",
 		"recipes.itemburing.ItemEntityHurtMixin",
 		"recipes.itemexploding.ExplosionMixin",
 		"recipes.iteminside.EntityMixin",
