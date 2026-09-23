@@ -18,6 +18,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ByIdMap;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -26,7 +27,6 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import snownee.kiwi.recipe.SizedIngredient;
-import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.LootContextKeys;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
@@ -159,7 +159,8 @@ public class BlockClickingRecipe extends BlockInteractingRecipe {
 		public static final StreamCodec<ByteBuf, EnumSet<Action>> ACTIONS_STREAM_CODEC = STREAM_CODEC.apply(ByteBufCodecs.list())
 				.map(EnumSet::copyOf, List::copyOf);
 		public static final Codec<Action> CODEC = StringRepresentable.fromEnum(Action::values);
-		public static final Codec<EnumSet<Action>> ACTIONS_CODEC = KCodecs.compactList(CODEC).xmap(EnumSet::copyOf, List::copyOf);
+		public static final Codec<EnumSet<Action>> ACTIONS_CODEC = ExtraCodecs.compactListCodec(CODEC)
+				.xmap(list -> EnumSet.copyOf(list), List::copyOf);
 
 		@Override
 		public String getSerializedName() {

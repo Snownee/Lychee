@@ -12,7 +12,6 @@ import net.minecraft.util.Util;
 import net.minecraft.world.item.crafting.RecipeMap;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import snownee.kiwi.util.KUtil;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
@@ -160,7 +159,7 @@ public final class RecipeTypes {
 			type.refreshCache(recipeMap);
 		});
 		ALL.forEach(LycheeRecipeType::updateEmptyState);
-		HAS_CRAFTING_RECIPES = KUtil.getRecipes(RecipeType.CRAFTING)
+		HAS_CRAFTING_RECIPES = recipeMap.byType(RecipeType.CRAFTING)
 				.stream()
 				.anyMatch(it -> it.value().getSerializer() == RecipeSerializers.CRAFTING);
 	}
