@@ -8,6 +8,15 @@ public enum ClientSideStrategy {
 	ALLOW_CLIENT_RUN;
 
 	public static ClientSideStrategy ofEntries(List<PostAction> list) {
-		return null;
+		if (list.isEmpty()) {
+			return DEFAULT;
+		}
+		if (list.stream().allMatch(it -> it.clientSideStrategy() == PREVENT_SYNC)) {
+			return PREVENT_SYNC;
+		}
+		if (list.stream().allMatch(it -> it.clientSideStrategy() == ALLOW_CLIENT_RUN)) {
+			return ALLOW_CLIENT_RUN;
+		}
+		return DEFAULT;
 	}
 }

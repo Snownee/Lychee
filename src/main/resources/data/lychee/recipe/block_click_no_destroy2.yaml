@@ -6,8 +6,7 @@ action:
 if:
   description: Test
   type: is_sneaking
-item_in:
-  - item: bucket
+item_in: bucket
 post:
   - prevent_default
   - drop cod

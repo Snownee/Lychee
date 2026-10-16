@@ -6,39 +6,16 @@
 		"aaa"
 	],
 	"key": {
-		"a": {
-			"item": "minecraft:blue_orchid"
-		},
-		"b": [
-			{
-				"fabric:type": "fabric:components",
-				"base": "minecraft:potion",
-				"components": {
-					"minecraft:potion_contents": {
-						"potion": "minecraft:water"
-					}
-				}
-			},
-			{
-				"fabric:type": "fabric:components",
-				"base": "minecraft:potion",
-				"components": {
-					"minecraft:potion_contents": {
-						"potion": "minecraft:water",
-						"custom_effects": [
-							{
-								"amplifier": 14,
-								"duration": 6000,
-								"id": "minecraft:unluck",
-								"ambient": false,
-								"show_icon": true,
-								"show_particles": false
-							}
-						]
-					}
+		"a": "minecraft:blue_orchid",
+		"b": {
+			"fabric:type": "fabric:components",
+			"base": "minecraft:potion",
+			"components": {
+				"minecraft:potion_contents": {
+					"potion": "minecraft:water"
 				}
 			}
-		]
+		}
 	},
 	"result": {
 		"id": "minecraft:diamond"

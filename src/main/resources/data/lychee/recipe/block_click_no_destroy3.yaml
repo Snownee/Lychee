@@ -3,8 +3,7 @@ can_destroy: false
 if:
   description: Test
   type: is_sneaking
-item_in:
-  - item: water_bucket
+item_in: water_bucket
 post:
   - prevent_default
   - add_item_cooldown 1
