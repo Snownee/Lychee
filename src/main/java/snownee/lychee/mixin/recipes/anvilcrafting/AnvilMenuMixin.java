@@ -125,6 +125,7 @@ public abstract class AnvilMenuMixin extends ItemCombinerMenu {
 		}
 		ActionContext actionContext = recipe.applyPostActions(context, 1);
 		if (actionContext != null) {
+			context.get(LycheeContextKey.ITEM).postApply(false, 1);
 			onTakeResult = Pair.of(context, actionContext);
 		}
 	}

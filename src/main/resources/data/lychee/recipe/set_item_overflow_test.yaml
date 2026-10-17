@@ -1,0 +1,11 @@
+comment: 64 gravel -> 32 ender_pearls (2 per repeat, maxStackSize 16), split into stacks of 16, dropped as new entities at the same position
+block_in: water_cauldron
+item_in:
+- count: 4
+  ingredient: gravel
+post:
+- count: 2
+  id: ender_pearl
+  target: /item_in/0
+  type: set_item
+type: lychee:item_inside
