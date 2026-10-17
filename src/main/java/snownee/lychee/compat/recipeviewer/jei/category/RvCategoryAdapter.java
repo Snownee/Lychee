@@ -38,6 +38,7 @@ import snownee.lychee.compat.recipeviewer.RVs;
 import snownee.lychee.compat.recipeviewer.SlotType;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryInstance;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryLayoutBuilder;
+import snownee.lychee.compat.recipeviewer.category.RvCategoryLayoutBuilder.IngredientLayout;
 import snownee.lychee.compat.recipeviewer.category.RvCategoryWidgetBuilder;
 import snownee.lychee.compat.recipeviewer.jei.LycheeJEIPlugin;
 import snownee.lychee.compat.recipeviewer.jei.LycheeJeiRecipeType;
@@ -205,23 +206,25 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 		slotGroup(builder, x, y, recipe.postActions().stream().filter(it -> !it.hidden()).toList(), this::actionSlot);
 	}
 
-	private void ingredientGroup(IRecipeLayoutBuilder builder, R recipe, float x, float y) {
+	private void ingredientGroup(IRecipeLayoutBuilder builder, R recipe, IngredientLayout layout) {
 		var ingredients = RVs.generateShapelessInputs(recipe);
-		slotGroup(
-				builder, x + 1, y + 1, ingredients, (layout0, ingredient, x0, y0) -> {
-					var slotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, (int) x0, (int) y0);
-					if (ingredient.ingredient.isEmpty()) {
-						if (!ingredient.tooltips.isEmpty()) {
-							slotBuilder.add(LycheeJEIPlugin.POST_ACTION, PostActionIngredientRenderer.INGREDIENT_HACK_DUMMY);
-						}
-					} else {
-						slotBuilder.add(ingredient.display());
-					}
-					slotBuilder.setBackground(LycheeJEIPlugin.slot(ingredient.type), -1, -1);
-					if (!ingredient.tooltips.isEmpty()) {
-						slotBuilder.addRichTooltipCallback((stack, tooltip) -> tooltip.addAll(ingredient.tooltips));
-					}
-				});
+		var size = Math.min(ingredients.size(), 9);
+		for (var index = 0; index < size; index++) {
+			var ingredient = ingredients.get(index);
+			var position = layout.position(index, size);
+			var slotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, (int) position.x() + 1, (int) position.y() + 1);
+			if (ingredient.ingredient.isEmpty()) {
+				if (!ingredient.tooltips.isEmpty()) {
+					slotBuilder.add(LycheeJEIPlugin.POST_ACTION, PostActionIngredientRenderer.INGREDIENT_HACK_DUMMY);
+				}
+			} else {
+				slotBuilder.add(ingredient.display());
+			}
+			slotBuilder.setBackground(LycheeJEIPlugin.slot(ingredient.type), -1, -1);
+			if (!ingredient.tooltips.isEmpty()) {
+				slotBuilder.addRichTooltipCallback((stack, tooltip) -> tooltip.addAll(ingredient.tooltips));
+			}
+		}
 	}
 
 	@Override
@@ -233,8 +236,8 @@ public class RvCategoryAdapter<R extends ILycheeRecipe<LycheeContext>> implement
 			}
 
 			@Override
-			protected void _ingredientGroup(R recipe, Vector2fc position) {
-				RvCategoryAdapter.this.ingredientGroup(builder, recipeHolder.value(), position.x(), position.y());
+			protected void _ingredientGroup(R recipe, IngredientLayout layout) {
+				RvCategoryAdapter.this.ingredientGroup(builder, recipeHolder.value(), layout);
 			}
 		};
 		instance.type().configureLayout(layoutBuilder, recipeHolder);
