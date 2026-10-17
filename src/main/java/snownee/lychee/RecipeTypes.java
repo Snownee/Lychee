@@ -49,6 +49,7 @@ public final class RecipeTypes {
 
 	public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES = DeferredRegister.create(BuiltInRegistries.RECIPE_TYPE, Lychee.ID);
 	public static final Set<LycheeRecipeType<? extends ILycheeRecipe<LycheeContext>>> ALL = Sets.newLinkedHashSet();
+	public static boolean HAS_CRAFTING_RECIPES;
 
 	public static final RecipeType<CategoryMetadata> CATEGORY_METADATA = register("category_metadata");
 	public static final RecipeType<CategoryModifier> CATEGORY_MODIFIER = register("category_modifier");
@@ -160,6 +161,9 @@ public final class RecipeTypes {
 			type.refreshCache(recipeMap);
 		});
 		ALL.forEach(LycheeRecipeType::updateEmptyState);
+		HAS_CRAFTING_RECIPES = recipeMap.byType(RecipeType.CRAFTING)
+				.stream()
+				.anyMatch(it -> it.value().getSerializer() == RecipeSerializers.CRAFTING);
 	}
 
 	@SuppressWarnings("unchecked")

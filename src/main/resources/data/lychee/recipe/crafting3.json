@@ -1,0 +1,28 @@
+{
+	"type": "lychee:crafting",
+	"pattern": [
+		"aaa",
+		"bbb",
+		"aaa"
+	],
+	"key": {
+		"a": "minecraft:blue_orchid",
+		"b": {
+			"fabric:type": "fabric:components",
+			"base": "minecraft:potion",
+			"components": {
+				"minecraft:potion_contents": {
+					"potion": "minecraft:water"
+				}
+			}
+		}
+	},
+	"result": {
+		"id": "minecraft:diamond"
+	},
+	"post": {
+		"type": "set_item",
+		"target": "/key/b",
+		"id": "minecraft:glass_bottle"
+	}
+}

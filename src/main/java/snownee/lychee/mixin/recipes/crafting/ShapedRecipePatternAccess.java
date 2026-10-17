@@ -12,7 +12,7 @@ import net.minecraft.world.item.crafting.ShapedRecipePattern;
 @Mixin(ShapedRecipePattern.class)
 public interface ShapedRecipePatternAccess {
 	@Invoker
-	boolean callMatches(CraftingInput craftingContainer, boolean nonMirror);
+	boolean callMatches(CraftingInput input, boolean symmetrical);
 
 	@Accessor("data")
 	Optional<ShapedRecipePattern.Data> data();

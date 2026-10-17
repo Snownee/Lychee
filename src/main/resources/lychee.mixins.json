@@ -28,6 +28,7 @@
 		"recipes.blockexploding.ServerExplosionMixin",
 		"recipes.crafting.CrafterMenuAccess",
 		"recipes.crafting.CraftingContainerMixin",
+		"recipes.crafting.CraftingInputMixin",
 		"recipes.crafting.InventoryMenuAccess",
 		"recipes.crafting.ShapedRecipeAccess",
 		"recipes.crafting.ShapedRecipePatternAccess",
