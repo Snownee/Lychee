@@ -24,8 +24,10 @@ public abstract class EntityMixin implements TypedInstance<EntityType<?>> {
 
 	@Inject(
 			at = @At(
+					// Loader-agnostic anchor: vanilla calls hurtServer(...) here, NeoForge patches
+					// it to hurt(...), but both call damageSources().lightningBolt() first.
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/entity/Entity;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"
+					target = "Lnet/minecraft/world/damagesource/DamageSources;lightningBolt()Lnet/minecraft/world/damagesource/DamageSource;"
 			), method = "thunderHit", cancellable = true
 	)
 	private void lychee_thunderHit_hurt(ServerLevel level, LightningBolt lightningBolt, CallbackInfo ci) {
