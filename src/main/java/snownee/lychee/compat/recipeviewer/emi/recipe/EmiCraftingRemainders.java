@@ -4,7 +4,6 @@ import java.util.List;
 
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.action.input.DamageItem;
 import snownee.lychee.action.input.SetItem;
@@ -51,17 +50,18 @@ public final class EmiCraftingRemainders {
 		var item = itemStack.getItem();
 		var remainder = item.hasCraftingRemainingItem() ? new ItemStack(item.getCraftingRemainingItem()) : ItemStack.EMPTY;
 		for (var action : recipe.postActions()) {
-			IntList indexes = switch (action) {
-				case DamageItem damageItem -> recipe.getItemIndexes(damageItem.target());
-				case SetItem setItem -> recipe.getItemIndexes(setItem.target());
-				default -> null;
-			};
-			if (indexes == null || !indexes.contains(index)) {
-				continue;
-			}
-			var transformed = action.transformRemainder(itemStack, recipe);
-			if (!transformed.isEmpty()) {
-				remainder = transformed;
+			if (action instanceof SetItem setItem) {
+				if (recipe.getItemIndexes(setItem.target()).contains(index)) {
+					// set_item is authoritative: setting air means this input leaves nothing behind
+					remainder = setItem.transformRemainder(itemStack, recipe);
+				}
+			} else if (action instanceof DamageItem damageItem) {
+				if (recipe.getItemIndexes(damageItem.target()).contains(index)) {
+					var transformed = damageItem.transformRemainder(itemStack, recipe);
+					if (!transformed.isEmpty()) {
+						remainder = transformed;
+					}
+				}
 			}
 		}
 		return remainder;
