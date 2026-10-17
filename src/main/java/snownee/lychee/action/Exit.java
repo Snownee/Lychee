@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import snownee.lychee.context.ActionContext;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -30,6 +31,11 @@ public record Exit(PostActionCommonProperties commonProperties) implements PostA
 	@Override
 	public boolean hidden() {
 		return true;
+	}
+
+	@Override
+	public ClientSideStrategy clientSideStrategy() {
+		return ClientSideStrategy.ALLOW_CLIENT_RUN;
 	}
 
 	public static class Type implements PostActionType<Exit> {

@@ -14,6 +14,7 @@ import net.minecraft.util.ExtraCodecs;
 import snownee.kiwi.util.codec.KCodecs;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.CommonProxy;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -27,14 +28,23 @@ public class CustomAction implements PostAction {
 	private final PostActionCommonProperties commonProperties;
 	public boolean repeatable;
 	public boolean preventSync;
+	public boolean allowClientRun;
 	@Nullable
 	public Apply applyFunc;
 
-	public CustomAction(PostActionCommonProperties commonProperties, String id, JsonObject json, boolean repeatable, boolean preventSync) {
+	public CustomAction(
+			PostActionCommonProperties commonProperties,
+			String id,
+			JsonObject json,
+			boolean repeatable,
+			boolean preventSync,
+			boolean allowClientRun) {
 		this.commonProperties = commonProperties;
 		this.id = id;
 		this.data = json;
 		this.repeatable = repeatable;
+		this.preventSync = preventSync;
+		this.allowClientRun = allowClientRun;
 	}
 
 	@Override
@@ -50,8 +60,23 @@ public class CustomAction implements PostAction {
 	}
 
 	@Override
+	public ClientSideStrategy clientSideStrategy() {
+		if (preventSync) {
+			return ClientSideStrategy.PREVENT_SYNC;
+		}
+		if (allowClientRun) {
+			return ClientSideStrategy.ALLOW_CLIENT_RUN;
+		}
+		return ClientSideStrategy.DEFAULT;
+	}
+
+	@Override
 	public boolean preventSync() {
 		return preventSync;
+	}
+
+	public boolean allowClientRun() {
+		return allowClientRun;
 	}
 
 	@Override
@@ -95,7 +120,8 @@ public class CustomAction implements PostAction {
 						.optionalFieldOf("data", new JsonObject())
 						.forGetter(CustomAction::data),
 				Codec.BOOL.optionalFieldOf("repeatable", true).forGetter(CustomAction::repeatable),
-				Codec.BOOL.optionalFieldOf("preventSync", false).forGetter(CustomAction::preventSync)
+				Codec.BOOL.optionalFieldOf("preventSync", false).forGetter(CustomAction::preventSync),
+				Codec.BOOL.optionalFieldOf("allowClientRun", true).forGetter(CustomAction::allowClientRun)
 		).apply(instance, CustomAction::new));
 
 		@Override

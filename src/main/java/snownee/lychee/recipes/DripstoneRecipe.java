@@ -34,7 +34,6 @@ import snownee.lychee.contextual.Location;
 import snownee.lychee.contextual.Not;
 import snownee.lychee.mixin.particles.PointedDripstoneBlockAccess;
 import snownee.lychee.mixin.predicates.LocationPredicate$BuilderAccess;
-import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.context.LycheeContext;
 import snownee.lychee.util.context.LycheeContextKey;
@@ -100,8 +99,8 @@ public class DripstoneRecipe extends LycheeRecipe<LycheeContext> implements Bloc
 		var check = (LocationCheck) LocationCheck.checkLocation(builder).build();
 		var exit = new Exit(new PostActionCommonProperties(new ContextualHolder(List.of(new Not(new Location(check))))));
 		var actionContext = context.get(LycheeContextKey.ACTION).singletonContext();
-		actionContext.jobs.offer(new Job(exit, 1));
-		actionContext.jobs.offer(new Job(new Delay(j / 20F), 1));
+		actionContext.appendAction(context, exit, 1);
+		actionContext.appendAction(context, new Delay(j / 20F), 1);
 		actionContext.run(context);
 		return true;
 	}

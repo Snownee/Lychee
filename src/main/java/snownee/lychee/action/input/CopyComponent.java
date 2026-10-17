@@ -13,6 +13,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import snownee.lychee.context.ActionContext;
 import snownee.lychee.util.Reference;
+import snownee.lychee.util.action.ClientSideStrategy;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.action.PostActionCommonProperties;
 import snownee.lychee.util.action.PostActionType;
@@ -34,6 +35,11 @@ public record CopyComponent(
 	@Override
 	public boolean hidden() {
 		return true;
+	}
+
+	@Override
+	public ClientSideStrategy clientSideStrategy() {
+		return ClientSideStrategy.ALLOW_CLIENT_RUN;
 	}
 
 	@Override

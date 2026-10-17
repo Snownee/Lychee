@@ -24,7 +24,6 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import snownee.lychee.RecipeSerializers;
 import snownee.lychee.RecipeTypes;
-import snownee.lychee.util.action.Job;
 import snownee.lychee.util.action.PostAction;
 import snownee.lychee.util.codec.LycheeCodecs;
 import snownee.lychee.util.codec.LycheeStreamCodecs;
@@ -141,7 +140,7 @@ public class AnvilCraftingRecipe extends LycheeRecipe<LycheeContext> {
 
 		context.get(LycheeContextKey.ITEM).replace(2, result);
 		final var actionContext = context.get(LycheeContextKey.ACTION).newContext();
-		actionContext.jobs.addAll(assemblingActions.stream().map(it -> new Job(it, 1)).toList());
+		actionContext.appendActions(context, assemblingActions.stream(), 1);
 		actionContext.run(context);
 		return context.getItem(2);
 	}

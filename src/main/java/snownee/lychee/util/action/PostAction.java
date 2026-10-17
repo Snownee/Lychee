@@ -66,7 +66,7 @@ public interface PostAction extends PostActionDisplay, PostActionLike, Contextua
 			PostActionType::streamCodec);
 	StreamCodec<RegistryFriendlyByteBuf, List<PostAction>> STREAM_LIST_CODEC = STREAM_CODEC.apply(original ->
 			// Error on Eclipse without the generic type (?)
-			new StreamCodec<>() {
+			new StreamCodec<RegistryFriendlyByteBuf, List<PostAction>>() {
 				@Override
 				public void encode(RegistryFriendlyByteBuf byteBuf, List<PostAction> list) {
 					var filtered = list.stream().filter(it -> !it.preventSync()).toList();
@@ -124,6 +124,18 @@ public interface PostAction extends PostActionDisplay, PostActionLike, Contextua
 
 	default boolean repeatable() {
 		return true;
+	}
+
+	/**
+	 * Do NOT override this method unless you know what you're doing. Use {@link #clientSideStrategy()} instead.
+	 */
+	@Override
+	default boolean preventSync() {
+		return clientSideStrategy() == ClientSideStrategy.PREVENT_SYNC;
+	}
+
+	default ClientSideStrategy clientSideStrategy() {
+		return ClientSideStrategy.DEFAULT;
 	}
 
 	default void getUsedPointers(@Nullable ILycheeRecipe<?> recipe, Consumer<JsonPointer> consumer) {}
