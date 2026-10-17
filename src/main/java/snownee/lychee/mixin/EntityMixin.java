@@ -25,9 +25,9 @@ public abstract class EntityMixin implements TypedInstance<EntityType<?>> {
 	@Inject(
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/world/entity/Entity;hurtServer(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/damagesource/DamageSource;F)Z"
-			), method = "thunderHit", cancellable = true
-	)
+					target = "Lnet/minecraft/world/entity/Entity;hurt(Lnet/minecraft/world/damagesource/DamageSource;F)V"),
+			method = "thunderHit",
+			cancellable = true)
 	private void lychee_thunderHit_hurt(ServerLevel level, LightningBolt lightningBolt, CallbackInfo ci) {
 		if (is(LycheeTags.LIGHTNING_IMMUNE)) {
 			ci.cancel();
