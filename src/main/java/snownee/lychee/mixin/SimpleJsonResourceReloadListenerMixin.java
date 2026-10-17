@@ -52,7 +52,7 @@ public class SimpleJsonResourceReloadListenerMixin {
 		lychee_beginApply(manager, lister, ops, codec, result);
 	}
 
-	@Inject(method = "scanDirectoryWithModifier", at = @At("HEAD"))
+	@Inject(method = "scanDirectoryWithModifier", at = @At("HEAD"), require = 0)
 	private static <T> void lychee_beginApply_scanDirectoryWithModifier(
 			ResourceManager manager,
 			FileToIdConverter lister,
