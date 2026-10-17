@@ -14,7 +14,6 @@ import com.google.gson.JsonObject;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.JsonOps;
 
-import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
@@ -56,7 +55,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import snownee.kiwi.loader.Platform;
 import snownee.kiwi.recipe.CustomIngredientSerializer;
@@ -411,7 +412,30 @@ public class CommonProxy {
 
 		// Interaction recipes
 		UseBlockCallback.EVENT.register(BlockInteractingRecipe::invoke);
-		AttackBlockCallback.EVENT.register(BlockClickingRecipe::invoke);
+		NeoForge.EVENT_BUS.addListener((PlayerInteractEvent.LeftClickBlock event) -> {
+			if (event.getFace() == null) {
+				return;
+			}
+			BlockClickingRecipe.Action action = switch (event.getAction()) {
+				case START -> BlockClickingRecipe.Action.START;
+				case STOP -> BlockClickingRecipe.Action.STOP;
+				case ABORT -> BlockClickingRecipe.Action.ABORT;
+				case CLIENT_HOLD -> null;
+			};
+			if (action == null) {
+				return;
+			}
+			var result = BlockClickingRecipe.invoke(
+					event.getEntity(),
+					event.getLevel(),
+					event.getHand(),
+					event.getPos(),
+					event.getFace(),
+					action);
+			if (result.consumesAction()) {
+				event.setCanceled(true);
+			}
+		});
 
 	}
 

@@ -1,0 +1,13 @@
+block_in: grass_block
+can_destroy: true
+action:
+  - stop
+  - abort
+if:
+  description: Test
+  type: is_sneaking
+item_in: bucket
+post:
+  - prevent_default
+  - drop cod
+type: lychee:block_clicking

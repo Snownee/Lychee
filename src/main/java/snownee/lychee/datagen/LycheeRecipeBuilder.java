@@ -1,6 +1,7 @@
 package snownee.lychee.datagen;
 
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -38,6 +39,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import snownee.kiwi.recipe.SizedIngredient;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
+import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
 import snownee.lychee.recipes.BlockExplodingRecipe;
 import snownee.lychee.recipes.BlockInteractingRecipe;
@@ -348,6 +350,37 @@ public abstract class LycheeRecipeBuilder<T extends LycheeRecipeBuilder<T, R>, R
 		@Override
 		public R build() {
 			return constructor.apply(properties(), inputs, blockPredicate);
+		}
+	}
+
+	public static class BlockClicking extends BlockInteracting<BlockClickingRecipe> {
+		protected boolean canDestroy = true;
+		protected EnumSet<BlockClickingRecipe.Action> action = EnumSet.of(BlockClickingRecipe.Action.START);
+
+		@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+		public BlockClicking(
+				Function3<LycheeRecipeCommonProperties, List<Optional<SizedIngredient>>, BlockPredicate, BlockClickingRecipe> constructor,
+				Optional<SizedIngredient> mainHand,
+				@Nullable Optional<SizedIngredient> offHand,
+				BlockPredicate block) {
+			super(constructor, mainHand, offHand, block);
+		}
+
+		@Contract("_ -> this")
+		public BlockClicking canDestroy(boolean canDestroy) {
+			this.canDestroy = canDestroy;
+			return this;
+		}
+
+		@Contract("_ -> this")
+		public BlockClicking action(BlockClickingRecipe.Action... actions) {
+			this.action = EnumSet.of(actions[0], actions);
+			return this;
+		}
+
+		@Override
+		public BlockClickingRecipe build() {
+			return new BlockClickingRecipe(properties(), inputs, blockPredicate, canDestroy, action);
 		}
 	}
 
