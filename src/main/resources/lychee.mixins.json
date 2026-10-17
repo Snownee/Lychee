@@ -54,6 +54,7 @@
 		"client.ClientRecipeBookMixin",
 		"client.GameRendererAccess",
 		"client.GuiGraphicsMixin",
+		"emi.EmiShapedRecipeMixin",
 		"jei.AnvilRecipeCategoryMixin",
 		"fabric.MultiPlayerGameModeMixin"
 	],
