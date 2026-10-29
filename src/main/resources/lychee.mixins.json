@@ -3,7 +3,6 @@
 	"package": "snownee.lychee.mixin",
 	"plugin": "snownee.lychee.mixin.MixinPlugin",
 	"compatibilityLevel": "JAVA_21",
-	"refmap": "lychee.refmap.json",
 	"mixins": [
 		"ChunkMapAccess",
 		"CraftingMenuAccess",

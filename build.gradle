@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.10-SNAPSHOT'
+    id 'fabric-loom' version '1.19.3'
     id 'maven-publish'
     id "me.modmuss50.mod-publish-plugin" version "2.+"
 }
@@ -23,12 +23,23 @@ repositories {
         name = "ModMaven"
         url = "https://modmaven.dev"
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "BlameJared"
+                url = "https://maven.blamejared.com"
+            }
+        }
+        filter {
+            includeGroup "net.mezzdev.config"
+        }
+    }
     maven { url = "https://maven.parchmentmc.org" }
-    maven { url "https://maven.shedaniel.me/" }
-    maven { url "https://maven.terraformersmc.com/releases/" }
-    maven { url "https://maven.terraformersmc.com/" }
+    maven { url = "https://maven.shedaniel.me/" }
+    maven { url = "https://maven.terraformersmc.com/releases/" }
+    maven { url = "https://maven.terraformersmc.com/" }
     maven {
-        url "https://cursemaven.com"
+        url = "https://cursemaven.com"
         content {
             includeGroup "curse.maven"
         }
@@ -78,7 +89,7 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-1.20.6:${project.parchmentmc_version}@zip")
+        parchment("org.parchmentmc.data:parchment-1.21.1:${project.parchmentmc_version}@zip")
     }
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
@@ -98,6 +109,8 @@ dependencies {
     modCompileOnlyApi("mezz.jei:jei-${project.minecraft_version}-common-api:${project.jei_version}")
     modCompileOnlyApi("mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}")
     modImplementation("mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}")
+    // JEI 内嵌的 mezz_config 是嵌套 jar，开发环境不会自动加载
+    modRuntimeOnly("net.mezzdev.config:mezz_config-${project.minecraft_version}-fabric:0.6.6")
 
     modImplementation annotationProcessor("maven.modrinth:kiwi:${project.kiwi_version}+fabric")
 
@@ -114,10 +127,6 @@ dependencies {
 }
 
 loom {
-    mixin {
-        defaultRefmapName = "${project.mod_id}.refmap.json"
-    }
-
     accessWidenerPath = file("src/main/resources/${project.mod_id}.accesswidener")
     enableTransitiveAccessWideners = false
 
@@ -146,6 +155,14 @@ processResources {
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
     it.options.release = 21
+}
+
+// Minecraft 1.21.1 cannot run on the Java 25 JVM that Loom 1.19 requires for Gradle,
+// so launch the game with a Java 21 toolchain instead.
+tasks.withType(net.fabricmc.loom.task.RunGameTask).configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 java {
