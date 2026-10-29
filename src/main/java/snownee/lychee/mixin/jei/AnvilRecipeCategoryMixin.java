@@ -19,7 +19,7 @@ import snownee.lychee.compat.recipeviewer.jei.element.RenderElementAdapter;
 @Mixin(value = AnvilRecipeCategory.class, remap = false)
 public class AnvilRecipeCategoryMixin {
 	@Unique
-	private final Vector2fc lychee$infoPosition = new Vector2f(83, 18);
+	private static final Vector2fc lychee$infoPosition = new Vector2f(83, 18);
 
 	@Inject(method = "createRecipeExtras*", at = @At("TAIL"))
 	private void onRecipeExtras(IRecipeExtrasBuilder builder, IJeiAnvilRecipe recipe, IFocusGroup focuses, CallbackInfo ci) {
