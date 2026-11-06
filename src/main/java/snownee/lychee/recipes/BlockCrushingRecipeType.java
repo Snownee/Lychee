@@ -13,6 +13,7 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -148,8 +149,8 @@ public class BlockCrushingRecipeType extends BlockKeyableRecipeType<BlockCrushin
 
 	@Override
 	@MustBeInvokedByOverriders
-	public void refreshCache() {
-		super.refreshCache();
+	public void refreshCache(RecipeManager recipeManager) {
+		super.refreshCache(recipeManager);
 		validItems.refreshCache(recipes);
 	}
 

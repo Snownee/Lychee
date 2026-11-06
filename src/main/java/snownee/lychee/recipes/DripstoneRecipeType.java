@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.Sets;
 
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.util.predicates.BlockPredicateExtensions;
@@ -22,8 +23,8 @@ public class DripstoneRecipeType extends BlockKeyableRecipeType<DripstoneRecipe>
 
 	@Override
 	@MustBeInvokedByOverriders
-	public void refreshCache() {
-		super.refreshCache();
+	public void refreshCache(RecipeManager recipeManager) {
+		super.refreshCache(recipeManager);
 		allSources.clear();
 		for (var recipe : recipes) {
 			allSources.addAll(BlockPredicateExtensions.matchedBlocks(recipe.value().sourceBlock));

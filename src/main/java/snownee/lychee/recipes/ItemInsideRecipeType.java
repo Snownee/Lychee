@@ -26,6 +26,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
@@ -50,10 +51,10 @@ public class ItemInsideRecipeType extends LycheeRecipeType<ItemInsideRecipe> {
 
 	@Override
 	@MustBeInvokedByOverriders
-	public void refreshCache() {
+	public void refreshCache(RecipeManager recipeManager) {
 		specialRecipes.clear();
 		recipesByItem.clear();
-		super.refreshCache();
+		super.refreshCache(recipeManager);
 		final var itemWeights = new Object2FloatOpenHashMap<Item>();
 		final var caches = recipes.stream()
 				.filter(it -> {
