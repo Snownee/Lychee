@@ -1,0 +1,16 @@
+{
+	"type": "lychee:item_inside",
+	"time": 1,
+	"item_in": "minecraft:lapis_lazuli",
+	"block_in": "minecraft:water",
+	"post": [
+		{
+			"type": "execute",
+			"command": "summon bee"
+		},
+		{
+			"type": "drop_item",
+			"id": "minecraft:emerald"
+		}
+	]
+}

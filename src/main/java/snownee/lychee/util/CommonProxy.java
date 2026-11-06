@@ -180,7 +180,8 @@ public class CommonProxy {
 
 	@Nullable
 	public static RecipeHolder<?> recipe(ResourceLocation id) {
-		var manager = KUtil.getRecipeManager();
+		var server = Platform.getServer();
+		var manager = server != null && server.isSameThread() ? server.getRecipeManager() : KUtil.getRecipeManager();
 		if (manager == null) {
 			return null;
 		}

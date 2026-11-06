@@ -9,9 +9,9 @@ import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import snownee.kiwi.util.KUtil;
 import snownee.lychee.recipes.AnvilCraftingRecipe;
 import snownee.lychee.recipes.BlockClickingRecipe;
 import snownee.lychee.recipes.BlockCrushingRecipe;
@@ -142,10 +142,10 @@ public final class RecipeTypes {
 		return Registry.register(BuiltInRegistries.RECIPE_TYPE, recipeType.id, recipeType);
 	}
 
-	public static void buildCache() {
-		ALL.forEach(LycheeRecipeType::refreshCache);
+	public static void buildCache(RecipeManager recipeManager) {
+		ALL.forEach(type -> type.refreshCache(recipeManager));
 		ALL.forEach(LycheeRecipeType::updateEmptyState);
-		HAS_CRAFTING_RECIPES = KUtil.getRecipes(RecipeType.CRAFTING)
+		HAS_CRAFTING_RECIPES = recipeManager.getAllRecipesFor(RecipeType.CRAFTING)
 				.stream()
 				.anyMatch(it -> it.value().getSerializer() == RecipeSerializers.CRAFTING);
 	}

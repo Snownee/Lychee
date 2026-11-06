@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
@@ -74,8 +75,11 @@ public class LycheeRecipeType<T extends ILycheeRecipe<LycheeContext>> implements
 	}
 
 	@MustBeInvokedByOverriders
-	public void refreshCache() {
-		recipes = KUtil.getRecipes(this).stream().filter(it -> !it.value().ghost()).sorted(comparator()).toList();
+	public void refreshCache(RecipeManager recipeManager) {
+		recipes = recipeManager.getAllRecipesFor(this).stream()
+				.filter(it -> !it.value().ghost())
+				.sorted(comparator())
+				.toList();
 	}
 
 	public Comparator<RecipeHolder<T>> comparator() {

@@ -12,6 +12,7 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import snownee.lychee.Lychee;
 import snownee.lychee.context.ItemShapelessContext;
@@ -31,8 +32,8 @@ public class ItemShapelessRecipeType<R extends ILycheeRecipe<LycheeContext>> ext
 
 	@Override
 	@MustBeInvokedByOverriders
-	public void refreshCache() {
-		super.refreshCache();
+	public void refreshCache(RecipeManager recipeManager) {
+		super.refreshCache(recipeManager);
 		validItems.refreshCache(recipes);
 	}
 

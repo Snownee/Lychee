@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.advancements.critereon.BlockPredicate;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
@@ -27,9 +28,9 @@ public class RandomBlockTickingRecipeType extends BlockKeyableRecipeType<RandomB
 
 	@Override
 	@MustBeInvokedByOverriders
-	public void refreshCache() {
+	public void refreshCache(RecipeManager recipeManager) {
 		var prevEmpty = isEmpty();
-		super.refreshCache();
+		super.refreshCache(recipeManager);
 		if (prevEmpty && recipes.isEmpty()) { // do not use isEmpty() directly because empty state is not updated yet
 			return;
 		}
